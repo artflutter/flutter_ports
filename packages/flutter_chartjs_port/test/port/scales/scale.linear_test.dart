@@ -2,8 +2,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui';
-
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,277 +35,6 @@ import 'scale_linear_reference.dart';
 // The groups of Chart.js ADR 0186 pin the arithmetic of getPixelForValue
 // (section 3) and the values of scaleValueOf (section 2) without
 // generated values.
-
-/// Native setups for selected reference cases. The generated expected scale,
-/// point and draw observations remain the comparison oracle.
-ChartConfig? _typedReference(String name) => switch (name) {
-  'primitives' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, -5, 78, -100]),
-    ],
-  ),
-  'string values' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-    datasets: [
-      TestDataset(
-        ChartKind('scaleTest'),
-        // Preserve strings so this still exercises the numeric parser.
-        extra: {
-          'data': ['10', '5', '0', '-5', '78', '-100'],
-        },
-      ),
-    ],
-  ),
-  'small numbers' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [-1e-8, 3e-8, -4e-8, 6e-8]),
-    ],
-  ),
-  'empty data' => const ChartConfig(
-    labels: ['a', 'b', 'c'],
-    datasets: [TestDataset(ChartKind('scaleTest'), data: [])],
-  ),
-  'equal large positive values' => const ChartConfig(
-    labels: ['a', 'b'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [10000, 10000]),
-    ],
-  ),
-  'equal large negative values' => const ChartConfig(
-    labels: ['a', 'b'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [-10000, -10000]),
-    ],
-  ),
-  'equal values with beginAtZero' => const ChartConfig(
-    labels: ['a', 'b'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [50, 50]),
-    ],
-    scales: [LinearAxis(.y, beginAtZero: true)],
-  ),
-  'all values zero' => const ChartConfig(
-    labels: ['a', 'b'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [0, 0]),
-    ],
-  ),
-  'suggestedMin and suggestedMax' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd', 'e'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [1, -1, 0, -2, 1]),
-    ],
-    scales: [LinearAxis(.y, suggestedMin: -10, suggestedMax: 10)],
-  ),
-  'min and max' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, -5, 78, -100]),
-    ],
-    scales: [LinearAxis(.y, min: -1010, max: 1010)],
-  ),
-  'a user min of 0' => const ChartConfig(
-    labels: ['S1', 'S2', 'S3'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [2500, 2000, 1500]),
-    ],
-    indexAxis: YAxis(),
-    scales: [
-      LinearAxis(.x, min: 0, max: 3000),
-      CategoryAxis(.y, extra: {'offset': false}),
-    ],
-  ),
-  'a user max of 0' => const ChartConfig(
-    labels: ['S1', 'S2', 'S3'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [-2500, -2000, -1500]),
-    ],
-    indexAxis: YAxis(),
-    scales: [LinearAxis(.x, min: -3000, max: 0)],
-  ),
-  'a user min above the data' => const ChartConfig(
-    labels: ['a'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [200]),
-    ],
-    scales: [LinearAxis(.y, min: 250)],
-  ),
-  'a user max below the data' => const ChartConfig(
-    labels: ['a'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [200]),
-    ],
-    scales: [LinearAxis(.y, max: 150)],
-  ),
-  'equal user min and max' => const ChartConfig(
-    labels: ['a', 'b', 'c'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [0, 500, 1000]),
-    ],
-    scales: [
-      LinearAxis(.y, min: 5, max: 5, ticks: AxisTicks(callback: _indexLabel)),
-    ],
-  ),
-  'grace' => const ChartConfig(
-    labels: ['a', 'b', 'c'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [20, 30, 40]),
-    ],
-    scales: [
-      LinearAxis(.y, extra: {'grace': PercentGrace(10)}),
-    ],
-  ),
-  'grace with beginAtZero' => const ChartConfig(
-    labels: ['a', 'b', 'c'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [0, 30, 40]),
-    ],
-    scales: [
-      LinearAxis(.y, beginAtZero: true, extra: {'grace': ValueGrace(5)}),
-    ],
-  ),
-  'min, max and stepSize' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, -5, 78, -100]),
-    ],
-    scales: [LinearAxis(.y, min: 1, max: 11, ticks: AxisTicks(stepSize: 2))],
-  ),
-  'a max with a stepSize that does not fit' => const ChartConfig(
-    labels: ['a', 'b', 'c'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [0.5, 2.5, 1.7]),
-    ],
-    scales: [LinearAxis(.y, max: 2.6, ticks: AxisTicks(stepSize: 0.4))],
-  ),
-  'count and includeBounds false' => ChartConfig(
-    datasets: [
-      TestDataset(
-        const ChartKind('linearTest'),
-        points: [
-          DataPoint(10, 100),
-          DataPoint(-10, 0),
-          DataPoint(0, 0),
-          DataPoint(99, 7),
-        ],
-      ),
-    ],
-    scales: const [
-      LinearAxis(
-        .x,
-        min: -11,
-        max: 103.5,
-        ticks: AxisTicks(extra: {'includeBounds': false}),
-      ),
-      LinearAxis(.y, ticks: AxisTicks(extra: {'count': 6})),
-    ],
-  ),
-  'the decimal places of the default format' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd', 'e'],
-    datasets: [
-      TestDataset(
-        ChartKind('scaleTest'),
-        data: [0.06, 0.005, 0, 0.025, 0.0078],
-      ),
-    ],
-  ),
-  'maxTicksLimit 21' => const ChartConfig(
-    labels: ['a', 'b'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [0.5, 2.5]),
-    ],
-    scales: [
-      LinearAxis(
-        .y,
-        beginAtZero: false,
-        ticks: AxisTicks(extra: {'maxTicksLimit': 21}),
-      ),
-    ],
-  ),
-  'bounds data' => const ChartConfig(
-    labels: ['a', 'b'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [1, 99]),
-    ],
-    scales: [LinearAxis(.y, bounds: ScaleBounds.data)],
-  ),
-  'reverse' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, -5, 78, -100]),
-    ],
-    scales: [LinearAxis(.y, reverse: true)],
-  ),
-  'offset' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, -5, 78, -100]),
-    ],
-    scales: [
-      LinearAxis(.y, extra: {'offset': true}),
-    ],
-  ),
-  'a ticks callback with the index' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd', 'e'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, 25, 78]),
-    ],
-    scales: [LinearAxis(.y, ticks: AxisTicks(callback: _indexLabel))],
-  ),
-  'a ticks callback that reads this' => const ChartConfig(
-    labels: ['a', 'b', 'c', 'd', 'e'],
-    datasets: [
-      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, 25, 78]),
-    ],
-    scales: [LinearAxis(.y, ticks: AxisTicks(callback: _labelOfThis))],
-  ),
-  'locale de-DE' => ChartConfig(
-    datasets: [
-      TestDataset(
-        const ChartKind('linearTest'),
-        points: [DataPoint(10000000, -1234.5), DataPoint(0, 98765.25)],
-      ),
-    ],
-    extra: const {'locale': Locale('de', 'DE')},
-  ),
-  'a vertical tick limit on a short canvas' => _verticalTickLimit(),
-  'a vertical tick limit with a large font' => _verticalTickLimit(
-    font: const ChartTextStyle(fontSize: 40),
-  ),
-  'a vertical tick limit with a lineHeight of 20 px' => _verticalTickLimit(
-    font: const ChartTextStyle(fontSize: 12, height: 1.6666666666666667),
-  ),
-  'a vertical tick limit with minRotation 60' => _verticalTickLimit(
-    minRotation: 60,
-  ),
-  'a vertical tick limit with minRotation 90' => _verticalTickLimit(
-    minRotation: 90,
-  ),
-  'a vertical tick limit with minRotation NaN' => _verticalTickLimit(
-    minRotation: double.nan,
-  ),
-  _ => null,
-};
-
-/// The shared data and tick limit of the font and rotation reference cases.
-ChartConfig _verticalTickLimit({ChartTextStyle? font, double? minRotation}) =>
-    ChartConfig(
-      labels: const ['a', 'b', 'c'],
-      datasets: const [
-        TestDataset(ChartKind('scaleTest'), data: [0, 500, 1000]),
-      ],
-      scales: [
-        LinearAxis(
-          .y,
-          ticks: AxisTicks(
-            font: font,
-            extra: {'maxTicksLimit': 1000, 'minRotation': ?minRotation},
-          ),
-        ),
-      ],
-    );
 
 /// The test controller `scaleTest2` of the generator: the overrides of
 /// `scaleTest`.
@@ -378,9 +105,9 @@ Map<String, Object?> _linearObservations(Scale scale, Chart chart) {
   };
 }
 
-/// The options of the scale [id] in the config of [chart], as a Map.
+/// The options of the scale [id] in the config of [chart].
 JsObjectFace _scaleConfig(Chart chart, String id) {
-  final scales = (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+  final scales = jsGet(chart.config.options, 'scales')! as JsObjectFace;
   return scales[id]! as JsObjectFace;
 }
 
@@ -526,20 +253,17 @@ void main() {
 
   group('linear scale charts against upstream', () {
     test('each action names a case', () {
-      final names = [for (final c in scaleLinearReference) c.name];
+      final names = [for (final c in scaleLinearReference(_functions)) c.name];
       expect(_actions.keys, everyElement(isIn(names)));
     });
 
-    for (final c in scaleLinearReference) {
+    for (final c in scaleLinearReference(_functions)) {
       testWidgets(c.name, (tester) async {
-        final typed = _typedReference(c.name);
-        final options = copyReference(c.options)! as AnyObject;
-        final chart = typed == null
-            ? acquireChart(
-                copyReference(c.config, _functions)! as AnyObject,
-                options,
-              )
-            : acquireChartRoot(ChartConfigLowering(typed).lower(), options);
+        final chart = acquireReferenceChart(
+          c.config,
+          c.options,
+          functions: _functions,
+        );
         _actions[c.name]?.call(chart);
         expectScaleChart(chart, c.expected, extra: _linearObservations);
       });

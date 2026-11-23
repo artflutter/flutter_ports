@@ -76,10 +76,14 @@ List<ScaleChartCase> _undefinedAxisIds(List<ScaleChartCase> cases) => [
 
 /// Whether the chart type or a dataset type of [config] is `doughnut` or
 /// `pie`.
-bool _hasDoughnutType(AnyObject config) {
+bool _hasDoughnutType(Object config) {
   bool isDoughnut(Object? type) => type == 'doughnut' || type == 'pie';
-  final datasets = jsGet(config['data'], 'datasets');
-  return isDoughnut(config['type']) ||
+  if (config case final ChartConfig Function() make) {
+    return make().datasets.any((d) => d is DoughnutDataset || d is PieDataset);
+  }
+  final map = config as AnyObject;
+  final datasets = jsGet(map['data'], 'datasets');
+  return isDoughnut(map['type']) ||
       (datasets is List<Object?> &&
           datasets.any((dataset) => isDoughnut(jsGet(dataset, 'type'))));
 }

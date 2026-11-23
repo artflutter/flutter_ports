@@ -241,13 +241,13 @@ void main() {
 
   group('time scale charts against upstream', () {
     test('each set-up and the case of the local date name a case', () {
-      final names = [for (final c in scaleTimeReference) c.name];
+      final names = [for (final c in scaleTimeReference(_functions)) c.name];
       expect(_setUps.keys, everyElement(isIn(names)));
       expect(names, contains(_localDateCase));
     });
 
     testTimeScaleCases(
-      scaleTimeReference,
+      scaleTimeReference(_functions),
       now: scaleTimeReferenceNow,
       functions: _functions,
       setUps: _setUps,

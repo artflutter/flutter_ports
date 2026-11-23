@@ -6,8 +6,15 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 78 cases, 218 widths.
 
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'package:flutter/painting.dart';
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+
+import '../../support/native_plugin.dart';
+import '../../support/test_dataset.dart';
 
 /// The Node.js version that generated the data.
 const String scaleRadialLinearReferenceNode = 'v24.22.1';
@@ -28,15 +35,17 @@ const String scaleRadialLinearReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ScaleRadialLinearReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -51,23 +60,19 @@ typedef ScaleRadialLinearReferenceWidth = ({
 });
 
 /// The cases.
-const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
+List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: '3 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['Eating', 'Drinking', 'Sleeping'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[38.0, 75.0, 22.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['Eating', 'Drinking', 'Sleeping'],
+      datasets: [
+        TestDataset(const ChartKind('radialTest'), data: [38.0, 75.0, 22.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -479,20 +484,17 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: '4 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['Eating', 'Drinking', 'Sleeping', 'Designing'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[49.0, 86.0, 33.0, 70.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['Eating', 'Drinking', 'Sleeping', 'Designing'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [49.0, 86.0, 33.0, 70.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -946,26 +948,17 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: '5 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Eating',
-          'Drinking',
-          'Sleeping',
-          'Designing',
-          'Coding',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[60.0, 7.0, 44.0, 81.0, 28.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['Eating', 'Drinking', 'Sleeping', 'Designing', 'Coding'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [60.0, 7.0, 44.0, 81.0, 28.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -1556,27 +1549,24 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: '6 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Eating',
-          'Drinking',
-          'Sleeping',
-          'Designing',
-          'Coding',
-          'Cycling',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[71.0, 18.0, 55.0, 92.0, 39.0, 76.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'Eating',
+        'Drinking',
+        'Sleeping',
+        'Designing',
+        'Coding',
+        'Cycling',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [71.0, 18.0, 55.0, 92.0, 39.0, 76.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -2217,28 +2207,25 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: '7 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Eating',
-          'Drinking',
-          'Sleeping',
-          'Designing',
-          'Coding',
-          'Cycling',
-          'Running',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[82.0, 29.0, 66.0, 13.0, 50.0, 87.0, 34.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'Eating',
+        'Drinking',
+        'Sleeping',
+        'Designing',
+        'Coding',
+        'Cycling',
+        'Running',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [82.0, 29.0, 66.0, 13.0, 50.0, 87.0, 34.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -2913,29 +2900,26 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: '8 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Eating',
-          'Drinking',
-          'Sleeping',
-          'Designing',
-          'Coding',
-          'Cycling',
-          'Running',
-          'Swimming',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[93.0, 40.0, 77.0, 24.0, 61.0, 8.0, 45.0, 82.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'Eating',
+        'Drinking',
+        'Sleeping',
+        'Designing',
+        'Coding',
+        'Cycling',
+        'Running',
+        'Swimming',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [93.0, 40.0, 77.0, 24.0, 61.0, 8.0, 45.0, 82.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -3702,40 +3686,27 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: '9 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Eating',
-          'Drinking',
-          'Sleeping',
-          'Designing',
-          'Coding',
-          'Cycling',
-          'Running',
-          'Swimming',
-          'Reading',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              14.0,
-              51.0,
-              88.0,
-              35.0,
-              72.0,
-              19.0,
-              56.0,
-              93.0,
-              40.0,
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'Eating',
+        'Drinking',
+        'Sleeping',
+        'Designing',
+        'Coding',
+        'Cycling',
+        'Running',
+        'Swimming',
+        'Reading',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [14.0, 51.0, 88.0, 35.0, 72.0, 19.0, 56.0, 93.0, 40.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -4539,42 +4510,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: '10 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Eating',
-          'Drinking',
-          'Sleeping',
-          'Designing',
-          'Coding',
-          'Cycling',
-          'Running',
-          'Swimming',
-          'Reading',
-          'Walking',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              25.0,
-              62.0,
-              9.0,
-              46.0,
-              83.0,
-              30.0,
-              67.0,
-              14.0,
-              51.0,
-              88.0,
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'Eating',
+        'Drinking',
+        'Sleeping',
+        'Designing',
+        'Coding',
+        'Cycling',
+        'Running',
+        'Swimming',
+        'Reading',
+        'Walking',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [25.0, 62.0, 9.0, 46.0, 83.0, 30.0, 67.0, 14.0, 51.0, 88.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -5425,44 +5382,41 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: '11 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Eating',
-          'Drinking',
-          'Sleeping',
-          'Designing',
-          'Coding',
-          'Cycling',
-          'Running',
-          'Swimming',
-          'Reading',
-          'Walking',
-          'Cooking',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              36.0,
-              73.0,
-              20.0,
-              57.0,
-              94.0,
-              41.0,
-              78.0,
-              25.0,
-              62.0,
-              9.0,
-              46.0,
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'Eating',
+        'Drinking',
+        'Sleeping',
+        'Designing',
+        'Coding',
+        'Cycling',
+        'Running',
+        'Swimming',
+        'Reading',
+        'Walking',
+        'Cooking',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [
+            36.0,
+            73.0,
+            20.0,
+            57.0,
+            94.0,
+            41.0,
+            78.0,
+            25.0,
+            62.0,
+            9.0,
+            46.0,
+          ],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -6399,46 +6353,43 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: '12 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Eating',
-          'Drinking',
-          'Sleeping',
-          'Designing',
-          'Coding',
-          'Cycling',
-          'Running',
-          'Swimming',
-          'Reading',
-          'Walking',
-          'Cooking',
-          'Writing',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              47.0,
-              84.0,
-              31.0,
-              68.0,
-              15.0,
-              52.0,
-              89.0,
-              36.0,
-              73.0,
-              20.0,
-              57.0,
-              94.0,
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'Eating',
+        'Drinking',
+        'Sleeping',
+        'Designing',
+        'Coding',
+        'Cycling',
+        'Running',
+        'Swimming',
+        'Reading',
+        'Walking',
+        'Cooking',
+        'Writing',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [
+            47.0,
+            84.0,
+            31.0,
+            68.0,
+            15.0,
+            52.0,
+            89.0,
+            36.0,
+            73.0,
+            20.0,
+            57.0,
+            94.0,
+          ],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -7385,33 +7336,31 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'centerPointLabels with 6 labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Eating',
-          'Drinking',
-          'Sleeping',
-          'Designing',
-          'Coding',
-          'Cycling',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 20.0, 30.0, 40.0, 50.0, 60.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'Eating',
+        'Drinking',
+        'Sleeping',
+        'Designing',
+        'Coding',
+        'Cycling',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [10.0, 20.0, 30.0, 40.0, 50.0, 60.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          extra: <String, Object?>{
             'pointLabels': <String, Object?>{'centerPointLabels': true},
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -8084,29 +8033,27 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a point label backdrop with padding',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          extra: <String, Object?>{
             'pointLabels': <String, Object?>{
-              'backdropColor': 'rgba(0, 0, 255, 0.5)',
+              'backdropColor': ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.5)),
               'backdropPadding': EdgeInsets.all(4),
             },
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -8660,30 +8607,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a point label backdrop with a border radius',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          extra: <String, Object?>{
             'pointLabels': <String, Object?>{
-              'backdropColor': 'yellow',
+              'backdropColor': ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
               'backdropPadding': EdgeInsets.fromLTRB(2, 1, 3, 4),
               'borderRadius': 4.0,
             },
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -9282,32 +9227,30 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a point label backdrop with an object border radius',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          extra: <String, Object?>{
             'pointLabels': <String, Object?>{
-              'backdropColor': 'yellow',
+              'backdropColor': ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
               'borderRadius': BorderRadius.only(
                 topLeft: Radius.circular(3),
                 bottomRight: Radius.circular(6),
               ),
             },
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -9906,26 +9849,23 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'multi-line labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          <Object?>['Eating', 'Dinner'],
-          <Object?>['Drinking', 'Water'],
-          'Sleeping',
-          <Object?>['Designing', 'Graphics', 'Now'],
-          'Coding',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        const <Object?>['Eating', 'Dinner'],
+        const <Object?>['Drinking', 'Water'],
+        'Sleeping',
+        const <Object?>['Designing', 'Graphics', 'Now'],
+        'Coding',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -10474,65 +10414,59 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'display auto hides the labels that overlap',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Label number 1',
-          'Label number 2',
-          'Label number 3',
-          'Label number 4',
-          'Label number 5',
-          'Label number 6',
-          'Label number 7',
-          'Label number 8',
-          'Label number 9',
-          'Label number 10',
-          'Label number 11',
-          'Label number 12',
-          'Label number 13',
-          'Label number 14',
-          'Label number 15',
-          'Label number 16',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              0.0,
-              13.0,
-              26.0,
-              39.0,
-              2.0,
-              15.0,
-              28.0,
-              41.0,
-              4.0,
-              17.0,
-              30.0,
-              43.0,
-              6.0,
-              19.0,
-              32.0,
-              45.0,
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'pointLabels': <String, Object?>{
-              'display': ScaleDisplay.auto,
-              'font': ChartTextStyle(fontSize: 14),
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'Label number 1',
+        'Label number 2',
+        'Label number 3',
+        'Label number 4',
+        'Label number 5',
+        'Label number 6',
+        'Label number 7',
+        'Label number 8',
+        'Label number 9',
+        'Label number 10',
+        'Label number 11',
+        'Label number 12',
+        'Label number 13',
+        'Label number 14',
+        'Label number 15',
+        'Label number 16',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [
+            0.0,
+            13.0,
+            26.0,
+            39.0,
+            2.0,
+            15.0,
+            28.0,
+            41.0,
+            4.0,
+            17.0,
+            30.0,
+            43.0,
+            6.0,
+            19.0,
+            32.0,
+            45.0,
+          ],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          pointLabelsDisplay: ScaleDisplay.auto,
+          pointLabelsFont: ChartTextStyle(fontSize: 14),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 300.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 300.0, 300.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -11501,57 +11435,40 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'display auto with centerPointLabels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Long label 1',
-          'Long label 2',
-          'Long label 3',
-          'Long label 4',
-          'Long label 5',
-          'Long label 6',
-          'Long label 7',
-          'Long label 8',
-          'Long label 9',
-          'Long label 10',
-          'Long label 11',
-          'Long label 12',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              1.0,
-              2.0,
-              3.0,
-              4.0,
-              5.0,
-              6.0,
-              7.0,
-              8.0,
-              9.0,
-              10.0,
-              11.0,
-              12.0,
-            ],
+    config: () => ChartConfig(
+      labels: [
+        'Long label 1',
+        'Long label 2',
+        'Long label 3',
+        'Long label 4',
+        'Long label 5',
+        'Long label 6',
+        'Long label 7',
+        'Long label 8',
+        'Long label 9',
+        'Long label 10',
+        'Long label 11',
+        'Long label 12',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          pointLabelsDisplay: ScaleDisplay.auto,
+          extra: <String, Object?>{
+            'pointLabels': <String, Object?>{'centerPointLabels': true},
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'pointLabels': <String, Object?>{
-              'display': ScaleDisplay.auto,
-              'centerPointLabels': true,
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 250.0, 'height': 250.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 250.0, 250.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -12412,26 +12329,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'no point labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.off)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -12858,24 +12767,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a scale without display',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'display': ScaleDisplay.off},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(display: ScaleDisplay.off)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -13093,31 +12996,29 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'angle lines with a dash',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          angleLinesColor: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          angleLinesLineWidth: 2,
+          extra: <String, Object?>{
             'angleLines': <String, Object?>{
-              'color': 'red',
-              'lineWidth': 2.0,
               'borderDash': <double>[5, 5],
               'borderDashOffset': 2.0,
             },
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -13661,27 +13562,20 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'angle lines without display and without width',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['A', 'B', 'C', 'D'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 4.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'angleLines': <String, Object?>{'display': false},
-            'grid': <String, Object?>{'lineWidth': 0.0},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['A', 'B', 'C', 'D'],
+      datasets: [
+        TestDataset(const ChartKind('radialTest'), data: [1.0, 2.0, 3.0, 4.0]),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          angleLinesDisplay: false,
+          grid: AxisGrid(lineWidth: 0),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -14008,7 +13902,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'scriptable angle line, grid and point label options',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radialTest',
       'data': <String, Object?>{
         'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
@@ -14031,8 +13925,8 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -14586,7 +14480,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'angle lines without width or color and a grid without color',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radialTest',
       'data': <String, Object?>{
         'labels': <Object?>['A', 'B', 'C', 'D'],
@@ -14608,8 +14502,8 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -14954,30 +14848,26 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a circular grid',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'grid': <String, Object?>{
-              'circular': true,
-              'color': 'blue',
-              'lineWidth': 2.0,
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          grid: AxisGrid(
+            color: ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+            lineWidth: 2,
+            extra: <String, Object?>{'circular': true},
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -15493,27 +15383,26 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a polygon grid with a border dash',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'grid': <String, Object?>{'color': 'red', 'lineWidth': 3.0},
-            'border': RadialAxisBorder(dash: <double>[4, 2], dashOffset: 1),
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          grid: AxisGrid(
+            color: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+            lineWidth: 3,
+          ),
+          border: RadialAxisBorder(dash: <double>[4, 2], dashOffset: 1),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -16057,26 +15946,19 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a circular grid without point labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[],
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'grid': <String, Object?>{'circular': true},
-            'min': 0.0,
-            'max': 10.0,
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [],
+      datasets: [TestDataset(const ChartKind('radialTest'), data: [])],
+      scales: const [
+        RadialLinearAxis(
+          grid: AxisGrid(extra: <String, Object?>{'circular': true}),
+          min: 0,
+          max: 10,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -16429,26 +16311,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a grid without display',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'grid': <String, Object?>{'display': false},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(grid: AxisGrid(display: false))],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -16894,24 +16768,26 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a polygon background',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          extra: <String, Object?>{
+            'backgroundColor': ChartPaint.solid(
+              Color.fromRGBO(0, 255, 0, 0.25),
+            ),
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'backgroundColor': 'rgba(0, 255, 0, 0.25)'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -17466,28 +17342,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a circular background with offset',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'backgroundColor': 'pink',
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          grid: AxisGrid(extra: <String, Object?>{'circular': true}),
+          extra: <String, Object?>{
+            'backgroundColor': ChartPaint.solid(
+              Color.fromRGBO(255, 192, 203, 1),
+            ),
             'offset': true,
-            'grid': <String, Object?>{'circular': true},
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -18010,24 +17886,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'startAngle 45',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['A', 'B', 'C', 'D', 'E', 'F'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'startAngle': 45.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['A', 'B', 'C', 'D', 'E', 'F'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(startAngle: 45)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -18694,24 +18564,15 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'startAngle -100',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['A', 'B', 'C'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 1.0, 2.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'startAngle': -100.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['A', 'B', 'C'],
+      datasets: [
+        TestDataset(const ChartKind('radialTest'), data: [3.0, 1.0, 2.0]),
+      ],
+      scales: const [RadialLinearAxis(startAngle: -100)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -19228,24 +19089,17 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a string startAngle',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['A', 'B', 'C', 'D'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 1.0, 2.0, 4.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'startAngle': '30'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['A', 'B', 'C', 'D'],
+      datasets: [
+        TestDataset(const ChartKind('radialTest'), data: [3.0, 1.0, 2.0, 4.0]),
+      ],
+      scales: const [
+        RadialLinearAxis(extra: <String, Object?>{'startAngle': '30'}),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -19712,24 +19566,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'reverse',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'reverse': true},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(reverse: true)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -20286,24 +20134,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'reverse with negative data',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-20.0, 30.0, -10.0, 50.0, 0.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'reverse': true},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [-20.0, 30.0, -10.0, 50.0, 0.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(reverse: true)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -20870,20 +20712,17 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'negative data',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-20.0, 30.0, -10.0, 50.0, 0.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [-20.0, 30.0, -10.0, 50.0, 0.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -21450,24 +21289,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'min and max',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'min': 20.0, 'max': 100.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(min: 20, max: 100)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -22032,24 +21865,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'beginAtZero with suggestedMax',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'beginAtZero': true, 'suggestedMax': 120.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(beginAtZero: true, suggestedMax: 120)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -22564,28 +22391,24 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'suggestedMin, grace and stepSize',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'suggestedMin': 10.0,
-            'grace': PercentGrace(10),
-            'ticks': <String, Object?>{'stepSize': 15.0},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          suggestedMin: 10,
+          ticks: AxisTicks(stepSize: 15),
+          extra: <String, Object?>{'grace': PercentGrace(10)},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -23050,30 +22873,28 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'count, precision and maxTicksLimit',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.5, 1.25, 2.75, 1.5, 2.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [0.5, 1.25, 2.75, 1.5, 2.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'count': 4.0,
               'precision': 1.0,
               'maxTicksLimit': 3.0,
             },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -23467,31 +23288,29 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'maxTicksLimit and includeBounds false',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'min': 3.0,
-            'max': 97.0,
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          min: 3,
+          max: 97,
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'maxTicksLimit': 4.0,
               'includeBounds': false,
             },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -23856,20 +23675,14 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'equal data',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['A', 'B', 'C'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[7.0, 7.0, 7.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['A', 'B', 'C'],
+      datasets: [
+        TestDataset(const ChartKind('radialTest'), data: [7.0, 7.0, 7.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -24327,33 +24140,31 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a tick backdrop and a text stroke',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{
-              'backdropColor': 'yellow',
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          ticks: AxisTicks(
+            color: ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+            font: ChartTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            extra: <String, Object?>{
+              'backdropColor': ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
               'backdropPadding': EdgeInsets.fromLTRB(4, 1, 4, 1),
-              'color': 'blue',
-              'textStrokeColor': 'red',
+              'textStrokeColor': ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
               'textStrokeWidth': 2.0,
-              'font': ChartTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -24918,30 +24729,26 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'no tick backdrop and a tick callback',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{
-              'showLabelBackdrop': false,
-              'callback': 'fn:tickUnit',
-              'font': ChartTextStyle(fontSize: 9),
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: [
+        RadialLinearAxis(
+          ticks: AxisTicks(
+            callback: functions['tickUnit']! as TickCallback,
+            font: const ChartTextStyle(fontSize: 9),
+            extra: const <String, Object?>{'showLabelBackdrop': false},
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -25457,26 +25264,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'no ticks',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{'display': false},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(ticks: AxisTicks(display: false))],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -25951,26 +25750,22 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a null tick font',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{'font': null},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          ticks: AxisTicks(extra: <String, Object?>{'font': null}),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -26514,28 +26309,20 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'stepSize 1 on a small canvas',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 41.0, 17.0, 29.0, 8.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{'stepSize': 1.0},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [3.0, 41.0, 17.0, 29.0, 8.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(ticks: AxisTicks(stepSize: 1))],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 200.0, 'height': 200.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 200.0, 200.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -27075,28 +26862,22 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'stepSize 1 without autoSkip on a small canvas',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 21.0, 17.0, 9.0, 8.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{'stepSize': 1.0, 'autoSkip': false},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [3.0, 21.0, 17.0, 9.0, 8.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(ticks: AxisTicks(stepSize: 1, autoSkip: false)),
+      ],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 200.0, 'height': 200.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 200.0, 200.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -27911,24 +27692,20 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'bounds data',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 41.0, 17.0, 29.0, 8.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'bounds': ScaleBounds.data},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [3.0, 41.0, 17.0, 29.0, 8.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(extra: <String, Object?>{'bounds': ScaleBounds.data}),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -28493,30 +28270,27 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'point label font, color and padding',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'pointLabels': <String, Object?>{
-              'font': ChartTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              'color': 'green',
-              'padding': 10.0,
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          pointLabelsFont: ChartTextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+          pointLabelsColor: ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          pointLabelsPadding: 10,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -29060,35 +28834,23 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a point label callback',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Alpha',
-          'Beta',
-          'Gamma',
-          'Delta',
-          'Epsilon',
-          'Zeta',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'pointLabels': <String, Object?>{
-              'callback': 'fn:pointLabelCallback',
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+        ),
+      ],
+      scales: [
+        RadialLinearAxis(
+          pointLabelsCallback:
+              functions['pointLabelCallback']! as PointLabelCallback,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -29756,22 +29518,23 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'hidden data indices',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'plugins': <Object?>[
-        <String, Object?>{'id': 'hideData', 'beforeInit': 'fn:hideOneAndThree'},
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
       ],
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+      plugins: [
+        nativePlugin(<String, Object?>{
+          'id': 'hideData',
+          'beforeInit': functions['hideOneAndThree'],
+        }),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -30228,23 +29991,19 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a hidden dataset',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['A', 'B', 'C', 'D'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'hidden': true,
-            'data': <Object?>[-500.0, 500.0, 0.0, 1000.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 9.0, 6.0, 12.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['A', 'B', 'C', 'D'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          hidden: true,
+          data: [-500.0, 500.0, 0.0, 1000.0],
+        ),
+        TestDataset(const ChartKind('radialTest'), data: [3.0, 9.0, 6.0, 12.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -30788,18 +30547,12 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'empty data',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[],
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [],
+      datasets: [TestDataset(const ChartKind('radialTest'), data: [])],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -31061,18 +30814,12 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'labels without data',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['A', 'B', 'C'],
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['A', 'B', 'C'],
+      datasets: [TestDataset(const ChartKind('radialTest'), data: [])],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -31575,20 +31322,19 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'null, undefined, NaN and string data',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['A', 'B', 'C', 'D', 'E', 'F'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['A', 'B', 'C', 'D', 'E', 'F'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          extra: <String, Object?>{
             'data': <Object?>[65.0, null, 90.0, double.nan, undefined, '70'],
           },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -32096,7 +31842,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'the labels option of the scale',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radialTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -32115,8 +31861,8 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -32555,7 +32301,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'the yLabels of the data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radialTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -32567,8 +32313,8 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -33072,22 +32818,19 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a wide canvas',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 250.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 400.0, 250.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -33547,30 +33290,27 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a tall canvas',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'Eating',
-          'Drinking',
-          'Sleeping',
-          'Designing',
-          'Coding',
-          'Cycling',
-          'Running',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 5.0, 2.0, 6.0, 3.0, 7.0, 4.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'Eating',
+        'Drinking',
+        'Sleeping',
+        'Designing',
+        'Coding',
+        'Cycling',
+        'Running',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [1.0, 5.0, 2.0, 6.0, 3.0, 7.0, 4.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 220.0, 'height': 400.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 220.0, 400.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -34191,26 +33931,24 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a string point label padding',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          extra: <String, Object?>{
             'pointLabels': <String, Object?>{'padding': '5'},
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -34745,28 +34483,26 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'an indexable point label padding',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          extra: <String, Object?>{
             'pointLabels': <String, Object?>{
               'padding': <Object?>[5.0, 15.0],
             },
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -35310,28 +35046,26 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a scriptable point label font',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: [
+        RadialLinearAxis(
+          extra: <String, Object?>{
             'pointLabels': <String, Object?>{
-              'font': 'fn:pointLabelFontByIndex',
+              'font': functions['pointLabelFontByIndex'],
             },
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -35875,26 +35609,22 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'two-line tick labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{'callback': 'fn:tickLines'},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: [
+        RadialLinearAxis(
+          ticks: AxisTicks(callback: functions['tickLines']! as TickCallback),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -36477,27 +36207,29 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a scriptable circular grid with a background',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: [
+        RadialLinearAxis(
+          grid: AxisGrid(
+            extra: <String, Object?>{'circular': functions['circularEven']},
+          ),
+          extra: const <String, Object?>{
+            'backgroundColor': ChartPaint.solid(
+              Color.fromRGBO(255, 192, 203, 1),
+            ),
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'backgroundColor': 'pink',
-            'grid': <String, Object?>{'circular': 'fn:circularEven'},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -37040,26 +36772,23 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a polygon background without labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[],
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'backgroundColor': 'pink',
-            'min': 0.0,
-            'max': 10.0,
+    config: () => ChartConfig(
+      labels: [],
+      datasets: [TestDataset(const ChartKind('radialTest'), data: [])],
+      scales: const [
+        RadialLinearAxis(
+          min: 0,
+          max: 10,
+          extra: <String, Object?>{
+            'backgroundColor': ChartPaint.solid(
+              Color.fromRGBO(255, 192, 203, 1),
+            ),
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -37319,28 +37048,22 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a negative drawing area with ticks',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'ticks': <String, Object?>{'stepSize': 10.0, 'autoSkip': false},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(ticks: AxisTicks(stepSize: 10, autoSkip: false)),
+      ],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 12.0, 'height': 12.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 6.0, 12.0, 12.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -37760,24 +37483,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'display auto',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'display': ScaleDisplay.auto},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(display: ScaleDisplay.auto)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -38321,25 +38038,19 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'display auto with a hidden dataset',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'hidden': true,
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'display': ScaleDisplay.auto},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          hidden: true,
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(display: ScaleDisplay.auto)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -38616,7 +38327,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'falsy labels',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radialTest',
       'data': <String, Object?>{
         'labels': <Object?>[0.0, '', undefined, null, double.nan, false],
@@ -38628,8 +38339,8 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       },
       'options': <String, Object?>{},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -39237,26 +38948,24 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a null point label callback',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          extra: <String, Object?>{
             'pointLabels': <String, Object?>{'callback': null},
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -39789,20 +39498,14 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'one label',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['Only'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['Only'],
+      datasets: [
+        TestDataset(const ChartKind('radialTest'), data: [5.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -40195,20 +39898,14 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'two labels',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['Left', 'Right'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5.0, 9.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['Left', 'Right'],
+      datasets: [
+        TestDataset(const ChartKind('radialTest'), data: [5.0, 9.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -40609,24 +40306,15 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'startAngle just below 0',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['A', 'B', 'C', 'D'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 4.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'startAngle': -0.0001},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['A', 'B', 'C', 'D'],
+      datasets: [
+        TestDataset(const ChartKind('radialTest'), data: [1.0, 2.0, 3.0, 4.0]),
+      ],
+      scales: const [RadialLinearAxis(startAngle: -0.0001)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -41093,27 +40781,20 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'startAngle 750 without ticks',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'startAngle': 750.0,
-            'ticks': <String, Object?>{'display': false},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(startAngle: 750, ticks: AxisTicks(display: false)),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -41588,24 +41269,17 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a startAngle that is not a number',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['A', 'B', 'C'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'startAngle': 'abc'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['A', 'B', 'C'],
+      datasets: [
+        TestDataset(const ChartKind('radialTest'), data: [1.0, 2.0, 3.0]),
+      ],
+      scales: const [
+        RadialLinearAxis(extra: <String, Object?>{'startAngle': 'abc'}),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -42135,24 +41809,18 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'position left',
-    config: <String, Object?>{
-      'type': 'radialTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April', 'May'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'position': ChartPosition.left},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May'],
+      datasets: [
+        TestDataset(
+          const ChartKind('radialTest'),
+          data: [65.0, 59.0, 90.0, 81.0, 56.0],
+        ),
+      ],
+      scales: const [RadialLinearAxis(position: ChartPosition.left)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[240.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -42528,7 +42196,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'position bottom with xLabels',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radialTest',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -42545,8 +42213,8 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
@@ -42967,15 +42635,15 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
   ),
   (
     name: 'a scale id rScale without datasets',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radialTest',
       'data': <String, Object?>{'datasets': <Object?>[], 'labels': <Object?>[]},
       'options': <String, Object?>{
         'scales': <String, Object?>{'rScale': <String, Object?>{}},
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 10.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'rScale': <String, Object?>{

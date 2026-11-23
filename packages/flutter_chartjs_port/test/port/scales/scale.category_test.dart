@@ -233,9 +233,9 @@ List<Object?> _dateLabels(Chart chart) {
   return labels;
 }
 
-/// The dataset [index] of [chart], as a Map.
-Map<String, Object?> _dataset(Chart chart, int index) =>
-    (chart.data['datasets']! as List<Object?>)[index]! as Map<String, Object?>;
+/// The dataset [index] of [chart]: its typed scope.
+JsObjectFace _dataset(Chart chart, int index) =>
+    (chart.data['datasets']! as List<Object?>)[index]! as JsObjectFace;
 
 /// The actions of the action cases of the generator (`runActionCase`), by
 /// the case name. Each one changes the chart and calls `chart.update()`.
@@ -252,8 +252,7 @@ final Map<String, void Function(Chart chart)> _actions = {
     chart.update();
   },
   'the next update removes a string min': (chart) {
-    final scales =
-        (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+    final scales = jsGet(chart.config.options, 'scales')! as JsObjectFace;
     (scales['x']! as JsObjectFace)['min'] = 'b';
     chart.update();
   },
@@ -262,8 +261,7 @@ final Map<String, void Function(Chart chart)> _actions = {
     chart.update();
   },
   'bounds data, then bounds ticks': (chart) {
-    final scales =
-        (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+    final scales = jsGet(chart.config.options, 'scales')! as JsObjectFace;
     (scales['x']! as JsObjectFace)['bounds'] = ScaleBounds.ticks;
     chart.update();
   },
@@ -290,8 +288,7 @@ final Map<String, void Function(Chart chart)> _actions = {
   },
   'Date labels and a copy of a label as min': (chart) {
     final labels = _dateLabels(chart);
-    final scales =
-        (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+    final scales = jsGet(chart.config.options, 'scales')! as JsObjectFace;
     (scales['x']! as JsObjectFace)['min'] = _copyOf(labels[1]);
     chart.update();
   },
@@ -410,16 +407,19 @@ void main() {
 
   group('category scale charts against upstream', () {
     test('each action and observation names a case', () {
-      final names = [for (final c in scaleCategoryReference) c.name];
+      final names = [
+        for (final c in scaleCategoryReference(_functions)) c.name,
+      ];
       expect(_actions.keys, everyElement(isIn(names)));
       expect(_extras.keys, everyElement(isIn(names)));
     });
 
-    for (final c in scaleCategoryReference) {
+    for (final c in scaleCategoryReference(_functions)) {
       testWidgets(c.name, (tester) async {
-        final chart = acquireChart(
-          copyReference(c.config, _functions)! as AnyObject,
-          copyReference(c.options)! as AnyObject,
+        final chart = acquireReferenceChart(
+          c.config,
+          c.options,
+          functions: _functions,
         );
         _actions[c.name]?.call(chart);
         expectScaleChart(

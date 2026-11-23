@@ -6,10 +6,16 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 76 cases, 277 widths.
 
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'dart:ui' show FontStyle, Locale;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+
+import '../../support/test_dataset.dart';
 
 /// The Node.js version that generated the data.
 const String scaleLinearReferenceNode = 'v24.22.1';
@@ -30,15 +36,17 @@ const String scaleLinearReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ScaleLinearReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -53,22 +61,22 @@ typedef ScaleLinearReferenceWidth = ({
 });
 
 /// The cases.
-const List<ScaleLinearReferenceCase> scaleLinearReference = [
+List<ScaleLinearReferenceCase> scaleLinearReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'primitives',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -761,19 +769,19 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'string values',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          extra: <String, Object?>{
             'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -1466,27 +1474,33 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'two value axes and a hidden dataset',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          extra: <String, Object?>{
             'yAxisID': 'y',
             'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
           },
-          <String, Object?>{
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          extra: <String, Object?>{
             'yAxisID': 'y2',
             'data': <Object?>['-1000', '1000'],
           },
-          <String, Object?>{
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          hidden: true,
+          extra: <String, Object?>{
             'yAxisID': 'y',
             'data': <Object?>['150'],
-            'hidden': true,
           },
-        ],
-      },
-      'options': <String, Object?>{
+        ),
+      ],
+      extra: const <String, Object?>{
         'scales': <String, Object?>{
           'y2': <String, Object?>{
             'position': ChartPosition.right,
@@ -1494,9 +1508,9 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
           },
         },
       },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 463.974609375, 483.6],
       'scales': <String, Object?>{
         'y2': <String, Object?>{
@@ -2658,12 +2672,12 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'null, NaN, undefined and infinite values',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          extra: <String, Object?>{
             'data': <Object?>[
               null,
               90.0,
@@ -2675,16 +2689,12 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
               double.negativeInfinity,
             ],
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'beginAtZero': false},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LinearAxis(.y, beginAtZero: false)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -3339,19 +3349,19 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'only values that are not finite',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          extra: <String, Object?>{
             'data': <Object?>[null, double.nan, double.infinity, 'abc'],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -3975,19 +3985,17 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'small numbers',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-1e-8, 3e-8, -4e-8, 6e-8],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [-1e-8, 3e-8, -4e-8, 6e-8],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[100.068359375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -4631,17 +4639,12 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'empty data',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [TestDataset(const ChartKind('scaleTest'), data: [])],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -5207,12 +5210,12 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'no datasets',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'scaleTest',
       'data': <String, Object?>{'labels': <Object?>[], 'datasets': <Object?>[]},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 10.0, 512.0, 512.0],
       'scales': <String, Object?>{},
       'points': <Object?>[],
@@ -5235,22 +5238,13 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'suggested bounds without values',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'suggestedMin': -10.0, 'suggestedMax': 15.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [TestDataset(const ChartKind('scaleTest'), data: [])],
+      scales: const [LinearAxis(.y, suggestedMin: -10, suggestedMax: 15)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[31.34375, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -5758,7 +5752,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'suggested bounds without datasets',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'scaleTest',
       'data': <String, Object?>{'datasets': <Object?>[]},
       'options': <String, Object?>{
@@ -5767,8 +5761,8 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[31.34375, 10.2, 512.0, 501.8],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -6195,23 +6189,21 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'objects on two linear axes',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 100.0},
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 99.0, 'y': 7.0},
-            ],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(10.0, 100.0),
+            DataPoint(-10.0, 0.0),
+            DataPoint(0.0, 0.0),
+            DataPoint(99.0, 7.0),
+          ],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 498.9892578125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -6980,23 +6972,21 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'sorted objects',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': -5.0, 'y': 3.0},
-              <String, Object?>{'x': 0.0, 'y': 9.0},
-              <String, Object?>{'x': 12.0, 'y': -4.0},
-              <String, Object?>{'x': 40.0, 'y': 1.0},
-            ],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(-5.0, 3.0),
+            DataPoint(0.0, 9.0),
+            DataPoint(12.0, -4.0),
+            DataPoint(40.0, 1.0),
+          ],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -7761,28 +7751,22 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'the user bounds of the other axis',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 100.0},
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 99.0, 'y': 7.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': -5.0, 'max': 20.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(10.0, 100.0),
+            DataPoint(-10.0, 0.0),
+            DataPoint(0.0, 0.0),
+            DataPoint(99.0, 7.0),
+          ],
+        ),
+      ],
+      scales: const [LinearAxis(.x, min: -5, max: 20)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -8500,25 +8484,25 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'objects with null, NaN and string values',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': null},
-              <String, Object?>{'x': 2.0, 'y': double.nan},
-              <String, Object?>{'x': null, 'y': 4.0},
-              <String, Object?>{'x': 3.0, 'y': 5.0},
-              <String, Object?>{'x': 'abc', 'y': 6.0},
-              <String, Object?>{'x': '7', 'y': '8.5'},
+              const <String, Object?>{'x': 1.0, 'y': null},
+              const <String, Object?>{'x': 2.0, 'y': double.nan},
+              const <String, Object?>{'x': null, 'y': 4.0},
+              const <String, Object?>{'x': 3.0, 'y': 5.0},
+              const <String, Object?>{'x': 'abc', 'y': 6.0},
+              const <String, Object?>{'x': '7', 'y': '8.5'},
             ],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -9254,31 +9238,31 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'raw values with parsing false',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          extra: <String, Object?>{
             'parsing': false,
             'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': '5'},
-              <String, Object?>{'x': 2.0},
-              <String, Object?>{'x': '3', 'y': 4.0},
-              <String, Object?>{'x': 4.0, 'y': null},
-              <String, Object?>{'x': 5.0, 'y': true},
-              <String, Object?>{
+              const <String, Object?>{'x': 1.0, 'y': '5'},
+              const <String, Object?>{'x': 2.0},
+              const <String, Object?>{'x': '3', 'y': 4.0},
+              const <String, Object?>{'x': 4.0, 'y': null},
+              const <String, Object?>{'x': 5.0, 'y': true},
+              const <String, Object?>{
                 'x': 6.0,
                 'y': <Object?>[7.0],
               },
-              <String, Object?>{'x': 7.0, 'y': 'abc'},
-              <String, Object?>{'x': 8.0, 'y': -2.0},
+              const <String, Object?>{'x': 7.0, 'y': 'abc'},
+              const <String, Object?>{'x': 8.0, 'y': -2.0},
             ],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[24.669921875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -9959,30 +9943,26 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'stacked',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[10.0, 10.0, 10.0, 10.0, 10.0, 10.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 10.0, 10.0, 10.0, 10.0, 10.0],
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.on)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -10765,31 +10745,27 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'stacked with a hidden dataset',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[10.0, 20.0, 30.0, 40.0, 50.0, 60.0],
-            'hidden': true,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 20.0, 30.0, 40.0, 50.0, 60.0],
+          hidden: true,
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.on)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -11531,31 +11507,26 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'stacked datasets of two types',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-          <String, Object?>{
-            'type': 'scaleTest2',
-            'data': <Object?>[10.0, 10.0, 10.0, 10.0, 10.0, 10.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+        ),
+        TestDataset(
+          const ChartKind('scaleTest2'),
+          data: [10.0, 10.0, 10.0, 10.0, 10.0, 10.0],
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.on)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -12338,28 +12309,28 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'stack groups without the stacked option',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'stack': 'a',
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-          <String, Object?>{
-            'stack': 'a',
-            'data': <Object?>[150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
-          },
-          <String, Object?>{
-            'stack': 'b',
-            'data': <Object?>[10.0, 10.0, 10.0, 10.0, 10.0, 10.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+          extra: const <String, Object?>{'stack': 'a'},
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
+          extra: const <String, Object?>{'stack': 'a'},
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 10.0, 10.0, 10.0, 10.0, 10.0],
+          extra: const <String, Object?>{'stack': 'b'},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -13142,29 +13113,24 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'stacked false with stack groups',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'stack': 'a',
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-          <String, Object?>{
-            'stack': 'a',
-            'data': <Object?>[150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.off},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+          extra: const <String, Object?>{'stack': 'a'},
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
+          extra: const <String, Object?>{'stack': 'a'},
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.off)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -13809,27 +13775,22 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'stacked single',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.single},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.single)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -14536,31 +14497,28 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'stacked with all datasets hidden',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['S1', 'S2', 'S3'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'hidden': true,
-            'data': <Object?>[2500.0, 2000.0, 1500.0],
-          },
-          <String, Object?>{
-            'hidden': true,
-            'data': <Object?>[1000.0, 2000.0, 1500.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': StackMode.on},
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['S1', 'S2', 'S3'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          hidden: true,
+          data: [2500.0, 2000.0, 1500.0],
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          hidden: true,
+          data: [1000.0, 2000.0, 1500.0],
+        ),
+      ],
+      scales: const [
+        LinearAxis(.x, stacked: StackMode.on),
+        CategoryAxis(.y, stacked: StackMode.on),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[28.677734375, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -15175,26 +15133,20 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a user min and all datasets hidden',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['S1', 'S2', 'S3'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'hidden': true,
-            'data': <Object?>[2500.0, 2000.0, 1500.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 20.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['S1', 'S2', 'S3'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          hidden: true,
+          data: [2500.0, 2000.0, 1500.0],
+        ),
+      ],
+      scales: const [LinearAxis(.x, min: 20)],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[28.677734375, 32.0, 493.9853515625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -15777,19 +15729,14 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'equal large positive values',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10000.0, 10000.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [10000.0, 10000.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[50.703125, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -16346,19 +16293,14 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'equal large negative values',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-10000.0, -10000.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [-10000.0, -10000.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[54.69921875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -16919,24 +16861,15 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'equal values with beginAtZero',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[50.0, 50.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'beginAtZero': true},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [50.0, 50.0]),
+      ],
+      scales: const [LinearAxis(.y, beginAtZero: true)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -17497,19 +17430,14 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'all values zero',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 0.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 0.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.677734375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -18070,24 +17998,18 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'suggestedMin and suggestedMax',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, -1.0, 0.0, -2.0, 1.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'suggestedMin': -10.0, 'suggestedMax': 10.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [1.0, -1.0, 0.0, -2.0, 1.0],
+        ),
+      ],
+      scales: const [LinearAxis(.y, suggestedMin: -10, suggestedMax: 10)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[31.34375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -18767,24 +18689,18 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'min and max',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'min': -1010.0, 'max': 1010.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+        ),
+      ],
+      scales: const [LinearAxis(.y, min: -1010, max: 1010)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[48.025390625, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -19322,26 +19238,22 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a user min of 0',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['S1', 'S2', 'S3'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[2500.0, 2000.0, 1500.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 0.0, 'max': 3000.0},
-          'y': <String, Object?>{'offset': false},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['S1', 'S2', 'S3'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [2500.0, 2000.0, 1500.0],
+        ),
+      ],
+      scales: const [
+        LinearAxis(.x, min: 0, max: 3000),
+        CategoryAxis(.y, extra: <String, Object?>{'offset': false}),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[28.677734375, 32.0, 493.9853515625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -19817,25 +19729,19 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a user max of 0',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['S1', 'S2', 'S3'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-2500.0, -2000.0, -1500.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': -3000.0, 'max': 0.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['S1', 'S2', 'S3'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [-2500.0, -2000.0, -1500.0],
+        ),
+      ],
+      scales: const [LinearAxis(.x, min: -3000, max: 0)],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[28.677734375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -20311,24 +20217,15 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a user min above the data',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[200.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'min': 250.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [200.0]),
+      ],
+      scales: const [LinearAxis(.y, min: 250)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -20745,24 +20642,15 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a user max below the data',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[200.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'max': 150.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [200.0]),
+      ],
+      scales: const [LinearAxis(.y, max: 150)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -21210,28 +21098,22 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'equal user min and max',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'min': 5.0,
-            'max': 5.0,
-            'ticks': <String, Object?>{'callback': 'fn:indexLabel'},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: [
+        LinearAxis(
+          .y,
+          min: 5,
+          max: 5,
+          ticks: AxisTicks(callback: functions['indexLabel']! as TickCallback),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -21524,23 +21406,19 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'beginAtZero with positive and negative data',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[20.0, 30.0, 40.0],
-          },
-          <String, Object?>{
-            'yAxisID': 'y2',
-            'data': <Object?>[-20.0, -30.0, -40.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [20.0, 30.0, 40.0]),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [-20.0, -30.0, -40.0],
+          extra: const <String, Object?>{'yAxisID': 'y2'},
+        ),
+      ],
+      scales: const [LinearAxis(.y, beginAtZero: true)],
+      extra: const <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'beginAtZero': true},
           'y2': <String, Object?>{
             'type': 'linear',
             'position': ChartPosition.right,
@@ -21548,9 +21426,9 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
           },
         },
       },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 480.65625, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -22474,24 +22352,17 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'grace',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[20.0, 30.0, 40.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'grace': PercentGrace(10)},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [20.0, 30.0, 40.0]),
+      ],
+      scales: const [
+        LinearAxis(.y, extra: <String, Object?>{'grace': PercentGrace(10)}),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -22963,24 +22834,21 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'grace with beginAtZero',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 30.0, 40.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'grace': ValueGrace(5), 'beginAtZero': true},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 30.0, 40.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          beginAtZero: true,
+          extra: <String, Object?>{'grace': ValueGrace(5)},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -23545,28 +23413,20 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'min, max and stepSize',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'min': 1.0,
-            'max': 11.0,
-            'ticks': <String, Object?>{'stepSize': 2.0},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+        ),
+      ],
+      scales: const [
+        LinearAxis(.y, min: 1, max: 11, ticks: AxisTicks(stepSize: 2)),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[26.45703125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -24103,27 +23963,15 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a max with a stepSize that does not fit',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.5, 2.5, 1.7],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'max': 2.6,
-            'ticks': <String, Object?>{'stepSize': 0.4},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.5, 2.5, 1.7]),
+      ],
+      scales: const [LinearAxis(.y, max: 2.6, ticks: AxisTicks(stepSize: 0.4))],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -24595,25 +24443,24 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'precision',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.1, 0.4, 0.9, 1.25],
-          },
-          <String, Object?>{
-            'yAxisID': 'y2',
-            'data': <Object?>[0.111, 0.244, 0.315],
-          },
-        ],
-      },
-      'options': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.1, 0.4, 0.9, 1.25]),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [0.111, 0.244, 0.315],
+          extra: const <String, Object?>{'yAxisID': 'y2'},
+        ),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(extra: <String, Object?>{'precision': 0.0}),
+        ),
+      ],
+      extra: const <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'precision': 0.0},
-          },
           'y2': <String, Object?>{
             'type': 'linear',
             'position': ChartPosition.right,
@@ -24621,9 +24468,9 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
           },
         },
       },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 474.64453125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -25308,35 +25155,33 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'count and includeBounds false',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 100.0},
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 99.0, 'y': 7.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'min': -11.0,
-            'max': 103.5,
-            'ticks': <String, Object?>{'includeBounds': false},
-          },
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'count': 6.0},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(10.0, 100.0),
+            DataPoint(-10.0, 0.0),
+            DataPoint(0.0, 0.0),
+            DataPoint(99.0, 7.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LinearAxis(
+          .x,
+          min: -11,
+          max: 103.5,
+          ticks: AxisTicks(extra: <String, Object?>{'includeBounds': false}),
+        ),
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(extra: <String, Object?>{'count': 6.0}),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -25915,19 +25760,17 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'the decimal places of the default format',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.06, 0.005, 0.0, 0.025, 0.0078],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [0.06, 0.005, 0.0, 0.025, 0.0078],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -26487,27 +26330,21 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'maxTicksLimit 21',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.5, 2.5],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'beginAtZero': false,
-            'ticks': <String, Object?>{'maxTicksLimit': 21.0},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.5, 2.5]),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          beginAtZero: false,
+          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 21.0}),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -27378,24 +27215,15 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'bounds data',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 99.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'bounds': ScaleBounds.data},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [1.0, 99.0]),
+      ],
+      scales: const [LinearAxis(.y, bounds: ScaleBounds.data)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -27956,24 +27784,18 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'reverse',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'reverse': true},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+        ),
+      ],
+      scales: const [LinearAxis(.y, reverse: true)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -28666,24 +28488,20 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'offset',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'offset': true},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+        ),
+      ],
+      scales: const [
+        LinearAxis(.y, extra: <String, Object?>{'offset': true}),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -29376,26 +29194,23 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a ticks callback with the index',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, 25.0, 78.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'callback': 'fn:indexLabel'},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, 25.0, 78.0],
+        ),
+      ],
+      scales: [
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(callback: functions['indexLabel']! as TickCallback),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -30017,26 +29832,23 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a ticks callback that reads this',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, 25.0, 78.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'callback': 'fn:labelOfThis'},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, 25.0, 78.0],
+        ),
+      ],
+      scales: [
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(callback: functions['labelOfThis']! as TickCallback),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.015625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -30654,22 +30466,17 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'locale de-DE',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10000000.0, 'y': -1234.5},
-              <String, Object?>{'x': 0.0, 'y': 98765.25},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{'locale': Locale('de', 'DE')},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [DataPoint(10000000.0, -1234.5), DataPoint(0.0, 98765.25)],
+        ),
+      ],
+      extra: const <String, Object?>{'locale': Locale('de', 'DE')},
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         57.376953125,
         32.0,
@@ -31434,28 +31241,22 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a vertical tick limit on a short canvas',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'maxTicksLimit': 1000.0},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 1000.0}),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 300.0, 'height': 150.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 294.0, 121.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -31896,29 +31697,23 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a vertical tick limit with a large font',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{
-              'maxTicksLimit': 1000.0,
-              'font': ChartTextStyle(fontSize: 40),
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(
+            font: ChartTextStyle(fontSize: 40),
+            extra: <String, Object?>{'maxTicksLimit': 1000.0},
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[114.09765625, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -32359,29 +32154,23 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a vertical tick limit with a lineHeight of 20 px',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{
-              'maxTicksLimit': 1000.0,
-              'font': ChartTextStyle(fontSize: 12, height: 1.6666666666666667),
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(
+            font: ChartTextStyle(fontSize: 12, height: 1.6666666666666667),
+            extra: <String, Object?>{'maxTicksLimit': 1000.0},
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -32977,29 +32766,25 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a vertical tick limit with minRotation 60',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'maxTicksLimit': 1000.0,
               'minRotation': 60.0,
             },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[41.48541425199592, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -33595,29 +33380,25 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a vertical tick limit with minRotation 90',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'maxTicksLimit': 1000.0,
               'minRotation': 90.0,
             },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[28.4, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -34213,29 +33994,25 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a vertical tick limit with minRotation NaN',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'maxTicksLimit': 1000.0,
               'minRotation': double.nan,
             },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -34831,26 +34608,17 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a vertical tick limit with a lineHeight of 0',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'font': ChartTextStyle(height: 0)},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(.y, ticks: AxisTicks(font: ChartTextStyle(height: 0))),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -35446,19 +35214,14 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a vertical tick limit with the default maxTicksLimit',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -36054,27 +35817,21 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a horizontal tick limit',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{'maxTicksLimit': 1000.0},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .x,
+          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 1000.0}),
+        ),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 493.9853515625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -36674,30 +36431,26 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a horizontal tick limit with minRotation 30',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .x,
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'maxTicksLimit': 1000.0,
               'minRotation': 30.0,
             },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+          ),
+        ),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 501.8, 470.5145857480041],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -37293,30 +37046,26 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a horizontal tick limit with a string minRotation',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .x,
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'maxTicksLimit': 1000.0,
               'minRotation': '45',
             },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+          ),
+        ),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         20.673828125,
         32.0,
@@ -38241,30 +37990,24 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a horizontal tick limit with a tiny lineHeight',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{
-              'maxTicksLimit': 1000.0,
-              'font': ChartTextStyle(height: 0.002),
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .x,
+          ticks: AxisTicks(
+            font: ChartTextStyle(height: 0.002),
+            extra: <String, Object?>{'maxTicksLimit': 1000.0},
+          ),
+        ),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         20.673828125,
         32.0,
@@ -39184,31 +38927,27 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a horizontal tick limit with a large font',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 500.0, 1000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
+      ],
+      scales: const [
+        LinearAxis(
+          .x,
+          ticks: AxisTicks(
+            font: ChartTextStyle(fontSize: 30),
+            extra: <String, Object?>{
               'maxTicksLimit': 1000.0,
               'minRotation': 45.0,
-              'font': ChartTextStyle(fontSize: 30),
             },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+          ),
+        ),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         20.673828125,
         32.0,
@@ -39668,30 +39407,24 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'large values on a narrow canvas',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1000000.125, 'y': 1.0},
-              <String, Object?>{'x': 9999999.5, 'y': 2.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{'maxTicksLimit': 1000.0},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [DataPoint(1000000.125, 1.0), DataPoint(9999999.5, 2.0)],
+        ),
+      ],
+      scales: const [
+        LinearAxis(
+          .x,
+          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 1000.0}),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 200.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 166.970703125, 271.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -40310,34 +40043,28 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'autoSkip false on a narrow canvas',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1000000.125, 'y': 1.0},
-              <String, Object?>{'x': 9999999.5, 'y': 2.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{
-              'autoSkip': false,
-              'maxRotation': 90.0,
-              'callback': 'fn:withUnit',
-            },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [DataPoint(1000000.125, 1.0), DataPoint(9999999.5, 2.0)],
+        ),
+      ],
+      scales: [
+        LinearAxis(
+          .x,
+          ticks: AxisTicks(
+            autoSkip: false,
+            maxRotation: 90,
+            callback: functions['withUnit']! as TickCallback,
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 200.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         37.35546875,
         32.0,
@@ -40979,29 +40706,25 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'positions top and right',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 100.0},
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 99.0, 'y': 7.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'position': ChartPosition.top},
-          'y': <String, Object?>{'position': ChartPosition.right},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(10.0, 100.0),
+            DataPoint(-10.0, 0.0),
+            DataPoint(0.0, 0.0),
+            DataPoint(99.0, 7.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LinearAxis(.x, position: ChartPosition.top),
+        LinearAxis(.y, position: ChartPosition.right),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         11.671875,
         60.4,
@@ -41775,28 +41498,27 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a y axis at the position of an x value',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 100.0},
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 99.0, 'y': 7.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'position': ScaleValuePosition('x', 20.0)},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(10.0, 100.0),
+            DataPoint(-10.0, 0.0),
+            DataPoint(0.0, 0.0),
+            DataPoint(99.0, 7.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          extra: <String, Object?>{'position': ScaleValuePosition('x', 20.0)},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[11.671875, 32.0, 498.9892578125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -42556,28 +42278,27 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a y axis at the position of a numeric string',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 100.0},
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 99.0, 'y': 7.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'position': ScaleValuePosition('x', '20')},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(10.0, 100.0),
+            DataPoint(-10.0, 0.0),
+            DataPoint(0.0, 0.0),
+            DataPoint(99.0, 7.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LinearAxis(
+          .y,
+          extra: <String, Object?>{'position': ScaleValuePosition('x', '20')},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[11.671875, 32.0, 498.9892578125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -43337,28 +43058,27 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'an x axis at the position null',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 100.0},
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 99.0, 'y': 7.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'position': ScaleValuePosition('y', null)},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(10.0, 100.0),
+            DataPoint(-10.0, 0.0),
+            DataPoint(0.0, 0.0),
+            DataPoint(99.0, 7.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LinearAxis(
+          .x,
+          extra: <String, Object?>{'position': ScaleValuePosition('y', null)},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 498.9892578125, 501.8],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -44122,29 +43842,25 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'center positions',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 100.0},
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 99.0, 'y': 7.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'position': ChartPosition.center},
-          'y': <String, Object?>{'position': ChartPosition.center},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(10.0, 100.0),
+            DataPoint(-10.0, 0.0),
+            DataPoint(0.0, 0.0),
+            DataPoint(99.0, 7.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LinearAxis(.x, position: ChartPosition.center),
+        LinearAxis(.y, position: ChartPosition.center),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[11.671875, 32.0, 498.9892578125, 501.8],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -44899,29 +44615,25 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'display false',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 100.0},
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 99.0, 'y': 7.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'display': ScaleDisplay.off},
-          'y': <String, Object?>{'display': ScaleDisplay.off},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(10.0, 100.0),
+            DataPoint(-10.0, 0.0),
+            DataPoint(0.0, 0.0),
+            DataPoint(99.0, 7.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LinearAxis(.x, display: ScaleDisplay.off),
+        LinearAxis(.y, display: ScaleDisplay.off),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -45134,36 +44846,25 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'titles',
-    config: <String, Object?>{
-      'type': 'linearTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 100.0},
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 99.0, 'y': 7.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'title': <String, Object?>{
-              'display': true,
-              'text': <String>['x'],
-            },
-          },
-          'y': <String, Object?>{
-            'title': <String, Object?>{'display': true},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('linearTest'),
+          points: [
+            DataPoint(10.0, 100.0),
+            DataPoint(-10.0, 0.0),
+            DataPoint(0.0, 0.0),
+            DataPoint(99.0, 7.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LinearAxis(.x, title: AxisTitle(display: true, text: <String>['x'])),
+        LinearAxis(.y, title: AxisTitle(display: true)),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[56.421484375, 32.0, 498.9892578125, 461.2],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -45950,36 +45651,20 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a canvas of size 0',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, '7+'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              29.05,
-              4.0,
-              15.69,
-              11.69,
-              2.84,
-              4.0,
-              0.0,
-              3.84,
-              4.0,
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'layout': <String, Object?>{
-          'padding': EdgeInsets.fromLTRB(1, 30, 1, 1),
-        },
-      },
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, '7+'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [29.05, 4.0, 15.69, 11.69, 2.84, 4.0, 0.0, 3.84, 4.0],
+        ),
+      ],
+      padding: const EdgeInsets.fromLTRB(1, 30, 1, 1),
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 0.0, 'height': 0.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[1.0, 30.0, 1.0, 30.0],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -46085,12 +45770,12 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'stacked and beginAtZero after the creation',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          extra: <String, Object?>{
             'data': <Object?>[
               null,
               90.0,
@@ -46102,16 +45787,12 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
               double.negativeInfinity,
             ],
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'beginAtZero': false},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LinearAxis(.y, beginAtZero: false)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -46859,27 +46540,22 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'a dataset hidden after the creation',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+        ),
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.on)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -47607,24 +47283,15 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'maxTicksLimit, stepSize, min and max after the creation',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.5, 2.5],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'beginAtZero': false},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('scaleTest'), data: [0.5, 2.5]),
+      ],
+      scales: const [LinearAxis(.y, beginAtZero: false)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
@@ -48030,20 +47697,18 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
   ),
   (
     name: 'reverse after the creation',
-    config: <String, Object?>{
-      'type': 'scaleTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.05, -25.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{'indexAxis': YAxis()},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+      datasets: [
+        TestDataset(
+          const ChartKind('scaleTest'),
+          data: [0.05, -25.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0],
+        ),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 500.328125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{

@@ -6,10 +6,16 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 56 cases, 365 widths.
 
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'dart:ui' show FontStyle, Locale;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:intl/intl.dart';
+
+import '../../support/test_dataset.dart';
 
 /// The Node.js version that generated the data.
 const String scaleLogarithmicReferenceNode = 'v24.22.1';
@@ -30,15 +36,17 @@ const String scaleLogarithmicReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ScaleLogarithmicReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -56,23 +64,23 @@ typedef ScaleLogarithmicReferenceWidth = ({
 ///
 /// A `NumberFormat` of package:intl has no const constructor, so the
 /// list is final.
-final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
+List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'log x and log y from 1 to 1e6',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 1.0},
-              <String, Object?>{'x': 30.0, 'y': 1000.0},
-              <String, Object?>{'x': 1000000.0, 'y': 1000000.0},
-            ],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(1.0, 1.0),
+            DataPoint(30.0, 1000.0),
+            DataPoint(1000000.0, 1000000.0),
+          ],
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -1571,20 +1579,18 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'values from 0.001 to 1000',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -3051,17 +3057,15 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'primitives and labels',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5.0, 50.0, 500.0, 5000.0],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [5.0, 50.0, 500.0, 5000.0],
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
@@ -3880,17 +3884,17 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'string values',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        TestDataset(
+          const ChartKind('logValueTest'),
+          extra: <String, Object?>{
             'data': <Object?>['10', '100', '1000', 'abc'],
           },
-        ],
-      },
-    },
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
@@ -4860,25 +4864,25 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'null, NaN, negative, string and boolean values',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': null},
-              <String, Object?>{'x': 2.0, 'y': double.nan},
-              <String, Object?>{'x': null, 'y': 4.0},
-              <String, Object?>{'x': 3.0, 'y': -5.0},
-              <String, Object?>{'x': 'abc', 'y': 6.0},
-              <String, Object?>{'x': '7', 'y': '8.5'},
-              <String, Object?>{'x': 9.0, 'y': true},
-              <String, Object?>{'x': 12.0, 'y': 40.0},
+              const <String, Object?>{'x': 1.0, 'y': null},
+              const <String, Object?>{'x': 2.0, 'y': double.nan},
+              const <String, Object?>{'x': null, 'y': 4.0},
+              const <String, Object?>{'x': 3.0, 'y': -5.0},
+              const <String, Object?>{'x': 'abc', 'y': 6.0},
+              const <String, Object?>{'x': '7', 'y': '8.5'},
+              const <String, Object?>{'x': 9.0, 'y': true},
+              const <String, Object?>{'x': 12.0, 'y': 40.0},
             ],
           },
-        ],
-      },
-    },
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
@@ -5966,17 +5970,12 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'data with zeros',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 10.0, 100.0],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('logValueTest'), data: [0.0, 10.0, 100.0]),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 506.0, 483.6],
@@ -6903,17 +6902,12 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'data with zeros and a min that is not a power of ten',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 25.0, 300.0],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('logValueTest'), data: [0.0, 25.0, 300.0]),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 506.0, 483.6],
@@ -7620,20 +7614,18 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'zeros on both axes',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 5.0, 'y': 2.0},
-              <String, Object?>{'x': 50.0, 'y': 0.0},
-            ],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.0, 0.0),
+            DataPoint(5.0, 2.0),
+            DataPoint(50.0, 0.0),
+          ],
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
@@ -8729,17 +8721,12 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'only zeros',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 0.0],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('logValueTest'), data: [0.0, 0.0]),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
@@ -9631,14 +9618,9 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'empty data',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [TestDataset(const ChartKind('logTest'), data: [])],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -11167,26 +11149,22 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a hidden dataset',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'hidden': true,
-            'data': <Object?>[
-              <String, Object?>{'x': 0.00001, 'y': 0.00001},
-              <String, Object?>{'x': 1000000000.0, 'y': 1000000000.0},
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 3.0, 'y': 20.0},
-              <String, Object?>{'x': 400.0, 'y': 7000.0},
-            ],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          hidden: true,
+          points: [
+            DataPoint(0.00001, 0.00001),
+            DataPoint(1000000000.0, 1000000000.0),
+          ],
+        ),
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [DataPoint(3.0, 20.0), DataPoint(400.0, 7000.0)],
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -12670,27 +12648,22 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'stacked values',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['category 1', 'category 2'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 39.0],
-            'stack': 'stack',
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 39.0],
-            'stack': 'stack',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['category 1', 'category 2'],
+      datasets: [
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [1.0, 39.0],
+          extra: const <String, Object?>{'stack': 'stack'},
+        ),
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [1.0, 39.0],
+          extra: const <String, Object?>{'stack': 'stack'},
+        ),
+      ],
+      scales: const [LogarithmicAxis(.y, stacked: StackMode.on)],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[31.0166015625, 32.0, 480.9833984375, 483.6],
@@ -13554,27 +13527,22 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'stacked values with zeros',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 10.0, 5.0],
-            'stack': 'stack',
-          },
-          <String, Object?>{
-            'data': <Object?>[5.0, 0.0, 0.0],
-            'stack': 'stack',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [0.0, 10.0, 5.0],
+          extra: const <String, Object?>{'stack': 'stack'},
+        ),
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [5.0, 0.0, 0.0],
+          extra: const <String, Object?>{'stack': 'stack'},
+        ),
+      ],
+      scales: const [LogarithmicAxis(.y, stacked: StackMode.on)],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
@@ -14550,21 +14518,21 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'parsing false with an absent x',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'y': 5.0},
-              <String, Object?>{'x': 10.0, 'y': 50.0},
-              <String, Object?>{'x': 100.0, 'y': 500.0},
+              const <String, Object?>{'y': 5.0},
+              const <String, Object?>{'x': 10.0, 'y': 50.0},
+              const <String, Object?>{'x': 100.0, 'y': 500.0},
             ],
           },
-        ],
-      },
-      'options': <String, Object?>{'parsing': false},
-    },
+        ),
+      ],
+      parsing: false,
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -16159,22 +16127,22 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'parsing false with zero, negative and string values',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': -5.0, 'y': -3.0},
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 100.0, 'y': 500.0},
-              <String, Object?>{'x': '20', 'y': '7'},
+              const <String, Object?>{'x': -5.0, 'y': -3.0},
+              const <String, Object?>{'x': 0.0, 'y': 0.0},
+              const <String, Object?>{'x': 100.0, 'y': 500.0},
+              const <String, Object?>{'x': '20', 'y': '7'},
             ],
           },
-        ],
-      },
-      'options': <String, Object?>{'parsing': false},
-    },
+        ),
+      ],
+      parsing: false,
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -17573,26 +17541,22 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min and max',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 0.5, 'max': 20000.0},
-          'y': <String, Object?>{'min': 1.0, 'max': 1000.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(.x, min: 0.5, max: 20000),
+        LogarithmicAxis(.y, min: 1, max: 1000),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 452.96120431576094],
@@ -18772,35 +18736,24 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min and max that are not powers of ten',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[250.0, 240.0, 270.0, 320.0, 450.0, 300.0, 280.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'display': ScaleDisplay.off},
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'autoSkip': false},
-            'min': 233.0,
-            'max': 471.0,
-          },
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      datasets: [
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [250.0, 240.0, 270.0, 320.0, 450.0, 300.0, 280.0],
+        ),
+      ],
+      scales: const [
+        CategoryAxis(.x, display: ScaleDisplay.off),
+        LogarithmicAxis(
+          .y,
+          ticks: AxisTicks(autoSkip: false),
+          min: 233,
+          max: 471,
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 501.8],
@@ -19391,26 +19344,25 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'string min and max',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 1.0},
-              <String, Object?>{'x': 30.0, 'y': 1000.0},
-              <String, Object?>{'x': 1000000.0, 'y': 1000000.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': '10'},
-          'y': <String, Object?>{'min': '10', 'max': '5000'},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(1.0, 1.0),
+            DataPoint(30.0, 1000.0),
+            DataPoint(1000000.0, 1000000.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(.x, extra: <String, Object?>{'min': '10'}),
+        LogarithmicAxis(
+          .y,
+          extra: <String, Object?>{'min': '10', 'max': '5000'},
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 502.326171875, 483.6],
@@ -20882,26 +20834,22 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'negative and invalid min and max',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': -10.0, 'max': 'abc'},
-          'y': <String, Object?>{'min': double.nan, 'max': -1000.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(.x, min: -10, extra: <String, Object?>{'max': 'abc'}),
+        LogarithmicAxis(.y, min: double.nan, max: -1000),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -22368,26 +22316,19 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min 0 and max 0',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 0.0},
-          'y': <String, Object?>{'max': 0.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+      scales: const [LogarithmicAxis(.x, min: 0), LogarithmicAxis(.y, max: 0)],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -23758,20 +23699,13 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min 0 with empty data and a max',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 0.0, 'max': 80.0},
-          'y': <String, Object?>{'min': 0.0, 'max': 0.8},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [TestDataset(const ChartKind('logTest'), data: [])],
+      scales: const [
+        LogarithmicAxis(.x, min: 0, max: 80),
+        LogarithmicAxis(.y, min: 0, max: 0.8),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
@@ -25165,28 +25099,21 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min 0 with zeros in the data',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 10.0, 'y': 10.0},
-              <String, Object?>{'x': 1.2, 'y': 6.3},
-              <String, Object?>{'x': 25.0, 'y': 25.0},
-              <String, Object?>{'x': 78.0, 'y': 78.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 0.0},
-          'y': <String, Object?>{'min': 0.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.0, 0.0),
+            DataPoint(10.0, 10.0),
+            DataPoint(1.2, 6.3),
+            DataPoint(25.0, 25.0),
+            DataPoint(78.0, 78.0),
+          ],
+        ),
+      ],
+      scales: const [LogarithmicAxis(.x, min: 0), LogarithmicAxis(.y, min: 0)],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
@@ -26620,26 +26547,22 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'suggestedMin and suggestedMax',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'suggestedMin': 0.1, 'suggestedMax': 100000.0},
-          'y': <String, Object?>{'suggestedMin': 50.0, 'suggestedMax': 60.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(.x, suggestedMin: 0.1, suggestedMax: 100000),
+        LogarithmicAxis(.y, suggestedMin: 50, suggestedMax: 60),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -28046,20 +27969,13 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'suggested bounds and empty data',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'suggestedMin': 0.5},
-          'y': <String, Object?>{'suggestedMin': 10.0, 'suggestedMax': 100.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [TestDataset(const ChartKind('logTest'), data: [])],
+      scales: const [
+        LogarithmicAxis(.x, suggestedMin: 0.5),
+        LogarithmicAxis(.y, suggestedMin: 10, suggestedMax: 100),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -29588,19 +29504,10 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'suggestedMin 0 and empty data',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'suggestedMin': 0.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [TestDataset(const ChartKind('logTest'), data: [])],
+      scales: const [LogarithmicAxis(.y, suggestedMin: 0)],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -30538,22 +30445,15 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'beginAtZero',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5.0, 50.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'beginAtZero': true},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('logValueTest'), data: [5.0, 50.0]),
+      ],
+      scales: const [
+        LogarithmicAxis(.y, extra: <String, Object?>{'beginAtZero': true}),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
@@ -31285,22 +31185,19 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'beginAtZero with the suggestedMin at the data min',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 100.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'beginAtZero': true, 'suggestedMin': 10.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('logValueTest'), data: [10.0, 100.0]),
+      ],
+      scales: const [
+        LogarithmicAxis(
+          .y,
+          suggestedMin: 10,
+          extra: <String, Object?>{'beginAtZero': true},
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 505.6630859375, 483.6],
@@ -32192,22 +32089,19 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'beginAtZero with a min',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5.0, 50.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'beginAtZero': true, 'min': 3.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('logValueTest'), data: [5.0, 50.0]),
+      ],
+      scales: const [
+        LogarithmicAxis(
+          .y,
+          min: 3,
+          extra: <String, Object?>{'beginAtZero': true},
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
@@ -32879,19 +32773,12 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'beginAtZero and empty data',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'beginAtZero': true},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [TestDataset(const ChartKind('logTest'), data: [])],
+      scales: const [
+        LogarithmicAxis(.y, extra: <String, Object?>{'beginAtZero': true}),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -34420,19 +34307,14 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'one value',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 5.0, 'y': 100.0},
-              <String, Object?>{'x': 5.0, 'y': 100.0},
-            ],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [DataPoint(5.0, 100.0), DataPoint(5.0, 100.0)],
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -35982,25 +35864,18 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'one value with a min and a max',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 5.0, 'y': 100.0},
-              <String, Object?>{'x': 5.0, 'y': 100.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 5.0},
-          'y': <String, Object?>{'max': 100.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [DataPoint(5.0, 100.0), DataPoint(5.0, 100.0)],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(.x, min: 5),
+        LogarithmicAxis(.y, max: 100),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 497.322265625, 483.6],
@@ -37411,20 +37286,13 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'empty data with a max',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'max': 80.0},
-          'y': <String, Object?>{'max': 0.8},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [TestDataset(const ChartKind('logTest'), data: [])],
+      scales: const [
+        LogarithmicAxis(.x, max: 80),
+        LogarithmicAxis(.y, max: 0.8),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
@@ -38814,25 +38682,19 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'min above max',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'min': 100.0, 'max': 10.0},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+      scales: const [LogarithmicAxis(.y, min: 100, max: 10)],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -39757,26 +39619,25 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'grace',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'grace': ValueGrace(3)},
-          'y': <String, Object?>{'grace': PercentGrace(50)},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(.x, extra: <String, Object?>{'grace': ValueGrace(3)}),
+        LogarithmicAxis(
+          .y,
+          extra: <String, Object?>{'grace': PercentGrace(50)},
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -41243,25 +41104,18 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'bounds data',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 3.0, 'y': 0.03},
-              <String, Object?>{'x': 700.0, 'y': 45.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': ScaleBounds.data},
-          'y': <String, Object?>{'bounds': ScaleBounds.data},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [DataPoint(3.0, 0.03), DataPoint(700.0, 45.0)],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(.x, bounds: ScaleBounds.data),
+        LogarithmicAxis(.y, bounds: ScaleBounds.data),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -42426,33 +42280,19 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'fixture small range',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 1.0, 4.0, 2.0, 5.0, 3.0, 16.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'display': ScaleDisplay.off},
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'autoSkip': false},
-          },
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      datasets: [
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [3.0, 1.0, 4.0, 2.0, 5.0, 3.0, 16.0],
+        ),
+      ],
+      scales: const [
+        CategoryAxis(.x, display: ScaleDisplay.off),
+        LogarithmicAxis(.y, ticks: AxisTicks(autoSkip: false)),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 512.0, 501.8],
@@ -43071,33 +42911,19 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'fixture medium range',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[25.0, 24.0, 27.0, 32.0, 45.0, 30.0, 28.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'display': ScaleDisplay.off},
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'autoSkip': false},
-          },
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      datasets: [
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [25.0, 24.0, 27.0, 32.0, 45.0, 30.0, 28.0],
+        ),
+      ],
+      scales: const [
+        CategoryAxis(.x, display: ScaleDisplay.off),
+        LogarithmicAxis(.y, ticks: AxisTicks(autoSkip: false)),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 512.0, 501.8],
@@ -43656,33 +43482,19 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'fixture large range',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[23.0, 21.0, 34.0, 52.0, 115.0, 3333.0, 5116.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'display': ScaleDisplay.off},
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'autoSkip': false},
-          },
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      datasets: [
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [23.0, 21.0, 34.0, 52.0, 115.0, 3333.0, 5116.0],
+        ),
+      ],
+      scales: const [
+        CategoryAxis(.x, display: ScaleDisplay.off),
+        LogarithmicAxis(.y, ticks: AxisTicks(autoSkip: false)),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 501.8],
@@ -44721,41 +44533,27 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'fixture large values in a small range',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              5000.002,
-              5000.012,
-              5000.01,
-              5000.03,
-              5000.04,
-              5000.004,
-              5000.032,
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'display': ScaleDisplay.off},
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'autoSkip': false},
-          },
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      datasets: [
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [
+            5000.002,
+            5000.012,
+            5000.01,
+            5000.03,
+            5000.04,
+            5000.004,
+            5000.032,
+          ],
+        ),
+      ],
+      scales: const [
+        CategoryAxis(.x, display: ScaleDisplay.off),
+        LogarithmicAxis(.y, ticks: AxisTicks(autoSkip: false)),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[74.05859375, 32.0, 512.0, 501.8],
@@ -45442,50 +45240,23 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'fixture null values',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              150.0,
-              null,
-              1500.0,
-              200.0,
-              9000.0,
-              3000.0,
-              8888.0,
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              1000.0,
-              5500.0,
-              800.0,
-              7777.0,
-              null,
-              6666.0,
-              5555.0,
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'display': ScaleDisplay.off},
-          'y': <String, Object?>{'display': ScaleDisplay.off},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      datasets: [
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [150.0, null, 1500.0, 200.0, 9000.0, 3000.0, 8888.0],
+        ),
+        TestDataset(
+          const ChartKind('logValueTest'),
+          data: [1000.0, 5500.0, 800.0, 7777.0, null, 6666.0, 5555.0],
+        ),
+      ],
+      scales: const [
+        CategoryAxis(.x, display: ScaleDisplay.off),
+        LogarithmicAxis(.y, display: ScaleDisplay.off),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -45840,19 +45611,14 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a range from 0.5 to 10.4',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.5, 'y': 0.5},
-              <String, Object?>{'x': 10.4, 'y': 10.4},
-            ],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [DataPoint(0.5, 0.5), DataPoint(10.4, 10.4)],
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 497.322265625, 483.6],
@@ -47203,17 +46969,12 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a range from 5000 to 6000',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5000.0, 6000.0],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('logValueTest'), data: [5000.0, 6000.0]),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
@@ -47821,17 +47582,12 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a range from 1000 to 10000',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1000.0, 10000.0],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('logValueTest'), data: [1000.0, 10000.0]),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[50.703125, 32.0, 505.6630859375, 483.6],
@@ -48719,26 +48475,22 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'reverse with zeros',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 0.5},
-              <String, Object?>{'x': 10.0, 'y': 0.0},
-              <String, Object?>{'x': 1000.0, 'y': 80.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'reverse': true},
-          'y': <String, Object?>{'reverse': true},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.0, 0.5),
+            DataPoint(10.0, 0.0),
+            DataPoint(1000.0, 80.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(.x, reverse: true),
+        LogarithmicAxis(.y, reverse: true),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -49949,26 +49701,22 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'positions top and right',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 1.0},
-              <String, Object?>{'x': 30.0, 'y': 1000.0},
-              <String, Object?>{'x': 1000000.0, 'y': 1000000.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'position': ChartPosition.top},
-          'y': <String, Object?>{'position': ChartPosition.right},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(1.0, 1.0),
+            DataPoint(30.0, 1000.0),
+            DataPoint(1000000.0, 1000000.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(.x, position: ChartPosition.top),
+        LogarithmicAxis(.y, position: ChartPosition.right),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -51467,26 +51215,22 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'offset',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'offset': true},
-          'y': <String, Object?>{'offset': true},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(.x, extra: <String, Object?>{'offset': true}),
+        LogarithmicAxis(.y, extra: <String, Object?>{'offset': true}),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -52761,27 +52505,24 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a tick callback',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'callback': 'fn:withUnit'},
-          },
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+      scales: [
+        LogarithmicAxis(
+          .y,
+          ticks: AxisTicks(callback: functions['withUnit']! as TickCallback),
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -54248,20 +53989,15 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'locale',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.5, 'y': 1.5},
-              <String, Object?>{'x': 12345.0, 'y': 2750.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{'locale': Locale('de', 'DE')},
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [DataPoint(0.5, 1.5), DataPoint(12345.0, 2750.0)],
+        ),
+      ],
+      extra: const <String, Object?>{'locale': Locale('de', 'DE')},
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 452.96120431576094],
@@ -55480,30 +55216,26 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'format',
-    config: <String, Object?>{
-      'type': 'logTest',
-      'data': const <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.5, 'y': 1.5},
-              <String, Object?>{'x': 12345.0, 'y': 2750.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [DataPoint(0.5, 1.5), DataPoint(12345.0, 2750.0)],
+        ),
+      ],
+      scales: [
+        LogarithmicAxis(
+          .y,
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'format': (NumberFormat.decimalPattern()
                 ..maximumFractionDigits = 1
                 ..minimumFractionDigits = 0),
             },
-          },
-        },
-      },
-    },
+          ),
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 452.96120431576094],
@@ -56722,32 +56454,31 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'linear tick options',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{
-              'stepSize': 7.0,
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(
+          .y,
+          ticks: AxisTicks(
+            stepSize: 7,
+            extra: <String, Object?>{
               'count': 3.0,
               'precision': 1.0,
               'includeBounds': false,
             },
-          },
-        },
-      },
-    },
+          ),
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -58214,19 +57945,14 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'scientific labels',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 2.0, 'y': 3e-7},
-              <String, Object?>{'x': 9000.0, 'y': 0.00002},
-            ],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [DataPoint(2.0, 3e-7), DataPoint(9000.0, 0.00002)],
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[
@@ -59747,20 +59473,18 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a narrow canvas',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 1.0},
-              <String, Object?>{'x': 30.0, 'y': 1000.0},
-              <String, Object?>{'x': 1000000.0, 'y': 1000000.0},
-            ],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(1.0, 1.0),
+            DataPoint(30.0, 1000.0),
+            DataPoint(1000000.0, 1000000.0),
+          ],
+        ),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 150.0, 'height': 200.0},
     },
@@ -60282,34 +60006,36 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'a narrow canvas without major ticks',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 1.0},
-              <String, Object?>{'x': 30.0, 'y': 1000.0},
-              <String, Object?>{'x': 1000000.0, 'y': 1000000.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(1.0, 1.0),
+            DataPoint(30.0, 1000.0),
+            DataPoint(1000000.0, 1000000.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(
+          .x,
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'major': <String, Object?>{'enabled': false},
             },
-          },
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{
+          ),
+        ),
+        LogarithmicAxis(
+          .y,
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'major': <String, Object?>{'enabled': false},
             },
-          },
-        },
-      },
-    },
+          ),
+        ),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 150.0, 'height': 200.0},
     },
@@ -60976,30 +60702,28 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'maxTicksLimit',
-    config: const <String, Object?>{
-      'type': 'logTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.001, 'y': 0.002},
-              <String, Object?>{'x': 0.5, 'y': 3.0},
-              <String, Object?>{'x': 1000.0, 'y': 999.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{'maxTicksLimit': 3.0},
-          },
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'maxTicksLimit': 5.0},
-          },
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('logTest'),
+          points: [
+            DataPoint(0.001, 0.002),
+            DataPoint(0.5, 3.0),
+            DataPoint(1000.0, 999.0),
+          ],
+        ),
+      ],
+      scales: const [
+        LogarithmicAxis(
+          .x,
+          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 3.0}),
+        ),
+        LogarithmicAxis(
+          .y,
+          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 5.0}),
+        ),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 300.0, 'height': 250.0},
     },
@@ -61453,17 +61177,12 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'data without zeros after data with zeros',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 10.0, 100.0],
-          },
-        ],
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        TestDataset(const ChartKind('logValueTest'), data: [0.0, 10.0, 100.0]),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 506.0, 483.6],
@@ -62390,22 +62109,15 @@ final List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference = [
   ),
   (
     name: 'beginAtZero removed after the creation',
-    config: const <String, Object?>{
-      'type': 'logValueTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5.0, 50.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'beginAtZero': true},
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        TestDataset(const ChartKind('logValueTest'), data: [5.0, 50.0]),
+      ],
+      scales: const [
+        LogarithmicAxis(.y, extra: <String, Object?>{'beginAtZero': true}),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 505.6630859375, 483.6],

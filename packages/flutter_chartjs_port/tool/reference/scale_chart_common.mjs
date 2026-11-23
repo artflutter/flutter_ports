@@ -127,8 +127,8 @@ import {dartClip, isClipValue} from './clip_value.mjs';
 import {constFill, fillTargetCode} from './fill_target.mjs';
 import {dartCanvasFont, dartFont, fontRecord} from './font_record.mjs';
 import {execFileSync} from 'node:child_process';
-import {existsSync, readFileSync, realpathSync, writeFileSync} from 'node:fs';
-import {relative} from 'node:path';
+import {appendFileSync, existsSync, readFileSync, realpathSync, writeFileSync} from 'node:fs';
+import {dirname, relative} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 
 const THIRD_PARTY = new URL('../../../../third_party/', import.meta.url);
@@ -1655,6 +1655,7 @@ const POSITIONER_CLASSES = {
  * its row. Another value stays.
  */
 function keyedValue(k, value, owner) {
+  if (value instanceof DartCode) return value;
   if (k === 'tooltip' && owner === 'plugins' && value && value.constructor === Object) {
     return new NativeTooltipOptions(value);
   }
@@ -1933,6 +1934,9 @@ function dart(v, state, owner) {
         (c) => CONTROL_ESCAPES[c] ?? `\\x${c.charCodeAt(0).toString(16).padStart(2, '0')}`,
       );
     return `${quote}${escaped}${quote}`;
+  }
+  if (v instanceof DartCode) {
+    return v.isConst && v.ctor && constLeaves && !inConst ? `const ${v.code}` : v.code;
   }
   if (v instanceof CallsText) {
     if (v.text.includes("'''")) throw new Error('A call with three quotes');
@@ -2364,6 +2368,7 @@ function constLiteral(v, owner, write) {
 /** Whether the object or array [v] holds a NumberFormat of the Dart data. */
 function hasNumberFormat(v, owner) {
   if (v instanceof DartFill) return v.split;
+  if (v instanceof DartCode) return !v.isConst;
   if (v instanceof DartNumberFormat || v instanceof NativeTooltipStyle || v instanceof NativeTooltipCallbacks) return true;
   if (v instanceof NativeTooltipOptions) return tooltipOptionsHaveFunctions(v.value);
   if (v instanceof NativeLegendOptions) return legendOptionsHaveFunctions(v.value);
@@ -2401,7 +2406,7 @@ function canvasFont(css, state) {
  * lines_longer_than_80_chars fails `analyze --fatal-infos` on it, and a
  * data file must not change by hand.
  */
-export function writeReference(outPath, name, cases, {title = name, notes = []} = {}) {
+export function writeReference(outPath, name, cases, {title = name, notes = [], typed = true} = {}) {
   loaded();
   for (const line of notes) {
     const comment = `// ${line}`.trimEnd();
@@ -2415,19 +2420,21 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
   }
   const type = name[0].toUpperCase() + name.slice(1);
   const state = {undefined: false};
-  const writeBody = () =>
-    cases
+  const writeBody = () => {
+    typedReport = {extra: new Map(), maps: []};
+    return cases
       .map(
         (c) =>
-          `  (name: ${dart(c.name, state)}, config: ${inputDart(c.config, state)}, ` +
+          `  (name: ${dart(c.name, state)}, config: ${typed ? typedConfigCode(c, state, name) ?? inputDart(c.config, state) : inputDart(c.config, state)}, ` +
           `options: ${inputDart(c.options, state)}, expected: ${dart(c.expected, state)}),\n`,
       )
       .join('');
+  };
   let body = writeBody();
   // A NumberFormat has no const constructor: the list is final, and each
   // object or array without a NumberFormat is const, so that its objects of
   // the port (an axis, a font) stay canonical.
-  if (state.numberFormats || state.tooltipValues || state.tooltipCallbacks || state.fixturePaints) {
+  if (state.numberFormats || state.tooltipValues || state.tooltipCallbacks || state.fixturePaints || state.closures) {
     constLeaves = true;
     try {
       body = writeBody();
@@ -2446,7 +2453,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes && !state.borderRadii ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats || state.clips || state.stackModes || state.borders || state.fixturePaints ? '\n' : ''}${state.fixturePaints ? "import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;\n" : ''}${state.borderRadii ? "import 'package:flutter/painting.dart';\n" : state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.algorithms || state.aligns || state.arcEnums || state.borderSkips || state.borders || state.clips || state.cubicModes || state.fillTargets || state.fillerEnums || state.graceLengths || state.modes || state.pointStyles || state.positioners || state.positions || state.radiusLengths || state.scaleAxes || state.scaleEnums || state.stackModes || state.steppedLines || state.textStyles || state.timeUnits || state.tooltipCallbacks || state.tooltipValues || state.pluginOptions || state.undefined ? `import 'package:flutter_chartjs_port/${state.positioners ? 'chartjs' : 'chartjs_core'}.dart';\n` : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.closures ? '\n// The typed configs make new data Lists at each call, as the Map form.\n// ignore_for_file: prefer_const_constructors\n// ignore_for_file: prefer_const_literals_to_create_immutables\n' : ''}${state.strokes && !state.borderRadii ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats || state.clips || state.stackModes || state.borders || state.fixturePaints || state.typedConfigs ? '\n' : ''}${state.fixturePaints ? "import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;\n" : ''}${state.borderRadii ? "import 'package:flutter/painting.dart';\n" : state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.algorithms || state.aligns || state.arcEnums || state.borderSkips || state.borders || state.clips || state.cubicModes || state.fillTargets || state.fillerEnums || state.graceLengths || state.modes || state.pointStyles || state.positioners || state.positions || state.radiusLengths || state.scaleAxes || state.scaleEnums || state.stackModes || state.steppedLines || state.textStyles || state.timeUnits || state.tooltipCallbacks || state.tooltipValues || state.pluginOptions || state.undefined || state.typedConfigs ? `import 'package:flutter_chartjs_port/${state.positioners || state.typedConfigs ? 'chartjs' : 'chartjs_core'}.dart';\n` : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}${supportImports(outPath, state)}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 
@@ -2465,15 +2472,17 @@ const String ${name}ReferenceCommit = '${buildCommit}';
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - \`config\`: the chart config, before the harness defaults.
-///   \`'fn:<name>'\` is a named function of the Dart test.
+/// - \`config\`: the chart config, before the harness defaults: a
+///   function that gives a new typed \`ChartConfig\` at each call, or the
+///   Map of a config with no typed form. \`'fn:<name>'\` is a named
+///   function of the Dart test.
 /// - \`options\`: the options of acquireChart (the canvas size).
 /// - \`expected\`: the observations of \`observe\` (\`chartArea\`,
 ///   \`scales\` by id and \`points\`), and \`drawCalls\`, the calls of one
 ///   \`chart.draw()\` as JSON lines \`[name, ...args]\`.
 typedef ${type}ReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -2488,7 +2497,7 @@ typedef ${type}ReferenceWidth = ({
 });
 
 /// The cases.${state.numberFormats ? '\n///\n/// A \`NumberFormat\` of package:intl has no const constructor, so the\n/// list is final.' : ''}
-${state.tooltipCallbacks ? '' : (state.numberFormats || state.tooltipValues || state.fixturePaints ? 'final ' : 'const ')}List<${type}ReferenceCase> ${name}Reference${state.tooltipCallbacks ? '(Map<String, Object?> functions) =>' : ' ='} [
+${state.tooltipCallbacks ? '' : (state.numberFormats || state.tooltipValues || state.fixturePaints || state.closures ? 'final ' : 'const ')}List<${type}ReferenceCase> ${name}Reference${state.tooltipCallbacks ? '(Map<String, Object?> functions) =>' : ' ='} [
 ${body}];
 
 /// Each text that the cases measured, with its font and width.
@@ -2498,6 +2507,25 @@ ${widths}];
   writeFileSync(outPath, out);
   execFileSync('dart', ['format', outPath], {stdio: 'inherit'});
   console.log(`Wrote ${cases.length} cases and ${measured.size} widths to ${outPath}`);
+  if (process.env.TYPED_CONFIG_REPORT) {
+    appendFileSync(
+      process.env.TYPED_CONFIG_REPORT,
+      `${JSON.stringify({file: name, cases: cases.length, extra: Object.fromEntries(typedReport.extra), maps: typedReport.maps})}\n`,
+    );
+  }
+}
+
+/**
+ * The relative imports of the test support files that the typed configs of
+ * [state] use, for the data file [outPath].
+ */
+function supportImports(outPath, state) {
+  const files = [];
+  if (state.nativePlugins) files.push('native_plugin.dart');
+  if (state.testDatasets) files.push('test_dataset.dart');
+  if (!files.length) return '';
+  const support = relative(dirname(outPath), `${PACKAGE_ROOT}test/support`);
+  return `\n${files.map((f) => `import '${support}/${f}';\n`).join('')}`;
 }
 
 /**
@@ -2528,4 +2556,1073 @@ export function dartLiteral(v, state = {undefined: false}, leaves = false) {
 export function referenceBuild() {
   loaded();
   return {version: PIN.version, commit: buildCommit, measured: measured.size};
+}
+
+// ---------------------------------------------------------------------------
+// The typed config.
+
+/**
+ * A Dart expression in a value of the Dart data: `code` as it is. [isConst]
+ * tells whether the expression can stand in a const literal, and [ctor]
+ * whether it is a constructor call that takes `const` outside one.
+ */
+export class DartCode {
+  constructor(code, {isConst = false, ctor = false} = {}) {
+    this.code = code;
+    this.isConst = isConst;
+    this.ctor = ctor;
+  }
+}
+
+/** A config that keeps its Map form: the reason is the message. */
+class KeepMap extends Error {}
+
+/** Stops the typed form of the current config with [reason]. */
+function keepMap(reason) {
+  throw new KeepMap(reason);
+}
+
+/**
+ * The record of the typed configs of a run: `extra` counts the cases of each
+ * option path that goes through an `extra` Map, `maps` lists each case that
+ * keeps its Map form with its reason. The environment variable
+ * TYPED_CONFIG_REPORT names a JSON lines file that gets one line for each
+ * data file.
+ */
+let typedReport = {extra: new Map(), maps: []};
+
+/** The option paths of the `extra` Maps of the current case. */
+let caseExtras = null;
+
+/** Records the option path [path] of an `extra` Map of the current case. */
+function noteExtra(path) {
+  caseExtras?.add(path);
+}
+
+/**
+ * A node of the typed writer: the Dart expression [code], whether it can be
+ * const ([c]), and whether it is a constructor call or a collection literal
+ * that takes `const` outside a const parent ([ctor]).
+ */
+const node = (code, c = true, ctor = false) => ({code, c, ctor});
+
+/** The code of the child [n] in a parent that is const ([parentConst]) or not. */
+function inner(n, parentConst) {
+  return !parentConst && n.c && n.ctor ? `const ${n.code}` : n.code;
+}
+
+/** A constructor call of [name] with the named or positional [args] (`[label, node]`). */
+function call(name, args) {
+  const present = args.filter(([, n]) => n !== undefined);
+  const c = present.every(([, n]) => n.c);
+  const text = present.map(([k, n]) => `${k === null ? '' : `${k}: `}${inner(n, c)}`).join(', ');
+  return node(`${name}(${text})`, c, true);
+}
+
+/** A list literal of [items] with the type argument [type]; [mutable] keeps it from const. */
+function listNode(items, {type = '', mutable = false} = {}) {
+  const c = !mutable && items.every((n) => n.c);
+  return node(`${type ? `<${type}>` : ''}[${items.map((n) => inner(n, c)).join(', ')}]`, c, true);
+}
+
+/** The node of a JS value of the Dart data (dart) in the object of the key [owner]. */
+function literalNode(v, state, owner) {
+  const c = !hasNumberFormat(v, owner);
+  const beforeLeaves = constLeaves;
+  const beforeConst = inConst;
+  constLeaves = true;
+  inConst = c;
+  try {
+    const code = dart(v, state, owner);
+    return node(code, c, /[)\]}]$/.test(code) && !code.startsWith('const '));
+  } finally {
+    constLeaves = beforeLeaves;
+    inConst = beforeConst;
+  }
+}
+
+/** The node of a whole number for a `double` parameter (prefer_int_literals). */
+function doubleNode(v) {
+  if (typeof v !== 'number') return undefined;
+  return node(nativeNumber(v));
+}
+
+/** The node of a data value of a `num?` List: a double literal, as the Map data. */
+function dataNumber(v) {
+  if (v === null) return node('null');
+  return node(num(v));
+}
+
+/** The node of a boolean. */
+const boolNode = (v) => (typeof v === 'boolean' ? node(String(v)) : undefined);
+
+/** The node of a string. */
+const stringNode = (v, state) => (typeof v === 'string' ? node(dart(v, state)) : undefined);
+
+/** The keys of a color option of nativeFixtureColors (`_isColor`). */
+function isColorKey(k) {
+  return (
+    k === 'color' ||
+    k === 'multiKeyBackground' ||
+    k === 'above' ||
+    k === 'below' ||
+    k.endsWith('Color') ||
+    k === 'fillStyle' ||
+    k === 'strokeStyle'
+  );
+}
+
+/**
+ * The Dart expression of the paint of the CSS color text [value], as
+ * `paintOfCss` of chartjs_test_utils gives it: the bytes of @kurkle/color
+ * and the alpha byte over 255. Dart `null` for a text that is no color.
+ */
+function paintCode(value, state) {
+  if (typeof value !== 'string' || value === '') return null;
+  const color = nativeReferenceColor(value);
+  if (!color || !color.valid) return null;
+  const {r, g, b, a} = color._rgb;
+  (state.strokes ??= new Set()).add('Color');
+  state.typedConfigs = true;
+  return `ChartPaint.solid(Color.fromRGBO(${r}, ${g}, ${b}, ${nativeNumber(a / 255)}))`;
+}
+
+/** The node of the paint of [value], or undefined for a value that is no color text. */
+function paintNode(value, state) {
+  const code = paintCode(value, state);
+  return code === null ? undefined : node(code, true, true);
+}
+
+/**
+ * The value of an `extra` Map for the option [k] with the value [v]: the
+ * color conversion of nativeFixtureColors (a color text is a paint, `false`
+ * and `''` are `null`), and each named function of the generator is the
+ * function of the `functions` table of the Dart test. A color function stops
+ * the typed form: nativeFixtureColors wraps it in a function of paints.
+ */
+function nativeExtra(k, v, state, path) {
+  if (typeof v === 'function' || (typeof v === 'string' && v.startsWith('fn:'))) {
+    if (k !== null && isColorKey(k)) keepMap(`the color option ${path} is a function of CSS texts`);
+    return functionCode(v, state);
+  }
+  if (k !== null && isColorKey(k)) {
+    if (v === false || v === '') return null;
+    if (typeof v === 'string') {
+      const code = paintCode(v, state);
+      return code === null ? v : new DartCode(code, {isConst: true, ctor: true});
+    }
+    if (Array.isArray(v)) return v.map((x) => nativeExtra(k, x, state, path));
+    return v;
+  }
+  if (Array.isArray(v)) {
+    return v.map((x) => (typeof x === 'function' ? functionCode(x, state) : x));
+  }
+  if (v !== null && typeof v === 'object' && v.constructor === Object && !['font', 'padding', 'fill', 'format'].includes(k)) {
+    return Object.fromEntries(Object.keys(v).map((x) => [x, nativeExtra(x, v[x], state, `${path}.${x}`)]));
+  }
+  return v;
+}
+
+/** The DartCode of the named function [v] of the generator: an item of `functions`. */
+function functionCode(v, state, type = null) {
+  const name = typeof v === 'function' ? v.dartName : v.slice(3);
+  if (!name) throw new Error(`An unnamed function: ${String(v)}`);
+  state.tooltipCallbacks = true;
+  state.typedConfigs = true;
+  return new DartCode(type ? `functions[${dart(name, state)}]! as ${type}` : `functions[${dart(name, state)}]`);
+}
+
+/** A Map literal `<String, Object?>{...}` of the `[key, node]` [entries]. */
+function mapNode(entries, state) {
+  const c = entries.every(([, n]) => n.c);
+  return node(`<String, Object?>{${entries.map(([k, n]) => `${dart(k, state)}: ${inner(n, c)}`).join(', ')}}`, c, true);
+}
+
+/**
+ * The node of the `extra` Map [entries] of the object of the key [owner], or
+ * undefined for no entry. [nodes] gives the node of a key that the caller
+ * writes itself.
+ */
+function extraNode(entries, state, owner, path, nodes = {}) {
+  const keys = Object.keys(entries);
+  if (keys.length === 0) return undefined;
+  return mapNode(
+    keys.map((k) => {
+      noteExtra(`${path}.${k}`);
+      if (k in nodes) return [k, nodes[k]];
+      return [k, literalNode(keyedValue(k, nativeExtra(k, entries[k], state, `${path}.${k}`), owner), state, k)];
+    }),
+    state,
+  );
+}
+
+/** A typed object: the fields of [spec] that the writer takes, the rest in `extra`. */
+function typedObject(name, positional, o, spec, state, owner, path) {
+  const args = positional.map((n) => [null, n]);
+  const rest = {};
+  for (const k of Object.keys(o)) {
+    const field = spec[k];
+    const n = field ? field(o[k]) : undefined;
+    if (n === undefined) {
+      rest[k] = o[k];
+    } else {
+      args.push([Array.isArray(n) ? n[0] : field.param ?? k, Array.isArray(n) ? n[1] : n]);
+    }
+  }
+  args.push(['extra', extraNode(rest, state, owner, path)]);
+  return call(name, args);
+}
+
+/** The Dart code of the keyword [v] of the enum [type] for the values [values]. */
+function enumNode(type, values, v, state, flag) {
+  if (typeof v !== 'string' || !values.includes(v)) return undefined;
+  if (flag) state[flag] = true;
+  return node(`${type}.${v}`);
+}
+
+/** The ScaleDisplay of a scale `display`. */
+function scaleDisplayNode(v) {
+  if (v === true) return node('ScaleDisplay.on');
+  if (v === false) return node('ScaleDisplay.off');
+  if (v === 'auto') return node('ScaleDisplay.auto');
+  return undefined;
+}
+
+/** The node of a font object (row adapt-text-style-fonts). */
+function fontNode(v, state) {
+  if (v === null || typeof v !== 'object' || v.constructor !== Object) return undefined;
+  return literalNode(new DartFont(v), state, 'font');
+}
+
+/** The node of a padding (EdgeInsets). */
+function paddingNode(v, state) {
+  if (typeof v !== 'number' && !(v && v.constructor === Object)) return undefined;
+  state.edgeInsets = true;
+  const code = dartPadding(v);
+  return node(code, true, code !== 'EdgeInsets.zero');
+}
+
+/** The ChartValue node of a paint option: a constant or an indexed paint. */
+function paintValueNode(v, state) {
+  if (typeof v === 'string') {
+    const paint = paintNode(v, state);
+    return paint && call('ChartValue.constant', [[null, paint]]);
+  }
+  if (Array.isArray(v) && v.length > 0) {
+    const items = v.map((x) => paintNode(x, state));
+    if (items.some((x) => x === undefined)) return undefined;
+    return call('ChartValue.indexed', [[null, listNode(items)]]);
+  }
+  return undefined;
+}
+
+/** The ChartValue node of a number option of a point. */
+function numberValueNode(v) {
+  if (typeof v === 'number') return call('ChartValue.constant', [[null, doubleNode(v)]]);
+  if (Array.isArray(v) && v.length > 0 && v.every((x) => typeof x === 'number')) {
+    return call('ChartValue.indexed', [[null, listNode(v.map(doubleNode))]]);
+  }
+  return undefined;
+}
+
+/** The node of a point style name. */
+function pointStyleNode(v, state) {
+  if (typeof v !== 'string' || !(v in POINT_STYLES)) return undefined;
+  state.pointStyles = true;
+  return node(POINT_STYLES[v], true, true);
+}
+
+/** The ChartValue node of a `pointStyle` of a line dataset. */
+function pointStyleValueNode(v, state) {
+  const one = pointStyleNode(v, state);
+  if (one) return call('ChartValue.constant', [[null, one]]);
+  if (Array.isArray(v) && v.length > 0) {
+    const items = v.map((x) => pointStyleNode(x, state));
+    if (items.some((x) => x === undefined)) return undefined;
+    return call('ChartValue.indexed', [[null, listNode(items)]]);
+  }
+  return undefined;
+}
+
+/** The node of an axis class `XAxis()` or `YAxis()`. */
+function axisClassNode(v, state) {
+  if (v !== 'x' && v !== 'y') return undefined;
+  state.scaleAxes = true;
+  return node(`${v.toUpperCase()}Axis()`, true, true);
+}
+
+/** The node of a fill (FillTarget, Chart.js ADR 0140). */
+function fillNode(v, state) {
+  let split = false;
+  const code = fillTargetCode(v, (color) => {
+    split = true;
+    const paint = paintCode(color, state);
+    if (paint === null) keepMap(`the split fill color ${color} is no color`);
+    return paint;
+  });
+  if (code === null) return undefined;
+  state.fillTargets = true;
+  if (split) return node(code, false, false);
+  return node(code, true, code.includes('('));
+}
+
+/** The node of a dash list (row adapt-dash-lists). */
+function dashNode(v) {
+  if (!Array.isArray(v) || !v.every((x) => typeof x === 'number')) return undefined;
+  return listNode(v.map(doubleNode));
+}
+
+/** The node of a radius length (cutout or radius of an arc dataset). */
+function radiusNode(v, state) {
+  if (typeof v === 'number') {
+    state.radiusLengths = true;
+    return node(`PixelRadius(${nativeNumber(v)})`, true, true);
+  }
+  if (typeof v === 'string' && /^-?[0-9.]+%$/.test(v)) {
+    state.radiusLengths = true;
+    return node(`PercentRadius(${nativeNumber(parseFloat(v))})`, true, true);
+  }
+  return undefined;
+}
+
+/** The function types of the keys of a line segment style (nativeSegmentStyle). */
+const SEGMENT_TYPES = {
+  borderColor: 'ChartPaint? Function(ScriptableLineSegmentContext)',
+  backgroundColor: 'ChartPaint? Function(ScriptableLineSegmentContext)',
+  borderWidth: 'double? Function(ScriptableLineSegmentContext)',
+  borderDash: 'List<double>? Function(ScriptableLineSegmentContext)',
+  borderDashOffset: 'double? Function(ScriptableLineSegmentContext)',
+  borderCapStyle: 'StrokeCap? Function(ScriptableLineSegmentContext)',
+  borderJoinStyle: 'StrokeJoin? Function(ScriptableLineSegmentContext)',
+};
+
+/** The node of a line segment style (Chart.js ADR 0142). */
+function segmentNode(v, state) {
+  if (v === null || typeof v !== 'object' || v.constructor !== Object) return undefined;
+  const args = [];
+  for (const k of Object.keys(v)) {
+    const name = functionName(v[k]);
+    if (!SEGMENT_TYPES[k] || name === null) return undefined;
+    if (k === 'borderCapStyle') (state.strokes ??= new Set()).add('StrokeCap');
+    if (k === 'borderJoinStyle') (state.strokes ??= new Set()).add('StrokeJoin');
+    args.push([k, node(functionCode(v[k], state, SEGMENT_TYPES[k]).code, false)]);
+  }
+  return call('LineSegmentStyle', args);
+}
+
+/** The Dart data class and the field writers of each dataset kind. */
+function datasetSpec(kind, state, axes, paths) {
+  const number = (v) => doubleNode(v);
+  const paint = (v) => paintValueNode(v, state);
+  const axisRef = (v) => (typeof v === 'string' && axes.has(v) ? axes.get(v) : undefined);
+  const common = {
+    label: (v) => stringNode(v, state),
+    hidden: boolNode,
+    order: (v) => (Number.isInteger(v) && !Object.is(v, -0) ? node(String(v)) : undefined),
+    clip: (v) => {
+      if (!isClipValue(v)) return undefined;
+      state.clips = true;
+      const code = dartClip(v);
+      return node(code, true, code.includes('('));
+    },
+    backgroundColor: paint,
+    borderColor: paint,
+    borderWidth: number,
+    hoverBackgroundColor: paint,
+    hoverBorderColor: paint,
+    hoverBorderWidth: number,
+  };
+  const cartesian = {
+    xAxisID: (v) => {
+      const a = axisRef(v);
+      return a && ['xAxis', a];
+    },
+    yAxisID: (v) => {
+      const a = axisRef(v);
+      return a && ['yAxis', a];
+    },
+    stack: (v) => stringNode(v, state),
+  };
+  const line = {
+    fill: (v) => fillNode(v, state),
+    tension: number,
+    borderDash: dashNode,
+    borderCapStyle: (v) => (['butt', 'round', 'square'].includes(v) ? strokeNode('StrokeCap', v, state) : undefined),
+    borderJoinStyle: (v) => (['miter', 'round', 'bevel'].includes(v) ? strokeNode('StrokeJoin', v, state) : undefined),
+    spanGaps: boolNode,
+    showLine: boolNode,
+    stepped: (v) => enumNode('SteppedLine', ['before', 'after', 'middle'], v, state, 'steppedLines'),
+    cubicInterpolationMode: (v) => {
+      if (!(v in CUBIC_MODES)) return undefined;
+      state.cubicModes = true;
+      return node(CUBIC_MODES[v], true, true);
+    },
+    segment: (v) => segmentNode(v, state),
+    pointRadius: numberValueNode,
+    pointHoverRadius: numberValueNode,
+    pointStyle: (v) => pointStyleValueNode(v, state),
+    pointBackgroundColor: paint,
+    pointBorderColor: paint,
+    pointBorderWidth: number,
+    pointHoverBackgroundColor: paint,
+    pointHoverBorderColor: paint,
+  };
+  const arc = {
+    offset: number,
+    hoverOffset: number,
+    spacing: number,
+  };
+  const arcMore = {
+    weight: number,
+    circumference: number,
+    rotation: number,
+    cutout: (v) => radiusNode(v, state),
+    radius: (v) => radiusNode(v, state),
+  };
+  const indexAxis = {indexAxis: (v) => axisClassNode(v, state)};
+  switch (kind) {
+    case 'bar':
+      return {
+        cls: 'BarDataset',
+        data: 'cartesian',
+        fields: {
+          ...common,
+          ...cartesian,
+          ...indexAxis,
+          borderRadius: number,
+          barPercentage: number,
+          categoryPercentage: number,
+          barThickness: (v) => {
+            if (v === 'flex') return node('BarThickness.flex');
+            if (typeof v !== 'number') return undefined;
+            state.borderSkips = true;
+            return node(`BarThickness.pixels(${nativeNumber(v)})`, true, true);
+          },
+          maxBarThickness: number,
+          minBarLength: number,
+          grouped: boolNode,
+          borderSkipped: (v) => {
+            if (v === false) return node('BorderSkip.none');
+            if (v === true) return node('BorderSkip.all');
+            return enumNode('BorderSkip', ['start', 'end', 'middle', 'bottom', 'left', 'top', 'right'], v, state);
+          },
+        },
+      };
+    case 'line':
+      return {cls: 'LineDataset', data: 'cartesian', fields: {...common, ...cartesian, ...indexAxis, ...line}};
+    case 'scatter':
+      return {cls: 'ScatterDataset', data: 'cartesian', fields: {...common, ...cartesian, ...line}};
+    case 'bubble':
+      return {
+        cls: 'BubbleDataset',
+        data: 'bubble',
+        fields: {
+          ...common,
+          xAxisID: cartesian.xAxisID,
+          yAxisID: cartesian.yAxisID,
+          radius: number,
+          hoverRadius: number,
+          pointStyle: (v) => pointStyleNode(v, state),
+        },
+      };
+    case 'pie':
+      return {cls: 'PieDataset', data: 'numbers', fields: {...common, ...arc, ...arcMore}};
+    case 'doughnut':
+      return {cls: 'DoughnutDataset', data: 'numbers', fields: {...common, ...arc, ...arcMore}};
+    case 'polarArea':
+      return {cls: 'PolarAreaDataset', data: 'numbers', fields: {...common, ...arc}};
+    case 'radar':
+      return {cls: 'RadarDataset', data: 'numbers', fields: {...common, ...line}};
+    default:
+      return {
+        cls: 'TestDataset',
+        data: 'test',
+        fields: {
+          label: common.label,
+          hidden: boolNode,
+          order: common.order,
+          borderColor: paint,
+          backgroundColor: paint,
+          borderWidth: number,
+        },
+      };
+  }
+}
+
+/** The node of the Flutter stroke enum value [v] of [type]. */
+function strokeNode(type, v, state) {
+  (state.strokes ??= new Set()).add(type);
+  return node(`${type}.${v}`);
+}
+
+/** Whether [v] is a plain object of the numbers [keys] (and nothing else). */
+function numberObject(v, keys, optional = []) {
+  if (v === null || typeof v !== 'object' || v.constructor !== Object) return false;
+  const own = Object.keys(v);
+  return (
+    own.every((k) => keys.includes(k) || optional.includes(k)) &&
+    keys.every((k) => typeof v[k] === 'number') &&
+    optional.every((k) => !(k in v) || v[k] === null || typeof v[k] === 'number')
+  );
+}
+
+/**
+ * The data nodes of the dataset [d] of the form [form]: `[param, node]`, or
+ * undefined for data that go through `extra`. A dataset whose data a step
+ * changes ([changed]: the items of the steps) keeps the form that the items
+ * of the steps fit.
+ */
+function dataNode(form, data, changed) {
+  if (!Array.isArray(data)) return undefined;
+  const numbers = (items) => items.every((x) => x === null || typeof x === 'number');
+  const isPoint = (x) => numberObject(x, ['x'], ['y']) && Object.keys(x).includes('y');
+  if (form === 'cartesian' || form === 'test') {
+    if (numbers(data) && (!changed || numbers(changed))) {
+      const list = listNode(data.map(dataNumber), {mutable: true});
+      return form === 'test' ? ['data', list] : ['data', call('DatasetData.values', [[null, list]])];
+    }
+    if (data.length > 0 && data.every(isPoint) && !changed) {
+      const list = listNode(
+        data.map((p) => node(`DataPoint(${num(p.x)}, ${p.y === null ? 'null' : num(p.y)})`, false, true)),
+        {mutable: true},
+      );
+      return form === 'test' ? ['points', list] : ['data', call('DatasetData.points', [[null, list]])];
+    }
+    return undefined;
+  }
+  if (form === 'numbers') {
+    if (numbers(data) && (!changed || numbers(changed))) return ['data', listNode(data.map(dataNumber), {mutable: true})];
+    return undefined;
+  }
+  if (form === 'bubble') {
+    if (data.length > 0 && data.every((x) => numberObject(x, ['x', 'y', 'r'])) && !changed) {
+      return [
+        'data',
+        listNode(data.map((p) => node(`DataPoint.bubble(${num(p.x)}, ${num(p.y)}, ${num(p.r)})`, false, true)), {mutable: true}),
+      ];
+    }
+    return undefined;
+  }
+  return undefined;
+}
+
+/** The node of one dataset of a chart of the type [chartType]. */
+function datasetNode(ds, i, chartType, state, axes, changed) {
+  const kind = ds.type ?? chartType;
+  const spec = datasetSpec(kind, state, axes);
+  if (spec.cls === 'TestDataset') state.testDatasets = true;
+  const args = spec.cls === 'TestDataset' ? [[null, node(`ChartKind(${dart(kind, state)})`, true, true)]] : [];
+  const rest = {};
+  let data;
+  if ('data' in ds) data = dataNode(spec.data, ds.data, changed);
+  for (const k of Object.keys(ds)) {
+    if (k === 'type') continue;
+    if (k === 'data') {
+      if (data) args.push(data);
+      else rest.data = ds.data;
+      continue;
+    }
+    const field = spec.fields[k];
+    const n = field ? field(ds[k]) : undefined;
+    if (n === undefined) rest[k] = ds[k];
+    else if (Array.isArray(n)) args.push(n);
+    else args.push([k, n]);
+  }
+  // The data of `extra` go to the chart by reference: a new List for each
+  // config, as the Map form.
+  const nodes = {};
+  if (Array.isArray(rest.data)) {
+    nodes.data = listNode(
+      rest.data.map((x) => literalNode(nativeExtra(null, x, state, 'data'), state, 'data')),
+      {type: 'Object?', mutable: true},
+    );
+  }
+  args.push(['extra', extraNode(rest, state, 'datasets', 'data.datasets[]', nodes)]);
+  return call(spec.cls, args);
+}
+
+/** The Dart class of each scale type with a typed axis. */
+const AXIS_CLASSES = {
+  category: 'CategoryAxis',
+  linear: 'LinearAxis',
+  logarithmic: 'LogarithmicAxis',
+  time: 'TimeAxis',
+  timeseries: 'TimeSeriesAxis',
+  radialLinear: 'RadialLinearAxis',
+};
+
+/**
+ * The scale type and the axis of the scale [id] of [config], as
+ * mergeScaleConfig gives them (core.config.js:71-87): the `type` of the
+ * scale options, else the type of the default scale of the chart type.
+ */
+function scaleTypeOf(config, id, conf) {
+  const {Chart} = loaded();
+  const options = config.options ?? {};
+  const datasetDefaults = Chart.defaults.datasets[config.type] ?? {};
+  const datasetOptions = (options.datasets ?? {})[config.type] ?? {};
+  const indexAxis = datasetOptions.indexAxis || options.indexAxis || datasetDefaults.indexAxis || 'x';
+  const fromDatasets = () => {
+    const bound = (config.data?.datasets ?? []).filter((d) => d.xAxisID === id || d.yAxisID === id);
+    if (!bound.length) return {};
+    if (bound[0].xAxisID === id) return {axis: 'x'};
+    return {axis: 'y'};
+  };
+  const fromPosition = (p) => (p === 'top' || p === 'bottom' ? 'x' : p === 'left' || p === 'right' ? 'y' : undefined);
+  let axis;
+  if (id === 'x' || id === 'y' || id === 'r') {
+    axis = id;
+  } else {
+    for (const opts of [conf, fromDatasets(), Chart.defaults.scales[conf.type] ?? {}]) {
+      const first = id.length > 1 && ['x', 'y', 'r'].includes(id[0].toLowerCase()) ? id[0].toLowerCase() : undefined;
+      axis = opts.axis || fromPosition(opts.position) || first;
+      if (axis) break;
+    }
+  }
+  const scales = Chart.overrides[config.type]?.scales ?? {};
+  const defaultId = axis === indexAxis ? '_index_' : '_value_';
+  const type = conf.type ?? scales[axis]?.type ?? scales[defaultId]?.type;
+  return {axis, type};
+}
+
+/** The field writers of a scale of the class [cls]. */
+function axisSpec(cls, state) {
+  const number = (v) => doubleNode(v);
+  const ticks = (v) => {
+    if (v === null || typeof v !== 'object' || v.constructor !== Object) return undefined;
+    return typedObject('AxisTicks', [], v, {
+      display: boolNode,
+      color: (x) => paintNode(x, state),
+      font: (x) => fontNode(x, state),
+      padding: number,
+      stepSize: number,
+      maxRotation: number,
+      autoSkip: boolNode,
+      align: (x) => enumNode('TickAlign', ['start', 'center', 'end', 'inner'], x, state, 'scaleEnums'),
+      crossAlign: (x) => enumNode('TickCrossAlign', ['near', 'center', 'far'], x, state, 'scaleEnums'),
+      source: (x) => enumNode('TickSource', ['auto', 'data', 'labels'], x, state, 'scaleEnums'),
+      callback: (x) => (functionName(x) === null ? undefined : node(functionCode(x, state, 'TickCallback').code, false)),
+    }, state, 'ticks', 'options.scales.<id>.ticks');
+  };
+  const grid = (v) => {
+    if (v === null || typeof v !== 'object' || v.constructor !== Object) return undefined;
+    return typedObject('AxisGrid', [], v, {
+      display: boolNode,
+      color: (x) => paintNode(x, state),
+      lineWidth: number,
+      drawOnChartArea: boolNode,
+      drawTicks: boolNode,
+      offset: boolNode,
+      tickLength: number,
+    }, state, 'grid', 'options.scales.<id>.grid');
+  };
+  const title = (v) => {
+    if (v === null || typeof v !== 'object' || v.constructor !== Object) return undefined;
+    return typedObject('AxisTitle', [], v, {
+      display: boolNode,
+      text: (x) => (typeof x === 'string' || Array.isArray(x) ? literalNode(new DartStringList((Array.isArray(x) ? x : [x]).map(String)), state, 'title') : undefined),
+      color: (x) => paintNode(x, state),
+      font: (x) => fontNode(x, state),
+      align: (x) => enumNode('ChartAlign', ['start', 'center', 'end'], x, state, 'aligns'),
+      padding: (x) => paddingNode(x, state),
+    }, state, 'title', 'options.scales.<id>.title');
+  };
+  const head = {
+    display: scaleDisplayNode,
+    position: (v) => enumNode('ChartPosition', ['top', 'left', 'bottom', 'right', 'center', 'chartArea'], v, state, 'positions'),
+    reverse: boolNode,
+    stacked: (v) => {
+      if (v === true) return node('StackMode.on');
+      if (v === false) return node('StackMode.off');
+      if (v === 'single') return node('StackMode.single');
+      return undefined;
+    },
+    ticks,
+    grid,
+    title,
+  };
+  const border = (radial) => (v) => {
+    if (v === null || typeof v !== 'object' || v.constructor !== Object) return undefined;
+    const code = literalNode(new DartBorder(v, radial), state, 'border');
+    return code;
+  };
+  const bounds = (v) => enumNode('ScaleBounds', ['data', 'ticks'], v, state, 'scaleEnums');
+  const range = {min: number, max: number, suggestedMin: number, suggestedMax: number};
+  switch (cls) {
+    case 'CategoryAxis':
+      return {
+        ...head,
+        labels: (v) => (Array.isArray(v) && v.every((x) => typeof x === 'string') ? listNode(v.map((x) => node(dart(x, state))), {mutable: true}) : undefined),
+        min: (v) => stringNode(v, state),
+        max: (v) => stringNode(v, state),
+        bounds,
+        border: border(false),
+      };
+    case 'LinearAxis':
+      return {...head, ...range, beginAtZero: boolNode, bounds, border: border(false)};
+    case 'LogarithmicAxis':
+      return {...head, ...range, bounds, border: border(false)};
+    case 'TimeAxis':
+    case 'TimeSeriesAxis':
+      return {...head, offsetAfterAutoskip: boolNode, bounds, border: border(false)};
+    case 'RadialLinearAxis':
+      return {...head, ...range, beginAtZero: boolNode, startAngle: number, border: border(true)};
+    default:
+      throw new Error(`No axis class ${cls}`);
+  }
+}
+
+/** The node of the scale [id] with the options [conf] of the class [cls] on [axis]. */
+function axisNode(cls, axis, conf, state, id) {
+  const spec = axisSpec(cls, state);
+  const path = 'options.scales.<id>';
+  const positional = cls === 'RadialLinearAxis' ? [] : [node(`.${axis}`)];
+  const args = positional.map((n) => [null, n]);
+  const rest = {};
+  for (const k of Object.keys(conf)) {
+    if (k === 'type') continue;
+    if (k === 'axis' && conf.axis === axis) continue;
+    if (k === 'time' && (cls === 'TimeAxis' || cls === 'TimeSeriesAxis') && conf.time && conf.time.constructor === Object) {
+      const timeRest = {};
+      for (const t of Object.keys(conf.time)) {
+        const v = conf.time[t];
+        if (t === 'unit' && TIME_UNIT_NAMES.has(v)) {
+          state.timeUnits = true;
+          args.push(['unit', node(`TimeUnit.${v}`)]);
+        } else if (t === 'tooltipFormat' && typeof v === 'string') {
+          args.push(['tooltipFormat', node(dart(v, state))]);
+        } else if (t === 'displayFormats' && v && v.constructor === Object && Object.values(v).every((x) => typeof x === 'string')) {
+          args.push(['displayFormats', call('TimeDisplayFormats', Object.keys(v).map((u) => [u, node(dart(v[u], state))]))]);
+        } else {
+          timeRest[t] = v;
+        }
+      }
+      for (const t of Object.keys(timeRest)) noteExtra(`${path}.time.${t}`);
+      if (Object.keys(timeRest).length) rest.time = timeRest;
+      continue;
+    }
+    if (cls === 'RadialLinearAxis' && (k === 'pointLabels' || k === 'angleLines') && conf[k] && conf[k].constructor === Object) {
+      const sub = conf[k];
+      const subRest = {};
+      const prefix = k === 'pointLabels' ? 'pointLabels' : 'angleLines';
+      const subSpec = k === 'pointLabels'
+        ? {
+            display: scaleDisplayNode,
+            color: (x) => paintNode(x, state),
+            font: (x) => fontNode(x, state),
+            padding: doubleNode,
+            callback: (x) => (functionName(x) === null ? undefined : node(functionCode(x, state, 'PointLabelCallback').code, false)),
+          }
+        : {display: boolNode, color: (x) => paintNode(x, state), lineWidth: doubleNode};
+      for (const s of Object.keys(sub)) {
+        const n = subSpec[s] ? subSpec[s](sub[s]) : undefined;
+        if (n === undefined) subRest[s] = sub[s];
+        else args.push([`${prefix}${s[0].toUpperCase()}${s.slice(1)}`, n]);
+      }
+      for (const t of Object.keys(subRest)) noteExtra(`${path}.${k}.${t}`);
+      if (Object.keys(subRest).length) rest[k] = subRest;
+      continue;
+    }
+    const n = spec[k] ? spec[k](conf[k]) : undefined;
+    if (n === undefined) rest[k] = conf[k];
+    else args.push([k, n]);
+  }
+  args.push(['extra', extraNode(rest, state, id, path)]);
+  return call(cls, args);
+}
+
+/** The Dart class of the plugin of each id of src/plugins/index.js. */
+const PLUGIN_CLASSES = {
+  colors: 'ColorsPlugin',
+  decimation: 'DecimationPlugin',
+  filler: 'FillerPlugin',
+  legend: 'LegendPlugin',
+  subtitle: 'SubtitlePlugin',
+  title: 'TitlePlugin',
+  tooltip: 'TooltipPlugin',
+};
+
+/** The node of the options of the config [o] (the keys of `options`). */
+function optionsArgs(config, o, state, axes) {
+  const args = [];
+  const rest = {};
+  const pluginOptions = [];
+  const disabled = [];
+  const pluginRest = {};
+  for (const k of Object.keys(o)) {
+    const v = o[k];
+    let n;
+    switch (k) {
+      case 'scales':
+        continue;
+      case 'indexAxis':
+        n = axisClassNode(v, state);
+        break;
+      case 'parsing':
+      case 'responsive':
+      case 'maintainAspectRatio':
+        n = boolNode(v);
+        break;
+      case 'aspectRatio':
+      case 'devicePixelRatio':
+        n = doubleNode(v);
+        break;
+      case 'layout':
+        if (v && v.constructor === Object && 'padding' in v) {
+          const padding = paddingNode(v.padding, state);
+          if (padding) {
+            args.push(['padding', padding]);
+            const {padding: _padding, ...layoutRest} = v;
+            if (Object.keys(layoutRest).length) rest.layout = layoutRest;
+            continue;
+          }
+        }
+        break;
+      case 'interaction':
+        if (v && v.constructor === Object) {
+          n = typedObject('ChartInteraction', [], v, {
+            mode: (x) => (typeof x === 'string' ? literalNode(new DartMode(x), state, 'interaction') : undefined),
+            intersect: boolNode,
+            axis: (x) => (typeof x === 'string' ? literalNode(new DartAxis(x), state, 'interaction') : undefined),
+            includeInvisible: boolNode,
+          }, state, 'interaction', 'options.interaction');
+        }
+        break;
+      case 'animation':
+        if (v === false) {
+          n = node('ChartAnimation.none');
+        } else if (v && v.constructor === Object) {
+          const ms = (x) => (Number.isInteger(x) && x >= 0 ? node(`Duration(milliseconds: ${x})`, true, true) : undefined);
+          n = typedObject('ChartAnimation', [], v, {
+            duration: ms,
+            delay: ms,
+            loop: boolNode,
+            animateScale: boolNode,
+            animateRotate: boolNode,
+          }, state, 'animation', 'options.animation');
+        }
+        break;
+      case 'elements':
+        if (v && v.constructor === Object) n = elementsNode(v, state);
+        break;
+      case 'events':
+        if (Array.isArray(v) && v.every((x) => typeof x === 'string')) {
+          n = listNode(v.map((x) => node(dart(x, state))));
+        }
+        break;
+      case 'plugins':
+        if (v && v.constructor === Object) {
+          for (const id of Object.keys(v)) {
+            const x = v[id];
+            if (x === false && id in PLUGIN_CLASSES) {
+              disabled.push(node(`PluginOff<${PLUGIN_CLASSES[id]}>()`, true, true));
+              continue;
+            }
+            const wrapped = keyedValue(id, x, 'plugins');
+            if (wrapped !== x) {
+              state.typedConfigs = true;
+              pluginOptions.push(literalNode(wrapped, state, id));
+              continue;
+            }
+            pluginRest[id] = x;
+          }
+          if (Object.keys(pluginRest).length) rest.plugins = pluginRest;
+          continue;
+        }
+        break;
+      default:
+        break;
+    }
+    if (n === undefined) rest[k] = v;
+    else args.push([k, n]);
+  }
+  if (pluginOptions.length) args.push(['pluginOptions', listNode(pluginOptions)]);
+  if (disabled.length) args.push(['disabledPlugins', listNode(disabled)]);
+  return {args, rest};
+}
+
+/** The node of `options.elements`. */
+function elementsNode(v, state) {
+  const paint = (x) => paintNode(x, state);
+  const number = doubleNode;
+  const specs = {
+    point: ['PointElementStyle', {
+      radius: number,
+      pointStyle: (x) => pointStyleNode(x, state),
+      backgroundColor: paint,
+      borderColor: paint,
+      borderWidth: number,
+      hitRadius: number,
+      hoverRadius: number,
+    }],
+    line: ['LineElementStyle', {
+      tension: number,
+      backgroundColor: paint,
+      borderColor: paint,
+      borderWidth: number,
+      borderDash: dashNode,
+      fill: (x) => fillNode(x, state),
+      stepped: (x) => enumNode('SteppedLine', ['before', 'after', 'middle'], x, state, 'steppedLines'),
+    }],
+    bar: ['BarElementStyle', {
+      backgroundColor: paint,
+      borderColor: paint,
+      borderWidth: number,
+      borderRadius: number,
+    }],
+    arc: ['ArcElementStyle', {
+      backgroundColor: paint,
+      borderColor: paint,
+      borderWidth: number,
+      offset: number,
+      spacing: number,
+      borderAlign: (x) => enumNode('ArcBorderAlign', ['center', 'inner'], x, state, 'arcEnums'),
+      spacingMode: (x) => enumNode('ArcSpacingMode', ['angular', 'proportional', 'parallel'], x, state, 'arcEnums'),
+    }],
+  };
+  const args = [];
+  const rest = {};
+  for (const k of Object.keys(v)) {
+    const spec = specs[k];
+    if (spec && v[k] && v[k].constructor === Object) {
+      args.push([k, typedObject(spec[0], [], v[k], spec[1], state, k, `options.elements.${k}`)]);
+    } else {
+      rest[k] = v[k];
+    }
+  }
+  args.push(['extra', extraNode(rest, state, 'elements', 'options.elements')]);
+  return call('ChartElements', args);
+}
+
+/** The items of the steps of [expected] that a `push` or a `splice` puts into each dataset. */
+function changedData(expected) {
+  const changed = new Map();
+  for (const step of expected?.steps ?? []) {
+    const [action, d, ...args] = step.do ?? [];
+    let items = null;
+    if (action === 'push') items = args;
+    if (action === 'splice') items = args.slice(2);
+    if (items) changed.set(d, [...(changed.get(d) ?? []), ...items]);
+  }
+  return changed;
+}
+
+/**
+ * The Dart code of the config of the case [c] as a typed config (Chart.js ADR
+ * 0052): a function `() => ChartConfig(...)` that makes new data Lists at
+ * each call, as `copyReference` makes new Maps. Dart `null` for a config
+ * that keeps its Map form; the reason goes into the report.
+ */
+function typedConfigCode(c, state, file) {
+  const config = c.config;
+  caseExtras = new Set();
+  const before = {...state, strokes: state.strokes && new Set(state.strokes)};
+  const beforeBorders = borderObjects;
+  borderObjects = true;
+  try {
+    const code = typedConfig(config, state, c);
+    for (const path of caseExtras) typedReport.extra.set(path, (typedReport.extra.get(path) ?? 0) + 1);
+    return code;
+  } catch (e) {
+    if (!(e instanceof KeepMap)) throw e;
+    for (const k of Object.keys(state)) delete state[k];
+    Object.assign(state, before);
+    typedReport.maps.push({file, name: c.name, reason: e.message});
+    return null;
+  } finally {
+    caseExtras = null;
+    borderObjects = beforeBorders;
+  }
+}
+
+/** The typed config code of [config] (typedConfigCode). */
+function typedConfig(config, state, c) {
+  if (config === null || typeof config !== 'object') keepMap('the config is not an object');
+  for (const k of Object.keys(config)) {
+    if (!['type', 'data', 'options', 'plugins'].includes(k)) keepMap(`the config key ${k} has no typed form`);
+  }
+  if (typeof config.type !== 'string') keepMap('the config has no chart type: a typed config takes it from its first dataset');
+  const data = config.data ?? {};
+  for (const k of Object.keys(data)) {
+    if (k !== 'labels' && k !== 'datasets') keepMap(`data.${k} has no typed form`);
+  }
+  const datasets = data.datasets ?? [];
+  if (!Array.isArray(datasets) || datasets.length === 0) keepMap('a typed config needs one dataset at least');
+  const first = datasets[0]?.type ?? config.type;
+  if (first !== config.type) keepMap(`the chart type ${config.type} differs from the type ${first} of the first dataset`);
+  const args = [];
+  if ('labels' in data) {
+    const labels = data.labels;
+    if (!Array.isArray(labels)) keepMap('data.labels is not an array');
+    if (labels.some((x) => x === null || x === undefined)) keepMap('data.labels has an item null or undefined: the typed labels are a List<Object>');
+    args.push([
+      'labels',
+      listNode(
+        labels.map((x) => (typeof x === 'number' ? node(num(x)) : Array.isArray(x) ? literalNode(x, state, 'labels') : node(dart(x, state)))),
+        {mutable: true},
+      ),
+    ]);
+  }
+  // The typed axes: the scales of `options.scales` in their order while the
+  // id of each is the id of the typed lowering (scaleIdsOf of lower.dart).
+  const options = config.options ?? {};
+  const axes = new Map();
+  const axisNodes = [];
+  const scaleRest = {};
+  if (options.scales && options.scales.constructor === Object) {
+    const counts = {};
+    const codes = new Set();
+    let typed = true;
+    for (const id of Object.keys(options.scales)) {
+      const conf = options.scales[id];
+      let n;
+      if (typed && conf && conf.constructor === Object) {
+        const {axis, type} = scaleTypeOf(config, id, conf);
+        const cls = AXIS_CLASSES[type];
+        const letter = axis;
+        const count = counts[letter] ?? 0;
+        const expectedId = count === 0 ? letter : `${letter}${count}`;
+        if (cls && ['x', 'y', 'r'].includes(axis) && (cls === 'RadialLinearAxis') === (axis === 'r') && expectedId === id) {
+          n = axisNode(cls, axis, conf, state, id);
+          if (codes.has(n.code)) n = undefined;
+          else {
+            codes.add(n.code);
+            counts[letter] = count + 1;
+          }
+        }
+      }
+      if (n === undefined) {
+        typed = false;
+        scaleRest[id] = conf;
+      } else {
+        axes.set(id, n);
+        axisNodes.push(n);
+      }
+    }
+  }
+  const changed = changedData(c.expected);
+  args.push([
+    'datasets',
+    listNode(datasets.map((ds, i) => datasetNode(ds, i, config.type, state, axes, changed.get(i)))),
+  ]);
+  if (axisNodes.length || ('scales' in options && Object.keys(scaleRest).length === 0)) {
+    args.push(['scales', listNode(axisNodes)]);
+  }
+  const {args: optionArgs, rest} = optionsArgs(config, options, state, axes);
+  args.push(...optionArgs);
+  if (Object.keys(scaleRest).length) rest.scales = scaleRest;
+  if (config.plugins !== undefined) {
+    if (!Array.isArray(config.plugins)) keepMap('the config plugins are not an array');
+    state.nativePlugins = true;
+    const plugins = config.plugins.map((p) => {
+      const entries = Object.keys(p).map((k) => `${dart(k, state)}: ${typeof p[k] === 'function' ? functionCode(p[k], state).code : dart(p[k], state)}`);
+      return node(`nativePlugin(<String, Object?>{${entries.join(', ')}})`, false, false);
+    });
+    args.push(['plugins', listNode(plugins)]);
+  }
+  args.push(['extra', extraNode(rest, state, 'options', 'options')]);
+  state.typedConfigs = true;
+  state.closures = true;
+  const root = call('ChartConfig', args);
+  return `() => ${inner(root, false)}`;
 }

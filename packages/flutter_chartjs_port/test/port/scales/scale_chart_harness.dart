@@ -782,6 +782,36 @@ Object? copyReference(
   _ => value,
 };
 
+/// The chart of the config [config] of a reference case with the
+/// `acquireChart` options [options] (Chart.js ADR 0052, section 7).
+///
+/// A typed config is a function that gives a new `ChartConfig` at each
+/// call: the chart takes the root scope of its lowering
+/// (`acquireChartRoot`). A config with no typed form is the Map of the
+/// generator: the chart takes its [copyReference] with [functions] and
+/// [nativeFixtureColors]. [theme] goes under `$theme` of the root.
+/// [prepareMap] changes the Map of a config with no typed form before the
+/// chart.
+Chart acquireReferenceChart(
+  Object config,
+  Map<String, Object?> options, {
+  Map<String, Object?> functions = const {},
+  ChartOptionsScope? theme,
+  void Function(AnyObject config)? prepareMap,
+}) {
+  final chartOptions = copyReference(options)! as AnyObject;
+  if (config case final ChartConfig Function() make) {
+    final root = ChartConfigLowering(make()).lower();
+    if (theme != null) root.dollarTheme = theme;
+    return acquireChartRoot(root, chartOptions);
+  }
+  final map = copyReference(config, functions)! as AnyObject;
+  if (theme != null) map[themeConfigKey] = theme;
+  nativeFixtureColors(map);
+  prepareMap?.call(map);
+  return acquireChart(map, chartOptions);
+}
+
 /// A plain copy of [value] for an `equals` compare with a Map literal: a
 /// typed object with a face (Chart.js ADR 0054 §5) or a Map becomes a Map
 /// with the keys of `jsObjectKeys` and the plain copies of the `jsGet`
@@ -906,7 +936,7 @@ void expectScaleChart(
 /// generated file has this record type.
 typedef ScaleChartCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -938,9 +968,9 @@ void testReferenceOrigin({
   });
 }
 
-/// A `testWidgets` case for each of [cases]: the chart of `acquireChart`
-/// with the config and the options of the case ([copyReference] with
-/// [functions]), then [expectScaleChart] with [extra].
+/// A `testWidgets` case for each of [cases]: the chart of
+/// [acquireReferenceChart] with the config and the options of the case and
+/// [functions], then [expectScaleChart] with [extra].
 void testScaleChartCases(
   List<ScaleChartCase> cases, {
   Map<String, Object?> functions = const {},
@@ -948,11 +978,10 @@ void testScaleChartCases(
 }) {
   for (final c in cases) {
     testWidgets(c.name, (tester) async {
-      final config = copyReference(c.config, functions)! as AnyObject;
-      nativeFixtureColors(config);
-      final chart = acquireChart(
-        config,
-        copyReference(c.options)! as AnyObject,
+      final chart = acquireReferenceChart(
+        c.config,
+        c.options,
+        functions: functions,
       );
       expectScaleChart(chart, c.expected, extra: extra);
     });

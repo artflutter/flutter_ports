@@ -406,7 +406,7 @@ void main() {
 
   group('radial linear scale charts against upstream', () {
     testScaleChartCases(
-      _nativePointLabels(scaleRadialLinearReference)
+      _nativePointLabels(scaleRadialLinearReference(_functions))
           .where((c) => !_typedNumberCases.contains(c.name))
           .toList(),
       functions: _functions,

@@ -6,9 +6,15 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 36 cases, 118 widths.
 
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'dart:ui' show FontStyle;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+
+import '../../support/test_dataset.dart';
 
 /// The Node.js version that generated the data.
 const String scaleTimeseriesReferenceNode = 'v24.22.1';
@@ -29,15 +35,17 @@ const String scaleTimeseriesReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ScaleTimeseriesReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -52,30 +60,30 @@ typedef ScaleTimeseriesReferenceWidth = ({
 });
 
 /// The cases.
-const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
+List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'irregular data',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -923,28 +931,26 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'ISO date labels and primitive data',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          '2021-01-04',
-          '2021-01-05',
-          '2021-01-06',
-          '2021-01-13',
-          '2021-01-14',
-          '2021-02-13',
-          '2021-02-14',
-          '2021-04-14',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 4.0, 8.0, 1.0, 5.0, 9.0, 2.0, 6.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        '2021-01-04',
+        '2021-01-05',
+        '2021-01-06',
+        '2021-01-13',
+        '2021-01-14',
+        '2021-02-13',
+        '2021-02-14',
+        '2021-04-14',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          data: [0.0, 4.0, 8.0, 1.0, 5.0, 9.0, 2.0, 6.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -1806,29 +1812,27 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'regular data',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1609977600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610064000000.0, 'y': 5.0},
-              <String, Object?>{'x': 1610150400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1610236800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1610323200000.0, 'y': 6.0},
-              <String, Object?>{'x': 1610409600000.0, 'y': 10.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 3.0},
-            ],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1609977600000.0, 1.0),
+            DataPoint(1610064000000.0, 5.0),
+            DataPoint(1610150400000.0, 9.0),
+            DataPoint(1610236800000.0, 2.0),
+            DataPoint(1610323200000.0, 6.0),
+            DataPoint(1610409600000.0, 10.0),
+            DataPoint(1610496000000.0, 3.0),
+          ],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 490.9853515625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -2786,32 +2790,28 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'offset',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'offset': true},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(.x, extra: <String, Object?>{'offset': true}),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -3659,32 +3659,26 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'reverse',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'reverse': true},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [TimeSeriesAxis(.x, reverse: true)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.677734375, 32.0, 494.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -4532,34 +4526,28 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'ticks source data',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': TickSource.data},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.data)),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -5407,35 +5395,29 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'ticks source labels',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['2021-01-05', '2021-01-20', '2021-03-01'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': TickSource.labels},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['2021-01-05', '2021-01-20', '2021-03-01'],
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -6125,32 +6107,26 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'bounds ticks',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609736400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609822800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609909200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610514000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610600400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613192400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613278800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618376400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'bounds': ScaleBounds.ticks},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609736400000.0, 0.0),
+            DataPoint(1609822800000.0, 4.0),
+            DataPoint(1609909200000.0, 8.0),
+            DataPoint(1610514000000.0, 1.0),
+            DataPoint(1610600400000.0, 5.0),
+            DataPoint(1613192400000.0, 9.0),
+            DataPoint(1613278800000.0, 2.0),
+            DataPoint(1618376400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [TimeSeriesAxis(.x, bounds: ScaleBounds.ticks)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -6998,32 +6974,31 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'min and max inside the data',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 1609891200000.0, 'max': '2021-02-14'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(
+          .x,
+          extra: <String, Object?>{'min': 1609891200000.0, 'max': '2021-02-14'},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 490.3203125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -7721,32 +7696,31 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'min and max outside the data',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': '2020-12-01', 'max': 1620086400000.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(
+          .x,
+          extra: <String, Object?>{'min': '2020-12-01', 'max': 1620086400000.0},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 492.6611328125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -8662,20 +8636,16 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'one data point',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609743600000.0, 'y': 0.0},
-            ],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [DataPoint(1609743600000.0, 0.0)],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[44.6982421875, 32.0, 467.3017578125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -9309,16 +9279,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'no data',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [TestDataset(const ChartKind('timeseriesTest'), data: [])],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 493.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -9906,34 +9871,33 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'two datasets',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1610150400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 4.0},
-              <String, Object?>{'x': 1615766400000.0, 'y': 8.0},
-            ],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1610150400000.0, 0.0),
+            DataPoint(1610496000000.0, 4.0),
+            DataPoint(1615766400000.0, 8.0),
+          ],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -10898,35 +10862,34 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'a hidden dataset',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1610150400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1615766400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1626998400000.0, 'y': 8.0},
-            ],
-            'hidden': true,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1610150400000.0, 0.0),
+            DataPoint(1615766400000.0, 4.0),
+            DataPoint(1626998400000.0, 8.0),
+          ],
+          hidden: true,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -11806,34 +11769,26 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'the fixed unit day',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'time': <String, Object?>{'unit': TimeUnit.day},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [TimeSeriesAxis(.x, unit: TimeUnit.day)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -12681,81 +12636,79 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'a narrow canvas with many points',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1610668800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1610236800000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610755200000.0, 'y': 1.0},
-              <String, Object?>{'x': 1611446400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1611532800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1611792000000.0, 'y': 2.0},
-              <String, Object?>{'x': 1612224000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1612051200000.0, 'y': 10.0},
-              <String, Object?>{'x': 1612051200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1613001600000.0, 'y': 7.0},
-              <String, Object?>{'x': 1612569600000.0, 'y': 0.0},
-              <String, Object?>{'x': 1613088000000.0, 'y': 4.0},
-              <String, Object?>{'x': 1613779200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1613865600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1614124800000.0, 'y': 5.0},
-              <String, Object?>{'x': 1614556800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1614384000000.0, 'y': 2.0},
-              <String, Object?>{'x': 1614384000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1615334400000.0, 'y': 10.0},
-              <String, Object?>{'x': 1614902400000.0, 'y': 3.0},
-              <String, Object?>{'x': 1615420800000.0, 'y': 7.0},
-              <String, Object?>{'x': 1616112000000.0, 'y': 0.0},
-              <String, Object?>{'x': 1616198400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1616457600000.0, 'y': 8.0},
-              <String, Object?>{'x': 1616889600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1616716800000.0, 'y': 5.0},
-              <String, Object?>{'x': 1616716800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1617667200000.0, 'y': 2.0},
-              <String, Object?>{'x': 1617235200000.0, 'y': 6.0},
-              <String, Object?>{'x': 1617753600000.0, 'y': 10.0},
-              <String, Object?>{'x': 1618444800000.0, 'y': 3.0},
-              <String, Object?>{'x': 1618531200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1618790400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1619222400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1619049600000.0, 'y': 8.0},
-              <String, Object?>{'x': 1619049600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1620000000000.0, 'y': 5.0},
-              <String, Object?>{'x': 1619568000000.0, 'y': 9.0},
-              <String, Object?>{'x': 1620086400000.0, 'y': 2.0},
-              <String, Object?>{'x': 1620777600000.0, 'y': 6.0},
-              <String, Object?>{'x': 1620864000000.0, 'y': 10.0},
-              <String, Object?>{'x': 1621123200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1621555200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1621382400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1621382400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1622332800000.0, 'y': 8.0},
-              <String, Object?>{'x': 1621900800000.0, 'y': 1.0},
-              <String, Object?>{'x': 1622419200000.0, 'y': 5.0},
-              <String, Object?>{'x': 1623110400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1623196800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1623456000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1623888000000.0, 'y': 10.0},
-              <String, Object?>{'x': 1623715200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1623715200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1624665600000.0, 'y': 0.0},
-              <String, Object?>{'x': 1624233600000.0, 'y': 4.0},
-              <String, Object?>{'x': 1624752000000.0, 'y': 8.0},
-              <String, Object?>{'x': 1625443200000.0, 'y': 1.0},
-              <String, Object?>{'x': 1625529600000.0, 'y': 5.0},
-            ],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1610668800000.0, 4.0),
+            DataPoint(1610236800000.0, 8.0),
+            DataPoint(1610755200000.0, 1.0),
+            DataPoint(1611446400000.0, 5.0),
+            DataPoint(1611532800000.0, 9.0),
+            DataPoint(1611792000000.0, 2.0),
+            DataPoint(1612224000000.0, 6.0),
+            DataPoint(1612051200000.0, 10.0),
+            DataPoint(1612051200000.0, 3.0),
+            DataPoint(1613001600000.0, 7.0),
+            DataPoint(1612569600000.0, 0.0),
+            DataPoint(1613088000000.0, 4.0),
+            DataPoint(1613779200000.0, 8.0),
+            DataPoint(1613865600000.0, 1.0),
+            DataPoint(1614124800000.0, 5.0),
+            DataPoint(1614556800000.0, 9.0),
+            DataPoint(1614384000000.0, 2.0),
+            DataPoint(1614384000000.0, 6.0),
+            DataPoint(1615334400000.0, 10.0),
+            DataPoint(1614902400000.0, 3.0),
+            DataPoint(1615420800000.0, 7.0),
+            DataPoint(1616112000000.0, 0.0),
+            DataPoint(1616198400000.0, 4.0),
+            DataPoint(1616457600000.0, 8.0),
+            DataPoint(1616889600000.0, 1.0),
+            DataPoint(1616716800000.0, 5.0),
+            DataPoint(1616716800000.0, 9.0),
+            DataPoint(1617667200000.0, 2.0),
+            DataPoint(1617235200000.0, 6.0),
+            DataPoint(1617753600000.0, 10.0),
+            DataPoint(1618444800000.0, 3.0),
+            DataPoint(1618531200000.0, 7.0),
+            DataPoint(1618790400000.0, 0.0),
+            DataPoint(1619222400000.0, 4.0),
+            DataPoint(1619049600000.0, 8.0),
+            DataPoint(1619049600000.0, 1.0),
+            DataPoint(1620000000000.0, 5.0),
+            DataPoint(1619568000000.0, 9.0),
+            DataPoint(1620086400000.0, 2.0),
+            DataPoint(1620777600000.0, 6.0),
+            DataPoint(1620864000000.0, 10.0),
+            DataPoint(1621123200000.0, 3.0),
+            DataPoint(1621555200000.0, 7.0),
+            DataPoint(1621382400000.0, 0.0),
+            DataPoint(1621382400000.0, 4.0),
+            DataPoint(1622332800000.0, 8.0),
+            DataPoint(1621900800000.0, 1.0),
+            DataPoint(1622419200000.0, 5.0),
+            DataPoint(1623110400000.0, 9.0),
+            DataPoint(1623196800000.0, 2.0),
+            DataPoint(1623456000000.0, 6.0),
+            DataPoint(1623888000000.0, 10.0),
+            DataPoint(1623715200000.0, 3.0),
+            DataPoint(1623715200000.0, 7.0),
+            DataPoint(1624665600000.0, 0.0),
+            DataPoint(1624233600000.0, 4.0),
+            DataPoint(1624752000000.0, 8.0),
+            DataPoint(1625443200000.0, 1.0),
+            DataPoint(1625529600000.0, 5.0),
+          ],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 200.0, 'height': 240.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         34.73889367282305,
         32.0,
@@ -14104,28 +14057,26 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'a vertical axis',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{'indexAxis': YAxis()},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         104.0703125,
         32.0,
@@ -15007,88 +14958,87 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'major ticks',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1610668800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1610236800000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610755200000.0, 'y': 1.0},
-              <String, Object?>{'x': 1611446400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1611532800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1611792000000.0, 'y': 2.0},
-              <String, Object?>{'x': 1612224000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1612051200000.0, 'y': 10.0},
-              <String, Object?>{'x': 1612051200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1613001600000.0, 'y': 7.0},
-              <String, Object?>{'x': 1612569600000.0, 'y': 0.0},
-              <String, Object?>{'x': 1613088000000.0, 'y': 4.0},
-              <String, Object?>{'x': 1613779200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1613865600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1614124800000.0, 'y': 5.0},
-              <String, Object?>{'x': 1614556800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1614384000000.0, 'y': 2.0},
-              <String, Object?>{'x': 1614384000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1615334400000.0, 'y': 10.0},
-              <String, Object?>{'x': 1614902400000.0, 'y': 3.0},
-              <String, Object?>{'x': 1615420800000.0, 'y': 7.0},
-              <String, Object?>{'x': 1616112000000.0, 'y': 0.0},
-              <String, Object?>{'x': 1616198400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1616457600000.0, 'y': 8.0},
-              <String, Object?>{'x': 1616889600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1616716800000.0, 'y': 5.0},
-              <String, Object?>{'x': 1616716800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1617667200000.0, 'y': 2.0},
-              <String, Object?>{'x': 1617235200000.0, 'y': 6.0},
-              <String, Object?>{'x': 1617753600000.0, 'y': 10.0},
-              <String, Object?>{'x': 1618444800000.0, 'y': 3.0},
-              <String, Object?>{'x': 1618531200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1618790400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1619222400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1619049600000.0, 'y': 8.0},
-              <String, Object?>{'x': 1619049600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1620000000000.0, 'y': 5.0},
-              <String, Object?>{'x': 1619568000000.0, 'y': 9.0},
-              <String, Object?>{'x': 1620086400000.0, 'y': 2.0},
-              <String, Object?>{'x': 1620777600000.0, 'y': 6.0},
-              <String, Object?>{'x': 1620864000000.0, 'y': 10.0},
-              <String, Object?>{'x': 1621123200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1621555200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1621382400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1621382400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1622332800000.0, 'y': 8.0},
-              <String, Object?>{'x': 1621900800000.0, 'y': 1.0},
-              <String, Object?>{'x': 1622419200000.0, 'y': 5.0},
-              <String, Object?>{'x': 1623110400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1623196800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1623456000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1623888000000.0, 'y': 10.0},
-              <String, Object?>{'x': 1623715200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1623715200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1624665600000.0, 'y': 0.0},
-              <String, Object?>{'x': 1624233600000.0, 'y': 4.0},
-              <String, Object?>{'x': 1624752000000.0, 'y': 8.0},
-              <String, Object?>{'x': 1625443200000.0, 'y': 1.0},
-              <String, Object?>{'x': 1625529600000.0, 'y': 5.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1610668800000.0, 4.0),
+            DataPoint(1610236800000.0, 8.0),
+            DataPoint(1610755200000.0, 1.0),
+            DataPoint(1611446400000.0, 5.0),
+            DataPoint(1611532800000.0, 9.0),
+            DataPoint(1611792000000.0, 2.0),
+            DataPoint(1612224000000.0, 6.0),
+            DataPoint(1612051200000.0, 10.0),
+            DataPoint(1612051200000.0, 3.0),
+            DataPoint(1613001600000.0, 7.0),
+            DataPoint(1612569600000.0, 0.0),
+            DataPoint(1613088000000.0, 4.0),
+            DataPoint(1613779200000.0, 8.0),
+            DataPoint(1613865600000.0, 1.0),
+            DataPoint(1614124800000.0, 5.0),
+            DataPoint(1614556800000.0, 9.0),
+            DataPoint(1614384000000.0, 2.0),
+            DataPoint(1614384000000.0, 6.0),
+            DataPoint(1615334400000.0, 10.0),
+            DataPoint(1614902400000.0, 3.0),
+            DataPoint(1615420800000.0, 7.0),
+            DataPoint(1616112000000.0, 0.0),
+            DataPoint(1616198400000.0, 4.0),
+            DataPoint(1616457600000.0, 8.0),
+            DataPoint(1616889600000.0, 1.0),
+            DataPoint(1616716800000.0, 5.0),
+            DataPoint(1616716800000.0, 9.0),
+            DataPoint(1617667200000.0, 2.0),
+            DataPoint(1617235200000.0, 6.0),
+            DataPoint(1617753600000.0, 10.0),
+            DataPoint(1618444800000.0, 3.0),
+            DataPoint(1618531200000.0, 7.0),
+            DataPoint(1618790400000.0, 0.0),
+            DataPoint(1619222400000.0, 4.0),
+            DataPoint(1619049600000.0, 8.0),
+            DataPoint(1619049600000.0, 1.0),
+            DataPoint(1620000000000.0, 5.0),
+            DataPoint(1619568000000.0, 9.0),
+            DataPoint(1620086400000.0, 2.0),
+            DataPoint(1620777600000.0, 6.0),
+            DataPoint(1620864000000.0, 10.0),
+            DataPoint(1621123200000.0, 3.0),
+            DataPoint(1621555200000.0, 7.0),
+            DataPoint(1621382400000.0, 0.0),
+            DataPoint(1621382400000.0, 4.0),
+            DataPoint(1622332800000.0, 8.0),
+            DataPoint(1621900800000.0, 1.0),
+            DataPoint(1622419200000.0, 5.0),
+            DataPoint(1623110400000.0, 9.0),
+            DataPoint(1623196800000.0, 2.0),
+            DataPoint(1623456000000.0, 6.0),
+            DataPoint(1623888000000.0, 10.0),
+            DataPoint(1623715200000.0, 3.0),
+            DataPoint(1623715200000.0, 7.0),
+            DataPoint(1624665600000.0, 0.0),
+            DataPoint(1624233600000.0, 4.0),
+            DataPoint(1624752000000.0, 8.0),
+            DataPoint(1625443200000.0, 1.0),
+            DataPoint(1625529600000.0, 5.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(
+          .x,
+          ticks: AxisTicks(
+            extra: <String, Object?>{
               'major': <String, Object?>{'enabled': true},
             },
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+          ),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         34.73889367282305,
         32.0,
@@ -16892,84 +16842,84 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'offset and offsetAfterAutoskip',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1610668800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1610236800000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610755200000.0, 'y': 1.0},
-              <String, Object?>{'x': 1611446400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1611532800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1611792000000.0, 'y': 2.0},
-              <String, Object?>{'x': 1612224000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1612051200000.0, 'y': 10.0},
-              <String, Object?>{'x': 1612051200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1613001600000.0, 'y': 7.0},
-              <String, Object?>{'x': 1612569600000.0, 'y': 0.0},
-              <String, Object?>{'x': 1613088000000.0, 'y': 4.0},
-              <String, Object?>{'x': 1613779200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1613865600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1614124800000.0, 'y': 5.0},
-              <String, Object?>{'x': 1614556800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1614384000000.0, 'y': 2.0},
-              <String, Object?>{'x': 1614384000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1615334400000.0, 'y': 10.0},
-              <String, Object?>{'x': 1614902400000.0, 'y': 3.0},
-              <String, Object?>{'x': 1615420800000.0, 'y': 7.0},
-              <String, Object?>{'x': 1616112000000.0, 'y': 0.0},
-              <String, Object?>{'x': 1616198400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1616457600000.0, 'y': 8.0},
-              <String, Object?>{'x': 1616889600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1616716800000.0, 'y': 5.0},
-              <String, Object?>{'x': 1616716800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1617667200000.0, 'y': 2.0},
-              <String, Object?>{'x': 1617235200000.0, 'y': 6.0},
-              <String, Object?>{'x': 1617753600000.0, 'y': 10.0},
-              <String, Object?>{'x': 1618444800000.0, 'y': 3.0},
-              <String, Object?>{'x': 1618531200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1618790400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1619222400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1619049600000.0, 'y': 8.0},
-              <String, Object?>{'x': 1619049600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1620000000000.0, 'y': 5.0},
-              <String, Object?>{'x': 1619568000000.0, 'y': 9.0},
-              <String, Object?>{'x': 1620086400000.0, 'y': 2.0},
-              <String, Object?>{'x': 1620777600000.0, 'y': 6.0},
-              <String, Object?>{'x': 1620864000000.0, 'y': 10.0},
-              <String, Object?>{'x': 1621123200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1621555200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1621382400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1621382400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1622332800000.0, 'y': 8.0},
-              <String, Object?>{'x': 1621900800000.0, 'y': 1.0},
-              <String, Object?>{'x': 1622419200000.0, 'y': 5.0},
-              <String, Object?>{'x': 1623110400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1623196800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1623456000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1623888000000.0, 'y': 10.0},
-              <String, Object?>{'x': 1623715200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1623715200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1624665600000.0, 'y': 0.0},
-              <String, Object?>{'x': 1624233600000.0, 'y': 4.0},
-              <String, Object?>{'x': 1624752000000.0, 'y': 8.0},
-              <String, Object?>{'x': 1625443200000.0, 'y': 1.0},
-              <String, Object?>{'x': 1625529600000.0, 'y': 5.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'offset': true, 'offsetAfterAutoskip': true},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1610668800000.0, 4.0),
+            DataPoint(1610236800000.0, 8.0),
+            DataPoint(1610755200000.0, 1.0),
+            DataPoint(1611446400000.0, 5.0),
+            DataPoint(1611532800000.0, 9.0),
+            DataPoint(1611792000000.0, 2.0),
+            DataPoint(1612224000000.0, 6.0),
+            DataPoint(1612051200000.0, 10.0),
+            DataPoint(1612051200000.0, 3.0),
+            DataPoint(1613001600000.0, 7.0),
+            DataPoint(1612569600000.0, 0.0),
+            DataPoint(1613088000000.0, 4.0),
+            DataPoint(1613779200000.0, 8.0),
+            DataPoint(1613865600000.0, 1.0),
+            DataPoint(1614124800000.0, 5.0),
+            DataPoint(1614556800000.0, 9.0),
+            DataPoint(1614384000000.0, 2.0),
+            DataPoint(1614384000000.0, 6.0),
+            DataPoint(1615334400000.0, 10.0),
+            DataPoint(1614902400000.0, 3.0),
+            DataPoint(1615420800000.0, 7.0),
+            DataPoint(1616112000000.0, 0.0),
+            DataPoint(1616198400000.0, 4.0),
+            DataPoint(1616457600000.0, 8.0),
+            DataPoint(1616889600000.0, 1.0),
+            DataPoint(1616716800000.0, 5.0),
+            DataPoint(1616716800000.0, 9.0),
+            DataPoint(1617667200000.0, 2.0),
+            DataPoint(1617235200000.0, 6.0),
+            DataPoint(1617753600000.0, 10.0),
+            DataPoint(1618444800000.0, 3.0),
+            DataPoint(1618531200000.0, 7.0),
+            DataPoint(1618790400000.0, 0.0),
+            DataPoint(1619222400000.0, 4.0),
+            DataPoint(1619049600000.0, 8.0),
+            DataPoint(1619049600000.0, 1.0),
+            DataPoint(1620000000000.0, 5.0),
+            DataPoint(1619568000000.0, 9.0),
+            DataPoint(1620086400000.0, 2.0),
+            DataPoint(1620777600000.0, 6.0),
+            DataPoint(1620864000000.0, 10.0),
+            DataPoint(1621123200000.0, 3.0),
+            DataPoint(1621555200000.0, 7.0),
+            DataPoint(1621382400000.0, 0.0),
+            DataPoint(1621382400000.0, 4.0),
+            DataPoint(1622332800000.0, 8.0),
+            DataPoint(1621900800000.0, 1.0),
+            DataPoint(1622419200000.0, 5.0),
+            DataPoint(1623110400000.0, 9.0),
+            DataPoint(1623196800000.0, 2.0),
+            DataPoint(1623456000000.0, 6.0),
+            DataPoint(1623888000000.0, 10.0),
+            DataPoint(1623715200000.0, 3.0),
+            DataPoint(1623715200000.0, 7.0),
+            DataPoint(1624665600000.0, 0.0),
+            DataPoint(1624233600000.0, 4.0),
+            DataPoint(1624752000000.0, 8.0),
+            DataPoint(1625443200000.0, 1.0),
+            DataPoint(1625529600000.0, 5.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(
+          .x,
+          offsetAfterAutoskip: true,
+          extra: <String, Object?>{'offset': true},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         30.534095073970928,
         32.0,
@@ -18782,34 +18732,33 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'normalized data',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1610150400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1635638400000.0, 'y': 4.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{'normalized': true},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1610150400000.0, 0.0),
+            DataPoint(1635638400000.0, 4.0),
+          ],
+        ),
+      ],
+      extra: const <String, Object?>{'normalized': true},
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[27.6884765625, 32.0, 484.6513671875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -19731,28 +19680,26 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'labels and data together',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['2021-01-07', '2021-01-20'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['2021-01-07', '2021-01-20'],
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -20600,24 +20547,24 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'null and invalid x values',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 1.0},
-              <String, Object?>{'x': null, 'y': 2.0},
-              <String, Object?>{'x': 'garbage', 'y': 3.0},
-              <String, Object?>{'x': 1609977600000.0, 'y': 4.0},
-              <String, Object?>{'x': 1612310400000.0, 'y': 5.0},
+              const <String, Object?>{'x': 1609718400000.0, 'y': 1.0},
+              const <String, Object?>{'x': null, 'y': 2.0},
+              const <String, Object?>{'x': 'garbage', 'y': 3.0},
+              const <String, Object?>{'x': 1609977600000.0, 'y': 4.0},
+              const <String, Object?>{'x': 1612310400000.0, 'y': 5.0},
             ],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 493.6572265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -21218,7 +21165,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'labels only, reversed in place',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'timeseriesTest',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -21245,8 +21192,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.677734375, 10.0, 494.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -21646,19 +21593,14 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'a label that does not parse',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['2021-01-04', 'garbage', '2021-01-20'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['2021-01-04', 'garbage', '2021-01-20'],
+      datasets: [
+        TestDataset(const ChartKind('timeseriesTest'), data: [1.0, 2.0, 3.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -22308,26 +22250,17 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'ticks source labels and a label that does not parse',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['2021-01-04', 'garbage', '2021-01-20'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': TickSource.labels},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['2021-01-04', 'garbage', '2021-01-20'],
+      datasets: [
+        TestDataset(const ChartKind('timeseriesTest'), data: [1.0, 2.0, 3.0]),
+      ],
+      scales: const [
+        TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[33.6884765625, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -22976,30 +22909,24 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'ticks source labels, {x, y} data and a label that does not parse',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['2021-01-04', 'garbage', '2021-01-20'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609977600000.0, 'y': 4.0},
-              <String, Object?>{'x': 1611100800000.0, 'y': 8.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': TickSource.labels},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['2021-01-04', 'garbage', '2021-01-20'],
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609977600000.0, 4.0),
+            DataPoint(1611100800000.0, 8.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[33.6884765625, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -23599,35 +23526,32 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'bounds ticks with a min',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609736400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609822800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609909200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610514000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610600400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613192400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613278800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618376400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'bounds': ScaleBounds.ticks,
-            'min': 1609826400000.0,
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609736400000.0, 0.0),
+            DataPoint(1609822800000.0, 4.0),
+            DataPoint(1609909200000.0, 8.0),
+            DataPoint(1610514000000.0, 1.0),
+            DataPoint(1610600400000.0, 5.0),
+            DataPoint(1613192400000.0, 9.0),
+            DataPoint(1613278800000.0, 2.0),
+            DataPoint(1618376400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(
+          .x,
+          bounds: ScaleBounds.ticks,
+          extra: <String, Object?>{'min': 1609826400000.0},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -24407,36 +24331,33 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'reverse and offsetAfterAutoskip on the data cache',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'reverse': true,
-            'offset': true,
-            'offsetAfterAutoskip': true,
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(
+          .x,
+          reverse: true,
+          offsetAfterAutoskip: true,
+          extra: <String, Object?>{'offset': true},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.677734375, 32.0, 494.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -25280,36 +25201,33 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'ticks source data, offset and labels',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['2021-01-07', '2021-03-01'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'offset': true,
-            'ticks': <String, Object?>{'source': TickSource.data},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['2021-01-07', '2021-03-01'],
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(
+          .x,
+          ticks: AxisTicks(source: TickSource.data),
+          extra: <String, Object?>{'offset': true},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -26161,33 +26079,27 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'normalized labels with ticks source labels',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          '2021-01-20',
-          '2021-01-04',
-          '2021-01-04',
-          '2021-01-11',
-          '2021-03-01',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 4.0, 5.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'normalized': true,
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{'source': TickSource.labels},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        '2021-01-20',
+        '2021-01-04',
+        '2021-01-04',
+        '2021-01-11',
+        '2021-03-01',
+      ],
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          data: [1.0, 2.0, 3.0, 4.0, 5.0],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
+      ],
+      extra: const <String, Object?>{'normalized': true},
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 493.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -26885,88 +26797,81 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'a vertical axis on the right with reverse',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1610668800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1610236800000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610755200000.0, 'y': 1.0},
-              <String, Object?>{'x': 1611446400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1611532800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1611792000000.0, 'y': 2.0},
-              <String, Object?>{'x': 1612224000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1612051200000.0, 'y': 10.0},
-              <String, Object?>{'x': 1612051200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1613001600000.0, 'y': 7.0},
-              <String, Object?>{'x': 1612569600000.0, 'y': 0.0},
-              <String, Object?>{'x': 1613088000000.0, 'y': 4.0},
-              <String, Object?>{'x': 1613779200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1613865600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1614124800000.0, 'y': 5.0},
-              <String, Object?>{'x': 1614556800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1614384000000.0, 'y': 2.0},
-              <String, Object?>{'x': 1614384000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1615334400000.0, 'y': 10.0},
-              <String, Object?>{'x': 1614902400000.0, 'y': 3.0},
-              <String, Object?>{'x': 1615420800000.0, 'y': 7.0},
-              <String, Object?>{'x': 1616112000000.0, 'y': 0.0},
-              <String, Object?>{'x': 1616198400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1616457600000.0, 'y': 8.0},
-              <String, Object?>{'x': 1616889600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1616716800000.0, 'y': 5.0},
-              <String, Object?>{'x': 1616716800000.0, 'y': 9.0},
-              <String, Object?>{'x': 1617667200000.0, 'y': 2.0},
-              <String, Object?>{'x': 1617235200000.0, 'y': 6.0},
-              <String, Object?>{'x': 1617753600000.0, 'y': 10.0},
-              <String, Object?>{'x': 1618444800000.0, 'y': 3.0},
-              <String, Object?>{'x': 1618531200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1618790400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1619222400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1619049600000.0, 'y': 8.0},
-              <String, Object?>{'x': 1619049600000.0, 'y': 1.0},
-              <String, Object?>{'x': 1620000000000.0, 'y': 5.0},
-              <String, Object?>{'x': 1619568000000.0, 'y': 9.0},
-              <String, Object?>{'x': 1620086400000.0, 'y': 2.0},
-              <String, Object?>{'x': 1620777600000.0, 'y': 6.0},
-              <String, Object?>{'x': 1620864000000.0, 'y': 10.0},
-              <String, Object?>{'x': 1621123200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1621555200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1621382400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1621382400000.0, 'y': 4.0},
-              <String, Object?>{'x': 1622332800000.0, 'y': 8.0},
-              <String, Object?>{'x': 1621900800000.0, 'y': 1.0},
-              <String, Object?>{'x': 1622419200000.0, 'y': 5.0},
-              <String, Object?>{'x': 1623110400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1623196800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1623456000000.0, 'y': 6.0},
-              <String, Object?>{'x': 1623888000000.0, 'y': 10.0},
-              <String, Object?>{'x': 1623715200000.0, 'y': 3.0},
-              <String, Object?>{'x': 1623715200000.0, 'y': 7.0},
-              <String, Object?>{'x': 1624665600000.0, 'y': 0.0},
-              <String, Object?>{'x': 1624233600000.0, 'y': 4.0},
-              <String, Object?>{'x': 1624752000000.0, 'y': 8.0},
-              <String, Object?>{'x': 1625443200000.0, 'y': 1.0},
-              <String, Object?>{'x': 1625529600000.0, 'y': 5.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'position': ChartPosition.right,
-            'reverse': true,
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1610668800000.0, 4.0),
+            DataPoint(1610236800000.0, 8.0),
+            DataPoint(1610755200000.0, 1.0),
+            DataPoint(1611446400000.0, 5.0),
+            DataPoint(1611532800000.0, 9.0),
+            DataPoint(1611792000000.0, 2.0),
+            DataPoint(1612224000000.0, 6.0),
+            DataPoint(1612051200000.0, 10.0),
+            DataPoint(1612051200000.0, 3.0),
+            DataPoint(1613001600000.0, 7.0),
+            DataPoint(1612569600000.0, 0.0),
+            DataPoint(1613088000000.0, 4.0),
+            DataPoint(1613779200000.0, 8.0),
+            DataPoint(1613865600000.0, 1.0),
+            DataPoint(1614124800000.0, 5.0),
+            DataPoint(1614556800000.0, 9.0),
+            DataPoint(1614384000000.0, 2.0),
+            DataPoint(1614384000000.0, 6.0),
+            DataPoint(1615334400000.0, 10.0),
+            DataPoint(1614902400000.0, 3.0),
+            DataPoint(1615420800000.0, 7.0),
+            DataPoint(1616112000000.0, 0.0),
+            DataPoint(1616198400000.0, 4.0),
+            DataPoint(1616457600000.0, 8.0),
+            DataPoint(1616889600000.0, 1.0),
+            DataPoint(1616716800000.0, 5.0),
+            DataPoint(1616716800000.0, 9.0),
+            DataPoint(1617667200000.0, 2.0),
+            DataPoint(1617235200000.0, 6.0),
+            DataPoint(1617753600000.0, 10.0),
+            DataPoint(1618444800000.0, 3.0),
+            DataPoint(1618531200000.0, 7.0),
+            DataPoint(1618790400000.0, 0.0),
+            DataPoint(1619222400000.0, 4.0),
+            DataPoint(1619049600000.0, 8.0),
+            DataPoint(1619049600000.0, 1.0),
+            DataPoint(1620000000000.0, 5.0),
+            DataPoint(1619568000000.0, 9.0),
+            DataPoint(1620086400000.0, 2.0),
+            DataPoint(1620777600000.0, 6.0),
+            DataPoint(1620864000000.0, 10.0),
+            DataPoint(1621123200000.0, 3.0),
+            DataPoint(1621555200000.0, 7.0),
+            DataPoint(1621382400000.0, 0.0),
+            DataPoint(1621382400000.0, 4.0),
+            DataPoint(1622332800000.0, 8.0),
+            DataPoint(1621900800000.0, 1.0),
+            DataPoint(1622419200000.0, 5.0),
+            DataPoint(1623110400000.0, 9.0),
+            DataPoint(1623196800000.0, 2.0),
+            DataPoint(1623456000000.0, 6.0),
+            DataPoint(1623888000000.0, 10.0),
+            DataPoint(1623715200000.0, 3.0),
+            DataPoint(1623715200000.0, 7.0),
+            DataPoint(1624665600000.0, 0.0),
+            DataPoint(1624233600000.0, 4.0),
+            DataPoint(1624752000000.0, 8.0),
+            DataPoint(1625443200000.0, 1.0),
+            DataPoint(1625529600000.0, 5.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(.y, position: ChartPosition.right, reverse: true),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         92.3844084864283,
         32.0,
@@ -28386,35 +28291,32 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'a time axis on top with a tick callback',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'position': ChartPosition.top,
-            'ticks': <String, Object?>{'callback': 'fn:tickIndex'},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: [
+        TimeSeriesAxis(
+          .x,
+          position: ChartPosition.top,
+          ticks: AxisTicks(callback: functions['tickIndex']! as TickCallback),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[
         20.673828125,
         60.4,
@@ -29271,35 +29173,34 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'suggestedMin and suggestedMax outside the data',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(
+          .x,
+          extra: <String, Object?>{
             'suggestedMin': '2020-12-20',
             'suggestedMax': 1620950400000.0,
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[22.0107421875, 32.0, 489.32421875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -30215,35 +30116,34 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'min and max between two data points',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(
+          .x,
+          extra: <String, Object?>{
             'min': 1610150400000.0,
             'max': 1610236800000.0,
           },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 493.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -30864,32 +30764,31 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'offset with a min inside the data: the start and end offsets differ',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 0.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 4.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 8.0},
-              <String, Object?>{'x': 1610496000000.0, 'y': 1.0},
-              <String, Object?>{'x': 1610582400000.0, 'y': 5.0},
-              <String, Object?>{'x': 1613174400000.0, 'y': 9.0},
-              <String, Object?>{'x': 1613260800000.0, 'y': 2.0},
-              <String, Object?>{'x': 1618358400000.0, 'y': 6.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'offset': true, 'min': 1610150400000.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          points: [
+            DataPoint(1609718400000.0, 0.0),
+            DataPoint(1609804800000.0, 4.0),
+            DataPoint(1609891200000.0, 8.0),
+            DataPoint(1610496000000.0, 1.0),
+            DataPoint(1610582400000.0, 5.0),
+            DataPoint(1613174400000.0, 9.0),
+            DataPoint(1613260800000.0, 2.0),
+            DataPoint(1618358400000.0, 6.0),
+          ],
+        ),
+      ],
+      scales: const [
+        TimeSeriesAxis(
+          .x,
+          extra: <String, Object?>{'offset': true, 'min': 1610150400000.0},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -31625,24 +31524,17 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
   ),
   (
     name: 'NaN and null x values with primitive data on labels',
-    config: <String, Object?>{
-      'type': 'timeseriesTest',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          '2021-01-04',
-          '2021-01-05',
-          '2021-01-09',
-          '2021-02-01',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, null, double.nan, 4.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['2021-01-04', '2021-01-05', '2021-01-09', '2021-02-01'],
+      datasets: [
+        TestDataset(
+          const ChartKind('timeseriesTest'),
+          data: [1.0, null, double.nan, 4.0],
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 493.6572265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{

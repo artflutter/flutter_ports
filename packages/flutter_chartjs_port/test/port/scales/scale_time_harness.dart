@@ -28,7 +28,6 @@ library;
 // the generators do.
 // ignore_for_file: invalid_use_of_protected_member
 
-import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -253,8 +252,8 @@ Map<String, Object?> _nullTickValuesAsNaN(Map<String, Object?> expected) {
 }
 
 /// A `testWidgets` case for each of [cases]: [setUps] for the name of the
-/// case, then the chart of `acquireChart` at [now], with the config and the
-/// options of the case ([copyReference] with [functions]), then
+/// case, then the chart of [acquireReferenceChart] at [now], with the config
+/// and the options of the case and [functions], then
 /// [expectScaleChart] and [expectExactTimes] with [timeObservations] and
 /// [extra]. The expected value of a tick of a time scale is NaN where the
 /// reference gives `null` (row `adapt-time-null-timestamp`).
@@ -277,9 +276,10 @@ void testTimeScaleCases(
     testWidgets(c.name, (tester) async {
       setUps[c.name]?.call();
       atNow(now, () {
-        final chart = acquireChart(
-          copyReference(c.config, functions)! as AnyObject,
-          copyReference(c.options)! as AnyObject,
+        final chart = acquireReferenceChart(
+          c.config,
+          c.options,
+          functions: functions,
         );
         Map<String, Object?> observations(Scale scale, Chart chart) => {
           ...timeObservations(scale, chart),

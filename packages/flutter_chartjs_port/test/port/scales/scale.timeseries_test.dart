@@ -131,7 +131,7 @@ void main() {
 
   group('timeseries scale charts against upstream', () {
     testTimeScaleCases(
-      scaleTimeseriesReference,
+      scaleTimeseriesReference(_functions),
       now: scaleTimeseriesReferenceNow,
       functions: _functions,
       extra: _timeseriesObservations,

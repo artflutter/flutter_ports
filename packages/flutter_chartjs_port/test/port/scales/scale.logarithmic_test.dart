@@ -190,12 +190,12 @@ final Map<String, Object?> _functions = {
 };
 
 /// The dataset [index] of [chart].
-Map<String, Object?> _dataset(Chart chart, int index) =>
-    (chart.data['datasets']! as List<Object?>)[index]! as Map<String, Object?>;
+JsObjectFace _dataset(Chart chart, int index) =>
+    (chart.data['datasets']! as List<Object?>)[index]! as JsObjectFace;
 
 /// The options of the scale [id] in the config of [chart].
 JsObjectFace _scaleConfig(Chart chart, String id) {
-  final scales = (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+  final scales = jsGet(chart.config.options, 'scales')! as JsObjectFace;
   return scales[id]! as JsObjectFace;
 }
 
@@ -288,15 +288,18 @@ void main() {
 
   group('logarithmic scale charts against upstream', () {
     test('each action names a case', () {
-      final names = [for (final c in scaleLogarithmicReference) c.name];
+      final names = [
+        for (final c in scaleLogarithmicReference(_functions)) c.name,
+      ];
       expect(_actions.keys, everyElement(isIn(names)));
     });
 
-    for (final c in scaleLogarithmicReference) {
+    for (final c in scaleLogarithmicReference(_functions)) {
       testWidgets(c.name, (tester) async {
-        final chart = acquireChart(
-          copyReference(c.config, _functions)! as AnyObject,
-          copyReference(c.options)! as AnyObject,
+        final chart = acquireReferenceChart(
+          c.config,
+          c.options,
+          functions: _functions,
         );
         _actions[c.name]?.call(chart);
         // A small log range scales the last bit of dart:math log (Chart.js
