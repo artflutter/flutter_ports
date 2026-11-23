@@ -160,7 +160,7 @@ final class SharedBarAnimations._(
       return false;
     }
     final options = properties.options;
-    return options == null || jsTruthy(options.$sharedValue);
+    return options == null || options.isShared;
   }
 }
 

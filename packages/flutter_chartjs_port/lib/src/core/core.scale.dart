@@ -767,8 +767,9 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:497 `_alignToPixels`, the `alignToPixels` option that
   /// `configure` reads. The constructor does not declare it. It starts
-  /// absent.
-  Object? _alignToPixels = undefined;
+  /// absent: `false` stands for that `undefined`, because the two reads take
+  /// its truthiness.
+  bool _alignToPixels = false;
 
   /// The `position` of the layout box (layout.d.ts:9). The constructor does
   /// not declare it. `layouts.configure` writes the `position` option
@@ -826,7 +827,7 @@ class Scale(AnyObject cfg)
         startPixel: startPixel,
         length: length,
         reverse: reversePixels,
-        align: jsTruthy(_alignToPixels),
+        align: _alignToPixels,
       );
 
   /// Only native category or explicitly bounded numeric scales opt in.
@@ -1978,9 +1979,7 @@ class Scale(AnyObject cfg)
     }
 
     final pixel = startPixel + decimal * length;
-    return int16Range(
-      jsTruthy(_alignToPixels) ? alignPixel(chart, pixel, 0) : pixel,
-    );
+    return int16Range(_alignToPixels ? alignPixel(chart, pixel, 0) : pixel);
   }
 
   /// core.scale.js:933 `getDecimalForPixel(pixel)`.

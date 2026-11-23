@@ -657,7 +657,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
 
     // In case values were cached (and thus frozen), we need to clone the
     // values
-    if (jsTruthy(values.$sharedValue)) {
+    if (values.isShared) {
       // DIVERGES(chartjs): adapt-typed-element-options, a copy of the class.
       values = values.clone()..storeKey(OptionKey.dollarShared, false);
     }

@@ -157,6 +157,10 @@ abstract class ElementOptions implements JsFreezable, JsObjectFace {
   /// absent key.
   Object? get $sharedValue => _read(_shared);
 
+  /// The truthiness of `$shared`: the port writes it only as `true` or
+  /// `false`.
+  bool get isShared => _shared == true;
+
   /// core.animations.js:71 `$animations`: the raw value, or [undefined] for
   /// an absent key.
   Object? get $animationsValue => _read(_animations);
@@ -365,6 +369,9 @@ final class GenericElementOptions extends ElementOptions {
   /// absent key.
   @override
   Object? get $sharedValue => _mapValue(r'$shared');
+
+  @override
+  bool get isShared => _mapValue(r'$shared') == true;
 
   /// core.animations.js:71 `$animations`: the raw value, or [undefined] for
   /// an absent key.

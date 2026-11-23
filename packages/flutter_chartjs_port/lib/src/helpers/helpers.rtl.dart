@@ -123,16 +123,12 @@ RTLAdapter _getLeftToRightAdapter() {
 /// helpers.rtl.ts:51 `getRtlAdapter`.
 ///
 /// Returns the right-to-left adapter of the rectangle at [rectX] with the
-/// width [width] when [rtl] is truthy, else the left-to-right adapter.
+/// width [width] when [rtl] is true, else the left-to-right adapter.
 ///
-/// [rtl] is an `Object?`, not a bool. Upstream declares `boolean`, but
-/// `plugin.tooltip.js:762` passes `options.rtl`, which has no default and
-/// thus can be `undefined`. The conditional `rtl ? … : …` applies ToBoolean,
-/// which is [jsTruthy] (Chart.js ADR 0146).
-RTLAdapter getRtlAdapter(Object? rtl, double rectX, double width) {
-  return jsTruthy(rtl)
-      ? _getRightToLeftAdapter(rectX, width)
-      : _getLeftToRightAdapter();
+/// The legend and tooltip options give `rtl` as a bool: an absent option is
+/// `false`, the truthiness of the upstream `undefined`.
+RTLAdapter getRtlAdapter(bool rtl, double rectX, double width) {
+  return rtl ? _getRightToLeftAdapter(rectX, width) : _getLeftToRightAdapter();
 }
 
 /// helpers.rtl.ts:55 `overrideTextDirection`.

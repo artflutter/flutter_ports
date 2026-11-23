@@ -10,17 +10,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('getRtlAdapter', () {
-    test('returns the right-to-left adapter for a truthy rtl', () {
-      // getRtlAdapter(v, 10, 100).x(30) for the falsy values undefined,
-      // null, 0, -0, NaN and '', and the truthy values 1, 'x', {} and [].
-      const falsy = <Object?>[undefined, null, 0, -0.0, double.nan, ''];
-      final truthy = <Object?>[1, 'x', <String, Object?>{}, <Object?>[]];
-      for (final value in falsy) {
-        expect(getRtlAdapter(value, 10, 100).x(30), 30, reason: '$value');
-      }
-      for (final value in truthy) {
-        expect(getRtlAdapter(value, 10, 100).x(30), 90, reason: '$value');
-      }
+    test('returns the right-to-left adapter for rtl true', () {
       expect(getRtlAdapter(true, 10, 100).x(30), 90);
       expect(getRtlAdapter(false, 10, 100).x(30), 30);
     });

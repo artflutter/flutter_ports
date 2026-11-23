@@ -41,7 +41,7 @@ final class LinearPixels({
   /// `this._reversePixels`.
   required final bool reverse,
 
-  /// The truthiness of `this._alignToPixels`.
+  /// `this._alignToPixels`.
   required final bool align,
 }) {
   /// The inputs of one scale, read once before a loop.

@@ -2294,7 +2294,7 @@ class DatasetController(
             createElementOptions(elementType),
           );
 
-    if (jsTruthy(values.$sharedValue)) {
+    if (values.isShared) {
       // `$shared` indicates this set of options can be shared between
       // multiple elements. Sharing is used to reduce number of properties
       // to change during animation.
@@ -2384,7 +2384,7 @@ class DatasetController(
   /// Dart `null` stands for the JS `undefined` result. The copy keeps the
   /// class of the options (Chart.js ADR 0021, section 3).
   ElementOptions? getSharedOptions(ElementOptions options) {
-    if (!jsTruthy(options.$sharedValue)) {
+    if (!options.isShared) {
       return null;
     }
     // DIVERGES(chartjs): adapt-typed-element-options, the copy keeps the class.
