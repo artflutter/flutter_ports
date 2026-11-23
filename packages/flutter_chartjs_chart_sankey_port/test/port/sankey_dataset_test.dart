@@ -1,4 +1,6 @@
 // Original code, not ported from chartjs-chart-sankey: the typed dataset.
+// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
+// ignore_for_file: deprecated_member_use
 @TestOn('vm')
 library;
 

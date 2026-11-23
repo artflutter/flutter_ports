@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: the chart twins of the typed API.
+// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
+// ignore_for_file: deprecated_member_use_from_same_package
 
 /// The chart twin of the typed API (Chart.js ADR 0052, section 11): a typed
 /// config and its raw twin give the same chart.

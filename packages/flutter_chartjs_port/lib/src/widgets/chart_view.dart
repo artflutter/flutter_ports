@@ -175,6 +175,12 @@ class ChartView extends StatefulWidget {
   /// `{type, data, options, plugins, platform}`: the escape hatch for a
   /// copy of the Chart.js docs, `jsonDecode` output and the options that
   /// [ChartConfig] does not have. The widget keeps it in [rawConfig].
+  // The 0.1.0 release removes it; the beta keeps it for one release.
+  // ignore: remove_deprecations_in_breaking_versions
+  @Deprecated(
+    'Use ChartView(config: ChartConfig(...)). ChartView.raw and the raw Map '
+    'config will be removed before 0.1.0 (Chart.js ADR 0195).',
+  )
   const new raw({
     required Map<String, Object?> config,
     this.updateMode,
@@ -191,7 +197,7 @@ class ChartView extends StatefulWidget {
        dataOnlyUpdates = false;
 
   /// The typed config of the chart, or Dart `null` for a widget of
-  /// [ChartView.raw].
+  /// `ChartView.raw`.
   ///
   /// The widget lowers it to the Maps of a raw config: a new Map for each
   /// class, and the Lists of the app (`data`, `points`, `labels`,
@@ -206,7 +212,7 @@ class ChartView extends StatefulWidget {
   final ChartConfig? config;
 
   /// The raw configuration `{type, data, options, plugins, platform}` of
-  /// [ChartView.raw] (`jsonDecode` output works), or Dart `null` for a
+  /// `ChartView.raw` (`jsonDecode` output works), or Dart `null` for a
   /// typed widget. The chart writes into its `data` and `options` Maps, as
   /// `initConfig` does. A nested Map literal needs the type
   /// `<String, Object?>`, and the config is never `const`: a `const`

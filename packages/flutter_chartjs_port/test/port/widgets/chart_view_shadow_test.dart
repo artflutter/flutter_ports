@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: the dataset shadow of ChartView.
+// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
+// ignore_for_file: deprecated_member_use_from_same_package
 @TestOn('vm')
 library;
 

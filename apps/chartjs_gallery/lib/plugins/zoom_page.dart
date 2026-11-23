@@ -1,4 +1,6 @@
 // Original code, not ported from chartjs-plugin-zoom: the zoom gallery page.
+// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
+// ignore_for_file: deprecated_member_use
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';

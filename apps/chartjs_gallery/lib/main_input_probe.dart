@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: the input probe of Chart.js ADR 0112.
+// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
+// ignore_for_file: deprecated_member_use
 // The header text names the probe and the ADR, and has no URI.
 // ignore_for_file: lines_longer_than_80_chars
 

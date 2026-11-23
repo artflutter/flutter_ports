@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: the gallery demo of phase 6.
+// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
+// ignore_for_file: deprecated_member_use
 
 import 'dart:math' as math;
 import 'dart:ui' as ui;

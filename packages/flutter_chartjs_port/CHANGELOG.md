@@ -1,5 +1,7 @@
 ## Unreleased
 
+- `ChartView.raw` is deprecated (Chart.js ADR 0195): use `ChartView(config: ChartConfig(...))`. The 0.1.0 release
+  removes `ChartView.raw` and the raw Map config. Its behavior does not change in the beta.
 - BREAKING: the tooltip options are one immutable object, `TooltipOptions` (Chart.js ADR 0192). `ChartTooltip`
   and `ChartConfig.tooltip` are gone: give `pluginOptions: [TooltipOptions(...)]`, with each Chart.js tooltip
   option as a field (`titleAlign`, `usePointStyle`, `boxPadding`, ...; `cornerRadius` is a `BorderRadius`). A
