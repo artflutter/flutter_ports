@@ -925,7 +925,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     enums) and `lib/src/upstream.dart` (`chartjsChartSankeyVersion`, `0.19.1`), and has the
     port-only List `sankeyRegisterables`. An app calls `Chart.register(sankeyRegisterables)` once
     and gives a typed `ChartView` a `ChartConfig` with a `SankeyDataset`: the class of the first dataset
-    gives the chart type (Chart.js ADR 0190). `ChartView.raw` with a Map config also works. `Flow` is also a Flutter widget name: a library that imports Flutter
+    gives the chart type (Chart.js ADR 0190). `Flow` is also a Flutter widget name: a library that imports Flutter
     and names the element imports the port with a prefix (seam S21).
   - `lib/src/`: the files of `src/` at their mapped paths: `types`, `lib/helpers`, `lib/core`,
     `lib/layout`, `labels`, `flow`, `controller` and `index.esm`; `src/index.ts`, the entry that
@@ -1595,14 +1595,9 @@ sankey ADRs are proposed. The doc paths are relative to
   without observations.
 - The tests of the typed API are in `test/port/typed/` (Chart.js ADR 0052 §11). They have
   `@TestOn('vm')`: the typed files import `dart:ui`. The lowering twins (`lowering_test.dart`,
-  `expectTwin` of `twin.dart`) compare the Map of each typed field with its raw twin. The docs
-  twins (`docs_twins_test.dart`, `expectChartTwin` of `chart_twin.dart`) show a typed config in a
-  `ChartView` and its raw twin in a `ChartView.raw`, and compare the observations of the
-  controller harness, the hits on a grid and the draw calls, before and during a hover, unthemed
-  and under `ChartThemeData.light()`, with the colors in parsed form. A docs twin compares two
-  charts through the public API: it holds when the internal model of the chart changes. The typed
-  config of a docs twin is a copy of the gallery config: a change of a docs config of the
-  gallery changes its copy in the same commit.
+  `expectTwin` of `twin.dart`) compare the Map of each typed field with its raw twin. No test
+  pumps a `ChartView.raw` (Chart.js ADR 0195): a widget test gives a typed `ChartConfig`, and a
+  test of a change pumps a `ChartView` with the next config.
 - The plugin reference tests in `test/port/plugins/` run the cases of their generator through
   `testPluginChartCases` of `plugin_chart_harness.dart`: the controller harness with `hits: false`,
   the key `boxes` (`observeBoxes`) and a key `plugins.<id>` for each observer of the file. A unit

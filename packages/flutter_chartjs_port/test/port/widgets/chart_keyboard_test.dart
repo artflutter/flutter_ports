@@ -1,6 +1,4 @@
 // Original code, not ported from Chart.js: tests of the keyboard of ChartView.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use_from_same_package
 @TestOn('vm')
 library;
 
@@ -729,34 +727,6 @@ void main() {
       await _key(tester, LogicalKeyboardKey.arrowRight);
       expect(next.hasPrimaryFocus, isTrue);
       expect(node.hasFocus, isFalse);
-    });
-
-    testWidgets('a new chart has no target', (tester) async {
-      final node = FocusNode();
-      addTearDown(node.dispose);
-      final root = ChartConfigLowering(_config('bar')).lower();
-      final config = <String, Object?>{
-        for (final key in root.jsKeys()) key: root.jsRead(key),
-      };
-      // The platform option is only available through the raw entry point.
-      Widget rawView(Map<String, Object?> value) => SizedBox(
-        width: 400,
-        height: 280,
-        child: ChartView.raw(config: value, focusNode: node),
-      );
-      await tester.pumpWidget(_top(rawView(config)));
-      node.requestFocus();
-      await tester.pump();
-      await _key(tester, LogicalKeyboardKey.arrowDown);
-      await _key(tester, LogicalKeyboardKey.arrowRight);
-      expect(await _key(tester, LogicalKeyboardKey.arrowLeft), isTrue);
-      await _key(tester, LogicalKeyboardKey.arrowRight);
-      // A new platform makes a new chart (Chart.js ADR 0049, section 4).
-      await tester.pumpWidget(
-        _top(rawView({...config, 'platform': FlutterPlatform.jsClass})),
-      );
-      await tester.pump();
-      expect(await _key(tester, LogicalKeyboardKey.arrowLeft), isFalse);
     });
   });
 

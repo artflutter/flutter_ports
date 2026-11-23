@@ -1,6 +1,4 @@
 // Original code, not ported from Chart.js: tests of the typed axes.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use_from_same_package
 @TestOn('vm')
 library;
 
@@ -159,24 +157,6 @@ void main() {
       expect(chart.scaleOf(_top), isNull);
       // The second dataset draws on the right axis.
       expect(chart.getDatasetMeta(1).yAxisID, 'y1');
-    });
-
-    testWidgets('a raw config has no axis objects', (tester) async {
-      // Chart.js writes into the config: it is not const.
-      final config = <String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': ['a', 'b'],
-          'datasets': [
-            <String, Object?>{
-              'data': [1, 2],
-            },
-          ],
-        },
-      };
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
-      await tester.pump();
-      expect(_chart(tester).scaleIdOf(const LinearAxis(.y)), isNull);
     });
   });
 }

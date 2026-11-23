@@ -1133,10 +1133,9 @@ repository.
       keys, the diagnostics, the update, the size, the callbacks and reduced motion),
       `chart_view_unregistered_test.dart` (it calls `removeBuiltins()` first in `main()`),
       `chart_theme_switch_test.dart` (theming.md §8 test 8), `chart_keyboard_test.dart` and
-      `chart_view_semantics_test.dart` (Chart.js ADR 0051). A test that pumps a `ChartView.raw`
-      gives it a config that is not `const`: Chart.js writes into its `data` and `options`. The
-      tests of the typed path are `test/port/typed/reconcile_test.dart`, `change_test.dart` and
-      `docs_twins_test.dart`.
+      `chart_view_semantics_test.dart` (Chart.js ADR 0051). Each test pumps a typed `ChartView`;
+      no test uses `ChartView.raw` (Chart.js ADR 0195). The tests of the typed path are
+      `test/port/typed/reconcile_test.dart` and `change_test.dart`.
   - `test/flutter_test_config.dart`: the port of `test/index.js`. `flutter test` runs it around
     each test file of the package ([Tests](#tests)).
   - `test/specs/`: ported upstream specs.

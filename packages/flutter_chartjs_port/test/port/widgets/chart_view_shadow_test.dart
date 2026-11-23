@@ -1,6 +1,4 @@
 // Original code, not ported from Chart.js: the dataset shadow of ChartView.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use_from_same_package
 @TestOn('vm')
 library;
 
@@ -43,29 +41,6 @@ ChartConfig _line(List<double> data, {ChartShadow? shadow}) => ChartConfig(
   animation: ChartAnimation.none,
   pluginOptions: const [LegendOptions(display: false)],
 );
-
-Map<String, Object?> _rawLine({required bool shadow}) => <String, Object?>{
-  'type': 'line',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[1.0, 3.0, 2.0],
-        'borderColor': const ChartPaint.solid(_black),
-        'pointRadius': 0.0,
-        if (shadow) 'shadow': _shadow,
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'animation': false,
-    'scales': <String, Object?>{
-      'x': <String, Object?>{'display': ScaleDisplay.off},
-      'y': <String, Object?>{'min': 0, 'max': 4, 'display': ScaleDisplay.off},
-    },
-    'plugins': <String, Object?>{'legend': false},
-  },
-};
 
 Widget _box(Widget child) => Directionality(
   textDirection: TextDirection.ltr,
@@ -182,47 +157,6 @@ void main() {
       expect(ctx.shadowColor, const Color(0x00000000));
       expect(ctx.shadowBlur, 0);
       expect(ctx.shadowOffsetY, 0);
-    });
-
-    testWidgets('a raw dataset with the option draws the same pixels', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        _box(ChartView(config: _line([1, 3, 2], shadow: _shadow))),
-      );
-      final typed = await _pixels(tester);
-      await tester.pumpWidget(const SizedBox());
-      await tester.pumpWidget(
-        _box(ChartView.raw(config: _rawLine(shadow: true))),
-      );
-      final raw = await _pixels(tester);
-      expect(raw, typed);
-    });
-
-    testWidgets('a shadow that is not a ChartShadow stops a debug build', (
-      tester,
-    ) async {
-      final config = _rawLine(shadow: true);
-      final dataset =
-          (jsGet(config['data'], 'datasets')! as List<Object?>).single!
-              as Map<String, Object?>;
-      dataset['shadow'] = <String, Object?>{'color': _red};
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
-      expect(tester.takeException(), isAssertionError);
-    });
-
-    testWidgets('the old canvas keys of a raw dataset draw no shadow', (
-      tester,
-    ) async {
-      final config = _rawLine(shadow: false);
-      final dataset =
-          (jsGet(config['data'], 'datasets')! as List<Object?>).single!
-              as Map<String, Object?>;
-      // A color key holds a ChartPaint, as each color option of the port.
-      dataset['shadowColor'] = const ChartPaint.solid(_red);
-      dataset['shadowBlur'] = 8;
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
-      expect(_reddish(await _pixels(tester)), 0);
     });
 
     testWidgets('a shadow keeps the data-only updates', (tester) async {

@@ -1,6 +1,4 @@
 // Original code, not ported from Chart.js: the items of a hidden legend.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use_from_same_package
 @TestOn('vm')
 library;
 
@@ -2417,60 +2415,40 @@ void main() {
       });
     }
 
-    for (final type in _kinds) {
-      testWidgets(
-        '$type: ChartView.raw: a new config and a beforeUpdate read',
-        (tester) async {
-          var reads = 0;
-          final plugin = _hook('beforeUpdate', (chart) {
-            chart.legend!.legendItems;
-            reads++;
-            return null;
-          });
-          // Raw: the test drives ChartView.raw.
-          Map<String, Object?> rawConfig(int count) {
-            final root = _config(
-              type,
-              labelValues: <Object?>[for (var i = 0; i < count; i++) 'l$i'],
-              datasets: <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[for (var i = 0; i < count; i++) 1.0 + i],
-                  'backgroundColor': _red,
-                },
-              ],
+    for (final kind in const [
+      typed.ChartKind.pie,
+      typed.ChartKind.doughnut,
+      typed.ChartKind.polarArea,
+    ]) {
+      testWidgets('$kind: a new config and a beforeUpdate read', (
+        tester,
+      ) async {
+        var reads = 0;
+        final plugin = _hook('beforeUpdate', (chart) {
+          chart.legend!.legendItems;
+          reads++;
+          return null;
+        });
+        typed.ChartConfig counted(int count) =>
+            config([
+              for (var i = 0; i < count; i++) 1.0 + i,
+            ], kind: kind).copyWith(
+              labels: [for (var i = 0; i < count; i++) 'l$i'],
               plugins: [plugin],
             );
-            return {for (final key in root.jsKeys()) key: root.jsRead(key)};
-          }
 
-          Widget frame(Map<String, Object?> config) => Directionality(
-            textDirection: TextDirection.ltr,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: SizedBox(
-                width: 400,
-                height: 300,
-                child: typed.ChartView.raw(
-                  config: config,
-                  updateMode: UpdateMode.none,
-                ),
-              ),
-            ),
-          );
-
-          await tester.pumpWidget(frame(rawConfig(3)));
-          final chart = chartOf(tester)..update(UpdateMode.none);
-          expect(_legendOf(chart).legendItemsPending, isTrue);
-          await tester.pumpWidget(frame(rawConfig(4)));
-          await tester.pump();
-          expect(tester.takeException(), isNull);
-          expect(reads, greaterThanOrEqualTo(2));
-          final meta = chartOf(tester).getDatasetMeta(0);
-          expect(meta.controller, isNotNull);
-          expect(meta.data, hasLength(4));
-          expect(chartOf(tester).legend!.legendItems, hasLength(4));
-        },
-      );
+        await tester.pumpWidget(view(counted(3)));
+        final chart = chartOf(tester)..update(UpdateMode.none);
+        expect(_legendOf(chart).legendItemsPending, isTrue);
+        await tester.pumpWidget(view(counted(4)));
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        expect(reads, greaterThanOrEqualTo(2));
+        final meta = chartOf(tester).getDatasetMeta(0);
+        expect(meta.controller, isNotNull);
+        expect(meta.data, hasLength(4));
+        expect(chartOf(tester).legend!.legendItems, hasLength(4));
+      });
     }
 
     for (final kind in const [

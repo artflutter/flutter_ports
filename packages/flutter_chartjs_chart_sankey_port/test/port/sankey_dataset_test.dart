@@ -1,13 +1,10 @@
 // Original code, not ported from chartjs-chart-sankey: the typed dataset.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use
 @TestOn('vm')
 library;
 
-// The typed dataset of Sankey ADR 0004 against its raw twin: each case
-// shows one chart as a typed `ChartView` and as a `ChartView.raw` with the
-// Map of the same options, and compares the nodes, the flows and the draw
-// calls, also of a hovered flow.
+// The typed dataset of Sankey ADR 0004: each case shows one chart as a
+// typed `ChartView` with the options of the dataset, and checks that it
+// draws and that a hovered flow changes the draw.
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
@@ -53,11 +50,7 @@ ChartPaint? _labelColor(SankeyNode node) => node.key == 'B' ? _white : null;
 
 bool? _labelShown(SankeyNode node) => node.key != 'E';
 
-/// The raw data item of a flow context, as the raw configs read it.
-SankeyDataPoint _raw(Object? context) =>
-    (context! as ScriptableContext).raw! as SankeyDataPoint;
-
-typedef _Case = ({String name, SankeyDataset typed, Map<String, Object?> raw});
+typedef _Case = ({String name, SankeyDataset typed});
 
 final List<_Case> _cases = [
   (
@@ -82,28 +75,6 @@ final List<_Case> _cases = [
       color: _dark,
       font: _font,
     ),
-    raw: {
-      'label': 'Layout',
-      'data': _flows,
-      'colorFrom': (Object? c) => ChartPaint.solid(_nodeColor(_raw(c).from)),
-      'colorTo': (Object? c) => ChartPaint.solid(_nodeColor(_raw(c).to)),
-      'colorMode': SankeyColorMode.gradient,
-      'alpha': 0.7,
-      'borderColor': _grey,
-      'borderWidth': 2.0,
-      'nodeWidth': 14.0,
-      'nodePadding': <String, Object?>{
-        'B': const SankeyNodeGap(before: 20, after: 30),
-      },
-      'nodeMinSize': 6.0,
-      'priority': <String, Object?>{'C': 0.0, 'B': 1.0},
-      'labels': <String, Object?>{'A': 'Alpha'},
-      'size': SankeySize.min,
-      'modeX': SankeyModeX.even,
-      'padding': 8.0,
-      'color': _dark,
-      'font': _font,
-    },
   ),
   (
     name: 'flow colors, hover colors and labels',
@@ -136,35 +107,6 @@ final List<_Case> _cases = [
         padding: .all(3),
       ),
     ),
-    raw: {
-      'label': 'Labels',
-      'data': _flows,
-      'colorFrom': _grey,
-      'colorTo': _dark,
-      'colorMode': SankeyColorMode.from,
-      'flowColor': (Object? c) => _flowPaint(_raw(c)),
-      'hoverFlowColor': _dark,
-      'hoverColorFrom': _red,
-      'hoverColorTo': (Object? c) => ChartPaint.solid(_nodeColor(_raw(c).to)),
-      'orientation': SankeyOrientation.vertical,
-      'nodePaddingMode': SankeyNodePaddingMode.even,
-      'column': <String, Object?>{'E': 3},
-      'nodeLabels': <String, Object?>{
-        'position': <String, Object?>{'A': SankeyLabelPosition.right},
-        'color': _labelColor,
-        'backgroundColor': _grey,
-        'display': _labelShown,
-        'borderRadius': 4.0,
-        'padding': 5.0,
-        'font': _font,
-      },
-      'flowLabels': <String, Object?>{
-        'display': true,
-        'color': (Object? c) => _flowLabelColor(_raw(c)),
-        'position': SankeyLabelPosition.center,
-        'padding': 3.0,
-      },
-    },
   ),
 ];
 
@@ -220,10 +162,9 @@ List<Object?> _observe(Chart chart) {
 
 void main() {
   for (final c in _cases) {
-    testWidgets('${c.name}: the typed dataset draws as its raw twin', (
-      tester,
-    ) async {
-      final typed = _observe(
+    testWidgets('${c.name}: the typed dataset draws, and a hover changes '
+        'the draw', (tester) async {
+      final observed = _observe(
         await _pump(
           tester,
           (created) => ChartView(
@@ -236,36 +177,8 @@ void main() {
           ),
         ),
       );
-      await tester.pumpWidget(const SizedBox());
-      final raw = _observe(
-        await _pump(
-          tester,
-          (created) => ChartView.raw(
-            config: <String, Object?>{
-              'type': SankeyController.id,
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{...c.raw},
-                ],
-              },
-              // The chart writes into its options: the Map is not const.
-              // ignore: prefer_const_literals_to_create_immutables
-              'options': <String, Object?>{
-                'animation': false,
-                'maintainAspectRatio': false,
-              },
-            },
-            onChartCreated: created,
-          ),
-        ),
-      );
-      // Each chart draws, and the hover changes the draw.
-      expect(raw[raw.length - 2], isNotEmpty);
-      expect(raw.last, isNot(raw[raw.length - 2]));
-      expect(typed, hasLength(raw.length));
-      for (var i = 0; i < raw.length; i++) {
-        expect(typed[i], raw[i], reason: 'item $i');
-      }
+      expect(observed[observed.length - 2], isNotEmpty);
+      expect(observed.last, isNot(observed[observed.length - 2]));
     });
   }
 

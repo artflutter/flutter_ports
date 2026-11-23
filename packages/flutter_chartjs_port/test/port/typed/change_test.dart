@@ -1,6 +1,4 @@
 // Original code, not ported from Chart.js: tests of the typed change test.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use_from_same_package
 @TestOn('vm')
 library;
 
@@ -17,8 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 // newest config, so a new closure there gives no update. The `LegendOptions`
 // and `TooltipOptions` of `pluginOptions` compare with `==`: a new closure
 // there is a new value and gives an update. A new `...For` closure is a new
-// value and gives an update. `ChartView.raw` keeps the identity test of
-// Chart.js ADR 0049, section 4. The update count is the `beforeUpdate` count
+// value and gives an update. The update count is the `beforeUpdate` count
 // of a registered spy plugin, which the config does not name.
 
 const Color _red = Color(0xFFFF0000);
@@ -262,75 +259,6 @@ void main() {
       await tester.pumpWidget(view(plugin('second')));
       expect(modes, hasLength(2));
       expect(starts, ['first', 'second']);
-    });
-
-    testWidgets('ChartView.raw keeps the identity test', (tester) async {
-      final modes = _spyOnUpdates();
-      Map<String, Object?> config() => <String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': <Object?>['a'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1],
-            },
-          ],
-        },
-        'options': <String, Object?>{'animation': false},
-      };
-      final raw = config();
-      await tester.pumpWidget(_box(ChartView.raw(config: raw)));
-      await tester.pumpWidget(_box(ChartView.raw(config: raw)));
-      expect(modes, hasLength(1));
-      // An equal Map that is a new object updates the chart.
-      await tester.pumpWidget(_box(ChartView.raw(config: config())));
-      expect(modes, hasLength(2));
-    });
-
-    testWidgets('a change of the form updates the same chart: raw, typed, '
-        'raw', (tester) async {
-      final modes = _spyOnUpdates();
-      final raw = <String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 2],
-            },
-          ],
-        },
-        'options': <String, Object?>{'animation': false},
-      };
-      await tester.pumpWidget(_box(ChartView.raw(config: raw)));
-      final chart = _chart(tester);
-      const typed = ChartConfig(
-        labels: ['a', 'b'],
-        datasets: [
-          LineDataset(label: 'typed', data: .values([3, 4])),
-        ],
-        animation: ChartAnimation.none,
-      );
-      await tester.pumpWidget(_box(const ChartView(config: typed)));
-      expect(modes, hasLength(2));
-      expect(_chart(tester), same(chart));
-      expect(chart.config.type, 'line');
-      expect(
-        (((chart.data as JsObjectFace)['datasets']! as List).first!
-            as JsObjectFace)['label'],
-        'typed',
-      );
-      // The same typed config: no update.
-      await tester.pumpWidget(_box(const ChartView(config: typed)));
-      expect(modes, hasLength(2));
-
-      await tester.pumpWidget(_box(ChartView.raw(config: raw)));
-      expect(modes, hasLength(3));
-      expect(_chart(tester), same(chart));
-      expect(chart.config.type, 'bar');
-      // The boundary makes a scope with the same values (row
-      // `adapt-config-objects`).
-      expect(chart.data['datasets'], same(jsGet(raw['data'], 'datasets')));
     });
 
     testWidgets('two ChartViews with one const config lower their own Maps', (

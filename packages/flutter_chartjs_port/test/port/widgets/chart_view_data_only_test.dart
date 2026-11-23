@@ -1,6 +1,4 @@
 // Original code, not ported from Chart.js: the data-only path of ChartView.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use_from_same_package
 @TestOn('vm')
 library;
 
@@ -151,25 +149,6 @@ ChartConfig _config(ChartKind type, int step, List<Object> labels) =>
 /// A scriptable radius that reads the mode of its context.
 Object? _radiusOfMode(ScriptableContext context) =>
     context.mode == UpdateMode.none ? 2.0 : 9.0;
-
-/// A raw config of a bar chart with a fixed range and no animation.
-Map<String, Object?> _rawBars(int step) => <String, Object?>{
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[1.0 + step, 2.0],
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'animation': false,
-    'scales': <String, Object?>{
-      'y': <String, Object?>{'min': 0.0, 'max': 100.0},
-    },
-  },
-};
 
 /// The bar chart that most tests vary.
 ChartConfig _bars(
@@ -573,37 +552,6 @@ void main() {
       await tester.pumpWidget(_view(_bars(2, labels), dataOnly: false));
       expect(spy.layouts, 1);
       expect(spy.modes, ['none']);
-    });
-
-    testWidgets('a raw config', (tester) async {
-      final spy = _spyOnChart();
-      Widget view(int step) => _box(
-        ChartView.raw(config: _rawBars(step), updateMode: UpdateMode.none),
-      );
-      await _warm(tester, view);
-      spy.clear();
-      await tester.pumpWidget(view(2));
-      expect(spy.layouts, 1);
-      expect(
-        tester.widget<ChartView>(find.byType(ChartView)).dataOnlyUpdates,
-        isFalse,
-      );
-    });
-
-    testWidgets('a change from a typed config to a raw one and back', (
-      tester,
-    ) async {
-      final spy = _spyOnChart();
-      final labels = _newLabels();
-      await _warm(tester, (step) => _view(_bars(step, labels)));
-      spy.clear();
-      await tester.pumpWidget(
-        _box(ChartView.raw(config: _rawBars(0), updateMode: UpdateMode.none)),
-      );
-      expect(spy.layouts, 1);
-      spy.clear();
-      await tester.pumpWidget(_view(_bars(2, labels)));
-      expect(spy.layouts, 1, reason: 'the typed config lowers again');
     });
 
     testWidgets('a new labels List', (tester) async {

@@ -1,6 +1,4 @@
 // Original code, not ported from Chart.js: tests of the theme switch.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use_from_same_package
 @TestOn('vm')
 library;
 
@@ -68,37 +66,6 @@ String _rgbaText(Color c, [double alpha = 1]) {
   return 'rgba(${channel(c.r)}, ${channel(c.g)}, ${channel(c.b)}, $a)';
 }
 
-/// A chart config of [type]: labels `a` to `c`, [datasets] datasets, the
-/// colors plugin on, `animation: false` unless [animated].
-// A Map config: the cases test the switch of `ChartView.raw`, which restores
-// the user `scales` and the palette keys of the dataset Maps in place, and
-// they edit these Maps by name.
-Map<String, Object?> _config({
-  String type = 'bar',
-  int datasets = 2,
-  bool animated = false,
-  List<Plugin<Object?>>? plugins,
-}) => <String, Object?>{
-  'type': type,
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      for (var i = 0; i < datasets; i++)
-        <String, Object?>{
-          'label': 'd$i',
-          'data': <Object?>[1 + i, 3, 2],
-        },
-    ],
-  },
-  'options': <String, Object?>{
-    if (!animated) 'animation': false,
-    'plugins': <String, Object?>{
-      'colors': const ColorsPluginOptions(enabled: true),
-    },
-  },
-  'plugins': ?plugins,
-};
-
 /// [child] at the top left of a box of 400 x 300.
 Widget _box(Widget child) => Directionality(
   textDirection: TextDirection.ltr,
@@ -108,37 +75,42 @@ Widget _box(Widget child) => Directionality(
   ),
 );
 
-/// Typed setup for ordinary theme switches. Raw identity probes retain
-/// [_config] and [_view].
+/// The dataset [i] of [_typedConfig]: `d<i>` with the data `[1 + i, 3, 2]`
+/// and the border color [borderColor].
+BarDataset _bar(int i, {ChartPaint? borderColor}) => BarDataset(
+  label: 'd$i',
+  data: .values([1 + i, 3, 2]),
+  borderColor: borderColor == null ? null : .constant(borderColor),
+);
+
+/// A bar chart config: labels `a` to `c`, [datasets] datasets (or the
+/// datasets of [_bar]), the colors plugin on ([colors]), `animation: false`
+/// unless [animated].
 ChartConfig _typedConfig({
   bool animated = false,
   List<Plugin<Object?>>? plugins,
+  List<Dataset>? datasets,
+  ColorsPluginOptions colors = const ColorsPluginOptions(enabled: true),
 }) => ChartConfig(
   labels: const ['a', 'b', 'c'],
-  datasets: [
-    for (var i = 0; i < 2; i++)
-      BarDataset(label: 'd$i', data: .values([1 + i, 3, 2])),
-  ],
+  datasets: datasets ?? [_bar(0), _bar(1)],
   animation: animated ? const ChartAnimation() : ChartAnimation.none,
   plugins: plugins,
-  pluginOptions: const [ColorsPluginOptions(enabled: true)],
+  pluginOptions: [colors],
 );
 
-Widget _typedView(ChartConfig config, {ChartThemeData? theme, Key? key}) =>
-    _box(ChartView(config: config, theme: theme, key: key));
-
-JsObjectFace _typedDataset(Chart chart, int index) =>
-    _datasets(chart)[index]! as JsObjectFace;
-
-/// A ChartView of [config] with [theme] in [_box].
-Widget _view(
-  Map<String, Object?> config, {
+/// A ChartView of [config] with [theme] and [updateMode] in [_box].
+Widget _typedView(
+  ChartConfig config, {
   ChartThemeData? theme,
   UpdateMode? updateMode,
   Key? key,
 }) => _box(
-  ChartView.raw(config: config, theme: theme, updateMode: updateMode, key: key),
+  ChartView(config: config, theme: theme, updateMode: updateMode, key: key),
 );
+
+JsObjectFace _typedDataset(Chart chart, int index) =>
+    _datasets(chart)[index]! as JsObjectFace;
 
 /// The chart of the one ChartView of the tree.
 Chart _chart(WidgetTester tester) {
@@ -149,9 +121,6 @@ Chart _chart(WidgetTester tester) {
 /// The datasets of [chart].
 List<Object?> _datasets(Chart chart) =>
     jsGet(chart.data, 'datasets')! as List<Object?>;
-
-/// The dataset [i] of [chart].
-AnyObject _dataset(Chart chart, int i) => _datasets(chart)[i]! as AnyObject;
 
 /// The resolved option [key] of the element [index] of the dataset
 /// [datasetIndex].
@@ -225,6 +194,24 @@ AnyObject _formConfig() => <String, Object?>{
   },
 };
 
+/// The typed config of the probe F-P4 for the widget (form F2): the chart
+/// of [_formConfig].
+const ChartConfig _typedFormConfig = ChartConfig(
+  labels: ['a', 'b', 'c'],
+  datasets: [
+    LineDataset(label: 'd0', data: .values([1, 2, 3])),
+    LineDataset(label: 'd1', data: .values([3, 2, 1])),
+  ],
+  scales: [
+    CategoryAxis(.x, title: AxisTitle(display: true, text: ['x'])),
+  ],
+  animation: ChartAnimation.none,
+  pluginOptions: [
+    ColorsPluginOptions(enabled: true),
+    TitleOptions(display: true, text: ['user']),
+  ],
+);
+
 /// The state of the probe F-P4: the `x` tick color, `x.min`, the border
 /// color of the dataset 0, the visibility of the dataset 1 and the title.
 String _formState(Chart chart) {
@@ -234,7 +221,7 @@ String _formState(Chart chart) {
       jsGet(jsGet(chart.options, 'plugins'), 'title')! as TitleOptions;
   final tickColor = (x.ticks.color as SolidChartPaint).color;
   final borderColor =
-      (_dataset(chart, 0)['borderColor']! as SolidChartPaint).color;
+      (jsGet(_datasets(chart)[0], 'borderColor')! as SolidChartPaint).color;
   return 'x.ticks.color=${_rgbaText(tickColor)} '
       'x.min=${x.min} '
       'ds0.borderColor=${_rgbaText(borderColor)} '
@@ -250,8 +237,9 @@ const String _formEdited =
     'ds0.borderColor=rgba(0, 128, 0, 1) visible1=false title.text=edited';
 
 /// The edits of the probe F-P4: the app hides the dataset 1, and it edits
-/// the title text and `x.min` of [options] imperatively.
-void _formEdits(Chart chart, AnyObject options) {
+/// the title text and `x.min` of [options] (a Map or the face of a typed
+/// scope) imperatively.
+void _formEdits(Chart chart, Object options) {
   chart.hide(1);
   // The title options are one immutable object (Chart.js ADR 0197): the edit
   // writes a new object.
@@ -317,7 +305,7 @@ List<DataPoint> _decimationInput() => [
 /// A host whose state sets the config and the theme of its ChartView in one
 /// `setState`.
 class const _Host({
-  required final Map<String, Object?> config,
+  required final ChartConfig config,
   final ChartThemeData? theme,
 }) extends StatefulWidget {
   @override
@@ -325,12 +313,12 @@ class const _Host({
 }
 
 class _HostState() extends State<_Host> {
-  late Map<String, Object?> config = widget.config;
+  late ChartConfig config = widget.config;
   late ChartThemeData? theme = widget.theme;
   UpdateMode? updateMode;
 
   void show(
-    Map<String, Object?> nextConfig,
+    ChartConfig nextConfig,
     ChartThemeData? nextTheme, {
     UpdateMode? mode,
   }) => setState(() {
@@ -341,7 +329,7 @@ class _HostState() extends State<_Host> {
 
   @override
   Widget build(BuildContext context) =>
-      _view(config, theme: theme, updateMode: updateMode);
+      _typedView(config, theme: theme, updateMode: updateMode);
 }
 
 void main() {
@@ -389,14 +377,14 @@ void main() {
         'options keep their identity, and the edit of x.min goes', (
       tester,
     ) async {
-      final config = _formConfig();
-      final options = config['options']! as AnyObject;
-      await tester.pumpWidget(_view(config, theme: _themeA));
+      await tester.pumpWidget(_typedView(_typedFormConfig, theme: _themeA));
       final chart = _chart(tester);
+      // The options of the app: the live typed scope of the lowering.
+      final options = chart.config.options;
       expect(_formState(chart), _formCreated);
       _formEdits(chart, options);
       expect(_formState(chart), _formEdited);
-      await tester.pumpWidget(_view(config, theme: _themeB));
+      await tester.pumpWidget(_typedView(_typedFormConfig, theme: _themeB));
       expect(
         _formState(chart),
         'x.ticks.color=rgba(0, 0, 255, 1) x.min=undefined '
@@ -675,56 +663,54 @@ void main() {
       expect(chartThemeOf(_chart(tester).config), isNull);
     });
 
-    testWidgets('a dataset that the app pushes after the first colorize gets '
+    testWidgets('a dataset that the app adds after the first colorize gets '
         'the next palette color after a switch', (tester) async {
-      final config = _config();
-      await tester.pumpWidget(_view(config, theme: _palette3A));
+      await tester.pumpWidget(_typedView(_typedConfig(), theme: _palette3A));
       final chart = _chart(tester);
       expect(
-        _dataset(chart, 1)['borderColor'],
+        _typedDataset(chart, 1)['borderColor'],
         ChartPaint.solid(_rgba(_green)),
       );
-      _datasets(chart).add(<String, Object?>{
-        'label': 'd2',
-        'data': <Object?>[2, 2, 2],
-      });
-      chart.update();
-      // The colors plugin skips: the datasets hold colors
-      // (plugin.colors.ts:113-121).
-      expect(_dataset(chart, 2).containsKey('borderColor'), isFalse);
-      await tester.pumpWidget(_view(config, theme: _palette3B));
+      final three = _typedConfig(datasets: [_bar(0), _bar(1), _bar(2)]);
+      await tester.pumpWidget(_typedView(three, theme: _palette3A));
+      await tester.pumpWidget(_typedView(three, theme: _palette3B));
+      expect(_chart(tester), same(chart));
       expect(
-        _dataset(chart, 0)['borderColor'],
+        _typedDataset(chart, 0)['borderColor'],
         ChartPaint.solid(_rgba(_yellow)),
       );
-      expect(_dataset(chart, 1)['borderColor'], ChartPaint.solid(_rgba(_cyan)));
       expect(
-        _dataset(chart, 2)['borderColor'],
+        _typedDataset(chart, 1)['borderColor'],
+        ChartPaint.solid(_rgba(_cyan)),
+      );
+      expect(
+        _typedDataset(chart, 2)['borderColor'],
         ChartPaint.solid(_rgba(_magenta)),
       );
       expect(
-        _dataset(chart, 2)['backgroundColor'],
+        _typedDataset(chart, 2)['backgroundColor'],
         ChartPaint.solid(_rgba(_magenta, 0.5)),
       );
     });
 
-    testWidgets('an app edit of a dataset color stays, and the other '
-        'datasets then get no palette color, as a new chart', (tester) async {
-      final config = _config();
-      await tester.pumpWidget(_view(config, theme: _palette3A));
+    testWidgets('an app color of a dataset stays, and the other datasets '
+        'then get no palette color, as a new chart', (tester) async {
+      const own = ChartPaint.solid(native_ui.Color.fromRGBO(1, 2, 3, 1));
+      final edited = _typedConfig(
+        datasets: [
+          _bar(0, borderColor: own),
+          _bar(1),
+        ],
+      );
+      await tester.pumpWidget(_typedView(_typedConfig(), theme: _palette3A));
       final chart = _chart(tester);
-      _dataset(chart, 0)['borderColor'] = const ChartPaint.solid(
-        native_ui.Color.fromRGBO(1, 2, 3, 1),
-      );
-      chart.update();
-      await tester.pumpWidget(_view(config, theme: _palette3B));
-      expect(
-        _dataset(chart, 0)['borderColor'],
-        const ChartPaint.solid(native_ui.Color.fromRGBO(1, 2, 3, 1)),
-      );
-      expect(_dataset(chart, 0).containsKey('backgroundColor'), isFalse);
-      expect(_dataset(chart, 1).containsKey('borderColor'), isFalse);
-      expect(_dataset(chart, 1).containsKey('backgroundColor'), isFalse);
+      await tester.pumpWidget(_typedView(edited, theme: _palette3A));
+      await tester.pumpWidget(_typedView(edited, theme: _palette3B));
+      expect(_chart(tester), same(chart));
+      expect(_typedDataset(chart, 0)['borderColor'], own);
+      expect(_typedDataset(chart, 0).jsHas('backgroundColor'), isFalse);
+      expect(_typedDataset(chart, 1).jsHas('borderColor'), isFalse);
+      expect(_typedDataset(chart, 1).jsHas('backgroundColor'), isFalse);
       final switched = [
         for (final key in ['borderColor', 'backgroundColor'])
           for (var i = 0; i < 2; i++)
@@ -732,15 +718,12 @@ void main() {
       ];
 
       // A new chart of the theme B with that dataset color.
-      final fresh = _config();
-      (_datasetsOf(fresh)[0]! as AnyObject)['borderColor'] =
-          const ChartPaint.solid(native_ui.Color.fromRGBO(1, 2, 3, 1));
       await tester.pumpWidget(
-        _view(fresh, theme: _palette3B, key: const ValueKey('fresh')),
+        _typedView(edited, theme: _palette3B, key: const ValueKey('fresh')),
       );
       final created = _chart(tester);
       expect(created, isNot(same(chart)));
-      expect(_dataset(created, 1).containsKey('borderColor'), isFalse);
+      expect(_typedDataset(created, 1).jsHas('borderColor'), isFalse);
       expect([
         for (final key in ['borderColor', 'backgroundColor'])
           for (var i = 0; i < 2; i++)
@@ -750,83 +733,79 @@ void main() {
 
     testWidgets('forceOverride: the palette keys go back to the values '
         'before the first write', (tester) async {
-      final config = _config();
-      // The colors options are one object (Chart.js ADR 0196): a change
-      // writes a new object into the options of the app.
-      final plugins =
-          (config['options']! as AnyObject)['plugins']! as AnyObject;
-      plugins['colors'] = const ColorsPluginOptions(
-        enabled: true,
-        forceOverride: true,
+      const own = ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1));
+      ChartConfig config({required bool enabled}) => _typedConfig(
+        datasets: [
+          _bar(0),
+          _bar(1, borderColor: own),
+        ],
+        colors: ColorsPluginOptions(enabled: enabled, forceOverride: true),
       );
-      (_datasetsOf(config)[1]! as AnyObject)['borderColor'] =
-          const ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1));
-      await tester.pumpWidget(_view(config, theme: _palette3A));
+      final on = config(enabled: true);
+      await tester.pumpWidget(_typedView(on, theme: _palette3A));
       final chart = _chart(tester);
       // forceOverride writes over the dataset color in each update.
       expect(
-        _dataset(chart, 1)['borderColor'],
+        _typedDataset(chart, 1)['borderColor'],
         ChartPaint.solid(_rgba(_green)),
       );
       chart
         ..update()
         ..update();
       expect(
-        _dataset(chart, 1)['borderColor'],
+        _typedDataset(chart, 1)['borderColor'],
         ChartPaint.solid(_rgba(_green)),
       );
-      await tester.pumpWidget(_view(config, theme: _palette3B));
-      expect(_dataset(chart, 1)['borderColor'], ChartPaint.solid(_rgba(_cyan)));
+      await tester.pumpWidget(_typedView(on, theme: _palette3B));
+      expect(
+        _typedDataset(chart, 1)['borderColor'],
+        ChartPaint.solid(_rgba(_cyan)),
+      );
       // A removal restores the value of the app before the first write, and
       // the colors plugin writes the upstream palette over it.
-      await tester.pumpWidget(_view(config));
+      await tester.pumpWidget(_typedView(on));
       expect(
-        _dataset(chart, 1)['borderColor'],
+        _typedDataset(chart, 1)['borderColor'],
         const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
       );
       // With the plugin off, a switch shows the restored values: the value
       // of the app, and no key where the app had none.
-      plugins['colors'] = const ColorsPluginOptions(
-        enabled: false,
-        forceOverride: true,
+      await tester.pumpWidget(
+        _typedView(config(enabled: false), theme: _palette3A),
       );
-      await tester.pumpWidget(_view(config, theme: _palette3A));
-      expect(
-        _dataset(chart, 1)['borderColor'],
-        const ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1)),
-      );
-      expect(_dataset(chart, 1).containsKey('backgroundColor'), isFalse);
-      expect(_dataset(chart, 0).containsKey('borderColor'), isFalse);
+      expect(_typedDataset(chart, 1)['borderColor'], own);
+      expect(_typedDataset(chart, 1).jsHas('backgroundColor'), isFalse);
+      expect(_typedDataset(chart, 0).jsHas('borderColor'), isFalse);
     });
 
     testWidgets('a theme change and a config change in one frame give one '
         'update with the theme mode', (tester) async {
       final modes = _spyOnUpdates();
-      final config = _config();
+      final config = _typedConfig();
       await tester.pumpWidget(_Host(config: config, theme: _themeA));
       final host = tester.state<_HostState>(find.byType(_Host));
       final chart = _chart(tester);
       expect(modes, [null]);
-      final next = <String, Object?>{
-        ...config,
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b', 'c'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[4, 5, 6],
-            },
-          ],
-        },
-      };
+      final data = <num?>[4, 5, 6];
+      final next = _typedConfig(datasets: [BarDataset(data: .values(data))]);
       host.show(next, _themeB, mode: UpdateMode.none);
       await tester.pump();
       expect(modes, [null, 'theme']);
-      // The boundary makes a scope with the same values (row
-      // `adapt-config-objects`).
-      expect(chart.data['datasets'], same(jsGet(next['data'], 'datasets')));
-      expect(_dataset(chart, 0)['borderColor'], ChartPaint.solid(_rgba(_blue)));
+      expect(_typedDataset(chart, 0)['data'], same(data));
+      expect(
+        _typedDataset(chart, 0)['borderColor'],
+        ChartPaint.solid(_rgba(_blue)),
+      );
       // A config change alone takes updateMode.
-      host.show({...next}, _themeB, mode: UpdateMode.none);
+      host.show(
+        _typedConfig(
+          datasets: [
+            const BarDataset(data: .values([7, 8, 9])),
+          ],
+        ),
+        _themeB,
+        mode: UpdateMode.none,
+      );
       await tester.pump();
       expect(modes, [null, 'theme', 'none']);
     });
@@ -880,30 +859,13 @@ void main() {
 
     testWidgets('the diagnostics name the theme', (tester) async {
       final properties = [
-        for (final property in const ChartView.raw(
-          config: {},
+        for (final property in const ChartView(
+          config: ChartConfig(datasets: [BarDataset()]),
           theme: ChartThemeData.dark(),
         ).toDiagnosticsNode().getProperties())
           if (!property.isFiltered(DiagnosticLevel.info)) property.name,
       ];
-      expect(properties, ['type', 'theme']);
-    });
-
-    testWidgets(r'an app value under $theme fails the debug assert', (
-      tester,
-    ) async {
-      final config = _config()..[themeConfigKey] = <String, Object?>{};
-      await tester.pumpWidget(_view(config));
-      expect(tester.takeException(), isA<AssertionError>());
-      await tester.pump();
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('an app plugins value that is not a List fails the debug '
-        'assert', (tester) async {
-      final config = _config()..['plugins'] = <String, Object?>{};
-      await tester.pumpWidget(_view(config));
-      expect(tester.takeException(), isA<AssertionError>());
+      expect(properties, ['type', 'datasets', 'theme']);
     });
   });
 
@@ -992,10 +954,6 @@ void main() {
     });
   });
 }
-
-/// The datasets of the raw [config].
-List<Object?> _datasetsOf(Map<String, Object?> config) =>
-    jsGet(config['data'], 'datasets')! as List<Object?>;
 
 /// A chart for the unit case of `ChartThemeSwitch`: only [data].
 final class _FakeChart(@override final ChartDataScope data) implements IChart {

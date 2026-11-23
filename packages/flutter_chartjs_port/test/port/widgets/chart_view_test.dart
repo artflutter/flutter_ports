@@ -1,6 +1,4 @@
 // Original code, not ported from Chart.js: tests of the ChartView widget.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use_from_same_package
 @TestOn('vm')
 library;
 
@@ -18,29 +16,25 @@ import 'package:flutter_test/flutter_test.dart';
 // the reduced-motion preference sets the flag of the canvas (section 7).
 // flutter_test_config.dart registers the built-in components.
 
-/// A config of [type] with three values, `animation: false` unless
-/// [options] gives it, and the inline [plugins].
-Map<String, Object?> _config({
-  String type = 'bar',
-  Map<String, Object?> options = const {},
+/// A bar chart config with the labels `a` to `c` and the values [data]
+/// (`[1, 2, 3]` in a new List), with [animation] (none by default), the
+/// inline [plugins] and [onHover].
+ChartConfig _bars({
+  List<num?>? data,
+  ChartAnimation animation = ChartAnimation.none,
   List<Plugin<Object?>>? plugins,
-  List<Object?>? data,
-}) => <String, Object?>{
-  'type': type,
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': data ?? <Object?>[1, 2, 3],
-      },
-    ],
-  },
-  'options': <String, Object?>{'animation': false, ...options},
-  'plugins': ?plugins,
-};
+  ChartEventHandler? onHover,
+}) => ChartConfig(
+  labels: const ['a', 'b', 'c'],
+  datasets: [
+    BarDataset(data: .values(data ?? [1, 2, 3])),
+  ],
+  animation: animation,
+  plugins: plugins,
+  onHover: onHover,
+);
 
-/// Typed setup for ordinary lifecycle checks. Raw identity and raw-option
-/// contract tests below retain [_config].
+/// Typed setup for ordinary lifecycle checks.
 ChartConfig _typedConfig({
   Dataset dataset = const BarDataset(data: .values([1, 2, 3])),
   bool? maintainAspectRatio,
@@ -118,17 +112,18 @@ List<String> _properties(Diagnosticable object) => [
 ];
 
 /// A parent that shows a ChartView of its config and a [Text] of its label.
-class const _Parent({required final Object config}) extends StatefulWidget {
+class const _Parent({required final ChartConfig config})
+    extends StatefulWidget {
   @override
   State<_Parent> createState() => _ParentState();
 }
 
 class _ParentState() extends State<_Parent> {
-  late Object config = widget.config;
+  late ChartConfig config = widget.config;
   String label = '';
   UpdateMode? updateMode;
 
-  void show(Object next, {UpdateMode? mode}) => setState(() {
+  void show(ChartConfig next, {UpdateMode? mode}) => setState(() {
     config = next;
     updateMode = mode;
   });
@@ -145,17 +140,7 @@ class _ParentState() extends State<_Parent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            switch (config) {
-              ChartConfig value => ChartView(
-                config: value,
-                updateMode: updateMode,
-              ),
-              Map<String, Object?> value => ChartView.raw(
-                config: value,
-                updateMode: updateMode,
-              ),
-              _ => throw ArgumentError.value(config, 'config'),
-            },
+            ChartView(config: config, updateMode: updateMode),
             Text(label, key: const ValueKey('label')),
           ],
         ),
@@ -513,8 +498,8 @@ void main() {
   group('diagnostics', () {
     testWidgets('the widget and the state describe the chart, not the '
         'config', (tester) async {
-      final widget = ChartView.raw(
-        config: _config(),
+      final widget = ChartView(
+        config: _bars(),
         updateMode: UpdateMode.none,
         onChartCreated: (chart) {},
       );
@@ -524,7 +509,6 @@ void main() {
         'updateMode: "none"',
         'has onChartCreated',
       ]);
-      expect(_properties(const ChartView.raw(config: {})), ['type: null']);
 
       await tester.pumpWidget(_box(widget));
       final chart = _chart(tester)!;
@@ -537,19 +521,19 @@ void main() {
   });
 
   group('update', () {
-    testWidgets('the same Map gives no update', (tester) async {
+    testWidgets('the same config gives no update', (tester) async {
       final counts = <String, int>{};
-      final config = _config(
+      final config = _bars(
         plugins: [_counter('update', 'beforeUpdate', counts)],
       );
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
+      await tester.pumpWidget(_box(ChartView(config: config)));
       expect(counts['beforeUpdate'], 1);
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
+      await tester.pumpWidget(_box(ChartView(config: config)));
       await tester.pump();
       expect(counts['beforeUpdate'], 1);
     });
 
-    testWidgets('a new Map gives one update in the post-frame phase', (
+    testWidgets('a new config gives one update in the post-frame phase', (
       tester,
     ) async {
       final phases = <SchedulerPhase>[];
@@ -562,13 +546,11 @@ void main() {
           },
         ),
       ];
-      final config = _config(plugins: plugins);
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
+      await tester.pumpWidget(_box(ChartView(config: _bars(plugins: plugins))));
       // The start updates the chart in the layout of the host.
       expect(phases, [SchedulerPhase.persistentCallbacks]);
-      await tester.pumpWidget(
-        _box(ChartView.raw(config: Map<String, Object?>.of(config))),
-      );
+      // A new data List: a config that is not ==.
+      await tester.pumpWidget(_box(ChartView(config: _bars(plugins: plugins))));
       expect(phases, [
         SchedulerPhase.persistentCallbacks,
         SchedulerPhase.postFrameCallbacks,
@@ -577,25 +559,24 @@ void main() {
       expect(phases, hasLength(2));
     });
 
-    testWidgets('three new Maps in one frame give one update with the last', (
-      tester,
-    ) async {
+    testWidgets('three new configs in one frame give one update with the '
+        'last', (tester) async {
       final counts = <String, int>{};
       final plugins = <Plugin<Object?>>[
         _counter('update', 'beforeUpdate', counts),
       ];
-      await tester.pumpWidget(_Parent(config: _config(plugins: plugins)));
+      await tester.pumpWidget(_Parent(config: _bars(plugins: plugins)));
       final parent = tester.state<_ParentState>(find.byType(_Parent));
       final chart = _chart(tester)!;
       final owner = tester.binding.buildOwner!;
       final root = tester.binding.rootElement!;
-      late Map<String, Object?> last;
+      late List<num?> last;
       for (final values in const [
-        <Object?>[4, 5, 6],
-        <Object?>[7, 8, 9],
-        <Object?>[10, 11, 12],
+        <num?>[4, 5, 6],
+        <num?>[7, 8, 9],
+        <num?>[10, 11, 12],
       ]) {
-        parent.show(last = _config(plugins: plugins, data: values));
+        parent.show(_bars(plugins: plugins, data: last = values));
         // A build outside a frame: the three builds come before the frame.
         owner.buildScope(root);
       }
@@ -603,9 +584,10 @@ void main() {
       await tester.pump();
       expect(counts['beforeUpdate'], 2);
       expect(_chart(tester), same(chart));
-      // The boundary makes a scope with the same values (row
-      // `adapt-config-objects`).
-      expect(chart.data['datasets'], same(jsGet(last['data'], 'datasets')));
+      final dataset =
+          (jsGet(chart.data, 'datasets')! as List<Object?>).single!
+              as JsObjectFace;
+      expect(dataset['data'], same(last));
       expect(chart.getDatasetMeta(0).data, hasLength(3));
       expect(jsGet(chart.getDatasetMeta(0).controller!.getParsed(0), 'y'), 10);
     });
@@ -615,16 +597,13 @@ void main() {
     ) async {
       late _ParentState parent;
       var hovers = 0;
-      Map<String, Object?> make() => _config(
-        options: <String, Object?>{
-          'onHover': (ChartEvent event, List<Object?> active, Chart c) {
-            hovers++;
-            parent.write('hover $hovers');
-          },
+      ChartConfig make() => _bars(
+        onHover: (event, active, c) {
+          hovers++;
+          parent.write('hover $hovers');
         },
       );
-      final first = make();
-      await tester.pumpWidget(_Parent(config: first));
+      await tester.pumpWidget(_Parent(config: make()));
       parent = tester.state<_ParentState>(find.byType(_Parent));
       final chart = _chart(tester)!;
       final center = tester.getCenter(find.byType(ChartView));
@@ -638,10 +617,10 @@ void main() {
       expect(find.text('hover 1'), findsOneWidget);
       expect(chart.lastEvent, isNotNull);
 
-      // The update replays the last event (core.controller.js:529-532) after
-      // the frame, where setState is allowed.
-      final second = Map<String, Object?>.of(first);
-      parent.show(second);
+      // The update of a new config (a new data List) replays the last event
+      // (core.controller.js:529-532) after the frame, where setState is
+      // allowed.
+      parent.show(make());
       await tester.pump();
       expect(tester.takeException(), isNull);
       expect(hovers, 2);
@@ -698,45 +677,22 @@ void main() {
       expect(chart.id, id);
     });
 
-    testWidgets('a new platform makes a new chart and calls onChartCreated '
-        'again', (tester) async {
-      final created = <Chart>[];
-      final config = _config();
-      Widget build(Map<String, Object?> config) =>
-          _box(ChartView.raw(config: config, onChartCreated: created.add));
-      await tester.pumpWidget(build(config));
-      expect(created, hasLength(1));
-      final first = created.single;
-      await tester.pumpWidget(
-        build({...config, 'platform': BasicPlatform.jsClass}),
-      );
-      expect(created, hasLength(2));
-      expect(first.canvas, isNull);
-      expect(created.last, isNot(same(first)));
-      expect(created.last.platform, isA<BasicPlatform>());
-      expect(created.last.platform, isNot(isA<FlutterPlatform>()));
-      expect(created.last.canvas, same(_canvas(tester)));
-      expect(Chart.instances.values, [created.last]);
-    });
-
     testWidgets('updateMode reaches beforeUpdate as args.mode', (tester) async {
       final modes = <Object?>[];
-      final config = _config(
-        plugins: [
-          Plugin<Object?>(
-            id: 'mode',
-            beforeUpdate: (chart, args, options) {
-              modes.add(args.mode);
-              return true;
-            },
-          ),
-        ],
-      );
-      await tester.pumpWidget(_Parent(config: config));
+      final plugins = [
+        Plugin<Object?>(
+          id: 'mode',
+          beforeUpdate: (chart, args, options) {
+            modes.add(args.mode);
+            return true;
+          },
+        ),
+      ];
+      await tester.pumpWidget(_Parent(config: _bars(plugins: plugins)));
       final parent = tester.state<_ParentState>(find.byType(_Parent))
-        ..show(Map.of(config), mode: UpdateMode.none);
+        ..show(_bars(plugins: plugins), mode: UpdateMode.none);
       await tester.pump();
-      parent.show(Map.of(config));
+      parent.show(_bars(plugins: plugins));
       await tester.pump();
       expect(modes, [null, 'none', null]);
     });
@@ -769,9 +725,8 @@ void main() {
     });
 
     testWidgets('a chart.options edit stays after chart.update() and goes '
-        'after a new options object', (tester) async {
-      final config = _config();
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
+        'after a config with another option', (tester) async {
+      await tester.pumpWidget(_box(ChartView(config: _bars())));
       final chart = _chart(tester)!;
       expect(chart.options['indexAxis'], isA<XAxis>());
       chart.options['indexAxis'] = const YAxis();
@@ -779,15 +734,14 @@ void main() {
       expect(chart.options['indexAxis'], isA<YAxis>());
       expect(chart.getDatasetMeta(0).indexAxis, isA<YAxis>());
 
-      // A new config Map with the same options object keeps the edit.
-      await tester.pumpWidget(_box(ChartView.raw(config: Map.of(config))));
+      // A new config with new data and == options keeps the live options
+      // and the edit.
+      await tester.pumpWidget(_box(ChartView(config: _bars())));
       expect(chart.options['indexAxis'], isA<YAxis>());
 
-      // A new options object drops it. The chart writes into the options:
-      // they are not const.
-      final options = <String, Object?>{'animation': false};
+      // A config with another option lowers new options: the edit goes.
       await tester.pumpWidget(
-        _box(ChartView.raw(config: {...config, 'options': options})),
+        _box(ChartView(config: _bars().copyWith(responsive: true))),
       );
       expect(chart.options['indexAxis'], isA<XAxis>());
       expect(chart.getDatasetMeta(0).indexAxis, isA<XAxis>());
@@ -996,12 +950,12 @@ void main() {
     testWidgets('a change of the preference to off makes no update, and the '
         'next update animates', (tester) async {
       final counts = <String, int>{};
-      final config = _config(
-        options: <String, Object?>{'animation': <String, Object?>{}},
-        plugins: [_counter('update', 'beforeUpdate', counts)],
-      );
-      Widget build(Map<String, Object?> config, {required bool reduced}) =>
-          _motion(_box(ChartView.raw(config: config)), reduced: reduced);
+      final plugins = [_counter('update', 'beforeUpdate', counts)];
+      ChartConfig make() =>
+          _bars(animation: const ChartAnimation(), plugins: plugins);
+      final config = make();
+      Widget build(ChartConfig config, {required bool reduced}) =>
+          _motion(_box(ChartView(config: config)), reduced: reduced);
       await tester.pumpWidget(build(config, reduced: true));
       final chart = _chart(tester)!;
       expect(animator.has(chart), isFalse);
@@ -1015,7 +969,8 @@ void main() {
         isNot(contains('reduced motion')),
       );
 
-      await tester.pumpWidget(build(Map.of(config), reduced: false));
+      // A new data List with the same values.
+      await tester.pumpWidget(build(make(), reduced: false));
       expect(counts['beforeUpdate'], 2);
       expect(animator.has(chart), isTrue);
       await tester.pump(const Duration(seconds: 2));

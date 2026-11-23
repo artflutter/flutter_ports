@@ -2,25 +2,23 @@
 /// The sankey chart type of chartjs-chart-sankey for `flutter_chartjs_port`.
 ///
 /// Register the two components once, before the first sankey chart. Then
-/// give a chart the type `sankey`:
+/// give a chart a `SankeyDataset`: the class of the first dataset gives the
+/// chart type `sankey`:
 ///
 /// ```dart
 /// Chart.register(sankeyRegisterables);
 ///
-/// ChartView.raw(
-///   config: <String, Object?>{
-///     'type': 'sankey',
-///     'data': <String, Object?>{
-///       'datasets': <Object?>[
-///         <String, Object?>{
-///           'data': <Object?>[
-///             const SankeyDataPoint(from: 'a', to: 'b', flow: 10),
-///             const SankeyDataPoint(from: 'a', to: 'c', flow: 5),
-///           ],
-///         },
-///       ],
-///     },
-///   },
+/// const ChartView(
+///   config: ChartConfig(
+///     datasets: [
+///       SankeyDataset(
+///         data: [
+///           SankeyDataPoint(from: 'a', to: 'b', flow: 10),
+///           SankeyDataPoint(from: 'a', to: 'c', flow: 5),
+///         ],
+///       ),
+///     ],
+///   ),
 /// );
 /// ```
 ///
