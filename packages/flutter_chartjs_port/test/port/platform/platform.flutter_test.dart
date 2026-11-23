@@ -124,42 +124,32 @@ void main() {
   });
 
   group('initCanvas', () {
-    test('takes the render width from the width style', () {
-      final canvas = UiCanvasElement();
-      canvas.style.setProperty('width', '620px');
+    test('takes the render width from the display width', () {
+      final canvas = UiCanvasElement()..displayWidth = 620;
       initCanvas(canvas);
       expect((canvas.width, canvas.height), (620, 310));
-      expect(canvas.style.getPropertyValue('display'), 'block');
-      expect(canvas.style.getPropertyValue('box-sizing'), 'border-box');
+      // No display or box-sizing write (row adapt-native-canvas-style).
+      expect((canvas.displayWidth, canvas.displayHeight), (620, null));
     });
 
     test('applies the aspect ratio with ToUint32', () {
-      final canvas = UiCanvasElement();
-      canvas.style.setProperty('width', '620px');
+      final canvas = UiCanvasElement()..displayWidth = 620;
       initCanvas(canvas, 3);
       expect((canvas.width, canvas.height), (620, 206));
     });
 
-    test('takes the render height from the height style', () {
-      final canvas = UiCanvasElement();
-      canvas.style
-        ..setProperty('width', '345px')
-        ..setProperty('height', '125.42px');
+    test('takes the render height from the display height', () {
+      final canvas = UiCanvasElement()
+        ..displayWidth = 345
+        ..displayHeight = 125.42;
       initCanvas(canvas, 3);
       expect((canvas.width, canvas.height), (345, 125));
     });
 
-    test('keeps the default size without styles', () {
+    test('keeps the default size without a display size', () {
       final canvas = UiCanvasElement();
       initCanvas(canvas);
       expect((canvas.width, canvas.height), (300, 150));
-    });
-
-    test('keeps a display style', () {
-      final canvas = UiCanvasElement();
-      canvas.style.setProperty('display', 'inline');
-      initCanvas(canvas);
-      expect(canvas.style.getPropertyValue('display'), 'inline');
     });
 
     test('keeps the render size of the attributes', () {
@@ -169,10 +159,9 @@ void main() {
       expect((canvas.width, canvas.height), (512, 512));
 
       // Attributes 165 x 85 and styles 345 x 125 (platform.dom.tests.js:235).
-      final styled = UiCanvasElement(width: 165, height: 85);
-      styled.style
-        ..setProperty('width', '345px')
-        ..setProperty('height', '125px');
+      final styled = UiCanvasElement(width: 165, height: 85)
+        ..displayWidth = 345
+        ..displayHeight = 125;
       initCanvas(styled);
       expect((styled.width, styled.height), (165, 85));
     });
@@ -194,33 +183,28 @@ void main() {
     });
 
     test('acquireContext initializes the canvas', () {
-      final canvas = UiCanvasElement();
-      canvas.style.setProperty('width', '512px');
+      final canvas = UiCanvasElement()..displayWidth = 512;
       final context = FlutterPlatform().acquireContext(canvas, 2);
       expect(context, same(canvas.getContext2d()));
       expect((canvas.width, canvas.height), (512, 256));
     });
 
     test('releaseContext restores the canvas', () {
-      final canvas = UiCanvasElement();
-      canvas.style
-        ..setProperty('width', '512px')
-        ..setProperty('height', '480px');
+      final canvas = UiCanvasElement()
+        ..displayWidth = 512
+        ..displayHeight = 480;
       final platform = FlutterPlatform();
       final context = platform.acquireContext(canvas)!;
       canvas
         ..width = 950
-        ..height = 900;
-      canvas.style
-        ..setProperty('width', '475px')
-        ..setProperty('height', '450px');
+        ..height = 900
+        ..displayWidth = 475
+        ..displayHeight = 450;
       context.fillStyle = const native_ui.Color.fromRGBO(255, 0, 0, 1);
 
       expect(platform.releaseContext(context), isTrue);
       expect((canvas.width, canvas.height), (300, 150));
-      expect(canvas.style.getPropertyValue('width'), '512px');
-      expect(canvas.style.getPropertyValue('height'), '480px');
-      expect(canvas.style.getPropertyValue('display'), '');
+      expect((canvas.displayWidth, canvas.displayHeight), (512, 480));
       // The context is back at its default state.
       expect(context.fillStyle, const native_ui.Color.fromRGBO(0, 0, 0, 1));
       expect(platform.releaseContext(context), isFalse);
@@ -228,10 +212,9 @@ void main() {
 
     test('releaseContext restores the initial attributes', () {
       // platform.dom.tests.js:331 "should restore canvas initial values".
-      final canvas = UiCanvasElement(width: 180);
-      canvas.style
-        ..setProperty('width', '512px')
-        ..setProperty('height', '480px');
+      final canvas = UiCanvasElement(width: 180)
+        ..displayWidth = 512
+        ..displayHeight = 480;
       final platform = FlutterPlatform();
       final context = platform.acquireContext(canvas)!;
       expect((canvas.width, canvas.height), (180, 480));
@@ -245,9 +228,7 @@ void main() {
       expect(canvas.getAttribute('width'), '180');
       expect(canvas.getAttribute('height'), isNull);
       expect((canvas.width, canvas.height), (180, 150));
-      expect(canvas.style.getPropertyValue('width'), '512px');
-      expect(canvas.style.getPropertyValue('height'), '480px');
-      expect(canvas.style.getPropertyValue('display'), '');
+      expect((canvas.displayWidth, canvas.displayHeight), (512, 480));
     });
 
     testWidgets('addEventListener keeps one proxy for each type', (

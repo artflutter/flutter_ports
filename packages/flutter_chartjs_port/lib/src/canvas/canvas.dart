@@ -146,6 +146,21 @@ enum CanvasTextBaseline() {
   bottom,
 }
 
+/// The touch action of a canvas: whether a touch sequence on the chart host
+/// may begin a pan of an ancestor (Chart.js ADR 0200).
+///
+/// The host has two behaviors, so the enum has two values. The DOM keyword
+/// of each value is its name.
+enum CanvasTouchAction() {
+  /// `auto`, the default: a touch move past the slop begins the pan
+  /// (Chart.js ADR 0037 §8).
+  auto,
+
+  /// `none`: no move begins the pan, and the host claims its touch pointers
+  /// in the gesture arena (Chart.js ADR 0108 §8).
+  none,
+}
+
 /// lib.dom.d.ts `CanvasPath`: the path methods that
 /// [CanvasRenderingContext2D] and [Path2D] share.
 abstract interface class CanvasPath() {
@@ -544,6 +559,29 @@ abstract interface class HTMLCanvasElement() {
 
   /// `style`: the inline style of the canvas.
   CSSStyleDeclaration get style;
+
+  /// The display width of the canvas in logical pixels, the `width` of its
+  /// inline style, or `null` when the canvas has none: then the display
+  /// width is the render width ([width]). `retinaScale` writes it
+  /// (Chart.js ADR 0200).
+  abstract double? displayWidth;
+
+  /// The display height of the canvas in logical pixels, as [displayWidth].
+  abstract double? displayHeight;
+
+  /// The touch action of the canvas (Chart.js ADR 0200). The chart host
+  /// reads it at the start of a touch sequence (Chart.js ADR 0108 §8).
+  abstract CanvasTouchAction touchAction;
+
+  /// Whether a drag may select the content around the canvas: `false` is
+  /// `user-select: none`. It has no effect: the canvas has no text to
+  /// select (Chart.js ADR 0200).
+  abstract bool userSelect;
+
+  /// The text direction of the canvas element, which a context with a
+  /// `null` [CanvasRenderingContext2D.direction] inherits. `null` is the
+  /// default, left to right (Chart.js ADRs 0124 and 0200).
+  abstract TextDirection? textDirection;
 
   /// `getContext(contextId)`: the one context of [contextId], or `null` for
   /// a context type that the canvas does not support. `clearCanvas` calls

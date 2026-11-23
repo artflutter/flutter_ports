@@ -1,5 +1,12 @@
 ## Unreleased
 
+- BREAKING: the canvas has typed members in place of its CSS style (Chart.js ADR 0200): `HTMLCanvasElement`
+  has `displayWidth` and `displayHeight` (`double?`, the display size in logical pixels; `null` is the render
+  size), `touchAction` (the enum `CanvasTouchAction`: `auto` or `none`), `userSelect` (`bool`) and
+  `textDirection` (`TextDirection?`, the direction that a context with a `null` `direction` inherits).
+  `retinaScale` writes the display size as doubles, the chart host reads `touchAction` at the start of a touch
+  sequence, and `initCanvas` writes no `display` and no `box-sizing`. `getStyle` of `helpers.dart` is gone, and
+  `readUsedSize` takes an `Axis` (`readUsedSize(canvas, Axis.horizontal)`).
 - BREAKING: the title and the subtitle options are one immutable object each, `TitleOptions` and
   `SubtitleOptions` (Chart.js ADR 0197). `ChartTitle` and the parameters `title` and `subtitle` of `ChartConfig`
   are gone: give `pluginOptions: [TitleOptions(display: true, text: ['Sales']), SubtitleOptions(...)]`, with each

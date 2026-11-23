@@ -49,26 +49,6 @@ import 'registry_observe.dart';
 // ---------------------------------------------------------------------------
 // The fixtures of the scenarios.
 
-/// The inline style of [_Canvas]: a Map of the properties.
-final class _Style() implements CSSStyleDeclaration {
-  final Map<String, String> _properties = {};
-
-  @override
-  String getPropertyValue(String property) => _properties[property] ?? '';
-
-  @override
-  String getPropertyPriority(String property) => '';
-
-  @override
-  void setProperty(String property, String? value, [String? priority]) {
-    if (value == null || value.isEmpty) {
-      _properties.remove(property);
-    } else {
-      _properties[property] = value;
-    }
-  }
-}
-
 /// The mock context of the harness with a recorded `resetTransform`, as the
 /// fake context of the generator.
 final class _Context() extends MockContext {
@@ -92,11 +72,24 @@ final class _Canvas([
   final _Context context = _Context();
 
   @override
-  final _Style style = _Style();
+  double? displayWidth;
+
+  @override
+  double? displayHeight;
 
   @override
   CanvasRenderingContext2D? getContext(String contextId) =>
       contextId == '2d' ? context : null;
+
+  /// The `style.width` and `style.height` texts of the generator: the
+  /// display size in px, `''` for an unset side.
+  String get styleText => '${_px(displayWidth)} ${_px(displayHeight)}';
+
+  static String _px(double? value) =>
+      value == null ? '' : '${jsToString(value)}px';
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 
   @override
   String? getAttribute(String name) => null;
@@ -526,11 +519,7 @@ void main() {
         ..observe('attached', chart.attached)
         ..observe('size', '${_n(chart.width)}x${_n(chart.height)}')
         ..observe('canvas', '${canvas.width}x${canvas.height}')
-        ..observe(
-          'style',
-          '${canvas.style.getPropertyValue('width')} '
-              '${canvas.style.getPropertyValue('height')}',
-        )
+        ..observe('style', canvas.styleText)
         ..observe('currentDevicePixelRatio', _n(chart.currentDevicePixelRatio))
         ..observe('aspectRatio', _n(chart.aspectRatio!))
         ..observe('chartArea', _edges(chart.chartArea))
@@ -788,11 +777,7 @@ void main() {
         ..observe('canvas', '${chart.canvas} ${chart.ctx}')
         ..observe('instances', Chart.instances.containsKey(id))
         ..observe('getChart', Chart.getChart(canvas) ?? 'undefined')
-        ..observe(
-          'style',
-          '${canvas.style.getPropertyValue('width')} '
-              '${canvas.style.getPropertyValue('height')}',
-        );
+        ..observe('style', canvas.styleText);
       log.clear();
       o
         ..observe('again', error(chart.destroy))
@@ -1087,9 +1072,7 @@ void main() {
       String sizeOf() =>
           '${_n(chart.width)}x${_n(chart.height)} '
           '${canvas.width}x${canvas.height}';
-      String styleOf() =>
-          '${canvas.style.getPropertyValue('width')} '
-          '${canvas.style.getPropertyValue('height')}';
+      String styleOf() => canvas.styleText;
       o.observe('initial', '${sizeOf()} ${sizes.join(' ')}');
       log.clear();
       sizes.clear();

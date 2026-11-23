@@ -65,6 +65,9 @@ final class _Canvas(
   @override
   Future<String> toDataURL([String? type, Object? quality]) =>
       throw UnimplementedError();
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// The mock context of [_Canvas].

@@ -345,6 +345,65 @@ final class UiCanvasElement({int? width, int? height})
   @override
   final UiCssStyleDeclaration style = UiCssStyleDeclaration();
 
+  static final RegExp _pixels = RegExp(r'^(\d*\.?\d+(?:e[+-]?\d+)?)px$');
+
+  static double? _readPixels(String value) {
+    final match = _pixels.firstMatch(value);
+    return match == null ? null : double.tryParse(match[1]!);
+  }
+
+  // The typed members read and write the inline style until the harness
+  // stops writing CSS text (Chart.js ADR 0200, step 2).
+
+  @override
+  double? get displayWidth => _readPixels(style.getPropertyValue('width'));
+
+  @override
+  set displayWidth(double? value) => style.setProperty(
+    'width',
+    value == null ? null : '${jsToString(value)}px',
+  );
+
+  @override
+  double? get displayHeight => _readPixels(style.getPropertyValue('height'));
+
+  @override
+  set displayHeight(double? value) => style.setProperty(
+    'height',
+    value == null ? null : '${jsToString(value)}px',
+  );
+
+  @override
+  CanvasTouchAction get touchAction =>
+      style.getPropertyValue('touch-action').trim().toLowerCase() == 'none'
+      ? CanvasTouchAction.none
+      : CanvasTouchAction.auto;
+
+  @override
+  set touchAction(CanvasTouchAction value) => style.setProperty(
+    'touch-action',
+    value == CanvasTouchAction.none ? 'none' : null,
+  );
+
+  @override
+  bool get userSelect => style.getPropertyValue('user-select') != 'none';
+
+  @override
+  set userSelect(bool value) =>
+      style.setProperty('user-select', value ? null : 'none');
+
+  @override
+  ui.TextDirection? get textDirection =>
+      switch (style.getPropertyValue('direction')) {
+        'rtl' => ui.TextDirection.rtl,
+        'ltr' => ui.TextDirection.ltr,
+        _ => null,
+      };
+
+  @override
+  set textDirection(ui.TextDirection? value) =>
+      style.setProperty('direction', value?.name);
+
   /// The container of the chart host that shows this canvas, or `null`.
   /// The host sets it when it attaches and clears it when it detaches.
   @override
@@ -2948,7 +3007,7 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   bool get _isRtl {
     final direction = _s.direction;
     if (direction == null) {
-      return _element.style.getPropertyValue('direction') == 'rtl';
+      return _element.textDirection == ui.TextDirection.rtl;
     }
     return direction == ui.TextDirection.rtl;
   }

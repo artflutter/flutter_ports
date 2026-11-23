@@ -91,6 +91,7 @@ CanvasTextBaseline
 CanvasTextLayout
 CanvasTextMetricsData
 CanvasTextMetricsSource
+CanvasTouchAction
 CaretXAnimation
 CaretYAnimation
 CartesianAxis
@@ -784,7 +785,6 @@ getParentNode
 getRelativePosition
 getRtlAdapter
 getStartAndCountOfVisiblePoints
-getStyle
 getTarget
 getTargetPixel
 getTargetValue
@@ -1144,6 +1144,7 @@ CanvasTextBaseline
 CanvasTextLayout
 CanvasTextMetricsData
 CanvasTextMetricsSource
+CanvasTouchAction
 CaretXAnimation
 CaretYAnimation
 CartesianAxis
@@ -1837,7 +1838,6 @@ getParentNode
 getRelativePosition
 getRtlAdapter
 getStartAndCountOfVisiblePoints
-getStyle
 getTarget
 getTargetPixel
 getTargetValue
@@ -2173,7 +2173,6 @@ getHoverColor
 getMaximumSize
 getRelativePosition
 getRtlAdapter
-getStyle
 halfPi
 infinity
 isArray

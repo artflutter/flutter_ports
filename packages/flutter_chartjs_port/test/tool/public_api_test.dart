@@ -58,6 +58,9 @@ const Map<String, String> _notExportedHelpers = {
   'createContext':
       'each context is the typed class of its type, made with its '
       'constructor (row adapt-typed-contexts)',
+  'getStyle':
+      'the canvas has no style: its display size is displayWidth and '
+      'displayHeight (row adapt-native-canvas-style)',
   'fontString':
       'no CSS font text: the canvas takes the TextStyle '
       '(row adapt-text-style-fonts)',

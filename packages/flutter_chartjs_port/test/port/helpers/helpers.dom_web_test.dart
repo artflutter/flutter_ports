@@ -23,38 +23,20 @@ final class const _Container(
   bool get isConnected => true;
 }
 
-/// A map-backed inline style.
-final class _Style([Map<String, String>? values])
-    implements CSSStyleDeclaration {
-  final Map<String, String> values = {...?values};
-
-  @override
-  String getPropertyValue(String property) => values[property] ?? '';
-
-  @override
-  String getPropertyPriority(String property) => '';
-
-  @override
-  void setProperty(String property, String? value, [String? priority]) {
-    if (value == null || value.isEmpty) {
-      values.remove(property);
-    } else {
-      values[property] = value;
-    }
-  }
-}
-
 /// A canvas element of 300 x 150 device pixels in [parentNode].
-final class _Canvas({@override var CanvasContainer? parentNode, _Style? style})
-    implements HTMLCanvasElement, CanvasNode {
+final class _Canvas({
+  @override var CanvasContainer? parentNode,
+  @override var double? displayWidth,
+  @override var double? displayHeight,
+}) implements HTMLCanvasElement, CanvasNode {
   @override
   int width = 300;
 
   @override
   int height = 150;
 
-  @override
-  final _Style style = style ?? _Style();
+  /// The display size as a list `[width, height]`.
+  List<double?> get displaySize => [displayWidth, displayHeight];
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -91,13 +73,17 @@ final class _Context() implements CanvasRenderingContext2D {
 final class _Chart(
   @override var double width,
   @override var double height, {
-  _Style? style,
+  double? displayWidth,
+  double? displayHeight,
 }) implements IChart {
   @override
   double currentDevicePixelRatio = double.nan;
 
   @override
-  final _Canvas canvas = _Canvas(style: style);
+  final _Canvas canvas = _Canvas(
+    displayWidth: displayWidth,
+    displayHeight: displayHeight,
+  );
 
   @override
   final _Context ctx = _Context();
@@ -153,7 +139,7 @@ void main() {
       expect([chart.canvas.width, chart.canvas.height], [720, 360]);
       expect([chart.width, chart.height], [800, 400]);
       expect(chart.currentDevicePixelRatio, 0.8999999761581421);
-      expect(chart.canvas.style.values, {'height': '400px', 'width': '800px'});
+      expect(chart.canvas.displaySize, [800, 400]);
       expect(chart.ctx.transforms, [
         [0.8999999761581421, 0, 0, 0.8999999761581421, 0, 0],
       ]);
@@ -162,13 +148,9 @@ void main() {
     test('should leave styled height and width on canvas if explicitly '
         'set', () {
       // helpers.dom.tests.js:240 with a fake chart.
-      final chart = _Chart(
-        200,
-        100,
-        style: _Style({'height': '400px', 'width': '400px'}),
-      );
+      final chart = _Chart(200, 100, displayWidth: 400, displayHeight: 400);
       expect(retinaScale(chart, null, false), isTrue);
-      expect(chart.canvas.style.values, {'height': '400px', 'width': '400px'});
+      expect(chart.canvas.displaySize, [400, 400]);
       expect(chart.currentDevicePixelRatio, 1);
       expect([chart.canvas.width, chart.canvas.height], [200, 100]);
     });
@@ -180,10 +162,7 @@ void main() {
       expect(retinaScale(chart, 1.5), isTrue);
       expect([chart.width, chart.height], [300.1, 150]);
       expect([chart.canvas.width, chart.canvas.height], [450, 224]);
-      expect(chart.canvas.style.values, {
-        'height': '150px',
-        'width': '300.1px',
-      });
+      expect(chart.canvas.displaySize, [300.1, 150]);
     });
 
     test('returns false when nothing changes', () {

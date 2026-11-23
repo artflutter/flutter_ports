@@ -44,7 +44,7 @@ final class const _Animation(
 final class _Canvas(@override var int width, @override var int height)
     implements HTMLCanvasElement {
   @override
-  CSSStyleDeclaration get style => throw UnimplementedError();
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 
   @override
   CanvasRenderingContext2D? getContext(String contextId) =>

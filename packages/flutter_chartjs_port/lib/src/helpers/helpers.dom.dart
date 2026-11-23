@@ -16,7 +16,10 @@
 /// - [getRelativePosition] reads the position of a [NativeEvent], which is
 ///   already in the logical pixels of the chart
 ///   (`platform-relative-position`).
-/// - The computed style of [getStyle] is the inline style of the canvas
+/// - The canvas has no style: its display size is
+///   [HTMLCanvasElement.displayWidth] and [HTMLCanvasElement.displayHeight]
+///   (Chart.js ADR 0200, `adapt-native-canvas-style`). `getComputedStyle`
+///   and `getStyle` have no port, and [readUsedSize] reads the display size
 ///   (`platform-dom-computed-style`).
 /// - [isDomSupported] is false (`platform-dom-supported`).
 ///
@@ -25,6 +28,7 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.dom.ts:9 `_isDomSupported`.
@@ -55,22 +59,9 @@ CanvasContainer? getParentNode(HTMLCanvasElement domNode) {
 // helpers.dom.ts:29 `parseMaxStyle` has no port: Flutter has no `max-width`
 // or `max-height` style (`platform-dom-no-css`).
 
-/// helpers.dom.ts:45 `getComputedStyle`.
-///
-/// Flutter has no computed style. The style of the canvas is its inline
-/// style, the [HTMLCanvasElement.style] that `retinaScale` writes.
-CSSStyleDeclaration _getComputedStyle(HTMLCanvasElement element) =>
-    // DIVERGES(chartjs): platform-dom-computed-style, the inline style.
-    element.style;
-
-/// helpers.dom.ts:48 `getStyle`.
-///
-/// [el] is an [HTMLCanvasElement], the only element of the port. The value
-/// is the inline value of [property], `''` when it is not set
-/// (`platform-dom-computed-style`, differences.md).
-String getStyle(HTMLCanvasElement el, String property) {
-  return _getComputedStyle(el).getPropertyValue(property);
-}
+// helpers.dom.ts:45 `getComputedStyle` and helpers.dom.ts:48 `getStyle` have
+// no port: the canvas has no style. Its display size is a pair of doubles
+// (Chart.js ADR 0200, `adapt-native-canvas-style`).
 
 // helpers.dom.ts:52-64 `positions` and `getPositionedStyle` have no port:
 // Flutter has no margin, padding or border style (`platform-dom-no-css`).
@@ -257,10 +248,10 @@ int _toUint32(double value) {
 /// gives 1. Upstream returns `boolean | void`, and every path returns a
 /// boolean.
 ///
-/// [HTMLCanvasElement.style] is a [CSSStyleDeclaration], so the property
-/// reads and writes of `canvas.style.height` and `canvas.style.width` call
-/// `getPropertyValue` and `setProperty`. The template literal formats the
-/// size with `Number::toString` ([jsToString]): 400 gives `'400px'`.
+/// The style `height` and `width` of the canvas are its display size,
+/// [HTMLCanvasElement.displayHeight] and [HTMLCanvasElement.displayWidth]:
+/// the template literal `${chart.height}px` is the double itself (Chart.js
+/// ADR 0200, `adapt-native-canvas-style`).
 /// The canvas width and height take the `Math.floor` of the device size
 /// (:230-231). The test of :232-234 compares these integers, so a fractional
 /// device size that does not change gives `false`. The assignment converts
@@ -286,14 +277,13 @@ bool retinaScale(IChart chart, double? forceRatio, [bool? forceStyle]) {
   // the "correct" values.
   // See https://github.com/chartjs/Chart.js/issues/3575
   // The test `canvas.style &&` has no port: every HTMLCanvasElement has a
-  // style.
-  final style = canvas.style;
+  // display size.
+  // DIVERGES(chartjs): adapt-native-canvas-style, the display size as doubles.
   if ((forceStyle ?? false) ||
-      (style.getPropertyValue('height').isEmpty &&
-          style.getPropertyValue('width').isEmpty)) {
-    style
-      ..setProperty('height', '${jsToString(chart.height)}px')
-      ..setProperty('width', '${jsToString(chart.width)}px');
+      (canvas.displayHeight == null && canvas.displayWidth == null)) {
+    canvas
+      ..displayHeight = chart.height
+      ..displayWidth = chart.width;
   }
 
   final canvasHeight = deviceHeight.floorToDouble();
@@ -323,10 +313,6 @@ bool retinaScale(IChart chart, double? forceRatio, [bool? forceStyle]) {
 /// port of `eventListenerOptions` (Chart.js ADR 0108).
 const bool supportsEventListenerOptions = false;
 
-/// The pattern of helpers.dom.ts:284. Dart `\d` is `[0-9]`, as in
-/// JavaScript without the `u` flag.
-final RegExp _usedSizePattern = RegExp(r'^(\d+)(\.\d+)?px$');
-
 /// helpers.dom.ts:279 `readUsedSize`.
 ///
 /// The "used" size is the final value of a dimension property after all
@@ -338,11 +324,20 @@ final RegExp _usedSizePattern = RegExp(r'^(\d+)(\.\d+)?px$');
 /// @see https://developer.mozilla.org/en-US/docs/Web/CSS/used_value
 /// @returns Size in pixels or undefined if unknown.
 ///
-/// The style is the inline style of [element] ([getStyle],
-/// `platform-dom-computed-style`). The result is the integer part of a
-/// pixel value, as `+matches[1]` gives. Dart `null` is JS `undefined`.
-double? readUsedSize(HTMLCanvasElement element, String property) {
-  final value = getStyle(element, property);
-  final matches = value.isEmpty ? null : _usedSizePattern.firstMatch(value);
-  return matches != null ? double.parse(matches[1]!) : null;
+/// The property `'width' | 'height'` is an [Axis]: [Axis.horizontal] reads
+/// [HTMLCanvasElement.displayWidth], [Axis.vertical]
+/// [HTMLCanvasElement.displayHeight] (`adapt-native-canvas-style`). An
+/// unset display size gives `undefined` (Dart `null`) where the DOM gives
+/// the laid-out size (`platform-dom-computed-style`). The result is the
+/// integer part of a non-negative finite size, as `+matches[1]` of the
+/// pattern `/^(\d+)(\.\d+)?px$/` gives.
+double? readUsedSize(HTMLCanvasElement element, Axis axis) {
+  // DIVERGES(chartjs): platform-dom-computed-style, the display size.
+  final value = switch (axis) {
+    Axis.horizontal => element.displayWidth,
+    Axis.vertical => element.displayHeight,
+  };
+  return value != null && value.isFinite && value >= 0
+      ? value.truncateToDouble()
+      : null;
 }

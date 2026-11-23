@@ -33,6 +33,7 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // The method FlutterPlatform.getMaximumSize has the name of the helper.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as chartjs;
@@ -49,7 +50,7 @@ final class _ChartjsExpando(
   final _Initial initial,
 );
 
-/// platform.dom.js:51-59 `initial`: the attributes and the inline style of
+/// platform.dom.js:51-59 `initial`: the attributes and the display size of
 /// the canvas before the chart changed them.
 final class _Initial({
   /// platform.dom.js:52 `height`: the `height` attribute. Dart `null` is
@@ -59,9 +60,11 @@ final class _Initial({
   /// platform.dom.js:53 `width`: the `width` attribute, as [height].
   required final String? width,
 
-  /// platform.dom.js:54-58 `style`: `display`, `height` and `width`, in this
-  /// key order.
-  required final Map<String, String> style,
+  /// platform.dom.js:56 `style.height`: the display height of the canvas.
+  required final double? displayHeight,
+
+  /// platform.dom.js:57 `style.width`: the display width of the canvas.
+  required final double? displayWidth,
 }) {
   /// platform.dom.js:301 `initial[prop]`, for `'height'` and `'width'`.
   String? operator [](String prop) => prop == 'height' ? height : width;
@@ -94,12 +97,10 @@ bool _isNullOrEmpty(String? value) => value == null || value == '';
 /// method. The config is used to determine the aspect ratio to apply in case
 /// no explicit height has been specified.
 ///
-/// The `display` and `box-sizing` styles have no effect in Flutter. The port
-/// still sets them, so that [FlutterPlatform.releaseContext] restores the
-/// same values.
+/// The canvas has no style (Chart.js ADR 0200): the `display` and
+/// `box-sizing` writes have no port, and the display size is
+/// [HTMLCanvasElement.displayWidth] and [HTMLCanvasElement.displayHeight].
 HTMLCanvasElement initCanvas(HTMLCanvasElement canvas, [double? aspectRatio]) {
-  final style = canvas.style;
-
   // NOTE(SB) canvas.getAttribute('width') !== canvas.width: in the first case
   // it returns null or '' if no explicit value has been set to the canvas
   // attribute.
@@ -111,34 +112,25 @@ HTMLCanvasElement initCanvas(HTMLCanvasElement canvas, [double? aspectRatio]) {
     _Initial(
       height: renderHeight,
       width: renderWidth,
-      style: {
-        'display': style.getPropertyValue('display'),
-        'height': style.getPropertyValue('height'),
-        'width': style.getPropertyValue('width'),
-      },
+      // DIVERGES(chartjs): adapt-native-canvas-style, no display style.
+      displayHeight: canvas.displayHeight,
+      displayWidth: canvas.displayWidth,
     ),
   );
 
-  // Force canvas to display as block to avoid extra space caused by inline
-  // elements, which would interfere with the responsive resize process.
-  // https://github.com/chartjs/Chart.js/issues/2538
-  if (style.getPropertyValue('display').isEmpty) {
-    style.setProperty('display', 'block');
-  }
-  // Include possible borders in the size
-  if (style.getPropertyValue('box-sizing').isEmpty) {
-    style.setProperty('box-sizing', 'border-box');
-  }
+  // platform.dom.js:71-76 force `display: block` and `box-sizing:
+  // border-box`: no port. The chart host is a block box with no border
+  // (Chart.js ADR 0200).
 
   if (_isNullOrEmpty(renderWidth)) {
-    final displayWidth = readUsedSize(canvas, 'width');
+    final displayWidth = readUsedSize(canvas, Axis.horizontal);
     if (displayWidth != null) {
       canvas.width = displayWidth.toInt();
     }
   }
 
   if (_isNullOrEmpty(renderHeight)) {
-    if (canvas.style.getPropertyValue('height') == '') {
+    if (canvas.displayHeight == null) {
       // If no explicit render height and style height, let's apply the
       // aspect ratio, which one can be specified by the user but also by
       // charts as default option (i.e. options.aspectRatio). If not
@@ -148,7 +140,7 @@ HTMLCanvasElement initCanvas(HTMLCanvasElement canvas, [double? aspectRatio]) {
         canvas.width / (aspectRatio.isNonZero ? aspectRatio! : 2),
       );
     } else {
-      final displayHeight = readUsedSize(canvas, 'height');
+      final displayHeight = readUsedSize(canvas, Axis.vertical);
       if (displayHeight != null) {
         canvas.height = displayHeight.toInt();
       }
@@ -454,10 +446,10 @@ class FlutterPlatform() extends BasePlatform {
       }
     }
 
-    final style = initial.style;
-    for (final MapEntry(:key, :value) in style.entries) {
-      canvas.style.setProperty(key, value);
-    }
+    // DIVERGES(chartjs): adapt-native-canvas-style, the display size.
+    canvas
+      ..displayHeight = initial.displayHeight
+      ..displayWidth = initial.displayWidth;
 
     // The canvas render size might have been changed (and thus the state
     // stack discarded), we can't use save() and restore() to restore the

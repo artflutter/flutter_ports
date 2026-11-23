@@ -2,6 +2,7 @@
 @TestOn('vm')
 library;
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:test/test.dart';
 
@@ -32,38 +33,20 @@ final class const _Container(
   bool get isConnected => true;
 }
 
-/// A map-backed inline style.
-final class _Style([Map<String, String>? values])
-    implements CSSStyleDeclaration {
-  final Map<String, String> values = {...?values};
-
-  @override
-  String getPropertyValue(String property) => values[property] ?? '';
-
-  @override
-  String getPropertyPriority(String property) => '';
-
-  @override
-  void setProperty(String property, String? value, [String? priority]) {
-    if (value == null || value.isEmpty) {
-      values.remove(property);
-    } else {
-      values[property] = value;
-    }
-  }
-}
-
 /// A canvas element of 300 x 150 device pixels in [parentNode].
-final class _Canvas({@override var CanvasContainer? parentNode, _Style? style})
-    implements HTMLCanvasElement, CanvasNode {
+final class _Canvas({
+  @override var CanvasContainer? parentNode,
+  @override var double? displayWidth,
+  @override var double? displayHeight,
+}) implements HTMLCanvasElement, CanvasNode {
   @override
   int width = 300;
 
   @override
   int height = 150;
 
-  @override
-  final _Style style = style ?? _Style();
+  /// The display size as a list `[width, height]`.
+  List<double?> get displaySize => [displayWidth, displayHeight];
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -114,13 +97,17 @@ final class _Context() implements CanvasRenderingContext2D {
 final class _Chart(
   @override var double width,
   @override var double height, {
-  _Style? style,
+  double? displayWidth,
+  double? displayHeight,
 }) implements IChart {
   @override
   double currentDevicePixelRatio = double.nan;
 
   @override
-  final _Canvas canvas = _Canvas(style: style);
+  final _Canvas canvas = _Canvas(
+    displayWidth: displayWidth,
+    displayHeight: displayHeight,
+  );
 
   @override
   final _Context ctx = _Context();
@@ -250,8 +237,7 @@ void main() {
       expect(chart.width, 800);
       expect(chart.height, 400);
       expect(chart.currentDevicePixelRatio, 0.8999999761581421);
-      expect(chart.canvas.style.getPropertyValue('width'), '800px');
-      expect(chart.canvas.style.getPropertyValue('height'), '400px');
+      expect(chart.canvas.displaySize, [800, 400]);
       expect(chart.ctx.calls, [
         {
           'name': 'setTransform',
@@ -261,11 +247,13 @@ void main() {
     });
 
     // [width, height, forceRatio, forceStyle, chart width, chart height,
-    // canvas width, canvas height, style width, style height].
+    // canvas width, canvas height, display width, display height]. The
+    // display size is the number of the style text `<n>px` (Chart.js ADR
+    // 0200).
     const table = <List<Object?>>[
-      [300.04, 150.06, 2.0, false, 300, 150.1, 600, 300, '300px', '150.1px'],
-      [300.05, 149.95, 1.5, null, 300.1, 150, 450, 224, '300.1px', '150px'],
-      [100.5, 50.25, 3.0, true, 100.5, 50.3, 301, 150, '100.5px', '50.3px'],
+      [300.04, 150.06, 2.0, false, 300, 150.1, 600, 300, 300, 150.1],
+      [300.05, 149.95, 1.5, null, 300.1, 150, 450, 224, 300.1, 150],
+      [100.5, 50.25, 3.0, true, 100.5, 50.3, 301, 150, 100.5, 50.3],
     ];
     for (final row in table) {
       test('reference: $row', () {
@@ -289,10 +277,7 @@ void main() {
           [chart.canvas.width, chart.canvas.height],
           [canvasWidth, canvasHeight],
         );
-        expect(chart.canvas.style.values, {
-          'height': styleHeight,
-          'width': styleWidth,
-        });
+        expect(chart.canvas.displaySize, [styleWidth, styleHeight]);
         expect(chart.ctx.calls, [
           {
             'name': 'setTransform',
@@ -304,13 +289,9 @@ void main() {
 
     test('keeps a style that is set', () {
       // The case of helpers.dom.tests.js:240 with a fake chart.
-      final chart = _Chart(
-        200,
-        100,
-        style: _Style({'height': '400px', 'width': '400px'}),
-      );
+      final chart = _Chart(200, 100, displayWidth: 400, displayHeight: 400);
       expect(retinaScale(chart, null, false), isTrue);
-      expect(chart.canvas.style.values, {'height': '400px', 'width': '400px'});
+      expect(chart.canvas.displaySize, [400, 400]);
       expect(chart.currentDevicePixelRatio, 1);
       expect([chart.canvas.width, chart.canvas.height], [200, 100]);
     });
@@ -346,7 +327,7 @@ void main() {
 
     test('a resize inside one device pixel gives false', () {
       // `_resize` stops when retinaScale gives false (core.controller.js:288).
-      // The style takes the new size, and the canvas keeps its size.
+      // The display size takes the new size, and the canvas keeps its size.
       final chart = _Chart(300.3, 150.2);
       expect(retinaScale(chart, 1, true), isTrue);
       expect([chart.canvas.width, chart.canvas.height], [300, 150]);
@@ -356,10 +337,7 @@ void main() {
       expect(retinaScale(chart, 1, true), isFalse);
       expect([chart.width, chart.height], [300.6, 150.7]);
       expect([chart.canvas.width, chart.canvas.height], [300, 150]);
-      expect(chart.canvas.style.values, {
-        'height': '150.7px',
-        'width': '300.6px',
-      });
+      expect(chart.canvas.displaySize, [300.6, 150.7]);
       expect(chart.ctx.calls, hasLength(1));
       chart.width = 301.2;
       expect(retinaScale(chart, 1, true), isTrue);
@@ -374,41 +352,39 @@ void main() {
       expect(retinaScale(chart, 1), isTrue);
       expect(retinaScale(chart, 1), isTrue);
       expect([chart.canvas.width, chart.canvas.height], [0, 0]);
-      expect(chart.canvas.style.values, {
-        'height': 'Infinitypx',
-        'width': 'NaNpx',
-      });
+      expect(chart.canvas.displayWidth, isNaN);
+      expect(chart.canvas.displayHeight, double.infinity);
     });
   });
 
   group('readUsedSize', () {
-    // [style value, expected]. From the reference engine.
-    const table = <List<Object?>>[
-      ['300px', 300],
-      ['300.75px', 300],
-      ['12.5em', null],
-      ['', null],
-      ['auto', null],
-      ['007px', 7],
-      ['-5px', null],
-      ['5.px', null],
-      ['1e3px', null],
-      [' 30px', null],
+    // [display width, expected]: the integer part of a non-negative finite
+    // display size, as `+matches[1]` of `/^(\d+)(\.\d+)?px$/` gives for
+    // its `<n>px` text (Chart.js ADR 0200).
+    const table = <List<double?>>[
+      [300, 300],
+      [300.75, 300],
+      [7, 7],
+      [0, 0],
+      [null, null],
+      [-5, null],
+      [double.nan, null],
+      [double.infinity, null],
     ];
-    for (final [value as String, expected] in table) {
-      test('reference: "$value"', () {
-        final canvas = _Canvas(style: _Style({'width': value}));
-        expect(readUsedSize(canvas, 'width'), expected);
+    for (final [value, expected] in table) {
+      test('display width $value', () {
+        final canvas = _Canvas(displayWidth: value, displayHeight: value);
+        expect(readUsedSize(canvas, Axis.horizontal), expected);
+        expect(readUsedSize(canvas, Axis.vertical), expected);
       });
     }
   });
 
   group('platform-dom-computed-style', () {
-    test('getStyle reads the inline style', () {
-      final canvas = _Canvas(style: _Style({'width': '120px'}));
-      expect(getStyle(canvas, 'width'), '120px');
-      expect(getStyle(canvas, 'height'), '');
-      expect(readUsedSize(canvas, 'height'), isNull);
+    test('an unset display size gives undefined', () {
+      final canvas = _Canvas(displayWidth: 120);
+      expect(readUsedSize(canvas, Axis.horizontal), 120);
+      expect(readUsedSize(canvas, Axis.vertical), isNull);
     });
   });
 

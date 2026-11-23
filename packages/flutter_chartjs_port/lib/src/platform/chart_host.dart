@@ -39,8 +39,8 @@
 ///   the [ContainerResizeObserver]s. `createResizeObserver` throttles them
 ///   to one resize in the next frame, as upstream.
 /// - The size of the host is the display size of the canvas, constrained to
-///   the incoming constraints: its `width` and `height` styles when both are
-///   pixel values, as `retinaScale` writes them, else its render size.
+///   the incoming constraints: its `displayWidth` and `displayHeight` when
+///   both are set, as `retinaScale` writes them, else its render size.
 ///   Paint maps the bitmap to the display size with one scale, as the DOM
 ///   stretches a canvas bitmap to its CSS size, and clips a larger canvas to
 ///   the host box.
@@ -106,8 +106,8 @@
 /// - `canvas.getBoundingClientRect()` gives the box of the canvas in the
 ///   logical pixels of the view ([RenderChartHost.boundingClientRect]).
 ///
-/// `touch-action` and the wheel (Chart.js ADR 0108):
-/// - The host reads the `touch-action` of the inline style of the canvas at
+/// `touch-action` and the wheel (Chart.js ADRs 0108 and 0200):
+/// - The host reads `HTMLCanvasElement.touchAction` of the canvas at
 ///   the first touch-like down of a sequence, as Chrome fixes the touch
 ///   action at the start of a touch. A change in a sequence acts at the next
 ///   one. With `none`, no move begins the pan: no `pointercancel`, and the
@@ -1028,22 +1028,15 @@ class RenderChartHost({
 
   // The display size of the canvas.
 
-  static final RegExp _pixels = RegExp(r'^(\d*\.?\d+(?:e[+-]?\d+)?)px$');
-
-  static double? _readPixels(String value) {
-    final match = _pixels.firstMatch(value);
-    return match == null ? null : double.tryParse(match[1]!);
-  }
-
-  /// The display size of the canvas in logical pixels: the `width` and
-  /// `height` styles when both are pixel values, as `retinaScale` writes
-  /// them, else the render size. The CSS rule for one style (it keeps the
-  /// aspect ratio of the render size) is not here: the harness matcher
-  /// `toBeChartOfSize` applies it.
+  /// The display size of the canvas in logical pixels:
+  /// [HTMLCanvasElement.displayWidth] and [HTMLCanvasElement.displayHeight]
+  /// when both are set, as `retinaScale` writes them, else the render size
+  /// (Chart.js ADR 0200). The rule for one side (it keeps the aspect ratio
+  /// of the render size) is not here: the harness matcher `toBeChartOfSize`
+  /// applies it.
   Size get displaySize {
-    final style = _canvas.style;
-    final width = _readPixels(style.getPropertyValue('width'));
-    final height = _readPixels(style.getPropertyValue('height'));
+    final width = _canvas.displayWidth;
+    final height = _canvas.displayHeight;
     if (width != null && height != null) {
       return Size(width, height);
     }
@@ -1338,10 +1331,10 @@ class RenderChartHost({
   int _sequenceTouches = 0;
 
   /// Whether the touch sequence of the host has `touch-action: none`
-  /// (Chart.js ADR 0108): the inline style of the canvas at the first
-  /// touch-like down of the sequence. While it is true, no move begins the
-  /// pan, and the host claims its touch-like pointers in the gesture arena
-  /// ([_claim]).
+  /// (Chart.js ADRs 0108 and 0200): [HTMLCanvasElement.touchAction] at the
+  /// first touch-like down of the sequence. While it is true, no move begins
+  /// the pan, and the host claims its touch-like pointers in the gesture
+  /// arena ([_claim]).
   bool _touchActionNone = false;
 
   /// The pointer of a mouse-like down with the primary button on the host,
@@ -1782,10 +1775,9 @@ class RenderChartHost({
       _panned = false;
       _sequenceTouches = 0;
       // Chrome fixes the touch action at the start of the touch (Chart.js
-      // ADR 0108). Only the canvas style counts: the port has no ancestor
+      // ADR 0108). Only the canvas counts: the port has no ancestor
       // elements.
-      _touchActionNone =
-          _canvas.style.touchAction.trim().toLowerCase() == 'none';
+      _touchActionNone = _canvas.touchAction == CanvasTouchAction.none;
     }
     final limitSquared = _slopLimitSquared(event.kind, gestureSettings);
     final hostTouch = _touches[event.pointer] = _HostTouch(event, limitSquared);

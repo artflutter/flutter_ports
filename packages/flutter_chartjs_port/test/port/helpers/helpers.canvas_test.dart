@@ -114,7 +114,7 @@ final class _Canvas(
       contextId == '2d' ? context : null;
 
   @override
-  CSSStyleDeclaration get style => throw UnimplementedError();
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 
   @override
   String? getAttribute(String name) => throw UnimplementedError();

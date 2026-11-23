@@ -260,11 +260,8 @@ void main() {
       final canvas = chart.canvas!;
       final wrapper = canvas.parentElement!;
 
-      // initCanvas (platform.dom.js:46-66) adds its style declarations.
-      expect(
-        canvas.getAttribute('style'),
-        'width: 150px; height: 245px; display: block; box-sizing: border-box;',
-      );
+      // initCanvas writes no display style (Chart.js ADR 0200).
+      expect(canvas.getAttribute('style'), 'width: 150px; height: 245px');
       // setAttribute applies ToString to the value.
       expect(canvas.getAttribute('data-index'), '3');
       // No height attribute in the options: retinaScale (helpers.dom.ts)
