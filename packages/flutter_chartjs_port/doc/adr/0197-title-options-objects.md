@@ -1,6 +1,6 @@
 # Chart.js ADR 0197: The title and subtitle options are one object each
 
-- Status: proposed
+- Status: accepted (2026-11-23): its code is on main, and all the gates of AGENTS.md pass.
 - Date: 2026-11-23
 - Supersedes: of [Chart.js ADR 0182](0182-resolved-plugin-option-classes.md), item 1 for `TitleOptions` and item 3
   for `Title.options`; of [Chart.js ADR 0052](0052-typed-public-api.md), §1, §4 and §8 for `ChartTitle` and the

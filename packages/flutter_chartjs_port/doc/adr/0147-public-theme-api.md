@@ -1,7 +1,7 @@
 # Chart.js ADR 0147: The public theme API
 
 - Status: accepted (2026-11-14): it restates accepted decisions, and the code passes the tests.
-- Superseded in part by: [Chart.js ADR 0196](0196-filler-colors-options-objects.md) (2026-11-23), for the palette keys and their reader of items 4 and 10 and the frozen palette Lists of item 8
+- Superseded in part by: [Chart.js ADR 0196](0196-filler-colors-options-objects.md) (2026-11-23), for the palette keys and their reader of items 4 and 10 and the frozen palette Lists of item 8; [Chart.js ADR 0197](0197-title-options-objects.md) (2026-11-23), for the title and subtitle keys of the theme in item 7
 - Date: 2026-11-14
 - Supersedes: [Chart.js ADR 0050](0050-public-theme-api.md), [Chart.js ADR 0117](0117-typed-theme-tokens.md) and
   [Chart.js ADR 0118](0118-theme-compile-typed-setters.md) as a whole, and the theme parts of

@@ -1,6 +1,7 @@
 # Chart.js ADR 0181: A class for each plugin, and getPlugin by type
 
 - Status: accepted (2026-11-19): the plugin classes and `getPlugin<T>()` are on main, and the tests and the port checks pass.
+- Superseded in part by: [Chart.js ADR 0197](0197-title-options-objects.md) (2026-11-23), for the options of `TitlePlugin` and `SubtitlePlugin` in item 1
 - Date: 2026-11-19
 - Supersedes: of [Chart.js ADR 0020](0020-registry-and-component-classes.md), in §5 the signature `Object getPlugin(Object? id)`; of [Chart.js ADR 0148](0148-plugin-typing.md), in item 1 the final class `PluginOf`.
 - Related: [Chart.js ADR 0144](0144-native-plugins.md), [Chart.js ADR 0150](0150-typed-plugin-options.md)
