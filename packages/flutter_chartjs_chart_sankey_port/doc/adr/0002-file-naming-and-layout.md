@@ -1,7 +1,7 @@
 # Sankey ADR 0002: File naming, layout and the Dart forms
 
 - Status: proposed
-- Superseded in part by: [ADR 0011](../../../../docs/adr/0011-public-library-exports-every-file.md): the exports of the public library, item 2 (2026-11-18)
+- Superseded in part by: [ADR 0011](../../../../docs/adr/0011-public-library-exports-every-file.md): the exports of the public library, item 2 (2026-11-18); [Sankey ADR 0005](0005-typed-resolved-options.md): the options, item 10 (2026-11-23)
 - Date: 2026-11-13
 - Gate: sankey phase 1 (the first ported file).
 - Related: [Chart.js ADR 0012](../../../flutter_chartjs_port/doc/adr/0012-file-naming-and-layout.md)

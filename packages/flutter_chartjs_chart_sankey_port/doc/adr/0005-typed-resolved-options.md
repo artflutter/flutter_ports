@@ -1,6 +1,6 @@
 # Sankey ADR 0005: The typed resolved options
 
-- Status: proposed
+- Status: accepted (2026-11-23): its code is on main, and the tests of section Tests, the sankey fixtures and the gallery and lab tests pass.
 - Date: 2026-11-23
 - Supersedes: [Sankey ADR 0002](0002-file-naming-and-layout.md) item 10
 - Related: [Sankey ADR 0004](0004-typed-sankey-dataset.md), [host-seams.md](../host-seams.md), [Chart.js ADR 0182](../../../flutter_chartjs_port/doc/adr/0182-resolved-plugin-option-classes.md)
