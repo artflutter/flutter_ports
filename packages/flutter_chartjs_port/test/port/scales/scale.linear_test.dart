@@ -36,7 +36,7 @@ import 'scale_linear_reference.dart';
 // (section 3) and the values of scaleValueOf (section 2) without
 // generated values.
 
-/// Native setups for four reference cases. The generated expected scale,
+/// Native setups for selected reference cases. The generated expected scale,
 /// point and draw observations remain the comparison oracle.
 ChartConfig? _typedReference(String name) => switch (name) {
   'primitives' => const ChartConfig(
@@ -66,6 +66,78 @@ ChartConfig? _typedReference(String name) => switch (name) {
   'empty data' => const ChartConfig(
     labels: ['a', 'b', 'c'],
     datasets: [TestDataset(ChartKind('scaleTest'), data: [])],
+  ),
+  'equal large positive values' => const ChartConfig(
+    labels: ['a', 'b'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [10000, 10000]),
+    ],
+  ),
+  'equal large negative values' => const ChartConfig(
+    labels: ['a', 'b'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [-10000, -10000]),
+    ],
+  ),
+  'equal values with beginAtZero' => const ChartConfig(
+    labels: ['a', 'b'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [50, 50]),
+    ],
+    scales: [LinearAxis(.y, beginAtZero: true)],
+  ),
+  'all values zero' => const ChartConfig(
+    labels: ['a', 'b'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [0, 0]),
+    ],
+  ),
+  'suggestedMin and suggestedMax' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd', 'e'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [1, -1, 0, -2, 1]),
+    ],
+    scales: [LinearAxis(.y, suggestedMin: -10, suggestedMax: 10)],
+  ),
+  'min and max' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, -5, 78, -100]),
+    ],
+    scales: [LinearAxis(.y, min: -1010, max: 1010)],
+  ),
+  'a user min of 0' => const ChartConfig(
+    labels: ['S1', 'S2', 'S3'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [2500, 2000, 1500]),
+    ],
+    indexAxis: YAxis(),
+    scales: [
+      LinearAxis(.x, min: 0, max: 3000),
+      CategoryAxis(.y, extra: {'offset': false}),
+    ],
+  ),
+  'a user max of 0' => const ChartConfig(
+    labels: ['S1', 'S2', 'S3'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [-2500, -2000, -1500]),
+    ],
+    indexAxis: YAxis(),
+    scales: [LinearAxis(.x, min: -3000, max: 0)],
+  ),
+  'a user min above the data' => const ChartConfig(
+    labels: ['a'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [200]),
+    ],
+    scales: [LinearAxis(.y, min: 250)],
+  ),
+  'a user max below the data' => const ChartConfig(
+    labels: ['a'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [200]),
+    ],
+    scales: [LinearAxis(.y, max: 150)],
   ),
   _ => null,
 };
