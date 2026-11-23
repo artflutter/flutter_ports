@@ -308,12 +308,12 @@ final class const DragRect({
 /// `pointEvents.dragStart` to `pointEvents.dragEnd`, inside the chart area
 /// of [chart].
 ///
-/// A direction that the [Mode] or the `ModeFn` [mode] does not enable spans
+/// A direction that the [ModeOption] [mode] does not enable spans
 /// the chart area; a null [mode] enables both. [maintainAspectRatio] keeps
 /// the aspect ratio of the chart area when both directions are enabled.
 DragRect computeDragRect(
   Chart chart,
-  Object? mode,
+  ModeOption? mode,
   ({NativeEvent dragStart, NativeEvent dragEnd}) pointEvents,
   bool? maintainAspectRatio,
 ) {

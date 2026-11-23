@@ -194,7 +194,7 @@ void main() {
   group('range-only updates (Chart.js ADR 0111)', () {
     /// The zoom options of the flows: each input on.
     ZoomPluginOptions zoomOptions({
-      Object? mode = Mode.xy,
+      ModeOption? mode = Mode.xy,
       GenericEvent? onZoomComplete,
     }) => ZoomPluginOptions(
       zoom: ZoomOptions(
@@ -297,10 +297,10 @@ void main() {
       final completed = <Chart>[];
       final modes = <Chart>[];
       final options = zoomOptions(
-        mode: (ZoomChartContext context) {
+        mode: ModeFromChart((context) {
           modes.add(context.chart);
           return Mode.x;
-        },
+        }),
         onZoomComplete: (context) => completed.add(context.chart),
       );
       final chart = _acquire(

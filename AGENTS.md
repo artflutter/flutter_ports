@@ -838,8 +838,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     and the removed option `zoom.enabled` has no field. Getters such as `speedOrDefault` and
     `limitsOrDefault` give the upstream defaults of a read. A callback field (`onZoomStart`,
     `onZoom`, `onPanComplete`, ...) has its typedef type, and the plugin calls it directly; a start
-    callback returns `bool` (Zoom ADR 0004). A `mode`, `scaleMode` or `overScaleMode` field is an
-    `Object?` that holds a `Mode` or a `ModeFn`; its constructor asserts it. The update mode is an
+    callback returns `bool` (Zoom ADR 0004). A `mode`, `scaleMode` or `overScaleMode` field is a
+    sealed `ModeOption?`: a `Mode`, or a `ModeFromChart` that holds a `ModeFn` (Zoom ADR 0008); each
+    reader switches over both. The update mode is an
     `UpdateMode`: the transition parameters of the API are `UpdateMode` with the upstream defaults,
     and the input zooms with `zoomUpdateMode`. The state of a chart
     is an `Expando<State>` (`state.dart`); the gesture managers are an `Expando` too. The listeners

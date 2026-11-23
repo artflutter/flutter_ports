@@ -1,3 +1,10 @@
+## Unreleased
+
+- BREAKING: the options `mode`, `scaleMode` and `overScaleMode` of `ZoomOptions` and `PanOptions` are a
+  sealed `ModeOption` (Zoom ADR 0008): a `Mode`, or a `ModeFromChart` that holds a `ModeFn`. A `Mode`
+  value is unchanged; a function becomes `ModeFromChart((context) => ...)`. A value of another type
+  no longer compiles.
+
 ## 0.1.0-beta.3
 
 - On `flutter_chartjs_port` 0.1.0-beta.4.

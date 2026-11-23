@@ -10,4 +10,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0005](0005-typed-zoom-options.md) Typed zoom options: accepted, supersedes 0003, 0004, superseded in part by 0007.
 - [0006](0006-native-test-matchers.md) Native matchers and spies in the zoom specs: accepted, supersedes 0002.
 - [0007](0007-typed-zoom-limits.md) Typed zoom limits: accepted, supersedes 0005.
+- [0008](0008-typed-mode-option.md) Typed mode option: proposed, supersedes 0005.
 <!-- adr-index:end -->

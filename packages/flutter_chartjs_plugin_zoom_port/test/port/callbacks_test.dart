@@ -79,14 +79,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     });
 
-    testWidgets('a ModeFn selects the zoom directions', (tester) async {
+    testWidgets('a ModeFromChart selects the zoom directions', (tester) async {
       final calls = <Chart>[];
       final chart = _chart(
         ZoomOptions(
-          mode: (ZoomChartContext context) {
+          mode: ModeFromChart((context) {
             calls.add(context.chart);
             return Mode.y;
-          },
+          }),
         ),
       )..zoom(const .all(2));
 
@@ -104,17 +104,32 @@ void main() {
       skip: 'diverges: adapt-native-zoom-options',
     );
 
-    test('a mode function of another type stops a debug build', () {
-      // `mode` is a Mode or a ModeFn (an Object? field): the constructor
-      // asserts it.
-      Object? noParameter() => Mode.x;
+    // A mode option is a sealed `ModeOption` (Zoom ADR 0008): a function of
+    // another type does not compile, so the case cannot exist.
+    test(
+      'a mode function of another type stops a debug build',
+      () {},
+      skip: 'diverges: adapt-native-zoom-options',
+    );
+
+    test('a ModeFromChart compares by its function', () {
+      Mode modeX(ZoomChartContext context) => Mode.x;
+      Mode modeY(ZoomChartContext context) => Mode.y;
+      expect(ModeFromChart(modeX), ModeFromChart(modeX));
+      expect(ModeFromChart(modeX).hashCode, ModeFromChart(modeX).hashCode);
+      expect(ModeFromChart(modeX), isNot(ModeFromChart(modeY)));
       expect(
-        () => ZoomOptions(mode: noParameter),
-        throwsA(isA<AssertionError>()),
+        ZoomOptions(mode: ModeFromChart(modeX)),
+        ZoomOptions(mode: ModeFromChart(modeX)),
       );
       expect(
-        () => PanOptions(scaleMode: noParameter),
-        throwsA(isA<AssertionError>()),
+        PanOptions(scaleMode: ModeFromChart(modeX)),
+        isNot(PanOptions(scaleMode: ModeFromChart(modeY))),
+      );
+      expect(
+        ZoomOptions(mode: ModeFromChart(modeX))
+            .merge(const ZoomOptions(scaleMode: Mode.y)),
+        ZoomOptions(mode: ModeFromChart(modeX), scaleMode: Mode.y),
       );
     });
   });

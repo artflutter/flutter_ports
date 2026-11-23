@@ -38,7 +38,10 @@ void main() {
               return mode;
             }
 
-            expect(directionEnabled(modeFn, dir, chart), equals(expected));
+            expect(
+              directionEnabled(ModeFromChart(modeFn), dir, chart),
+              equals(expected),
+            );
             expect(modeFnCalls, contains((chart: chart)));
           },
         );

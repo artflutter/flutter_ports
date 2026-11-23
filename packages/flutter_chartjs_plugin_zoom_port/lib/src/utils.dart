@@ -37,26 +37,21 @@ bool keyPressed(ModifierKey? key, NativeEvent event) =>
 bool keyNotPressed(ModifierKey? key, NativeEvent event) =>
     key != null && !key.pressedIn(event);
 
-/// utils.ts:14 `directionEnabled(mode, dir, chart)`: whether the [Mode] or
-/// the `ModeFn` [mode] has the direction [dir] (`'x'` or `'y'`).
+/// utils.ts:14 `directionEnabled(mode, dir, chart)`: whether the
+/// [ModeOption] [mode] has the direction [dir] (`'x'` or `'y'`).
 ///
 /// Null (the `undefined` of an option that is not set) enables each
-/// direction. A [ModeFn] gets `{ chart }` and gives a [Mode] (Zoom ADR
-/// 0004). Another value of [mode] enables nothing.
+/// direction. A [ModeFromChart] gets `{ chart }` and gives a [Mode] (Zoom
+/// ADR 0008). The sealed type has no other value: the upstream `return
+/// false` for a value of another type has no Dart case.
 // DIVERGES(zoom): adapt-zoom-option-enums, the fields of the mode.
-bool directionEnabled(Object? mode, String dir, Chart chart) {
-  switch (mode) {
-    case null:
-      return true;
-    case final Mode mode:
-      return mode.hasAxis(dir);
-    case final ModeFn mode:
+bool directionEnabled(ModeOption? mode, String dir, Chart chart) =>
+    switch (mode) {
+      null => true,
+      final Mode mode => mode.hasAxis(dir),
       // DIVERGES(zoom): adapt-native-callbacks, a direct call of the ModeFn.
-      return mode((chart: chart)).hasAxis(dir);
-  }
-
-  return false;
-}
+      ModeFromChart(:final fn) => fn((chart: chart)).hasAxis(dir),
+    };
 
 /// utils.ts:58 `EnabledDirections`: the enabled state of the `x` and `y`
 /// directions. `convertOverScaleMode` changes it.
@@ -81,14 +76,14 @@ final class _Directions({required var bool x, required var bool y}) {
 }
 
 /// utils.ts:26 `directionsEnabled(mode, chart)`: the directions of the
-/// [Mode] or the `ModeFn` [mode].
+/// [ModeOption] [mode]. Null enables none.
 // DIVERGES(zoom): adapt-zoom-option-enums, the fields of the mode.
-_Directions _directionsEnabled(Object? mode, Chart chart) {
+_Directions _directionsEnabled(ModeOption? mode, Chart chart) {
   // DIVERGES(zoom): adapt-native-callbacks, a direct call of the ModeFn.
   final value = switch (mode) {
-    final ModeFn mode => mode((chart: chart)),
+    ModeFromChart(:final fn) => fn((chart: chart)),
     final Mode mode => mode,
-    _ => null,
+    null => null,
   };
   if (value != null) {
     return _Directions(x: value.usesX, y: value.usesY);
@@ -143,7 +138,7 @@ Scale? getScaleUnderPoint(Point point, Chart chart) {
 /// enabled)`: the deprecated `overScaleMode` as a `scaleMode`.
 void _convertOverScaleMode(
   Chart chart,
-  Object? overScaleMode,
+  ModeOption? overScaleMode,
   _Directions scaleEnabled,
   _Directions enabled,
 ) {

@@ -75,9 +75,9 @@ void main() {
               ZoomPluginOptions(
                 zoom: ZoomOptions(
                   drag: const DragOptions(enabled: true),
-                  mode: (ZoomChartContext _) {
+                  mode: ModeFromChart((_) {
                     return Mode.x;
-                  },
+                  }),
                 ),
               ),
             ],
@@ -147,9 +147,9 @@ void main() {
               ZoomPluginOptions(
                 zoom: ZoomOptions(
                   drag: const DragOptions(enabled: true),
-                  mode: (ZoomChartContext _) {
+                  mode: ModeFromChart((_) {
                     return Mode.y;
-                  },
+                  }),
                 ),
               ),
             ],

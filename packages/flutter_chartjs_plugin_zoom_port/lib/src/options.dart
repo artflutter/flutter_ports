@@ -48,7 +48,7 @@ enum Mode({
 
   /// Whether the mode has the direction `y`.
   required final bool usesY,
-}) {
+}) implements ModeOption {
   /// `'x'`: the horizontal scales.
   x(usesX: true, usesY: false),
 
@@ -68,14 +68,48 @@ enum Mode({
 }
 
 /// options.ts:6 `ModeFn`: a function that gives the [Mode] when the user
-/// zooms or pans.
+/// zooms or pans. [ModeFromChart] holds it in a mode option.
 typedef ModeFn = Mode Function(ZoomChartContext context);
 
-// options.ts:7 `ModeOption = Mode | ModeFn`: Dart has no union of an enum
-// and a function type. A `mode`, `scaleMode` or `overScaleMode` field is an
-// `Object?`, and the constructor of its class asserts that it holds a [Mode],
-// a [ModeFn] or null. A value of another type, for example a function with
-// no parameter, stops a debug build.
+/// options.ts:7 `ModeOption = Mode | ModeFn`: the value of a `mode`,
+/// `scaleMode` or `overScaleMode` option.
+///
+/// A [Mode] gives the directions, and a [ModeFromChart] gives the [Mode] of
+/// its [ModeFn] when the user zooms or pans (Zoom ADR 0008). A reader
+/// switches over the two.
+///
+/// ```dart
+/// const ZoomOptions(mode: Mode.x);
+/// ZoomOptions(
+///   mode: ModeFromChart((context) => context.chart.width > 600 ? .xy : .x),
+/// );
+/// ```
+// DIVERGES(zoom): adapt-native-zoom-options, a sealed type of the union.
+sealed class ModeOption();
+
+/// options.ts:7 the `ModeFn` member of `ModeOption`: a [Mode] that [fn]
+/// gives from the chart when the user zooms or pans.
+///
+/// Two values are equal when their functions are equal (the `==` of a
+/// function: the same closure, or a tear-off of the same function).
+@immutable
+final class const ModeFromChart(
+  /// The function that gives the [Mode].
+  final ModeFn fn,
+) implements ModeOption {
+  /// The mode that [fn] gives.
+  this;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is ModeFromChart && other.fn == fn;
+
+  @override
+  int get hashCode => fn.hashCode;
+
+  @override
+  String toString() => 'ModeFromChart($fn)';
+}
 
 /// options.ts:8 `ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta'`: a
 /// modifier key of an event.
@@ -186,16 +220,16 @@ abstract interface class ModifierKeyOptions() {
 
 /// The options with `mode`, `scaleMode` and `overScaleMode` that
 /// `getEnabledScalesByPoint` of `utils.dart` reads (utils.ts:96):
-/// [ZoomOptions] and [PanOptions]. Each is a [Mode], a [ModeFn] or null.
+/// [ZoomOptions] and [PanOptions]. Each is a [ModeOption] or null.
 abstract interface class ScaleModeOptions() {
   /// `mode`: the directions. Null is not set.
-  Object? get mode;
+  ModeOption? get mode;
 
   /// `scaleMode`: the directions over a scale. Null is not set.
-  Object? get scaleMode;
+  ModeOption? get scaleMode;
 
   /// `overScaleMode`, deprecated. Null is not set.
-  Object? get overScaleMode;
+  ModeOption? get overScaleMode;
 }
 
 /// `a?.merge(b) ?? b`: the merge of two nested option objects, where null
@@ -397,9 +431,9 @@ final class const PinchOptions({
 /// ```
 @immutable
 final class const ZoomOptions({
-  /// options.ts:102 `mode`: the zoom directions, a [Mode] or a [ModeFn].
+  /// options.ts:102 `mode`: the zoom directions, a [ModeOption].
   /// The default is [Mode.xy].
-  @override final Object? mode,
+  @override final ModeOption? mode,
 
   /// options.ts:107 `wheel`: the options of the mouse wheel mode.
   final WheelOptions? wheel,
@@ -411,11 +445,11 @@ final class const ZoomOptions({
   final PinchOptions? pinch,
 
   /// options.ts:119 `scaleMode`: the directions of a zoom over a scale, a
-  /// [Mode] or a [ModeFn]. The default is none.
-  @override final Object? scaleMode,
+  /// [ModeOption]. The default is none.
+  @override final ModeOption? scaleMode,
 
   /// options.ts:121 `overScaleMode`, deprecated: use [scaleMode] instead.
-  @override final Object? overScaleMode,
+  @override final ModeOption? overScaleMode,
 
   /// options.ts:126 `onZoom`: called while the user is zooming.
   final ZoomCallback? onZoom,
@@ -432,21 +466,7 @@ final class const ZoomOptions({
   final RejectableStartEvent<NativeEvent>? onZoomStart,
 }) implements ScaleModeOptions {
   /// The zoom options.
-  this
-    : assert(
-        mode == null || mode is Mode || mode is ModeFn,
-        'The zoom mode is a Mode or a ModeFn.',
-      ),
-      assert(
-        scaleMode == null || scaleMode is Mode || scaleMode is ModeFn,
-        'The zoom scaleMode is a Mode or a ModeFn.',
-      ),
-      assert(
-        overScaleMode == null ||
-            overScaleMode is Mode ||
-            overScaleMode is ModeFn,
-        'The zoom overScaleMode is a Mode or a ModeFn.',
-      );
+  this;
 
   /// These options with each field that [over] sets. A nested object merges
   /// its own fields.
@@ -510,20 +530,20 @@ final class const PanOptions({
   /// options.ts:148 `enabled`: enable panning. The default is `false`.
   @override final bool? enabled,
 
-  /// options.ts:159 `mode`: the pan directions, a [Mode] or a [ModeFn].
+  /// options.ts:159 `mode`: the pan directions, a [ModeOption].
   /// The default is [Mode.xy].
-  @override final Object? mode,
+  @override final ModeOption? mode,
 
   /// options.ts:164 `modifierKey`: the modifier key that a mouse pan needs.
   /// The default is none.
   @override final ModifierKey? modifierKey,
 
   /// options.ts:166 `scaleMode`: the directions of a pan over a scale, a
-  /// [Mode] or a [ModeFn]. The default is none.
-  @override final Object? scaleMode,
+  /// [ModeOption]. The default is none.
+  @override final ModeOption? scaleMode,
 
   /// options.ts:168 `overScaleMode`, deprecated: use [scaleMode] instead.
-  @override final Object? overScaleMode,
+  @override final ModeOption? overScaleMode,
 
   /// options.ts:173 `threshold`: the minimal pan distance of a pan, in
   /// pixels. The default is 10.
@@ -544,21 +564,7 @@ final class const PanOptions({
   final RejectableStartEvent<GestureEvent>? onPanStart,
 }) implements ModifierKeyOptions, ScaleModeOptions {
   /// The pan options.
-  this
-    : assert(
-        mode == null || mode is Mode || mode is ModeFn,
-        'The pan mode is a Mode or a ModeFn.',
-      ),
-      assert(
-        scaleMode == null || scaleMode is Mode || scaleMode is ModeFn,
-        'The pan scaleMode is a Mode or a ModeFn.',
-      ),
-      assert(
-        overScaleMode == null ||
-            overScaleMode is Mode ||
-            overScaleMode is ModeFn,
-        'The pan overScaleMode is a Mode or a ModeFn.',
-      );
+  this;
 
   /// Whether the pan is on: [enabled], else `false`.
   bool get isEnabled => enabled ?? false;

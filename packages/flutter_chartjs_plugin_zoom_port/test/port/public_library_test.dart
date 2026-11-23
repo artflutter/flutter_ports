@@ -30,6 +30,8 @@ const List<Type> _types = [
   LimitOptions,
   Mode,
   ModeFn,
+  ModeFromChart,
+  ModeOption,
   ModifierKey,
   PanAmount,
   PanFunction,
@@ -87,7 +89,7 @@ void main() {
   // The compile of this file is the check. A new export of the zoom library
   // gets a reference in a list, and the count here.
   test('the zoom library shares no name with the host and Material', () {
-    expect(_types, hasLength(30));
+    expect(_types, hasLength(32));
     expect(_values, hasLength(12));
   });
 
