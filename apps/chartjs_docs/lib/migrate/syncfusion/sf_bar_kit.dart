@@ -68,7 +68,7 @@ CategoryAxis sfCategoryAxis({
     drawOnChartArea: false,
     color: .solid(Sf.axisLine),
     offset: true,
-    extra: {'tickLength': 5},
+    tickLength: 5,
   ),
   ticks: AxisTicks(
     color: const .solid(Sf.text),
@@ -103,7 +103,8 @@ LinearAxis sfValueAxis({
     drawOnChartArea: grid,
     drawTicks: ticks,
     offset: false,
-    extra: const {'tickLength': 5, 'tickColor': ChartPaint.solid(Sf.axisLine)},
+    tickLength: 5,
+    extra: const {'tickColor': ChartPaint.solid(Sf.axisLine)},
   ),
   ticks: AxisTicks(
     stepSize: stepSize,

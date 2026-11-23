@@ -73,7 +73,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       grid: AxisGrid(
         color: .solid(apexJsGrid),
         drawOnChartArea: false,
-        extra: {'tickLength': 6},
+        tickLength: 6,
       ),
       ticks: AxisTicks(
         source: .data,

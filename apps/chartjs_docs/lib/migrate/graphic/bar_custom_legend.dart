@@ -57,7 +57,7 @@ final ChartConfig _config = ChartConfig(
         color: .solid(Gx.stroke),
         drawOnChartArea: false,
         offset: false,
-        extra: {'tickLength': 5},
+        tickLength: 5,
       ),
       // The labels stay 7.5 px under the axis line.
       ticks: graphicTicks(extra: const {'padding': 2.5}),

@@ -588,6 +588,26 @@ void main() {
       }
     });
 
+    test('the grid tick length compares by its value', () {
+      _expectEqual(
+        const AxisGrid(tickLength: 6),
+        AxisGrid(tickLength: _runtime(6)),
+      );
+      expect(
+        const AxisGrid(tickLength: 6),
+        isNot(const AxisGrid(tickLength: 5)),
+      );
+      expect(const AxisGrid(tickLength: 6), isNot(const AxisGrid()));
+      expect(
+        const AxisGrid().copyWith(tickLength: 6),
+        const AxisGrid(tickLength: 6),
+      );
+      expect(
+        const AxisGrid(tickLength: 6).copyWith(offset: true).tickLength,
+        6,
+      );
+    });
+
     test('the scales compare by their entries, in key order', () {
       expect(
         const ChartConfig(

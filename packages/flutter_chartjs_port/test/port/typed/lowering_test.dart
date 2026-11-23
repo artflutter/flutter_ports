@@ -775,7 +775,8 @@ const Map<String, (AxisGrid, Map<String, Object?>)> _grid = {
   ),
   'drawTicks': (AxisGrid(drawTicks: false), {'drawTicks': false}),
   'offset': (AxisGrid(offset: true), {'offset': true}),
-  'extra': (AxisGrid(extra: {'tickLength': 4}), {'tickLength': 4}),
+  'tickLength': (AxisGrid(tickLength: 4), {'tickLength': 4}),
+  'extra': (AxisGrid(extra: {'tickWidth': 2}), {'tickWidth': 2}),
 };
 
 /// The cases of the parameters of [AxisTitle] and the twin `title` Map.
@@ -2178,14 +2179,14 @@ void main() {
             .y,
             grid: AxisGrid(color: ChartPaint.solid(_red)),
             extra: {
-              'grid': {'tickLength': 4},
+              'grid': {'tickWidth': 2},
               'grace': PercentGrace(5),
             },
           ),
         ),
         {
           'type': 'linear',
-          'grid': {'color': _redValue, 'tickLength': 4},
+          'grid': {'color': _redValue, 'tickWidth': 2},
           'grace': const PercentGrace(5),
         },
       );

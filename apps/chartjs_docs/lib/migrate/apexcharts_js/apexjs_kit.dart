@@ -82,7 +82,7 @@ CategoryAxis apexJsCategoryAxis({
       : const AxisGrid(
           color: .solid(apexJsGrid),
           drawOnChartArea: false,
-          extra: {'tickLength': 6},
+          tickLength: 6,
         ),
   ticks: AxisTicks(
     color: labelColor,

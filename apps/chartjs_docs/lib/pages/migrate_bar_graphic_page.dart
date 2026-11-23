@@ -162,7 +162,7 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
     ),
     (
       Text('AxisGuide(tickLine: TickLine())'),
-      DocText('`AxisGrid(drawOnChartArea: false)` with `tickLength`'),
+      DocText('`AxisGrid(drawOnChartArea: false, tickLength: 5)`'),
     ),
   ],
   demos: [

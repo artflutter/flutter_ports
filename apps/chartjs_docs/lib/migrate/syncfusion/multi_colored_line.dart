@@ -119,7 +119,7 @@ final ChartConfig _config = ChartConfig(
       grid: AxisGrid(
         drawOnChartArea: false,
         color: ChartPaint.solid(_axisLine),
-        extra: {'tickLength': 6},
+        tickLength: 6,
       ),
       ticks: AxisTicks(
         stepSize: 5,

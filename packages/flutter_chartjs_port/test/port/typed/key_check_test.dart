@@ -139,6 +139,7 @@ const AxisGrid _grid = AxisGrid(
   drawOnChartArea: true,
   drawTicks: true,
   offset: false,
+  tickLength: 8,
 );
 const AxisTitle _axisTitle = AxisTitle(
   display: true,

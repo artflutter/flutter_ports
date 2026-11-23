@@ -1187,8 +1187,12 @@ final class const AxisGrid({
   /// The default of the index axis of a bar chart is `true`.
   final bool? offset,
 
+  /// The length in pixels that the grid lines draw into the axis area, the
+  /// tick marks: `tickLength`. The default is 8.
+  final double? tickLength,
+
   /// The Chart.js grid options that have no parameter, for example
-  /// `{'tickLength': 4}`. The rules of [ChartAxis.extra] apply.
+  /// `{'tickWidth': 2}`. The rules of [ChartAxis.extra] apply.
   final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The grid options of an axis.
@@ -1203,6 +1207,7 @@ final class const AxisGrid({
     bool? drawOnChartArea,
     bool? drawTicks,
     bool? offset,
+    double? tickLength,
     Map<String, Object?>? extra,
   }) => AxisGrid(
     display: display ?? this.display,
@@ -1211,6 +1216,7 @@ final class const AxisGrid({
     drawOnChartArea: drawOnChartArea ?? this.drawOnChartArea,
     drawTicks: drawTicks ?? this.drawTicks,
     offset: offset ?? this.offset,
+    tickLength: tickLength ?? this.tickLength,
     extra: extra ?? this.extra,
   );
 
@@ -1221,6 +1227,7 @@ final class const AxisGrid({
     ('drawOnChartArea', drawOnChartArea),
     ('drawTicks', drawTicks),
     ('offset', offset),
+    ('tickLength', tickLength),
     ('extra', byEntries(extra)),
   ];
 
@@ -1249,6 +1256,7 @@ GridLineOptionsScope? _lowerGrid(AxisGrid? grid) {
   put(scope, OptionKey.drawOnChartArea, grid.drawOnChartArea);
   put(scope, OptionKey.drawTicks, grid.drawTicks);
   put(scope, OptionKey.offset, grid.offset);
+  put(scope, OptionKey.tickLength, grid.tickLength);
   return mergeExtra(scope, grid.extra);
 }
 

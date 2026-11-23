@@ -72,7 +72,7 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
             grid: AxisGrid(
               drawOnChartArea: false,
               color: .solid(_axisLine),
-              extra: {'tickLength': 6},
+              tickLength: 6,
             ),
             ticks: AxisTicks(
               stepSize: 2,
