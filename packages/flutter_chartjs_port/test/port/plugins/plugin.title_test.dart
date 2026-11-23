@@ -63,9 +63,12 @@ import 'plugin_title_reference.dart';
 /// bodies.
 final Map<String, Object?> _functions = {
   // (ctx) => `Chart of type ${ctx.chart.config.type}`, as its one line
-  // (row adapt-title-text-lines).
-  'titleText': (ContextObject ctx) {
-    final type = jsToString((ctx.chart as Chart).config.type);
+  // (row adapt-title-text-lines), in the one function `scripted` (row
+  // adapt-title-scripted).
+  'titleText': (Object? ctx, Object? options) {
+    final type = jsToString(
+      ((ctx! as ContextObject).chart as Chart).config.type,
+    );
     return ['Chart of type $type'];
   },
 };
@@ -79,7 +82,7 @@ Object? _observeTitle(Chart chart) {
   if (titleBlock == null) return null;
   final options = (titleBlock as Title).options!;
   return <String, Object?>{
-    'lines': options.text.length.toDouble(),
+    'lines': options.text!.length.toDouble(),
     'options': plainTitleOptions(options),
   };
 }
@@ -107,36 +110,32 @@ Chart _lineWithoutTitle() => acquireChartRoot(
 );
 
 /// A line chart with the title [title].
-Chart _line(ChartTitle title) => acquireChartRoot(
+Chart _line(TitleOptions title) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: const [
         LineDataset(data: .values([1, 2])),
       ],
-      title: title,
+      pluginOptions: [title],
     ),
   ).lower(),
 );
 
-/// The resolved title options of a box that a test builds: the values of
-/// `TitleOptions.of({})` for each option that the test does not give.
+/// The title options of a box that a test builds: the fields that the test
+/// gives, and no other field.
 TitleOptions _titleOptions({
   bool display = false,
   List<String> text = const [],
-  EdgeInsets padding = EdgeInsets.zero,
+  EdgeInsets? padding,
   ChartTextStyle? font,
   ChartPosition? position,
 }) => TitleOptions(
-  align: null,
-  color: const ChartPaint.unchanged(),
   display: display,
-  font: toFont(font),
-  fullSize: false,
+  font: font,
   padding: padding,
   position: position,
   text: text,
-  weight: null,
 );
 
 void main() {
@@ -150,7 +149,7 @@ void main() {
 
   test('the reference has the unit cases of Chart.js ADR 0041', () {
     expect(
-      [for (final c in pluginTitleReference) c.name],
+      [for (final c in pluginTitleReference(_functions)) c.name],
       [
         'display false (the default)',
         'display true',
@@ -174,14 +173,14 @@ void main() {
   });
 
   testPluginChartCases(
-    pluginTitleReference,
+    pluginTitleReference(_functions),
     observers: {'title': _observeTitle},
     functions: _functions,
   );
 
   group('theming.md §8 test 3: the light preset', () {
     testPluginChartCases(
-      pluginTitleReference,
+      pluginTitleReference(_functions),
       observers: {'title': _observeTitle},
       functions: _functions,
       theme: compileLightTheme(),
@@ -192,7 +191,10 @@ void main() {
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
       final config =
-          copyReference(pluginTitleReference.first.config, _functions)!
+          copyReference(
+                pluginTitleReference(_functions).first.config,
+                _functions,
+              )!
               as AnyObject;
       config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
@@ -206,19 +208,17 @@ void main() {
     });
 
     test('new Title(config) keeps a plain chart object', () {
-      // Map options: the test pins the read of a JS config object.
+      // A config Map: the test pins the read of a JS config object. The
+      // options are one TitleOptions (Chart.js ADR 0197).
       final chart = <String, Object?>{'options': <String, Object?>{}};
-      final options = <String, Object?>{
-        'display': true,
-        'text': ['a'],
-      };
+      const options = TitleOptions(display: true, text: ['a']);
       final constructed = _construct([
         <String, Object?>{'chart': chart, 'options': options},
       ]);
       expect(constructed, isA<Title>());
       final value = constructed! as Title;
       expect(value.chart, same(chart));
-      expect(value.options, TitleOptions.of(options));
+      expect(value.options, same(options));
       expect(value.ctx, isNull);
     });
 
@@ -234,12 +234,14 @@ void main() {
       // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
       // object are its hooks, and `id`, `defaults`, `defaultRoutes` and
       // `descriptors` its fields. `_element` is no field: the class is
-      // `Title.jsClass`.
+      // `Title.jsClass`. The `defaultRoutes` and the `descriptors` have no
+      // field: the plugin gives the color of the route itself (Chart.js ADR
+      // 0197).
       expect(pluginHookNames(title), _upstreamHooks);
       expect(title.id, 'title');
       expect(title.defaults, isNotNull);
-      expect(title.defaultRoutes, isNotNull);
-      expect(title.descriptors, isNotNull);
+      expect(title.defaultRoutes, isNull);
+      expect(title.descriptors, isNull);
     });
   });
 
@@ -352,7 +354,7 @@ void main() {
     });
 
     testWidgets('stop removes the title box', (tester) async {
-      final chart = _line(const ChartTitle(display: true, text: ['a']));
+      final chart = _line(const TitleOptions(display: true, text: ['a']));
       final box = chart.titleBlock;
       expect(box, isA<Title>());
       expect(chart.boxes, contains(same(box)));
@@ -363,14 +365,22 @@ void main() {
   });
 
   group('adapt-component-class-role', () {
-    test('an options value that is not a Map throws a TypeError', () {
-      // Upstream stores the value (probe: newOptions5 gives 5).
-      expect(
-        () => _construct([
-          <String, Object?>{'options': 5},
-        ]),
-        throwsA(isA<TypeError>()),
-      );
+    test('an options value that is not a TitleBoxOptions throws a '
+        'TypeError', () {
+      // Upstream stores the value (probe: newOptions5 gives 5). The options
+      // are one TitleOptions or SubtitleOptions (Chart.js ADR 0197): a Map
+      // throws too.
+      for (final options in <Object>[
+        5,
+        <String, Object?>{'display': true},
+      ]) {
+        expect(
+          () => _construct([
+            <String, Object?>{'options': options},
+          ]),
+          throwsA(isA<TypeError>()),
+        );
+      }
     });
 
     test('a ctx value that is not a context throws a TypeError', () {

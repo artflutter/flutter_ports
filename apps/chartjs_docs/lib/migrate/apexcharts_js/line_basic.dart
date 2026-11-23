@@ -17,9 +17,12 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 0, 10, 0),
-  title: apexJsTitle('Product Trends by Month'),
   // One series: ApexCharts.js shows no legend.
-  pluginOptions: [const LegendOptions(display: false), apexTooltip()],
+  pluginOptions: [
+    apexJsTitle('Product Trends by Month'),
+    const LegendOptions(display: false),
+    apexTooltip(),
+  ],
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,

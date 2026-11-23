@@ -45,6 +45,12 @@ import 'package:test/test.dart';
 // title color functions are a fallback of the legend: the named exceptions
 // of [_legendExceptions].
 //
+// The title and the subtitle options are one TitleOptions and one
+// SubtitleOptions object (Chart.js ADR 0197): each path `plugins.title.<key>`
+// and `plugins.subtitle.<key>` maps to the field `<key>`
+// ([_objectPluginFields]). The two plugins have no `defaultRoutes` and no
+// `descriptors`: the named exceptions of [_titleExceptions].
+//
 // The decimation options are one DecimationOptions object (Chart.js ADR
 // 0194), with the rule of the tooltip: [_decimationFields] gives its fields.
 
@@ -241,6 +247,29 @@ String? _legendPathProblem(String path, String prefix) {
   return null;
 }
 
+/// The inventory paths of the title and the subtitle that have no value in
+/// the port, each with its reason (Chart.js ADR 0197: one TitleOptions and
+/// one SubtitleOptions object, no `defaultRoutes` and no `descriptors`; the
+/// color fallback is Dart code of the plugin).
+const Map<String, String> _titleExceptions = {
+  'defaults plugins.title.color':
+      'the color of Chart.defaults when no options set it, a fallback of '
+      'the plugin (resolvedTitleOptions, plugin.title.js:158-160)',
+  'defaults plugins.subtitle.color':
+      'the color of Chart.defaults when no options set it, a fallback of '
+      'the plugin (resolvedTitleOptions, plugin.subtitle.js:45-47)',
+  'descriptors plugins.title._scriptable':
+      'no descriptors: TitleOptions.scripted stands for the scriptable '
+      'options (row adapt-title-scripted)',
+  'descriptors plugins.title._indexable':
+      'no descriptors: a field has one value',
+  'descriptors plugins.subtitle._scriptable':
+      'no descriptors: SubtitleOptions.scripted stands for the scriptable '
+      'options (row adapt-title-scripted)',
+  'descriptors plugins.subtitle._indexable':
+      'no descriptors: a field has one value',
+};
+
 /// The prefix of the legend options in the inventory path [path] of
 /// [group], or Dart `null` for a path of another object.
 String? _legendPrefix(String group, String path) {
@@ -284,6 +313,10 @@ const String _tooltipPrefix = 'plugins.tooltip.';
 final Map<String, Map<String, Object?>> _objectPluginFields = {
   'filler': fillerOptionFields(const FillerOptions()),
   'colors': colorsOptionFields(const ColorsPluginOptions()),
+  // The title and the subtitle options are one object each (Chart.js ADR
+  // 0197).
+  'subtitle': titleOptionFields(const SubtitleOptions()),
+  'title': titleOptionFields(const TitleOptions()),
 };
 
 /// Each field of the filler or colors options [value], or Dart `null` for
@@ -291,6 +324,7 @@ final Map<String, Map<String, Object?>> _objectPluginFields = {
 Map<String, Object?>? _objectFields(Object? value) => switch (value) {
   final FillerOptions options => fillerOptionFields(options),
   final ColorsPluginOptions options => colorsOptionFields(options),
+  final TitleBoxOptions<Object?> options => titleOptionFields(options),
   _ => null,
 };
 
@@ -849,6 +883,7 @@ void main() {
         for (final MapEntry(key: path, :value) in paths.entries) {
           if (_tooltipExceptions.containsKey('$group $path')) continue;
           if (_legendExceptions.containsKey('$group $path')) continue;
+          if (_titleExceptions.containsKey('$group $path')) continue;
           // A legend path: `plugins.legend` holds a LegendOptions, and the
           // next segments are fields of it (Chart.js ADR 0193).
           if (_legendPrefix(group, path) case final prefix?) {
@@ -956,9 +991,12 @@ void main() {
       }
     });
 
-    test('each legend exception is an inventory path', () {
-      // No stale exception (Chart.js ADR 0193).
-      for (final entry in _legendExceptions.keys) {
+    test('each legend and title exception is an inventory path', () {
+      // No stale exception (Chart.js ADRs 0193 and 0197).
+      for (final entry in [
+        ..._legendExceptions.keys,
+        ..._titleExceptions.keys,
+      ]) {
         final [group, path] = entry.split(' ');
         expect(
           (values[group]! as Map<String, Object?>).containsKey(path),
@@ -1036,6 +1074,7 @@ void main() {
           if (_isInflateAuto(path, expected)) continue;
           if (_tooltipExceptions.containsKey('$name $path')) continue;
           if (_legendExceptions.containsKey('$name $path')) continue;
+          if (_titleExceptions.containsKey('$name $path')) continue;
           // A tooltip font: the routed value is the font of the defaults
           // merged over Chart.defaults.font (Tooltip._resolved).
           if (name == 'defaults' && _tooltipRoutes.contains(path)) {
@@ -1142,6 +1181,13 @@ void main() {
         final id = site['id'] as String?;
         final folder = file.split('/')[1];
         var keys = site['keys'] as List<Object?>?;
+        // The tooltip, the legend, the title and the subtitle have no
+        // descriptors (Chart.js ADRs 0192, 0193 and 0197,
+        // [_tooltipExceptions], [_legendExceptions] and [_titleExceptions]).
+        if (kind == 'field descriptors' &&
+            const ['tooltip', 'legend', 'title', 'subtitle'].contains(id)) {
+          continue;
+        }
         Object? object;
         final args = site['args'];
         if (args is List<Object?> &&
@@ -1170,12 +1216,6 @@ void main() {
             'static overrides' => _read(overrides, id),
             _ => null,
           };
-        }
-        // The tooltip and the legend have no descriptors (Chart.js ADRs 0192
-        // and 0193, [_tooltipExceptions] and [_legendExceptions]).
-        if (kind == 'field descriptors' &&
-            (id == 'tooltip' || id == 'legend')) {
-          continue;
         }
         if (object == null || keys == null) continue;
         // The port has no animation option `type` (row

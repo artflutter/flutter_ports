@@ -1295,6 +1295,23 @@ function legendOptionsHaveFunctions(value) {
 }
 
 /**
+ * The options of the title or the subtitle plugin of an input config
+ * (`options.plugins.title`, `options.plugins.subtitle`): the TitleOptions or
+ * the SubtitleOptions object of the port (Chart.js ADR 0197). [type] is the
+ * Dart class. A function of the generator at a scriptable key (a `text`)
+ * goes into the one function `scripted` (row adapt-title-scripted).
+ */
+class NativeTitleOptions { constructor(type, value) { this.type = type; this.value = value; } }
+
+/** The Dart class of the options object of each plugin id of Chart.js ADR 0197. */
+const TITLE_OPTIONS_CLASSES = {title: 'TitleOptions', subtitle: 'SubtitleOptions'};
+
+/** Whether the title options [value] hold a function of the generator. */
+function titleOptionsHaveFunctions(value) {
+  return Object.values(value).some((x) => functionName(x) !== null);
+}
+
+/**
  * The decimation options of an input config (`options.plugins.decimation`):
  * the DecimationOptions object of the port (Chart.js ADR 0194).
  */
@@ -1649,6 +1666,9 @@ function keyedValue(k, value, owner) {
   }
   if (k in PLUGIN_OPTIONS_CLASSES && owner === 'plugins' && value && value.constructor === Object) {
     return new NativePluginOptions(PLUGIN_OPTIONS_CLASSES[k], value);
+  }
+  if (k in TITLE_OPTIONS_CLASSES && owner === 'plugins' && value && value.constructor === Object) {
+    return new NativeTitleOptions(TITLE_OPTIONS_CLASSES[k], value);
   }
   if (k === 'callbacks' && value && value.constructor === Object &&
       Object.values(value).every(v => typeof v === 'function' || typeof v === 'string' && v.startsWith('fn:'))) {
@@ -2103,6 +2123,49 @@ function dart(v, state, owner) {
     };
     return constLeaves ? nativeConstant(write) : write();
   }
+  if (v instanceof NativeTitleOptions) {
+    state.pluginOptions = true;
+    const write = () => {
+      const fields = [];
+      const scripted = [];
+      for (const k of Object.keys(v.value)) {
+        const x = v.value[k];
+        const name = functionName(x);
+        if (name !== null) {
+          scripted.push([k, name]);
+        } else if (k === 'text') {
+          fields.push(`text: ${dart(keyedValue(k, x, 'title'), state, k)}`);
+        } else if (k === 'color') {
+          fields.push(`color: ${dart(new NativeTooltipPaint(x), state)}`);
+        } else if (k === 'padding') {
+          fields.push(`padding: ${dart(new DartPadding(x), state)}`);
+        } else if (k === 'events') {
+          fields.push(`events: <String>[${x.map((e) => dart(e, state)).join(', ')}]`);
+        } else if (typeof x === 'number') {
+          fields.push(`${k}: ${nativeNumber(x)}`);
+        } else if (x && x.constructor === Object && k !== 'font') {
+          throw new Error(`A ${v.type} option object with no field form: ${k}`);
+        } else {
+          fields.push(`${k}: ${dart(keyedValue(k, x, 'title'), state, k)}`);
+        }
+      }
+      if (scripted.length) {
+        // The scriptable options of the generator as the one function
+        // `scripted`: it calls each function with the chart context and the
+        // options, as the resolver of upstream calls it with the context and
+        // the sub-resolver (row adapt-title-scripted).
+        state.tooltipCallbacks = true;
+        const over = scripted.map(([k, name]) => {
+          if (k !== 'text') throw new Error(`A scriptable ${v.type} option of no scripted form: ${k}`);
+          return `text: (functions[${dart(name, state)}]! as Object? Function(Object?, Object?))(context, options)! as List<String>`;
+        });
+        fields.push(`scripted: (context, options) => ${v.type}(${over.join(', ')})`);
+      }
+      return `${v.type}(${fields.join(', ')})`;
+    };
+    if (titleOptionsHaveFunctions(v.value)) return write();
+    return constLeaves ? nativeConstant(write) : write();
+  }
   if (v instanceof NativePluginOptions) {
     state.pluginOptions = true;
     const write = () => {
@@ -2304,6 +2367,7 @@ function hasNumberFormat(v, owner) {
   if (v instanceof DartNumberFormat || v instanceof NativeTooltipStyle || v instanceof NativeTooltipCallbacks) return true;
   if (v instanceof NativeTooltipOptions) return tooltipOptionsHaveFunctions(v.value);
   if (v instanceof NativeLegendOptions) return legendOptionsHaveFunctions(v.value);
+  if (v instanceof NativeTitleOptions) return titleOptionsHaveFunctions(v.value);
   if (Array.isArray(v)) return v.some((x) => hasNumberFormat(x, owner));
   if (v === null || typeof v !== 'object' || v.constructor !== Object) return false;
   return Object.keys(v).some((k) => hasNumberFormat(keyedValue(k, v[k], owner), k));

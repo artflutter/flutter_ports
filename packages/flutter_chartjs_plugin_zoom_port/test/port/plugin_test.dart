@@ -146,19 +146,20 @@ ChartConfig _rangeConfig(
   ],
   animation: ChartAnimation.none,
   scales: const [LinearAxis(.x, min: 0, max: 100), LinearAxis(.y)],
-  title: ChartTitle(
-    display: true,
-    extra: {
-      'text': (ScriptableChartContext ctx) {
+  pluginOptions: [
+    TitleOptions(
+      display: true,
+      scripted: (ctx, options) {
         final chart = ctx.chart as Chart;
         final level = 'Zoom level ${chart.getZoomLevel()}';
         titles.add(level);
-        return [level];
+        return TitleOptions(text: [level]);
       },
-    },
-  ),
-  // Explicit false keeps the full path even when range-only updates default on.
-  pluginOptions: [zoom.merge(ZoomPluginOptions(rangeOnlyUpdates: rangeOnly))],
+    ),
+    // Explicit false keeps the full path even when range-only updates
+    // default on.
+    zoom.merge(ZoomPluginOptions(rangeOnlyUpdates: rangeOnly)),
+  ],
 );
 
 /// What a zoom step leaves: the ranges and the ticks of the scales, the zoom

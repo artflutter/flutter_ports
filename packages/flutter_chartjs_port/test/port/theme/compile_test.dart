@@ -78,14 +78,15 @@ String _jsonRaw(Object? value) => switch (value) {
 /// its fields that it sets (Chart.js ADR 0192, [setTooltipOptionFields]),
 /// and so are the [LegendOptions] of `plugins.legend` and its label and
 /// title options (Chart.js ADR 0193, [setLegendOptionFields]) and the
-/// [ColorsPluginOptions] of `plugins.colors` (Chart.js ADR 0196,
-/// [setFillerColorsOptionFields]).
+/// [ColorsPluginOptions] of `plugins.colors` (Chart.js ADR 0196) and the
+/// [TitleOptions] and [SubtitleOptions] of `plugins.title` and
+/// `plugins.subtitle` (Chart.js ADR 0197, [setFillerColorsOptionFields]).
 bool _isObject(Object? value) =>
     value is Map<String, Object?> ||
     value is JsObjectFace ||
     value is TooltipOptions ||
     isLegendOptionObject(value) ||
-    value is ColorsPluginOptions;
+    setFillerColorsOptionFields(value) != null;
 
 /// The own keys of the object [value] in the `Object.keys` order: for a
 /// [TooltipOptions], a legend option object or a [ColorsPluginOptions], the
@@ -94,7 +95,7 @@ List<String> _keys(Object? value) => value is TooltipOptions
     ? setTooltipOptionFields(value).keys.toList()
     : isLegendOptionObject(value)
     ? setLegendOptionFields(value!).keys.toList()
-    : value is ColorsPluginOptions
+    : setFillerColorsOptionFields(value) != null
     ? setFillerColorsOptionFields(value)!.keys.toList()
     : jsObjectKeys(value);
 
@@ -105,7 +106,7 @@ Object? _get(Object? value, String key) => value is TooltipOptions
     ? setTooltipOptionFields(value)[key] ?? undefined
     : isLegendOptionObject(value)
     ? setLegendOptionFields(value!)[key] ?? undefined
-    : value is ColorsPluginOptions
+    : setFillerColorsOptionFields(value) != null
     ? setFillerColorsOptionFields(value)![key] ?? undefined
     : jsGet(value, key);
 
@@ -1249,12 +1250,14 @@ void main() {
       expect(nodes.length, greaterThan(10));
       for (final (path, node) in nodes) {
         // The TooltipOptions of plugins.tooltip, the LegendOptions of
-        // plugins.legend and the ColorsPluginOptions of plugins.colors are
-        // immutable objects (Chart.js ADRs 0192, 0193 and 0196): they have
-        // no write to freeze, and the palette Lists are unmodifiable.
+        // plugins.legend, the ColorsPluginOptions of plugins.colors and the
+        // title and subtitle options are immutable objects (Chart.js ADRs
+        // 0192, 0193, 0196 and 0197): they have no write to freeze, and the
+        // palette Lists are unmodifiable.
         if (node is TooltipOptions ||
             isLegendOptionObject(node) ||
             node is ColorsPluginOptions ||
+            node is TitleBoxOptions<Object?> ||
             path.startsWith('plugins.colors.')) {
           continue;
         }
@@ -1295,25 +1298,26 @@ void main() {
         'options': <String, Object?>{},
         themeConfigKey: compiled,
       });
-      // The title: the tooltip options of the theme are one immutable
-      // TooltipOptions with no resolver (Chart.js ADR 0192).
-      final scopes = config.getOptionScopes(
-        undefined,
-        config.pluginScopeKeys(Plugin<Object?>(id: 'title')),
-      );
-      expect(scopes.first, same(_at(compiled, 'plugins.title')));
+      // The scale scopes: the options of the seven built-in plugins of the
+      // theme are immutable objects with no resolver (Chart.js ADRs 0192 to
+      // 0197).
+      final scopes = config.getOptionScopes(undefined, [
+        ['scale'],
+      ]);
+      expect(scopes.first, same(_at(compiled, 'scale')));
       final resolver = config.createResolver(scopes, <String, Object?>{});
       expect(
-        resolver['color'],
+        jsGet(resolver['ticks'], 'color'),
         const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       // A value of the type of the key: the write throws for the freeze
       // alone (a string would be a foreign pair of the oracle O2).
       expect(
-        () => resolver['color'] = const ChartPaint.solid(_red),
+        () => jsSet(resolver['ticks'], 'color', const ChartPaint.solid(_red)),
         throwsA(isA<TypeError>()),
       );
       expect(_at(compiled, 'plugins.tooltip'), isA<TooltipOptions>());
+      expect(_at(compiled, 'plugins.title'), isA<TitleOptions>());
     });
   });
 

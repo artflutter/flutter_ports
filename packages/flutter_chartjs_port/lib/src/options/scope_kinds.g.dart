@@ -201,10 +201,6 @@ enum ScopeKind(
   /// the point labels of a radial scale.
   pointLabelOptions('PointLabelOptions'),
 
-  /// index.d.ts:2579 TitleOptions, the scopes `plugins.title` and
-  /// `plugins.subtitle`.
-  titleOptions('TitleOptions'),
-
   /// index.d.ts:2974 TooltipDatasetOptions, the `tooltip` object of a dataset
   /// (read at plugin.tooltip.js:357).
   tooltipDatasetOptions('TooltipDatasetOptions'),
@@ -299,8 +295,6 @@ enum ScopeKind(
         return AngleLineOptionsScope();
       case ScopeKind.pointLabelOptions:
         return PointLabelOptionsScope();
-      case ScopeKind.titleOptions:
-        return TitleOptionsScope();
       case ScopeKind.tooltipDatasetOptions:
         return TooltipDatasetOptionsScope();
       case ScopeKind.genericPluginOptions:
@@ -392,8 +386,6 @@ enum ScopeKind(
         return AngleLineOptionsScope;
       case ScopeKind.pointLabelOptions:
         return PointLabelOptionsScope;
-      case ScopeKind.titleOptions:
-        return TitleOptionsScope;
       case ScopeKind.tooltipDatasetOptions:
         return TooltipDatasetOptionsScope;
       case ScopeKind.genericPluginOptions:
@@ -1215,19 +1207,6 @@ enum ScopeKind(
           OptionKey.padding,
           OptionKey.centerPointLabels,
         ];
-      case ScopeKind.titleOptions:
-        return const [
-          OptionKey.align,
-          OptionKey.display,
-          OptionKey.position,
-          OptionKey.color,
-          OptionKey.font,
-          OptionKey.fullSize,
-          OptionKey.padding,
-          OptionKey.text,
-          OptionKey.weight,
-          OptionKey.events,
-        ];
       case ScopeKind.tooltipDatasetOptions:
         return const [OptionKey.callbacks];
       case ScopeKind.genericPluginOptions:
@@ -1498,9 +1477,9 @@ enum ScopeKind(
           case OptionKey.legend:
             return 5506;
           case OptionKey.subtitle:
-            return 34;
+            return 5506;
           case OptionKey.title:
-            return 34;
+            return 5506;
           case OptionKey.tooltip:
             return 5506;
           default:
@@ -2846,31 +2825,6 @@ enum ScopeKind(
           default:
             return 0;
         }
-      case ScopeKind.titleOptions:
-        switch (key) {
-          case OptionKey.align:
-            return 1536;
-          case OptionKey.display:
-            return 2;
-          case OptionKey.position:
-            return 2432;
-          case OptionKey.color:
-            return 4864;
-          case OptionKey.font:
-            return 4096;
-          case OptionKey.fullSize:
-            return 2;
-          case OptionKey.padding:
-            return 4480;
-          case OptionKey.text:
-            return 5888;
-          case OptionKey.weight:
-            return 1;
-          case OptionKey.events:
-            return 16;
-          default:
-            return 0;
-        }
       case ScopeKind.tooltipDatasetOptions:
         switch (key) {
           case OptionKey.callbacks:
@@ -2952,14 +2906,7 @@ enum ScopeKind(
             return null;
         }
       case ScopeKind.pluginOptionsByType:
-        switch (key) {
-          case OptionKey.subtitle:
-            return ScopeKind.titleOptions;
-          case OptionKey.title:
-            return ScopeKind.titleOptions;
-          default:
-            return null;
-        }
+        return null;
       case ScopeKind.elementOptionsByType:
         switch (key) {
           case OptionKey.arc:
@@ -3258,8 +3205,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.pointLabelOptions:
         return null;
-      case ScopeKind.titleOptions:
-        return null;
       case ScopeKind.tooltipDatasetOptions:
         return null;
       case ScopeKind.genericPluginOptions:
@@ -3350,8 +3295,6 @@ enum ScopeKind(
       case ScopeKind.angleLineOptions:
         return 64;
       case ScopeKind.pointLabelOptions:
-        return 64;
-      case ScopeKind.titleOptions:
         return 64;
       case ScopeKind.tooltipDatasetOptions:
         return 64;
@@ -3444,8 +3387,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.pointLabelOptions:
         return null;
-      case ScopeKind.titleOptions:
-        return null;
       case ScopeKind.tooltipDatasetOptions:
         return null;
       case ScopeKind.genericPluginOptions:
@@ -3536,8 +3477,6 @@ enum ScopeKind(
       case ScopeKind.angleLineOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.pointLabelOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.titleOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.tooltipDatasetOptions:
         return classifyUnion(raw, 64);

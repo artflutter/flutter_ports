@@ -2300,7 +2300,7 @@ const Map<String, String> observationDigests = {
   'fixture plugin.title/scriptable-options.js (plain)':
       'a6416a8a92c93c4a6e0908a4a5e286e2da7a9fd07a5d42070a0d6081ddc81e1d',
   'fixture plugin.title/scriptable-options.js (trace)':
-      '1a252b6c7b128ed3778c12ea20789e2627b4c29ef674407fd54b78c7a58fb525',
+      '21c029e4e59c29d908283e1cd5abfc76ed28d08c2fb173e9dec802fe955b2119',
   'fixture plugin.tooltip/box-padding.js (plain)':
       'a9af3900d84125e1206af2dfbedd870186de12c4c29205ffc15541f9361ee0f3',
   'fixture plugin.tooltip/box-padding.js (trace)':

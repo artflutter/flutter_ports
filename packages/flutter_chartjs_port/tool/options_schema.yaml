@@ -207,8 +207,8 @@ kinds:
       decimation: bool | pluginOptions  # the DecimationOptions of plugin_options.dart (Chart.js ADR 0194)
       filler: bool | pluginOptions  # the FillerOptions of plugin_options.dart (Chart.js ADR 0196)
       legend: bool | pluginOptions  # the LegendOptions of plugin_options.dart (Chart.js ADR 0193)
-      subtitle: bool | scope TitleOptions
-      title: bool | scope TitleOptions
+      subtitle: bool | pluginOptions  # the SubtitleOptions of plugin_options.dart (Chart.js ADR 0197)
+      title: bool | pluginOptions  # the TitleOptions of plugin_options.dart (Chart.js ADR 0197)
       tooltip: bool | pluginOptions  # the TooltipOptions of plugin_options.dart (Chart.js ADR 0192)
   ElementOptionsByType:
     doc: index.d.ts:2201 ElementOptionsByType, the scope `elements` (by element type id).
@@ -989,19 +989,6 @@ kinds:
   # ---------------------------------------------------------------------------------------------
   # The plugins. `events` of each plugin is read at core.controller.js:1170.
   # ---------------------------------------------------------------------------------------------
-  TitleOptions:
-    doc: index.d.ts:2579 TitleOptions, the scopes `plugins.title` and `plugins.subtitle`.
-    keys:
-      align: chartAlign
-      display: bool
-      position: chartPosition
-      color: chartPaint
-      font: textStyle
-      fullSize: bool
-      padding: edgeInsets
-      text: textLines
-      weight: number  # plugin.title.js:155 and plugin.subtitle.js:42 defaults, read at core.layouts.js:334
-      events: list  # read at core.controller.js:1170
   TooltipDatasetOptions:
     doc: index.d.ts:2974 TooltipDatasetOptions, the `tooltip` object of a dataset (read at plugin.tooltip.js:357).
     keys:

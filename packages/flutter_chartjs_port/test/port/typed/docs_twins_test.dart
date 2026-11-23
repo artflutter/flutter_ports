@@ -32,8 +32,9 @@ import 'chart_twin.dart';
 //   key of a dataset, and the filler reads `fill` only for a dataset with a
 //   line element.
 // - The title of the Area sample is a function of the context
-//   (`line-boundaries.md:106`). `ChartTitle.text` is a `String`: the typed
-//   text of each variant is the constant of that function.
+//   (`line-boundaries.md:106`). A `FillTarget` has no text: the typed text
+//   of each variant is the constant of that function, and the raw twin
+//   gives the function as the one function `scripted` (Chart.js ADR 0197).
 // - The radar datasets have `fill: true` (`radar.md:22`, `:32`). The fill
 //   of the port is `FillTarget.toOrigin` in both twins (Chart.js ADR 0140):
 //   the filler reads `true` as `'origin'` (`parseFillOption`,
@@ -696,10 +697,13 @@ Map<String, Object?> _areaRaw(FillTarget fill, String name) =>
       'options': <String, Object?>{
         'plugins': <String, Object?>{
           'filler': const FillerOptions(propagate: false),
-          'title': <String, Object?>{
-            'display': true,
-            'text': (Object? ctx) => _areaTitleText(name),
-          },
+          // The title function is the one function `scripted` (row
+          // adapt-title-scripted).
+          'title': TitleOptions(
+            display: true,
+            scripted: (context, options) =>
+                TitleOptions(text: _areaTitleText(name)),
+          ),
         },
         'interaction': <String, Object?>{'intersect': false},
       },
@@ -725,8 +729,10 @@ ChartConfig _areaTyped(FillTarget fill, String title) => ChartConfig(
       fill: fill,
     ),
   ],
-  pluginOptions: const [FillerOptions(propagate: false)],
-  title: ChartTitle(display: true, text: [title]),
+  pluginOptions: [
+    TitleOptions(display: true, text: [title]),
+    const FillerOptions(propagate: false),
+  ],
   interaction: const ChartInteraction(intersect: false),
 );
 
@@ -901,14 +907,14 @@ ChartConfig _barTyped() => ChartConfig(
     ),
   ],
   padding: const EdgeInsets.all(8),
-  title: const ChartTitle(
-    display: true,
-    text: ['Sales by quarter'],
-    align: .start,
-    font: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-    padding: EdgeInsets.only(top: 4, bottom: 8),
-  ),
   pluginOptions: [
+    const TitleOptions(
+      display: true,
+      text: ['Sales by quarter'],
+      align: .start,
+      font: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      padding: EdgeInsets.only(top: 4, bottom: 8),
+    ),
     const LegendOptions(
       position: ChartPosition.bottom,
       align: .start,
@@ -1052,16 +1058,16 @@ Map<String, Object?> _barRaw() => <String, Object?>{
           padding: 12,
         ),
       ),
-      'title': <String, Object?>{
-        'display': true,
-        'text': ['Sales by quarter'],
-        'align': ChartAlign.start,
-        'font': const ChartTextStyle(
+      'title': const TitleOptions(
+        display: true,
+        text: ['Sales by quarter'],
+        align: ChartAlign.start,
+        font: ChartTextStyle(
           fontSize: 16,
           fontWeight: native_ui.FontWeight.w600,
         ),
-        'padding': const EdgeInsets.only(top: 4, bottom: 8),
-      },
+        padding: EdgeInsets.only(top: 4, bottom: 8),
+      ),
       'tooltip': TooltipOptions(
         mode: const IndexInteractionMode(),
         intersect: false,
@@ -1144,13 +1150,13 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
     intersect: false,
     includeInvisible: true,
   ),
-  subtitle: ChartTitle(
-    display: true,
-    text: ['Steps in thousands'],
-    color: ChartPaint.solid(_navy),
-    position: .bottom,
-  ),
   pluginOptions: [
+    SubtitleOptions(
+      display: true,
+      text: ['Steps in thousands'],
+      color: ChartPaint.solid(_navy),
+      position: .bottom,
+    ),
     LegendOptions(
       labels: LegendLabelOptions(usePointStyle: true),
       reverse: true,
@@ -1247,14 +1253,12 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
       'easing': Curves.easeOutQuart,
     },
     'plugins': <String, Object?>{
-      'subtitle': <String, Object?>{
-        'display': true,
-        'text': ['Steps in thousands'],
-        'color': const ChartPaint.solid(
-          native_ui.Color.fromRGBO(27, 58, 92, 1),
-        ),
-        'position': ChartPosition.bottom,
-      },
+      'subtitle': const SubtitleOptions(
+        display: true,
+        text: ['Steps in thousands'],
+        color: ChartPaint.solid(native_ui.Color.fromRGBO(27, 58, 92, 1)),
+        position: ChartPosition.bottom,
+      ),
       'legend': const LegendOptions(
         reverse: true,
         labels: LegendLabelOptions(usePointStyle: true),
@@ -1630,13 +1634,15 @@ ChartConfig _doughnutTypeTyped() => const ChartConfig(
       radius: PixelRadius(150),
     ),
   ],
-  title: ChartTitle(
-    display: true,
-    text: ['Tasks'],
-    color: ChartPaint.solid(_navy),
-    position: .bottom,
-    fullSize: false,
-  ),
+  pluginOptions: [
+    TitleOptions(
+      display: true,
+      text: ['Tasks'],
+      color: ChartPaint.solid(_navy),
+      position: .bottom,
+      fullSize: false,
+    ),
+  ],
   elements: ChartElements(
     arc: ArcElementStyle(borderWidth: 1, borderColor: ChartPaint.solid(_white)),
   ),
@@ -1697,15 +1703,13 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
       },
     },
     'plugins': <String, Object?>{
-      'title': <String, Object?>{
-        'display': true,
-        'text': ['Tasks'],
-        'color': const ChartPaint.solid(
-          native_ui.Color.fromRGBO(27, 58, 92, 1),
-        ),
-        'position': ChartPosition.bottom,
-        'fullSize': false,
-      },
+      'title': const TitleOptions(
+        display: true,
+        text: ['Tasks'],
+        color: ChartPaint.solid(native_ui.Color.fromRGBO(27, 58, 92, 1)),
+        position: ChartPosition.bottom,
+        fullSize: false,
+      ),
     },
   },
 };

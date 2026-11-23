@@ -32,8 +32,8 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 0, 30, 0),
-  title: apexJsTitle('Fiction Books Sales'),
   pluginOptions: [
+    apexJsTitle('Fiction Books Sales'),
     // legend: {position: 'top', horizontalAlign: 'left'}
     apexJsLegend(position: .top, align: .start, square: true),
     apexJsBarTooltip(value: _thousands, horizontal: true),

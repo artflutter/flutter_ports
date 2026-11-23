@@ -106,14 +106,14 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: const EdgeInsets.all(10),
-  title: const ChartTitle(
-    display: true,
-    text: ['Capital investment as a share of exports'],
-    color: .solid(_text),
-    font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
-  ),
-  // TooltipBehavior(header: '', canShowMarker: false)
   pluginOptions: const [
+    TitleOptions(
+      display: true,
+      text: ['Capital investment as a share of exports'],
+      color: .solid(_text),
+      font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+    ),
+    // TooltipBehavior(header: '', canShowMarker: false)
     TooltipOptions(
       backgroundColor: .solid(_tooltip),
       displayColors: false,

@@ -52,7 +52,6 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 0, 10, 0),
   // title.style: {fontSize: '16px', color: '#666'}
-  title: apexJsTitle('Forecast', size: 16, color: const Color(0xFF666666)),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
@@ -60,6 +59,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
   pluginOptions: [
+    apexJsTitle('Forecast', size: 16, color: const Color(0xFF666666)),
     const LegendOptions(display: false),
     apexTooltip(),
     zoom.options,

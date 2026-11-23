@@ -351,12 +351,13 @@ final class const PluginOff<T extends Plugin<Object?>>() {
   String toString() => 'PluginOff<$T>()';
 }
 
-/// The defaults of a plugin: a typed scope of a built-in plugin, or the
-/// [PluginOptions] of an add-on (Chart.js ADR 0148).
+/// The defaults of a plugin: the [PluginOptions] of a built-in plugin or an
+/// add-on (Chart.js ADRs 0148 and 0197), or a typed scope of a plugin whose
+/// hooks get the resolved options.
 ///
 /// ```dart
-/// defaults: TitleOptionsScope()..display = false,   // a built-in plugin
-/// defaults: const ZoomPluginOptions(...),           // an add-on
+/// defaults: const TitleOptions(display: false),   // a built-in plugin
+/// defaults: const ZoomPluginOptions(...),         // an add-on
 /// ```
 abstract interface class PluginDefaults();
 
@@ -432,17 +433,16 @@ base class PluginOf<O, C extends IChart>({
   final O Function(ContextResolver options)? options,
 
   /// `defaults`: the default options, which the registry merges into
-  /// `defaults.plugins.<id>`: a typed scope of a built-in plugin, or the
-  /// [PluginOptions] of an add-on.
+  /// `defaults.plugins.<id>`: the [PluginOptions] of a built-in plugin or
+  /// an add-on, or a typed scope.
   final PluginDefaults? defaults,
 
   /// `defaultRoutes`: a route of the defaults for each option key, for
   /// example `{'color': 'color'}` (`defaults.route`).
   final Map<String, String>? defaultRoutes,
 
-  /// `descriptors`: the `_scriptable` and `_indexable` rules of the options
-  /// of a built-in plugin. The options of an add-on are [PluginOptions], with
-  /// no rules.
+  /// `descriptors`: the `_scriptable` and `_indexable` rules of the resolved
+  /// options of a plugin. [PluginOptions] have no rules.
   final DescriptorsScope? descriptors,
 
   /// `additionalOptionScopes`: more scopes of the options after

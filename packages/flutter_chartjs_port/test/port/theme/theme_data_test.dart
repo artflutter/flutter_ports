@@ -150,8 +150,9 @@ Map<String, Object?> _slots(Object? value, [String prefix = '']) {
 /// with its face (Chart.js ADR 0054 §5).
 /// The [TooltipOptions] of `plugins.tooltip`, the [LegendOptions] of
 /// `plugins.legend` (with its labels and its title) and the
-/// [ColorsPluginOptions] of `plugins.colors` are objects too: their keys are
-/// the fields that they set (Chart.js ADRs 0192, 0193 and 0196,
+/// [ColorsPluginOptions] of `plugins.colors` and the title and subtitle
+/// options are objects too: their keys are the fields that they set
+/// (Chart.js ADRs 0192, 0193, 0196 and 0197,
 /// [setTooltipOptionFields], [setLegendOptionFields],
 /// [setFillerColorsOptionFields]).
 bool _isObject(Object? value) =>
@@ -159,7 +160,7 @@ bool _isObject(Object? value) =>
     value is JsObjectFace ||
     value is TooltipOptions ||
     isLegendOptionObject(value) ||
-    value is ColorsPluginOptions;
+    setFillerColorsOptionFields(value) != null;
 
 /// The own keys of the object [value] in the `Object.keys` order: for a
 /// [TooltipOptions], a legend option object or a [ColorsPluginOptions], the
@@ -168,7 +169,7 @@ List<String> _keys(Object? value) => value is TooltipOptions
     ? setTooltipOptionFields(value).keys.toList()
     : isLegendOptionObject(value)
     ? setLegendOptionFields(value!).keys.toList()
-    : value is ColorsPluginOptions
+    : setFillerColorsOptionFields(value) != null
     ? setFillerColorsOptionFields(value)!.keys.toList()
     : jsObjectKeys(value);
 
@@ -179,7 +180,7 @@ Object? _get(Object? value, String key) => value is TooltipOptions
     ? setTooltipOptionFields(value)[key] ?? undefined
     : isLegendOptionObject(value)
     ? setLegendOptionFields(value!)[key] ?? undefined
-    : value is ColorsPluginOptions
+    : setFillerColorsOptionFields(value) != null
     ? setFillerColorsOptionFields(value)![key] ?? undefined
     : jsGet(value, key);
 

@@ -932,6 +932,23 @@ Future<void> runStep(
         }),
       );
       chart.update();
+    case ['setOption', final String path, final Object? value]
+        when path.startsWith('plugins.title.') ||
+            path.startsWith('plugins.subtitle.'):
+      // The title and the subtitle options are one immutable object each
+      // (Chart.js ADR 0197): the write of the key is a new object in the
+      // plugins of the chart options, where the set trap of upstream writes
+      // the key.
+      final [_, id, key] = path.split('.');
+      final plugins = jsGet(chart.options, 'plugins')!;
+      final over = _titleOptionsOf(id, key, value);
+      final current = jsGet(plugins, id);
+      jsSet(
+        plugins,
+        id,
+        current is PluginOptions<Object?> ? current.mergeOptions(over) : over,
+      );
+      chart.update();
     case ['setOption', final String path, final Object? value]:
       final keys = path.split('.');
       Object? target = chart.options;
@@ -943,6 +960,45 @@ Future<void> runStep(
     default:
       throw ArgumentError.value(step, 'step', 'Not a reference step');
   }
+}
+
+/// The [TitleOptions] or the [SubtitleOptions] of the plugin [id] with the
+/// one field [key] of the value [value].
+PluginOptions<Object?> _titleOptionsOf(String id, String key, Object? value) {
+  List<String>? text;
+  bool? display;
+  ChartAlign? align;
+  ChartPosition? position;
+  double? weight;
+  switch (key) {
+    case 'text':
+      text = value! as List<String>;
+    case 'display':
+      display = value! as bool;
+    case 'align':
+      align = value! as ChartAlign;
+    case 'position':
+      position = value! as ChartPosition;
+    case 'weight':
+      weight = (value! as num).toDouble();
+    default:
+      throw ArgumentError.value(key, 'key', 'No title field');
+  }
+  return id == 'title'
+      ? TitleOptions(
+          text: text,
+          display: display,
+          align: align,
+          position: position,
+          weight: weight,
+        )
+      : SubtitleOptions(
+          text: text,
+          display: display,
+          align: align,
+          position: position,
+          weight: weight,
+        );
 }
 
 /// Whether [item] is the parsed item of a number of [_doughnutDataItems]: an

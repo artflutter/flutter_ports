@@ -1123,6 +1123,18 @@ config, where a Map stops a debug build. `ChartFiller`, `ChartColors`, `ChartCon
 `ColorsPluginOptions` with its palettes. A data fixture with colors options has a hand port. The rules of the
 tooltip options for tests apply.
 
+The title and the subtitle options are one immutable object each (Chart.js ADR 0197, rows
+`adapt-native-plugin-options` and `adapt-title-scripted`): `TitleOptions` and `SubtitleOptions`, the two final
+classes of the sealed `TitleBoxOptions<T>` (the fields `align`, `display`, `position`, `color`, `font`,
+`fullSize`, `padding`, `text`, `weight`, `scripted` and `events`, written once), in `ChartConfig.pluginOptions`
+or in `options.plugins.title` and `options.plugins.subtitle` of a raw config, where a Map stops a debug build.
+`ChartTitle`, `ChartConfig.title`, `ChartConfig.subtitle`, `TitleOptions.of` and the scope kind `TitleOptions`
+are gone. The `color` that no options set is `Chart.defaults.color`, which the plugin gives in `beforeUpdate`
+(`resolvedTitleOptions`). The scriptable form of the options is the one function `scripted`,
+`(context, options) => TitleOptions(...)` with the chart context, once for each update. The theme writes one
+`TitleOptions` and one `SubtitleOptions`. A data fixture with title options has a hand port. The rules of the
+tooltip options for tests apply.
+
 A tooltip item is the native extensible class `TooltipItem` of `lib/src/types/tooltip_item.dart` (row
 `adapt-native-tooltip-item`). It is immutable: `datasetIndex` and
 `dataIndex` are `int`, `label` is the `List<String>` of the lines of the label, `formattedValue` is a `String`,

@@ -11,7 +11,7 @@
 /// them with typed reads, and the typed API makes no Map of options. Each
 /// class of the typed config lowers to a new scope of its kind in its
 /// library (`lowerDataset` of `datasets.dart`, `lowerAxis` of `axes.dart`,
-/// `lowerTitle` and the other functions of `groups.dart`), with these
+/// `lowerInteraction` and the other functions of `groups.dart`), with these
 /// rules:
 /// 1. The keys come in the order of the constructor parameters. A
 ///    parameter that is `null` writes no key.
@@ -287,10 +287,6 @@ final class ChartConfigLowering(
   ChartOptionsScope _options() {
     final config = this.config;
     final plugins = PluginOptionsByTypeScope();
-    if (config.title case final title?) plugins.title = lowerTitle(title);
-    if (config.subtitle case final subtitle?) {
-      plugins.subtitle = lowerTitle(subtitle);
-    }
     // The options objects of add-on plugins, each under its plugin id
     // (Chart.js ADR 0148).
     for (final options

@@ -910,7 +910,7 @@ void main() {
                   isFalse,
                 );
                 expect(
-                  TitleOptions.of(jsGet(plugins, 'subtitle')).display,
+                  (jsGet(plugins, 'subtitle')! as SubtitleOptions).display,
                   isFalse,
                 );
                 expect(

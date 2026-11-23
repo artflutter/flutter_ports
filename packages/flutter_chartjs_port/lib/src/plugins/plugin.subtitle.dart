@@ -5,14 +5,15 @@
 /// [subTitle] is the plugin object, the default export of the upstream file
 /// and `SubTitle` of `src/plugins/index.js:5` (Chart.js ADR 0038, section
 /// 1). It is a typed `Plugin` (Chart.js ADR 0054 §12) with the upstream
-/// keys in the upstream order: `id`, `start`, `stop`, `beforeUpdate`,
-/// `defaults`, `defaultRoutes` and `descriptors`. It has no `_element`.
+/// keys in the upstream order: `id`, `start`, `stop`, `beforeUpdate` and
+/// `defaults`; the `defaultRoutes` and the `descriptors` have no field
+/// (Chart.js ADR 0197). It has no `_element`.
 ///
 /// The subtitle box is a [Title] of `plugin.title.dart`. Each hook is a
 /// private function of the hook type `(types.Chart chart, args,
-/// TitleOptions options)` (Chart.js ADR 0150, in place of the upstream
+/// SubtitleOptions options)` (Chart.js ADR 0150, in place of the upstream
 /// parameter counts of Chart.js ADR 0038, section 3): the argument class of
-/// its hook, and the resolved [TitleOptions].
+/// its hook, and the merged [SubtitleOptions] (Chart.js ADR 0197).
 ///
 /// The `WeakMap` of `plugin.subtitle.js:4` is the file-private `Expando`
 /// [_map] (Chart.js ADR 0038, section 5). An `Expando` holds its key
@@ -35,8 +36,9 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 final Expando<Title> _map = Expando<Title>('subtitle');
 
 /// plugin.subtitle.js:9 `start(chart, _args, options)`. The box keeps the
-/// resolved options.
-void _start(IChart chart, PluginHookArgs _, TitleOptions options) {
+/// merged options until `beforeUpdate` of the same update gives it the
+/// options with their fallbacks.
+void _start(IChart chart, PluginHookArgs _, SubtitleOptions options) {
   final title = Title((ctx: chart.ctx, options: options, chart: chart));
 
   layouts
@@ -49,7 +51,7 @@ void _start(IChart chart, PluginHookArgs _, TitleOptions options) {
 /// `undefined` of `map.get` on a chart without a subtitle: `removeBox` then
 /// changes nothing (core.layouts.js:318-323). `map.delete(chart)` is the
 /// write of Dart `null`.
-void _stop(IChart chart, PluginHookArgs _, TitleOptions _) {
+void _stop(IChart chart, PluginHookArgs _, SubtitleOptions _) {
   layouts.removeBox(chart, _map[chart]);
   _map[chart] = null;
 }
@@ -57,10 +59,16 @@ void _stop(IChart chart, PluginHookArgs _, TitleOptions _) {
 /// plugin.subtitle.js:26 `beforeUpdate(chart, _args, options)`. Without a
 /// subtitle, the null check throws the TypeError of the write into
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
-bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
+bool _beforeUpdate(IChart chart, UpdateHookArgs _, SubtitleOptions options) {
   final title = _map[chart]!;
-  layouts.configure(chart, title, options);
-  title.options = options;
+  // The fallbacks of upstream and `scripted` (Chart.js ADR 0197).
+  final resolved = resolvedTitleOptions(
+    chart,
+    options,
+    (color) => SubtitleOptions(color: color),
+  );
+  layouts.configure(chart, title, resolved);
+  title.options = resolved;
   return true;
 }
 
@@ -68,46 +76,45 @@ bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
 /// `src/plugins/index.js:5` (Chart.js ADR 0038, section 1).
 ///
 /// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
-/// upstream order. The hooks get the resolved [TitleOptions] (Chart.js ADR
-/// 0182).
+/// upstream order. The hooks get the merged [SubtitleOptions] (Chart.js ADR
+/// 0197).
 final subTitle = SubtitlePlugin();
 
 /// The subtitle plugin: a class of its own, so
 /// `registry.getPlugin<SubtitlePlugin>()`
 /// finds it by its type.
 // DIVERGES(chartjs): adapt-typed-plugins, a class for each plugin.
-final class SubtitlePlugin() extends Plugin<TitleOptions> {
+final class SubtitlePlugin() extends Plugin<SubtitleOptions> {
   /// The subtitle plugin.
   this
     : super(
         id: 'subtitle',
-        // The hooks get the resolved options (Chart.js ADR 0182).
-        options: TitleOptions.of,
+        // The hooks get the merged SubtitleOptions (Chart.js ADR 0197).
         start: _start,
         stop: _stop,
         beforeUpdate: _beforeUpdate,
-        // plugin.subtitle.js:32-43. A typed scope of the kind `TitleOptions`
-        // (Chart.js ADR 0054 §3).
-        defaults: TitleOptionsScope()
+        // plugin.subtitle.js:32-43: one SubtitleOptions with each default
+        // (Chart.js ADR 0197). The route of the `color` (:45-47) and the
+        // descriptors (:49-52) have no field: the plugin gives the `color` of
+        // `Chart.defaults` where no options set one, and the one function
+        // `scripted` takes the place of the scriptable options
+        // ([resolvedTitleOptions]).
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        defaults: const SubtitleOptions(
           // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
-          ..align = ChartAlign.center
-          ..display = false
+          align: ChartAlign.center,
+          display: false,
           // DIVERGES(chartjs): adapt-text-style-fonts, the font is a
           // ChartTextStyle.
-          ..font = const ChartTextStyle(fontWeight: FontWeight.normal)
-          ..fullSize = true
-          ..padding = EdgeInsets.zero
-          ..position = ChartPosition.top
+          font: ChartTextStyle(fontWeight: FontWeight.normal),
+          fullSize: true,
+          padding: EdgeInsets.zero,
+          position: ChartPosition.top,
           // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
-          ..text = const ['']
+          text: [''],
           // by default greater than legend (1000) and smaller than title (2000)
-          ..weight = 1500.0,
-        // plugin.subtitle.js:45-47.
-        defaultRoutes: const {'color': 'color'},
-        // plugin.subtitle.js:49-52. A typed scope of the kind `Descriptors`.
-        descriptors: DescriptorsScope()
-          ..descScriptable = true
-          ..descIndexable = false,
+          weight: 1500,
+        ),
         // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
         // opt-in.
         supportsDataUpdates: true,

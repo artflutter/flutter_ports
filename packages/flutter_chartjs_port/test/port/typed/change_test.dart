@@ -104,9 +104,10 @@ class _ParentState() extends State<_Parent> {
                         : ChartValue.resolver(colorFor!),
                   ),
                 ],
-                title: title == null
-                    ? null
-                    : ChartTitle(display: true, text: [?title]),
+                pluginOptions: [
+                  if (title case final text?)
+                    TitleOptions(display: true, text: [text]),
+                ],
                 animation: ChartAnimation.none,
                 onClick: onClick,
               ),

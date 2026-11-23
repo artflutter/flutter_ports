@@ -69,7 +69,7 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
       Text('majorGridLines, axisLine'),
       DocText('the `grid` and the `border` of each axis'),
     ),
-    (Text('ChartTitle'), DocText('`title: ChartTitle(...)`')),
+    (Text('ChartTitle'), DocText('`TitleOptions(...)` in `pluginOptions`')),
     (Text('Legend'), DocText('`LegendOptions(...)` in `pluginOptions`')),
     (
       Text('TooltipBehavior'),

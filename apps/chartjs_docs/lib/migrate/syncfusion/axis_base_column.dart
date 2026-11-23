@@ -52,8 +52,11 @@ ChartConfig _config(double crossAt) => ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: sfPadding,
-  title: sfTitle('Population growth rate of countries'),
-  pluginOptions: [const LegendOptions(display: false), _tooltip],
+  pluginOptions: [
+    sfTitle('Population growth rate of countries'),
+    const LegendOptions(display: false),
+    _tooltip,
+  ],
   plugins: [
     sfTooltipLook,
     sfDataLabels(

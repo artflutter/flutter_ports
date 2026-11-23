@@ -16,52 +16,95 @@ final class const _NoEvents() extends PluginOptions<_NoEvents> {
   _NoEvents merge(_NoEvents over) => over;
 }
 
-// Each field has the type of its schema key, with the conversion that `of`
-// applies at its one read of the key (Chart.js ADR 0182). A plain Map stands
-// for the resolved options.
+// The option objects of the built-in plugins (Chart.js ADRs 0192 to 0197):
+// `merge`, `==`, `hashCode`, the plugin id and the layout keys.
 void main() {
-  // Maps: the subject is `of`, the read of raw resolved options into the
-  // classes of Chart.js ADR 0182.
-  group('the fields that `of` reads from the resolved options', () {
-    test('the lines of a text', () {
-      expect(
-        TitleOptions.of(<String, Object?>{
-          'text': ['a'],
-        }).text,
-        ['a'],
+  // The title and the subtitle options are one object each (Chart.js ADR
+  // 0197), with the fields of their shared base.
+  group('TitleOptions and SubtitleOptions', () {
+    TitleOptions? script(ScriptableChartContext context, TitleOptions o) =>
+        null;
+
+    test('merge takes each field that the other options set', () {
+      const base = TitleOptions(
+        align: ChartAlign.center,
+        display: false,
+        font: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        fullSize: true,
+        padding: EdgeInsets.all(10),
+        position: ChartPosition.top,
+        text: [''],
+        weight: 2000,
       );
-      expect(
-        TitleOptions.of(<String, Object?>{
-          'text': ['a', 'b'],
-        }).text,
-        ['a', 'b'],
+      final merged = base.merge(
+        TitleOptions(
+          display: true,
+          color: const ChartPaint.solid(Color(0xff112233)),
+          font: const TextStyle(fontSize: 20),
+          text: const ['Sales', '2026'],
+          scripted: script,
+          events: const ['click'],
+        ),
       );
+      expect(merged, isA<TitleOptions>());
+      expect(merged.align, ChartAlign.center);
+      expect(merged.display, isTrue);
+      expect(merged.color, const ChartPaint.solid(Color(0xff112233)));
+      // A font merges by field, as the resolver merges the font objects.
+      expect(merged.font!.fontSize, 20);
+      expect(merged.font!.fontWeight, FontWeight.bold);
+      expect(merged.fullSize, isTrue);
+      expect(merged.padding, const EdgeInsets.all(10));
+      expect(merged.position, ChartPosition.top);
+      expect(merged.text, ['Sales', '2026']);
+      expect(merged.weight, 2000);
+      expect(merged.scripted, same(script));
+      expect(merged.events, ['click']);
+      expect(base.merge(const TitleOptions()), base);
+    });
+
+    test('a subtitle merges into a subtitle', () {
+      const merged = SubtitleOptions(weight: 1500);
+      final result = merged.merge(const SubtitleOptions(display: true));
+      expect(result, isA<SubtitleOptions>());
+      expect(result, const SubtitleOptions(weight: 1500, display: true));
+    });
+
+    test('== and hashCode compare the fields and the class', () {
+      final a = TitleOptions(text: _copy(['a']), events: _copy(['click']));
+      final b = TitleOptions(text: _copy(['a']), events: _copy(['click']));
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(const TitleOptions(text: ['b'], events: ['click'])));
+      expect(a, isNot(TitleOptions(text: _copy(['a']))));
       expect(
-        TitleOptions.of(<String, Object?>{'text': <String>[]}).text,
-        isEmpty,
+        const TitleOptions(display: true),
+        isNot(const SubtitleOptions(display: true)),
       );
-      // A text takes its lines (row adapt-title-text-lines): `of` stops a
-      // debug build at a String.
+      expect(const TitleOptions(), isNot(TitleOptions(scripted: script)));
+    });
+
+    test('the layout reads display, fullSize, position and weight', () {
+      const options = TitleOptions(
+        display: true,
+        fullSize: false,
+        position: ChartPosition.left,
+        weight: 42,
+      );
+      expect(options.layoutOption(OptionKey.display), isTrue);
+      expect(options.layoutOption(OptionKey.fullSize), isFalse);
+      expect(options.layoutOption(OptionKey.position), ChartPosition.left);
+      expect(options.layoutOption(OptionKey.weight), 42);
+      expect(options.layoutOption(OptionKey.text), same(undefined));
       expect(
-        () => TitleOptions.of(<String, Object?>{'text': 'a'}),
-        throwsA(isA<AssertionError>()),
+        const TitleOptions().layoutOption(OptionKey.weight),
+        same(undefined),
       );
     });
 
-    test('a font and a text align', () {
-      final font = TitleOptions.of(<String, Object?>{
-        'font': const ChartTextStyle(fontSize: 20),
-      }).font;
-      expect(font.fontSize, 20);
-    });
-
-    test('a position', () {
-      expect(
-        TitleOptions.of(<String, Object?>{'position': ChartPosition.left})
-            .position,
-        ChartPosition.left,
-      );
-      expect(TitleOptions.of(<String, Object?>{}).position, isNull);
+    test('the plugin ids are title and subtitle', () {
+      expect(const TitleOptions().pluginId, 'title');
+      expect(const SubtitleOptions().pluginId, 'subtitle');
     });
   });
 

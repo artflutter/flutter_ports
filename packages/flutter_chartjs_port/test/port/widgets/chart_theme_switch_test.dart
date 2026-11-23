@@ -212,10 +212,7 @@ AnyObject _formConfig() => <String, Object?>{
     'animation': false,
     'plugins': <String, Object?>{
       'colors': const ColorsPluginOptions(enabled: true),
-      'title': <String, Object?>{
-        'display': true,
-        'text': ['user'],
-      },
+      'title': const TitleOptions(display: true, text: ['user']),
     },
     'scales': <String, Object?>{
       'x': <String, Object?>{
@@ -232,7 +229,9 @@ AnyObject _formConfig() => <String, Object?>{
 /// color of the dataset 0, the visibility of the dataset 1 and the title.
 String _formState(Chart chart) {
   final x = _scaleOptions(chart, 'x');
-  final title = jsGet(jsGet(chart.options, 'plugins'), 'title');
+  // The title options are one object (Chart.js ADR 0197).
+  final title =
+      jsGet(jsGet(chart.options, 'plugins'), 'title')! as TitleOptions;
   final tickColor = (x.ticks.color as SolidChartPaint).color;
   final borderColor =
       (_dataset(chart, 0)['borderColor']! as SolidChartPaint).color;
@@ -240,7 +239,7 @@ String _formState(Chart chart) {
       'x.min=${x.min} '
       'ds0.borderColor=${_rgbaText(borderColor)} '
       'visible1=${chart.isDatasetVisible(1)} '
-      'title.text=${(jsGet(title, 'text')! as List<Object?>).join()}';
+      'title.text=${title.text!.join()}';
 }
 
 const String _formCreated =
@@ -254,7 +253,16 @@ const String _formEdited =
 /// the title text and `x.min` of [options] imperatively.
 void _formEdits(Chart chart, AnyObject options) {
   chart.hide(1);
-  jsSet(jsGet(jsGet(options, 'plugins'), 'title'), 'text', ['edited']);
+  // The title options are one immutable object (Chart.js ADR 0197): the edit
+  // writes a new object.
+  final plugins = jsGet(options, 'plugins');
+  jsSet(
+    plugins,
+    'title',
+    (jsGet(plugins, 'title')! as TitleOptions).merge(
+      const TitleOptions(text: ['edited']),
+    ),
+  );
   // After `initOptions`, `scales` is the typed scale scope of the chart
   // (Chart.js ADR 0054 §5): the edit goes through its face.
   jsSet(jsGet(jsGet(options, 'scales'), 'x'), 'min', 'b');

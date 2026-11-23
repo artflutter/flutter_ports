@@ -30,8 +30,8 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: sfPadding,
-  title: sfTitle('Population growth rate of countries'),
   pluginOptions: [
+    sfTitle('Population growth rate of countries'),
     const LegendOptions(display: false),
     sfTooltip(
       text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}',

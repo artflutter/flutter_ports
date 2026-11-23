@@ -49,8 +49,8 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: sfPadding,
-  title: sfTitle('Tourism - Number of arrivals'),
   pluginOptions: [
+    sfTitle('Tourism - Number of arrivals'),
     // `order` also sorts the legend: reverse gives 2015, 2016, 2017.
     sfLegend(const SfBarIcon(), reverse: true),
     sfTooltip(

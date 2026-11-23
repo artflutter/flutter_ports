@@ -226,9 +226,9 @@ Chart _chart(
   final config = ChartConfig(
     labels: const ['alpha', 'beta', 'gamma'],
     datasets: [for (var d = 0; d < 2; d++) dataset(d)],
-    title: const ChartTitle(display: true, text: ['Title']),
-    subtitle: const ChartTitle(display: true, text: ['Subtitle']),
     pluginOptions: [
+      const TitleOptions(display: true, text: ['Title']),
+      const SubtitleOptions(display: true, text: ['Subtitle']),
       LegendOptions(
         title: const LegendTitleOptions(display: true, text: ['Legend title']),
         labels: legendLabels,
@@ -409,6 +409,12 @@ Iterable<(String, Object?)> _themeColors(
   // The fields that the ColorsPluginOptions of plugins.colors sets (Chart.js
   // ADR 0196).
   final ColorsPluginOptions options => _themeColors(
+    setFillerColorsOptionFields(options),
+    path,
+  ),
+  // The fields that the TitleOptions and SubtitleOptions of plugins.title
+  // and plugins.subtitle set (Chart.js ADR 0197).
+  final TitleBoxOptions<Object?> options => _themeColors(
     setFillerColorsOptionFields(options),
     path,
   ),

@@ -178,7 +178,7 @@ ChartConfig _bars(
   List<Dataset>? datasets,
   List<ChartAxis>? scales = _categoryAxes,
   ChartAnimation? animation = ChartAnimation.none,
-  ChartTitle? title,
+  TitleOptions? title,
   List<Plugin<Object?>>? plugins,
   List<PluginOptions<Object?>>? pluginOptions,
   Map<String, Object?>? extra,
@@ -197,9 +197,8 @@ ChartConfig _bars(
       ],
   scales: scales,
   animation: animation,
-  title: title,
   plugins: plugins,
-  pluginOptions: pluginOptions,
+  pluginOptions: [?title, ...?pluginOptions],
   extra: extra,
 );
 
@@ -525,7 +524,7 @@ void main() {
             _bars(
               3,
               labels,
-              title: const ChartTitle(display: true, text: ['new']),
+              title: const TitleOptions(display: true, text: ['new']),
             ),
             dataOnly: dataOnly,
           ),
@@ -621,7 +620,7 @@ void main() {
         (labels) => _bars(
           1,
           labels,
-          title: const ChartTitle(display: true, text: ['t']),
+          title: const TitleOptions(display: true, text: ['t']),
         ),
       );
       expect(spy.layouts, 1);
@@ -1118,7 +1117,7 @@ void main() {
       List<Object> labels, {
       Dataset? dataset,
       LegendOptions? legend = const LegendOptions(display: false),
-      ChartTitle? title,
+      TitleOptions? title,
     }) => ChartConfig(
       labels: labels,
       datasets: [dataset ?? colored(type, step)],
@@ -1129,8 +1128,7 @@ void main() {
         _ => _categoryAxes,
       },
       animation: ChartAnimation.none,
-      pluginOptions: [?legend],
-      title: title,
+      pluginOptions: [?title, ?legend],
     );
 
     Offset elementAt(WidgetTester tester, int index) {
@@ -1157,9 +1155,9 @@ void main() {
           LegendOptions? legend = const LegendOptions(display: false),
         }) async {
           final labels = _newLabels();
-          ChartConfig at(int step, ChartTitle? title) =>
+          ChartConfig at(int step, TitleOptions? title) =>
               coloredConfig(type, step, labels, legend: legend, title: title);
-          Widget view(int step, {double width = 400, ChartTitle? title}) =>
+          Widget view(int step, {double width = 400, TitleOptions? title}) =>
               _box(
                 ChartView(
                   config: at(step, title),
@@ -1179,7 +1177,7 @@ void main() {
           Future<void> tick(
             int step, {
             double width = 400,
-            ChartTitle? title,
+            TitleOptions? title,
           }) async {
             spy.clear();
             await tester.pumpWidget(view(step, width: width, title: title));
@@ -1194,7 +1192,7 @@ void main() {
           await tick(3);
 
           // A later full update.
-          const title = ChartTitle(display: true, text: ['new']);
+          const title = TitleOptions(display: true, text: ['new']);
           spy.clear();
           await tester.pumpWidget(view(4, title: title));
           expect(spy.layouts, 1);
@@ -1732,11 +1730,12 @@ void main() {
           // A full update makes new hit boxes from the kept state.
           await tester.pumpWidget(
             _view(
-              legendBars(
-                6,
-                labels,
-                position,
-              ).copyWith(title: const ChartTitle(display: true, text: ['new'])),
+              legendBars(6, labels, position).copyWith(
+                pluginOptions: [
+                  LegendOptions(position: position),
+                  const TitleOptions(display: true, text: ['new']),
+                ],
+              ),
               dataOnly: dataOnly,
             ),
           );

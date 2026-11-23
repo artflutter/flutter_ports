@@ -6,14 +6,16 @@
 /// object, the default export of the upstream file and `Title` of
 /// `src/plugins/index.js:6` (Chart.js ADR 0038, section 1). It is a typed
 /// `Plugin` (Chart.js ADR 0054 §12) with the upstream keys in the upstream
-/// order: `id`, `_element`, `start`, `stop`, `beforeUpdate`, `defaults`,
-/// `defaultRoutes` and `descriptors`.
+/// order: `id`, `_element`, `start`, `stop`, `beforeUpdate` and `defaults`.
+/// The `defaultRoutes` and the `descriptors` have no field (Chart.js ADR
+/// 0197).
 ///
 /// Each hook is a private function of the hook type `(types.Chart chart,
 /// args, TitleOptions options)` (Chart.js ADR 0150, in place of the
 /// upstream parameter counts of Chart.js ADR 0038, section 3): the argument
-/// class of its hook, and the resolved `TitleOptions` of `plugin_options.dart`.
-/// The box keeps the resolved options, a [TitleOptions] (Chart.js ADR 0182).
+/// class of its hook, and the merged [TitleOptions] of `plugin_options.dart`
+/// (Chart.js ADR 0197). The box keeps a [TitleBoxOptions]: the options of
+/// the title or of the subtitle.
 /// `chart.titleBlock` is a field of `types.Chart`: Dart `null` stands for JS
 /// `undefined` and for the `delete` of `plugin.title.js:136`.
 ///
@@ -24,7 +26,7 @@
 /// Not a pure layer: it imports `helpers.extras`.
 library;
 
-import 'dart:ui' show FontWeight;
+import 'dart:ui';
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -34,7 +36,12 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 /// The layout box of the chart title. `layouts.addBox` gives it the default
 /// layer, which calls [draw] (core.layouts.js:301-308).
 class Title(
-  ({Object? chart, Object? options, CanvasRenderingContext2D? ctx}) config,
+  ({
+    Object? chart,
+    TitleBoxOptions<Object?>? options,
+    CanvasRenderingContext2D? ctx,
+  })
+  config,
 ) extends Element implements LayoutItem {
   /// plugin.title.js:11 `constructor(config)`.
   ///
@@ -43,22 +50,22 @@ class Title(
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
   /// 4). The `construct` closure of [jsClass] reads it from a JS value.
   this {
-    options = switch (config.options) {
-      null => null,
-      final Object options => TitleOptions.of(options),
-    };
+    options = config.options;
   }
 
-  /// plugin.title.js:15 `options`, the resolved [TitleOptions] of the box.
-  /// Dart `null` stands for JS `undefined`: a read of an option then throws
-  /// the [TypeError] of the null check, as the read of a member of
-  /// `undefined` throws upstream.
-  // DIVERGES(chartjs): adapt-native-plugin-options, the resolved values.
+  /// plugin.title.js:15 `options`, the [TitleBoxOptions] of the box: the
+  /// merged options of the plugin, with the fallbacks of upstream after the
+  /// `beforeUpdate` hook (Chart.js ADR 0197). Dart `null` stands for JS
+  /// `undefined`: a read of an option then throws the [TypeError] of the
+  /// null check, as the read of a member of `undefined` throws upstream.
+  // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
   @override
-  TitleOptions? get options => super.options as TitleOptions?;
+  TitleBoxOptions<Object?>? get options =>
+      super.options as TitleBoxOptions<Object?>?;
 
   @override
-  set options(covariant TitleOptions? value) => super.options = value;
+  set options(covariant TitleBoxOptions<Object?>? value) =>
+      super.options = value;
 
   /// plugin.title.js:7 `class Title` as a value (Chart.js ADR 0020, section
   /// 3).
@@ -152,7 +159,7 @@ class Title(
     left = 0;
     top = 0;
 
-    if (!opts.display) {
+    if (opts.display != true) {
       width = height = right = bottom = 0;
       return;
     }
@@ -162,9 +169,10 @@ class Title(
 
     // The lines of `opts.text` (Chart.js ADR 0150): `isArray(text) ?
     // text.length : 1`.
-    final lineCount = opts.text.length;
-    final padding = _padding = opts.padding;
-    final textSize = lineCount * opts.font.lineHeight! + padding.vertical;
+    final lineCount = (opts.text ?? const <String>[]).length;
+    final padding = _padding = opts.padding ?? EdgeInsets.zero;
+    final lineHeight = toFont(opts.font).lineHeight!;
+    final textSize = lineCount * lineHeight + padding.vertical;
 
     if (isHorizontal()) {
       height = textSize;
@@ -236,19 +244,19 @@ class Title(
     final ctx = this.ctx;
     final opts = options!;
 
-    if (!opts.display) {
+    if (opts.display != true) {
       return;
     }
 
-    final fontOpts = opts.font;
+    final fontOpts = toFont(opts.font);
     final lineHeight = fontOpts.lineHeight!;
     final offset = lineHeight / 2 + _padding!.top;
     final (:titleX, :titleY, :maxWidth, :rotation) = _drawArgs(offset);
 
     // The arguments of renderText, in the upstream order of their reads.
-    final text = opts.text;
+    final text = opts.text ?? const <String>[];
     final textOpts = RenderTextOpts(
-      color: opts.color,
+      color: opts.color ?? const ChartPaint.unchanged(),
       maxWidth: maxWidth,
       rotation: rotation,
       textAlign: toLeftRightCenter(opts.align),
@@ -267,17 +275,20 @@ class Title(
 /// An absent argument, [undefined] and JS `null` throw the [TypeError] of
 /// the read `config.chart`, as upstream. A member with the value
 /// [undefined] gives Dart `null`. The `chart` keeps any value, because
-/// `Title` never reads it. An `options` that is not an object (a Map or a
-/// typed object) and a `ctx` that is not a context throw a [TypeError].
-/// Upstream stores such a value.
-// DIVERGES(chartjs): adapt-component-class-role, a non-object options throws.
-({Object? chart, Object? options, CanvasRenderingContext2D? ctx}) _titleConfig(
-  List<Object?> args,
-) {
+/// `Title` never reads it. An `options` that is not a [TitleBoxOptions]
+/// (Chart.js ADR 0197) and a `ctx` that is not a context throw a
+/// [TypeError]. Upstream stores such a value.
+// DIVERGES(chartjs): adapt-component-class-role, other options throw.
+({
+  Object? chart,
+  TitleBoxOptions<Object?>? options,
+  CanvasRenderingContext2D? ctx,
+})
+_titleConfig(List<Object?> args) {
   final config = args.isEmpty ? undefined : args[0];
   return (
     chart: _orNull(jsGet(config, 'chart')),
-    options: jsObjectOrNull(jsGet(config, 'options')),
+    options: _orNull(jsGet(config, 'options')) as TitleBoxOptions<Object?>?,
     ctx: _orNull(jsGet(config, 'ctx')) as CanvasRenderingContext2D?,
   );
 }
@@ -296,7 +307,9 @@ void _createTitle(IChart chart, TitleOptions titleOpts) {
 }
 
 /// plugin.title.js:129 `start(chart, _args, options)`. The box keeps the
-/// resolved options.
+/// merged options until `beforeUpdate` of the same update gives it the
+/// options with their fallbacks: the layout reads only `display`,
+/// `fullSize`, `position` and `weight` between the two hooks.
 void _start(IChart chart, PluginHookArgs _, TitleOptions options) {
   _createTitle(chart, options);
 }
@@ -314,11 +327,62 @@ void _stop(IChart chart, PluginHookArgs _, TitleOptions _) {
 /// plugin.title.js:139 `beforeUpdate(chart, _args, options)`. Without a
 /// title block, the null check throws the TypeError of the write into
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
+///
+/// The box gets the options with the fallbacks of upstream
+/// ([resolvedTitleOptions], Chart.js ADR 0197), so `scripted` runs once for
+/// each update.
 bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
   final title = chart.titleBlock! as Title;
-  layouts.configure(chart, title, options);
-  title.options = options;
+  final resolved = resolvedTitleOptions(
+    chart,
+    options,
+    (color) => TitleOptions(color: color),
+  );
+  layouts.configure(chart, title, resolved);
+  title.options = resolved;
   return true;
+}
+
+/// The `color` of `Chart.defaults` as a paint, or Dart `null` for a value
+/// that is no color: the `defaultRoutes` `{color: 'color'}` of
+/// plugin.title.js:158-160 and plugin.subtitle.js:45-47, a route to
+/// `defaults.color`.
+// DIVERGES(chartjs): adapt-native-plugin-options, the route in Dart.
+ChartPaint? _defaultColor() => switch (optionOf(defaults, OptionKey.color)) {
+  final ChartPaint paint => paint,
+  final Color color => ChartPaint.solid(color),
+  _ => null,
+};
+
+/// The options [source] of the hooks of the title or the subtitle plugin
+/// with the fallbacks of upstream (Chart.js ADR 0197), and the result of
+/// [TitleBoxOptions.scripted] merged over them:
+///
+/// - A `color` that [source] does not set is the `color` of
+///   `Chart.defaults`, the route of plugin.title.js:158-160.
+/// - [TitleBoxOptions.scripted] gets the chart context and these options,
+///   once for each update, where upstream calls each scriptable option at
+///   its first read in the update. Its result merges over [source], and a
+///   color that it does not set falls back again.
+///
+/// The font stays as the options give it: the box merges it over
+/// `Chart.defaults.font` with `toFont` at each read, as upstream.
+/// [withColorOnly] makes the options of the class of [source] with only a
+/// color.
+// DIVERGES(chartjs): adapt-title-scripted, one function for the options.
+T resolvedTitleOptions<T extends TitleBoxOptions<T>>(
+  IChart chart,
+  T source,
+  T Function(ChartPaint? color) withColorOnly,
+) {
+  T withColor(T options) => options.color != null
+      ? options
+      : options.merge(withColorOnly(_defaultColor()));
+  final base = withColor(source);
+  final script = source.scripted;
+  if (script == null) return base;
+  final scripted = script(chart.getContext(), base);
+  return scripted == null ? base : withColor(source.merge(scripted));
 }
 
 /// plugin.title.js:120 the default export, `Title` of
@@ -327,7 +391,7 @@ bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
 /// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
 /// upstream order. Each hook is a private function of the hook type
 /// `(chart, args, options)` with the argument class of its hook and the
-/// resolved [TitleOptions] (Chart.js ADR 0182). The key `_element: Title` of
+/// merged [TitleOptions] (Chart.js ADR 0197). The key `_element: Title` of
 /// plugin.title.js:127 is for the tests: they read `Title.jsClass`.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
 final title = TitlePlugin();
@@ -340,33 +404,32 @@ final class TitlePlugin() extends Plugin<TitleOptions> {
   this
     : super(
         id: 'title',
-        // The hooks get the resolved options (Chart.js ADR 0182).
-        options: TitleOptions.of,
+        // The hooks get the merged TitleOptions (Chart.js ADR 0197).
         start: _start,
         stop: _stop,
         beforeUpdate: _beforeUpdate,
-        // plugin.title.js:145-156. A typed scope of the kind `TitleOptions`
-        // (Chart.js ADR 0054 §3).
-        defaults: TitleOptionsScope()
+        // plugin.title.js:145-156: one TitleOptions with each default
+        // (Chart.js ADR 0197). The route of the `color` (:158-160) and the
+        // descriptors (:162-165) have no field: the plugin gives the `color` of
+        // `Chart.defaults` where no options set one, and the one function
+        // `scripted` takes the place of the scriptable options
+        // ([resolvedTitleOptions]).
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        defaults: const TitleOptions(
           // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
-          ..align = ChartAlign.center
-          ..display = false
+          align: ChartAlign.center,
+          display: false,
           // DIVERGES(chartjs): adapt-text-style-fonts, the font is a
           // ChartTextStyle.
-          ..font = const ChartTextStyle(fontWeight: FontWeight.bold)
-          ..fullSize = true
-          ..padding = const EdgeInsets.all(10)
-          ..position = ChartPosition.top
+          font: ChartTextStyle(fontWeight: FontWeight.bold),
+          fullSize: true,
+          padding: EdgeInsets.all(10),
+          position: ChartPosition.top,
           // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
-          ..text = const ['']
+          text: [''],
           // by default greater than legend (1000) to be above
-          ..weight = 2000.0,
-        // plugin.title.js:158-160.
-        defaultRoutes: const {'color': 'color'},
-        // plugin.title.js:162-165. A typed scope of the kind `Descriptors`.
-        descriptors: DescriptorsScope()
-          ..descScriptable = true
-          ..descIndexable = false,
+          weight: 2000,
+        ),
         // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
         // opt-in.
         supportsDataUpdates: true,

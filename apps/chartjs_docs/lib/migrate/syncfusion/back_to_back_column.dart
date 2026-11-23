@@ -34,10 +34,10 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: sfPadding,
-  title: sfTitle('Population of various countries'),
   // TooltipBehavior(enable: true): the series name, a marker and the point.
   // The tooltip takes the front column under the pointer.
   pluginOptions: [
+    sfTitle('Population of various countries'),
     sfTooltip(
       header: true,
       mode: const PointInteractionMode(),

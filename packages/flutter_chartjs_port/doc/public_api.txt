@@ -138,7 +138,6 @@ ChartTextStyle
 ChartTheme
 ChartThemeData
 ChartThemeSwitch
-ChartTitle
 ChartTransition
 ChartValue
 ChartView
@@ -500,6 +499,7 @@ StartFill
 StaticFontInputs
 SteppedLine
 StyleProp
+SubtitleOptions
 SubtitlePlugin
 SweepChartGradient
 TRBL
@@ -525,9 +525,10 @@ TimeSeriesAxis
 TimeSeriesScale
 TimeUnit
 Title
+TitleBoxOptions
 TitleOptions
-TitleOptionsScope
 TitlePlugin
+TitleScript
 Tooltip
 TooltipAnimation
 TooltipBodyItem
@@ -850,7 +851,6 @@ lowerAxis
 lowerDataset
 lowerElements
 lowerInteraction
-lowerTitle
 lowerTransitions
 lttbDecimation
 maxAtlasInstances
@@ -962,6 +962,7 @@ requireUiColor
 resolve
 resolveObjectKey
 resolveTarget
+resolvedTitleOptions
 restoreTextDirection
 retinaScale
 rlookupByAxis
@@ -1190,7 +1191,6 @@ ChartTextStyle
 ChartTheme
 ChartThemeData
 ChartThemeSwitch
-ChartTitle
 ChartTransition
 ChartValue
 ChartView
@@ -1552,6 +1552,7 @@ StartFill
 StaticFontInputs
 SteppedLine
 StyleProp
+SubtitleOptions
 SubtitlePlugin
 SweepChartGradient
 TRBL
@@ -1576,9 +1577,10 @@ TimeScaleTimeOptionsScope
 TimeSeriesAxis
 TimeSeriesScale
 TimeUnit
+TitleBoxOptions
 TitleOptions
-TitleOptionsScope
 TitlePlugin
+TitleScript
 TooltipAnimation
 TooltipBodyItem
 TooltipCallbacks
@@ -1913,7 +1915,6 @@ lowerAxis
 lowerDataset
 lowerElements
 lowerInteraction
-lowerTitle
 lowerTransitions
 lttbDecimation
 maxAtlasInstances
@@ -2030,6 +2031,7 @@ requireUiColor
 resolve
 resolveObjectKey
 resolveTarget
+resolvedTitleOptions
 restoreTextDirection
 retinaScale
 rgb2hsl

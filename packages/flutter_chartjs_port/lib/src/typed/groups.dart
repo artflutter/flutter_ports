@@ -1,12 +1,12 @@
 // Original code, not ported from Chart.js: the option groups of the typed API.
 
 /// The option groups of the typed API (Chart.js ADR 0052, sections 1 and
-/// 6): the plugin [ChartTitle], and the options [ChartInteraction] and
-/// [ChartAnimation] of `ChartConfig`. The legend, the tooltip, the
-/// decimation, the filler and the colors options are one `LegendOptions`,
-/// `TooltipOptions`, `DecimationOptions`, `FillerOptions` and
-/// `ColorsPluginOptions` in `ChartConfig.pluginOptions` (Chart.js ADRs
-/// 0192, 0193, 0194 and 0196).
+/// 6): the options [ChartInteraction] and [ChartAnimation] of
+/// `ChartConfig`. The options of the seven built-in plugins are one
+/// `TitleOptions`, `SubtitleOptions`, `LegendOptions`, `TooltipOptions`,
+/// `DecimationOptions`, `FillerOptions` and `ColorsPluginOptions` in
+/// `ChartConfig.pluginOptions` (Chart.js ADRs 0192, 0193, 0194, 0196 and
+/// 0197).
 ///
 /// The callbacks of a group get one details object. The chart calls the
 /// callback of the newest config: `==` of a group compares a callback only
@@ -17,122 +17,7 @@ library;
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
-import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-
-/// A title or a subtitle: the options of the title plugin,
-/// `options.plugins.title`, or of the subtitle plugin,
-/// `options.plugins.subtitle` (`docs/configuration/title.md`,
-/// `docs/configuration/subtitle.md`).
-@immutable
-final class const ChartTitle({
-  /// Whether the chart shows the title: `display`. The default is `false`.
-  /// Set it to `true` to show the [text].
-  final bool? display,
-
-  /// The lines of the title: `text` (row `adapt-title-text-lines`), for
-  /// example `['Sales']` or `['Sales', '2026']`.
-  final List<String>? text,
-
-  /// The color of the text: `color`.
-  final ChartPaint? color,
-
-  /// The font of the text: `font`. The color of the font is not read: set
-  /// [color].
-  final TextStyle? font,
-
-  /// The alignment of the title along its side: `align`.
-  final ChartAlign? align,
-
-  /// The side of the chart of the title: `position`. The title takes
-  /// [ChartPosition.top], [ChartPosition.left], [ChartPosition.bottom] and
-  /// [ChartPosition.right]. The default is the top.
-  final ChartPosition? position,
-
-  /// The space around the title: `padding`. Chart.js reads the top and the
-  /// bottom.
-  final EdgeInsets? padding,
-
-  /// Whether the box of the title takes the full width or height of the
-  /// chart: `fullSize`. The default is `true`.
-  final bool? fullSize,
-
-  /// The Chart.js title options that have no parameter, for example
-  /// `{'weight': 2000}`.
-  ///
-  /// The entries go into the title Map last: an entry wins over a
-  /// parameter with the same key. A Map value merges into the Map of the
-  /// key, a List or another value replaces it. The chart gets a copy of
-  /// each Map and the Lists of the app.
-  final Map<String, Object?>? extra,
-}) with Diagnosticable {
-  /// The title options.
-  this;
-
-  /// A copy of these title options with the given parameters. A parameter
-  /// that is `null` keeps its value.
-  ChartTitle copyWith({
-    bool? display,
-    List<String>? text,
-    ChartPaint? color,
-    TextStyle? font,
-    ChartAlign? align,
-    ChartPosition? position,
-    EdgeInsets? padding,
-    bool? fullSize,
-    Map<String, Object?>? extra,
-  }) => ChartTitle(
-    display: display ?? this.display,
-    text: text ?? this.text,
-    color: color ?? this.color,
-    font: font ?? this.font,
-    align: align ?? this.align,
-    position: position ?? this.position,
-    padding: padding ?? this.padding,
-    fullSize: fullSize ?? this.fullSize,
-    extra: extra ?? this.extra,
-  );
-
-  List<TypedProperty> get _props => [
-    ('display', display),
-    ('text', byItems(text)),
-    ('color', color),
-    ('font', font),
-    ('align', align),
-    ('position', position),
-    ('padding', padding),
-    ('fullSize', fullSize),
-    ('extra', byEntries(extra)),
-  ];
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ChartTitle && propsEqual(_props, other._props);
-
-  @override
-  int get hashCode => propsHash(_props);
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    addProps(properties, _props);
-  }
-}
-
-/// The `title` or `subtitle` scope of [title].
-TitleOptionsScope lowerTitle(ChartTitle title) {
-  final scope = TitleOptionsScope();
-  put(scope, OptionKey.display, title.display);
-  put(scope, OptionKey.text, title.text);
-  put(scope, OptionKey.color, title.color);
-  put(scope, OptionKey.font, title.font);
-  put(scope, OptionKey.align, title.align);
-  put(scope, OptionKey.position, title.position);
-  put(scope, OptionKey.padding, title.padding);
-  put(scope, OptionKey.fullSize, title.fullSize);
-  return mergeExtra(scope, title.extra);
-}
 
 /// The interaction: which elements an event hits, `options.interaction`
 /// (`docs/configuration/interactions.md`).
@@ -157,8 +42,12 @@ final class const ChartInteraction({
   /// `includeInvisible`. The default is `false`.
   final bool? includeInvisible,
 
-  /// The Chart.js interaction options that have no parameter. The rules of
-  /// [ChartTitle.extra] apply.
+  /// The Chart.js interaction options that have no parameter.
+  ///
+  /// The entries go into the interaction Map last: an entry wins over a
+  /// parameter with the same key. A Map value merges into the Map of the
+  /// key, a List or another value replaces it. The chart gets a copy of
+  /// each Map and the Lists of the app.
   final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The interaction options.
@@ -268,7 +157,7 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
   final AnimationEventHandler? onComplete;
 
   /// The Chart.js animation options that have no parameter. The rules of
-  /// [ChartTitle.extra] apply.
+  /// [ChartInteraction.extra] apply.
   final Map<String, Object?>? extra;
 
   /// Whether this is [none].

@@ -71,13 +71,13 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: const EdgeInsets.all(10),
-  title: const ChartTitle(
-    display: true,
-    text: ['Inflation - Consumer price'],
-    color: ChartPaint.solid(_text),
-    font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
-  ),
   pluginOptions: const [
+    TitleOptions(
+      display: true,
+      text: ['Inflation - Consumer price'],
+      color: ChartPaint.solid(_text),
+      font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+    ),
     LegendOptions(
       labels: LegendLabelOptions(
         usePointStyle: true,

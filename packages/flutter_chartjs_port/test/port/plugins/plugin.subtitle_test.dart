@@ -81,7 +81,7 @@ Object? _observeBox(LayoutItem? box) {
   if (box == null) return null;
   final options = (box as Title).options!;
   return <String, Object?>{
-    'lines': options.text.length.toDouble(),
+    'lines': options.text!.length.toDouble(),
     'options': plainTitleOptions(options),
   };
 }
@@ -108,14 +108,14 @@ final Map<String, Object? Function(Chart chart)> _observers = {
 const List<String> _upstreamHooks = ['start', 'stop', 'beforeUpdate'];
 
 /// A line chart whose subtitle plugin is disabled when [subtitle] is null.
-Chart _lineWithSubtitle([ChartTitle? subtitle]) => acquireChartRoot(
+Chart _lineWithSubtitle([SubtitleOptions? subtitle]) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: const [
         LineDataset(data: .values([1, 2])),
       ],
-      subtitle: subtitle,
+      pluginOptions: [?subtitle],
       disabledPlugins: subtitle == null
           ? const [PluginOff<SubtitlePlugin>()]
           : null,
@@ -131,34 +131,16 @@ Chart _line(String text) => acquireChartRoot(
       datasets: const [
         LineDataset(data: .values([1, 2])),
       ],
-      subtitle: ChartTitle(display: true, text: [text]),
+      pluginOptions: [
+        SubtitleOptions(display: true, text: [text]),
+      ],
     ),
   ).lower(),
 );
 
-/// The resolved title options of a direct hook call: the values of
-/// `TitleOptions.of({})` for each option that the call does not give.
-TitleOptions _titleOptions({
-  bool display = false,
-  List<String> text = const [],
-  ChartPosition? position,
-  num? weight,
-  bool fullSize = false,
-}) => TitleOptions(
-  align: null,
-  color: const ChartPaint.unchanged(),
-  display: display,
-  font: toFont(null),
-  fullSize: fullSize,
-  padding: EdgeInsets.zero,
-  position: position,
-  text: text,
-  weight: weight,
-);
-
-/// The resolved options of a direct `start` call: the box reads `display`,
-/// `text`, `position`, `weight` and `fullSize`.
-TitleOptions _startOptions(String text) => _titleOptions(
+/// The options of a direct `start` call: the box reads `display`, `text`,
+/// `position`, `weight` and `fullSize`.
+SubtitleOptions _startOptions(String text) => SubtitleOptions(
   display: true,
   text: [text],
   position: ChartPosition.top,
@@ -168,10 +150,11 @@ TitleOptions _startOptions(String text) => _titleOptions(
 
 /// `plugin.<hook>(chart, args, options)`: the hook field [hook] of the
 /// native plugin (Chart.js ADR 0144) with the arguments of its hook. The
-/// hooks of the subtitle take the resolved [TitleOptions] (Chart.js ADR
-/// 0182): [options], or the options of `{}` that the probe gave.
-void _hook(String hook, Chart chart, [TitleOptions? options]) {
-  final view = options ?? _titleOptions();
+/// hooks of the subtitle take the merged [SubtitleOptions] (Chart.js ADR
+/// 0197): [options], or the options with no field, the `{}` that the probe
+/// gave.
+void _hook(String hook, Chart chart, [SubtitleOptions? options]) {
+  final view = options ?? const SubtitleOptions();
   switch (hook) {
     case 'start':
       subTitle.start!(chart, const PluginHookArgs(), view);
@@ -236,13 +219,14 @@ void main() {
   group('plugin object', () {
     test('the hooks and the fields are the upstream keys', () {
       // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
-      // object are its hooks, and `id`, `defaults`, `defaultRoutes` and
-      // `descriptors` its fields.
+      // object are its hooks, and `id` and `defaults` its fields. The
+      // `defaultRoutes` and the `descriptors` have no field: the plugin
+      // gives the color of the route itself (Chart.js ADR 0197).
       expect(pluginHookNames(subTitle), _upstreamHooks);
       expect(subTitle.id, 'subtitle');
       expect(subTitle.defaults, isNotNull);
-      expect(subTitle.defaultRoutes, isNotNull);
-      expect(subTitle.descriptors, isNotNull);
+      expect(subTitle.defaultRoutes, isNull);
+      expect(subTitle.descriptors, isNull);
     });
 
     test('the registry gives the plugin object', () {
@@ -254,8 +238,8 @@ void main() {
       // Each hook is a function of the hook type `(chart, args, options)`,
       // in place of the upstream parameter counts of Chart.js ADR 0038,
       // section 3: `fn.length` of a hook changes no behavior of Chart.js.
-      // A hook takes the argument class of its hook and the resolved
-      // [TitleOptions] (Chart.js ADR 0182). The `Never` parameter type of
+      // A hook takes the argument class of its hook and the merged
+      // [SubtitleOptions] (Chart.js ADR 0197). The `Never` parameter type of
       // the `isNot` matcher rejects each function with one more parameter.
       for (final (hook, function) in <(String, Function?)>[
         ('start', subTitle.start),
@@ -263,54 +247,52 @@ void main() {
       ]) {
         expect(
           function,
-          isA<void Function(IChart, PluginHookArgs, TitleOptions)>(),
+          isA<void Function(IChart, PluginHookArgs, SubtitleOptions)>(),
           reason: hook,
         );
         expect(
           function,
           isNot(
-            isA<void Function(IChart, PluginHookArgs, TitleOptions, Never)>(),
+            isA<
+              void Function(IChart, PluginHookArgs, SubtitleOptions, Never)
+            >(),
           ),
           reason: hook,
         );
       }
       expect(
         subTitle.beforeUpdate,
-        isA<bool Function(IChart, UpdateHookArgs, TitleOptions)>(),
+        isA<bool Function(IChart, UpdateHookArgs, SubtitleOptions)>(),
       );
     });
 
     test('the defaults have the upstream keys and values', () {
-      // The probe output `defaults`, `defaultRoutes` and `descriptors`.
-      final defaults = subTitle.defaults! as JsObjectFace;
-      expect(jsObjectKeys(defaults), [
-        'align',
-        'display',
-        'font',
-        'fullSize',
-        'padding',
-        'position',
-        'text',
-        'weight',
-      ]);
-      expect(defaults['align'], ChartAlign.center);
-      expect(defaults['display'], isFalse);
+      // The probe output `defaults` (plugin.subtitle.js:32-43), one
+      // SubtitleOptions (Chart.js ADR 0197).
       expect(
-        defaults['font'],
-        const ChartTextStyle(fontWeight: FontWeight.normal),
+        subTitle.defaults,
+        const SubtitleOptions(
+          align: ChartAlign.center,
+          display: false,
+          font: ChartTextStyle(fontWeight: FontWeight.normal),
+          fullSize: true,
+          padding: EdgeInsets.zero,
+          position: ChartPosition.top,
+          text: [''],
+          weight: 1500,
+        ),
       );
-      expect(defaults['fullSize'], isTrue);
-      expect(defaults['padding'], EdgeInsets.zero);
-      expect(defaults['position'], ChartPosition.top);
-      expect(defaults['text'], ['']);
-      expect(defaults['weight'], 1500);
-      expect(_plain(subTitle.defaultRoutes), <String, Object?>{
-        'color': 'color',
-      });
-      expect(_plain(subTitle.descriptors), <String, Object?>{
-        '_scriptable': true,
-        '_indexable': false,
-      });
+    });
+
+    testWidgets('the color routes to Chart.defaults.color', (tester) async {
+      // The probe output `defaultRoutes` {color: 'color'}: the box of a chart
+      // whose options set no color gets `Chart.defaults.color` (Chart.js ADR
+      // 0197).
+      final chart = _line('A');
+      expect(
+        _subtitles(chart).single.options!.color,
+        Chart.defaults.colorCell!.raw,
+      );
     });
   });
 
@@ -319,7 +301,7 @@ void main() {
         'box each time', (tester) async {
       // The probe outputs `afterStop` 0 and `afterRestart` [1, true, 'A2'].
       final chart = _lineWithSubtitle(
-        const ChartTitle(display: true, text: ['A']),
+        const SubtitleOptions(display: true, text: ['A']),
       );
       final first = _subtitles(chart);
       expect(first, hasLength(1));
@@ -329,10 +311,10 @@ void main() {
       chart.update();
       expect(_subtitles(chart), isEmpty);
 
-      _pluginOptions(chart)['subtitle'] = <String, Object?>{
-        'display': true,
-        'text': ['A2'],
-      };
+      _pluginOptions(chart)['subtitle'] = const SubtitleOptions(
+        display: true,
+        text: ['A2'],
+      );
       chart.update();
       final second = _subtitles(chart);
       expect(second, hasLength(1));
@@ -424,14 +406,3 @@ void main() {
     });
   });
 }
-
-/// [value] as plain Dart values for a compare with a Map literal: an object
-/// (a Map or a typed object with a face, Chart.js ADR 0054 §5) gives a new
-/// Map of its own keys in the `Object.keys` order, each value read by name;
-/// another value is itself.
-Object? _plain(Object? value) =>
-    value is Map<String, Object?> || value is JsObjectFace
-    ? <String, Object?>{
-        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
-      }
-    : value;

@@ -31,7 +31,7 @@ final List<double> _dash = <double>[2, 3];
 ChartConfig _config(
   List<Dataset> datasets, {
   List<Object>? labels,
-  ChartTitle? title,
+  TitleOptions? title,
   EdgeInsets? padding,
   ChartAnimation? animation = ChartAnimation.none,
   List<Plugin<Object?>>? plugins,
@@ -41,7 +41,7 @@ ChartConfig _config(
   datasets: datasets,
   // The axis of the case `an axis` (Chart.js ADR 0191).
   scales: const [LinearAxis(.y)],
-  title: title,
+  pluginOptions: [?title],
   padding: padding,
   animation: animation,
   plugins: plugins,
@@ -175,7 +175,7 @@ void main() {
           _config([BarDataset(data: .values(_data()))]),
           _config([
             BarDataset(data: .values(_data())),
-          ], title: const ChartTitle(text: ['t'])),
+          ], title: const TitleOptions(text: ['t'])),
         ),
         isFalse,
       );

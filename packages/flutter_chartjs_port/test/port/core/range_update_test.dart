@@ -116,21 +116,22 @@ Plugin<Object?> _recorder(_Log log) {
 /// context. The title text shows the range options of the scale [axis] and
 /// its last range: the layout fits the title before the scales, so
 /// `scale.min` and `scale.max` are those of the last update, in both paths.
-Map<String, Object?> _titleOf(_Log log, String axis) => <String, Object?>{
-  'display': true,
-  'text': (Object? ctx) {
+TitleOptions _titleOf(_Log log, String axis) => TitleOptions(
+  display: true,
+  // The scriptable text is the one function `scripted` (Chart.js ADR 0197).
+  scripted: (ctx, options) {
     log.context('title.text', ctx);
-    final chart = contextRead(ctx, 'chart')! as Chart;
+    final chart = ctx.chart as Chart;
     final scale = chart.scales[axis];
-    if (scale == null) return ['none'];
-    final options = scale.options;
+    if (scale == null) return const TitleOptions(text: ['none']);
+    final scaleOptions = scale.options;
     final line =
-        '$axis ${plainValue(options.min)} to '
-        '${plainValue(options.max)}, was ${scale.min} to '
+        '$axis ${plainValue(scaleOptions.min)} to '
+        '${plainValue(scaleOptions.max)}, was ${scale.min} to '
         '${scale.max}';
-    return [line];
+    return TitleOptions(text: [line]);
   },
-};
+);
 
 Object? Function(Object?) _padding(_Log log) => (ctx) {
   log.context('layout.padding', ctx);
@@ -783,6 +784,11 @@ Object? _pluginResolver(Chart chart, String id) =>
             as OptionView)
         .resolver;
 
+/// The options of the descriptor of the plugin [id] of [chart]: the merged
+/// options object of the title (Chart.js ADR 0197).
+Object? _pluginOptionsOf(Chart chart, String id) =>
+    chart.plugins.cache!.firstWhere((d) => d.plugin.id == id).options;
+
 void main() {
   Chart.register([_UserLine.value]);
 
@@ -804,7 +810,7 @@ void main() {
       final options = chart.options;
       final scale = chart.scales['x']!.optionsView;
       final dataset = chart.getDatasetMeta(0).controller!.options;
-      final title = _pluginResolver(chart, 'title');
+      final title = _pluginOptionsOf(chart, 'title');
       expect(chart.updateRanges(), isTrue);
       expect(chart.options, isNot(same(options)));
       expect(chart.options.resolver, same(options.resolver));
@@ -813,10 +819,10 @@ void main() {
       final next = chart.getDatasetMeta(0).controller!.options;
       expect(next, isNot(same(dataset)));
       expect(next.resolver, same(dataset.resolver));
-      expect(_pluginResolver(chart, 'title'), same(title));
+      expect(_pluginOptionsOf(chart, 'title'), same(title));
       chart.update();
       expect(chart.options.resolver, isNot(same(options.resolver)));
-      expect(_pluginResolver(chart, 'title'), isNot(same(title)));
+      expect(_pluginOptionsOf(chart, 'title'), isNot(same(title)));
     });
 
     testWidgets('a scriptable title shows each new range', (tester) async {

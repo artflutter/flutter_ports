@@ -29,13 +29,13 @@ ChartValue<ChartPaint> apexJsLighten(Color color, {double opacity = 0.85}) =>
     );
 
 /// `title: {text, align}`: 14 px, weight 900, the text color.
-ChartTitle apexJsTitle(
+TitleOptions apexJsTitle(
   String text, {
   ChartAlign align = .start,
   ChartPosition position = .top,
   Color color = Apex.text,
   double size = 14,
-}) => ChartTitle(
+}) => TitleOptions(
   display: true,
   text: [text],
   align: align,

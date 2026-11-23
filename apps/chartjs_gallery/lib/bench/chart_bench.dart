@@ -547,8 +547,8 @@ ChartBenchCase _pluginCase(
 /// no option: the chart listens to no event.
 Map<String, Object?> _leastWorkPlugins() => <String, Object?>{
   'legend': const LegendOptions(display: false),
-  'title': <String, Object?>{'display': false},
-  'subtitle': <String, Object?>{'display': false},
+  'title': const TitleOptions(display: false),
+  'subtitle': const SubtitleOptions(display: false),
   'colors': const ColorsPluginOptions(enabled: false),
   'decimation': const DecimationOptions(enabled: false),
 };
@@ -962,10 +962,10 @@ ChartBenchCase _boxCase(
           'plugins': <String, Object?>{
             if (!legend) 'legend': false,
             if (title)
-              'title': <String, Object?>{
-                'display': true,
-                'text': ['Chart.js Line Chart'],
-              },
+              'title': const TitleOptions(
+                display: true,
+                text: ['Chart.js Line Chart'],
+              ),
           },
         },
         plugins: timing.plugins,
@@ -1338,10 +1338,10 @@ ChartBenchCase _themeCase(
         ],
         options: <String, Object?>{
           'plugins': <String, Object?>{
-            'title': <String, Object?>{
-              'display': true,
-              'text': ['Chart.js Theme Chart'],
-            },
+            'title': const TitleOptions(
+              display: true,
+              text: ['Chart.js Theme Chart'],
+            ),
           },
         },
         plugins: timing.plugins,

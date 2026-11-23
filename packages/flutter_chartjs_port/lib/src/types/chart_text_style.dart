@@ -10,9 +10,9 @@
 /// canvas lays out the text with the style itself.
 ///
 /// ```dart
-/// ChartTitle(
+/// TitleOptions(
 ///   display: true,
-///   text: 'Sales',
+///   text: ['Sales'],
 ///   font: ChartTextStyle(fontSize: 20, fontWeight: FontWeight.bold),
 /// );
 /// ```

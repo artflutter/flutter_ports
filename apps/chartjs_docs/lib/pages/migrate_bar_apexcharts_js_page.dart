@@ -142,7 +142,7 @@ DocPageContent apexJsBarMigrationPage() => migrationPage(
         ),
         DocText(
           'The title with `offsetY: 330` sits under the plot: '
-          '`ChartTitle(position: .bottom, align: .center)`.',
+          '`TitleOptions(position: .bottom, align: .center)`.',
         ),
       ],
       replica: (_) => const ApexJsColumnLabels(),

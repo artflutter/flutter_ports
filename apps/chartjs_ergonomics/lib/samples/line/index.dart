@@ -273,7 +273,7 @@ final List<Sample> lineSamples = [
   const Sample(
     file: 'title',
     title: 'Title and subtitle',
-    note: 'ChartTitle for both. display must be true.',
+    note: 'TitleOptions and SubtitleOptions. display must be true.',
     child: ChartView(config: withTitle),
     accepted: true,
   ),

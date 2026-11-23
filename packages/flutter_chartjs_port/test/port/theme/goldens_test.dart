@@ -50,9 +50,9 @@ ChartConfig _config() => const ChartConfig(
   labels: ['A', 'B', 'C', 'D', 'E'],
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
-  title: ChartTitle(display: true, text: ['Title']),
-  subtitle: ChartTitle(display: true, text: ['Subtitle']),
   pluginOptions: [
+    TitleOptions(display: true, text: ['Title']),
+    SubtitleOptions(display: true, text: ['Subtitle']),
     LegendOptions(title: LegendTitleOptions(display: true, text: ['Legend'])),
     ColorsPluginOptions(enabled: true),
   ],

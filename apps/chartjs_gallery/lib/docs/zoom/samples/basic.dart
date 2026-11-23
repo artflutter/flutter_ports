@@ -5,16 +5,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/demo/demo_common.dart' show jsNumberText;
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, UpdateMode;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        ActiveElement,
-        Chart,
-        ChartEvent,
-        ChartPosition,
-        ContextObject,
-        Scale,
-        ScriptableScaleContext;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// A sample of the docs of chartjs-plugin-zoom: the `module.exports` of its
 /// `chart-editor` block (`{actions, config, output}`).
@@ -113,13 +104,16 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
       'scales': scales,
       'plugins': <String, Object?>{
         'zoom': zoomOptions,
-        'title': <String, Object?>{
-          'display': true,
-          'position': ChartPosition.bottom,
-          'text': (Object? ctx) => [
-            'Zoom: ${zoomStatus(_chartOf(ctx))}, Pan: ${panStatus()}',
-          ],
-        },
+        // The scriptable text is the one function `scripted` (Chart.js ADR
+        // 0197).
+        'title': TitleOptions(
+          display: true,
+          position: ChartPosition.bottom,
+          scripted: (context, options) {
+            final zoom = zoomStatus(context.chart as Chart);
+            return TitleOptions(text: ['Zoom: $zoom, Pan: ${panStatus()}']);
+          },
+        ),
       },
       // Chart.js ADR 0130: a ChartEventHandler, with all three parameters.
       'onClick': (ChartEvent e, List<ActiveElement> elements, Chart chart) {
@@ -289,9 +283,6 @@ void setZoomSampleOptions(
 List<String> zoomAxisTitle(Object? ctx) => [
   '${((ctx! as ScriptableScaleContext).scale! as Scale).axis} axis',
 ];
-
-/// `ctx.chart` of a scriptable context.
-Chart _chartOf(Object? ctx) => (ctx! as ContextObject).chart as Chart;
 
 /// A point `{x, y}` of `Utils.points` (`docs/scripts/utils.js:46`).
 Map<String, Object?> _p(double x, double y) => <String, Object?>{

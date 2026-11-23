@@ -29,9 +29,9 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: sfPadding,
-  title: sfTitle('Population growth of various countries'),
   // TooltipBehavior(header: '', canShowMarker: false)
   pluginOptions: [
+    sfTitle('Population growth of various countries'),
     sfTooltip(
       text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}%',
     ),

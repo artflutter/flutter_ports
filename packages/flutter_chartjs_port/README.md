@@ -320,7 +320,6 @@ ChartConfig(
   labels: labels,
   datasets: datasets,
   padding: const EdgeInsets.all(8),
-  title: const ChartTitle(display: true, text: ['Votes']),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
@@ -331,6 +330,7 @@ ChartConfig(
   ),
   elements: const ChartElements(bar: BarElementStyle(borderRadius: 4)),
   pluginOptions: const [
+    TitleOptions(display: true, text: ['Votes']),
     LegendOptions(
       position: ChartPosition.bottom,
       labels: LegendLabelOptions(font: TextStyle(fontSize: 12)),
@@ -343,16 +343,17 @@ ChartConfig(
 )
 ```
 
-The legend and the tooltip options are one `LegendOptions` and one `TooltipOptions` object in
-`pluginOptions`, as the options of an add-on plugin: each Chart.js option is a field, and the
-legend `labels` and `title` are a `LegendLabelOptions` and a `LegendTitleOptions`.
+The options of the built-in plugins are one object each in `pluginOptions`, as the options of an
+add-on plugin: `TitleOptions`, `SubtitleOptions`, `LegendOptions`, `TooltipOptions`,
+`DecimationOptions`, `FillerOptions` and `ColorsPluginOptions`. Each Chart.js option is a field, and
+the legend `labels` and `title` are a `LegendLabelOptions` and a `LegendTitleOptions`.
 `ChartConfig ==` compares them with `==`, so a new closure in them (a callback or `scripted`)
 gives a chart update; give a tear-off of a function or a method. `scripted` gives the options that
 depend on the context: `scripted: (context, options) => TooltipOptions(backgroundColor: ...)` with
-the tooltip context, and `LegendOptions(scripted: ...)` with the chart context, once for each
-update.
+the tooltip context, and `LegendOptions(scripted: ...)`, `TitleOptions(scripted: ...)` and
+`SubtitleOptions(scripted: ...)` with the chart context, once for each update.
 
-`subtitle` takes a `ChartTitle` too, `filler` sets the filler plugin, and
+`SubtitleOptions(display: true, text: ['2026'])` adds a subtitle under the title, and
 `animation: ChartAnimation.none` turns the animations off. `indexAxis: const YAxis()` gives a
 horizontal bar chart: the index axis takes `XAxis` or `YAxis` only. `responsive`, `maintainAspectRatio` and `aspectRatio` set the [size](#size).
 

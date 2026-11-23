@@ -6,7 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 17 cases, 14 widths.
 
-import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin;
+import 'dart:ui' show Color, FontStyle, FontWeight, StrokeCap, StrokeJoin;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs_core.dart';
@@ -53,10 +53,12 @@ typedef PluginTitleReferenceWidth = ({
 });
 
 /// The cases.
-const List<PluginTitleReferenceCase> pluginTitleReference = [
+List<PluginTitleReferenceCase> pluginTitleReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'display false (the default)',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -84,8 +86,8 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -2265,7 +2267,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'display true',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -2289,16 +2291,13 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Chart title'],
-          },
+          'title': TitleOptions(display: true, text: <String>['Chart title']),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -3967,10 +3966,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'do': <Object?>[
             'setOption',
             'plugins.title',
-            <String, Object?>{
-              'display': true,
-              'text': <String>['Back'],
-            },
+            TitleOptions(display: true, text: <String>['Back']),
           ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
@@ -5022,7 +5018,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'position bottom',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -5046,17 +5042,17 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Bottom title'],
-            'position': ChartPosition.bottom,
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Bottom title'],
+            position: ChartPosition.bottom,
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 496.9970703125, 449.2],
         'scales': <String, Object?>{
@@ -6083,7 +6079,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'position left with align start',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -6107,18 +6103,18 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Left title'],
-            'position': ChartPosition.left,
-            'align': ChartAlign.start,
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Left title'],
+            position: ChartPosition.left,
+            align: ChartAlign.start,
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           61.74765625,
@@ -7163,7 +7159,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'position left with align end',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -7187,18 +7183,18 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Left title'],
-            'position': ChartPosition.left,
-            'align': ChartAlign.center,
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Left title'],
+            position: ChartPosition.left,
+            align: ChartAlign.center,
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           61.74765625,
@@ -8814,7 +8810,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'position right with align start',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -8838,18 +8834,18 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Right title'],
-            'position': ChartPosition.right,
-            'align': ChartAlign.start,
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Right title'],
+            position: ChartPosition.right,
+            align: ChartAlign.start,
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 477.6, 483.59999999999997],
         'scales': <String, Object?>{
@@ -9885,7 +9881,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'position right with align end',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -9909,18 +9905,18 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Right title'],
-            'position': ChartPosition.right,
-            'align': ChartAlign.end,
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Right title'],
+            position: ChartPosition.right,
+            align: ChartAlign.end,
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 477.6, 483.59999999999997],
         'scales': <String, Object?>{
@@ -10956,7 +10952,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'align start and end',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -10980,17 +10976,17 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Aligned'],
-            'align': ChartAlign.start,
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Aligned'],
+            align: ChartAlign.start,
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -12592,7 +12588,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'align end and start',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -12616,17 +12612,17 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Aligned'],
-            'align': ChartAlign.end,
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Aligned'],
+            align: ChartAlign.end,
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -14228,7 +14224,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'fullSize false',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -14252,17 +14248,17 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Not full size'],
-            'fullSize': false,
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Not full size'],
+            fullSize: false,
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -15872,7 +15868,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'padding as a number',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -15896,17 +15892,17 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Padded'],
-            'padding': EdgeInsets.all(25),
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Padded'],
+            padding: EdgeInsets.all(25),
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 64.4, 496.9970703125, 483.6],
         'scales': <String, Object?>{
@@ -16928,7 +16924,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'padding as an object',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -16952,17 +16948,17 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Padded'],
-            'padding': EdgeInsets.fromLTRB(30, 4, 0, 16),
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Padded'],
+            padding: EdgeInsets.fromLTRB(30, 4, 0, 16),
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -18572,7 +18568,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'a text array',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -18596,17 +18592,17 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Line one', 'Line two', 'Line three'],
-            'font': ChartTextStyle(height: 1.5),
-          },
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Line one', 'Line two', 'Line three'],
+            font: ChartTextStyle(height: 1.5),
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 74.0, 496.9970703125, 483.6],
         'scales': <String, Object?>{
@@ -20198,7 +20194,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'font and color',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -20222,24 +20218,24 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Styled'],
-            'color': 'rgb(255, 0, 0)',
-            'font': ChartTextStyle(
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Styled'],
+            color: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+            font: ChartTextStyle(
               fontFamily: 'Arial',
               fontFamilyFallback: [],
               fontSize: 18,
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.normal,
             ),
-          },
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -21277,7 +21273,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
     name: 'a scriptable text',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -21299,13 +21295,24 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{'display': true, 'text': 'fn:titleText'},
+          'title': TitleOptions(
+            display: true,
+            scripted: (context, options) => TitleOptions(
+              text:
+                  (functions['titleText']!
+                          as Object? Function(Object?, Object?))(
+                        context,
+                        options,
+                      )!
+                      as List<String>,
+            ),
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -22340,7 +22347,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'a number text',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -22364,16 +22371,13 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['0'],
-          },
+          'title': TitleOptions(display: true, text: <String>['0']),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -23408,7 +23412,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
   ),
   (
     name: 'full: title with the default legend',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -23427,15 +23431,12 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Chart title'],
-          },
+          'title': TitleOptions(display: true, text: <String>['Chart title']),
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 66.4, 496.9970703125, 483.6],
         'scales': <String, Object?>{

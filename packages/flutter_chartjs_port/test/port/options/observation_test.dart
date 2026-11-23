@@ -783,6 +783,35 @@ Object? _wrapped(Object? value, String path, List<String> trace) {
       ),
     );
   }
+  // The title and the subtitle options are one TitleOptions and one
+  // SubtitleOptions (Chart.js ADR 0197): `scripted` stands for the
+  // scriptable options of the Map: it gets the context, as they did.
+  if (value is TitleOptions) {
+    final scripted = value.scripted;
+    return scripted == null
+        ? value
+        : value.merge(
+            TitleOptions(
+              scripted: (context, options) {
+                trace.add(_traceLine('$path.scripted', [context]));
+                return scripted(context, options);
+              },
+            ),
+          );
+  }
+  if (value is SubtitleOptions) {
+    final scripted = value.scripted;
+    return scripted == null
+        ? value
+        : value.merge(
+            SubtitleOptions(
+              scripted: (context, options) {
+                trace.add(_traceLine('$path.scripted', [context]));
+                return scripted(context, options);
+              },
+            ),
+          );
+  }
   // The tooltip options are one TooltipOptions (Chart.js ADR 0192): trace
   // each function field with the path of its field. `scripted` stands for
   // the scriptable options of the Map: it gets the context, as they did.

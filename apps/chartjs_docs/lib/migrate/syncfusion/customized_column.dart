@@ -50,8 +50,8 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: sfPadding,
-  title: sfTitle('PC vendor shipments - 2015 Q1'),
   pluginOptions: [
+    sfTitle('PC vendor shipments - 2015 Q1'),
     const LegendOptions(display: false),
     sfTooltip(
       text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}M',

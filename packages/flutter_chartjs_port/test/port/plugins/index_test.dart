@@ -56,9 +56,15 @@ const Set<String> _removedKeys = {'_element: class', 'destroy(1)'};
 /// `descriptors`. Their fallbacks (the fonts over `Chart.defaults.font`, the
 /// animation items over `animation`) are Dart code of the tooltip. The
 /// legend options are one LegendOptions object (Chart.js ADR 0193), with no
-/// `descriptors`: `scripted` stands for the scriptable options.
+/// `descriptors`: `scripted` stands for the scriptable options. The title
+/// and the subtitle options are one TitleOptions and SubtitleOptions object
+/// (Chart.js ADR 0197), with no `defaultRoutes` and no `descriptors`: the
+/// plugin gives the `color` of `Chart.defaults`, and `scripted` stands for
+/// the scriptable options.
 const Map<String, Set<String>> _removedPluginKeys = {
   'legend': {'descriptors'},
+  'subtitle': {'defaultRoutes', 'descriptors'},
+  'title': {'defaultRoutes', 'descriptors'},
   'tooltip': {'defaultRoutes', 'descriptors'},
 };
 
@@ -149,10 +155,11 @@ List<String> _nativeKeys<O>(Plugin<O> plugin) => [
 
 /// [f] of the plugin object [plugin] of the namespace `plugins`, with the
 /// options type of the plugin: a hook field is read through the type of its
-/// plugin, the resolved options class of Chart.js ADR 0182.
+/// plugin, the options class of the plugin (Chart.js ADRs 0192 to 0197).
 T _withPlugin<T>(Object? plugin, T Function<O>(Plugin<O> plugin) f) =>
     switch (plugin) {
       final Plugin<TitleOptions> p => f<TitleOptions>(p),
+      final Plugin<SubtitleOptions> p => f<SubtitleOptions>(p),
       final Plugin<LegendOptions> p => f<LegendOptions>(p),
       final Plugin<TooltipOptions> p => f<TooltipOptions>(p),
       final Plugin<FillerOptions> p => f<FillerOptions>(p),

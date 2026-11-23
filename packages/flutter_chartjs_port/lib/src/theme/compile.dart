@@ -111,8 +111,13 @@ ChartOptionsScope? compileChartTheme({
     t.ticks.color = ChartPaint.solid(color);
     t.scaleTitle.color = ChartPaint.solid(color);
     t.pointLabels.color = ChartPaint.solid(color);
-    t.title.color = ChartPaint.solid(color);
-    t.subtitle.color = ChartPaint.solid(color);
+    // The options of the title and the subtitle are one immutable
+    // [TitleOptions] and [SubtitleOptions] (Chart.js ADR 0197): the theme
+    // writes one object for each plugin, no scope of the tree. The font
+    // below writes the objects again with the color and the font.
+    t._plugins
+      ..title = TitleOptions(color: ChartPaint.solid(color))
+      ..subtitle = SubtitleOptions(color: ChartPaint.solid(color));
   }
   // `borderColor` replaces `Defaults.borderColor` (`core.defaults.js:42`).
   // The route of the grid color (`core.scale.defaults.js:87`), the default
@@ -192,9 +197,13 @@ ChartOptionsScope? compileChartTheme({
       : _fontWithout(baseFont, weight: true);
   final emitWithoutWeight =
       fontWithoutWeight != null && _hasFontField(fontWithoutWeight);
+  // One object for each plugin with the color and the font (Chart.js ADR
+  // 0197).
   if (emitWithoutWeight) {
-    t.title.font = fontWithoutWeight;
-    t.subtitle.font = fontWithoutWeight;
+    final titleColor = color == null ? null : ChartPaint.solid(color);
+    t._plugins
+      ..title = TitleOptions(color: titleColor, font: fontWithoutWeight)
+      ..subtitle = SubtitleOptions(color: titleColor, font: fontWithoutWeight);
   }
   // The whole font token for the legend label font
   // (`plugin.legend.js:136, 288`) and the legend title font (`:446, 495`).
@@ -311,15 +320,6 @@ final class _ThemeTree() {
   late final PluginOptionsByTypeScope _plugins = root.plugins = add(
     PluginOptionsByTypeScope(),
   );
-
-  /// `plugins.title`.
-  late final TitleOptionsScope title = _plugins.title = add<TitleOptionsScope>(
-    TitleOptionsScope(),
-  );
-
-  /// `plugins.subtitle`.
-  late final TitleOptionsScope subtitle = _plugins.subtitle =
-      add<TitleOptionsScope>(TitleOptionsScope());
 
   late final ElementOptionsByTypeScope _elements = root.elements = add(
     ElementOptionsByTypeScope(),

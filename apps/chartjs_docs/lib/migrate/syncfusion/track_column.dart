@@ -31,8 +31,8 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: sfPadding,
-  title: sfTitle('Marks of a student'),
   pluginOptions: [
+    sfTitle('Marks of a student'),
     sfLegend(const SfColumnIcon()),
     // format: 'point.y marks in point.x'
     sfTooltip(

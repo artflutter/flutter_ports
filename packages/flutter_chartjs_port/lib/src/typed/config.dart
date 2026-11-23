@@ -103,12 +103,6 @@ final class const ChartConfig({
   /// The space around the chart: `options.layout.padding`.
   final EdgeInsets? padding,
 
-  /// The title: `options.plugins.title`.
-  final ChartTitle? title,
-
-  /// The subtitle below the title: `options.plugins.subtitle`.
-  final ChartTitle? subtitle,
-
   /// The elements that an event hits: `options.interaction`.
   final ChartInteraction? interaction,
 
@@ -160,8 +154,9 @@ final class const ChartConfig({
   final List<String>? events,
 
   /// The options of the plugins as objects: each goes to
-  /// `options.plugins.<pluginId>` (Chart.js ADRs 0148, 0192, 0193 and
-  /// 0196), for example the [LegendOptions] of the legend, the
+  /// `options.plugins.<pluginId>` (Chart.js ADRs 0148, 0192, 0193, 0196
+  /// and 0197), for example the [TitleOptions] and [SubtitleOptions] of the
+  /// title and the subtitle, the [LegendOptions] of the legend, the
   /// [TooltipOptions] of the tooltip, the [FillerOptions] of the filler, the
   /// [ColorsPluginOptions] of the colors plugin and the options of an add-on
   /// plugin. A plugin and its options come apart: a plugin that
@@ -170,6 +165,7 @@ final class const ChartConfig({
   ///
   /// ```dart
   /// pluginOptions: const [
+  ///   TitleOptions(display: true, text: ['Sales']),
   ///   LegendOptions(position: ChartPosition.bottom),
   ///   TooltipOptions(mode: IndexInteractionMode()),
   /// ],
@@ -233,8 +229,6 @@ final class const ChartConfig({
     double? aspectRatio,
     double? devicePixelRatio,
     EdgeInsets? padding,
-    ChartTitle? title,
-    ChartTitle? subtitle,
     ChartInteraction? interaction,
     ChartAnimation? animation,
     List<PropertyAnimation>? animations,
@@ -258,8 +252,6 @@ final class const ChartConfig({
     aspectRatio: aspectRatio ?? this.aspectRatio,
     devicePixelRatio: devicePixelRatio ?? this.devicePixelRatio,
     padding: padding ?? this.padding,
-    title: title ?? this.title,
-    subtitle: subtitle ?? this.subtitle,
     interaction: interaction ?? this.interaction,
     animation: animation ?? this.animation,
     animations: animations ?? this.animations,
@@ -294,8 +286,6 @@ final class const ChartConfig({
     ('aspectRatio', aspectRatio),
     ('devicePixelRatio', devicePixelRatio),
     ('padding', padding),
-    ('title', title),
-    ('subtitle', subtitle),
     ('interaction', interaction),
     ('animation', animation),
     ('animations', byItems(animations)),

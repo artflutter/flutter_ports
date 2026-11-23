@@ -67,11 +67,11 @@ Widget _view({
             LinearAxis(.y, min: 0, max: 100),
           ],
           maintainAspectRatio: false,
-          title: title == null
-              ? null
-              : ChartTitle(display: true, text: [title]),
           animation: ChartAnimation.none,
-          pluginOptions: [_wheelZoom()],
+          pluginOptions: [
+            if (title != null) TitleOptions(display: true, text: [title]),
+            _wheelZoom(),
+          ],
         ),
         theme: theme,
         onChartCreated: onChartCreated,

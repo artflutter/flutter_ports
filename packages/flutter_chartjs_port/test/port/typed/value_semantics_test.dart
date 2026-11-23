@@ -1091,11 +1091,6 @@ void main() {
           const TimeDisplayFormats(day: 'dd MMM').copyWith(hour: 'HH:mm'),
         ),
         (
-          const ChartTitle(),
-          const ChartTitle().copyWith(),
-          const ChartTitle().copyWith(text: ['T']),
-        ),
-        (
           const ChartInteraction(),
           const ChartInteraction().copyWith(),
           const ChartInteraction().copyWith(intersect: false),
@@ -1152,8 +1147,6 @@ void main() {
         'aspectRatio',
         'devicePixelRatio',
         'padding',
-        'title',
-        'subtitle',
         'interaction',
         'animation',
         'animations',

@@ -495,7 +495,8 @@ void main() {
                 'mode': const DatasetInteractionMode(),
               },
               'plugins': <String, Object?>{
-                'title': <String, Object?>{'position': ChartPosition.bottom},
+                // The title options are one object (Chart.js ADR 0197).
+                'title': const TitleOptions(position: ChartPosition.bottom),
               },
             }),
         );
@@ -504,7 +505,7 @@ void main() {
         expect(options['spanGaps'], false);
         expect(jsGet(options['hover'], 'mode'), const DatasetInteractionMode());
         expect(
-          jsGet(jsGet(options['plugins'], 'title'), 'position'),
+          (jsGet(options['plugins'], 'title')! as TitleOptions).position,
           ChartPosition.bottom,
         );
 

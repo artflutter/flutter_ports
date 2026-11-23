@@ -116,7 +116,7 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
     ),
     (
       Text('ChartTitle, AxisTitle'),
-      DocText('`title: ChartTitle(...)`, `AxisTitle`'),
+      DocText('`TitleOptions(...)` in `pluginOptions`, `AxisTitle`'),
     ),
     (
       Text('Legend'),

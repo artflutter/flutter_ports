@@ -3060,13 +3060,13 @@ void main() {
         final twinLog = <Object?>[];
         Map<String, Object?> options(List<Object?> into) => {
           'plugins': <String, Object?>{
-            'title': <String, Object?>{
-              'display': true,
-              'text': (ContextObject ctx) {
+            'title': TitleOptions(
+              display: true,
+              scripted: (ctx, options) {
                 into.add(_contexts(ctx.chart as Chart));
-                return ['title'];
+                return const TitleOptions(text: ['title']);
               },
-            },
+            ),
             'legend': const LegendOptions(
               display: false,
               labels: LegendLabelOptions(),
@@ -3584,15 +3584,15 @@ void main() {
                 },
                 options: {
                   'plugins': <String, Object?>{
-                    'title': <String, Object?>{
-                      'display': true,
-                      'text': (ContextObject ctx) {
+                    'title': TitleOptions(
+                      display: true,
+                      scripted: (ctx, options) {
                         if (armed) {
                           log.add(_fillStyles(ctx.chart as Chart));
                         }
-                        return ['title'];
+                        return const TitleOptions(text: ['title']);
                       },
-                    },
+                    ),
                     'legend': const LegendOptions(
                       display: false,
                       labels: LegendLabelOptions(),

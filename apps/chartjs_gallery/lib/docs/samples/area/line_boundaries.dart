@@ -23,8 +23,9 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 ///   page has no actions: `Randomize` (`:76-82`) and `Smooth` (`:84-90`)
 ///   are not variants.
 /// - The title function `(ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill`
-///   (`:106`) is the constant text of each variant: `ChartTitle.text` is a
-///   `String`, and a `FillTarget` has no text (Chart.js ADR 0140).
+///   (`:106`) is the constant text of each variant, in the
+///   `TitleOptions.text` lines: a `FillTarget` has no text (Chart.js ADR
+///   0140).
 ///
 /// The options are those of `:95-113`. The gallery registers
 /// `registerables`, with the filler and the title: the chart fills the
@@ -80,7 +81,9 @@ ChartConfig _config(FillTarget fill, String name) => ChartConfig(
       fill: fill,
     ),
   ],
-  pluginOptions: const [FillerOptions(propagate: false)],
-  title: ChartTitle(display: true, text: ['Fill: $name']),
+  pluginOptions: [
+    TitleOptions(display: true, text: ['Fill: $name']),
+    const FillerOptions(propagate: false),
+  ],
   interaction: const ChartInteraction(intersect: false),
 );

@@ -80,12 +80,6 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: const EdgeInsets.all(10),
-  title: const ChartTitle(
-    display: true,
-    text: ['Annual rainfall of Paris'],
-    color: ChartPaint.solid(_text),
-    font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
-  ),
   // ActivationMode.singleTap: the nearest point on the x axis.
   interaction: const ChartInteraction(
     mode: NearestInteractionMode(),
@@ -93,6 +87,12 @@ final ChartConfig _config = ChartConfig(
     axis: .x,
   ),
   pluginOptions: const [
+    TitleOptions(
+      display: true,
+      text: ['Annual rainfall of Paris'],
+      color: ChartPaint.solid(_text),
+      font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+    ),
     LegendOptions(display: false),
     TooltipOptions(
       backgroundColor: ChartPaint.solid(_tooltip),

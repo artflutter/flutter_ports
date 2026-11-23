@@ -872,14 +872,11 @@ void main() {
       ((cfg['options']! as JsObjectFace)['plugins']! as OptionScope).jsAddAll(
         <String, Object?>{
           'legend': true,
-          'title': <String, Object?>{
-            'display': true,
-            'text': ['Fixed title'],
-          },
-          'subtitle': <String, Object?>{
-            'display': true,
-            'text': ['Fixed subtitle'],
-          },
+          'title': const TitleOptions(display: true, text: ['Fixed title']),
+          'subtitle': const SubtitleOptions(
+            display: true,
+            text: ['Fixed subtitle'],
+          ),
           'tooltip': const TooltipOptions(),
           'colors': true,
           'filler': true,

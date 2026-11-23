@@ -31,13 +31,13 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
   // title: {floating: true, offsetY: 330, align: 'center'}: under the plot.
-  title: apexJsTitle(
-    'Monthly Inflation in Argentina, 2002',
-    align: .center,
-    position: .bottom,
-    color: const Color(0xFF444444),
-  ),
   pluginOptions: [
+    apexJsTitle(
+      'Monthly Inflation in Argentina, 2002',
+      align: .center,
+      position: .bottom,
+      color: const Color(0xFF444444),
+    ),
     const LegendOptions(display: false),
     apexJsBarTooltip(value: _percent),
   ],

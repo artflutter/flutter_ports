@@ -30,7 +30,7 @@ const TextStyle sfLabelFont = TextStyle(fontSize: 12, letterSpacing: 0.4);
 const EdgeInsets sfPadding = EdgeInsets.fromLTRB(4, 10, 10, 5);
 
 /// `ChartTitle(text: ...)`: the title over the plot area.
-ChartTitle sfTitle(String text) => ChartTitle(
+TitleOptions sfTitle(String text) => TitleOptions(
   display: true,
   text: [text],
   color: const .solid(Sf.text),

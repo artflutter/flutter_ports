@@ -108,9 +108,9 @@ SegmentToggles _toggles(WidgetTester tester) =>
 
 /// The one line of the resolved title text of [chart] (row
 /// adapt-title-text-lines): the [TitleOptions] of the title box
-/// (Chart.js ADR 0182).
+/// (Chart.js ADR 0197).
 String _titleText(Chart chart) =>
-    (chart.titleBlock!.options! as TitleOptions).text.single;
+    (chart.titleBlock!.options! as TitleOptions).text!.single;
 
 /// The rect of the host lies inside the view of [size].
 void _expectInView(WidgetTester tester, Size size, String reason) {

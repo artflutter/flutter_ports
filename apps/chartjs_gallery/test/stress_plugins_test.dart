@@ -253,8 +253,9 @@ void main() {
       expect(chart.boxes.whereType<Legend>().isNotEmpty, legend);
       // The title plugin makes its block also with `display: false`.
       expect(chart.titleBlock, isNotNull);
+      // The title options are one object (Chart.js ADR 0197).
       expect(
-        jsGet(jsGet(chart.options['plugins'], 'title'), 'display'),
+        (jsGet(chart.options['plugins'], 'title')! as TitleOptions).display,
         pluginCase.scene == StressPluginScene.title,
       );
       final tooltipPlugin =

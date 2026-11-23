@@ -95,9 +95,9 @@ Chart _chart(String type, {required bool colors, ChartOptionsScope? theme}) {
   final config = ChartConfig(
     labels: const ['alpha', 'beta', 'gamma'],
     datasets: [for (var d = 0; d < 2; d++) dataset(d)],
-    title: const ChartTitle(display: true, text: ['Title']),
-    subtitle: const ChartTitle(display: true, text: ['Subtitle']),
     pluginOptions: [
+      const TitleOptions(display: true, text: ['Title']),
+      const SubtitleOptions(display: true, text: ['Subtitle']),
       const LegendOptions(
         title: LegendTitleOptions(display: true, text: ['Legend title']),
       ),

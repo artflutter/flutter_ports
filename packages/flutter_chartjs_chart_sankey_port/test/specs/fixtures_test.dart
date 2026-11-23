@@ -29,10 +29,10 @@ void main() {
           ..options = mergeExtra(ChartOptionsScope(), {
             'plugins': {
               'legend': const LegendOptions(display: false),
-              'title': {
-                'display': true,
-                'text': ['OD pairs on hexagon level'],
-              },
+              'title': const TitleOptions(
+                display: true,
+                text: ['OD pairs on hexagon level'],
+              ),
             },
           }),
       );

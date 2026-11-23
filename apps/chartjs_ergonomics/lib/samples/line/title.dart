@@ -15,7 +15,9 @@ const withTitle = ChartConfig(
       borderColor: .constant(.solid(teal)),
     ),
   ],
-  title: ChartTitle(display: true, text: ['Monthly sales']),
-  subtitle: ChartTitle(display: true, text: ['2026, all regions']),
+  pluginOptions: [
+    TitleOptions(display: true, text: ['Monthly sales']),
+    SubtitleOptions(display: true, text: ['2026, all regions']),
+  ],
 );
 // #enddocregion sample

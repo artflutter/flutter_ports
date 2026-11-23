@@ -44,17 +44,16 @@ const List<PluginOptions<Object?>> _colorsOn = [
 ChartConfig _bars(
   List<Dataset> datasets, {
   bool animated = false,
-  ChartTitle? title,
+  TitleOptions? title,
   List<PluginOff<Plugin<Object?>>>? disabledPlugins,
   List<PluginOptions<Object?>>? pluginOptions,
 }) => ChartConfig(
   labels: _labels,
   datasets: datasets,
   scales: const [LinearAxis(.y, min: 0, max: 50)],
-  title: title,
   animation: animated ? null : ChartAnimation.none,
   disabledPlugins: disabledPlugins,
-  pluginOptions: pluginOptions,
+  pluginOptions: [?title, ...?pluginOptions],
 );
 
 /// [child] at the top left of a box of 400 x 300.
@@ -427,7 +426,7 @@ void main() {
   group('the data and the options Maps', () {
     testWidgets('the options Map stays for a data change, with an imperative '
         'edit; an option change gives a new options Map', (tester) async {
-      const title = ChartTitle(display: true, text: ['T']);
+      const title = TitleOptions(display: true, text: ['T']);
       await tester.pumpWidget(
         _view(
           _bars([
@@ -455,7 +454,7 @@ void main() {
         _view(
           _bars([
             const BarDataset(data: .values([4, 5, 6])),
-          ], title: const ChartTitle(display: true, text: ['U'])),
+          ], title: const TitleOptions(display: true, text: ['U'])),
         ),
       );
       expect(chart.config.options, isNot(same(options)));
@@ -473,7 +472,7 @@ void main() {
       final data = chart.data;
 
       await tester.pumpWidget(
-        _view(_bars(datasets, title: const ChartTitle(text: ['T']))),
+        _view(_bars(datasets, title: const TitleOptions(text: ['T']))),
       );
       expect(chart.data, same(data));
 

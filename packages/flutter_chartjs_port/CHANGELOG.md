@@ -1,5 +1,14 @@
 ## Unreleased
 
+- BREAKING: the title and the subtitle options are one immutable object each, `TitleOptions` and
+  `SubtitleOptions` (Chart.js ADR 0197). `ChartTitle` and the parameters `title` and `subtitle` of `ChartConfig`
+  are gone: give `pluginOptions: [TitleOptions(display: true, text: ['Sales']), SubtitleOptions(...)]`, with each
+  Chart.js title option as a field (`weight` too, where `ChartTitle` needed `extra`). A raw config holds the
+  object in `options.plugins.title` or `options.plugins.subtitle`; a Map there stops a debug build. The
+  scriptable form of the options is one function, `scripted: (context, options) => TitleOptions(...)`, which the
+  plugin calls with the chart context once for each update. `TitleOptions.of` and `TitleOptionsScope` are gone,
+  and the fields of `TitleOptions` are nullable. `ChartConfig ==` compares the objects with `==`: a new closure
+  in `scripted` gives a chart update; give a tear-off.
 - BREAKING: the legend options are one immutable object, `LegendOptions` (Chart.js ADR 0193). `ChartLegend`
   and `ChartConfig.legend` are gone: give `pluginOptions: [LegendOptions(...)]`, with each Chart.js legend
   option as a field; `labels` and `title` are a `LegendLabelOptions` and a `LegendTitleOptions`

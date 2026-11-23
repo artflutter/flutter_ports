@@ -1094,39 +1094,6 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
   ),
 };
 
-/// The cases of the parameters of [ChartTitle] and the twin Map.
-const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
-  'display': (ChartTitle(display: true), {'display': true}),
-  'text': (
-    ChartTitle(text: ['Votes']),
-    {
-      'text': ['Votes'],
-    },
-  ),
-  'color': (ChartTitle(color: ChartPaint.solid(_blue)), {'color': _blueValue}),
-  'font': (ChartTitle(font: _font), {'font': _fontValue}),
-  'align': (ChartTitle(align: .start), {'align': ChartAlign.start}),
-  'position': (
-    ChartTitle(position: .bottom),
-    {'position': ChartPosition.bottom},
-  ),
-  'padding': (
-    ChartTitle(padding: EdgeInsets.only(top: 10, bottom: 30)),
-    {'padding': EdgeInsets.only(left: 0, top: 10, right: 0, bottom: 30)},
-  ),
-  'fullSize': (ChartTitle(fullSize: false), {'fullSize': false}),
-  'extra': (
-    ChartTitle(
-      extra: {
-        'text': ['A', 'B'],
-      },
-    ),
-    {
-      'text': ['A', 'B'],
-    },
-  ),
-};
-
 /// The cases of the parameters of [ChartInteraction] and the twin Map.
 const Map<String, (ChartInteraction, Map<String, Object?>)> _interaction = {
   'mode': (
@@ -1227,16 +1194,13 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       'plugins': {'legend': LegendOptions()},
     },
   ),
-  'title': (
-    ChartConfig(datasets: [BarDataset()], title: ChartTitle()),
+  'pluginOptions of the title and the subtitle': (
+    ChartConfig(
+      datasets: [BarDataset()],
+      pluginOptions: [TitleOptions(), SubtitleOptions()],
+    ),
     {
-      'plugins': {'title': <String, Object?>{}},
-    },
-  ),
-  'subtitle': (
-    ChartConfig(datasets: [BarDataset()], subtitle: ChartTitle()),
-    {
-      'plugins': {'subtitle': <String, Object?>{}},
+      'plugins': {'title': TitleOptions(), 'subtitle': SubtitleOptions()},
     },
   ),
   'pluginOptions': (
@@ -1300,14 +1264,14 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       maintainAspectRatio: true,
       aspectRatio: 2,
       padding: EdgeInsets.all(1),
-      title: ChartTitle(display: true),
-      subtitle: ChartTitle(display: false),
       interaction: ChartInteraction(intersect: true),
       animation: ChartAnimation.none,
       onClick: _onEvent,
       onHover: _onEvent,
       events: ['click'],
       pluginOptions: [
+        TitleOptions(display: true),
+        SubtitleOptions(display: false),
         LegendOptions(display: true),
         TooltipOptions(enabled: true),
       ],
@@ -1325,8 +1289,8 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
         'padding': EdgeInsets.only(left: 1, top: 1, right: 1, bottom: 1),
       },
       'plugins': {
-        'title': {'display': true},
-        'subtitle': {'display': false},
+        'title': TitleOptions(display: true),
+        'subtitle': SubtitleOptions(display: false),
         'legend': LegendOptions(display: true),
         'tooltip': TooltipOptions(enabled: true),
       },
@@ -2340,25 +2304,6 @@ void main() {
       });
     });
 
-    group('each parameter of ChartTitle, as the title and the subtitle', () {
-      for (final MapEntry(key: name, value: (title, twin)) in _title.entries) {
-        test(name, () {
-          expectTwin(
-            _options(
-              ChartConfig(
-                datasets: const [BarDataset()],
-                title: title,
-                subtitle: title,
-              ),
-            ),
-            {
-              'plugins': {'title': twin, 'subtitle': twin},
-            },
-          );
-        });
-      }
-    });
-
     group('TooltipOptions in pluginOptions', () {
       test('reach options.plugins.tooltip as the object itself', () {
         final tooltip = TooltipOptions(
@@ -2501,20 +2446,20 @@ void main() {
         onLeave: _onLegend,
         fullSize: false,
       );
+      const title = TitleOptions(
+        display: true,
+        text: ['T'],
+        color: ChartPaint.solid(_red),
+        font: _font,
+        align: .end,
+        position: .left,
+        padding: EdgeInsets.fromLTRB(1, 2, 3, 4),
+        fullSize: false,
+        weight: 1,
+      );
       final options = _options(
         ChartConfig(
           datasets: const [BarDataset()],
-          title: const ChartTitle(
-            display: true,
-            text: ['T'],
-            color: ChartPaint.solid(_red),
-            font: _font,
-            align: .end,
-            position: .left,
-            padding: EdgeInsets.fromLTRB(1, 2, 3, 4),
-            fullSize: false,
-            extra: {'weight': 1},
-          ),
           interaction: const ChartInteraction(
             mode: NearestInteractionMode(),
             intersect: false,
@@ -2530,30 +2475,11 @@ void main() {
             onComplete: _onAnimation,
             animateRotate: false,
           ),
-          pluginOptions: [legend, tooltip],
+          pluginOptions: [title, legend, tooltip],
         ),
       );
       expectTwin(options, {
-        'plugins': {
-          'title': {
-            'display': true,
-            'text': ['T'],
-            'color': _redValue,
-            'font': _fontValue,
-            'align': ChartAlign.end,
-            'position': ChartPosition.left,
-            'padding': const EdgeInsets.only(
-              left: 1,
-              top: 2,
-              right: 3,
-              bottom: 4,
-            ),
-            'fullSize': false,
-            'weight': 1,
-          },
-          'legend': legend,
-          'tooltip': tooltip,
-        },
+        'plugins': {'title': title, 'legend': legend, 'tooltip': tooltip},
         'interaction': {
           'mode': const NearestInteractionMode(),
           'intersect': false,
@@ -2732,26 +2658,22 @@ void main() {
           const ChartConfig(
             datasets: [BarDataset()],
             responsive: true,
-            title: ChartTitle(display: true, text: ['T']),
+            interaction: ChartInteraction(intersect: true, axis: .x),
             pluginOptions: [DecimationOptions(enabled: true)],
             extra: {
               'responsive': false,
-              'plugins': {
-                'title': {'display': false, 'padding': EdgeInsets.all(2)},
-              },
+              'interaction': {'intersect': false, 'includeInvisible': true},
               'locale': native_ui.Locale('de', 'DE'),
             },
           ),
         ),
         {
           'responsive': false,
-          'plugins': {
-            'title': {
-              'display': false,
-              'text': ['T'],
-              'padding': const EdgeInsets.all(2),
-            },
-            'decimation': const DecimationOptions(enabled: true),
+          'plugins': {'decimation': const DecimationOptions(enabled: true)},
+          'interaction': {
+            'intersect': false,
+            'axis': InteractionAxis.x,
+            'includeInvisible': true,
           },
           'locale': const native_ui.Locale('de', 'DE'),
         },

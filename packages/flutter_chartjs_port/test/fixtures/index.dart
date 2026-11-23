@@ -274,6 +274,26 @@ import 'hand/controller.polarArea/last-slice-animate.dart'
     as controller_polararea_last_slice_animate;
 import 'hand/controller.polarArea/pointLabels/overlapping.dart'
     as controller_polararea_pointlabels_overlapping;
+import 'hand/controller.polarArea/pointLabels/withTitle/bottom-centered-45.dart'
+    as controller_polararea_pointlabels_withtitle_bottom_centered_45;
+import 'hand/controller.polarArea/pointLabels/withTitle/bottom-centered.dart'
+    as controller_polararea_pointlabels_withtitle_bottom_centered;
+import 'hand/controller.polarArea/pointLabels/withTitle/left-centered-45.dart'
+    as controller_polararea_pointlabels_withtitle_left_centered_45;
+import 'hand/controller.polarArea/pointLabels/withTitle/left-centered.dart'
+    as controller_polararea_pointlabels_withtitle_left_centered;
+import 'hand/controller.polarArea/pointLabels/withTitle/right-centered-45.dart'
+    as controller_polararea_pointlabels_withtitle_right_centered_45;
+import 'hand/controller.polarArea/pointLabels/withTitle/right-centered.dart'
+    as controller_polararea_pointlabels_withtitle_right_centered;
+import 'hand/controller.polarArea/pointLabels/withTitle/top-centered-45.dart'
+    as controller_polararea_pointlabels_withtitle_top_centered_45;
+import 'hand/controller.polarArea/pointLabels/withTitle/top-centered.dart'
+    as controller_polararea_pointlabels_withtitle_top_centered;
+import 'hand/controller.polarArea/pointLabels/withTitle/top-default-45.dart'
+    as controller_polararea_pointlabels_withtitle_top_default_45;
+import 'hand/controller.polarArea/pointLabels/withTitle/top-default.dart'
+    as controller_polararea_pointlabels_withtitle_top_default;
 import 'hand/controller.polarArea/polar-area-animation-rotate.dart'
     as controller_polararea_polar_area_animation_rotate;
 import 'hand/controller.polarArea/polar-area-animation-scale.dart'
@@ -362,6 +382,8 @@ import 'hand/core.layouts/hidden-vertical-boxes.dart'
     as core_layouts_hidden_vertical_boxes;
 import 'hand/core.layouts/no-boxes-all-padding.dart'
     as core_layouts_no_boxes_all_padding;
+import 'hand/core.layouts/refit-vertical-boxes.dart'
+    as core_layouts_refit_vertical_boxes;
 import 'hand/core.layouts/scriptable.dart' as core_layouts_scriptable;
 import 'hand/core.layouts/stacked-boxes-max-index-without-clip.dart'
     as core_layouts_stacked_boxes_max_index_without_clip;
@@ -716,6 +738,7 @@ import 'hand/plugin.legend/title/top-end-end.dart'
     as plugin_legend_title_top_end_end;
 import 'hand/plugin.legend/title/top-start-start.dart'
     as plugin_legend_title_top_start_start;
+import 'hand/plugin.subtitle/basic.dart' as plugin_subtitle_basic;
 import 'hand/plugin.title/scriptable-options.dart'
     as plugin_title_scriptable_options;
 import 'hand/plugin.tooltip/box-padding.dart' as plugin_tooltip_box_padding;
@@ -1345,6 +1368,46 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_polararea_pointlabels_overlapping.fixture,
     sha256: 'd36ed140bae4',
   ),
+  'controller.polarArea/pointLabels/withTitle/bottom-centered-45.js': (
+    load: controller_polararea_pointlabels_withtitle_bottom_centered_45.fixture,
+    sha256: 'ffb8e9030dc8',
+  ),
+  'controller.polarArea/pointLabels/withTitle/bottom-centered.js': (
+    load: controller_polararea_pointlabels_withtitle_bottom_centered.fixture,
+    sha256: '2d56f9c199fe',
+  ),
+  'controller.polarArea/pointLabels/withTitle/left-centered-45.js': (
+    load: controller_polararea_pointlabels_withtitle_left_centered_45.fixture,
+    sha256: '9cddd9c0a59c',
+  ),
+  'controller.polarArea/pointLabels/withTitle/left-centered.js': (
+    load: controller_polararea_pointlabels_withtitle_left_centered.fixture,
+    sha256: 'e0c966a5dc9a',
+  ),
+  'controller.polarArea/pointLabels/withTitle/right-centered-45.js': (
+    load: controller_polararea_pointlabels_withtitle_right_centered_45.fixture,
+    sha256: 'bd96ed252d6b',
+  ),
+  'controller.polarArea/pointLabels/withTitle/right-centered.js': (
+    load: controller_polararea_pointlabels_withtitle_right_centered.fixture,
+    sha256: 'a1397cd075e3',
+  ),
+  'controller.polarArea/pointLabels/withTitle/top-centered-45.js': (
+    load: controller_polararea_pointlabels_withtitle_top_centered_45.fixture,
+    sha256: '59ffe1d24c49',
+  ),
+  'controller.polarArea/pointLabels/withTitle/top-centered.js': (
+    load: controller_polararea_pointlabels_withtitle_top_centered.fixture,
+    sha256: 'aa2aa45504c5',
+  ),
+  'controller.polarArea/pointLabels/withTitle/top-default-45.js': (
+    load: controller_polararea_pointlabels_withtitle_top_default_45.fixture,
+    sha256: '1987c504c20f',
+  ),
+  'controller.polarArea/pointLabels/withTitle/top-default.js': (
+    load: controller_polararea_pointlabels_withtitle_top_default.fixture,
+    sha256: 'dd7dcd1341e7',
+  ),
   'controller.polarArea/polar-area-animation-rotate.js': (
     load: controller_polararea_polar_area_animation_rotate.fixture,
     sha256: '118993e3038a',
@@ -1524,6 +1587,10 @@ final Map<String, HandFixture> handFixtures = {
   'core.layouts/no-boxes-all-padding.js': (
     load: core_layouts_no_boxes_all_padding.fixture,
     sha256: 'a96320f7bf65',
+  ),
+  'core.layouts/refit-vertical-boxes.js': (
+    load: core_layouts_refit_vertical_boxes.fixture,
+    sha256: '830bb6d854a7',
   ),
   'core.layouts/scriptable.js': (
     load: core_layouts_scriptable.fixture,
@@ -2302,6 +2369,10 @@ final Map<String, HandFixture> handFixtures = {
   'plugin.legend/title/top-start-start.js': (
     load: plugin_legend_title_top_start_start.fixture,
     sha256: '5f59112baca5',
+  ),
+  'plugin.subtitle/basic.js': (
+    load: plugin_subtitle_basic.fixture,
+    sha256: '6c27489e32e7',
   ),
   'plugin.title/scriptable-options.js': (
     load: plugin_title_scriptable_options.fixture,

@@ -174,6 +174,10 @@ Fonts stay `TextStyle` values: the compiled theme holds the token itself, or a n
 Emitted:
 
 - root `color` and the token keys of section 4
+- `plugins.title` and `plugins.subtitle`: one `TitleOptions` and one `SubtitleOptions` with
+  `color` and `font` (Chart.js ADR 0197), and `plugins.legend` and `plugins.tooltip`: one
+  `LegendOptions` and one `TooltipOptions` (Chart.js ADRs 0192 and 0193); a path
+  `plugins.<id>.<key>` of this file is the field `<key>` of the object
 - `plugins.colors`: one `ColorsPluginOptions` with `borderColors` and `backgroundColors`
   (Chart.js ADR 0196), from the tokens `palette` and `paletteBackgroundAlpha`: the colors at their
   alpha, and the colors at `paletteBackgroundAlpha` (0.5 by default)

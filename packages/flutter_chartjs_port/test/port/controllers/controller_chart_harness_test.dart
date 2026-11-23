@@ -80,7 +80,9 @@ ChartConfigurationScope _lineConfig() => ChartConfigLowering(
       LineDataset(label: 'two', data: .values([2, 1, 6, 2])),
     ],
     labels: ['a', 'b', 'c', 'd'],
-    title: ChartTitle(display: true, text: ['T']),
+    pluginOptions: [
+      TitleOptions(display: true, text: ['T']),
+    ],
   ),
 ).lower();
 
@@ -392,8 +394,10 @@ void main() {
         'plugins.title.display',
         false,
       ]);
+      // The title options are one object (Chart.js ADR 0197).
       expect(
-        jsGet(jsGet(jsGet(chart.options, 'plugins'), 'title'), 'display'),
+        (jsGet(jsGet(chart.options, 'plugins'), 'title')! as TitleOptions)
+            .display,
         isFalse,
       );
       expect(

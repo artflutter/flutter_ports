@@ -26,8 +26,8 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   // No axis is visible: the margin of 10 px on each side.
   padding: const EdgeInsets.all(10),
-  title: sfTitle('Land area of various cities (sq.km)'),
   pluginOptions: [
+    sfTitle('Land area of various cities (sq.km)'),
     const LegendOptions(display: false),
     sfTooltip(
       text: (item) => '${item.label.join(' ')} : ${sfValue(item)} sq.km',

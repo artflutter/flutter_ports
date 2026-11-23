@@ -13,9 +13,7 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
         ZoomChart,
         ZoomOptions,
         ZoomPluginOptions;
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ChartPosition;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The sample `Linear Scales` of `docs/samples/drag/linear.md:5-113`: a
 /// scatter chart that zooms to the rectangle of a mouse drag, and pans with
@@ -77,11 +75,14 @@ ZoomDocsSample zoomDragLinearSample(ZoomDocsLog log) {
       'scales': scales,
       'plugins': <String, Object?>{
         'zoom': zoomOptions,
-        'title': <String, Object?>{
-          'display': true,
-          'position': ChartPosition.bottom,
-          'text': () => ['Zoom: ${zoomStatus()}'],
-        },
+        // The scriptable text is the one function `scripted` (Chart.js ADR
+        // 0197).
+        'title': TitleOptions(
+          display: true,
+          position: ChartPosition.bottom,
+          scripted: (context, options) =>
+              TitleOptions(text: ['Zoom: ${zoomStatus()}']),
+        ),
       },
     },
   };

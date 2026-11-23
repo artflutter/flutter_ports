@@ -140,7 +140,10 @@ DocPageContent apexJsMigrationPage() => migrationPage(
       Text('forecastDataPoints: {count: 7}'),
       DocText('`segment: LineSegmentStyle(borderDash: ...)`'),
     ),
-    (Text('title: {text, align}'), DocText('`title: ChartTitle(...)`')),
+    (
+      Text('title: {text, align}'),
+      DocText('`TitleOptions(...)` in `pluginOptions`'),
+    ),
     (
       Text('xaxis.title, yaxis.title'),
       DocText('the `title` of each axis: `AxisTitle`'),

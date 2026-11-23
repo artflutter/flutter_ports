@@ -1,31 +1,20 @@
 // Original code, not ported from Chart.js: the resolved plugin option classes.
 
-/// The resolved option classes of the seven built-in plugins (Chart.js ADR
-/// 0182).
-///
-/// The options of a plugin hook are a context resolver of
-/// `core.plugins.js:175-188` (an `OptionView`). Each class is an immutable
-/// final class with one typed field for each key, `==` and `hashCode`. Its
-/// static method `of` reads each key of the resolved options once, at the
-/// first hook of an update, and applies the conversion of the key in the
-/// schema (`jsToNumber`, `toFont`, `canvasTextAlign`, ...). A scriptable
-/// option gives its value at that read. Each hook of the update gets the
-/// same object. A field that still holds the raw value says why.
-///
-/// The tooltip, the legend and the decimation are the exceptions (Chart.js
-/// ADRs 0192, 0193 and 0194): [TooltipOptions], [LegendOptions] and
-/// [DecimationOptions] are each one immutable `PluginOptions` object with a
-/// nullable field for each option, which the plugin service merges from the
-/// defaults to the chart, and the plugin resolves the fallbacks of upstream
-/// itself. [FillerOptions] and [ColorsPluginOptions] are such objects too
-/// (Chart.js ADR 0196).
+/// The option classes of the seven built-in plugins: each is one immutable
+/// `PluginOptions` object with a nullable field for each option, which the
+/// plugin service merges from the defaults to the chart, and the plugin
+/// resolves the fallbacks of upstream itself (Chart.js ADRs 0192, 0193, 0194,
+/// 0196 and 0197): [TooltipOptions], [LegendOptions], [DecimationOptions],
+/// [FillerOptions], [ColorsPluginOptions], and [TitleOptions] and
+/// [SubtitleOptions] with their base [TitleBoxOptions].
 ///
 /// A class takes the name of its `index.d.ts` interface (`LegendOptions`,
 /// `TitleOptions`, `TooltipOptions`, `FillerOptions`, `DecimationOptions`)
 /// or a port-only name for an inline type of `index.d.ts`
 /// (`LegendLabelOptions`, `LegendTitleOptions`, `ColorsPluginOptions` of
-/// `plugin.colors.ts:4`). The app library exports them: they are the `O` of
-/// the hooks of the built-in plugins.
+/// `plugin.colors.ts:4`, `SubtitleOptions` of the subtitle plugin). The app
+/// library exports them: they are the `O` of the hooks of the built-in
+/// plugins.
 ///
 /// This library is a pure layer.
 library;
@@ -48,93 +37,116 @@ import 'package:meta/meta.dart' show immutable;
 @pragma('wasm:prefer-inline')
 Object? optionOf(Object? options, OptionKey key) => readOption(options, key);
 
-/// The lines of the text option [value], as `renderText` draws them
-/// (`helpers.canvas.ts:457`): each item of a List, else the value itself,
-/// as a `ToString`.
-// DIVERGES(chartjs): adapt-title-text-lines, the lines of the text.
-List<String> _textLines(Object? value) {
-  if (value is List<String>) return value;
-  assert(
-    value == null || value is Undefined,
-    'A title text takes a List<String> of its lines, not $value.',
-  );
-  return const <String>[];
-}
-
-/// `TitleOptions` (`index.d.ts`): the resolved options of the title and the
-/// subtitle plugins (`plugin.title.js:145-156`, `plugin.subtitle.js:32-43`).
+/// `TitleOptions` (`index.d.ts:2579`): the options of a title box, of the
+/// title plugin ([TitleOptions]) or of the subtitle plugin
+/// ([SubtitleOptions]), one immutable object with one nullable field for
+/// each option of `plugin.title.js:145-156` and `plugin.subtitle.js:32-43`
+/// (Chart.js ADR 0197). A null field is not set.
 ///
-/// The plugin makes one object from the resolved options of each update
-/// ([TitleOptions.of]). A scriptable option gives its value at that read.
-/// The layout reads `fullSize`, `position` and `weight` through
+/// Upstream gives both plugins the one type `TitleOptions`; the port has
+/// one class for each plugin id, because the plugin service merges the
+/// objects of one plugin by their class ([merge] gives the class of the
+/// plugin). This sealed base holds the fields, [merge], `==` and
+/// `hashCode`; the two final classes give the plugin id. The `Title` box of
+/// both plugins reads a [TitleBoxOptions].
+///
+/// The plugin service merges the options of the defaults, the overrides of
+/// the chart type, the theme and the chart ([merge]), as for the options of
+/// an add-on (Chart.js ADR 0148): no resolver runs. The plugin then gives a
+/// [color] that no options set the `color` of `Chart.defaults` (the
+/// `defaultRoutes` of upstream), and merges the result of [scripted] with
+/// the chart context once for each update. The box merges [font] over
+/// `Chart.defaults.font` ([toFont]) at each read, as upstream. The layout
+/// reads `display`, `fullSize`, `position` and `weight` through
 /// [layoutOption].
-///
-/// ```dart
-/// final options = TitleOptions.of({'display': true, 'text': ['Sales']});
-/// print(options.text); // [Sales]
-/// ```
-// DIVERGES(chartjs): adapt-native-plugin-options, resolved values.
+// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
 @immutable
-final class const TitleOptions({
-  /// `align`, a [ChartAlign] (row `adapt-chart-align-enum`).
-  required final ChartAlign? align,
+sealed class const TitleBoxOptions<T extends TitleBoxOptions<T>>({
+  /// `align`: the alignment of the text along the side (row
+  /// `adapt-chart-align-enum`). The default is [ChartAlign.center].
+  final ChartAlign? align,
 
-  /// `color`: the paint of the option value, or [ChartPaint.unchanged]
-  /// without one.
-  required final ChartPaint color,
+  /// `display`: whether the chart shows the box. The default is `false`.
+  final bool? display,
 
-  /// `display`.
-  required final bool display,
+  /// `position`: the side of the chart of the box (row
+  /// `adapt-chart-position-enum`): [ChartPosition.top], [ChartPosition.left],
+  /// [ChartPosition.bottom] or [ChartPosition.right]. The default is
+  /// [ChartPosition.top].
+  final ChartPosition? position,
 
-  /// `font`: the [toFont] of the option value.
-  required final ChartTextStyle font,
+  /// `color`: the paint of the text. Null gives the `color` of
+  /// `Chart.defaults` (the `defaultRoutes` of upstream).
+  final ChartPaint? color,
 
-  /// `fullSize`: the truthiness of the option value.
-  required final bool fullSize,
+  /// `font`: the font of the text. The box merges it over
+  /// `Chart.defaults.font` ([toFont]). [merge] merges it by field.
+  final TextStyle? font,
 
-  /// `padding`.
-  required final EdgeInsets padding,
+  /// `fullSize`: whether the box takes the full width or height of the
+  /// canvas. The default is `true`.
+  final bool? fullSize,
 
-  /// `position`, a [ChartPosition] (row `adapt-chart-position-enum`).
-  required final ChartPosition? position,
+  /// `padding`: the space around the text (Chart.js ADR 0123). The box reads
+  /// the top and the bottom. Null is no space.
+  final EdgeInsets? padding,
 
-  /// `text`: its lines.
-  required final List<String> text,
+  /// `text`: the lines of the text (row `adapt-title-text-lines`), for
+  /// example `['Sales']` or `['Sales', '2026']`. The default is `['']`.
+  final List<String>? text,
 
-  /// `weight`: a number, or Dart `null` for no number.
-  required final num? weight,
-}) implements LayoutBoxOptions {
-  /// The options with the given values.
+  /// `weight`: the order of the boxes on one side of the chart. The default
+  /// is 2000 for the title and 1500 for the subtitle.
+  final double? weight,
+
+  /// The scriptable options of upstream as one function: the plugin calls it
+  /// with the chart context and the options of the update once for each
+  /// update, and merges the result over them. The result gives only the
+  /// options that change.
+  ///
+  /// ```dart
+  /// TitleOptions(
+  ///   display: true,
+  ///   scripted: (context, options) => TitleOptions(
+  ///     text: ['Chart of type ${context.chart.config.type}'],
+  ///   ),
+  /// );
+  /// ```
+  // DIVERGES(chartjs): adapt-title-scripted, one function for the options.
+  final TitleScript<T>? scripted,
+
+  /// `events`: the event types of the plugin, the option that the event
+  /// filter of the chart reads (`core.controller.js:1170`, Chart.js ADR
+  /// 0150). Null gives the `events` of the chart.
+  @override final List<String>? events,
+}) extends PluginOptions<T> implements LayoutBoxOptions {
+  /// The options of a title box.
   this;
 
-  /// The options of the resolved options [options]: one read of each key, in
-  /// the order of the keys of `index.d.ts`.
-  // A static method: a factory makes the lint ask for const Map literals of
-  // the resolved options.
-  // ignore: prefer_constructors_over_static_methods
-  static TitleOptions of(Object? options) {
-    if (options is TitleOptions) return options;
-    final weight = optionOf(options, OptionKey.weight);
-    return TitleOptions(
-      align: ChartAlign.of(optionOf(options, OptionKey.align)),
-      color: chartPaintOf(optionOf(options, OptionKey.color)),
-      display: boolOption(
-        optionOf(options, OptionKey.display),
-        OptionKey.display,
-      ),
-      font: toFont(optionOf(options, OptionKey.font)),
-      fullSize: jsTruthy(optionOf(options, OptionKey.fullSize)),
-      padding: paddingOption(optionOf(options, OptionKey.padding)),
-      position: ChartPosition.of(optionOf(options, OptionKey.position)),
-      text: _textLines(optionOf(options, OptionKey.text)),
-      weight: weight is num ? weight : null,
-    );
-  }
+  /// The constructor of the class of the plugin, for [merge].
+  _TitleFactory<T> get _create;
+
+  /// These options with each field that [over] sets. [font] merges by field,
+  /// as the resolver of upstream merges the keys of the font object.
+  @override
+  T merge(T over) => _create(
+    align: over.align ?? align,
+    display: over.display ?? display,
+    position: over.position ?? position,
+    color: over.color ?? color,
+    font: font?.merge(over.font) ?? over.font,
+    fullSize: over.fullSize ?? fullSize,
+    padding: over.padding ?? padding,
+    text: over.text ?? text,
+    weight: over.weight ?? weight,
+    scripted: over.scripted ?? scripted,
+    events: over.events ?? events,
+  );
 
   @override
   Object? layoutOption(OptionKey key) => switch (key) {
-    OptionKey.display => display,
-    OptionKey.fullSize => fullSize,
+    OptionKey.display => display ?? undefined,
+    OptionKey.fullSize => fullSize ?? undefined,
     OptionKey.position => position ?? undefined,
     OptionKey.weight => weight ?? undefined,
     _ => undefined,
@@ -143,33 +155,133 @@ final class const TitleOptions({
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TitleOptions &&
+      other is T &&
           other.align == align &&
-          other.color == color &&
           other.display == display &&
+          other.position == position &&
+          other.color == color &&
           other.font == font &&
           other.fullSize == fullSize &&
           other.padding == padding &&
-          other.position == position &&
-          _listEquals(other.text, text) &&
-          other.weight == weight;
+          _nullableListEquals(other.text, text) &&
+          other.weight == weight &&
+          other.scripted == scripted &&
+          _nullableListEquals(other.events, events);
 
   @override
   int get hashCode => Object.hash(
+    runtimeType,
     align,
-    color,
     display,
+    position,
+    color,
     font,
     fullSize,
     padding,
-    position,
-    Object.hashAll(text),
+    _listHash(text),
     weight,
+    scripted,
+    _listHash(events),
   );
 
   @override
   String toString() =>
-      'TitleOptions(display: $display, text: $text, position: $position)';
+      'TitleBoxOptions($pluginId, display: $display, text: $text, '
+      'position: $position)';
+}
+
+/// The constructor of a class of [TitleBoxOptions].
+typedef _TitleFactory<T> = T Function({
+  ChartAlign? align,
+  bool? display,
+  ChartPosition? position,
+  ChartPaint? color,
+  TextStyle? font,
+  bool? fullSize,
+  EdgeInsets? padding,
+  List<String>? text,
+  double? weight,
+  TitleScript<T>? scripted,
+  List<String>? events,
+});
+
+/// [TitleBoxOptions.scripted]: the options that change for the chart
+/// context [context], over the options [options] of the update. Dart `null`
+/// changes nothing.
+// DIVERGES(chartjs): adapt-title-scripted, one function for the options.
+typedef TitleScript<T> = T? Function(ScriptableChartContext context, T options);
+
+/// The options of the title plugin, `options.plugins.title`
+/// (`plugin.title.js:145-156`, `docs/configuration/title.md`): a
+/// [TitleBoxOptions] with the plugin id `title` (Chart.js ADR 0197).
+///
+/// An app gives the options in `ChartConfig.pluginOptions`, or in
+/// `options.plugins.title` of a raw config. A Map there stops a debug
+/// build.
+///
+/// ```dart
+/// ChartConfig(
+///   datasets: [LineDataset(data: .values([3, 5, 2]))],
+///   pluginOptions: const [
+///     TitleOptions(display: true, text: ['Sales']),
+///     SubtitleOptions(display: true, text: ['2026']),
+///   ],
+/// );
+/// ```
+// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+final class const TitleOptions({
+  super.align,
+  super.display,
+  super.position,
+  super.color,
+  super.font,
+  super.fullSize,
+  super.padding,
+  super.text,
+  super.weight,
+  super.scripted,
+  super.events,
+}) extends TitleBoxOptions<TitleOptions> {
+  /// The title options.
+  this;
+
+  @override
+  String get pluginId => 'title';
+
+  @override
+  _TitleFactory<TitleOptions> get _create => TitleOptions.new;
+}
+
+/// The options of the subtitle plugin, `options.plugins.subtitle`
+/// (`plugin.subtitle.js:32-43`, `docs/configuration/subtitle.md`): a
+/// [TitleBoxOptions] with the plugin id `subtitle` (Chart.js ADR 0197). The
+/// subtitle has the options of the title (`index.d.ts:3034`).
+///
+/// ```dart
+/// const SubtitleOptions(display: true, text: ['2026']);
+/// ```
+// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+final class const SubtitleOptions({
+  super.align,
+  super.display,
+  super.position,
+  super.color,
+  super.font,
+  super.fullSize,
+  super.padding,
+  super.text,
+  super.weight,
+  super.scripted,
+  super.events,
+}) extends TitleBoxOptions<SubtitleOptions> {
+  /// The subtitle options.
+  this;
+
+  @override
+  String get pluginId => 'subtitle';
+
+  @override
+  _TitleFactory<SubtitleOptions> get _create => SubtitleOptions.new;
 }
 
 /// Whether the Lists [a] and [b] have equal items in the same order.

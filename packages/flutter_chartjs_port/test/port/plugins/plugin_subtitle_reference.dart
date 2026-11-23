@@ -6,7 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 7 cases, 14 widths.
 
-import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin;
+import 'dart:ui' show Color, FontStyle, FontWeight, StrokeCap, StrokeJoin;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs_core.dart';
@@ -53,10 +53,10 @@ typedef PluginSubtitleReferenceWidth = ({
 });
 
 /// The cases.
-const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
+final List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
   (
     name: 'alone',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -79,16 +79,16 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'decimation': false,
           'filler': false,
           'legend': false,
-          'subtitle': <String, Object?>{
-            'display': true,
-            'text': <String>['Chart subtitle'],
-          },
+          'subtitle': SubtitleOptions(
+            display: true,
+            text: <String>['Chart subtitle'],
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -1164,7 +1164,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
   ),
   (
     name: 'with a title',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -1187,20 +1187,17 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'decimation': false,
           'filler': false,
           'legend': false,
-          'subtitle': <String, Object?>{
-            'display': true,
-            'text': <String>['Chart subtitle'],
-          },
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Chart title'],
-          },
+          'subtitle': SubtitleOptions(
+            display: true,
+            text: <String>['Chart subtitle'],
+          ),
+          'title': TitleOptions(display: true, text: <String>['Chart title']),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 48.8, 496.9970703125, 483.6],
         'scales': <String, Object?>{
@@ -2834,7 +2831,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
   ),
   (
     name: 'position left',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -2857,18 +2854,18 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'decimation': false,
           'filler': false,
           'legend': false,
-          'subtitle': <String, Object?>{
-            'display': true,
-            'text': <String>['Left subtitle'],
-            'position': ChartPosition.left,
-            'align': ChartAlign.start,
-          },
+          'subtitle': SubtitleOptions(
+            display: true,
+            text: <String>['Left subtitle'],
+            position: ChartPosition.left,
+            align: ChartAlign.start,
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           41.74765625,
@@ -3944,7 +3941,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
   ),
   (
     name: 'display false (the default)',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -3971,8 +3968,8 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -6331,10 +6328,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'do': <Object?>[
             'setOption',
             'plugins.subtitle',
-            <String, Object?>{
-              'display': true,
-              'text': <String>['Back'],
-            },
+            SubtitleOptions(display: true, text: <String>['Back']),
           ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
@@ -7424,7 +7418,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
   ),
   (
     name: 'padding',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -7447,24 +7441,24 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'decimation': false,
           'filler': false,
           'legend': false,
-          'subtitle': <String, Object?>{
-            'display': true,
-            'text': <String>['Padded'],
-            'position': ChartPosition.bottom,
-            'padding': EdgeInsets.fromLTRB(0, 6, 0, 12),
-          },
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Title'],
-            'position': ChartPosition.bottom,
-            'padding': EdgeInsets.all(4),
-          },
+          'subtitle': SubtitleOptions(
+            display: true,
+            text: <String>['Padded'],
+            position: ChartPosition.bottom,
+            padding: EdgeInsets.fromLTRB(0, 6, 0, 12),
+          ),
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Title'],
+            position: ChartPosition.bottom,
+            padding: EdgeInsets.all(4),
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 496.9970703125, 428.8],
         'scales': <String, Object?>{
@@ -8521,7 +8515,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
   ),
   (
     name: 'a text array with font, color and align',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -8544,30 +8538,30 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'decimation': false,
           'filler': false,
           'legend': false,
-          'subtitle': <String, Object?>{
-            'display': true,
-            'text': <String>['Line one', 'Line two'],
-            'align': ChartAlign.end,
-            'color': 'rgb(0, 128, 0)',
-            'font': ChartTextStyle(
+          'subtitle': SubtitleOptions(
+            display: true,
+            text: <String>['Line one', 'Line two'],
+            align: ChartAlign.end,
+            color: ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+            font: ChartTextStyle(
               fontFamily: 'Arial',
               fontFamilyFallback: [],
               fontSize: 14,
               fontStyle: FontStyle.italic,
               height: 1.5,
             ),
-          },
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Title'],
-            'align': ChartAlign.start,
-          },
+          ),
+          'title': TitleOptions(
+            display: true,
+            text: <String>['Title'],
+            align: ChartAlign.start,
+          ),
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 76.4, 496.9970703125, 483.6],
         'scales': <String, Object?>{
@@ -9635,7 +9629,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
   ),
   (
     name: 'full: subtitle, title and legend',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -9654,19 +9648,16 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'subtitle': <String, Object?>{
-            'display': true,
-            'text': <String>['Chart subtitle'],
-          },
-          'title': <String, Object?>{
-            'display': true,
-            'text': <String>['Chart title'],
-          },
+          'subtitle': SubtitleOptions(
+            display: true,
+            text: <String>['Chart subtitle'],
+          ),
+          'title': TitleOptions(display: true, text: <String>['Chart title']),
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,

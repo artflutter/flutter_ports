@@ -499,10 +499,11 @@ void main() {
                   display: true,
                   position: ChartPosition.left,
                 ),
-                'title': <String, Object?>{
-                  'display': true,
-                  'position': ChartPosition.bottom,
-                },
+                // The title options are one object (Chart.js ADR 0197).
+                'title': const TitleOptions(
+                  display: true,
+                  position: ChartPosition.bottom,
+                ),
               },
             }),
           <String, Object?>{

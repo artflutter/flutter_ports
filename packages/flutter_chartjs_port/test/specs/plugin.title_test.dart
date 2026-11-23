@@ -9,12 +9,11 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/plugin_options_plain.dart';
 
 // `Chart` is the class of core.controller.dart, with the static members
 // `Chart.registry` and `Chart.defaults`. `Chart.helpers.clone` is `clone` of
@@ -44,20 +43,28 @@ JsClass _titleClass() => Title.jsClass;
 Title _newTitle(AnyObject config) =>
     jsConstruct(_titleClass(), [config]) as Title;
 
-/// `Chart.defaults.plugins.title`.
-TitleOptionsScope _titleDefaults() =>
+/// `Chart.defaults.plugins.title`: one [TitleOptions] (Chart.js ADR 0197).
+TitleOptions _titleDefaults() =>
     (Chart.defaults.pluginsCell!.raw! as PluginOptionsByTypeScope)
             .titleCell!
             .raw!
-        as TitleOptionsScope;
+        as TitleOptions;
 
-/// `Chart.helpers.clone(Chart.defaults.plugins.title)`.
-TitleOptionsScope _cloneTitleDefaults() =>
-    clone(_titleDefaults())! as TitleOptionsScope;
+/// `Chart.defaults.color`.
+ChartPaint _defaultColor() => Chart.defaults.colorCell!.raw! as ChartPaint;
 
-/// `chart.options.plugins.title`, the option resolver of the title.
-JsObjectFace _titleOptions(Chart chart) =>
-    jsGet(jsGet(chart.options, 'plugins'), 'title')! as JsObjectFace;
+/// `Chart.helpers.clone(Chart.defaults.plugins.title)`: the clone reads the
+/// `color` route of plugin.title.js:158-160, so it holds
+/// `Chart.defaults.color`.
+TitleOptions _cloneTitleDefaults() =>
+    _titleDefaults().merge(TitleOptions(color: _defaultColor()));
+
+/// `chart.options.plugins.title.<key> = value` for each field of [over]: the
+/// options of the chart with [over] merged over them (Chart.js ADR 0197).
+void _writeTitleOptions(Chart chart, TitleOptions over) {
+  final plugins = _pluginOptions(chart);
+  plugins['title'] = (plugins['title']! as TitleOptions).merge(over);
+}
 
 /// `chart.options.plugins`, the option resolver of the plugins.
 JsObjectFace _pluginOptions(Chart chart) =>
@@ -106,44 +113,33 @@ void main() {
     group('auto', fixture.specs('plugin.title'));
 
     test('Should have the correct default config', () {
-      final defaults = _titleDefaults();
-      // `toEqual`: the own keys of the object and the value of each key.
+      // `toEqual`: the value of each key. The `color` of upstream is the
+      // route to `Chart.defaults.color` (plugin.title.js:158-160): the
+      // plugin gives that color when the options set none (Chart.js ADR
+      // 0197), and the clone of the defaults holds it.
       expect(
-        defaults.ownKeys,
-        unorderedEquals(<Object>[
-          OptionKey.align,
-          OptionKey.color,
-          OptionKey.display,
-          OptionKey.position,
-          OptionKey.fullSize,
-          OptionKey.weight,
-          OptionKey.font,
-          OptionKey.padding,
-          OptionKey.text,
-        ]),
+        _cloneTitleDefaults(),
+        TitleOptions(
+          align: ChartAlign.center,
+          color: _defaultColor(),
+          display: false,
+          position: ChartPosition.top,
+          fullSize: true,
+          weight: 2000,
+          font: const ChartTextStyle(fontWeight: native_ui.FontWeight.bold),
+          padding: const EdgeInsets.all(10),
+          text: const [''],
+        ),
       );
-      expect(defaults.alignCell?.raw, ChartAlign.center);
-      // `color` routes to `Chart.defaults.color` (plugin.title.js:158-160).
-      expect(
-        defaults.lookup(OptionKey.color)?.raw,
-        Chart.defaults.colorCell?.raw,
-      );
-      expect(defaults.displayCell?.raw, false);
-      expect(defaults.positionCell?.raw, ChartPosition.top);
-      expect(defaults.fullSizeCell?.raw, true);
-      expect(defaults.weightCell?.raw, 2000);
-      expect(
-        defaults.fontCell?.raw,
-        const ChartTextStyle(fontWeight: native_ui.FontWeight.bold),
-      );
-      expect(defaults.paddingCell?.raw, const EdgeInsets.all(10));
-      expect(defaults.textCell?.raw, ['']);
+      expect(_titleDefaults().color, isNull);
     });
 
     test('should update correctly', () {
       final chart = <String, Object?>{'options': clone(Chart.defaults)};
 
-      final options = _cloneTitleDefaults()..text = ['My title'];
+      final options = _cloneTitleDefaults().merge(
+        const TitleOptions(text: ['My title']),
+      );
 
       final title = _newTitle(<String, Object?>{
         'chart': chart,
@@ -154,9 +150,8 @@ void main() {
       expect(title.height, 0);
 
       // Now we have a height since we display
-      options.display = true;
       title
-        ..options = TitleOptions.of(options)
+        ..options = options.merge(const TitleOptions(display: true))
         ..update(400, 200);
 
       expect(title.width, 400);
@@ -166,9 +161,9 @@ void main() {
     test('should update correctly when vertical', () {
       final chart = <String, Object?>{'options': clone(Chart.defaults)};
 
-      final options = _cloneTitleDefaults()
-        ..text = ['My title']
-        ..position = ChartPosition.left;
+      final options = _cloneTitleDefaults().merge(
+        const TitleOptions(text: ['My title'], position: ChartPosition.left),
+      );
 
       final title = _newTitle(<String, Object?>{
         'chart': chart,
@@ -179,9 +174,8 @@ void main() {
       expect(title.height, 0);
 
       // Now we have a height since we display
-      options.display = true;
       title
-        ..options = TitleOptions.of(options)
+        ..options = options.merge(const TitleOptions(display: true))
         ..update(200, 400);
 
       expect(title.width, 34.4);
@@ -193,12 +187,14 @@ void main() {
       () {
         final chart = <String, Object?>{'options': clone(Chart.defaults)};
 
-        final options = _cloneTitleDefaults()
-          ..text = <String>['line1', 'line2']
-          ..position = ChartPosition.left
-          ..display = true;
-        options.font = (options.fontCell!.raw! as TextStyle).merge(
-          const ChartTextStyle(height: 1.5),
+        // `options.font.lineHeight = 1.5`: the font merges by field.
+        final options = _cloneTitleDefaults().merge(
+          const TitleOptions(
+            text: <String>['line1', 'line2'],
+            position: ChartPosition.left,
+            display: true,
+            font: ChartTextStyle(height: 1.5),
+          ),
         );
 
         final title = _newTitle(<String, Object?>{
@@ -215,7 +211,9 @@ void main() {
       final chart = <String, Object?>{'options': clone(Chart.defaults)};
       final context = createMockContext();
 
-      final options = _cloneTitleDefaults()..text = ['My title'];
+      final options = _cloneTitleDefaults().merge(
+        const TitleOptions(text: ['My title']),
+      );
 
       final title =
           _newTitle(<String, Object?>{
@@ -229,9 +227,8 @@ void main() {
       expect(context.getCalls(), equals(<Object?>[]));
 
       // Now we have a height since we display
-      options.display = true;
       title
-        ..options = TitleOptions.of(options)
+        ..options = options.merge(const TitleOptions(display: true))
         ..update(400, 200)
         ..top = 50
         ..left = 100;
@@ -247,9 +244,9 @@ void main() {
       final chart = <String, Object?>{'options': clone(Chart.defaults)};
       final context = createMockContext();
 
-      final options = _cloneTitleDefaults()
-        ..text = ['My title']
-        ..position = ChartPosition.left;
+      final options = _cloneTitleDefaults().merge(
+        const TitleOptions(text: ['My title'], position: ChartPosition.left),
+      );
 
       final title =
           _newTitle(<String, Object?>{
@@ -263,9 +260,9 @@ void main() {
       expect(context.getCalls(), equals(<Object?>[]));
 
       // Now we have a height since we display
-      options.display = true;
+      final displayed = options.merge(const TitleOptions(display: true));
       title
-        ..options = TitleOptions.of(options)
+        ..options = displayed
         ..update(200, 400)
         ..top = 50
         ..left = 100;
@@ -280,8 +277,9 @@ void main() {
       );
 
       // Rotation is other way on right side
-      options.position = ChartPosition.right;
-      title.options = TitleOptions.of(options);
+      title.options = displayed.merge(
+        const TitleOptions(position: ChartPosition.right),
+      );
 
       // Reset call tracker
       context.resetCalls();
@@ -311,13 +309,13 @@ void main() {
                 LineDataset(data: .values([10, 20, 30, 100])),
               ],
               labels: ['A', 'B', 'C', 'D'],
-              title: ChartTitle(display: true),
+              pluginOptions: [TitleOptions(display: true)],
             ),
           ).lower(),
         );
         expect((chart.titleBlock! as Title).options!.display, true);
 
-        _titleOptions(chart)['display'] = false;
+        _writeTitleOptions(chart, const TitleOptions(display: false));
         chart.update();
         expect((chart.titleBlock! as Title).options!.display, false);
       });
@@ -328,11 +326,13 @@ void main() {
           ChartConfigLowering(
             const ChartConfig(
               datasets: [LineDataset()],
-              title: ChartTitle(
-                fullSize: true,
-                position: ChartPosition.top,
-                extra: {'weight': 150},
-              ),
+              pluginOptions: [
+                TitleOptions(
+                  fullSize: true,
+                  position: ChartPosition.top,
+                  weight: 150,
+                ),
+              ],
             ),
           ).lower(),
         );
@@ -341,10 +341,14 @@ void main() {
         expect(chart.titleBlock!.position, ChartPosition.top);
         expect(chart.titleBlock!.weight, 150);
 
-        _titleOptions(chart)
-          ..['fullSize'] = false
-          ..['position'] = ChartPosition.left
-          ..['weight'] = 42;
+        _writeTitleOptions(
+          chart,
+          const TitleOptions(
+            fullSize: false,
+            position: ChartPosition.left,
+            weight: 42,
+          ),
+        );
         chart.update();
 
         expect(chart.titleBlock!.fullSize, false);
@@ -391,18 +395,14 @@ void main() {
           );
           expect(chart.titleBlock, isNull);
 
-          _pluginOptions(chart)['title'] = <String, Object?>{};
+          // `{}`: the title options with no field (Chart.js ADR 0197).
+          _pluginOptions(chart)['title'] = const TitleOptions();
           chart.update();
           expect(chart.titleBlock, isNotNull);
-          // `toEqualOptions` reads the own keys of the defaults: the box has
-          // the resolved `TitleOptions` (Chart.js ADR 0182), and `color` is a
-          // route of the defaults, not an own key.
-          final expected = TitleOptions.of(_titleDefaults());
-          expect(
-            plainTitleOptions((chart.titleBlock! as Title).options)!
-              ..remove('color'),
-            plainTitleOptions(expected)!..remove('color'),
-          );
+          // `toEqualOptions` reads the own keys of the defaults, with the
+          // `color` of the route: the box keeps the options with the color
+          // of `Chart.defaults` (Chart.js ADR 0197).
+          expect((chart.titleBlock! as Title).options, _cloneTitleDefaults());
         },
       );
     });

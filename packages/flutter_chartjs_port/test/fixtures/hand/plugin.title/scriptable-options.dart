@@ -36,11 +36,15 @@ Map<String, Object?> fixture() {
         },
         'plugins': <String, Object?>{
           'legend': false,
-          'title': <String, Object?>{
-            'display': true,
+          // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+          'title': TitleOptions(
+            display: true,
+            // DIVERGES(chartjs): adapt-title-scripted, the scriptable text in
+            // the one function `scripted`.
             // DIVERGES(chartjs): adapt-title-text-lines, the lines of the text.
-            'text': () => ['Title Text'],
-          },
+            scripted: (context, options) =>
+                const TitleOptions(text: ['Title Text']),
+          ),
           'filler': false,
           'tooltip': false,
         },

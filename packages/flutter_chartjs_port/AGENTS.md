@@ -573,19 +573,25 @@ repository.
     (Chart.js ADR 0181): `FillerPlugin`, `DecimationPlugin` and `ColorsPlugin` extend
     `Plugin<FillerOptions>`, `Plugin<DecimationOptions>` and `Plugin<ColorsPluginOptions>`.
     `LegendPlugin` extends `Plugin<LegendOptions>`, `TitlePlugin` and `SubtitlePlugin` extend
-    `Plugin<TitleOptions>`, and `TooltipPlugin` extends `Plugin<TooltipOptions>`.
+    `Plugin<TitleOptions>` and `Plugin<SubtitleOptions>`, and `TooltipPlugin` extends
+    `Plugin<TooltipOptions>`.
     `registry.getPlugin<T>()` finds a registered plugin by its class, with no id; a test plugin
     that a test finds this way has a private class. The
     key `_element` of upstream has no field (the tests read `Legend.jsClass`, `Title.jsClass` and
     `Tooltip.jsClass`), and the decimation plugin has no `destroy`. The options of each built-in
     plugin are an immutable final class of the port-only pure `plugin_options.dart` (row
-    `adapt-native-plugin-options`). The title class holds
-    resolved values (Chart.js ADR 0182): `TitleOptions.of`
-    and the other `of` methods read each key once, at the first hook of an update, and each hook of
-    the update gets the same object. A field has the type of its key in the schema: a number, a
-    `ChartTextStyle`, a `TextAlign`, an enum or the lines of a text. `Title.options` is a
-    `TitleOptions?` and `Legend.options` a `LegendOptions`; the layout reads their layout keys
-    through `LayoutBoxOptions`. `LegendOptions` is one immutable `PluginOptions` with a nullable
+    `adapt-native-plugin-options`), one immutable `PluginOptions` with a nullable field for each
+    option. `TitleOptions` and `SubtitleOptions` are the two final classes of the sealed
+    `TitleBoxOptions<T>`, which holds the fields, `merge`, `==` and `hashCode` once (Chart.js ADR
+    0197): an app gives them in `ChartConfig.pluginOptions` or in `options.plugins.title` and
+    `options.plugins.subtitle` of a raw config (a Map there stops a debug build), and the theme
+    writes one of each. The plugin defaults are one `const` object each, with no `defaultRoutes`
+    and no `descriptors`. The `beforeUpdate` hook gives the box the merged object with
+    `Chart.defaults.color` where no options set a `color` (`resolvedTitleOptions` of
+    `plugin.title.dart`, also for the subtitle), and calls `scripted` once for each update (row
+    `adapt-title-scripted`); the box merges the font over `Chart.defaults.font` with `toFont` at each
+    read. `Title.options` is a `TitleBoxOptions<Object?>?` and `Legend.options` a `LegendOptions`;
+    the layout reads their layout keys through `LayoutBoxOptions`. `LegendOptions` is one immutable `PluginOptions` with a nullable
     field for each legend option, `merge`, `==` and `hashCode`, and the nested
     `LegendLabelOptions` and `LegendTitleOptions` with their own `merge` (Chart.js ADR 0193): an
     app gives it in `ChartConfig.pluginOptions` or in `options.plugins.legend` of a raw config (a
@@ -1063,12 +1069,11 @@ repository.
     of `lower.dart`: `x`, `y`, `r`, then `x1`, `y1`), a dataset names its axis by the axis object
     (`yAxis`), and `chart.scaleOf(axis)` gives the scale (Chart.js ADR 0191); an axis takes its `border` as an `AxisBorder` (a
     `RadialAxisBorder` for `RadialLinearAxis`) of `lib/chartjs.dart` (Chart.js ADR 0141).
-    `groups.dart` has `ChartTitle`, `ChartInteraction` and `ChartAnimation`. `ChartConfig` also
-    has `parsing` and `devicePixelRatio` (Chart.js ADR 0194). The legend, the tooltip, the
-    decimation, the filler and the colors plugin have no group: a config gives its
-    `LegendOptions`, `TooltipOptions`, `DecimationOptions`, `FillerOptions` and
-    `ColorsPluginOptions` in `ChartConfig.pluginOptions` (Chart.js ADRs 0192, 0193, 0194 and
-    0196), and
+    `groups.dart` has `ChartInteraction` and `ChartAnimation`. `ChartConfig` also
+    has `parsing` and `devicePixelRatio` (Chart.js ADR 0194). The seven built-in plugins have no
+    group: a config gives its `TitleOptions`, `SubtitleOptions`, `LegendOptions`,
+    `TooltipOptions`, `DecimationOptions`, `FillerOptions` and `ColorsPluginOptions` in
+    `ChartConfig.pluginOptions` (Chart.js ADRs 0192, 0193, 0194, 0196 and 0197), and
     `==` compares each object with its `==`, so a new closure in it is a new
     value. `elements.dart` has `ChartElements` and the 4 element
     styles. `callbacks.dart` has `ChartScript`, a function of the typed dataset or data context
@@ -1179,15 +1184,16 @@ repository.
     0180) are pure helper libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not a
     test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`), `handFixtures`
-    (421 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
+    (432 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
     (39 skips, all `diverges: adapt-date-moment-format`). `hand/<path>.dart` is the hand port of the
     impure config `test/fixtures/<path>.js` of the pin, with the function `fixture()`. A pure data
     config whose config holds a keyword of an option with a class value (the 22 data fixtures with
     `cubicInterpolationMode`, the 25 with `pointStyle`, the 142 with a `fill` (Chart.js ADR 0140;
     the other 18 are moment skips), the 19 with a scale `border` (Chart.js ADR 0141), the 8 with
     a length, the 35 with an axis letter, the 1 with a constant `segment` style, the 44 with
-    legend options, one `LegendOptions` (Chart.js ADR 0193), and the 10 with colors options, one
-    `ColorsPluginOptions` (Chart.js ADR 0196)) also has a hand port, of `<path>.js` or
+    legend options, one `LegendOptions` (Chart.js ADR 0193), the 10 with colors options, one
+    `ColorsPluginOptions` (Chart.js ADR 0196), and the 12 with title or subtitle options, one
+    `TitleOptions` or `SubtitleOptions` (Chart.js ADR 0197)) also has a hand port, of `<path>.js` or
     `<path>.json`, with the
     config of `fixtures.json` (Chart.js ADR 0115): the registry test lists the option keys, and
     O1 runs such a fixture from its hand port only.
