@@ -185,4 +185,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0189](0189-open-dataset-class.md) An open dataset class: accepted, supersedes 0052.
 - [0190](0190-chart-type-from-first-dataset.md) The chart type comes from the first dataset: accepted, supersedes 0052.
 - [0191](0191-typed-axes.md) Typed axes with no ids: accepted, supersedes 0052.
+- [0192](0192-tooltip-options-object.md) The tooltip options are one object: proposed, supersedes 0052, 0054, 0124, 0125, 0148, 0182.
 <!-- adr-index:end -->
