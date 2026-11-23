@@ -1,6 +1,6 @@
 # Chart.js ADR 0193: The legend options are one object
 
-- Status: proposed
+- Status: accepted (2026-11-23): its code is on main, and all the gates of AGENTS.md pass.
 - Date: 2026-11-23
 - Supersedes: of [Chart.js ADR 0182](0182-resolved-plugin-option-classes.md), item 1 for `LegendOptions`,
   `LegendLabelOptions` and `LegendTitleOptions`, item 3 for `Legend.options`, item 5 for `LegendOptions.view`, and

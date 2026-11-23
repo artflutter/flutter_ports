@@ -1,6 +1,7 @@
 # Chart.js ADR 0099: A hidden legend waits with native indexed colors
 
 - Status: accepted
+- Superseded in part by: [Chart.js ADR 0193](0193-legend-options-object.md) (2026-11-23), for the guard of the native scopes behind the legend and label resolvers
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0078, 0092, 0093; `differences.md` row `adapt-hidden-legend-items`.
 - Measurements: performance.md §65.

@@ -1,6 +1,7 @@
 # Chart.js ADR 0092: The items of a hidden legend wait for a read
 
 - Status: accepted
+- Superseded in part by: [Chart.js ADR 0193](0193-legend-options-object.md) (2026-11-23), for the reads of the guards through the resolvers, the descriptor guard and the label color read at the mark
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0065, 0074 and 0087; `differences.md` row `adapt-hidden-legend-items`.
 - Measurements: performance.md §65.

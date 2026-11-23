@@ -1,7 +1,7 @@
 # Chart.js ADR 0182: Resolved option classes for the built-in plugins
 
 - Status: accepted (2026-11-19): the option classes are on main, and the tests and the port checks pass.
-- Superseded in part by: [Chart.js ADR 0192](0192-tooltip-options-object.md) (2026-11-23), for the tooltip parts of items 1, 4, 5 and 7
+- Superseded in part by: [Chart.js ADR 0192](0192-tooltip-options-object.md) (2026-11-23), for the tooltip parts of items 1, 4, 5 and 7; [Chart.js ADR 0193](0193-legend-options-object.md) (2026-11-23), for the legend parts of items 1, 3, 5 and 7
 - Date: 2026-11-19
 - Supersedes: of [Chart.js ADR 0150](0150-typed-plugin-options.md), item 2 (the facades of the built-in plugins) and item 3 (the getters of the facades).
 - Related: [Chart.js ADR 0181](0181-plugin-classes-and-typed-get-plugin.md), [Chart.js ADR 0148](0148-plugin-typing.md)
