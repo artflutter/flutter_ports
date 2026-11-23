@@ -63,6 +63,7 @@ BasePlatform
 BasicPlatform
 BezierCurveToCommand
 BorderColorAnimation
+BorderSkip
 BorderSkipped
 BorderSkippedEdge
 BorderWidthAnimation
@@ -615,6 +616,7 @@ bezierCurveTo
 bezierInterpolation
 blendModeOf
 boolOption
+borderSkippedOf
 boundSegment
 boundSegments
 boundaryPointSearchEnabled
@@ -1119,6 +1121,7 @@ BasePlatform
 BasicPlatform
 BezierCurveToCommand
 BorderColorAnimation
+BorderSkip
 BorderSkipped
 BorderSkippedEdge
 BorderWidthAnimation
@@ -1671,6 +1674,7 @@ bezierCurveTo
 bezierInterpolation
 blendModeOf
 boolOption
+borderSkippedOf
 boundSegment
 boundSegments
 boundaryPointSearchEnabled

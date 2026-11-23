@@ -585,6 +585,23 @@ AnimationEventHandler animationTrampoline(
 double? millisecondsOf(Duration? duration) =>
     duration == null ? null : duration.inMicroseconds / 1000;
 
+/// The option value of [skip], the value of `borderSkipped` (row
+/// `adapt-border-skipped-enum`): `false` for [BorderSkip.none], `true` for
+/// [BorderSkip.all] and the [BorderSkippedEdge] of the same name for an
+/// edge. Dart `null` for `null`.
+Object? borderSkippedOf(BorderSkip? skip) => switch (skip) {
+  null => null,
+  BorderSkip.none => false,
+  BorderSkip.all => true,
+  BorderSkip.start => BorderSkippedEdge.start,
+  BorderSkip.end => BorderSkippedEdge.end,
+  BorderSkip.middle => BorderSkippedEdge.middle,
+  BorderSkip.bottom => BorderSkippedEdge.bottom,
+  BorderSkip.left => BorderSkippedEdge.left,
+  BorderSkip.top => BorderSkippedEdge.top,
+  BorderSkip.right => BorderSkippedEdge.right,
+};
+
 /// A new List of the numbers of [list], or Dart `null` for `null`.
 List<double>? numberList(List<double>? list) =>
     list == null ? null : List<double>.of(list);

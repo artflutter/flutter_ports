@@ -25,7 +25,7 @@ final ChartConfig _config = ChartConfig(
       barPercentage: 1,
       // borderRadius: BorderRadius.all(Radius.circular(10)): all corners.
       borderRadius: 10,
-      extra: {'borderSkipped': false},
+      borderSkipped: BorderSkip.none,
     ),
   ],
   maintainAspectRatio: false,

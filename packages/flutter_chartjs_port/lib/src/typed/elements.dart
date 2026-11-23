@@ -339,6 +339,48 @@ final class const LineElementStyle({
   }
 }
 
+/// The edges of a bar that draw no border: the option `borderSkipped` of
+/// [BarDataset.borderSkipped] and [BarElementStyle.borderSkipped]
+/// (`docs/charts/bar.md`, "borderSkipped").
+///
+/// The option of Chart.js holds `false`, `true` or an edge keyword. [none]
+/// and [all] are the two booleans, and each other value is the edge of the
+/// same name ([BorderSkippedEdge]).
+///
+/// ```dart
+/// BarDataset(data: values, borderWidth: 2, borderSkipped: BorderSkip.none),
+/// ```
+enum BorderSkip() {
+  /// `false`: each edge draws its border.
+  none,
+
+  /// `true`: no edge draws a border.
+  all,
+
+  /// `'start'`: the edge at the base of the bar draws no border, the
+  /// default.
+  start,
+
+  /// `'end'`: the edge at the value of the bar draws no border.
+  end,
+
+  /// `'middle'`: the inner edges of a bar in a stack draw no border. A bar
+  /// on an axis that does not stack draws each border.
+  middle,
+
+  /// `'bottom'`: the bottom edge draws no border.
+  bottom,
+
+  /// `'left'`: the left edge draws no border.
+  left,
+
+  /// `'top'`: the top edge draws no border.
+  top,
+
+  /// `'right'`: the right edge draws no border.
+  right,
+}
+
 /// The options of the bars of a chart: `elements.bar`
 /// (`docs/configuration/elements.md`, "Bar Configuration").
 ///
@@ -359,8 +401,12 @@ final class const BarElementStyle({
   /// number. The object form goes through [extra].
   final double? borderRadius,
 
+  /// The edges of a bar that draw no border: `borderSkipped`, a
+  /// [BorderSkip]. The default is [BorderSkip.start].
+  final BorderSkip? borderSkipped,
+
   /// The Chart.js bar options that have no parameter, for example
-  /// `{'borderSkipped': false}`. The rules of [ChartElements.extra] apply.
+  /// `{'inflateAmount': 0}`. The rules of [ChartElements.extra] apply.
   final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The bar options.
@@ -373,12 +419,14 @@ final class const BarElementStyle({
     ChartPaint? borderColor,
     double? borderWidth,
     double? borderRadius,
+    BorderSkip? borderSkipped,
     Map<String, Object?>? extra,
   }) => BarElementStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
     borderWidth: borderWidth ?? this.borderWidth,
     borderRadius: borderRadius ?? this.borderRadius,
+    borderSkipped: borderSkipped ?? this.borderSkipped,
     extra: extra ?? this.extra,
   );
 
@@ -389,6 +437,7 @@ final class const BarElementStyle({
     put(scope, OptionKey.borderColor, borderColor);
     put(scope, OptionKey.borderWidth, borderWidth);
     put(scope, OptionKey.borderRadius, borderRadius);
+    put(scope, OptionKey.borderSkipped, borderSkippedOf(borderSkipped));
     return mergeExtra(scope, extra);
   }
 
@@ -397,6 +446,7 @@ final class const BarElementStyle({
     ('borderColor', borderColor),
     ('borderWidth', borderWidth),
     ('borderRadius', borderRadius),
+    ('borderSkipped', borderSkipped),
     ('extra', byEntries(extra)),
   ];
 

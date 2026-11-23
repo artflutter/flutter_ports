@@ -141,7 +141,7 @@ class _BarSample1State() extends State<BarSample1> {
             borderWidth: _touched < 0 ? 0 : 1,
             barThickness: const BarThickness.pixels(_width),
             borderRadius: _width / 2,
-            extra: const {'borderSkipped': false},
+            borderSkipped: BorderSkip.none,
           ),
         ],
         animation: const ChartAnimation(

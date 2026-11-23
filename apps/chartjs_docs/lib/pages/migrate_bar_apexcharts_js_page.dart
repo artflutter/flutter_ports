@@ -55,7 +55,7 @@ DocPageContent apexJsBarMigrationPage() => migrationPage(
     ),
     (
       Text("borderRadiusApplication: 'around'"),
-      DocText("`borderRadius` with `extra: {'borderSkipped': false}`"),
+      DocText('`borderRadius` with `borderSkipped: BorderSkip.none`'),
     ),
     (
       Text("borderRadiusWhenStacked: 'last'"),
@@ -133,7 +133,7 @@ DocPageContent apexJsBarMigrationPage() => migrationPage(
       notes: const [
         DocText(
           "`borderRadiusApplication: 'around'` (the default) rounds the "
-          "four corners: `extra: {'borderSkipped': false}`.",
+          'four corners: `borderSkipped: BorderSkip.none`.',
         ),
         DocText(
           "`xaxis: {position: 'top'}` is `position: .top`. "

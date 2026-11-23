@@ -83,7 +83,7 @@ DocPageContent flChartBarMigrationPage() => migrationPage(
     (Text('alignment, groupsSpace'), DocText('`groupAxis` of the shared code')),
     (
       Text('borderRadius'),
-      DocText('`borderRadius` and `borderSkipped: false`'),
+      DocText('`borderRadius` and `borderSkipped: BorderSkip.none`'),
     ),
     (Text('borderSide'), DocText('`borderColor` and `borderWidth`')),
     (

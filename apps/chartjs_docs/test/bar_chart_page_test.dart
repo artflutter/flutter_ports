@@ -27,8 +27,8 @@ const List<String> _variants = [
   'styling.minBarLength',
   'styling.Shadow',
   'border-skipped..end',
-  'border-skipped.false',
-  'border-skipped.true',
+  'border-skipped..none',
+  'border-skipped..all',
   'border-width.Object',
   'border-radius.All corners',
   'border-radius.Object',
@@ -74,7 +74,10 @@ final Map<String, (Object?, String)> _defaultsOf = () {
 bool _sameDefault(Object? actual, String text) => switch (actual) {
   final num value => value == num.parse(text),
   final String value => "'$value'" == text,
-  // An enum value, for example `BorderSkippedEdge.start`.
+  // The chart holds a BorderSkippedEdge, and the table gives the BorderSkip
+  // of the typed parameter.
+  final BorderSkippedEdge value => 'BorderSkip.${value.name}' == text,
+  // An enum value, for example `BorderSkip.start`.
   final Enum value => '$value' == text,
   final bool value => '$value' == text,
   Undefined() => text == 'undefined',
@@ -162,6 +165,7 @@ void main() {
       barThickness: BarThickness.pixels(1),
       borderColor: .constant(.solid(teal)),
       borderRadius: 1,
+      borderSkipped: BorderSkip.none,
       borderWidth: 1,
       categoryPercentage: 1,
       clip: ChartClip.none,
@@ -187,6 +191,7 @@ void main() {
       'barThickness',
       'borderColor',
       'borderRadius',
+      'borderSkipped',
       'borderWidth',
       'categoryPercentage',
       'clip',

@@ -92,7 +92,8 @@ final ChartConfig _config = flBars(
           borderRadius: 2.5,
           // The rods of a group stand on each other at one place.
           grouped: false,
-          extra: {'data': _rods(activity), 'borderSkipped': false},
+          borderSkipped: BorderSkip.none,
+          extra: {'data': _rods(activity)},
         ),
     ],
     tooltip: const ChartTooltip(enabled: false),

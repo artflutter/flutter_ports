@@ -186,6 +186,7 @@ List<ChartConfig> _configs() {
           maxBarThickness: 12,
           minBarLength: 1,
           grouped: true,
+          borderSkipped: BorderSkip.start,
         ),
         LineDataset(
           points: points,
@@ -394,6 +395,7 @@ List<ChartConfig> _configs() {
           borderColor: ChartPaint.solid(_red),
           borderWidth: 0,
           borderRadius: 0,
+          borderSkipped: BorderSkip.all,
         ),
         arc: ArcElementStyle(
           backgroundColor: ChartPaint.solid(_red),

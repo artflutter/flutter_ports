@@ -23,7 +23,8 @@ BarDataset _bars(
   hoverBackgroundColor: .constant(.solid(color)),
   categoryPercentage: 0.8,
   barPercentage: 1,
-  extra: {'borderRadius': corners, 'borderSkipped': false},
+  borderSkipped: BorderSkip.none,
+  extra: {'borderRadius': corners},
 );
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(

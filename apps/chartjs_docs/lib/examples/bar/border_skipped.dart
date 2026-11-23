@@ -26,8 +26,7 @@ const Color tealFill = Color.fromRGBO(75, 192, 192, 0.25);
 
 /// The border skip example, with the value of the selected variant.
 // #docregion bar-border-skipped
-// A BorderSkippedEdge, false or true.
-ChartConfig borderSkipped(Object skipped) => ChartConfig(
+ChartConfig borderSkipped(BorderSkip skipped) => ChartConfig(
   labels: months,
   datasets: [
     BarDataset(
@@ -36,7 +35,7 @@ ChartConfig borderSkipped(Object skipped) => ChartConfig(
       backgroundColor: const .constant(.solid(tealFill)),
       borderColor: const .constant(.solid(teal)),
       borderWidth: 4,
-      extra: {'borderSkipped': skipped},
+      borderSkipped: skipped,
     ),
   ],
 );
@@ -52,7 +51,7 @@ void main() {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Center(
-            child: ChartView(config: borderSkipped(BorderSkippedEdge.start)),
+            child: ChartView(config: borderSkipped(BorderSkip.start)),
           ),
         ),
       ),

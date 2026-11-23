@@ -20,7 +20,7 @@ BarDataset _bars(String label, List<num> data, Color color) => BarDataset(
   // its two bars.
   categoryPercentage: 0.8,
   barPercentage: 0.92,
-  extra: const {'borderSkipped': false},
+  borderSkipped: BorderSkip.none,
 );
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(

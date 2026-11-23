@@ -16,13 +16,13 @@ final ChartConfig _config = ChartConfig(
       // `RectShape(borderRadius: BorderRadius.circular(2))`: all four
       // corners, so no edge is skipped.
       borderRadius: 2,
+      borderSkipped: BorderSkip.none,
       extra: {
         // `Varset('min') + Varset('max')`: a floating bar takes the pair
         // `[start, end]`.
         'data': [
           for (final row in intervalData) [row.min, row.max],
         ],
-        'borderSkipped': false,
       },
     ),
   ],

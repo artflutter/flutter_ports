@@ -57,7 +57,7 @@ class _BarSample2State() extends State<BarSample2> {
     barThickness: const BarThickness.pixels(_width + _barsSpace),
     maxBarThickness: _width,
     borderRadius: _width / 2,
-    extra: const {'borderSkipped': false},
+    borderSkipped: BorderSkip.none,
   );
 
   RodLabel _label(int dataset, int index) {

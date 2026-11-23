@@ -60,7 +60,7 @@ class _BarSample3State() extends State<BarSample3> {
           hoverBackgroundColor: .resolver(_gradient),
           barThickness: const BarThickness.pixels(8),
           borderRadius: 4,
-          extra: const {'borderSkipped': false},
+          borderSkipped: BorderSkip.none,
         ),
       ],
       animation: const ChartAnimation(

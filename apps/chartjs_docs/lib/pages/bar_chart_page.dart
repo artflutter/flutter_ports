@@ -51,11 +51,10 @@ const List<DocProperty> barProperties = [
   DocProperty(
     'borderSkipped',
     section: 'borderskipped',
-    type: 'BorderSkippedEdge or bool',
-    extra: true,
+    type: 'BorderSkip',
     scriptable: true,
     indexable: true,
-    fallback: 'BorderSkippedEdge.start',
+    fallback: 'BorderSkip.start',
   ),
   DocProperty(
     'borderWidth',
@@ -555,31 +554,31 @@ DocPageContent barChartPage() => DocPageContent(
               ),
             ),
             const DocParagraph(
-              DocText('`borderSkipped` takes these values, through `extra`:'),
+              DocText('`borderSkipped` takes a `BorderSkip`:'),
             ),
             const DocBullets([
-              DocText('`BorderSkippedEdge.start`'),
-              DocText('`BorderSkippedEdge.end`'),
+              DocText('`BorderSkip.start`'),
+              DocText('`BorderSkip.end`'),
               DocText(
-                '`BorderSkippedEdge.middle`: only on stacked bars. The chart '
-                'skips the borders between the bars.',
+                '`BorderSkip.middle`: only on stacked bars. The chart skips '
+                'the borders between the bars.',
               ),
-              DocText('`BorderSkippedEdge.bottom`'),
-              DocText('`BorderSkippedEdge.left`'),
-              DocText('`BorderSkippedEdge.top`'),
-              DocText('`BorderSkippedEdge.right`'),
-              DocText('`false`: the chart skips no border.'),
-              DocText('`true`: the chart skips all borders.'),
+              DocText('`BorderSkip.bottom`'),
+              DocText('`BorderSkip.left`'),
+              DocText('`BorderSkip.top`'),
+              DocText('`BorderSkip.right`'),
+              DocText('`BorderSkip.none`: the chart skips no border.'),
+              DocText('`BorderSkip.all`: the chart skips all borders.'),
             ]),
             LiveExample(
               id: 'border-skipped',
               description: 'A bar chart with a skipped border',
               variants: [
                 for (final (label, value) in const [
-                  ('.start', BorderSkippedEdge.start),
-                  ('.end', BorderSkippedEdge.end),
-                  ('false', false),
-                  ('true', true),
+                  ('.start', BorderSkip.start),
+                  ('.end', BorderSkip.end),
+                  ('.none', BorderSkip.none),
+                  ('.all', BorderSkip.all),
                 ])
                   ExampleVariant(
                     name: label,

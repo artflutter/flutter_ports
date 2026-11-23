@@ -30,7 +30,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
       borderRadius: 5,
       categoryPercentage: 0.8,
       barPercentage: 1,
-      extra: {'borderSkipped': false},
+      borderSkipped: BorderSkip.none,
     ),
   ],
   aspectRatio: 16 / 9,

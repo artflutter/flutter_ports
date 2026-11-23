@@ -338,6 +338,18 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
   ),
   'minBarLength': (const [BarDataset(minBarLength: 2)], {'minBarLength': 2}),
   'grouped': (const [BarDataset(grouped: false)], {'grouped': false}),
+  'borderSkipped, none': (
+    const [BarDataset(borderSkipped: BorderSkip.none)],
+    {'borderSkipped': false},
+  ),
+  'borderSkipped, all': (
+    const [BarDataset(borderSkipped: BorderSkip.all)],
+    {'borderSkipped': true},
+  ),
+  'borderSkipped, an edge': (
+    const [BarDataset(borderSkipped: BorderSkip.middle)],
+    {'borderSkipped': BorderSkippedEdge.middle},
+  ),
   'fill, a name': (_lineStyle(fill: .toOrigin), {'fill': FillTarget.toOrigin}),
   'fill, none': (_lineStyle(fill: .none), {'fill': FillTarget.none}),
   'fill, a dataset index': (
@@ -966,10 +978,28 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
       'bar': {'borderRadius': 4},
     },
   ),
-  'bar.extra': (
-    ChartElements(bar: BarElementStyle(extra: {'borderSkipped': false})),
+  'bar.borderSkipped, none': (
+    ChartElements(bar: BarElementStyle(borderSkipped: BorderSkip.none)),
     {
       'bar': {'borderSkipped': false},
+    },
+  ),
+  'bar.borderSkipped, all': (
+    ChartElements(bar: BarElementStyle(borderSkipped: BorderSkip.all)),
+    {
+      'bar': {'borderSkipped': true},
+    },
+  ),
+  'bar.borderSkipped, an edge': (
+    ChartElements(bar: BarElementStyle(borderSkipped: BorderSkip.left)),
+    {
+      'bar': {'borderSkipped': BorderSkippedEdge.left},
+    },
+  ),
+  'bar.extra': (
+    ChartElements(bar: BarElementStyle(extra: {'inflateAmount': 0})),
+    {
+      'bar': {'inflateAmount': 0},
     },
   ),
   'arc.backgroundColor': (

@@ -94,7 +94,7 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
     (
       Text('borderRadius'),
       DocText(
-        '`borderRadius`, and `borderSkipped: false` in `extra` for the corners '
+        '`borderRadius`, and `borderSkipped: BorderSkip.none` for the corners '
         'on the base',
       ),
     ),
@@ -212,7 +212,7 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       notes: const [
         DocText(
           '`borderRadius: BorderRadius.circular(10)` is `borderRadius: 10`. '
-          '`borderSkipped: false` in `extra` also rounds the corners on the '
+          '`borderSkipped: BorderSkip.none` also rounds the corners on the '
           'base.',
         ),
         DocText(
@@ -379,8 +379,8 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       ),
       notes: const [
         DocText(
-          '`borderRadius: 10` with `borderSkipped: false` rounds the four '
-          'corners of each bar, also of a negative bar.',
+          '`borderRadius: 10` with `borderSkipped: BorderSkip.none` rounds the '
+          'four corners of each bar, also of a negative bar.',
         ),
         DocText(
           'The value axis keeps its grid lines and its axis line: the `grid` '

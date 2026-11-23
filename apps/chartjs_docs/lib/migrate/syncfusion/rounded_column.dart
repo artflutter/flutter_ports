@@ -20,7 +20,7 @@ final ChartConfig _config = ChartConfig(
       barPercentage: 1,
       borderRadius: 10,
       // All four corners, also the ones on the base.
-      extra: {'borderSkipped': false},
+      borderSkipped: BorderSkip.none,
     ),
   ],
   maintainAspectRatio: false,

@@ -717,7 +717,7 @@ void main() {
                 native_ui.Color.fromRGBO(0, 128, 0, 1),
               ),
               borderWidth: 2,
-              extra: {'borderSkipped': BorderSkippedEdge.top},
+              borderSkipped: BorderSkip.top,
             ),
           ),
           scales: [

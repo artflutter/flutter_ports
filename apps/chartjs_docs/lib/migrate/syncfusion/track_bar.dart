@@ -19,7 +19,7 @@ final ChartConfig _config = ChartConfig(
       categoryPercentage: 0.7,
       barPercentage: 1,
       borderRadius: 15,
-      extra: {'borderSkipped': false},
+      borderSkipped: BorderSkip.none,
     ),
   ],
   maintainAspectRatio: false,

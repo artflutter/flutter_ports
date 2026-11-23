@@ -23,7 +23,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
       // barCategoryGap="10%": the bar takes 80 % of its band.
       categoryPercentage: 0.8,
       barPercentage: 1,
-      extra: {'borderSkipped': false},
+      borderSkipped: BorderSkip.none,
     ),
   ],
   // The 16:9 of ChartContainer, and the default margin of 5 px.

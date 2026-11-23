@@ -26,7 +26,7 @@ final ChartConfig _config = ChartConfig(
       _inflation,
       Apex.blue,
       radius: 10,
-    ).copyWith(extra: const {'borderSkipped': false}),
+    ).copyWith(borderSkipped: BorderSkip.none),
   ],
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),

@@ -106,6 +106,7 @@ const List<(Dataset, List<String>)> _datasets = [
       'maxBarThickness',
       'minBarLength',
       'grouped',
+      'borderSkipped',
       'extra',
     ],
   ),
@@ -335,6 +336,33 @@ void main() {
       );
     });
 
+    test('borderSkipped compares by its value', () {
+      _expectEqual(
+        BarDataset(borderSkipped: _runtime(BorderSkip.none)),
+        const BarDataset(borderSkipped: BorderSkip.none),
+      );
+      expect(
+        const BarDataset(borderSkipped: BorderSkip.none),
+        isNot(const BarDataset(borderSkipped: BorderSkip.all)),
+      );
+      expect(
+        const BarDataset(borderSkipped: BorderSkip.start),
+        isNot(const BarDataset()),
+      );
+      _expectEqual(
+        BarElementStyle(borderSkipped: _runtime(BorderSkip.left)),
+        const BarElementStyle(borderSkipped: BorderSkip.left),
+      );
+      expect(
+        const BarElementStyle(borderSkipped: BorderSkip.left),
+        isNot(const BarElementStyle(borderSkipped: BorderSkip.right)),
+      );
+      expect(
+        const BarElementStyle().copyWith(borderSkipped: BorderSkip.all),
+        const BarElementStyle(borderSkipped: BorderSkip.all),
+      );
+    });
+
     test('the key and the class take part', () {
       expect(
         const BarDataset(key: ValueKey('a')),
@@ -361,6 +389,11 @@ void main() {
       final copy = bar.copyWith(grouped: false);
       expect(copy.data, same(data));
       expect([copy.borderRadius, copy.stack, copy.grouped], [4, 's', false]);
+      final skipped = copy.copyWith(borderSkipped: BorderSkip.none);
+      expect(
+        [skipped.grouped, skipped.borderSkipped],
+        [false, BorderSkip.none],
+      );
       final doughnut = const DoughnutDataset(cutout: PercentRadius(70))
           .copyWith(rotation: 90);
       expect(

@@ -79,7 +79,7 @@ class _BarSample7State() extends State<BarSample7> {
     barThickness: const BarThickness.pixels(_width + 2),
     maxBarThickness: _width,
     borderRadius: _width / 2,
-    extra: const {'borderSkipped': false},
+    borderSkipped: BorderSkip.none,
   );
 
   /// fl_chart turns the chart by quarter turns. In Chart.js, the turn sets

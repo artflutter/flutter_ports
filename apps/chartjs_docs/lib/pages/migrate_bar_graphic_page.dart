@@ -94,7 +94,8 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
     (
       Text('RectShape(borderRadius: ...)'),
       DocText(
-        '`borderRadius`, and `borderSkipped: false` for all four corners',
+        '`borderRadius`, and `borderSkipped: BorderSkip.none` for all four '
+        'corners',
       ),
     ),
     (
@@ -237,8 +238,8 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
         ),
         DocText(
           '`RectShape(borderRadius: BorderRadius.circular(2))` is '
-          '`borderRadius: 2` with `borderSkipped: false`: Chart.js then '
-          'rounds all four corners.',
+          '`borderRadius: 2` with `borderSkipped: BorderSkip.none`: Chart.js '
+          'then rounds all four corners.',
         ),
       ],
       replica: (_) => const GraphicBarInterval(),

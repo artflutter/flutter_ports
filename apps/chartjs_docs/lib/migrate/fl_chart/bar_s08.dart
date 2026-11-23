@@ -107,7 +107,7 @@ class _BarSample8State() extends State<BarSample8> {
           ]),
           borderWidth: 2,
           barThickness: const BarThickness.pixels(22),
-          extra: const {'borderSkipped': false},
+          borderSkipped: BorderSkip.none,
         ),
       ],
       tooltip: const ChartTooltip(enabled: false),

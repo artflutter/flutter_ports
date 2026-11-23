@@ -70,6 +70,7 @@ export 'package:flutter_chartjs_port/src/typed/elements.dart'
     show
         ArcElementStyle,
         BarElementStyle,
+        BorderSkip,
         ChartElements,
         LineElementStyle,
         PointElementStyle;

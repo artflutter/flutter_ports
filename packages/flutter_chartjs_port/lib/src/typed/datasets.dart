@@ -357,6 +357,11 @@ final class const BarDataset({
   /// Whether the bars of the datasets at one index stand next to each
   /// other: `grouped`. The default is `true`.
   final bool? grouped,
+
+  /// The edges of each bar that draw no border: `borderSkipped`, a
+  /// [BorderSkip]. The default is [BorderSkip.start], the edge at the base
+  /// of the bar.
+  final BorderSkip? borderSkipped,
   super.extra,
 }) extends Dataset {
   /// A bar dataset.
@@ -391,6 +396,7 @@ final class const BarDataset({
     double? maxBarThickness,
     double? minBarLength,
     bool? grouped,
+    BorderSkip? borderSkipped,
     Map<String, Object?>? extra,
   }) => BarDataset(
     key: key ?? this.key,
@@ -419,6 +425,7 @@ final class const BarDataset({
     maxBarThickness: maxBarThickness ?? this.maxBarThickness,
     minBarLength: minBarLength ?? this.minBarLength,
     grouped: grouped ?? this.grouped,
+    borderSkipped: borderSkipped ?? this.borderSkipped,
     extra: extra ?? this.extra,
   );
 
@@ -441,6 +448,7 @@ final class const BarDataset({
     put(scope, OptionKey.maxBarThickness, maxBarThickness);
     put(scope, OptionKey.minBarLength, minBarLength);
     put(scope, OptionKey.grouped, grouped);
+    put(scope, OptionKey.borderSkipped, borderSkippedOf(borderSkipped));
   }
 
   @override
@@ -461,6 +469,7 @@ final class const BarDataset({
     ('maxBarThickness', maxBarThickness),
     ('minBarLength', minBarLength),
     ('grouped', grouped),
+    ('borderSkipped', borderSkipped),
     ('extra', byEntries(extra)),
   ];
 }

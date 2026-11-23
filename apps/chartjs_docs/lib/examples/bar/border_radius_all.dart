@@ -29,7 +29,7 @@ const roundBars = BarDataset(
   data: mixedSigns,
   backgroundColor: .constant(.solid(teal)),
   borderRadius: 12,
-  extra: {'borderSkipped': false},
+  borderSkipped: BorderSkip.none,
 );
 // #enddocregion bar-border-radius-all
 

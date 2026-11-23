@@ -55,7 +55,7 @@ DocPageContent shadcnBarMigrationPage() => migrationPage(
     ),
     (
       Text('radius={8}'),
-      DocText('`borderRadius: 8` with `borderSkipped: false`'),
+      DocText('`borderRadius: 8` with `borderSkipped: BorderSkip.none`'),
     ),
     (
       Text('radius={[0, 0, 4, 4]}'),
@@ -104,8 +104,8 @@ DocPageContent shadcnBarMigrationPage() => migrationPage(
       notes: const [
         DocText(
           '`radius={8}` rounds the four corners: `borderRadius: 8` with '
-          '`borderSkipped: false`. By default, Chart.js keeps the two corners '
-          'at the base square.',
+          '`borderSkipped: BorderSkip.none`. By default, Chart.js keeps the '
+          'two corners at the base square.',
         ),
         DocText(
           'Recharts gives a bar 80 % of its band (`barCategoryGap="10%"`): '
