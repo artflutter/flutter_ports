@@ -1165,9 +1165,7 @@ void main() {
         animation: ChartAnimation.none,
         tooltip: ChartTooltip(enabled: false),
         responsive: false,
-        extra: {
-          'plugins': {'legend': false},
-        },
+        disabledPlugins: [PluginOff<LegendPlugin>()],
       );
       final chart = Chart(
         UiCanvasElement(width: 480, height: 320),
@@ -1746,7 +1744,7 @@ void main() {
           legend: const ChartLegend(display: false),
           tooltip: const ChartTooltip(enabled: false),
           responsive: false,
-          extra: const {'events': <String>[]},
+          events: const [],
         );
         final lowering = ChartConfigLowering(config([1, 2, 3, 4, 5, 6, 7, 8]));
         final chart = Chart(

@@ -238,17 +238,15 @@ class const BenchmarkChart({
         responsive: true,
         maintainAspectRatio: false,
         pluginOptions: config.zooms ? [_chartJsZoom] : null,
-        extra: {
-          'events': config.tooltips
-              ? const [
-                  'mousemove',
-                  'mouseout',
-                  'click',
-                  'touchstart',
-                  'touchmove',
-                ]
-              : const <String>[],
-        },
+        events: config.tooltips
+            ? const [
+                'mousemove',
+                'mouseout',
+                'click',
+                'touchstart',
+                'touchmove',
+              ]
+            : const [],
       ),
       updateMode: UpdateMode.none,
       theme: const cj.ChartThemeData(),
@@ -480,6 +478,15 @@ class const BenchmarkChart({
           ),
           _ => EdgeInsets.zero,
         },
+        events: config.tooltips
+            ? const [
+                'mousemove',
+                'mouseout',
+                'click',
+                'touchstart',
+                'touchmove',
+              ]
+            : const [],
         extra: {
           // The generator supplies sorted, finite numeric XY points, and a
           // DataPoint.bubble gives its radius with no parse step.
@@ -487,15 +494,6 @@ class const BenchmarkChart({
               config.type == ChartType.scatter ||
               config.type == ChartType.bubble)
             'parsing': false,
-          'events': config.tooltips
-              ? const [
-                  'mousemove',
-                  'mouseout',
-                  'click',
-                  'touchstart',
-                  'touchmove',
-                ]
-              : const <String>[],
         },
       ),
       updateMode: UpdateMode.none,

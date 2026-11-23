@@ -111,7 +111,7 @@ class _BarSample8State() extends State<BarSample8> {
         ),
       ],
       tooltip: const ChartTooltip(enabled: false),
-      extra: const {'events': <String>[]},
+      events: const [],
       plugins: [_dashedBars, _errorBars(_data)],
       scales: [
         groupAxis(

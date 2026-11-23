@@ -106,9 +106,10 @@ ChartConfigurationScope _config({
       animation: ChartAnimation.none,
       indexAxis: horizontal ? const YAxis() : const XAxis(),
       scales: horizontal ? [value, index] : [index, value],
-      extra: const {
-        'plugins': {'legend': false, 'tooltip': false},
-      },
+      disabledPlugins: const [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
     ),
   ).lower();
   // Preserve nullable labels and effectful List subclasses for the guards.

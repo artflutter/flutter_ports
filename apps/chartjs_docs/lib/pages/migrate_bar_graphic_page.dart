@@ -134,10 +134,7 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
     ),
     (
       Text('on: {GestureType.tap}, clear: {GestureType.doubleTap}'),
-      DocText(
-        "`'events': ['click']` in `extra`, and an inline plugin for the double "
-        'tap',
-      ),
+      DocText("`events: ['click']`, and an inline plugin for the double tap"),
     ),
     (
       Text('TooltipGuide()'),

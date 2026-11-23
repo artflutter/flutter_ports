@@ -116,10 +116,8 @@ Chart _lineWithSubtitle([ChartTitle? subtitle]) => acquireChartRoot(
         LineDataset(data: [1, 2]),
       ],
       subtitle: subtitle,
-      extra: subtitle == null
-          ? const {
-              'plugins': {'subtitle': false},
-            }
+      disabledPlugins: subtitle == null
+          ? const [PluginOff<SubtitlePlugin>()]
           : null,
     ),
   ).lower(),

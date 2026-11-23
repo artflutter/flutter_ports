@@ -166,7 +166,8 @@ ChartConfigurationScope _config(
       scales: [axis],
       elements: elements,
       animation: animation,
-      extra: {'events': const <String>[], ...?extra},
+      events: const [],
+      extra: extra,
     ),
   ).lower();
 }

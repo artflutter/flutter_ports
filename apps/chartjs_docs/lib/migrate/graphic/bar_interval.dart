@@ -50,7 +50,7 @@ final ChartConfig _config = ChartConfig(
   animation: ChartAnimation.none,
   legend: const ChartLegend(display: false),
   // The demo has no selection.
-  extra: const {'events': <String>[]},
+  events: const [],
 );
 
 /// The replica of the Graphic demo "Interval Bar Chart".

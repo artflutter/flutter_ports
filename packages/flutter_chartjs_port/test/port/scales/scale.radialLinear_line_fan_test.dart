@@ -556,7 +556,7 @@ void main() {
                   animation: ChartAnimation.none,
                   legend: const ChartLegend(display: false),
                   maintainAspectRatio: false,
-                  extra: const {'events': <String>[]},
+                  events: const [],
                 ),
                 updateMode: UpdateMode.none,
                 theme: const ChartThemeData(),

@@ -37,9 +37,10 @@ void main() {
         CategoryAxis(.x, display: ScaleDisplay.off),
         LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
       ],
-      extra: const {
-        'plugins': {'legend': false, 'tooltip': false},
-      },
+      disabledPlugins: const [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
     );
     final chart = acquireChartRoot(ChartConfigLowering(config).lower());
     final source = chart.getDatasetMeta(2).dataset! as LineElement;

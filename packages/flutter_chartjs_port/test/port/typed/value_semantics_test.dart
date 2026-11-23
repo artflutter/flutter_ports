@@ -518,6 +518,49 @@ void main() {
       );
     });
 
+    test('the events compare by their items', () {
+      ChartConfig config(List<String> events) =>
+          ChartConfig(datasets: const [BarDataset()], events: events);
+      _expectEqual(
+        config(_runtime(['click', 'mousemove'])),
+        config(_runtime(['click', 'mousemove'])),
+      );
+      expect(
+        config(_runtime(['click'])),
+        isNot(config(_runtime(['mousemove']))),
+      );
+      expect(
+        config(_runtime([])),
+        isNot(const ChartConfig(datasets: [BarDataset()])),
+      );
+      expect(
+        const ChartConfig(datasets: [BarDataset()]).copyWith(events: ['click']),
+        config(_runtime(['click'])),
+      );
+    });
+
+    test('the disabled plugins compare by their items', () {
+      ChartConfig config(List<PluginOff<Plugin<Object?>>> off) =>
+          ChartConfig(datasets: const [BarDataset()], disabledPlugins: off);
+      _expectEqual(
+        config(_runtime([const PluginOff<LegendPlugin>()])),
+        config(_runtime([const PluginOff<LegendPlugin>()])),
+      );
+      expect(
+        config(_runtime([const PluginOff<LegendPlugin>()])),
+        isNot(config(_runtime([const PluginOff<TitlePlugin>()]))),
+      );
+      expect(
+        config(_runtime([])),
+        isNot(const ChartConfig(datasets: [BarDataset()])),
+      );
+      expect(
+        const ChartConfig(datasets: [BarDataset()])
+            .copyWith(disabledPlugins: const [PluginOff<LegendPlugin>()]),
+        config(_runtime([const PluginOff<LegendPlugin>()])),
+      );
+    });
+
     test('the scales compare by their entries, in key order', () {
       expect(
         const ChartConfig(
@@ -738,8 +781,10 @@ void main() {
         'elements',
         'onClick',
         'onHover',
+        'events',
         'pluginOptions',
         'plugins',
+        'disabledPlugins',
         'extra',
       ]);
       expect(names(const RadialLinearAxis()), [

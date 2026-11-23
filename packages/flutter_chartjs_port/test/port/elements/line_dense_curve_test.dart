@@ -140,11 +140,8 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
     responsive: false,
     maintainAspectRatio: false,
     padding: EdgeInsets.zero,
-    extra: {
-      'parsing': false,
-      'devicePixelRatio': ratio,
-      'events': const <String>[],
-    },
+    events: const [],
+    extra: {'parsing': false, 'devicePixelRatio': ratio},
   );
 }
 

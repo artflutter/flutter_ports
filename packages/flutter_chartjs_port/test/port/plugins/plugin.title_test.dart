@@ -101,9 +101,7 @@ Chart _lineWithoutTitle() => acquireChartRoot(
         LineDataset(data: [1, 2]),
       ],
       // Disable the plugin itself, rather than only hiding its title.
-      extra: {
-        'plugins': {'title': false},
-      },
+      disabledPlugins: [PluginOff<TitlePlugin>()],
     ),
   ).lower(),
 );

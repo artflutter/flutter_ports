@@ -349,10 +349,8 @@ ChartConfigurationScope _config({
           },
         ),
       ],
-      extra: const {
-        'events': <String>[],
-        'plugins': {'legend': false},
-      },
+      events: const [],
+      disabledPlugins: const [PluginOff<LegendPlugin>()],
     ),
   ).lower();
 }
@@ -1359,7 +1357,7 @@ void main() {
                 animation: ChartAnimation.none,
                 legend: const ChartLegend(display: false),
                 maintainAspectRatio: false,
-                extra: const {'events': <String>[]},
+                events: const [],
               ),
               updateMode: UpdateMode.none,
               theme: const ChartThemeData(),

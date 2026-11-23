@@ -215,15 +215,13 @@ typed.ChartConfig _typedConfig(List<typed.DataPoint> points) =>
       ],
       responsive: false,
       animation: typed.ChartAnimation.none,
-      extra: const {
-        'parsing': false,
-        'plugins': {
-          'legend': false,
-          'tooltip': false,
-          'colors': false,
-          'filler': false,
-        },
-      },
+      disabledPlugins: const [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TooltipPlugin>(),
+        PluginOff<ColorsPlugin>(),
+        PluginOff<FillerPlugin>(),
+      ],
+      extra: const {'parsing': false},
     );
 
 List<typed.DataPoint> _points() => [

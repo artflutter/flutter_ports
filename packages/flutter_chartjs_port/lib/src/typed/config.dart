@@ -33,12 +33,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 ///
 /// A config is immutable. `==` compares the parameters: the Lists of the
 /// app by identity, the [datasets] by their items, the [plugins] by the
-/// identity of their items, the [scales] by their items, the `extra` Maps
-/// by their entries, and the callbacks [onClick] and [onHover] only by their
-/// presence. The chart calls the callback of the
-/// newest config. Thus a new config that is `==` to the last one does not
-/// update the chart. For new data, give a new List. Or change the List and
-/// call `chart.update()`.
+/// identity of their items, the [scales], the [events] and the
+/// [disabledPlugins] by their items, the `extra` Maps by their entries, and
+/// the callbacks [onClick] and [onHover] only by their presence. The chart
+/// calls the callback of the newest config. Thus a new config that is `==`
+/// to the last one does not update the chart. For new data, give a new List.
+/// Or change the List and call `chart.update()`.
 ///
 /// The config of a live chart, `chart.config`, is a `ChartConfiguration`,
 /// another type.
@@ -150,6 +150,15 @@ final class const ChartConfig({
   /// The function of a pointer move on the chart: `options.onHover`.
   final ChartEventHandler? onHover,
 
+  /// The names of the input events that the chart listens to:
+  /// `options.events`, for example `['click']`. The default is
+  /// `['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove']`
+  /// (`docs/configuration/interactions.md`, "Events"). An empty List turns
+  /// the input events off: no hover, no tooltip and no click.
+  ///
+  /// The chart gets a copy of the List. `==` compares its items.
+  final List<String>? events,
+
   /// The options of add-on plugins: each goes to
   /// `options.plugins.<pluginId>` (Chart.js ADR 0148). A plugin and its
   /// options come apart: a plugin that `Chart.register` adds for all charts
@@ -166,6 +175,16 @@ final class const ChartConfig({
   /// `plugins: [plugin]` in each build gives no update while `plugin` is
   /// the same object, for example a field or a top-level constant.
   final List<Plugin<Object?>>? plugins,
+
+  /// The plugins that this chart turns off, by their class:
+  /// `options.plugins.<id>: false` for each registered plugin and each
+  /// inline plugin of [plugins] that an item matches
+  /// (`docs/developers/plugins.md`, "Disable plugins"), for example
+  /// `[PluginOff<LegendPlugin>()]`. An item that matches no plugin writes
+  /// nothing.
+  ///
+  /// `==` compares the items one by one with `==`.
+  final List<PluginOff<Plugin<Object?>>>? disabledPlugins,
 
   /// The Chart.js options that have no parameter, for example
   /// `{'locale': 'de-DE'}`.
@@ -213,8 +232,10 @@ final class const ChartConfig({
     ChartElements? elements,
     ChartEventHandler? onClick,
     ChartEventHandler? onHover,
+    List<String>? events,
     List<PluginOptions<Object?>>? pluginOptions,
     List<Plugin<Object?>>? plugins,
+    List<PluginOff<Plugin<Object?>>>? disabledPlugins,
     Map<String, Object?>? extra,
   }) => ChartConfig(
     datasets: datasets ?? this.datasets,
@@ -237,8 +258,10 @@ final class const ChartConfig({
     elements: elements ?? this.elements,
     onClick: onClick ?? this.onClick,
     onHover: onHover ?? this.onHover,
+    events: events ?? this.events,
     pluginOptions: pluginOptions ?? this.pluginOptions,
     plugins: plugins ?? this.plugins,
+    disabledPlugins: disabledPlugins ?? this.disabledPlugins,
     extra: extra ?? this.extra,
   );
 
@@ -247,6 +270,7 @@ final class const ChartConfig({
     ('labels', labels),
     ..._optionProps,
     _pluginsProp,
+    _disabledPluginsProp,
     _extraProp,
   ];
 
@@ -271,11 +295,16 @@ final class const ChartConfig({
     ('elements', elements),
     ('onClick', byPresence(onClick)),
     ('onHover', byPresence(onHover)),
+    ('events', byItems(events)),
     ('pluginOptions', byItems(pluginOptions)),
   ];
 
   /// The property of [plugins].
   TypedProperty get _pluginsProp => ('plugins', byIdentityItems(plugins));
+
+  /// The property of [disabledPlugins], which lowers into `options` too.
+  TypedProperty get _disabledPluginsProp =>
+      ('disabledPlugins', byItems(disabledPlugins));
 
   /// The property of [extra], which lowers into `options` too.
   TypedProperty get _extraProp => ('extra', byEntries(extra));
@@ -301,6 +330,7 @@ final class const ChartConfig({
 /// reconcile keeps the live `options` Map.
 bool optionFieldsEqual(ChartConfig a, ChartConfig b) =>
     propsEqual(a._optionProps, b._optionProps) &&
+    a._disabledPluginsProp.$2 == b._disabledPluginsProp.$2 &&
     a._extraProp.$2 == b._extraProp.$2;
 
 /// Whether the [ChartConfig.plugins] of [a] and [b] are `==`, by the compare

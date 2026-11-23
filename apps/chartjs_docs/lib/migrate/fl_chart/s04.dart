@@ -39,7 +39,7 @@ final ChartConfig _config = fills(
       ),
     ],
     tooltip: const ChartTooltip(enabled: false),
-    extra: const {'events': <String>[]},
+    events: const [],
     plugins: _plugins,
     scales: [
       const CategoryAxis(

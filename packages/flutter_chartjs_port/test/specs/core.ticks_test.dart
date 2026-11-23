@@ -91,9 +91,7 @@ void main() {
             ),
             LinearAxis(.y, ticks: AxisTicks(callback: valueTickLabel)),
           ],
-          extra: {
-            'plugins': {'legend': false},
-          },
+          disabledPlugins: [PluginOff<LegendPlugin>()],
         ),
       );
 
@@ -137,9 +135,7 @@ void main() {
                 ticks: AxisTicks(autoSkip: false, callback: valueTickLabel),
               ),
             ],
-            extra: {
-              'plugins': {'legend': false},
-            },
+            disabledPlugins: [PluginOff<LegendPlugin>()],
           ),
         );
 

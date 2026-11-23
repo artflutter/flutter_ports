@@ -24,11 +24,12 @@ ChartConfig _config(Object? value) {
     responsive: false,
     animation: ChartAnimation.none,
     scales: [scale(.x), scale(.y)],
-    extra: const {
-      'devicePixelRatio': 2.0,
-      'events': <String>[],
-      'plugins': {'legend': false, 'tooltip': false},
-    },
+    events: const [],
+    disabledPlugins: const [
+      PluginOff<LegendPlugin>(),
+      PluginOff<TooltipPlugin>(),
+    ],
+    extra: const {'devicePixelRatio': 2.0},
   );
 }
 

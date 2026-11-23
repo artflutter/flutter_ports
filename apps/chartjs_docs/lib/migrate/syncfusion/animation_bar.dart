@@ -56,7 +56,7 @@ class _SfAnimationBarState() extends State<SfAnimationBar> {
         legend: const ChartLegend(display: false),
         tooltip: const ChartTooltip(enabled: false),
         animation: const ChartAnimation(duration: Duration(milliseconds: 1500)),
-        extra: const {'events': <String>[]},
+        events: const [],
         scales: [
           sfCategoryAxis(direction: .y, reverse: true),
           sfValueAxis(

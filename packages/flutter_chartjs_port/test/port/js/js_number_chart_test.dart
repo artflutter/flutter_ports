@@ -37,9 +37,11 @@ void main() {
       datasets: const [
         BarDataset(data: [1, 2, 3]),
       ],
-      extra: const {
-        'plugins': {'legend': false, 'title': false, 'tooltip': false},
-      },
+      disabledPlugins: const [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
     );
 
     testWidgets('Date labels give the upstream layout at 800 x 300', (

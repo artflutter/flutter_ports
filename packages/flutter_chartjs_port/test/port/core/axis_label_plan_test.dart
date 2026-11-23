@@ -108,20 +108,18 @@ ChartConfigurationScope _config() => ChartConfigLowering(
     maintainAspectRatio: false,
     animation: ChartAnimation.none,
     scales: const [CategoryAxis(.x), LogarithmicAxis(.y)],
+    events: const [],
     // `plugins: false` as one entry for each built-in plugin.
-    extra: const {
-      'parsing': false,
-      'events': <String>[],
-      'plugins': {
-        'colors': false,
-        'decimation': false,
-        'filler': false,
-        'legend': false,
-        'subtitle': false,
-        'title': false,
-        'tooltip': false,
-      },
-    },
+    disabledPlugins: const [
+      PluginOff<ColorsPlugin>(),
+      PluginOff<DecimationPlugin>(),
+      PluginOff<FillerPlugin>(),
+      PluginOff<LegendPlugin>(),
+      PluginOff<SubtitlePlugin>(),
+      PluginOff<TitlePlugin>(),
+      PluginOff<TooltipPlugin>(),
+    ],
+    extra: const {'parsing': false},
   ),
 ).lower();
 

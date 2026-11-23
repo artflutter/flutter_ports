@@ -190,9 +190,10 @@ void main() {
               CategoryAxis(.x, display: ScaleDisplay.off),
               LinearAxis(.y, display: ScaleDisplay.off),
             ],
-            extra: const {
-              'plugins': {'legend': false, 'title': false},
-            },
+            disabledPlugins: const [
+              PluginOff<LegendPlugin>(),
+              PluginOff<TitlePlugin>(),
+            ],
           ),
         ).lower(),
       );

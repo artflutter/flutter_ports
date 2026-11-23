@@ -135,7 +135,7 @@ ChartConfig _config(Map<String, Object?> reference, _Logs logs) {
         },
       ),
     ],
-    extra: {'events': ?options['events']},
+    events: (options['events'] as List<Object?>?)?.cast<String>(),
   );
 }
 

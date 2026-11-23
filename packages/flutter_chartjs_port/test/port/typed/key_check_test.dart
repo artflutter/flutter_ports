@@ -392,6 +392,7 @@ List<ChartConfig> _configs() {
       ),
       onClick: _onEvent,
       onHover: _onEvent,
+      events: const ['click'],
       plugins: const [],
     ),
     ChartConfig(

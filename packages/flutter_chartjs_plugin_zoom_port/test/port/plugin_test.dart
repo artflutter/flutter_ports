@@ -622,4 +622,41 @@ void main() {
       expect(options.events, ['click']);
     });
   });
+
+  group('the plugin off (PluginOff)', () {
+    ChartConfig config({List<PluginOff<Plugin<Object?>>>? off}) => ChartConfig(
+      datasets: [
+        LineDataset(points: [DataPoint(1, 1), DataPoint(5, 5)]),
+      ],
+      scales: const [LinearAxis(.x, min: 0, max: 10), LinearAxis(.y)],
+      pluginOptions: const [
+        ZoomPluginOptions(
+          zoom: ZoomOptions(wheel: WheelOptions(enabled: true), mode: Mode.x),
+        ),
+      ],
+      disabledPlugins: off,
+    );
+
+    /// The x range of [chart] after a wheel zoom at its center.
+    (Object?, Object?) wheel(Chart chart) {
+      final scaleX = chart.scales['x']!;
+      final scaleY = chart.scales['y']!;
+      triggerWheelEvent(
+        chart,
+        x: scaleX.getPixelForValue(5),
+        y: scaleY.getPixelForValue(3),
+        deltaY: -100,
+      );
+      return (scaleX.options.min, scaleX.options.max);
+    }
+
+    testWidgets('PluginOff<ZoomPlugin> turns the registered zoom off', (
+      tester,
+    ) async {
+      final on = wheel(_acquire(config()));
+      expect(on, isNot((0.0, 10.0)));
+      final off = _acquire(config(off: const [PluginOff<ZoomPlugin>()]));
+      expect(wheel(off), (0.0, 10.0));
+    });
+  });
 }

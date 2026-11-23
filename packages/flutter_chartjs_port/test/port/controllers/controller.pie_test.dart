@@ -95,11 +95,8 @@ void main() {
     ) async {
       // The legend plugin is off, so it writes no `chart.legend`.
       final chart = _chart(
-        _one(const [1.0, 2.0, 3.0]).copyWith(
-          extra: {
-            'plugins': {'legend': false},
-          },
-        ),
+        _one(const [1.0, 2.0, 3.0])
+            .copyWith(disabledPlugins: const [PluginOff<LegendPlugin>()]),
       );
       expect(chart.legend, isNull);
       expect(() => _generateLabels(chart), throwsA(isA<TypeError>()));

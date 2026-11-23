@@ -730,15 +730,17 @@ void main() {
             else
               const TimeSeriesAxis(.x),
           ],
+          disabledPlugins: const [
+            PluginOff<ColorsPlugin>(),
+            PluginOff<FillerPlugin>(),
+            PluginOff<LegendPlugin>(),
+            PluginOff<SubtitlePlugin>(),
+            PluginOff<TitlePlugin>(),
+            PluginOff<TooltipPlugin>(),
+          ],
           extra: const {
             'parsing': false,
             'plugins': {
-              'colors': false,
-              'filler': false,
-              'legend': false,
-              'subtitle': false,
-              'title': false,
-              'tooltip': false,
               'decimation': {
                 'enabled': true,
                 'algorithm': LttbDecimationAlgorithm(),

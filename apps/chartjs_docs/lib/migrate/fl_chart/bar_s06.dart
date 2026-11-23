@@ -96,7 +96,7 @@ final ChartConfig _config = flBars(
         ),
     ],
     tooltip: const ChartTooltip(enabled: false),
-    extra: const {'events': <String>[]},
+    events: const [],
     plugins: [_extraLines],
     scales: [
       // Without offset, the first and the last group stand at the ends of

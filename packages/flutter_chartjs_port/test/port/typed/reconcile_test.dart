@@ -46,6 +46,7 @@ ChartConfig _bars(
   List<Dataset> datasets, {
   bool animated = false,
   ChartTitle? title,
+  List<PluginOff<Plugin<Object?>>>? disabledPlugins,
   Map<String, Object?>? extra,
 }) => ChartConfig(
   labels: _labels,
@@ -53,6 +54,7 @@ ChartConfig _bars(
   scales: const [LinearAxis(.y, min: 0, max: 50)],
   title: title,
   animation: animated ? null : ChartAnimation.none,
+  disabledPlugins: disabledPlugins,
   extra: extra,
 );
 
@@ -567,6 +569,28 @@ void main() {
       await tester.pump();
       expect(modes, [null, 'theme', 'theme']);
       expect(map['borderColor'], const ChartPaint.solid(_red));
+    });
+  });
+
+  group('disabledPlugins', () {
+    testWidgets('a plugin off runs no hook, and a new config turns it on', (
+      tester,
+    ) async {
+      final data = <num?>[1, 2, 3];
+      ChartConfig config({required bool off}) => _bars([
+        BarDataset(data: data),
+      ], disabledPlugins: off ? const [PluginOff<LegendPlugin>()] : null);
+      // The `start` hook of the legend plugin writes `chart.legend`.
+      await tester.pumpWidget(_view(config(off: true)));
+      final chart = _chart(tester);
+      expect(chart.legend, isNull);
+
+      await tester.pumpWidget(_view(config(off: true)));
+      expect(chart.legend, isNull);
+
+      await tester.pumpWidget(_view(config(off: false)));
+      await tester.pump();
+      expect(chart.legend, isNotNull);
     });
   });
 

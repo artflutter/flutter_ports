@@ -1413,9 +1413,7 @@ void main() {
             responsive: false,
             // The labels of a legend read each arc in the layout, also with
             // `display: false`: this test counts the reads of the update.
-            extra: const {
-              'plugins': {'legend': false},
-            },
+            disabledPlugins: const [PluginOff<LegendPlugin>()],
           );
           final canvas = UiCanvasElement(width: 640, height: 400);
           final chart = Chart(canvas, ChartConfigLowering(config).lower());
@@ -1457,9 +1455,7 @@ void main() {
                       datasets: [datasets[type]!(values(0))],
                       animation: ChartAnimation.none,
                       tooltip: const ChartTooltip(enabled: false),
-                      extra: const {
-                        'plugins': {'legend': false},
-                      },
+                      disabledPlugins: const [PluginOff<LegendPlugin>()],
                     ),
                     updateMode: UpdateMode.none,
                     theme: const ChartThemeData(),

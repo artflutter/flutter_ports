@@ -17,7 +17,8 @@
 ///    parameter that is `null` writes no key.
 /// 2. A List of the app goes by reference: `data`, `points`, `labels`,
 ///    `CategoryAxis.labels` and `plugins`. A small style List
-///    (`ChartValue.indexed` or `borderDash`) lowers to a new List.
+///    (`ChartValue.indexed` or `borderDash`) and `ChartConfig.events` lower
+///    to a new List.
 /// 3. A `ChartPaint` passes unchanged. A `Duration` lowers through
 ///    [millisecondsOf], and an `EdgeInsets` stays a native value.
 ///    A name type lowers to its name or its `optionValue`.
@@ -303,6 +304,19 @@ final class ChartConfigLowering(
         in config.pluginOptions ?? const <PluginOptions<Object?>>[]) {
       plugins.jsWrite(options.pluginId, options);
     }
+    // `options.plugins.<id>: false` for each plugin that an item of
+    // `disabledPlugins` matches, as an `extra` entry
+    // `{'plugins': {<id>: false}}` stores it (`core.plugins.js:146-172`).
+    if (config.disabledPlugins case final offs?) {
+      for (final plugin in [
+        ...registry.plugins.items.values.whereType<Plugin<Object?>>(),
+        ...?config.plugins,
+      ]) {
+        if (offs.any((off) => off.matches(plugin))) {
+          _store(plugins, plugin.id, false);
+        }
+      }
+    }
     final options = ChartOptionsScope();
     if (config.scales case final scales?) {
       final byId = ScaleOptionsByIdScope();
@@ -344,6 +358,9 @@ final class ChartConfigLowering(
     }
     if (config.onHover != null) {
       options.onHover = eventTrampoline(() => this.config.onHover);
+    }
+    if (config.events case final events?) {
+      put(options, OptionKey.events, List<String>.of(events));
     }
     return mergeExtra(options, config.extra);
   }

@@ -724,9 +724,10 @@ void main() {
             CategoryAxis(.x, display: ScaleDisplay.off),
             LinearAxis(.y, display: ScaleDisplay.off, beginAtZero: false),
           ],
-          extra: {
-            'plugins': {'legend': false, 'title': false},
-          },
+          disabledPlugins: [
+            PluginOff<LegendPlugin>(),
+            PluginOff<TitlePlugin>(),
+          ],
         ),
       );
 
@@ -792,9 +793,10 @@ void main() {
               CategoryAxis(.x, display: ScaleDisplay.off),
               LinearAxis(.y, display: ScaleDisplay.off, beginAtZero: false),
             ],
-            extra: {
-              'plugins': {'legend': false, 'title': false},
-            },
+            disabledPlugins: [
+              PluginOff<LegendPlugin>(),
+              PluginOff<TitlePlugin>(),
+            ],
           ),
         );
 
@@ -822,9 +824,10 @@ void main() {
             CategoryAxis(.x, display: ScaleDisplay.off),
             LinearAxis(.y, min: 0, max: 2, display: ScaleDisplay.off),
           ],
-          extra: {
-            'plugins': {'legend': false, 'title': false},
-          },
+          disabledPlugins: [
+            PluginOff<LegendPlugin>(),
+            PluginOff<TitlePlugin>(),
+          ],
         ),
       );
 
@@ -854,9 +857,10 @@ void main() {
             CategoryAxis(.x, display: ScaleDisplay.off),
             LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
           ],
-          extra: {
-            'plugins': {'legend': false, 'title': false},
-          },
+          disabledPlugins: [
+            PluginOff<LegendPlugin>(),
+            PluginOff<TitlePlugin>(),
+          ],
         ),
       );
 
@@ -900,9 +904,10 @@ void main() {
                 max: 100,
               ),
             ],
-            extra: {
-              'plugins': {'legend': false, 'title': false},
-            },
+            disabledPlugins: [
+              PluginOff<LegendPlugin>(),
+              PluginOff<TitlePlugin>(),
+            ],
           ),
         );
 
@@ -939,9 +944,10 @@ void main() {
             CategoryAxis(.x, display: ScaleDisplay.off, stacked: StackMode.on),
             LinearAxis(.y, display: ScaleDisplay.off),
           ],
-          extra: {
-            'plugins': {'legend': false, 'title': false},
-          },
+          disabledPlugins: [
+            PluginOff<LegendPlugin>(),
+            PluginOff<TitlePlugin>(),
+          ],
         ),
       );
 
@@ -1040,9 +1046,10 @@ void main() {
               CategoryAxis(.x, display: ScaleDisplay.off),
               LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
             ],
-            extra: {
-              'plugins': {'legend': false, 'title': false},
-            },
+            disabledPlugins: [
+              PluginOff<LegendPlugin>(),
+              PluginOff<TitlePlugin>(),
+            ],
           ),
         );
 
@@ -1081,9 +1088,10 @@ void main() {
               CategoryAxis(.x, display: ScaleDisplay.off),
               LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
             ],
-            extra: {
-              'plugins': {'legend': false, 'title': false},
-            },
+            disabledPlugins: [
+              PluginOff<LegendPlugin>(),
+              PluginOff<TitlePlugin>(),
+            ],
           ),
         );
 
@@ -1114,9 +1122,10 @@ void main() {
             CategoryAxis(.x, display: ScaleDisplay.off),
             LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
           ],
-          extra: {
-            'plugins': {'legend': false, 'title': false},
-          },
+          disabledPlugins: [
+            PluginOff<LegendPlugin>(),
+            PluginOff<TitlePlugin>(),
+          ],
         ),
       );
 
@@ -1662,9 +1671,10 @@ void main() {
             CategoryAxis(.x, display: ScaleDisplay.off),
             LinearAxis(.y, display: ScaleDisplay.off),
           ],
-          extra: {
-            'plugins': {'legend': false, 'title': false},
-          },
+          disabledPlugins: [
+            PluginOff<LegendPlugin>(),
+            PluginOff<TitlePlugin>(),
+          ],
         ),
       );
 
@@ -1694,9 +1704,10 @@ void main() {
             CategoryAxis(.x, display: ScaleDisplay.off, stacked: StackMode.on),
             LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
           ],
-          extra: {
-            'plugins': {'legend': false, 'title': false},
-          },
+          disabledPlugins: [
+            PluginOff<LegendPlugin>(),
+            PluginOff<TitlePlugin>(),
+          ],
         ),
       );
 

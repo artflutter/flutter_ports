@@ -121,9 +121,7 @@ class _GraphicBarAutoUpdateState() extends State<GraphicBarAutoUpdate> {
       tooltip: _tooltip,
       plugins: _plugins,
       // No `mouseout`: the selection stays when the pointer leaves.
-      extra: const {
-        'events': ['mousemove', 'click', 'touchstart', 'touchmove'],
-      },
+      events: const ['mousemove', 'click', 'touchstart', 'touchmove'],
     );
   }
 

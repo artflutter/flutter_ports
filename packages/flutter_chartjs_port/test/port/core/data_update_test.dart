@@ -812,15 +812,13 @@ void main() {
       ],
       responsive: false,
       animation: typed.ChartAnimation.none,
-      extra: const {
-        'parsing': false,
-        'plugins': {
-          'legend': false,
-          'tooltip': false,
-          'colors': false,
-          'filler': false,
-        },
-      },
+      disabledPlugins: const [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TooltipPlugin>(),
+        PluginOff<ColorsPlugin>(),
+        PluginOff<FillerPlugin>(),
+      ],
+      extra: const {'parsing': false},
     );
     final first = [typed.DataPoint(1, 2), typed.DataPoint(2, 3)];
     final lowering = ChartConfigLowering(cfg(first));
@@ -1941,9 +1939,11 @@ void main() {
           ],
           responsive: false,
           animation: typed.ChartAnimation.none,
-          extra: {
-            'plugins': {'legend': false, 'tooltip': false, 'colors': false},
-          },
+          disabledPlugins: [
+            PluginOff<LegendPlugin>(),
+            PluginOff<TooltipPlugin>(),
+            PluginOff<ColorsPlugin>(),
+          ],
         );
         expect(chart(ChartConfigLowering(make()).lower()).updateData(), isTrue);
         final root = ChartConfigLowering(make()).lower();
@@ -2124,9 +2124,11 @@ void main() {
         datasets: [typed.PieDataset(data: values, backgroundColor: c)],
         responsive: false,
         animation: typed.ChartAnimation.none,
-        extra: const {
-          'plugins': {'legend': false, 'tooltip': false, 'colors': false},
-        },
+        disabledPlugins: const [
+          PluginOff<LegendPlugin>(),
+          PluginOff<TooltipPlugin>(),
+          PluginOff<ColorsPlugin>(),
+        ],
       );
       final lowering = ChartConfigLowering(
         cfg(const [1, 2, 3], const typed.ChartValue.indexed([red, blue])),

@@ -389,6 +389,7 @@ PluginHook
 PluginHookArgs
 PluginHookFunction
 PluginOf
+PluginOff
 PluginOptions
 PluginOptionsByTypeScope
 PluginService
@@ -1442,6 +1443,7 @@ PluginHook
 PluginHookArgs
 PluginHookFunction
 PluginOf
+PluginOff
 PluginOptions
 PluginOptionsByTypeScope
 PluginService

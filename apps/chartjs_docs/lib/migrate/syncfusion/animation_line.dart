@@ -63,7 +63,7 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
         tooltip: const ChartTooltip(enabled: false),
         animation: const ChartAnimation(duration: Duration(milliseconds: 1500)),
         // The original has no tooltip and no selection.
-        extra: const {'events': <String>[]},
+        events: const [],
         scales: const [
           LinearAxis(
             .x,

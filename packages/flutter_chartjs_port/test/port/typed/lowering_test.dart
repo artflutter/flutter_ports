@@ -1308,6 +1308,25 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     ChartConfig(datasets: [BarDataset()], onHover: _onEvent),
     {'onHover': _function},
   ),
+  'events': (
+    ChartConfig(datasets: [BarDataset()], events: ['click']),
+    {
+      'events': ['click'],
+    },
+  ),
+  'events, an empty List': (
+    ChartConfig(datasets: [BarDataset()], events: []),
+    {'events': <String>[]},
+  ),
+  'disabledPlugins': (
+    ChartConfig(
+      datasets: [BarDataset()],
+      disabledPlugins: [PluginOff<LegendPlugin>(), PluginOff<TitlePlugin>()],
+    ),
+    {
+      'plugins': {'legend': false, 'title': false},
+    },
+  ),
   'extra': (
     ChartConfig(
       datasets: [BarDataset()],
@@ -1332,6 +1351,7 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       animation: ChartAnimation.none,
       onClick: _onEvent,
       onHover: _onEvent,
+      events: ['click'],
       extra: {'locale': native_ui.Locale('en', 'US')},
     ),
     {
@@ -1355,10 +1375,17 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       'animation': false,
       'onClick': _function,
       'onHover': _function,
+      'events': ['click'],
       'locale': native_ui.Locale('en', 'US'),
     },
   ),
 };
+
+/// An inline plugin of its own class, for `PluginOff<_ProbePlugin>`.
+final class _ProbePlugin() extends Plugin<Object?> {
+  /// The plugin `probe`, with no hooks.
+  this : super(id: 'probe');
+}
 
 void main() {
   group('the datasets', () {
@@ -2645,6 +2672,85 @@ void main() {
       ).lower();
       expect(lowered.jsKeys(), ['type', 'data', 'options', 'plugins']);
       expect(lowered['plugins'], same(plugins));
+    });
+
+    test('the events lower to a new List, also a const one', () {
+      final events = ['click'];
+      final options = _options(
+        ChartConfig(datasets: const [LineDataset()], events: events),
+      );
+      expect(options['events'], isNot(same(events)));
+      expect(options['events'], ['click']);
+      final empty = _options(
+        const ChartConfig(datasets: [LineDataset()], events: []),
+      );
+      (empty['events']! as List<String>).add('click');
+      expect(empty['events'], ['click']);
+    });
+
+    group('disabledPlugins', () {
+      test('a built-in plugin off is the false of extra', () {
+        const typed = ChartConfig(
+          datasets: [BarDataset()],
+          legend: ChartLegend(display: true),
+          disabledPlugins: [PluginOff<LegendPlugin>()],
+        );
+        const raw = ChartConfig(
+          datasets: [BarDataset()],
+          legend: ChartLegend(display: true),
+          extra: {
+            'plugins': {'legend': false},
+          },
+        );
+        const twin = {
+          'plugins': {'legend': false},
+        };
+        expectTwin(_options(typed), twin);
+        expectTwin(_options(raw), twin);
+      });
+
+      test('an inline plugin of its own class is off by its id', () {
+        final probe = _ProbePlugin();
+        final options = _options(
+          ChartConfig(
+            datasets: const [LineDataset()],
+            plugins: [probe],
+            disabledPlugins: const [
+              PluginOff<_ProbePlugin>(),
+              PluginOff<TooltipPlugin>(),
+            ],
+          ),
+        );
+        expectTwin(options, {
+          'plugins': {'tooltip': false, 'probe': false},
+        });
+      });
+
+      test('an item that matches no plugin writes nothing', () {
+        expectTwin(
+          _options(
+            const ChartConfig(
+              datasets: [LineDataset()],
+              disabledPlugins: [PluginOff<_ProbePlugin>()],
+            ),
+          ),
+          <String, Object?>{},
+        );
+      });
+
+      test('two items of one class are ==', () {
+        // A new object at run time, not the const one.
+        // ignore: prefer_const_constructors
+        final runtime = PluginOff<LegendPlugin>();
+        expect(runtime, const PluginOff<LegendPlugin>());
+        expect(runtime.hashCode, const PluginOff<LegendPlugin>().hashCode);
+        expect(
+          const PluginOff<LegendPlugin>(),
+          isNot(const PluginOff<TitlePlugin>()),
+        );
+        expect(const PluginOff<LegendPlugin>().matches(legend), isTrue);
+        expect(const PluginOff<LegendPlugin>().matches(title), isFalse);
+      });
     });
 
     test('the order of the scales is the order of the List', () {

@@ -431,6 +431,11 @@ Object _mergeOptions(List<Object?> scopes) {
         result = result == null ? options : result.mergeOptions(options);
       case Map<Object?, Object?>(isEmpty: true):
         break;
+      // The `false` of a plugin off: the scope `plugins.<id>` of the pass of
+      // all plugins (`install`, `uninstall`), where upstream reads no option
+      // from a boolean (core.plugins.js:146-151).
+      case false:
+        break;
       default:
         assert(false, 'The options of this plugin are its PluginOptions.');
     }

@@ -133,7 +133,7 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
       tooltip: const ChartTooltip(enabled: false),
       plugins: [_labels],
       // The demo has no selection.
-      extra: const {'events': <String>[]},
+      events: const [],
     );
   }
 

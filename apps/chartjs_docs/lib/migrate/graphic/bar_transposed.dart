@@ -91,9 +91,7 @@ final ChartConfig _config = ChartConfig(
   ),
   tooltip: const ChartTooltip(enabled: false),
   plugins: [barLabels(_sold), tapSelection()],
-  extra: const {
-    'events': ['click'],
-  },
+  events: const ['click'],
 );
 
 /// The replica of the Graphic demo "Transposed Bar Chart".

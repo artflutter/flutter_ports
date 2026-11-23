@@ -366,9 +366,10 @@ void main() {
               ),
             ),
           ],
-          extra: const {
-            'plugins': {'legend': false, 'title': false},
-          },
+          disabledPlugins: const [
+            PluginOff<LegendPlugin>(),
+            PluginOff<TitlePlugin>(),
+          ],
         ),
       );
 

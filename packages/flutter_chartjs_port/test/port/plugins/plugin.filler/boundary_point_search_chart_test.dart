@@ -56,9 +56,10 @@ void main() {
       ],
       animation: ChartAnimation.none,
       responsive: false,
-      extra: const {
-        'plugins': {'legend': false, 'tooltip': false},
-      },
+      disabledPlugins: const [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
     );
     final chart = acquireChartRoot(ChartConfigLowering(config).lower());
     final meta = chart.getDatasetMeta(0);
@@ -122,9 +123,10 @@ void main() {
                 ),
                 LinearAxis(axis == 'x' ? .y : .x, display: ScaleDisplay.off),
               ],
-              extra: const {
-                'plugins': {'legend': false, 'tooltip': false},
-              },
+              disabledPlugins: const [
+                PluginOff<LegendPlugin>(),
+                PluginOff<TooltipPlugin>(),
+              ],
             );
             final chart = acquireChartRoot(ChartConfigLowering(config).lower());
             final source = fillerSourceOf(chart.getDatasetMeta(0))!;

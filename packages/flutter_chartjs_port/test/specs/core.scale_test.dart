@@ -332,9 +332,7 @@ void main() {
               ),
               const LinearAxis(.y, display: ScaleDisplay.off),
             ],
-            extra: const {
-              'plugins': {'legend': false},
-            },
+            disabledPlugins: const [PluginOff<LegendPlugin>()],
           ),
         );
 
@@ -371,9 +369,7 @@ void main() {
             LineDataset(data: [0, 1]),
           ],
           scales: [LinearAxis(.y, display: ScaleDisplay.off)],
-          extra: {
-            'plugins': {'legend': false},
-          },
+          disabledPlugins: [PluginOff<LegendPlugin>()],
         ),
         {
           'canvas': <String, Object?>{'height': 100, 'width': 200},

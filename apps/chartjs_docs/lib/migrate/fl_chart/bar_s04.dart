@@ -88,7 +88,7 @@ ChartConfig _config(double width) {
             ),
       ],
       tooltip: const ChartTooltip(enabled: false),
-      extra: const {'events': <String>[]},
+      events: const [],
       scales: [
         groupAxis(
           count: 4,

@@ -68,11 +68,12 @@ ChartConfigurationScope _config({
       LinearAxis(.x, min: -1, max: 20),
       LinearAxis(.y, min: -1, max: 20),
     ],
-    extra: const {
-      'events': <String>[],
-      'parsing': false,
-      'plugins': {'legend': false, 'tooltip': false},
-    },
+    events: const [],
+    disabledPlugins: const [
+      PluginOff<LegendPlugin>(),
+      PluginOff<TooltipPlugin>(),
+    ],
+    extra: const {'parsing': false},
   ),
 ).lower();
 

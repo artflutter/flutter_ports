@@ -81,9 +81,7 @@ final ChartConfig _config = ChartConfig(
     tooltipShadow,
     tapSelection(refresh: true),
   ],
-  extra: const {
-    'events': ['click'],
-  },
+  events: const ['click'],
 );
 
 /// The replica of the Graphic demo "Interactive Bar Chart".

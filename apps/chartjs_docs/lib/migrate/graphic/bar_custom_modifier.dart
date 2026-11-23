@@ -82,9 +82,7 @@ final ChartConfig _config = ChartConfig(
     tapSelection(onDoubleTap: resetRange),
   ],
   pluginOptions: const [horizontalRange],
-  extra: const {
-    'events': ['click'],
-  },
+  events: const ['click'],
 );
 
 /// The replica of the Graphic demo "Custom Modifier".

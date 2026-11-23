@@ -20,6 +20,7 @@ library;
 import 'dart:ui' show Size;
 
 import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:meta/meta.dart';
 
 /// The function of a hook that cannot cancel: `hook(chart, args, options)`.
 ///
@@ -317,6 +318,38 @@ final class TooltipDrawHookArgs({
 /// final probe = Plugin<Object?>(id: 'probe', afterDraw: (chart, args, _) {});
 /// ```
 typedef Plugin<O> = PluginOf<O, IChart>;
+
+/// Turns off each plugin of the class [T] for one chart: the typed form of
+/// `options.plugins.<id>: false`, which makes the plugin service skip the
+/// plugin (U `core.plugins.js:146-172`).
+///
+/// ```dart
+/// ChartConfig(
+///   datasets: [LineDataset(data: values)],
+///   disabledPlugins: const [PluginOff<LegendPlugin>()],
+/// )
+/// ```
+///
+/// The typed config writes `false` under the id of each registered plugin
+/// and each inline plugin of the chart that [matches]. A [T] with no such
+/// plugin writes nothing. Two [PluginOff] of the same class [T] are `==`.
+@immutable
+final class const PluginOff<T extends Plugin<Object?>>() {
+  /// The plugins of the class [T] off.
+  this;
+
+  /// Whether [plugin] is a [T].
+  bool matches(Plugin<Object?> plugin) => plugin is T;
+
+  @override
+  bool operator ==(Object other) => other.runtimeType == runtimeType;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() => 'PluginOff<$T>()';
+}
 
 /// The defaults of a plugin: a typed scope of a built-in plugin, or the
 /// [PluginOptions] of an add-on (Chart.js ADR 0148).

@@ -68,10 +68,11 @@ Chart _chart(
       ),
       const LinearAxis(.y),
     ],
-    extra: const {
-      'events': <String>[],
-      'plugins': {'legend': false, 'tooltip': false},
-    },
+    events: const [],
+    disabledPlugins: const [
+      PluginOff<LegendPlugin>(),
+      PluginOff<TooltipPlugin>(),
+    ],
   );
   final chart = Chart(canvas, ChartConfigLowering(config).lower());
   addTearDown(chart.destroy);

@@ -385,9 +385,7 @@ void main() {
                   LineDataset(data: [10, 20, 30, 100]),
                 ],
                 labels: ['A', 'B', 'C', 'D'],
-                extra: {
-                  'plugins': {'title': false},
-                },
+                disabledPlugins: [PluginOff<TitlePlugin>()],
               ),
             ).lower(),
           );

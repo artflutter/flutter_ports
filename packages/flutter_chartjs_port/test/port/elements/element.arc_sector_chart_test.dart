@@ -60,9 +60,11 @@ ChartConfig _config(ChartKind type, {required double borderWidth}) =>
         ),
       ],
       animation: ChartAnimation.none,
-      extra: const {
-        'plugins': {'legend': false, 'title': false, 'tooltip': false},
-      },
+      disabledPlugins: const [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
     );
 
 Future<Uint8List> _pixels(
@@ -106,9 +108,10 @@ void main() {
           ),
         ],
         animation: ChartAnimation.none,
-        extra: const {
-          'plugins': {'legend': false, 'tooltip': false},
-        },
+        disabledPlugins: const [
+          PluginOff<LegendPlugin>(),
+          PluginOff<TooltipPlugin>(),
+        ],
       );
       final chart = acquireChartRoot(ChartConfigLowering(config).lower());
       await tester.pump();

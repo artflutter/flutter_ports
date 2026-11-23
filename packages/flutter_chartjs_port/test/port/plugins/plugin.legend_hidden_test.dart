@@ -179,6 +179,7 @@ ChartConfigurationScope _typedConfig(
   typed.ChartAnimation? animation,
   Map<String, Object?>? extra,
   List<Plugin<Object?>>? plugins,
+  List<typed.PluginOff<Plugin<Object?>>>? disabledPlugins,
 }) => ChartConfigLowering(
   typed.ChartConfig(
     labels: labelValues ?? <Object>['a', 'b', 'c'],
@@ -188,6 +189,7 @@ ChartConfigurationScope _typedConfig(
     animation: animation,
     legend: legend,
     plugins: plugins,
+    disabledPlugins: disabledPlugins,
     extra: extra,
   ),
 ).lower();
@@ -892,17 +894,14 @@ void main() {
           scales: type == 'polarArea'
               ? const [typed.RadialLinearAxis(min: 0, max: 10)]
               : null,
-          // The plugins off: the typed API has no form for a plugin `false`.
-          extra: const {
-            'plugins': <String, Object?>{
-              'tooltip': false,
-              'title': false,
-              'subtitle': false,
-              'colors': false,
-              'decimation': false,
-              'filler': false,
-            },
-          },
+          disabledPlugins: const [
+            PluginOff<TooltipPlugin>(),
+            PluginOff<TitlePlugin>(),
+            PluginOff<SubtitlePlugin>(),
+            PluginOff<ColorsPlugin>(),
+            PluginOff<DecimationPlugin>(),
+            PluginOff<FillerPlugin>(),
+          ],
           labelValues: <String>['a', 'b', 'c'],
           data: data,
         );
@@ -2416,7 +2415,7 @@ void main() {
                     tooltip: const typed.ChartTooltip(enabled: false),
                     responsive: true,
                     maintainAspectRatio: false,
-                    extra: const {'events': <String>[]},
+                    events: const [],
                   ),
                   updateMode: UpdateMode.none,
                   theme: const typed.ChartThemeData(),
@@ -4269,17 +4268,15 @@ void main() {
                       tooltip: typed.ChartTooltip(enabled: tooltips),
                       responsive: true,
                       maintainAspectRatio: false,
-                      extra: {
-                        'events': tooltips
-                            ? [
-                                'mousemove',
-                                'mouseout',
-                                'click',
-                                'touchstart',
-                                'touchmove',
-                              ]
-                            : <String>[],
-                      },
+                      events: tooltips
+                          ? [
+                              'mousemove',
+                              'mouseout',
+                              'click',
+                              'touchstart',
+                              'touchmove',
+                            ]
+                          : [],
                     ),
                     updateMode: UpdateMode.none,
                     theme: const typed.ChartThemeData(),

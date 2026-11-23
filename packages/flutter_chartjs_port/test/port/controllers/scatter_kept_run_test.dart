@@ -47,11 +47,12 @@ ChartConfig _config(
     LinearAxis(.x, display: ScaleDisplay.off, min: 0, max: 100),
     LinearAxis(.y, display: ScaleDisplay.off, min: 0, max: 100),
   ],
-  extra: const {
-    'parsing': false,
-    'events': <String>[],
-    'plugins': {'legend': false, 'tooltip': false},
-  },
+  events: const [],
+  disabledPlugins: const [
+    PluginOff<LegendPlugin>(),
+    PluginOff<TooltipPlugin>(),
+  ],
+  extra: const {'parsing': false},
 );
 
 String _describe(Object? value) => switch (value) {

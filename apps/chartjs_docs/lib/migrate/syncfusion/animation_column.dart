@@ -59,7 +59,7 @@ class _SfAnimationColumnState() extends State<SfAnimationColumn> {
         // The default animationDuration of a series.
         animation: const ChartAnimation(duration: Duration(milliseconds: 1500)),
         // The original has no tooltip.
-        extra: const {'events': <String>[]},
+        events: const [],
         scales: [sfCategoryAxis(), sfValueAxis(min: 0, max: 100, stepSize: 20)],
       ),
     ),

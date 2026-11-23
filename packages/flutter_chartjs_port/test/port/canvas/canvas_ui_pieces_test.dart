@@ -1083,9 +1083,10 @@ void main() {
               CategoryAxis(.x, display: ScaleDisplay.off),
               LinearAxis(.y, display: ScaleDisplay.off, min: 0),
             ],
-            extra: const {
-              'plugins': {'legend': false, 'title': false},
-            },
+            disabledPlugins: const [
+              PluginOff<LegendPlugin>(),
+              PluginOff<TitlePlugin>(),
+            ],
           ),
         ).lower(),
       );
@@ -1187,10 +1188,11 @@ void main() {
             legend: legend
                 ? const ChartLegend(position: ChartPosition.right)
                 : null,
-            extra: {
-              'parsing': false,
-              'plugins': {if (!legend) 'legend': false, 'title': false},
-            },
+            disabledPlugins: [
+              if (!legend) const PluginOff<LegendPlugin>(),
+              const PluginOff<TitlePlugin>(),
+            ],
+            extra: const {'parsing': false},
           ),
         ).lower(),
       );
