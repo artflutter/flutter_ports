@@ -59,18 +59,6 @@ abstract class const TooltipPositioner() {
     List<ActiveElement> items,
     Object? eventPosition,
   );
-
-  /// The positioner of [value], the value of an option `position`, or Dart
-  /// `null` for a value that is not a positioner. A positioner name of
-  /// Chart.js is not a positioner: a debug build stops on it.
-  static TooltipPositioner? of(Object? value) {
-    assert(
-      value is! String,
-      'The option position of the tooltip takes a TooltipPositioner, not '
-      'the name "$value".',
-    );
-    return value is TooltipPositioner ? value : null;
-  }
 }
 
 /// `TooltipPosition` (`index.d.ts`): the position `{x, y}` of a built-in

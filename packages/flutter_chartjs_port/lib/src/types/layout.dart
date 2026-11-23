@@ -71,18 +71,7 @@ enum ChartPosition() implements LayoutPosition {
   center,
 
   /// `'chartArea'`: a box inside the chart area, for example a legend.
-  chartArea;
-
-  /// The value of [value], a `position` option, or Dart `null` for a value
-  /// that is not a [ChartPosition]. A keyword of Chart.js is not a value: a
-  /// debug build stops on it.
-  static ChartPosition? of(Object? value) {
-    assert(
-      value is! String,
-      'A position takes a ChartPosition, not the name "$value".',
-    );
-    return value is ChartPosition ? value : null;
-  }
+  chartArea,
 }
 
 /// The object form `{[scaleId]: value}` of layout.d.ts:3 `LayoutPosition`:

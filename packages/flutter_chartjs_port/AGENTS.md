@@ -810,8 +810,9 @@ repository.
       `middle`) of the pure `lib/src/types/line_option_enums.dart` (row
       `adapt-stepped-line-enum`), and the bar option `borderSkipped` holds a boolean or the enum
       `BorderSkippedEdge` of the pure `lib/src/types/bar_option_enums.dart` (row
-      `adapt-border-skipped-enum`), also in a raw config. A keyword stops a debug build. The
-      typed API has `stepped` on the line, scatter and radar datasets and on `LineElementStyle`;
+      `adapt-border-skipped-enum`), also in a raw config. A keyword is a foreign value, with no
+      debug stop: `stepped` draws the form `before`, and `borderSkipped` writes the key of its
+      text, as for each value that is not of the enum. The typed API has `stepped` on the line, scatter and radar datasets and on `LineElementStyle`;
       `stepped: true` and `borderSkipped` go through `extra`.
     - `plugin.filler/`: the 8 files of `src/plugins/plugin.filler/` (Chart.js ADR 0040).
       `index.dart` has the plugin `filler` and the source class `FillerSource`; `meta.$filler`
@@ -859,7 +860,8 @@ repository.
       `NearestTooltipPositioner` are the positioners of upstream. An app or a plugin gives its own
       positioner as a subclass, with no registration. `lib/` has no positioner names and no table:
       `Tooltip.positioners`, the static of `Tooltip.jsClass` and the plugin key `positioners` are
-      gone. A positioner name stops a debug build in `TooltipPositioner.of`. The base class and
+      gone. The field `TooltipOptions.position` takes only a positioner: a name does not
+      compile. The base class and
       `TooltipPosition` are in the pure `tooltip_position.dart`, because `opt.dart` reads the
       type. The generators write the positioner class into the reference data (`DartPositioner`),
       and a positioner of a test has the name `'fn:positioner:<key>'` there. An app gives it in

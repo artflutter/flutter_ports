@@ -38,19 +38,7 @@ enum BorderSkippedEdge() {
   top,
 
   /// `'right'`: the right edge.
-  right;
-
-  /// The value of [value], the value of the option `borderSkipped`, or Dart
-  /// `null` for a value that is not a [BorderSkippedEdge] (a boolean among
-  /// them). A keyword of Chart.js is not a value: a debug build stops on it.
-  static BorderSkippedEdge? of(Object? value) {
-    assert(
-      value is! String,
-      'The option borderSkipped takes a BorderSkippedEdge, not the name '
-      '"$value".',
-    );
-    return value is BorderSkippedEdge ? value : null;
-  }
+  right,
 }
 
 /// `barThickness` of a bar (index.d.ts:124 `number | 'flex'`): the width of

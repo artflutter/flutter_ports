@@ -21,16 +21,5 @@ enum SteppedLine() {
   after,
 
   /// `'middle'`: the step in the middle of the segment.
-  middle;
-
-  /// The value of [value], the value of the option `stepped`, or Dart `null`
-  /// for a value that is not a [SteppedLine] (a boolean among them). A
-  /// keyword of Chart.js is not a value: a debug build stops on it.
-  static SteppedLine? of(Object? value) {
-    assert(
-      value is! String,
-      'The option stepped takes a SteppedLine, not the name "$value".',
-    );
-    return value is SteppedLine ? value : null;
-  }
+  middle,
 }

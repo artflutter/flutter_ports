@@ -23,17 +23,5 @@ enum FillerDrawTime() {
 
   /// `'beforeDatasetsDraw'`: the filler fills each area after the scales,
   /// before the first dataset draws.
-  beforeDatasetsDraw;
-
-  /// The value of [value], the value of the option `drawTime`, or Dart
-  /// `null` for a value that is not a [FillerDrawTime]: the filler then
-  /// fills in no hook, as upstream does for a value that is not a keyword. A
-  /// keyword of Chart.js is not a value: a debug build stops on it.
-  static FillerDrawTime? of(Object? value) {
-    assert(
-      value is! String,
-      'The option drawTime takes a FillerDrawTime, not the name "$value".',
-    );
-    return value is FillerDrawTime ? value : null;
-  }
+  beforeDatasetsDraw,
 }

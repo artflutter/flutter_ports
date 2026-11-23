@@ -1338,18 +1338,6 @@ void main() {
       expect(animator.remove(chart), isTrue);
     });
 
-    testWidgets('a positioner name is not a positioner: a debug build '
-        'stops', (tester) async {
-      expect(
-        () => TooltipPositioner.of('average'),
-        throwsA(isA<AssertionError>()),
-      );
-      expect(TooltipPositioner.of(null), isNull);
-      expect(TooltipPositioner.of(undefined), isNull);
-      const nearest = NearestTooltipPositioner();
-      expect(TooltipPositioner.of(nearest), same(nearest));
-    });
-
     test('average keeps the semantics of new Set()', () {
       // The probe outputs `averageNaN` {x: NaN, y: 1}, `averageZeros`
       // {x: 2, y: 1} and `averageMinusZero` {x: +0, y: 1}: the add step of
