@@ -697,7 +697,9 @@ FillerOptionsScope lowerFiller(ChartFiller filler) {
 final class ChartAnimation extends AnimationSettings with Diagnosticable {
   /// The animation options: the length `duration` (the default is 1000
   /// milliseconds), the wait `delay`, the curve `easing` (a Flutter [Curve],
-  /// the default is `Curves.easeOutQuart`) and the repeat `loop`.
+  /// the default is `Curves.easeOutQuart`), the repeat `loop`, and the
+  /// `animateScale` and `animateRotate` of the doughnut, pie and polar area
+  /// charts.
   ///
   /// A constant of `Curves` and a `const` curve of the app compare by
   /// identity. A curve that `build` makes anew at each call is a new value,
@@ -707,13 +709,17 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
     super.delay,
     super.easing,
     super.loop,
+    this.animateScale,
+    this.animateRotate,
     this.onProgress,
     this.onComplete,
     this.extra,
   }) : _none = false;
 
   const new _none()
-    : onProgress = null,
+    : animateScale = null,
+      animateRotate = null,
+      onProgress = null,
       onComplete = null,
       extra = null,
       _none = true;
@@ -721,6 +727,15 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
   /// No animation: `animation: false`. A change of the data then shows at
   /// once. Its copies are [none] too.
   static const ChartAnimation none = ChartAnimation._none();
+
+  /// Whether the doughnut, pie and polar area charts grow their arcs from
+  /// the center at the start: `animateScale`. The default is `false` for
+  /// doughnut and pie, and `true` for polar area.
+  final bool? animateScale;
+
+  /// Whether the doughnut, pie and polar area charts turn their arcs from
+  /// the start angle at the start: `animateRotate`. The default is `true`.
+  final bool? animateRotate;
 
   /// The function of each step of the animations: `onProgress`.
   final AnimationEventHandler? onProgress;
@@ -742,6 +757,8 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
     Duration? delay,
     Curve? easing,
     bool? loop,
+    bool? animateScale,
+    bool? animateRotate,
     AnimationEventHandler? onProgress,
     AnimationEventHandler? onComplete,
     Map<String, Object?>? extra,
@@ -752,6 +769,8 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
           delay: delay ?? this.delay,
           easing: easing ?? this.easing,
           loop: loop ?? this.loop,
+          animateScale: animateScale ?? this.animateScale,
+          animateRotate: animateRotate ?? this.animateRotate,
           onProgress: onProgress ?? this.onProgress,
           onComplete: onComplete ?? this.onComplete,
           extra: extra ?? this.extra,
@@ -763,6 +782,8 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
     ('delay', delay),
     ('easing', easing),
     ('loop', loop),
+    ('animateScale', animateScale),
+    ('animateRotate', animateRotate),
     ('onProgress', byPresence(onProgress)),
     ('onComplete', byPresence(onComplete)),
     ('extra', byEntries(extra)),
@@ -834,13 +855,20 @@ TransitionsSpecScope? lowerTransitions(List<ChartTransition> transitions) {
 /// The `animation` option of [animation]: `false` for
 /// [ChartAnimation.none], else an `AnimationOptionsScope`. The scope has no
 /// copy of `duration`, `delay`, `easing` and `loop`: each of these cells
-/// holds [animation], the object of the app. The callbacks
+/// holds [animation], the object of the app. `animateScale` and
+/// `animateRotate` go as their bools. The callbacks
 /// lower to trampolines that call the callback of the newest config of
 /// [lowering].
 Object lowerAnimation(ChartAnimation animation, ChartConfigLowering lowering) {
   if (animation._none) return false;
   final scope = AnimationOptionsScope();
   _putSettings(scope, animation);
+  if (animation.animateScale case final animateScale?) {
+    scope.animateScale = animateScale;
+  }
+  if (animation.animateRotate case final animateRotate?) {
+    scope.animateRotate = animateRotate;
+  }
   if (animation.onProgress != null) {
     scope.onProgress = animationTrampoline(
       () => lowering.config.animation?.onProgress,

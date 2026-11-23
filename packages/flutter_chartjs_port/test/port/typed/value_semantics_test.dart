@@ -618,6 +618,32 @@ void main() {
       );
     });
 
+    test('animateScale and animateRotate compare by value', () {
+      _expectEqual(
+        const ChartAnimation(animateScale: true, animateRotate: false),
+        ChartAnimation(animateScale: _runtime(true), animateRotate: false),
+      );
+      expect(
+        const ChartAnimation(animateScale: true),
+        isNot(const ChartAnimation(animateScale: false)),
+      );
+      expect(
+        const ChartAnimation(animateRotate: true),
+        isNot(const ChartAnimation()),
+      );
+      expect(
+        const ChartAnimation().copyWith(
+          animateScale: true,
+          animateRotate: true,
+        ),
+        const ChartAnimation(animateScale: true, animateRotate: true),
+      );
+      expect(
+        ChartAnimation.none.copyWith(animateScale: true),
+        same(ChartAnimation.none),
+      );
+    });
+
     test('ChartAnimation.none is not an empty animation', () {
       expect(ChartAnimation.none, isNot(const ChartAnimation()));
       expect(ChartAnimation.none.copyWith(), same(ChartAnimation.none));

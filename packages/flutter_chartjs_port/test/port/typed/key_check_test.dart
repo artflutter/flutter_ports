@@ -82,6 +82,8 @@ const Map<String, int> _allowlist = {
   'options.plugins.tooltip.intersect': 1615,
   'options.animation.onProgress': 1802,
   'options.animation.onComplete': 1806,
+  'options.animation.animateRotate': 298,
+  'options.animation.animateScale': 304,
 };
 
 /// The keys of a value Map: the check does not go into it.
@@ -356,6 +358,8 @@ List<ChartConfig> _configs() {
         delay: Duration.zero,
         easing: Curves.easeOutQuart,
         loop: false,
+        animateScale: false,
+        animateRotate: true,
         onProgress: _onAnimation,
         onComplete: _onAnimation,
       ),

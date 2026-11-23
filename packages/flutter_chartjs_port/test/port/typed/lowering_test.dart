@@ -1255,6 +1255,11 @@ const Map<String, (ChartAnimation, Object)> _animation = {
     {'easing': Curves.easeInOutBack},
   ),
   'loop': (ChartAnimation(loop: true), {'loop': true}),
+  'animateScale': (ChartAnimation(animateScale: true), {'animateScale': true}),
+  'animateRotate': (
+    ChartAnimation(animateRotate: false),
+    {'animateRotate': false},
+  ),
   'onProgress': (
     ChartAnimation(onProgress: _onAnimation),
     {'onProgress': _function},
@@ -1263,10 +1268,7 @@ const Map<String, (ChartAnimation, Object)> _animation = {
     ChartAnimation(onComplete: _onAnimation),
     {'onComplete': _function},
   ),
-  'extra': (
-    ChartAnimation(extra: {'animateScale': true}),
-    {'animateScale': true},
-  ),
+  'extra': (ChartAnimation(extra: {'to': 1}), {'to': 1}),
 };
 
 /// The cases of the option parameters of [ChartConfig] and the twin
@@ -2583,7 +2585,7 @@ void main() {
             loop: false,
             onProgress: _onAnimation,
             onComplete: _onAnimation,
-            extra: {'animateRotate': false},
+            animateRotate: false,
           ),
         ),
       );
@@ -2661,9 +2663,9 @@ void main() {
           'delay': 20,
           'easing': Curves.linear,
           'loop': false,
+          'animateRotate': false,
           'onProgress': _function,
           'onComplete': _function,
-          'animateRotate': false,
         },
       });
     });
