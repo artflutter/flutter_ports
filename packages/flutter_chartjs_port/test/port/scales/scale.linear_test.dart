@@ -2,6 +2,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui';
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -238,8 +240,74 @@ ChartConfig? _typedReference(String name) => switch (name) {
     ],
     scales: [LinearAxis(.y, reverse: true)],
   ),
+  'offset' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, -5, 78, -100]),
+    ],
+    scales: [
+      LinearAxis(.y, extra: {'offset': true}),
+    ],
+  ),
+  'a ticks callback with the index' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd', 'e'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, 25, 78]),
+    ],
+    scales: [LinearAxis(.y, ticks: AxisTicks(callback: _indexLabel))],
+  ),
+  'a ticks callback that reads this' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd', 'e'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, 25, 78]),
+    ],
+    scales: [LinearAxis(.y, ticks: AxisTicks(callback: _labelOfThis))],
+  ),
+  'locale de-DE' => ChartConfig(
+    datasets: [
+      TestDataset(
+        const ChartKind('linearTest'),
+        points: [DataPoint(10000000, -1234.5), DataPoint(0, 98765.25)],
+      ),
+    ],
+    extra: const {'locale': Locale('de', 'DE')},
+  ),
+  'a vertical tick limit on a short canvas' => _verticalTickLimit(),
+  'a vertical tick limit with a large font' => _verticalTickLimit(
+    font: const ChartTextStyle(fontSize: 40),
+  ),
+  'a vertical tick limit with a lineHeight of 20 px' => _verticalTickLimit(
+    font: const ChartTextStyle(fontSize: 12, height: 1.6666666666666667),
+  ),
+  'a vertical tick limit with minRotation 60' => _verticalTickLimit(
+    minRotation: 60,
+  ),
+  'a vertical tick limit with minRotation 90' => _verticalTickLimit(
+    minRotation: 90,
+  ),
+  'a vertical tick limit with minRotation NaN' => _verticalTickLimit(
+    minRotation: double.nan,
+  ),
   _ => null,
 };
+
+/// The shared data and tick limit of the font and rotation reference cases.
+ChartConfig _verticalTickLimit({ChartTextStyle? font, double? minRotation}) =>
+    ChartConfig(
+      labels: const ['a', 'b', 'c'],
+      datasets: const [
+        TestDataset(ChartKind('scaleTest'), data: [0, 500, 1000]),
+      ],
+      scales: [
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(
+            font: font,
+            extra: {'maxTicksLimit': 1000, 'minRotation': ?minRotation},
+          ),
+        ),
+      ],
+    );
 
 /// The test controller `scaleTest2` of the generator: the overrides of
 /// `scaleTest`.
@@ -351,15 +419,21 @@ List<String> _indexLabel(
   List<Tick> ticks,
 ) => ['$index'];
 
+/// The reference callback uses the scale supplied as its typed first argument.
+List<String> _labelOfThis(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => ['[${jsToString(scale.getLabelForValue(value))}]'];
+
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
   'indexLabel': _indexLabel,
   'withUnit': (Object? scale, double value, int index, Object? ticks) => [
     '${jsToString(value)} kg',
   ],
-  'labelOfThis': (Object? scale, double value, int index, Object? ticks) => [
-    '[${jsToString((scale! as Scale).getLabelForValue(value))}]',
-  ],
+  'labelOfThis': _labelOfThis,
 };
 
 /// A chart of the test controller `linearTest` with the points [points]
