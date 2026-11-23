@@ -1,6 +1,7 @@
 # Chart.js ADR 0194: The decimation options are one object
 
 - Status: accepted (2026-11-23): its code is on main, and all the gates of AGENTS.md pass.
+- Superseded in part by: [Chart.js ADR 0196](0196-filler-colors-options-objects.md) (2026-11-23), for `ChartColors` and the parameter `colors` of `ChartConfig` in item 6
 - Date: 2026-11-23
 - Supersedes: of [Chart.js ADR 0182](0182-resolved-plugin-option-classes.md), item 1 for `DecimationOptions`
   and item 6; of [Chart.js ADR 0054](0054-typed-internal-model.md), §2 for the kind `DecimationOptions` of the
