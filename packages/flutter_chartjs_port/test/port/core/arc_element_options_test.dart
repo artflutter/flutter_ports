@@ -540,6 +540,6 @@ void main() {
     expect(result.jsRead('borderJoinStyle'), same(undefined));
     expect(result.isForeign(OptionKey.angle), isTrue);
     expect(result.jsKeys().first, r'$shared');
-    expect(jsGet(result, r'$shared'), false);
+    expect(result.$sharedValue, false);
   });
 }

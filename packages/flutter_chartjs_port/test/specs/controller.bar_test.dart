@@ -77,6 +77,9 @@ BarElement _bar(ChartMeta meta, int index) => meta.data[index] as BarElement;
 /// `element.options` of [element].
 Object? _options(Object element) => (element as Element).options;
 
+/// The resolved options of the bar [bar].
+BarOptions _barOptions(BarElement bar) => bar.options! as BarOptions;
+
 /// The mock context of :1677-1678: `ctx.resetTransform = function() {}`.
 final class _ResetTransformContext() extends MockContext {
   @override
@@ -1195,14 +1198,14 @@ void main() {
 
       meta.controller!.setHoverStyle(bar, 1, 0);
       expect(
-        jsGet(bar.options, 'backgroundColor'),
+        _barOptions(bar).backgroundColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(230, 0, 0, 1)),
       );
       expect(
-        jsGet(bar.options, 'borderColor'),
+        _barOptions(bar).borderColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 230, 1)),
       );
-      expect(jsGet(bar.options, 'borderWidth'), 2);
+      expect(_barOptions(bar).borderWidth, 2);
 
       // Set a dataset style
       _dataset(chart, 1)['hoverBackgroundColor'] = const ChartPaint.solid(
@@ -1216,14 +1219,14 @@ void main() {
 
       meta.controller!.setHoverStyle(bar, 1, 0);
       expect(
-        jsGet(bar.options, 'backgroundColor'),
+        _barOptions(bar).backgroundColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(128, 128, 128, 1)),
       );
       expect(
-        jsGet(bar.options, 'borderColor'),
+        _barOptions(bar).borderColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 1)),
       );
-      expect(jsGet(bar.options, 'borderWidth'), 5);
+      expect(_barOptions(bar).borderWidth, 5);
 
       // Should work with array styles so that we can set per bar
       _dataset(chart, 1)['hoverBackgroundColor'] = <Object?>[
@@ -1239,14 +1242,14 @@ void main() {
 
       meta.controller!.setHoverStyle(bar, 1, 0);
       expect(
-        jsGet(bar.options, 'backgroundColor'),
+        _barOptions(bar).backgroundColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
       );
       expect(
-        jsGet(bar.options, 'borderColor'),
+        _barOptions(bar).borderColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1)),
       );
-      expect(jsGet(bar.options, 'borderWidth'), 2.5);
+      expect(_barOptions(bar).borderWidth, 2.5);
     });
 
     testWidgets('should remove a hover style from a bar', (tester) async {
@@ -1287,38 +1290,38 @@ void main() {
 
       chart.update();
       expect(
-        jsGet(bar.options, 'backgroundColor'),
+        _barOptions(bar).backgroundColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(128, 128, 128, 1)),
       );
       expect(
-        jsGet(bar.options, 'borderColor'),
+        _barOptions(bar).borderColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(15, 15, 15, 1)),
       );
-      expect(jsGet(bar.options, 'borderWidth'), 3.14);
+      expect(_barOptions(bar).borderWidth, 3.14);
       meta.controller!.setHoverStyle(bar, 1, 0);
       expect(
-        jsGet(bar.options, 'backgroundColor'),
+        _barOptions(bar).backgroundColor,
         getHoverColor(
           const ChartPaint.solid(native_ui.Color.fromRGBO(128, 128, 128, 1)),
         ),
       );
       expect(
-        jsGet(bar.options, 'borderColor'),
+        _barOptions(bar).borderColor,
         getHoverColor(
           const ChartPaint.solid(native_ui.Color.fromRGBO(15, 15, 15, 1)),
         ),
       );
-      expect(jsGet(bar.options, 'borderWidth'), 3.14);
+      expect(_barOptions(bar).borderWidth, 3.14);
       meta.controller!.removeHoverStyle(bar);
       expect(
-        jsGet(bar.options, 'backgroundColor'),
+        _barOptions(bar).backgroundColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(128, 128, 128, 1)),
       );
       expect(
-        jsGet(bar.options, 'borderColor'),
+        _barOptions(bar).borderColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(15, 15, 15, 1)),
       );
-      expect(jsGet(bar.options, 'borderWidth'), 3.14);
+      expect(_barOptions(bar).borderWidth, 3.14);
 
       // Should work with array styles so that we can set per bar
       _dataset(chart, 1)['backgroundColor'] = <Object?>[
@@ -1333,38 +1336,38 @@ void main() {
 
       chart.update();
       expect(
-        jsGet(bar.options, 'backgroundColor'),
+        _barOptions(bar).backgroundColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
       );
       expect(
-        jsGet(bar.options, 'borderColor'),
+        _barOptions(bar).borderColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1)),
       );
-      expect(jsGet(bar.options, 'borderWidth'), 2.5);
+      expect(_barOptions(bar).borderWidth, 2.5);
       meta.controller!.setHoverStyle(bar, 1, 0);
       expect(
-        jsGet(bar.options, 'backgroundColor'),
+        _barOptions(bar).backgroundColor,
         getHoverColor(
           const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         ),
       );
       expect(
-        jsGet(bar.options, 'borderColor'),
+        _barOptions(bar).borderColor,
         getHoverColor(
           const ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1)),
         ),
       );
-      expect(jsGet(bar.options, 'borderWidth'), 2.5);
+      expect(_barOptions(bar).borderWidth, 2.5);
       meta.controller!.removeHoverStyle(bar);
       expect(
-        jsGet(bar.options, 'backgroundColor'),
+        _barOptions(bar).backgroundColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
       );
       expect(
-        jsGet(bar.options, 'borderColor'),
+        _barOptions(bar).borderColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1)),
       );
-      expect(jsGet(bar.options, 'borderWidth'), 2.5);
+      expect(_barOptions(bar).borderWidth, 2.5);
     });
 
     group('Bar width', () {

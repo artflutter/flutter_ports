@@ -147,9 +147,9 @@ Map<String, Object?> _ticks(_Log log) => <String, Object?>{
   'color': (Object? ctx) {
     log.context('ticks.color', ctx);
     // A read through the scale view has the scale context, with no index.
-    final index = contextRead(ctx, 'index');
+    final index = ctx is ScriptableScaleContext ? ctx.index : null;
     return ChartPaint.solid(
-      index is num && index % 2 == 0
+      index != null && index.isEven
           ? const Color(0xff336699)
           : const Color(0xff993366),
     );

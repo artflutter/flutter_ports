@@ -9,7 +9,6 @@ import 'package:chartjs_test_utils/pure.dart' show createMockContext;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/context_keys.dart';
 import '../../support/test_dataset.dart';
 
 // The typed element options of Chart.js ADR 0021, section 7, on real charts
@@ -81,14 +80,8 @@ final class _TypedController extends DatasetController {
       final point = points[i] as Element;
       final parsed = getParsed(i);
       final properties = <String, Object?>{
-        'x': iScale.getPixelForValue(
-          scaleValueOf(iScale, jsGet(parsed, 'x')),
-          i,
-        ),
-        'y': vScale.getPixelForValue(
-          scaleValueOf(vScale, jsGet(parsed, 'y')),
-          i,
-        ),
+        'x': iScale.getPixelForValue(scaleValueOf(iScale, parsed!.x), i),
+        'y': vScale.getPixelForValue(scaleValueOf(vScale, parsed.y), i),
       };
       if (includeOptions) {
         properties['options'] =
@@ -278,7 +271,7 @@ void main() {
           'typedLine',
           dataset: {
             'backgroundColor': (Object? context) => ChartPaint.solid(
-              contextRead(context, 'dataIndex') == 0
+              context is ScriptableContext && context.dataIndex == 0
                   ? const native_ui.Color.fromRGBO(0, 0, 255, 1)
                   : const native_ui.Color.fromRGBO(255, 0, 0, 1),
             ),

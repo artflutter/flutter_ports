@@ -158,11 +158,11 @@ void main() {
         const expectedPoints = 5;
         final data = _data(chart);
         expect(data.length, expectedPoints);
-        expect(jsGet(data[0], 'x'), originalData[2].x);
-        expect(jsGet(data[1], 'x'), originalData[3].x);
-        expect(jsGet(data[2], 'x'), originalData[4].x);
-        expect(jsGet(data[3], 'x'), originalData[5].x);
-        expect(jsGet(data[4], 'x'), originalData[6].x);
+        expect((data[0]! as ParsedItem).x, originalData[2].x);
+        expect((data[1]! as ParsedItem).x, originalData[3].x);
+        expect((data[2]! as ParsedItem).x, originalData[4].x);
+        expect((data[3]! as ParsedItem).x, originalData[5].x);
+        expect((data[4]! as ParsedItem).x, originalData[6].x);
       });
 
       testWidgets('should not crash with uneven points', (tester) async {

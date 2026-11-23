@@ -60,9 +60,9 @@ JsObjectFace _dataset(Chart chart, int index) =>
 /// `meta.data[index]` of [meta], an arc.
 ArcElement _arc(ChartMeta meta, int index) => meta.data[index] as ArcElement;
 
-/// `element.options[key]` of [element].
-Object? _option(Object element, String key) =>
-    jsGet((element as Element).options, key);
+/// The resolved options of the arc [element].
+ArcOptions _arcOptionsOf(Object element) =>
+    (element as Element).options! as ArcOptions;
 
 /// The options of the arcs of :92-98, :191-197 and :237-243.
 AnyObject _arcOptions() => <String, Object?>{
@@ -164,8 +164,8 @@ void main() {
       );
 
       final meta = chart.getDatasetMeta(0);
-      expect(_option(meta.data[0], 'spacingMode'), ArcSpacingMode.angular);
-      expect(_option(meta.data[1], 'spacingMode'), ArcSpacingMode.angular);
+      expect(_arcOptionsOf(meta.data[0]).spacingMode, ArcSpacingMode.angular);
+      expect(_arcOptionsOf(meta.data[1]).spacingMode, ArcSpacingMode.angular);
     });
 
     testWidgets('should reset and update elements', (tester) async {
@@ -539,25 +539,25 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptionsOf(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(49, 135, 221, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptionsOf(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(23, 90, 157, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 2);
+        expect(_arcOptionsOf(arc).borderWidth, 2);
 
         await triggerMouseEvent(chart, 'mouseout', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptionsOf(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptionsOf(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 2);
+        expect(_arcOptionsOf(arc).borderWidth, 2);
       });
 
       testWidgets('should handle hover styles defined via dataset properties', (
@@ -580,25 +580,25 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptionsOf(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(200, 100, 150, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptionsOf(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(150, 50, 100, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 8.4);
+        expect(_arcOptionsOf(arc).borderWidth, 8.4);
 
         await triggerMouseEvent(chart, 'mouseout', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptionsOf(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptionsOf(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 2);
+        expect(_arcOptionsOf(arc).borderWidth, 2);
       });
 
       testWidgets('should handle hover styles defined via element options', (
@@ -621,25 +621,25 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptionsOf(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(200, 100, 150, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptionsOf(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(150, 50, 100, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 8.4);
+        expect(_arcOptionsOf(arc).borderWidth, 8.4);
 
         await triggerMouseEvent(chart, 'mouseout', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptionsOf(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptionsOf(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 2);
+        expect(_arcOptionsOf(arc).borderWidth, 2);
       });
     });
 

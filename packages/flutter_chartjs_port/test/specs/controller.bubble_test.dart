@@ -62,8 +62,9 @@ PointElement _point(ChartMeta meta, int index) =>
 /// `element.options` of [element].
 Object? _options(Object element) => (element as Element).options;
 
-/// `element.options[key]` of [element].
-Object? _option(Object element, String key) => jsGet(_options(element), key);
+/// The resolved options of the point [element].
+PointOptions _pointOptions(Object element) =>
+    _options(element)! as PointOptions;
 
 /// The tooltip body item `{before: [], lines: lines, after: []}`
 /// (plugin.tooltip.js:559-563).
@@ -364,27 +365,27 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(49, 135, 221, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(23, 90, 157, 1)),
         );
-        expect(_option(point, 'borderWidth'), 1);
-        expect(_option(point, 'radius'), 20 + 4);
+        expect(_pointOptions(point).borderWidth, 1);
+        expect(_pointOptions(point).radius, 20 + 4);
 
         await triggerMouseEvent(chart, 'mouseout', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(point, 'borderWidth'), 2);
-        expect(_option(point, 'radius'), 20);
+        expect(_pointOptions(point).borderWidth, 2);
+        expect(_pointOptions(point).radius, 20);
       });
 
       testWidgets('should handle hover styles defined via dataset properties', (
@@ -408,27 +409,27 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(200, 100, 150, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(150, 50, 100, 1)),
         );
-        expect(_option(point, 'borderWidth'), 8.4);
-        expect(_option(point, 'radius'), 20 + 4.2);
+        expect(_pointOptions(point).borderWidth, 8.4);
+        expect(_pointOptions(point).radius, 20 + 4.2);
 
         await triggerMouseEvent(chart, 'mouseout', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(point, 'borderWidth'), 2);
-        expect(_option(point, 'radius'), 20);
+        expect(_pointOptions(point).borderWidth, 2);
+        expect(_pointOptions(point).radius, 20);
       });
 
       testWidgets('should handle hover styles defined via element options', (
@@ -455,27 +456,27 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(200, 100, 150, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(150, 50, 100, 1)),
         );
-        expect(_option(point, 'borderWidth'), 8.4);
-        expect(_option(point, 'radius'), 20 + 4.2);
+        expect(_pointOptions(point).borderWidth, 8.4);
+        expect(_pointOptions(point).radius, 20 + 4.2);
 
         await triggerMouseEvent(chart, 'mouseout', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(point, 'borderWidth'), 2);
-        expect(_option(point, 'radius'), 20);
+        expect(_pointOptions(point).borderWidth, 2);
+        expect(_pointOptions(point).radius, 20);
       });
     });
 

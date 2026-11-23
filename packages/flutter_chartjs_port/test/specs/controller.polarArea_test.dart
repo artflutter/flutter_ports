@@ -61,8 +61,8 @@ ArcElement _arc(ChartMeta meta, int index) => meta.data[index] as ArcElement;
 /// `element.options` of [element].
 Object? _options(Object element) => (element as Element).options;
 
-/// `element.options[key]` of [element].
-Object? _option(Object element, String key) => jsGet(_options(element), key);
+/// The resolved options of the arc [element].
+ArcOptions _arcOptions(Object element) => _options(element)! as ArcOptions;
 
 /// The expected values `{o, s, e}` of an arc: the outer radius, the start
 /// angle and the end angle.
@@ -218,8 +218,14 @@ void main() {
       );
 
       final meta = chart.getDatasetMeta(0);
-      expect(_option(meta.data[0], 'spacingMode'), ArcSpacingMode.proportional);
-      expect(_option(meta.data[1], 'spacingMode'), ArcSpacingMode.proportional);
+      expect(
+        _arcOptions(meta.data[0]).spacingMode,
+        ArcSpacingMode.proportional,
+      );
+      expect(
+        _arcOptions(meta.data[1]).spacingMode,
+        ArcSpacingMode.proportional,
+      );
     });
 
     testWidgets('should respect chart-level spacingMode override', (
@@ -245,10 +251,10 @@ void main() {
       );
 
       final meta = chart.getDatasetMeta(0);
-      expect(_option(meta.data[0], 'spacingMode'), ArcSpacingMode.parallel);
-      expect(_option(meta.data[1], 'spacingMode'), ArcSpacingMode.parallel);
-      expect(_option(meta.data[0], 'spacing'), 12);
-      expect(_option(meta.data[1], 'spacing'), 12);
+      expect(_arcOptions(meta.data[0]).spacingMode, ArcSpacingMode.parallel);
+      expect(_arcOptions(meta.data[1]).spacingMode, ArcSpacingMode.parallel);
+      expect(_arcOptions(meta.data[0]).spacing, 12);
+      expect(_arcOptions(meta.data[1]).spacing, 12);
     });
 
     testWidgets('should draw all elements', (tester) async {
@@ -341,14 +347,14 @@ void main() {
 
       for (var i = 0; i < 4; ++i) {
         expect(
-          _option(meta.data[i], 'backgroundColor'),
+          _arcOptions(meta.data[i]).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(128, 129, 130, 1)),
         );
         expect(
-          _option(meta.data[i], 'borderColor'),
+          _arcOptions(meta.data[i]).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(56, 57, 58, 1)),
         );
-        expect(_option(meta.data[i], 'borderWidth'), 1.123);
+        expect(_arcOptions(meta.data[i]).borderWidth, 1.123);
       }
 
       chart.update();
@@ -517,25 +523,25 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptions(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(49, 135, 221, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptions(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(23, 90, 157, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 2);
+        expect(_arcOptions(arc).borderWidth, 2);
 
         await triggerMouseEvent(chart, 'mouseout', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptions(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptions(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 2);
+        expect(_arcOptions(arc).borderWidth, 2);
       });
 
       testWidgets('should handle hover styles defined via dataset properties', (
@@ -558,25 +564,25 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptions(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(200, 100, 150, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptions(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(150, 50, 100, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 8.4);
+        expect(_arcOptions(arc).borderWidth, 8.4);
 
         await triggerMouseEvent(chart, 'mouseout', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptions(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptions(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 2);
+        expect(_arcOptions(arc).borderWidth, 2);
       });
 
       testWidgets('should handle hover styles defined via element options', (
@@ -599,25 +605,25 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptions(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(200, 100, 150, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptions(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(150, 50, 100, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 8.4);
+        expect(_arcOptions(arc).borderWidth, 8.4);
 
         await triggerMouseEvent(chart, 'mouseout', arc);
         expect(
-          _option(arc, 'backgroundColor'),
+          _arcOptions(arc).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(arc, 'borderColor'),
+          _arcOptions(arc).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(arc, 'borderWidth'), 2);
+        expect(_arcOptions(arc).borderWidth, 2);
       });
     });
 

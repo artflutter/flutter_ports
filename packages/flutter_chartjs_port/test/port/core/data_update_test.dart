@@ -335,7 +335,7 @@ void main() {
   test('scriptable styles fall back and see new parsed values', () {
     final cfg = config('bar');
     ChartPaint background(Object? context) => ChartPaint.solid(
-      (jsGet(contextRead(context, 'parsed'), 'y')! as num) > 5
+      (((context! as ScriptableContext).parsed! as ParsedItem).y! as num) > 5
           ? const ui.Color(0xffff0000)
           : const ui.Color(0xff0000ff),
     );
@@ -344,7 +344,7 @@ void main() {
     change(cfg, 0);
     expect(a.updateData(), isFalse);
     expect(
-      jsGet(a.getDatasetMeta(0).data.first.options, 'backgroundColor'),
+      (a.getDatasetMeta(0).data.first.options! as BarOptions).backgroundColor,
       const ChartPaint.solid(ui.Color(0xffff0000)),
     );
   });
@@ -698,11 +698,11 @@ void main() {
       final a = chart(cfg);
       final controller = a.getDatasetMeta(0).controller!;
       final context = controller.getContext(null, true, 'resize');
-      expect(contextRead(context, 'active'), isTrue);
+      expect(context.active, isTrue);
       change(cfg, 0);
       expect(a.updateData(), isTrue, reason: type);
-      expect(contextRead(context, 'active'), isFalse, reason: type);
-      expect(contextRead(context, 'mode'), same(undefined), reason: type);
+      expect(context.active, isFalse, reason: type);
+      expect(context.mode, isNull, reason: type);
     }
   });
   test('the arguments of afterUpdate are the arguments {mode}', () {
@@ -780,8 +780,8 @@ void main() {
       for (final e in c.getActiveElements()) [e.datasetIndex, e.index],
     ];
     Object tips(Chart c) => [
-      for (final t in c.tooltip!.dataPoints ?? const <Object?>[])
-        [jsGet(t, 'formattedValue'), plain(jsGet(t, 'parsed'))],
+      for (final t in c.tooltip!.dataPoints ?? const <TooltipItem>[])
+        [t.formattedValue, plain(t.parsed)],
     ];
     expect(active(a), active(b));
     expect(tips(a), tips(b));
@@ -1241,7 +1241,7 @@ void main() {
               jsGet(jsGet(defaults, 'elements'), elementOf(type)),
               'borderWidth',
               (Object? context) {
-                calls.add(contextRead(context, 'index'));
+                calls.add((context! as ScriptableContext).index);
                 return 2.0;
               },
             );
@@ -1257,7 +1257,7 @@ void main() {
         test('a function in the overrides of the type keeps the full path', () {
           final calls = <Object?>[];
           jsSet(jsGet(overrides, type), 'borderWidth', (Object? context) {
-            calls.add(contextRead(context, 'index'));
+            calls.add((context! as ScriptableContext).index);
             return 2.0;
           });
           expectTwin(() {
@@ -1605,7 +1605,7 @@ void main() {
             () => indexed(
               type,
               background: (Object? context) {
-                calls.add(contextRead(context, 'index'));
+                calls.add((context! as ScriptableContext).index);
                 return red;
               },
             ),
@@ -1642,7 +1642,7 @@ void main() {
           final calls = <Object?>[];
           final pie = jsGet(overrides, 'pie');
           jsSet(pie, 'rotation', (Object? context) {
-            calls.add(jsGet(contextRead(context, 'dataset'), 'data'));
+            calls.add(jsGet((context! as ScriptableContext).dataset, 'data'));
             return 30.0;
           });
           expectTwin(cfg, path: false, ticks: 2);
@@ -1748,8 +1748,8 @@ void main() {
         dataset(cfg)['backgroundColor'] = <Object?>[green];
         a.update(UpdateMode.none);
         expect(a.updateData(), isTrue);
-        final options = a.getDatasetMeta(0).data[1].options;
-        expect(jsGet(options, 'backgroundColor'), green);
+        final options = a.getDatasetMeta(0).data[1].options! as ArcOptions;
+        expect(options.backgroundColor, green);
       });
 
       test('a chart of a plain style stays on its path', () {
@@ -2159,7 +2159,7 @@ void main() {
       expect(lowering.lastApplyDataOnly, isTrue);
       expect(a.updateData(), isTrue);
       expect(
-        jsGet(a.getDatasetMeta(0).data[1].options, 'backgroundColor'),
+        (a.getDatasetMeta(0).data[1].options! as ArcOptions).backgroundColor,
         blue,
       );
       lowering.apply(

@@ -70,8 +70,12 @@ JsObjectFace _dataset(Chart chart, int index) =>
 /// `element.options` of [element].
 Object? _options(Object element) => (element as Element).options;
 
-/// `element.options[key]` of [element].
-Object? _option(Object element, String key) => jsGet(_options(element), key);
+/// The resolved options of the point [element].
+PointOptions _pointOptions(Object element) =>
+    _options(element)! as PointOptions;
+
+/// The resolved options of the line [element].
+LineOptions _lineOptions(Object element) => _options(element)! as LineOptions;
 
 /// `Chart.defaults.datasets`.
 JsObjectFace _datasetDefaults() =>
@@ -664,14 +668,14 @@ void main() {
       final meta = chart.getDatasetMeta(0);
 
       expect(
-        _option(meta.dataset!, 'backgroundColor'),
+        _lineOptions(meta.dataset!).backgroundColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(98, 98, 98, 1)),
       );
       expect(
-        _option(meta.dataset!, 'borderColor'),
+        _lineOptions(meta.dataset!).borderColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(8, 8, 8, 1)),
       );
-      expect(_option(meta.dataset!, 'borderWidth'), 0.55);
+      expect(_lineOptions(meta.dataset!).borderWidth, 0.55);
     });
 
     group('dataset global defaults', () {
@@ -726,26 +730,26 @@ void main() {
               ..labels = <Object?>['label1', 'label2']),
         );
 
-        final options = chart.getDatasetMeta(0).dataset!.options;
+        final options = _lineOptions(chart.getDatasetMeta(0).dataset!);
 
-        expect(jsGet(options, 'spanGaps'), true);
-        expect(jsGet(options, 'tension'), 0.231);
+        expect(options.spanGaps, true);
+        expect(options.tension, 0.231);
         expect(
-          jsGet(options, 'backgroundColor'),
+          options.backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(170, 221, 221, 1)),
         );
-        expect(jsGet(options, 'borderWidth'), '#daa');
+        expect(options.borderWidthValue, '#daa');
         expect(
-          jsGet(options, 'borderColor'),
+          options.borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(221, 170, 221, 1)),
         );
-        expect(jsGet(options, 'borderCapStyle'), native_ui.StrokeCap.round);
-        expect(jsGet(options, 'borderDash'), equals(<double>[0]));
-        expect(jsGet(options, 'borderDashOffset'), 0.871);
-        expect(jsGet(options, 'borderJoinStyle'), native_ui.StrokeJoin.miter);
-        expect(jsGet(options, 'fill'), FillTarget.toStart);
+        expect(options.borderCapStyle, native_ui.StrokeCap.round);
+        expect(options.borderDash, equals(<double>[0]));
+        expect(options.borderDashOffset, 0.871);
+        expect(options.borderJoinStyle, native_ui.StrokeJoin.miter);
+        expect(options.fill, FillTarget.toStart);
         expect(
-          jsGet(options, 'cubicInterpolationMode'),
+          options.cubicInterpolationMode,
           const MonotoneCubicInterpolationMode(),
         );
       });
@@ -788,15 +792,15 @@ void main() {
             }),
         );
 
-        final options = chart.getDatasetMeta(0).dataset!.options;
+        final options = _lineOptions(chart.getDatasetMeta(0).dataset!);
 
         // dataset-level option overrides global default
-        expect(jsGet(options, 'spanGaps'), true);
+        expect(options.spanGaps, true);
         // chart-level default overrides global default
-        expect(jsGet(options, 'tension'), 0.345);
+        expect(options.tension, 0.345);
         // dataset-level option overrides chart-level default
         expect(
-          jsGet(options, 'backgroundColor'),
+          options.backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(221, 170, 221, 1)),
         );
       });
@@ -826,25 +830,25 @@ void main() {
     };
 
     /// The expectations of :675-685 and :713-723.
-    void expectLineOptions(Object? options) {
-      expect(jsGet(options, 'spanGaps'), true);
-      expect(jsGet(options, 'tension'), 0.231);
+    void expectLineOptions(LineOptions options) {
+      expect(options.spanGaps, true);
+      expect(options.tension, 0.231);
       expect(
-        jsGet(options, 'backgroundColor'),
+        options.backgroundColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(170, 221, 221, 1)),
       );
-      expect(jsGet(options, 'borderWidth'), '#daa');
+      expect(options.borderWidthValue, '#daa');
       expect(
-        jsGet(options, 'borderColor'),
+        options.borderColor,
         const ChartPaint.solid(native_ui.Color.fromRGBO(221, 170, 221, 1)),
       );
-      expect(jsGet(options, 'borderCapStyle'), native_ui.StrokeCap.round);
-      expect(jsGet(options, 'borderDash'), equals(<double>[0]));
-      expect(jsGet(options, 'borderDashOffset'), 0.871);
-      expect(jsGet(options, 'borderJoinStyle'), native_ui.StrokeJoin.miter);
-      expect(jsGet(options, 'fill'), FillTarget.toStart);
+      expect(options.borderCapStyle, native_ui.StrokeCap.round);
+      expect(options.borderDash, equals(<double>[0]));
+      expect(options.borderDashOffset, 0.871);
+      expect(options.borderJoinStyle, native_ui.StrokeJoin.miter);
+      expect(options.fill, FillTarget.toStart);
       expect(
-        jsGet(options, 'cubicInterpolationMode'),
+        options.cubicInterpolationMode,
         const MonotoneCubicInterpolationMode(),
       );
     }
@@ -871,7 +875,7 @@ void main() {
           }),
       );
 
-      expectLineOptions(chart.getDatasetMeta(0).dataset!.options);
+      expectLineOptions(_lineOptions(chart.getDatasetMeta(0).dataset!));
     });
 
     testWidgets('should obey the dataset options', (tester) async {
@@ -890,7 +894,7 @@ void main() {
             ..labels = <Object?>['label1', 'label2']),
       );
 
-      expectLineOptions(chart.getDatasetMeta(0).dataset!.options);
+      expectLineOptions(_lineOptions(chart.getDatasetMeta(0).dataset!));
     });
 
     testWidgets('should handle number of data point changes in update', (
@@ -970,27 +974,27 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(49, 135, 221, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(23, 90, 157, 1)),
         );
-        expect(_option(point, 'borderWidth'), 1);
-        expect(_option(point, 'radius'), 4);
+        expect(_pointOptions(point).borderWidth, 1);
+        expect(_pointOptions(point).radius, 4);
 
         await triggerMouseEvent(chart, 'mouseout', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(point, 'borderWidth'), 2);
-        expect(_option(point, 'radius'), 3);
+        expect(_pointOptions(point).borderWidth, 2);
+        expect(_pointOptions(point).radius, 3);
       });
 
       testWidgets('should handle hover styles defined via dataset properties', (
@@ -1014,27 +1018,27 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(200, 100, 150, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(150, 50, 100, 1)),
         );
-        expect(_option(point, 'borderWidth'), 8.4);
-        expect(_option(point, 'radius'), 4.2);
+        expect(_pointOptions(point).borderWidth, 8.4);
+        expect(_pointOptions(point).radius, 4.2);
 
         await triggerMouseEvent(chart, 'mouseout', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(point, 'borderWidth'), 2);
-        expect(_option(point, 'radius'), 3);
+        expect(_pointOptions(point).borderWidth, 2);
+        expect(_pointOptions(point).radius, 3);
       });
 
       testWidgets('should handle hover styles defined via element options', (
@@ -1061,27 +1065,27 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(200, 100, 150, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(150, 50, 100, 1)),
         );
-        expect(_option(point, 'borderWidth'), 8.4);
-        expect(_option(point, 'radius'), 4.2);
+        expect(_pointOptions(point).borderWidth, 8.4);
+        expect(_pointOptions(point).radius, 4.2);
 
         await triggerMouseEvent(chart, 'mouseout', point);
         expect(
-          _option(point, 'backgroundColor'),
+          _pointOptions(point).backgroundColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(100, 150, 200, 1)),
         );
         expect(
-          _option(point, 'borderColor'),
+          _pointOptions(point).borderColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(50, 100, 150, 1)),
         );
-        expect(_option(point, 'borderWidth'), 2);
-        expect(_option(point, 'radius'), 3);
+        expect(_pointOptions(point).borderWidth, 2);
+        expect(_pointOptions(point).radius, 3);
       });
 
       testWidgets(
@@ -1115,25 +1119,25 @@ void main() {
 
           await triggerMouseEvent(chart, 'mousemove', point);
           expect(
-            _option(dataset, 'backgroundColor'),
+            _lineOptions(dataset).backgroundColor,
             const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 1)),
           );
           expect(
-            _option(dataset, 'borderColor'),
+            _lineOptions(dataset).borderColor,
             const ChartPaint.solid(native_ui.Color.fromRGBO(17, 17, 17, 1)),
           );
-          expect(_option(dataset, 'borderWidth'), 12);
+          expect(_lineOptions(dataset).borderWidth, 12);
 
           await triggerMouseEvent(chart, 'mouseout', point);
           expect(
-            _option(dataset, 'backgroundColor'),
+            _lineOptions(dataset).backgroundColor,
             const ChartPaint.solid(native_ui.Color.fromRGBO(170, 170, 170, 1)),
           );
           expect(
-            _option(dataset, 'borderColor'),
+            _lineOptions(dataset).borderColor,
             const ChartPaint.solid(native_ui.Color.fromRGBO(187, 187, 187, 1)),
           );
-          expect(_option(dataset, 'borderWidth'), 6);
+          expect(_lineOptions(dataset).borderWidth, 6);
         },
       );
     });
@@ -1156,7 +1160,7 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       final point = meta.data[0];
 
-      expect(_option(point, 'borderWidth'), 0);
+      expect(_pointOptions(point).borderWidth, 0);
     });
 
     testWidgets('should allow an array as the point border width setting', (
@@ -1177,10 +1181,10 @@ void main() {
       );
 
       final meta = chart.getDatasetMeta(0);
-      expect(_option(meta.data[0], 'borderWidth'), 1);
-      expect(_option(meta.data[1], 'borderWidth'), 2);
-      expect(_option(meta.data[2], 'borderWidth'), 3);
-      expect(_option(meta.data[3], 'borderWidth'), 4);
+      expect(_pointOptions(meta.data[0]).borderWidth, 1);
+      expect(_pointOptions(meta.data[1]).borderWidth, 2);
+      expect(_pointOptions(meta.data[2]).borderWidth, 3);
+      expect(_pointOptions(meta.data[3]).borderWidth, 4);
     });
 
     testWidgets('should render a million points', (tester) async {

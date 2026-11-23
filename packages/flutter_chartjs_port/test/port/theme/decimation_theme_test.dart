@@ -77,7 +77,7 @@ _State _state(Chart chart, List<DataPoint> input) {
   final dataset = datasets[0]!;
   final data = jsGet(dataset, 'data')! as List<Object?>;
   return (
-    items: [for (final item in data) (jsGet(item, 'x'), jsGet(item, 'y'))],
+    items: [for (final item in data.cast<ParsedItem>()) (item.x, item.y)],
     rawIsInput: identical(jsGet(dataset, '_data'), input),
     metaCount: chart.getDatasetMeta(0).data.length,
     keys: jsObjectKeys(dataset),

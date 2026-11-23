@@ -11,7 +11,6 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
-import '../../support/context_keys.dart';
 import '../../support/data_scope.dart';
 import '../../support/font_record.dart';
 import '../../support/tick_label.dart';
@@ -254,25 +253,22 @@ final Map<String, Object> _functions = {
   'thisType': (Scale scale, double value, int index, List<Tick> ticks) => [
     '${scale.type}${jsToString(value)}',
   ],
-  'colorByIndex': (Object? ctx) =>
-      jsTruthy(jsToNumber(contextRead(ctx, 'index')).remainder(2))
+  'colorByIndex': (Object? ctx) => _isOddIndex(ctx)
       ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
       : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
-  'widthByIndex': (Object? ctx) => contextRead(ctx, 'type') == 'tick'
-      ? jsToNumber(contextRead(ctx, 'index')) + 1
+  'widthByIndex': (Object? ctx) =>
+      ctx is ScriptableScaleContext && ctx.type == 'tick'
+      ? ctx.index! + 1.0
       : 5.0,
-  'undefinedOddWidth': (Object? ctx) =>
-      jsTruthy(jsToNumber(contextRead(ctx, 'index')).remainder(2))
-      ? undefined
-      : 2.0,
+  'undefinedOddWidth': (Object? ctx) => _isOddIndex(ctx) ? undefined : 2.0,
   'fontByIndex': (Object? ctx) => ChartTextStyle(
-    fontSize: contextRead(ctx, 'type') == 'tick'
-        ? 10 + 2 * jsToNumber(contextRead(ctx, 'index'))
+    fontSize: ctx is ScriptableScaleContext && ctx.type == 'tick'
+        ? 10 + 2.0 * ctx.index!
         : 12.0,
   ),
   'colorByMajor': (Object? ctx) {
-    final tick = contextRead(ctx, 'tick');
-    return tick is Tick && tick.major
+    final tick = ctx is ScriptableScaleContext ? ctx.tick : null;
+    return tick != null && tick.major
         ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
         : const ChartPaint.solid(native_ui.Color.fromRGBO(128, 128, 128, 1));
   },
@@ -280,6 +276,15 @@ final Map<String, Object> _functions = {
     final s = scale! as Scale;
     s.ticks = s.ticks!.sublist(1);
   },
+};
+
+/// `ctx.index % 2` of a reference function as a truth value: an absent
+/// index is `undefined`, which gives NaN.
+bool _isOddIndex(Object? ctx) => switch (ctx) {
+  ScriptableScaleContext(:final int index) => index.isOdd,
+  ScriptableScalePointLabelContext(:final index) => index.isOdd,
+  ScriptableContext(:final index) => index.isOdd,
+  _ => false,
 };
 
 /// A mutable copy of a reference value, with each `'fn:<name>'` replaced by

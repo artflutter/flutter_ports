@@ -64,7 +64,7 @@ import '../support/tick_label.dart';
 //   are the members of the default adapter (`_startOf`, `_endOf`, `_add`).
 // - `scale._unit` is the field `unit` of `TimeScale`.
 // - `controller.getParsed(0)[xScale.id]` is
-//   `jsGet(controller.getParsed(0), xScale.id)`.
+//   `parsedValueOf(controller.getParsed(0), xScale.axis)`.
 // - `toBeTruthy()` is `jsTruthy(value)`.
 // - A `beforeEach` of a `describe` that acquires a chart is a local function
 //   that each case calls first. `this.chart` is a `late` variable of the
@@ -612,12 +612,18 @@ void main() {
       final controller = chart.getDatasetMeta(0).controller!;
       expect(
         jsTruthy(
-          scaleLabelOf(xScale, jsGet(controller.getParsed(0), xScale.id)),
+          scaleLabelOf(
+            xScale,
+            parsedValueOf(controller.getParsed(0), xScale.axis),
+          ),
         ),
         isTrue,
       );
       expect(
-        scaleLabelOf(xScale, jsGet(controller.getParsed(0), xScale.id)),
+        scaleLabelOf(
+          xScale,
+          parsedValueOf(controller.getParsed(0), xScale.axis),
+        ),
         'Jan 1, 2015, 8:00:00 pm',
       );
       expect(
@@ -733,7 +739,7 @@ void main() {
 
         final xScale = chart.scales['x']!;
         final controller = chart.getDatasetMeta(0).controller!;
-        final value = jsGet(controller.getParsed(0), xScale.id);
+        final value = parsedValueOf(controller.getParsed(0), xScale.axis);
         expect(jsTruthy(scaleLabelOf(xScale, value)), isTrue);
         expect(scaleLabelOf(xScale, value), 'Jan 1, 2015, 8:00:00 pm');
       },
@@ -790,7 +796,7 @@ void main() {
       final controller = chart.getDatasetMeta(0).controller!;
       final label = scaleLabelOf(
         xScale,
-        jsGet(controller.getParsed(0), xScale.id),
+        parsedValueOf(controller.getParsed(0), xScale.axis),
       );
       expect(label, equals('Jan 8, 2018, 5:14:23 am'));
     });

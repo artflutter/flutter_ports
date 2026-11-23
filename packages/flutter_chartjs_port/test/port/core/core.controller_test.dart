@@ -137,14 +137,8 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
       final point = points[i] as Element;
       final parsed = getParsed(i);
       final properties = <String, Object?>{
-        'x': iScale.getPixelForValue(
-          scaleValueOf(iScale, jsGet(parsed, 'x')),
-          i,
-        ),
-        'y': vScale.getPixelForValue(
-          scaleValueOf(vScale, jsGet(parsed, 'y')),
-          i,
-        ),
+        'x': iScale.getPixelForValue(scaleValueOf(iScale, parsed!.x), i),
+        'y': vScale.getPixelForValue(scaleValueOf(vScale, parsed.y), i),
       };
       if (includeOptions) {
         properties['options'] =

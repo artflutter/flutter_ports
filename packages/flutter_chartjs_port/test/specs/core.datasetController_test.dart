@@ -50,7 +50,7 @@ import '../support/parsed_items.dart';
 //   `controller.resolveAnimations(...).properties` (Chart.js ADR 0012).
 //   `toBeInstanceOf(Object)` is `isA<Object>()`. `withContext(text)` is the
 //   `reason` of `expect`.
-// - `opts.$shared` is `jsGet(opts, r'$shared')`. `Object.isFrozen(o)` is
+// - `opts.$shared` is `opts.$sharedValue`. `Object.isFrozen(o)` is
 //   `o.isFrozen` of a `JsFreezable` (Chart.js ADR 0021, section 7).
 // - `delete Chart.defaults.datasets.line.fill` is `remove('fill')`.
 //
@@ -135,9 +135,9 @@ Matcher _contextContaining({
   return matcher;
 }
 
-/// `meta._parsed.map(p => p[key])`.
-List<Object?> _parsedOf(ChartMeta meta, String key) => [
-  for (final p in meta.parsed) jsGet(p, key),
+/// `meta._parsed.map(p => p[axis])`.
+List<Object?> _parsedOf(ChartMeta meta, CartesianAxis axis) => [
+  for (final p in meta.parsed) p!.valueOf(axis),
 ];
 
 /// `data.push(...items)`: the change, then the notification of the hooked
@@ -463,8 +463,8 @@ void main() {
       );
 
       final meta1 = chart.getDatasetMeta(0);
-      final parsedXValues1 = _parsedOf(meta1, 'x');
-      final parsedYValues1 = _parsedOf(meta1, 'y');
+      final parsedXValues1 = _parsedOf(meta1, .x);
+      final parsedYValues1 = _parsedOf(meta1, .y);
 
       expect(meta1.data.length, 6);
       expect(
@@ -474,8 +474,8 @@ void main() {
       expect(parsedYValues1, equals(data1));
 
       final meta2 = chart.getDatasetMeta(1);
-      final parsedXValues2 = _parsedOf(meta2, 'x');
-      final parsedYValues2 = _parsedOf(meta2, 'y');
+      final parsedXValues2 = _parsedOf(meta2, .x);
+      final parsedYValues2 = _parsedOf(meta2, .y);
 
       expect(meta2.data.length, 5);
       expect(
@@ -519,8 +519,8 @@ void main() {
       );
 
       final meta = chart.getDatasetMeta(0);
-      final parsedXValues = _parsedOf(meta, 'x');
-      final parsedYValues = _parsedOf(meta, 'y');
+      final parsedXValues = _parsedOf(meta, .x);
+      final parsedYValues = _parsedOf(meta, .y);
 
       expect(meta.data.length, 2);
       expect(parsedXValues, equals(<Object?>[0, 1])); // label indices
@@ -540,7 +540,7 @@ void main() {
         <String, Object?>{'x': 'Five', 'name': 'Five', 'y': 5, 'value': 5},
       ]);
       List<Object?> xOf(List<Object?> data) => [
-        for (final n in data) jsGet(n, 'x'),
+        for (final n in data) (n! as ParsedItem).x,
       ];
       for (final parsing in <Object?>[
         true,
@@ -695,7 +695,7 @@ void main() {
         );
 
         final meta = chart.getDatasetMeta(0);
-        List<Object?> parsedYValues() => _parsedOf(meta, 'y');
+        List<Object?> parsedYValues() => _parsedOf(meta, .y);
         late IElement first;
         late IElement second;
         late IElement last;
@@ -938,14 +938,14 @@ void main() {
         final meta = chart.getDatasetMeta(0);
 
         expect(meta.data.length, 6);
-        expect(_parsedOf(meta, 'y'), equals(data0));
+        expect(_parsedOf(meta, .y), equals(data0));
         final point0 = meta.data[0];
 
         _dataset(chart, 0)['data'] = data1;
         chart.update();
 
         expect(meta.data.length, 3);
-        expect(_parsedOf(meta, 'y'), equals(data1));
+        expect(_parsedOf(meta, .y), equals(data1));
         expect(meta.data[0], same(point0));
 
         _push(data1, [9]);
@@ -956,13 +956,13 @@ void main() {
         chart.update();
 
         expect(meta.data.length, 6);
-        expect(_parsedOf(meta, 'y'), equals(data0));
+        expect(_parsedOf(meta, .y), equals(data0));
 
         _dataset(chart, 0)['data'] = data2;
         chart.update();
 
         expect(meta.data.length, 8);
-        expect(_parsedOf(meta, 'y'), equals(data2));
+        expect(_parsedOf(meta, .y), equals(data2));
       },
     );
 
@@ -989,14 +989,14 @@ void main() {
       final meta = chart.getDatasetMeta(0);
 
       expect(meta.data.length, 6);
-      expect(_parsedOf(meta, 'y'), equals(data0));
+      expect(_parsedOf(meta, .y), equals(data0));
       final point0 = meta.data[0];
 
       _dataset(chart, 0)['data'] = data1;
       chart.update();
 
       expect(meta.data.length, 3);
-      expect(_parsedOf(meta, 'y'), equals(data1));
+      expect(_parsedOf(meta, .y), equals(data1));
       expect(meta.data[0], same(point0));
 
       _push(data1, [9]);
@@ -1007,13 +1007,13 @@ void main() {
       chart.update();
 
       expect(meta.data.length, 6);
-      expect(_parsedOf(meta, 'y'), equals(data0));
+      expect(_parsedOf(meta, .y), equals(data0));
 
       _dataset(chart, 0)['data'] = data2;
       chart.update();
 
       expect(meta.data.length, 8);
-      expect(_parsedOf(meta, 'y'), equals(data2));
+      expect(_parsedOf(meta, .y), equals(data2));
     });
 
     testWidgets(
@@ -1568,7 +1568,7 @@ void main() {
         final opts1 = controller.resolveDataElementOptions(1);
 
         expect(identical(opts0, opts1), isTrue);
-        expect(jsGet(opts0, r'$shared'), isTrue);
+        expect(opts0.$sharedValue, isTrue);
         expect((opts0 as JsFreezable).isFrozen, isTrue);
       });
 
@@ -1597,7 +1597,7 @@ void main() {
         final opts1 = controller.resolveDataElementOptions(1);
 
         expect(identical(opts0, opts1), isFalse);
-        expect(jsGet(opts0, r'$shared'), isNot(isTrue));
+        expect(opts0.$sharedValue, isNot(isTrue));
         expect((opts0 as JsFreezable).isFrozen, isFalse);
       });
 
@@ -1627,7 +1627,7 @@ void main() {
         final opts1 = controller.resolveDataElementOptions(1);
 
         expect(identical(opts0, opts1), isFalse);
-        expect(jsGet(opts0, r'$shared'), isNot(isTrue));
+        expect(opts0.$sharedValue, isNot(isTrue));
         expect((opts0 as JsFreezable).isFrozen, isFalse);
       });
 

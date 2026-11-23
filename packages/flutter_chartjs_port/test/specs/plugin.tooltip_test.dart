@@ -782,12 +782,8 @@ void main() {
               mode: const IndexInteractionMode(),
               callbacks: TooltipCallbacks(
                 beforeLabel: (tooltip, ctx) {
-                  final parsed = ctx.parsed;
-                  return [
-                    jsToString(
-                      jsAdd(jsAdd(jsGet(parsed, 'x'), ','), jsGet(parsed, 'y')),
-                    ),
-                  ];
+                  final parsed = ctx.parsed! as ParsedItem;
+                  return [jsToString(jsAdd(jsAdd(parsed.x, ','), parsed.y))];
                 },
               ),
             ),

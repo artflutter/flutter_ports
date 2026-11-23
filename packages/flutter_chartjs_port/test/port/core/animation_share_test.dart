@@ -11,7 +11,6 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/animation_spec_input.dart';
-import '../../support/context_keys.dart';
 
 // `BarController.update` with one resolution of the animation options for
 // its bars (`lib/src/core/animation_share.dart`, row
@@ -85,21 +84,19 @@ ChartConfigurationScope _stacked(List<String> log, {required bool twin}) =>
       ),
     ).lower();
 
-List<Element> _bars(Chart chart) => [
+List<BarElement> _bars(Chart chart) => [
   for (
     var i = 0;
     i < (jsGet(chart.data, 'datasets')! as List<Object?>).length;
     i++
   )
-    ...chart.getDatasetMeta(i).data.cast<Element>(),
+    ...chart.getDatasetMeta(i).data.cast<BarElement>(),
 ];
 
 /// The geometry of each bar.
 String _geometry(Chart chart) => [
   for (final bar in _bars(chart))
-    [
-      for (final name in const ['x', 'y', 'base', 'width', 'height']) bar[name],
-    ].join(','),
+    [bar.x, bar.y, bar.base, bar.width, bar.height].join(','),
 ].join(';');
 
 /// The `$animations` entries of each bar: the key order and the state of
@@ -126,12 +123,14 @@ String _running(Chart chart, double date) => [
 /// The context of each bar: the keys that the shared path writes.
 String _contexts(Chart chart) => [
   for (final bar in _bars(chart))
-    if (bar.$context case final Object context)
+    if (bar.$context case final ScriptableContext context)
       [
-        for (final name in const ['index', 'dataIndex', 'active', 'mode'])
-          contextRead(context, name),
-        jsGet(contextRead(context, 'parsed'), 'y'),
-        contextRead(context, 'raw'),
+        context.index,
+        context.dataIndex,
+        context.active,
+        context.mode,
+        (context.parsed as ParsedItem?)?.y,
+        context.raw,
       ].join(','),
 ].join(';');
 
@@ -331,11 +330,10 @@ void main() {
       final run = await _run(
         _bar(
           animation: <String, Object?>{
-            'delay': (Object? context, Object? options) =>
-                switch (contextRead(context, 'dataIndex')) {
-                  final num index => index * 3.0,
-                  _ => 0.0,
-                },
+            'delay': (Object? context, Object? options) => switch (context) {
+              ScriptableContext(dataIndex: final int index) => index * 3.0,
+              _ => 0.0,
+            },
           },
         ),
         twin: false,

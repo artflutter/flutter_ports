@@ -519,11 +519,12 @@ final class _FakeChart(@override final Config config, AnyObject spec)
 
 /// The functions of the `{$fn: name}` markers.
 final Map<Object?, Object?> _functions = {
-  'colorByIndex': (Object? ctx) => contextRead(ctx, 'dataIndex') == 1
+  'colorByIndex': (Object? ctx) =>
+      ctx is ScriptableContext && ctx.dataIndex == 1
       ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
       : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
   'fillIsDataset': (Object? ctx) =>
-      FillTarget.toValue(contextRead(ctx, 'type') == 'dataset' ? 75 : 0),
+      FillTarget.toValue((ctx! as ContextObject).type == 'dataset' ? 75 : 0),
 };
 
 /// A new value from a spec value: `{$fn: name}` gives a function,
@@ -1221,7 +1222,7 @@ void main() {
       expect(run.chart.dataChanges, isEmpty);
       expect(run.meta(0).data, hasLength(7));
       expect(
-        [for (final item in run.meta(0).parsed) jsGet(item, 'y')],
+        [for (final item in run.meta(0).parsed) item!.y],
         [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
       );
     });
@@ -1274,8 +1275,8 @@ void main() {
       final meta = run.meta(0);
       expect(run._dataset(0)['data'], '123');
       expect(meta.data, hasLength(3));
-      expect([for (final item in meta.parsed) jsGet(item, 'x')], [0, 1, 2]);
-      expect([for (final item in meta.parsed) jsGet(item, 'y')], [1, 2, 3]);
+      expect([for (final item in meta.parsed) item!.x], [0, 1, 2]);
+      expect([for (final item in meta.parsed) item!.y], [1, 2, 3]);
 
       // An equal string that is not the same object.
       final parsed = meta.parsed;
@@ -1289,7 +1290,7 @@ void main() {
       run._dataset(0)['data'] = '4321';
       run.step(<Object?>['elements', false]);
       expect(meta.data, hasLength(4));
-      expect([for (final item in meta.parsed) jsGet(item, 'y')], [4, 3, 2, 1]);
+      expect([for (final item in meta.parsed) item!.y], [4, 3, 2, 1]);
       expect(run.chart.dataChanges, isEmpty);
 
       final data = <Object?>[5.0, 6.0];
