@@ -1044,16 +1044,27 @@ void _doughnutDataItems(AnyObject config) {
 /// the values for a List with a `ParsedItem` (`parsing: false`, row
 /// `harness-parsed-data-items`; a value that is no object goes into `r`,
 /// as [_doughnutDataItems] does), else the values themselves.
-List<Object?> _dataValues(List<Object?> data, List<Object?> values) =>
-    data is List<ParsedItem?> || data.any((item) => item is ParsedItem)
-    ? <ParsedItem?>[
-        for (final value in values)
-          if (value is Map || value is ParsedItem)
-            parsedItemOf(value)
-          else
-            ParsedItem()..r = value,
-      ]
-    : values;
+List<Object?> _dataValues(List<Object?> data, List<Object?> values) => _like(
+  data,
+  data is List<ParsedItem?> || data.any((item) => item is ParsedItem)
+      ? <ParsedItem?>[
+          for (final value in values)
+            if (value is Map || value is ParsedItem)
+              parsedItemOf(value)
+            else
+              ParsedItem()..r = value,
+        ]
+      : values,
+);
+
+/// A List of the runtime type of [data] (its empty `sublist`) with the items
+/// of [values]: a typed data List of a typed config (`List<num?>`) takes the
+/// items of a step one by one.
+List<Object?> _like(List<Object?> data, List<Object?> values) {
+  final list = data.sublist(0, 0);
+  values.forEach(list.add);
+  return list;
+}
 
 /// The data List of the dataset [d] of [chart]:
 /// `chart.data.datasets[d].data`. An absent dataset throws the
@@ -1224,23 +1235,22 @@ Future<void> _runCaseSteps(
   final error = expected['error'] as Map<String, Object?>?;
   final at = error?['at'];
   final parseColors = theme != null;
-  final config = copyReference(c.config, functions)! as AnyObject;
-  if (theme != null) {
-    config[themeConfigKey] = theme;
-  }
-  final options = copyReference(c.options)! as AnyObject;
-
-  nativeFixtureColors(config);
-  _doughnutDataItems(config);
+  Chart acquire() => acquireReferenceChart(
+    c.config,
+    c.options,
+    functions: functions,
+    theme: theme as ChartOptionsScope?,
+    prepareMap: _doughnutDataItems,
+  );
   if (at == 'initial') {
     expect(
-      () => acquireChart(config, options),
+      acquire,
       _throwsError(error!, errorTypes),
       reason: 'initial: the error of the generator',
     );
     return;
   }
-  final chart = acquireChart(config, options);
+  final chart = acquire();
   expectControllerObservations(
     chart,
     expected['initial'],

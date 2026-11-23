@@ -207,12 +207,7 @@ void main() {
     ]) {
       testWidgets(name, (tester) async {
         final c = _reference.firstWhere((c) => c.name == name);
-        final config = copyReference(c.config)! as AnyObject;
-        nativeFixtureColors(config);
-        final chart = acquireChartRoot(
-          config,
-          copyReference(c.options)! as AnyObject,
-        );
+        final chart = acquireReferenceChart(c.config, c.options);
         var observation = c.expected['initial']! as AnyObject;
         if (stepIndex >= 0) {
           final step =

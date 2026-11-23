@@ -132,7 +132,9 @@ void main() {
   testReferenceWidths(controllerScatterReferenceWidths);
 
   test('the reference has the 6 cases of Chart.js ADR 0030 first', () {
-    final names = [for (final c in controllerScatterReference) c.name];
+    final names = [
+      for (final c in controllerScatterReference(_functions)) c.name,
+    ];
     bool prefixed(String n) =>
         n.startsWith('parsed:') || n.startsWith('interfaces:');
     expect(names.take(6), [
@@ -152,7 +154,7 @@ void main() {
   // pins the port.
   testControllerChartCases(
     [
-      for (final c in controllerScatterReference)
+      for (final c in controllerScatterReference(_functions))
         if (c.name != _stringClipCase) c,
     ],
     functions: _functions,
@@ -166,12 +168,12 @@ void main() {
     testWidgets("the clip of the borderWidth '3' is 3 on each side", (
       tester,
     ) async {
-      final c = controllerScatterReference.firstWhere(
-        (c) => c.name == _stringClipCase,
-      );
-      final chart = acquireChartRoot(
-        copyReference(c.config, _functions)! as AnyObject,
-        copyReference(c.options)! as AnyObject,
+      final c = controllerScatterReference(_functions)
+          .firstWhere((c) => c.name == _stringClipCase);
+      final chart = acquireReferenceChart(
+        c.config,
+        c.options,
+        functions: _functions,
       );
       final clip = chart.getDatasetMeta(0).clip;
       expect([clip.left, clip.top, clip.right, clip.bottom], [3, 3, 3, 3]);
@@ -180,7 +182,7 @@ void main() {
 
   group('theming.md §8 test 3: the light preset', () {
     testControllerChartCases(
-      controllerScatterReference,
+      controllerScatterReference(_functions),
       functions: _functions,
       theme: compileLightTheme(),
     );
@@ -189,12 +191,15 @@ void main() {
       final snapshot = jsonDecode(
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
-      final config =
-          copyReference(controllerScatterReference.first.config, _functions)!
-              as AnyObject;
-      config[themeConfigKey] = compileLightTheme();
-      nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
+      expectNoStaleScaleKeys(
+        acquireReferenceChart(
+          controllerScatterReference(_functions).first.config,
+          const {},
+          functions: _functions,
+          theme: compileLightTheme(),
+        ),
+        snapshot,
+      );
     });
   });
 

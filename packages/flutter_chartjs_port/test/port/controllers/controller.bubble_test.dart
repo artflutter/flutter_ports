@@ -101,7 +101,9 @@ void main() {
   testReferenceWidths(controllerBubbleReferenceWidths);
 
   test('the reference has the 7 cases of Chart.js ADR 0030 first', () {
-    final names = [for (final c in controllerBubbleReference) c.name];
+    final names = [
+      for (final c in controllerBubbleReference(_functions)) c.name,
+    ];
     bool prefixed(String n) =>
         n.startsWith('parsed:') || n.startsWith('interfaces:');
     expect(names.first, 'default');
@@ -111,14 +113,14 @@ void main() {
   });
 
   testControllerChartCases(
-    controllerBubbleReference,
+    controllerBubbleReference(_functions),
     functions: _functions,
     skips: _parsedItemSkips,
   );
 
   group('theming.md §8 test 3: the light preset', () {
     testControllerChartCases(
-      controllerBubbleReference,
+      controllerBubbleReference(_functions),
       functions: _functions,
       theme: compileLightTheme(),
       skips: _parsedItemSkips,
@@ -128,11 +130,13 @@ void main() {
       final snapshot = jsonDecode(
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
-      final config =
-          copyReference(controllerBubbleReference.first.config)! as AnyObject;
-      config[themeConfigKey] = compileLightTheme();
-      nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChart(config), snapshot);
+      final chart = acquireReferenceChart(
+        controllerBubbleReference(_functions).first.config,
+        const {},
+        functions: _functions,
+        theme: compileLightTheme(),
+      );
+      expectNoStaleScaleKeys(chart, snapshot);
     });
   });
 

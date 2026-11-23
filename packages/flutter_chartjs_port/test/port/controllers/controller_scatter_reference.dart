@@ -6,10 +6,14 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 17 cases, 85 widths.
 
-import 'dart:ui' show FontStyle, StrokeCap, StrokeJoin;
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
+import 'dart:ui' show Color, FontStyle, StrokeCap, StrokeJoin;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String controllerScatterReferenceNode = 'v24.22.1';
@@ -30,15 +34,17 @@ const String controllerScatterReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerScatterReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -53,39 +59,46 @@ typedef ControllerScatterReferenceWidth = ({
 });
 
 /// The cases.
-const List<ControllerScatterReferenceCase> controllerScatterReference = [
+List<ControllerScatterReferenceCase> controllerScatterReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'default',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          label: 'one',
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': -10.0, 'y': 0.0},
-              <String, Object?>{'x': 0.0, 'y': 10.0},
-              <String, Object?>{'x': 10.0, 'y': 5.0},
-              <String, Object?>{'x': 0.5, 'y': 5.5},
+              const <String, Object?>{'x': -10.0, 'y': 0.0},
+              const <String, Object?>{'x': 0.0, 'y': 10.0},
+              const <String, Object?>{'x': 10.0, 'y': 5.0},
+              const <String, Object?>{'x': 0.5, 'y': 5.5},
             ],
-            'label': 'one',
           },
-          <String, Object?>{
+        ),
+        ScatterDataset(
+          label: 'two',
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          borderWidth: 2,
+          pointRadius: const ChartValue.constant(5),
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 4.0, 'y': -3.0},
-              <String, Object?>{'x': -6.0, 'y': 8.0},
-              <String, Object?>{'x': 2.0, 'y': 2.0},
+              const <String, Object?>{'x': 4.0, 'y': -3.0},
+              const <String, Object?>{'x': -6.0, 'y': 8.0},
+              const <String, Object?>{'x': 2.0, 'y': 2.0},
             ],
-            'label': 'two',
-            'backgroundColor': 'red',
-            'borderColor': '#0000ff',
-            'borderWidth': 2.0,
-            'pointRadius': 5.0,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
         'scales': <String, Object?>{
@@ -6779,60 +6792,63 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'showLine true',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          showLine: true,
+          borderWidth: 3,
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 10.0, 'y': 6.0},
+              const <String, Object?>{'x': 0.0, 'y': 3.0},
+              const <String, Object?>{'x': 1.0, 'y': 5.0},
+              const <String, Object?>{'x': 4.0, 'y': 2.0},
+              const <String, Object?>{'x': 5.0, 'y': null},
+              const <String, Object?>{'x': 6.0, 'y': 4.0},
+              const <String, Object?>{'x': 9.0, 'y': 1.0},
+              const <String, Object?>{'x': 10.0, 'y': 6.0},
             ],
-            'showLine': true,
-            'borderWidth': 3.0,
             'spanGaps': 2.0,
           },
-          <String, Object?>{
+        ),
+        ScatterDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, -3.0),
+            DataPoint(1.0, -5.0),
+            DataPoint(4.0, -2.0),
+            DataPoint(5.0, null),
+            DataPoint(6.0, -4.0),
+            DataPoint(9.0, -1.0),
+            DataPoint(10.0, -6.0),
+          ]),
+          segment: LineSegmentStyle(
+            borderColor:
+                functions['segColor']!
+                    as ChartPaint? Function(ScriptableLineSegmentContext),
+            borderWidth:
+                functions['segWidth']!
+                    as double? Function(ScriptableLineSegmentContext),
+          ),
+        ),
+        ScatterDataset(
+          tension: 0.4,
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': -3.0},
-              <String, Object?>{'x': 1.0, 'y': -5.0},
-              <String, Object?>{'x': 4.0, 'y': -2.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 6.0, 'y': -4.0},
-              <String, Object?>{'x': 9.0, 'y': -1.0},
-              <String, Object?>{'x': 10.0, 'y': -6.0},
+              const <String, Object?>{'x': 0.0, 'y': 1.0},
+              const <String, Object?>{'x': 3.0, 'y': 8.0},
+              const <String, Object?>{'x': 6.0, 'y': 2.0},
+              const <String, Object?>{'x': 9.0, 'y': 7.0},
             ],
-            'segment': <String, Object?>{
-              'borderColor': 'fn:segColor',
-              'borderWidth': 'fn:segWidth',
-            },
           },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
-              <String, Object?>{'x': 3.0, 'y': 8.0},
-              <String, Object?>{'x': 6.0, 'y': 2.0},
-              <String, Object?>{'x': 9.0, 'y': 7.0},
-            ],
-            'tension': 0.4,
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 2.0, 'y': -4.0},
-            ],
-            'showLine': false,
-          },
-        ],
-      },
-      'options': <String, Object?>{'showLine': true},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+        ScatterDataset(
+          data: DatasetData.points([DataPoint(2.0, -4.0)]),
+          showLine: false,
+        ),
+      ],
+      extra: const <String, Object?>{'showLine': true},
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 502.326171875, 483.6],
         'scales': <String, Object?>{
@@ -12651,48 +12667,45 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'a visible x range',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 10.0, 'y': 6.0},
-            ],
-            'showLine': true,
-            'spanGaps': 2.0,
-            'segment': <String, Object?>{
-              'borderColor': 'fn:segColor',
-              'borderWidth': 'fn:segWidth',
-            },
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 6.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 2.0, 'max': 7.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 3.0),
+            DataPoint(1.0, 5.0),
+            DataPoint(4.0, 2.0),
+            DataPoint(5.0, null),
+            DataPoint(6.0, 4.0),
+            DataPoint(9.0, 1.0),
+            DataPoint(10.0, 6.0),
+          ]),
+          showLine: true,
+          segment: LineSegmentStyle(
+            borderColor:
+                functions['segColor']!
+                    as ChartPaint? Function(ScriptableLineSegmentContext),
+            borderWidth:
+                functions['segWidth']!
+                    as double? Function(ScriptableLineSegmentContext),
+          ),
+          extra: const <String, Object?>{'spanGaps': 2.0},
+        ),
+        ScatterDataset(
+          data: DatasetData.points([
+            DataPoint(10.0, 6.0),
+            DataPoint(9.0, 1.0),
+            DataPoint(6.0, 4.0),
+            DataPoint(5.0, null),
+            DataPoint(4.0, 2.0),
+            DataPoint(1.0, 5.0),
+            DataPoint(0.0, 3.0),
+          ]),
+        ),
+      ],
+      scales: const [LinearAxis(.x, min: 2, max: 7)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -16152,46 +16165,50 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'object data',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{
+              const <String, Object?>{
                 'a': 1.0,
                 'n': <String, Object?>{'b': 4.0},
               },
-              <String, Object?>{
+              const <String, Object?>{
                 'a': 2.0,
                 'n': <String, Object?>{'b': null},
               },
-              <String, Object?>{'a': 3.0},
-              <String, Object?>{
+              const <String, Object?>{'a': 3.0},
+              const <String, Object?>{
                 'a': 4.0,
                 'n': <String, Object?>{'b': '7'},
               },
-              <String, Object?>{
+              const <String, Object?>{
                 'a': '5',
                 'n': <String, Object?>{'b': 2.0},
               },
             ],
-            'parsing': <String, Object?>{'xAxisKey': 'a', 'yAxisKey': 'n.b'},
+            'parsing': const <String, Object?>{
+              'xAxisKey': 'a',
+              'yAxisKey': 'n.b',
+            },
           },
-          <String, Object?>{
+        ),
+        ScatterDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 2.0},
-              <String, Object?>{'x': 3.0},
-              <String, Object?>{'y': 4.0},
-              <String, Object?>{'x': 5.0, 'y': double.nan},
-              <String, Object?>{'x': 6.0, 'y': 1.0},
+              const <String, Object?>{'x': 1.0, 'y': 2.0},
+              const <String, Object?>{'x': 3.0},
+              const <String, Object?>{'y': 4.0},
+              const <String, Object?>{'x': 5.0, 'y': double.nan},
+              const <String, Object?>{'x': 6.0, 'y': 1.0},
             ],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -17492,35 +17509,30 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'getLabelAndValue with labels',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'a',
-          'b',
-          <Object?>['c1', 'c2'],
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 15.0},
-              <String, Object?>{'x': 12.0, 'y': 10.0},
-              <String, Object?>{'x': 1.5, 'y': -2.25},
-              <String, Object?>{'x': 1000.0, 'y': 0.0},
-            ],
-            'label': 'one',
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 20.0, 'y': 10.0},
-            ],
-            'label': 'two',
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: [
+        'a',
+        'b',
+        const <Object?>['c1', 'c2'],
+      ],
+      datasets: [
+        ScatterDataset(
+          data: DatasetData.points([
+            DataPoint(10.0, 15.0),
+            DataPoint(12.0, 10.0),
+            DataPoint(1.5, -2.25),
+            DataPoint(1000.0, 0.0),
+          ]),
+          label: 'one',
+        ),
+        ScatterDataset(
+          data: DatasetData.points([DataPoint(20.0, 10.0)]),
+          label: 'two',
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 493.9853515625, 483.6],
         'scales': <String, Object?>{
@@ -18765,35 +18777,23 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'a hidden dataset',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 2.0},
-              <String, Object?>{'x': 2.0, 'y': 4.0},
-            ],
-            'hidden': true,
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 3.0, 'y': 1.0},
-              <String, Object?>{'x': 4.0, 'y': 3.0},
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 5.0},
-              <String, Object?>{'x': 5.0, 'y': 0.0},
-            ],
-            'showLine': true,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          data: DatasetData.points([DataPoint(1.0, 2.0), DataPoint(2.0, 4.0)]),
+          hidden: true,
+        ),
+        ScatterDataset(
+          data: DatasetData.points([DataPoint(3.0, 1.0), DataPoint(4.0, 3.0)]),
+        ),
+        ScatterDataset(
+          data: DatasetData.points([DataPoint(0.0, 5.0), DataPoint(5.0, 0.0)]),
+          showLine: true,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -21388,50 +21388,44 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'parsed: parsing false, a null item',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
+              const <String, Object?>{'x': 0.0, 'y': 1.0},
               null,
-              <String, Object?>{'x': 2.0, 'y': 3.0},
+              const <String, Object?>{'x': 2.0, 'y': 3.0},
             ],
             'parsing': false,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: parsing false, a logarithmic x, an item without x',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'y': 5.0},
-              <String, Object?>{'x': 10.0, 'y': 1.0},
-              <String, Object?>{'x': 100.0, 'y': 2.0},
+              const <String, Object?>{'y': 5.0},
+              const <String, Object?>{'x': 10.0, 'y': 1.0},
+              const <String, Object?>{'x': 100.0, 'y': 2.0},
             ],
             'parsing': false,
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'logarithmic'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LogarithmicAxis(.x)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           30.681640625,
@@ -22742,28 +22736,23 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'parsed: parsing false, a logarithmic x, an item with x null',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': null, 'y': 5.0},
-              <String, Object?>{'x': 10.0, 'y': 1.0},
-              <String, Object?>{'x': 100.0, 'y': 2.0},
+              const <String, Object?>{'x': null, 'y': 5.0},
+              const <String, Object?>{'x': 10.0, 'y': 1.0},
+              const <String, Object?>{'x': 100.0, 'y': 2.0},
             ],
             'parsing': false,
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'logarithmic'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LogarithmicAxis(.x)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           30.681640625,
@@ -24068,37 +24057,36 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'parsed: the one-read rule with segment, spanGaps 2 and start > 0',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          segment: LineSegmentStyle(
+            borderColor:
+                functions['segColor']!
+                    as ChartPaint? Function(ScriptableLineSegmentContext),
+            borderWidth:
+                functions['segWidth']!
+                    as double? Function(ScriptableLineSegmentContext),
+          ),
+          showLine: true,
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 10.0, 'y': 6.0},
+              const <String, Object?>{'x': 0.0, 'y': 3.0},
+              const <String, Object?>{'x': 1.0, 'y': 5.0},
+              const <String, Object?>{'x': 4.0, 'y': 2.0},
+              const <String, Object?>{'x': 5.0, 'y': null},
+              const <String, Object?>{'x': 6.0, 'y': 4.0},
+              const <String, Object?>{'x': 9.0, 'y': 1.0},
+              const <String, Object?>{'x': 10.0, 'y': 6.0},
             ],
-            'segment': <String, Object?>{
-              'borderColor': 'fn:segColor',
-              'borderWidth': 'fn:segWidth',
-            },
             'spanGaps': 2.0,
-            'showLine': true,
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 4.5, 'max': 9.5},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LinearAxis(.x, min: 4.5, max: 9.5)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -27255,28 +27243,25 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: "parsed: spanGaps '2'",
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 10.0, 'y': 6.0},
-            ],
-            'spanGaps': '2',
-            'showLine': true,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 3.0),
+            DataPoint(1.0, 5.0),
+            DataPoint(4.0, 2.0),
+            DataPoint(5.0, null),
+            DataPoint(6.0, 4.0),
+            DataPoint(9.0, 1.0),
+            DataPoint(10.0, 6.0),
+          ]),
+          showLine: true,
+          extra: const <String, Object?>{'spanGaps': '2'},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 502.326171875, 483.6],
         'scales': <String, Object?>{
@@ -28568,26 +28553,25 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'parsed: a scriptable option writes ctx.parsed',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
-              <String, Object?>{'x': 1.0, 'y': 2.0},
-              <String, Object?>{'x': 2.0, 'y': 3.0},
-              <String, Object?>{'x': 3.0, 'y': 4.0},
-            ],
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 1.0),
+            DataPoint(1.0, 2.0),
+            DataPoint(2.0, 3.0),
+            DataPoint(3.0, 4.0),
+          ]),
+          showLine: true,
+          extra: <String, Object?>{
             'spanGaps': 1.5,
-            'showLine': true,
-            'pointRadius': 'fn:radiusWrite',
+            'pointRadius': functions['radiusWrite'],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -29494,34 +29478,27 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'parsed: stacked object data',
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 2.0},
-              <String, Object?>{'x': 2.0, 'y': -3.0},
-              <String, Object?>{'x': 3.0, 'y': null},
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 4.0},
-              <String, Object?>{'x': 2.0, 'y': 5.0},
-              <String, Object?>{'x': 3.0, 'y': 1.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          data: DatasetData.points([
+            DataPoint(1.0, 2.0),
+            DataPoint(2.0, -3.0),
+            DataPoint(3.0, null),
+          ]),
+        ),
+        ScatterDataset(
+          data: DatasetData.points([
+            DataPoint(1.0, 4.0),
+            DataPoint(2.0, 5.0),
+            DataPoint(3.0, 1.0),
+          ]),
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.on)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -30805,7 +30782,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: "parsed: showLine with no data returns the borderWidth '3'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'scatter',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -30822,8 +30799,8 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -31847,7 +31824,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'scatter',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -31871,8 +31848,8 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -33100,7 +33077,7 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 2',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'scatter',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -33124,8 +33101,8 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -34353,33 +34330,22 @@ const List<ControllerScatterReferenceCase> controllerScatterReference = [
   ),
   (
     name: "interfaces: the hover with the override interaction.mode 'point'",
-    config: <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 1.0},
-              <String, Object?>{'x': 5.0, 'y': 5.0},
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.03, 'y': 1.0},
-              <String, Object?>{'x': 8.0, 'y': 2.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 0.0, 'max': 10.0},
-          'y': <String, Object?>{'min': 0.0, 'max': 10.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          data: DatasetData.points([DataPoint(1.0, 1.0), DataPoint(5.0, 5.0)]),
+        ),
+        ScatterDataset(
+          data: DatasetData.points([DataPoint(1.03, 1.0), DataPoint(8.0, 2.0)]),
+        ),
+      ],
+      scales: const [
+        LinearAxis(.x, min: 0, max: 10),
+        LinearAxis(.y, min: 0, max: 10),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
         'scales': <String, Object?>{

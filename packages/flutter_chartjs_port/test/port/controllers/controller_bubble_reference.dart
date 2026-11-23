@@ -6,10 +6,14 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 18 cases, 67 widths.
 
-import 'dart:ui' show FontStyle;
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
+import 'dart:ui' show Color, FontStyle;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String controllerBubbleReferenceNode = 'v24.22.1';
@@ -30,15 +34,17 @@ const String controllerBubbleReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerBubbleReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -53,39 +59,46 @@ typedef ControllerBubbleReferenceWidth = ({
 });
 
 /// The cases.
-const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
+List<ControllerBubbleReferenceCase> controllerBubbleReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'default',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        BubbleDataset(
+          label: 'one',
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 10.0, 'r': 5.0},
-              <String, Object?>{'x': -15.0, 'y': -10.0, 'r': 1.0},
-              <String, Object?>{'x': 0.0, 'y': -9.0, 'r': 2.0},
-              <String, Object?>{'x': -4.0, 'y': 10.0, 'r': 12.0},
+              const <String, Object?>{'x': 10.0, 'y': 10.0, 'r': 5.0},
+              const <String, Object?>{'x': -15.0, 'y': -10.0, 'r': 1.0},
+              const <String, Object?>{'x': 0.0, 'y': -9.0, 'r': 2.0},
+              const <String, Object?>{'x': -4.0, 'y': 10.0, 'r': 12.0},
             ],
-            'label': 'one',
           },
-          <String, Object?>{
+        ),
+        BubbleDataset(
+          label: 'two',
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          borderWidth: 2,
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 4.0, 'y': 2.0, 'r': 8.0},
-              <String, Object?>{'x': 12.0, 'y': -6.0},
-              <String, Object?>{'x': -8.0, 'y': 5.0, 'r': 3.5},
+              const <String, Object?>{'x': 4.0, 'y': 2.0, 'r': 8.0},
+              const <String, Object?>{'x': 12.0, 'y': -6.0},
+              const <String, Object?>{'x': -8.0, 'y': 5.0, 'r': 3.5},
             ],
-            'label': 'two',
-            'backgroundColor': 'red',
-            'borderColor': '#0000ff',
-            'borderWidth': 2.0,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 499.0, 483.6],
         'scales': <String, Object?>{
@@ -6432,29 +6445,30 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'a named radius function',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'labels': <Object?>[0.0, 1.0, 2.0, 3.0],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: [0.0, 1.0, 2.0, 3.0],
+      datasets: [
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
-              <String, Object?>{'x': 1.0, 'y': 3.0},
-              <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 9.0},
-              <String, Object?>{'x': 3.0, 'y': 4.0},
+              const <String, Object?>{'x': 0.0, 'y': 1.0},
+              const <String, Object?>{'x': 1.0, 'y': 3.0},
+              const <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 9.0},
+              const <String, Object?>{'x': 3.0, 'y': 4.0},
             ],
-            'radius': 'fn:radiusOfIndex',
+            'radius': functions['radiusOfIndex'],
           },
-          <String, Object?>{
+        ),
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[4.0, 2.0, 5.0, 1.0],
-            'radius': 'fn:radiusOfIndex',
+            'radius': functions['radiusOfIndex'],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.0, 483.6],
         'scales': <String, Object?>{
@@ -7627,32 +7641,33 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'hoverRadius with the step hover',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          data: [
+            DataPoint.bubble(1.0, 2.0, 10.0),
+            DataPoint.bubble(3.0, 5.0, 6.0),
+            DataPoint.bubble(5.0, 1.0, 14.0),
+          ],
+          hoverRadius: 7,
+          hoverBackgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(200, 100, 150, 1)),
+          ),
+          hoverBorderWidth: 3,
+        ),
+        BubbleDataset(
+          radius: 5,
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 10.0},
-              <String, Object?>{'x': 3.0, 'y': 5.0, 'r': 6.0},
-              <String, Object?>{'x': 5.0, 'y': 1.0, 'r': 14.0},
+              const <String, Object?>{'x': 2.0, 'y': 4.0, 'r': 8.0},
+              const <String, Object?>{'x': 4.0, 'y': 3.0},
             ],
-            'hoverRadius': 7.0,
-            'hoverBackgroundColor': 'rgb(200, 100, 150)',
-            'hoverBorderWidth': 3.0,
           },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 2.0, 'y': 4.0, 'r': 8.0},
-              <String, Object?>{'x': 4.0, 'y': 3.0},
-            ],
-            'radius': 5.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 497.0, 483.6],
         'scales': <String, Object?>{
@@ -10282,39 +10297,46 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'custom parsing keys',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'a': 1.0, 'b': 4.0, 'r': 6.0},
-              <String, Object?>{'a': 2.0, 'b': 2.0},
-              <String, Object?>{'a': 4.0, 'b': 5.0, 'r': 3.0},
+              const <String, Object?>{'a': 1.0, 'b': 4.0, 'r': 6.0},
+              const <String, Object?>{'a': 2.0, 'b': 2.0},
+              const <String, Object?>{'a': 4.0, 'b': 5.0, 'r': 3.0},
             ],
-            'parsing': <String, Object?>{'xAxisKey': 'a', 'yAxisKey': 'b'},
+            'parsing': const <String, Object?>{
+              'xAxisKey': 'a',
+              'yAxisKey': 'b',
+            },
           },
-          <String, Object?>{
+        ),
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{
+              const <String, Object?>{
                 'a': 3.0,
                 'n': <String, Object?>{'y': 1.0},
                 'r': 7.0,
               },
-              <String, Object?>{
+              const <String, Object?>{
                 'a': 5.0,
                 'n': <String, Object?>{'y': 3.0},
                 'r': 2.0,
               },
             ],
-            'parsing': <String, Object?>{'xAxisKey': 'a', 'yAxisKey': 'n.y'},
+            'parsing': const <String, Object?>{
+              'xAxisKey': 'a',
+              'yAxisKey': 'n.y',
+            },
           },
-        ],
-      },
-      'options': <String, Object?>{'indexAxis': YAxis()},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -11410,31 +11432,32 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: '[x, y, r] arrays',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[1.0, 2.0, 5.0],
-              <Object?>[2.0, 4.0],
-              <Object?>[3.0, 1.0, null],
-              <Object?>[4.0, 3.0, 0.0],
-              <Object?>[5.0, 5.0, 7.0],
+              const <Object?>[1.0, 2.0, 5.0],
+              const <Object?>[2.0, 4.0],
+              const <Object?>[3.0, 1.0, null],
+              const <Object?>[4.0, 3.0, 0.0],
+              const <Object?>[5.0, 5.0, 7.0],
             ],
           },
-          <String, Object?>{
+        ),
+        BubbleDataset(
+          radius: 6,
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[2.0, 3.0, 12.0],
-              <Object?>[4.0, 1.0, 2.5],
+              const <Object?>[2.0, 3.0, 12.0],
+              const <Object?>[4.0, 1.0, 2.5],
             ],
-            'radius': 6.0,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 499.0, 483.6],
         'scales': <String, Object?>{
@@ -17185,36 +17208,31 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'getMaxOverflow',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 0.0, 'r': 30.0},
-              <String, Object?>{'x': 10.0, 'y': 10.0, 'r': 20.0},
-              <String, Object?>{'x': 5.0, 'y': 5.0, 'r': 2.0},
-            ],
-            'borderWidth': 4.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 2.0, 'y': 8.0, 'r': 0.0},
-              <String, Object?>{'x': 8.0, 'y': 2.0, 'r': 0.0},
-            ],
-            'borderWidth': 0.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 0.0, 'max': 10.0},
-          'y': <String, Object?>{'min': 0.0, 'max': 10.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          data: [
+            DataPoint.bubble(0.0, 0.0, 30.0),
+            DataPoint.bubble(10.0, 10.0, 20.0),
+            DataPoint.bubble(5.0, 5.0, 2.0),
+          ],
+          borderWidth: 4,
+        ),
+        BubbleDataset(
+          data: [
+            DataPoint.bubble(2.0, 8.0, 0.0),
+            DataPoint.bubble(8.0, 2.0, 0.0),
+          ],
+          borderWidth: 0,
+        ),
+      ],
+      scales: const [
+        LinearAxis(.x, min: 0, max: 10),
+        LinearAxis(.y, min: 0, max: 10),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[34.0, 34.0, 478.0, 478.0],
         'scales': <String, Object?>{
@@ -18407,42 +18425,37 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'clip',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 1.0, 'r': 25.0},
-              <String, Object?>{'x': 4.0, 'y': 9.0, 'r': 18.0},
-            ],
-            'clip': ChartClip.none,
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 2.0, 'y': 9.5, 'r': 20.0},
-              <String, Object?>{'x': 5.0, 'y': 0.5, 'r': 15.0},
-            ],
-            'clip': ChartClip.all(10),
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.5, 'y': 5.0, 'r': 22.0},
-              <String, Object?>{'x': 5.5, 'y': 6.0, 'r': 12.0},
-            ],
-            'clip': ChartClip(left: 5, right: -2, bottom: 0),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 1.0, 'max': 5.0},
-          'y': <String, Object?>{'min': 1.0, 'max': 9.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          data: [
+            DataPoint.bubble(1.0, 1.0, 25.0),
+            DataPoint.bubble(4.0, 9.0, 18.0),
+          ],
+          clip: ChartClip.none,
+        ),
+        BubbleDataset(
+          data: [
+            DataPoint.bubble(2.0, 9.5, 20.0),
+            DataPoint.bubble(5.0, 0.5, 15.0),
+          ],
+          clip: const ChartClip.all(10),
+        ),
+        BubbleDataset(
+          data: [
+            DataPoint.bubble(0.5, 5.0, 22.0),
+            DataPoint.bubble(5.5, 6.0, 12.0),
+          ],
+          clip: const ChartClip(left: 5, right: -2, bottom: 0),
+        ),
+      ],
+      scales: const [
+        LinearAxis(.x, min: 1, max: 5),
+        LinearAxis(.y, min: 1, max: 9),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[26.0, 32.0, 486.0, 483.6],
         'scales': <String, Object?>{
@@ -19596,22 +19609,21 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'parsed: parsing false, [x, y, r] arrays',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[1.0, 2.0, 5.0],
-              <Object?>[3.0, 4.0, 6.0],
+              const <Object?>[1.0, 2.0, 5.0],
+              const <Object?>[3.0, 4.0, 6.0],
             ],
             'parsing': false,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -20620,69 +20632,66 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'parsed: parsing false, a null item',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0},
+              const <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0},
               null,
             ],
             'parsing': false,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: object data with a null item',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0},
+              const <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0},
               null,
             ],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: the r values of object data',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          radius: 4,
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 1.0, 'r': '5'},
-              <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 0.0},
-              <String, Object?>{'x': 3.0, 'y': 3.0, 'r': null},
-              <String, Object?>{'x': 4.0, 'y': 4.0, 'r': true},
-              <String, Object?>{'x': 5.0, 'y': 5.0, 'r': 'abc'},
-              <String, Object?>{'x': 6.0, 'y': 6.0, 'r': -2.0},
-              <String, Object?>{'x': 7.0, 'y': 7.0},
-              <String, Object?>{'x': 8.0, 'y': 8.0, 'r': '0'},
+              const <String, Object?>{'x': 1.0, 'y': 1.0, 'r': '5'},
+              const <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 0.0},
+              const <String, Object?>{'x': 3.0, 'y': 3.0, 'r': null},
+              const <String, Object?>{'x': 4.0, 'y': 4.0, 'r': true},
+              const <String, Object?>{'x': 5.0, 'y': 5.0, 'r': 'abc'},
+              const <String, Object?>{'x': 6.0, 'y': 6.0, 'r': -2.0},
+              const <String, Object?>{'x': 7.0, 'y': 7.0},
+              const <String, Object?>{'x': 8.0, 'y': 8.0, 'r': '0'},
             ],
-            'radius': 4.0,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -21773,7 +21782,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: "parsed: radius '4' with primitive data",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bubble',
       'data': <String, Object?>{
         'labels': <Object?>[1.0, 2.0, 3.0],
@@ -21785,8 +21794,8 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -23270,7 +23279,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: "parsed: radius '4' with object data",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bubble',
       'data': <String, Object?>{
         'datasets': <Object?>[
@@ -23284,8 +23293,8 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 497.322265625, 483.6],
         'scales': <String, Object?>{
@@ -24304,21 +24313,20 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'parsed: a string r of an array',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[1.0, 2.0, 5.0],
-              <Object?>[5.0, 5.0, '7'],
+              const <Object?>[1.0, 2.0, 5.0],
+              const <Object?>[5.0, 5.0, '7'],
             ],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -25151,33 +25159,36 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'parsed: an insert below the old length reads the old parsed item',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'labels': <Object?>[1.0, 2.0, 3.0, 4.0],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: [1.0, 2.0, 3.0, 4.0],
+      datasets: [
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 1.0, 'r': 5.0},
-              <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 6.0},
-              <String, Object?>{'x': 3.0, 'y': 3.0, 'r': 7.0},
+              const <String, Object?>{'x': 1.0, 'y': 1.0, 'r': 5.0},
+              const <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 6.0},
+              const <String, Object?>{'x': 3.0, 'y': 3.0, 'r': 7.0},
             ],
           },
-          <String, Object?>{
+        ),
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[1.0, 4.0, 8.0],
-              <Object?>[2.0, 3.0, 9.0],
+              const <Object?>[1.0, 4.0, 8.0],
+              const <Object?>[2.0, 3.0, 9.0],
             ],
           },
-          <String, Object?>{
+        ),
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[3.0, 1.0, 2.0],
-            'radius': 'fn:rawRadius',
+            'radius': functions['rawRadius'],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -28777,24 +28788,23 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'parsed: parsing false, object items with _custom',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 2.0, '_custom': 7.0},
-              <String, Object?>{'x': 2.0, 'y': 3.0, '_custom': 0.0},
-              <String, Object?>{'x': 3.0, 'y': 1.0, '_custom': '2'},
-              <String, Object?>{'x': 4.0, 'y': 4.0},
+              const <String, Object?>{'x': 1.0, 'y': 2.0, '_custom': 7.0},
+              const <String, Object?>{'x': 2.0, 'y': 3.0, '_custom': 0.0},
+              const <String, Object?>{'x': 3.0, 'y': 1.0, '_custom': '2'},
+              const <String, Object?>{'x': 4.0, 'y': 4.0},
             ],
             'parsing': false,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -29656,7 +29666,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bubble',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -29680,8 +29690,8 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -30904,7 +30914,7 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 2',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bubble',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -30928,8 +30938,8 @@ const List<ControllerBubbleReferenceCase> controllerBubbleReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{

@@ -12,10 +12,14 @@
 //       chart.getDatasetMeta(i).data.map((el) => el.angle),
 //     )
 
-import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin;
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
+import 'dart:ui' show Color, FontStyle, FontWeight, StrokeCap, StrokeJoin;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String controllerRadarReferenceNode = 'v24.22.1';
@@ -36,15 +40,17 @@ const String controllerRadarReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerRadarReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -59,31 +65,29 @@ typedef ControllerRadarReferenceWidth = ({
 });
 
 /// The cases.
-const List<ControllerRadarReferenceCase> controllerRadarReference = [
+final List<ControllerRadarReferenceCase> controllerRadarReference = [
   (
     name: 'default',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 20.0, 5.0, 15.0],
-            'label': 'one',
-          },
-          <String, Object?>{
-            'data': <Object?>[5.0, 12.0, 18.0, 6.0, 14.0],
-            'label': 'two',
-            'backgroundColor': 'rgba(255, 0, 0, 0.2)',
-            'borderColor': '#0000ff',
-            'borderWidth': 2.0,
-            'pointRadius': 4.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        RadarDataset(data: [10.0, 20.0, 5.0, 15.0], label: 'one'),
+        RadarDataset(
+          data: [5.0, 12.0, 18.0, 6.0, 14.0],
+          label: 'two',
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.2)),
+          ),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          borderWidth: 2,
+          pointRadius: const ChartValue.constant(4),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -8155,27 +8159,19 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'spanGaps',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, null, 5.0, 15.0, null],
-            'spanGaps': true,
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, 12.0, null, 6.0, 14.0],
-            'spanGaps': 2.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[null, 8.0, 16.0, null, 3.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        RadarDataset(data: [10.0, null, 5.0, 15.0, null], spanGaps: true),
+        RadarDataset(
+          data: [4.0, 12.0, null, 6.0, 14.0],
+          extra: const <String, Object?>{'spanGaps': 2.0},
+        ),
+        RadarDataset(data: [null, 8.0, 16.0, null, 3.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -9649,25 +9645,19 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'tension',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 20.0, 5.0, 15.0, 8.0],
-            'tension': 0.4,
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, 12.0, 18.0, 6.0, 14.0],
-            'tension': 0.2,
-            'borderWidth': 2.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        RadarDataset(data: [10.0, 20.0, 5.0, 15.0, 8.0], tension: 0.4),
+        RadarDataset(
+          data: [4.0, 12.0, 18.0, 6.0, 14.0],
+          tension: 0.2,
+          borderWidth: 2,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -10841,26 +10831,16 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'a hidden dataset',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 20.0, 5.0, 15.0, 8.0],
-            'hidden': true,
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, 12.0, 18.0, 6.0, 14.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[7.0, 3.0, 9.0, 11.0, 2.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        RadarDataset(data: [10.0, 20.0, 5.0, 15.0, 8.0], hidden: true),
+        RadarDataset(data: [4.0, 12.0, 18.0, 6.0, 14.0]),
+        RadarDataset(data: [7.0, 3.0, 9.0, 11.0, 2.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -14734,22 +14714,15 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'null items',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, null, 5.0, null, 8.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[null, null, null, 6.0, 14.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        RadarDataset(data: [10.0, null, 5.0, null, 8.0]),
+        RadarDataset(data: [null, null, null, 6.0, 14.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -15896,24 +15869,19 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'showLine false',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 20.0, 5.0, 15.0, 8.0],
-            'showLine': false,
-            'borderWidth': 3.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, 12.0, 18.0, 6.0, 14.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        RadarDataset(
+          data: [10.0, 20.0, 5.0, 15.0, 8.0],
+          showLine: false,
+          borderWidth: 3,
+        ),
+        RadarDataset(data: [4.0, 12.0, 18.0, 6.0, 14.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -17078,40 +17046,29 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'scale r options',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 20.0, 5.0, 15.0, 8.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, 12.0, 18.0, 6.0, 14.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'min': 0.0,
-            'max': 30.0,
-            'startAngle': 30.0,
-            'reverse': true,
-            'beginAtZero': true,
-            'angleLines': <String, Object?>{'display': false},
-            'grid': <String, Object?>{'circular': true},
-            'pointLabels': <String, Object?>{
-              'display': ScaleDisplay.on,
-              'padding': 8.0,
-            },
-            'ticks': <String, Object?>{'stepSize': 5.0},
-          },
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        RadarDataset(data: [10.0, 20.0, 5.0, 15.0, 8.0]),
+        RadarDataset(data: [4.0, 12.0, 18.0, 6.0, 14.0]),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          min: 0,
+          max: 30,
+          startAngle: 30,
+          reverse: true,
+          beginAtZero: true,
+          angleLinesDisplay: false,
+          grid: AxisGrid(extra: <String, Object?>{'circular': true}),
+          pointLabelsDisplay: ScaleDisplay.on,
+          pointLabelsPadding: 8,
+          ticks: AxisTicks(stepSize: 5),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -18254,27 +18211,25 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'the step hover',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 20.0, 5.0, 15.0, 8.0],
-            'label': 'one',
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, 12.0, 18.0, 6.0, 14.0],
-            'label': 'two',
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        RadarDataset(data: [10.0, 20.0, 5.0, 15.0, 8.0], label: 'one'),
+        RadarDataset(
+          data: [4.0, 12.0, 18.0, 6.0, 14.0],
+          label: 'two',
+          pointHoverBackgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+          extra: const <String, Object?>{
             'hoverRadius': 7.0,
-            'pointHoverBackgroundColor': 'red',
             'pointHoverBorderWidth': 3.0,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -21067,20 +21022,17 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'parsed: parsing false with numbers',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5.0, 3.0, 1.0],
-            'parsing': false,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        RadarDataset(
+          data: [5.0, 3.0, 1.0],
+          extra: const <String, Object?>{'parsing': false},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -21769,42 +21721,36 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'parsed: parsing false with a null item',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        RadarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'r': 5.0},
+              const <String, Object?>{'r': 5.0},
               null,
-              <String, Object?>{'r': 1.0},
+              const <String, Object?>{'r': 1.0},
             ],
             'parsing': false,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: a label index past the end',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a'],
+      datasets: [
+        RadarDataset(data: [1.0, 2.0]),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -22406,31 +22352,32 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'parsed: object data with the default key and a parsing key',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        RadarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'r': 10.0},
-              <String, Object?>{'r': 20.0},
-              <String, Object?>{'r': 15.0},
+              const <String, Object?>{'r': 10.0},
+              const <String, Object?>{'r': 20.0},
+              const <String, Object?>{'r': 15.0},
             ],
           },
-          <String, Object?>{
+        ),
+        RadarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'v': 4.0},
-              <String, Object?>{'v': '12'},
-              <String, Object?>{},
+              const <String, Object?>{'v': 4.0},
+              const <String, Object?>{'v': '12'},
+              const <String, Object?>{},
             ],
-            'parsing': <String, Object?>{'key': 'v'},
+            'parsing': const <String, Object?>{'key': 'v'},
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -23334,7 +23281,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -23351,8 +23298,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -24270,7 +24217,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 2',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -24287,8 +24234,8 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -25206,22 +25153,17 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'interfaces: an r scale that is not radial, no data',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>[],
-        'datasets': <Object?>[
-          <String, Object?>{'data': <Object?>[]},
-        ],
-      },
-      'options': <String, Object?>{
+    config: () => ChartConfig(
+      labels: [],
+      datasets: [RadarDataset(data: [])],
+      extra: const <String, Object?>{
         'scales': <String, Object?>{
           'r': <String, Object?>{'type': 'linear'},
         },
       },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -25788,24 +25730,19 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'interfaces: an r scale that is not radial, with data',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        RadarDataset(data: [1.0, 2.0]),
+      ],
+      extra: const <String, Object?>{
         'scales': <String, Object?>{
           'r': <String, Object?>{'type': 'linear'},
         },
       },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),

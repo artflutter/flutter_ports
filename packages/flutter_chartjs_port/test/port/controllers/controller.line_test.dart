@@ -168,7 +168,7 @@ void main() {
   testReferenceWidths(controllerLineReferenceWidths);
 
   test('the reference has the 17 cases of Chart.js ADR 0030 first', () {
-    final names = [for (final c in controllerLineReference) c.name];
+    final names = [for (final c in controllerLineReference(_functions)) c.name];
     bool prefixed(String n) =>
         n.startsWith('parsed:') || n.startsWith('interfaces:');
     expect(names.first, 'default');
@@ -179,7 +179,7 @@ void main() {
   });
 
   final cases = [
-    for (final c in controllerLineReference)
+    for (final c in controllerLineReference(_functions))
       if (c.name != _otherLineCase) c,
   ];
 
@@ -203,7 +203,7 @@ void main() {
 
     testControllerChartCases(
       [
-        for (final c in controllerLineReference)
+        for (final c in controllerLineReference(_functions))
           if (c.name == _otherLineCase) c,
       ],
       functions: _functions,
@@ -255,12 +255,15 @@ void main() {
       final snapshot = jsonDecode(
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
-      final config =
-          copyReference(controllerLineReference.first.config, _functions)!
-              as AnyObject;
-      config[themeConfigKey] = compileLightTheme();
-      nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
+      expectNoStaleScaleKeys(
+        acquireReferenceChart(
+          controllerLineReference(_functions).first.config,
+          const {},
+          functions: _functions,
+          theme: compileLightTheme(),
+        ),
+        snapshot,
+      );
     });
   });
 

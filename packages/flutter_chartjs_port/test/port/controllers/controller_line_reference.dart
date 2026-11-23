@@ -15,10 +15,14 @@
 //       .getDatasetMeta(0)
 //       ._parsed.map((p) => Object.keys(p._stacks || {}))
 
-import 'dart:ui' show FontStyle, StrokeCap, StrokeJoin;
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
+import 'dart:ui' show Color, FontStyle, StrokeCap, StrokeJoin;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String controllerLineReferenceNode = 'v24.22.1';
@@ -39,15 +43,17 @@ const String controllerLineReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerLineReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -62,30 +68,33 @@ typedef ControllerLineReferenceWidth = ({
 });
 
 /// The cases.
-const List<ControllerLineReferenceCase> controllerLineReference = [
+List<ControllerLineReferenceCase> controllerLineReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'default',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 20.0, -5.0, 15.0, 8.0],
-            'label': 'one',
-          },
-          <String, Object?>{
-            'data': <Object?>[5.0, -10.0, 8.0, 12.0, 3.0],
-            'label': 'two',
-            'backgroundColor': 'red',
-            'borderColor': '#0000ff',
-            'borderWidth': 2.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([10.0, 20.0, -5.0, 15.0, 8.0]),
+          label: 'one',
+        ),
+        LineDataset(
+          data: DatasetData.values([5.0, -10.0, 8.0, 12.0, 3.0]),
+          label: 'two',
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          borderWidth: 2,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -4905,21 +4914,18 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'showLine false',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 1.0, 4.0, 1.0, 5.0],
-            'showLine': false,
-            'borderWidth': 4.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 1.0, 4.0, 1.0, 5.0]),
+          showLine: false,
+          borderWidth: 4,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 504.0, 483.6],
         'scales': <String, Object?>{
@@ -5860,23 +5866,18 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'spanGaps true',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, null, 4.0, null, 5.0],
-            'spanGaps': true,
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, null, 2.0, 1.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, null, 4.0, null, 5.0]),
+          spanGaps: true,
+        ),
+        LineDataset(data: DatasetData.values([1.0, 2.0, null, 2.0, 1.0])),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -7146,44 +7147,37 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'spanGaps a number',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 10.0, 'y': 6.0},
-            ],
-            'spanGaps': 2.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 10.0, 'y': 6.0},
-            ],
-            'spanGaps': 3.5,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 3.0),
+            DataPoint(1.0, 5.0),
+            DataPoint(4.0, 2.0),
+            DataPoint(5.0, null),
+            DataPoint(6.0, 4.0),
+            DataPoint(9.0, 1.0),
+            DataPoint(10.0, 6.0),
+          ]),
+          extra: const <String, Object?>{'spanGaps': 2.0},
+        ),
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 3.0),
+            DataPoint(1.0, 5.0),
+            DataPoint(4.0, 2.0),
+            DataPoint(5.0, null),
+            DataPoint(6.0, 4.0),
+            DataPoint(9.0, 1.0),
+            DataPoint(10.0, 6.0),
+          ]),
+          extra: const <String, Object?>{'spanGaps': 3.5},
+        ),
+      ],
+      scales: const [LinearAxis(.x)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 502.326171875, 483.6],
         'scales': <String, Object?>{
@@ -8874,28 +8868,25 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'stepped before, after and middle',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 3.0, 2.0, 5.0, 4.0],
-            'stepped': SteppedLine.before,
-          },
-          <String, Object?>{
-            'data': <Object?>[2.0, 4.0, 3.0, 6.0, 5.0],
-            'stepped': SteppedLine.after,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 4.0, 7.0, 6.0],
-            'stepped': SteppedLine.middle,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 3.0, 2.0, 5.0, 4.0]),
+          stepped: SteppedLine.before,
+        ),
+        LineDataset(
+          data: DatasetData.values([2.0, 4.0, 3.0, 6.0, 5.0]),
+          stepped: SteppedLine.after,
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 4.0, 7.0, 6.0]),
+          stepped: SteppedLine.middle,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -10477,25 +10468,22 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'tension',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 8.0, 2.0, 9.0, 3.0],
-            'tension': 0.4,
-          },
-          <String, Object?>{
-            'data': <Object?>[9.0, 2.0, 8.0, 1.0, 7.0],
-            'tension': 0.4,
-            'capBezierPoints': false,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 8.0, 2.0, 9.0, 3.0]),
+          tension: 0.4,
+        ),
+        LineDataset(
+          data: DatasetData.values([9.0, 2.0, 8.0, 1.0, 7.0]),
+          tension: 0.4,
+          extra: const <String, Object?>{'capBezierPoints': false},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -11789,25 +11777,22 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'cubicInterpolationMode monotone',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 8.0, 2.0, 9.0, 3.0],
-            'cubicInterpolationMode': MonotoneCubicInterpolationMode(),
-          },
-          <String, Object?>{
-            'data': <Object?>[2.0, null, 5.0, 5.0, 1.0],
-            'cubicInterpolationMode': MonotoneCubicInterpolationMode(),
-            'spanGaps': true,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 8.0, 2.0, 9.0, 3.0]),
+          cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
+        ),
+        LineDataset(
+          data: DatasetData.values([2.0, null, 5.0, 5.0, 1.0]),
+          cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
+          spanGaps: true,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -13092,24 +13077,25 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'segment with named functions',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 4.0, 2.0, 6.0, 3.0],
-            'segment': <String, Object?>{
-              'borderColor': 'fn:segColor',
-              'borderWidth': 'fn:segWidth',
-            },
-            'borderWidth': 2.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 4.0, 2.0, 6.0, 3.0]),
+          segment: LineSegmentStyle(
+            borderColor:
+                functions['segColor']!
+                    as ChartPaint? Function(ScriptableLineSegmentContext),
+            borderWidth:
+                functions['segWidth']!
+                    as double? Function(ScriptableLineSegmentContext),
+          ),
+          borderWidth: 2,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -14178,30 +14164,21 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'stacked lines',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, -10.0, 10.0, -10.0, 5.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[10.0, 15.0, 0.0, -4.0, 2.0],
-          },
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(data: DatasetData.values([10.0, -10.0, 10.0, -10.0, 5.0])),
+        LineDataset(data: DatasetData.values([10.0, 15.0, 0.0, -4.0, 2.0])),
+        LineDataset(
+          extra: <String, Object?>{
             'data': <Object?>[1.0, 2.0, null, 3.0, '4'],
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.on)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -15942,24 +15919,19 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'indexAxis y',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, -2.0, 6.0, 1.0, 4.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, -3.0, 0.0, 2.0],
-            'borderWidth': 1.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{'indexAxis': YAxis()},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(data: DatasetData.values([3.0, -2.0, 6.0, 1.0, 4.0])),
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, -3.0, 0.0, 2.0]),
+          borderWidth: 1,
+        ),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -17280,42 +17252,35 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'a linear x scale with min and max',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 10.0, 'y': 6.0},
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 10.0, 'y': 6.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear', 'min': 2.0, 'max': 7.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 3.0),
+            DataPoint(1.0, 5.0),
+            DataPoint(4.0, 2.0),
+            DataPoint(5.0, null),
+            DataPoint(6.0, 4.0),
+            DataPoint(9.0, 1.0),
+            DataPoint(10.0, 6.0),
+          ]),
+        ),
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(10.0, 6.0),
+            DataPoint(9.0, 1.0),
+            DataPoint(6.0, 4.0),
+            DataPoint(5.0, null),
+            DataPoint(4.0, 2.0),
+            DataPoint(1.0, 5.0),
+            DataPoint(0.0, 3.0),
+          ]),
+        ),
+      ],
+      scales: const [LinearAxis(.x, min: 2, max: 7)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -19872,25 +19837,22 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'pointRadius 0',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 1.0, 4.0, 1.0, 5.0],
-            'pointRadius': 0.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[2.0, 7.0, 1.0, 8.0, 2.0],
-            'pointRadius': 0.0,
-            'borderWidth': 6.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 1.0, 4.0, 1.0, 5.0]),
+          pointRadius: const ChartValue.constant(0),
+        ),
+        LineDataset(
+          data: DatasetData.values([2.0, 7.0, 1.0, 8.0, 2.0]),
+          pointRadius: const ChartValue.constant(0),
+          borderWidth: 6,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -21078,26 +21040,19 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'a hidden dataset and setDatasetVisibility',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 4.0, 5.0],
-            'hidden': true,
-          },
-          <String, Object?>{
-            'data': <Object?>[5.0, 4.0, 3.0, 2.0, 1.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[2.0, 4.0, 1.0, 3.0, 5.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 3.0, 4.0, 5.0]),
+          hidden: true,
+        ),
+        LineDataset(data: DatasetData.values([5.0, 4.0, 3.0, 2.0, 1.0])),
+        LineDataset(data: DatasetData.values([2.0, 4.0, 1.0, 3.0, 5.0])),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -24929,25 +24884,22 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'parsing false',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 2.0, 'y': -2.0},
-              <String, Object?>{'x': 3.0, 'y': 1.0},
-            ],
-            'parsing': false,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 3.0),
+            DataPoint(1.0, 5.0),
+            DataPoint(2.0, -2.0),
+            DataPoint(3.0, 1.0),
+          ]),
+          extra: const <String, Object?>{'parsing': false},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -25825,27 +25777,26 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'null items',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, null, 3.0, double.nan, 5.0],
-          },
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, null, 3.0, double.nan, 5.0]),
+        ),
+        LineDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 'a', 'y': 2.0},
-              <String, Object?>{'x': 'b', 'y': null},
-              <String, Object?>{'x': 'c'},
-              <String, Object?>{'x': 'd', 'y': 4.0},
+              const <String, Object?>{'x': 'a', 'y': 2.0},
+              const <String, Object?>{'x': 'b', 'y': null},
+              const <String, Object?>{'x': 'c'},
+              const <String, Object?>{'x': 'd', 'y': 4.0},
             ],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -27053,25 +27004,22 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'drawActiveElementsOnTop false with setActive',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 3.0, 2.0, 4.0, 3.0],
-            'drawActiveElementsOnTop': false,
-            'pointRadius': 6.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[2.0, 3.0, 1.0, 4.0, 2.0],
-            'pointRadius': 6.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 3.0, 2.0, 4.0, 3.0]),
+          pointRadius: const ChartValue.constant(6),
+          extra: const <String, Object?>{'drawActiveElementsOnTop': false},
+        ),
+        LineDataset(
+          data: DatasetData.values([2.0, 3.0, 1.0, 4.0, 2.0]),
+          pointRadius: const ChartValue.constant(6),
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.0, 483.6],
         'scales': <String, Object?>{
@@ -29070,22 +29018,15 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'push',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 3.0, 2.0, 4.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, 2.0, 3.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(data: DatasetData.values([1.0, 3.0, 2.0, 4.0])),
+        LineDataset(data: DatasetData.values([4.0, 2.0, 3.0])),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -31806,128 +31747,127 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'parsed: parsing false, a null item',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        LineDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
+              const <String, Object?>{'x': 0.0, 'y': 1.0},
               null,
-              <String, Object?>{'x': 2.0, 'y': 3.0},
+              const <String, Object?>{'x': 2.0, 'y': 3.0},
             ],
             'parsing': false,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: parsing false, a null item, with segment',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        LineDataset(
+          segment: LineSegmentStyle(
+            borderColor:
+                functions['segColor']!
+                    as ChartPaint? Function(ScriptableLineSegmentContext),
+            borderWidth:
+                functions['segWidth']!
+                    as double? Function(ScriptableLineSegmentContext),
+          ),
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
+              const <String, Object?>{'x': 0.0, 'y': 1.0},
               null,
-              <String, Object?>{'x': 2.0, 'y': 3.0},
+              const <String, Object?>{'x': 2.0, 'y': 3.0},
             ],
             'parsing': false,
-            'segment': <String, Object?>{
-              'borderColor': 'fn:segColor',
-              'borderWidth': 'fn:segWidth',
-            },
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: parsing false, a null item, hidden',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        LineDataset(
+          hidden: true,
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
+              const <String, Object?>{'x': 0.0, 'y': 1.0},
               null,
-              <String, Object?>{'x': 2.0, 'y': 3.0},
+              const <String, Object?>{'x': 2.0, 'y': 3.0},
             ],
             'parsing': false,
-            'hidden': true,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: parsing false, a null item, a user min and max',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
+              const <String, Object?>{'x': 0.0, 'y': 1.0},
               null,
-              <String, Object?>{'x': 2.0, 'y': 3.0},
+              const <String, Object?>{'x': 2.0, 'y': 3.0},
             ],
             'parsing': false,
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear', 'min': 0.5, 'max': 1.5},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LinearAxis(.x, min: 0.5, max: 1.5)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: parsing false, a number item with segment',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        LineDataset(
+          segment: LineSegmentStyle(
+            borderColor:
+                functions['segColor']!
+                    as ChartPaint? Function(ScriptableLineSegmentContext),
+            borderWidth:
+                functions['segWidth']!
+                    as double? Function(ScriptableLineSegmentContext),
+          ),
+          extra: <String, Object?>{
             'data': <Object?>[
               5.0,
-              <String, Object?>{'x': 1.0, 'y': 2.0},
+              const <String, Object?>{'x': 1.0, 'y': 2.0},
             ],
             'parsing': false,
-            'segment': <String, Object?>{
-              'borderColor': 'fn:segColor',
-              'borderWidth': 'fn:segWidth',
-            },
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -32549,28 +32489,23 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'parsed: parsing false, x.min 1, an item without x',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'y': 50.0},
-              <String, Object?>{'x': 2.0, 'y': 10.0},
-              <String, Object?>{'x': 3.0, 'y': 20.0},
+              const <String, Object?>{'y': 50.0},
+              const <String, Object?>{'x': 2.0, 'y': 10.0},
+              const <String, Object?>{'x': 3.0, 'y': 20.0},
             ],
             'parsing': false,
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear', 'min': 1.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LinearAxis(.x, min: 1)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -33611,28 +33546,23 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'parsed: parsing false, x.min 1, an item with x null',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': null, 'y': 50.0},
-              <String, Object?>{'x': 2.0, 'y': 10.0},
-              <String, Object?>{'x': 3.0, 'y': 20.0},
+              const <String, Object?>{'x': null, 'y': 50.0},
+              const <String, Object?>{'x': 2.0, 'y': 10.0},
+              const <String, Object?>{'x': 3.0, 'y': 20.0},
             ],
             'parsing': false,
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear', 'min': 1.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LinearAxis(.x, min: 1)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -34732,36 +34662,35 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'parsed: the one-read rule with segment, spanGaps 2 and start > 0',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          segment: LineSegmentStyle(
+            borderColor:
+                functions['segColor']!
+                    as ChartPaint? Function(ScriptableLineSegmentContext),
+            borderWidth:
+                functions['segWidth']!
+                    as double? Function(ScriptableLineSegmentContext),
+          ),
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 10.0, 'y': 6.0},
+              const <String, Object?>{'x': 0.0, 'y': 3.0},
+              const <String, Object?>{'x': 1.0, 'y': 5.0},
+              const <String, Object?>{'x': 4.0, 'y': 2.0},
+              const <String, Object?>{'x': 5.0, 'y': null},
+              const <String, Object?>{'x': 6.0, 'y': 4.0},
+              const <String, Object?>{'x': 9.0, 'y': 1.0},
+              const <String, Object?>{'x': 10.0, 'y': 6.0},
             ],
-            'segment': <String, Object?>{
-              'borderColor': 'fn:segColor',
-              'borderWidth': 'fn:segWidth',
-            },
             'spanGaps': 2.0,
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear', 'min': 4.5, 'max': 9.5},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LinearAxis(.x, min: 4.5, max: 9.5)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -37881,32 +37810,25 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: "parsed: spanGaps '2'",
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 5.0, 'y': null},
-              <String, Object?>{'x': 6.0, 'y': 4.0},
-              <String, Object?>{'x': 9.0, 'y': 1.0},
-              <String, Object?>{'x': 10.0, 'y': 6.0},
-            ],
-            'spanGaps': '2',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 3.0),
+            DataPoint(1.0, 5.0),
+            DataPoint(4.0, 2.0),
+            DataPoint(5.0, null),
+            DataPoint(6.0, 4.0),
+            DataPoint(9.0, 1.0),
+            DataPoint(10.0, 6.0),
+          ]),
+          extra: const <String, Object?>{'spanGaps': '2'},
+        ),
+      ],
+      scales: const [LinearAxis(.x)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 502.326171875, 483.6],
         'scales': <String, Object?>{
@@ -39198,30 +39120,25 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'parsed: a scriptable option writes ctx.parsed',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
-              <String, Object?>{'x': 1.0, 'y': 2.0},
-              <String, Object?>{'x': 2.0, 'y': 3.0},
-              <String, Object?>{'x': 3.0, 'y': 4.0},
-            ],
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 1.0),
+            DataPoint(1.0, 2.0),
+            DataPoint(2.0, 3.0),
+            DataPoint(3.0, 4.0),
+          ]),
+          extra: <String, Object?>{
             'spanGaps': 1.5,
-            'pointRadius': 'fn:radiusWrite',
+            'pointRadius': functions['radiusWrite'],
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LinearAxis(.x)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
         'scales': <String, Object?>{
@@ -40128,28 +40045,23 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'parsed: stacked List items with parsing false',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        LineDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[0.0, 1.0],
-              <Object?>[1.0, 2.0],
+              const <Object?>[0.0, 1.0],
+              const <Object?>[1.0, 2.0],
             ],
             'parsing': false,
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.on)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -40930,31 +40842,24 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'parsed: stacked numbers with parsing false',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0],
-            'parsing': false,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0]),
+          extra: const <String, Object?>{'parsing': false},
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.on)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -40971,8 +40876,8 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 507.0, 469.2],
         'scales': <String, Object?>{
@@ -41994,7 +41899,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 2',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -42011,8 +41916,8 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 469.2],
         'scales': <String, Object?>{
@@ -43040,19 +42945,14 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
   ),
   (
     name: 'interfaces: a dataset element of another class',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        LineDataset(data: DatasetData.values([1.0, 2.0, 3.0])),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),

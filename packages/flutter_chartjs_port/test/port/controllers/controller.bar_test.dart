@@ -182,11 +182,14 @@ void main() {
       final snapshot = jsonDecode(
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
-      final config =
-          copyReference(controllerBarReference.first.config)! as AnyObject;
-      config[themeConfigKey] = compileLightTheme();
-      nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
+      expectNoStaleScaleKeys(
+        acquireReferenceChart(
+          controllerBarReference.first.config,
+          const {},
+          theme: compileLightTheme(),
+        ),
+        snapshot,
+      );
     });
   });
 

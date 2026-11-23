@@ -2739,6 +2739,28 @@ function mapNode(entries, state) {
 }
 
 /**
+ * The number options of a dataset and of an element. A case that gives one
+ * of them a text or a boolean (the parsed-data cases of Chart.js ADR 0030
+ * section 7) keeps its Map: a typed scope holds such a value as a foreign
+ * value of its key (the oracle O2 of Chart.js ADR 0054).
+ */
+const NUMBER_OPTIONS = new Set([
+  'base', 'inflateAmount', 'minBarLength', 'maxBarThickness', 'barPercentage', 'categoryPercentage',
+  'radius', 'hoverRadius', 'hitRadius', 'rotation', 'borderWidth', 'hoverBorderWidth', 'pointRadius',
+  'pointHoverRadius', 'pointBorderWidth', 'pointHoverBorderWidth', 'pointHitRadius', 'pointRotation',
+  'tension', 'offset', 'hoverOffset', 'spacing', 'weight', 'circumference', 'order', 'angle',
+]);
+
+/** Stops the typed form for a text or a boolean at a number option [k]. */
+function checkNumberOption(k, v, path) {
+  if (!NUMBER_OPTIONS.has(k) || !/^(data\.datasets\[\]|options\.elements)\./.test(path)) return;
+  const foreign = (x) => typeof x === 'boolean' || (typeof x === 'string' && !(k === 'inflateAmount' && x === 'auto'));
+  if (foreign(v) || (Array.isArray(v) && v.some(foreign))) {
+    keepMap(`the number option ${path} has the value ${JSON.stringify(v)} of another type`);
+  }
+}
+
+/**
  * The node of the `extra` Map [entries] of the object of the key [owner], or
  * undefined for no entry. [nodes] gives the node of a key that the caller
  * writes itself.
@@ -2749,6 +2771,7 @@ function extraNode(entries, state, owner, path, nodes = {}) {
   return mapNode(
     keys.map((k) => {
       noteExtra(`${path}.${k}`);
+      checkNumberOption(k, entries[k], `${path}.${k}`);
       if (k in nodes) return [k, nodes[k]];
       return [k, literalNode(keyedValue(k, nativeExtra(k, entries[k], state, `${path}.${k}`), owner), state, k)];
     }),
@@ -3107,8 +3130,15 @@ function dataNode(form, data, changed) {
 }
 
 /** The node of one dataset of a chart of the type [chartType]. */
-function datasetNode(ds, i, chartType, state, axes, changed) {
+function datasetNode(ds, i, chartType, state, axes, changed, chartParsing) {
   const kind = ds.type ?? chartType;
+  const parsing = 'parsing' in ds ? ds.parsing : chartParsing;
+  if ((kind === 'doughnut' || kind === 'pie') && parsing === false) {
+    keepMap(
+      'a doughnut dataset of parsing: false takes its number items as parsed ' +
+        'items with the number in r (_doughnutDataItems of the controller harness)',
+    );
+  }
   const spec = datasetSpec(kind, state, axes);
   if (spec.cls === 'TestDataset') state.testDatasets = true;
   const args = spec.cls === 'TestDataset' ? [[null, node(`ChartKind(${dart(kind, state)})`, true, true)]] : [];
@@ -3392,7 +3422,8 @@ function optionsArgs(config, o, state, axes) {
         if (v === false) {
           n = node('ChartAnimation.none');
         } else if (v && v.constructor === Object) {
-          const ms = (x) => (Number.isInteger(x) && x >= 0 ? node(`Duration(milliseconds: ${x})`, true, true) : undefined);
+          const ms = (x) =>
+            x === 0 ? node('Duration.zero') : Number.isInteger(x) && x > 0 ? node(`Duration(milliseconds: ${x})`, true, true) : undefined;
           n = typedObject('ChartAnimation', [], v, {
             duration: ms,
             delay: ms,
@@ -3603,7 +3634,7 @@ function typedConfig(config, state, c) {
   const changed = changedData(c.expected);
   args.push([
     'datasets',
-    listNode(datasets.map((ds, i) => datasetNode(ds, i, config.type, state, axes, changed.get(i)))),
+    listNode(datasets.map((ds, i) => datasetNode(ds, i, config.type, state, axes, changed.get(i), options.parsing))),
   ]);
   if (axisNodes.length || ('scales' in options && Object.keys(scaleRest).length === 0)) {
     args.push(['scales', listNode(axisNodes)]);

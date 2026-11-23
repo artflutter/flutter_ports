@@ -191,7 +191,9 @@ void main() {
   testReferenceWidths(controllerPolarAreaReferenceWidths);
 
   test('the reference has the 9 cases of Chart.js ADR 0030 first', () {
-    final names = [for (final c in controllerPolarAreaReference) c.name];
+    final names = [
+      for (final c in controllerPolarAreaReference(_functions)) c.name,
+    ];
     bool prefixed(String n) =>
         n.startsWith('parsed:') ||
         n.startsWith('interfaces:') ||
@@ -204,7 +206,7 @@ void main() {
 
   testControllerChartCases(
     [
-      for (final c in controllerPolarAreaReference)
+      for (final c in controllerPolarAreaReference(_functions))
         if (!_isSharing(c)) c,
     ],
     functions: _functions,
@@ -222,11 +224,14 @@ void main() {
     tearDown(() => Chart.unregister([_sharingClass]));
 
     test('the reference has the 11 rows of the ADR 0028 table', () {
-      expect(controllerPolarAreaReference.where(_isSharing), hasLength(11));
+      expect(
+        controllerPolarAreaReference(_functions).where(_isSharing),
+        hasLength(11),
+      );
     });
 
     testControllerChartCases(
-      controllerPolarAreaReference.where(_isSharing).toList(),
+      controllerPolarAreaReference(_functions).where(_isSharing).toList(),
       functions: _functions,
       extras: _extras,
     );
@@ -239,7 +244,7 @@ void main() {
     // light preset.
     testControllerChartCases(
       [
-        for (final c in controllerPolarAreaReference)
+        for (final c in controllerPolarAreaReference(_functions))
           if (!c.name.startsWith('legend:')) c,
       ],
       functions: _functions,
@@ -251,12 +256,15 @@ void main() {
       final snapshot = jsonDecode(
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
-      final config =
-          copyReference(controllerPolarAreaReference.first.config)!
-              as AnyObject;
-      config[themeConfigKey] = compileLightTheme();
-      nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
+      expectNoStaleScaleKeys(
+        acquireReferenceChart(
+          controllerPolarAreaReference(_functions).first.config,
+          const {},
+          functions: _functions,
+          theme: compileLightTheme(),
+        ),
+        snapshot,
+      );
     });
   });
 

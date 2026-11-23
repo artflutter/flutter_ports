@@ -21,8 +21,12 @@
 //       .getDatasetMeta(0)
 //       ._parsed.map((p) => Object.keys(p._stacks || {}))
 
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'package:flutter/painting.dart';
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String controllerBarReferenceNode = 'v24.22.1';
@@ -43,15 +47,17 @@ const String controllerBarReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerBarReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -66,30 +72,31 @@ typedef ControllerBarReferenceWidth = ({
 });
 
 /// The cases.
-const List<ControllerBarReferenceCase> controllerBarReference = [
+final List<ControllerBarReferenceCase> controllerBarReference = [
   (
     name: 'default',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 20.0, -5.0, 15.0],
-            'label': 'one',
-          },
-          <String, Object?>{
-            'data': <Object?>[5.0, -10.0, 8.0, 12.0],
-            'label': 'two',
-            'backgroundColor': 'red',
-            'borderColor': '#0000ff',
-            'borderWidth': 2.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([10.0, 20.0, -5.0, 15.0]),
+          label: 'one',
+        ),
+        BarDataset(
+          data: DatasetData.values([5.0, -10.0, 8.0, 12.0]),
+          label: 'two',
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          borderWidth: 2,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -6626,24 +6633,16 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'indexAxis y',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, -2.0, 6.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, -3.0],
-            'borderWidth': 1.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{'indexAxis': YAxis()},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(data: DatasetData.values([3.0, -2.0, 6.0])),
+        BarDataset(data: DatasetData.values([1.0, 2.0, -3.0]), borderWidth: 1),
+      ],
+      indexAxis: const YAxis(),
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
         'scales': <String, Object?>{
@@ -7658,37 +7657,32 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'stacked true with borderSkipped middle',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, -5.0, 2.0],
-            'borderSkipped': BorderSkippedEdge.middle,
-            'borderWidth': 2.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 4.0, -6.0],
-            'borderSkipped': BorderSkippedEdge.middle,
-            'borderWidth': 2.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, -2.0, 2.0],
-            'borderSkipped': BorderSkippedEdge.middle,
-            'borderWidth': 2.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': StackMode.on},
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([10.0, -5.0, 2.0]),
+          borderSkipped: BorderSkip.middle,
+          borderWidth: 2,
+        ),
+        BarDataset(
+          data: DatasetData.values([3.0, 4.0, -6.0]),
+          borderSkipped: BorderSkip.middle,
+          borderWidth: 2,
+        ),
+        BarDataset(
+          data: DatasetData.values([1.0, -2.0, 2.0]),
+          borderSkipped: BorderSkip.middle,
+          borderWidth: 2,
+        ),
+      ],
+      scales: const [
+        CategoryAxis(.x, stacked: StackMode.on),
+        LinearAxis(.y, stacked: StackMode.on),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -8861,31 +8855,20 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'stacked single',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5.0, -3.0, 4.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[-2.0, 6.0, 3.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 1.0, -8.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': StackMode.on},
-          'y': <String, Object?>{'stacked': StackMode.single},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(data: DatasetData.values([5.0, -3.0, 4.0])),
+        BarDataset(data: DatasetData.values([-2.0, 6.0, 3.0])),
+        BarDataset(data: DatasetData.values([1.0, 1.0, -8.0])),
+      ],
+      scales: const [
+        CategoryAxis(.x, stacked: StackMode.on),
+        LinearAxis(.y, stacked: StackMode.single),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -10101,38 +10084,21 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'stack groups with negative values',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[4.0, -2.0, 3.0],
-            'stack': 's1',
-          },
-          <String, Object?>{
-            'data': <Object?>[-3.0, 5.0, 1.0],
-            'stack': 's2',
-          },
-          <String, Object?>{
-            'data': <Object?>[2.0, -4.0, -1.0],
-            'stack': 's1',
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, -6.0],
-            'stack': 's2',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': StackMode.on},
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(data: DatasetData.values([4.0, -2.0, 3.0]), stack: 's1'),
+        BarDataset(data: DatasetData.values([-3.0, 5.0, 1.0]), stack: 's2'),
+        BarDataset(data: DatasetData.values([2.0, -4.0, -1.0]), stack: 's1'),
+        BarDataset(data: DatasetData.values([1.0, 2.0, -6.0]), stack: 's2'),
+      ],
+      scales: const [
+        CategoryAxis(.x, stacked: StackMode.on),
+        LinearAxis(.y, stacked: StackMode.on),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -11539,32 +11505,33 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'floating bars',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[1.0, 5.0],
-              <Object?>[-2.0, 3.0],
-              <Object?>[4.0, -1.0],
+              const <Object?>[1.0, 5.0],
+              const <Object?>[-2.0, 3.0],
+              const <Object?>[4.0, -1.0],
               7.0,
             ],
           },
-          <String, Object?>{
+        ),
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[0.0, 2.0],
+              const <Object?>[0.0, 2.0],
               3.0,
-              <Object?>[-3.0, -1.0],
-              <Object?>[2.0, 2.0],
+              const <Object?>[-3.0, -1.0],
+              const <Object?>[2.0, 2.0],
             ],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -12784,36 +12751,35 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'floating bars, stacked',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[1.0, 3.0],
-              <Object?>[-2.0, 2.0],
+              const <Object?>[1.0, 3.0],
+              const <Object?>[-2.0, 2.0],
               4.0,
             ],
           },
-          <String, Object?>{
+        ),
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[2.0, 4.0],
+              const <Object?>[2.0, 4.0],
               5.0,
-              <Object?>[-1.0, -3.0],
+              const <Object?>[-1.0, -3.0],
             ],
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': StackMode.on},
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [
+        CategoryAxis(.x, stacked: StackMode.on),
+        LinearAxis(.y, stacked: StackMode.on),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -13922,26 +13888,16 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'a hidden dataset and setDatasetVisibility',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0],
-            'hidden': true,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 1.0, 2.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[2.0, 4.0, -1.0],
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(data: DatasetData.values([1.0, 2.0, 3.0]), hidden: true),
+        BarDataset(data: DatasetData.values([3.0, 1.0, 2.0])),
+        BarDataset(data: DatasetData.values([2.0, 4.0, -1.0])),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[34.677734375, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -16656,28 +16612,25 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'barThickness a number and flex, maxBarThickness',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 4.0],
-            'barThickness': BarThickness.pixels(20),
-          },
-          <String, Object?>{
-            'data': <Object?>[2.0, 3.0, 1.0, 1.0],
-            'barThickness': BarThickness.flex,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 1.0, 2.0, 5.0],
-            'maxBarThickness': 12.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([1.0, 2.0, 3.0, 4.0]),
+          barThickness: const BarThickness.pixels(20),
+        ),
+        BarDataset(
+          data: DatasetData.values([2.0, 3.0, 1.0, 1.0]),
+          barThickness: BarThickness.flex,
+        ),
+        BarDataset(
+          data: DatasetData.values([3.0, 1.0, 2.0, 5.0]),
+          maxBarThickness: 12,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -18079,25 +18032,19 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'grouped false',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0],
-            'grouped': false,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 1.0, 2.0],
-            'grouped': false,
-            'barPercentage': 0.5,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(data: DatasetData.values([1.0, 2.0, 3.0]), grouped: false),
+        BarDataset(
+          data: DatasetData.values([3.0, 1.0, 2.0]),
+          grouped: false,
+          barPercentage: 0.5,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -19002,26 +18949,17 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'skipNull with null items',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, null, 3.0, 4.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[null, 2.0, 5.0, null],
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 4.0, null, 1.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{'skipNull': true},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        BarDataset(data: DatasetData.values([1.0, null, 3.0, 4.0])),
+        BarDataset(data: DatasetData.values([null, 2.0, 5.0, null])),
+        BarDataset(data: DatasetData.values([3.0, 4.0, null, 1.0])),
+      ],
+      extra: const <String, Object?>{'skipNull': true},
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -20393,24 +20331,21 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'minBarLength with 0 and negative values',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, -0.1, 5.0, -3.0, 0.05],
-            'minBarLength': 10.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[0.0, 0.0, -2.0, 1.0, 0.0],
-            'minBarLength': 6.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([0.0, -0.1, 5.0, -3.0, 0.05]),
+          minBarLength: 10,
+        ),
+        BarDataset(
+          data: DatasetData.values([0.0, 0.0, -2.0, 1.0, 0.0]),
+          minBarLength: 6,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -21614,24 +21549,21 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'base',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5.0, 1.0, -3.0, 2.0],
-            'base': 2.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, -4.0, 0.0, 1.0],
-            'base': -1.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([5.0, 1.0, -3.0, 2.0]),
+          extra: const <String, Object?>{'base': 2.0},
+        ),
+        BarDataset(
+          data: DatasetData.values([3.0, -4.0, 0.0, 1.0]),
+          extra: const <String, Object?>{'base': -1.0},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -22760,41 +22692,38 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'borderSkipped start, end, an edge, true and false',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[4.0, -3.0],
-            'borderSkipped': BorderSkippedEdge.start,
-            'borderWidth': 3.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, -3.0],
-            'borderSkipped': BorderSkippedEdge.end,
-            'borderWidth': 3.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, -3.0],
-            'borderSkipped': BorderSkippedEdge.left,
-            'borderWidth': 3.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, -3.0],
-            'borderSkipped': true,
-            'borderWidth': 3.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[4.0, -3.0],
-            'borderSkipped': false,
-            'borderWidth': 3.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([4.0, -3.0]),
+          borderSkipped: BorderSkip.start,
+          borderWidth: 3,
+        ),
+        BarDataset(
+          data: DatasetData.values([4.0, -3.0]),
+          borderSkipped: BorderSkip.end,
+          borderWidth: 3,
+        ),
+        BarDataset(
+          data: DatasetData.values([4.0, -3.0]),
+          borderSkipped: BorderSkip.left,
+          borderWidth: 3,
+        ),
+        BarDataset(
+          data: DatasetData.values([4.0, -3.0]),
+          borderSkipped: BorderSkip.all,
+          borderWidth: 3,
+        ),
+        BarDataset(
+          data: DatasetData.values([4.0, -3.0]),
+          borderSkipped: BorderSkip.none,
+          borderWidth: 3,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 54.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -24156,35 +24085,34 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'inflateAmount auto and a number, borderRadius',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, -2.0, 5.0],
-            'inflateAmount': undefined,
-            'borderRadius': 6.0,
-            'borderWidth': 2.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[2.0, 4.0, -1.0],
-            'inflateAmount': 3.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, -3.0, 2.0],
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([3.0, -2.0, 5.0]),
+          borderRadius: 6,
+          borderWidth: 2,
+          extra: const <String, Object?>{'inflateAmount': undefined},
+        ),
+        BarDataset(
+          data: DatasetData.values([2.0, 4.0, -1.0]),
+          extra: const <String, Object?>{'inflateAmount': 3.0},
+        ),
+        BarDataset(
+          data: DatasetData.values([1.0, -3.0, 2.0]),
+          borderSkipped: BorderSkip.none,
+          borderWidth: 1,
+          extra: const <String, Object?>{
             'borderRadius': BorderRadius.only(
               topLeft: Radius.circular(8),
               bottomRight: Radius.circular(4),
             ),
-            'borderSkipped': false,
-            'borderWidth': 1.0,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -25571,33 +25499,23 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'a linear index axis',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 2.0},
-              <String, Object?>{'x': 3.0, 'y': 4.0},
-              <String, Object?>{'x': 4.0, 'y': 1.0},
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 2.0, 'y': 5.0},
-              <String, Object?>{'x': 4.0, 'y': 3.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BarDataset(
+          data: DatasetData.points([
+            DataPoint(1.0, 2.0),
+            DataPoint(3.0, 4.0),
+            DataPoint(4.0, 1.0),
+          ]),
+        ),
+        BarDataset(
+          data: DatasetData.points([DataPoint(2.0, 5.0), DataPoint(4.0, 3.0)]),
+        ),
+      ],
+      scales: const [LinearAxis(.x)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -26705,34 +26623,27 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'a timeseries index axis',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609718400000.0, 'y': 3.0},
-              <String, Object?>{'x': 1609804800000.0, 'y': 5.0},
-              <String, Object?>{'x': 1609977600000.0, 'y': 2.0},
-              <String, Object?>{'x': 1610064000000.0, 'y': 7.0},
-            ],
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 1609804800000.0, 'y': 1.0},
-              <String, Object?>{'x': 1609891200000.0, 'y': 4.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'timeseries'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BarDataset(
+          data: DatasetData.points([
+            DataPoint(1609718400000.0, 3.0),
+            DataPoint(1609804800000.0, 5.0),
+            DataPoint(1609977600000.0, 2.0),
+            DataPoint(1610064000000.0, 7.0),
+          ]),
+        ),
+        BarDataset(
+          data: DatasetData.points([
+            DataPoint(1609804800000.0, 1.0),
+            DataPoint(1609891200000.0, 4.0),
+          ]),
+        ),
+      ],
+      scales: const [TimeSeriesAxis(.x)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -27751,27 +27662,16 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'a logarithmic value axis',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 10.0, 100.0, 1000.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[5.0, 50.0, 0.5, 2000.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'type': 'logarithmic'},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        BarDataset(data: DatasetData.values([1.0, 10.0, 100.0, 1000.0])),
+        BarDataset(data: DatasetData.values([5.0, 50.0, 0.5, 2000.0])),
+      ],
+      scales: const [LogarithmicAxis(.y)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[54.037109375, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -29248,30 +29148,19 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'reversed scales',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, -2.0, 5.0],
-            'borderWidth': 2.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[-1.0, 4.0, 2.0],
-            'borderWidth': 2.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'reverse': true},
-          'y': <String, Object?>{'reverse': true},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(data: DatasetData.values([3.0, -2.0, 5.0]), borderWidth: 2),
+        BarDataset(data: DatasetData.values([-1.0, 4.0, 2.0]), borderWidth: 2),
+      ],
+      scales: const [
+        CategoryAxis(.x, reverse: true),
+        LinearAxis(.y, reverse: true),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -30242,29 +30131,22 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'clip false',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0],
-            'clip': ChartClip.none,
-          },
-          <String, Object?>{
-            'data': <Object?>[2.0, 3.0, 1.0],
-            'clip': ChartClip.all(10),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'min': 0.0, 'max': 2.0},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([1.0, 2.0, 3.0]),
+          clip: ChartClip.none,
+        ),
+        BarDataset(
+          data: DatasetData.values([2.0, 3.0, 1.0]),
+          clip: const ChartClip.all(10),
+        ),
+      ],
+      scales: const [LinearAxis(.y, min: 0, max: 2)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -31282,38 +31164,42 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'object data with parsing keys',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'k': 'a', 'v': 3.0},
-              <String, Object?>{'k': 'b', 'v': 5.0},
+              const <String, Object?>{'k': 'a', 'v': 3.0},
+              const <String, Object?>{'k': 'b', 'v': 5.0},
             ],
-            'parsing': <String, Object?>{'xAxisKey': 'k', 'yAxisKey': 'v'},
+            'parsing': const <String, Object?>{
+              'xAxisKey': 'k',
+              'yAxisKey': 'v',
+            },
           },
-          <String, Object?>{
+        ),
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{
+              const <String, Object?>{
                 'k': 'b',
                 'nested': <String, Object?>{'v': 2.0},
               },
-              <String, Object?>{
+              const <String, Object?>{
                 'k': 'c',
                 'nested': <String, Object?>{'v': -1.0},
               },
             ],
-            'parsing': <String, Object?>{
+            'parsing': const <String, Object?>{
               'xAxisKey': 'k',
               'yAxisKey': 'nested.v',
             },
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -32124,22 +32010,21 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsing false',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 3.0),
+            DataPoint(1.0, 5.0),
+            DataPoint(2.0, -2.0),
+          ]),
+          extra: const <String, Object?>{'parsing': false},
+        ),
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 1.0, 'y': 5.0},
-              <String, Object?>{'x': 2.0, 'y': -2.0},
-            ],
-            'parsing': false,
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{
+              const <String, Object?>{
                 'x': 1.0,
                 'y': 4.0,
                 '_custom': <String, Object?>{
@@ -32151,15 +32036,15 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                   'max': 4.0,
                 },
               },
-              <String, Object?>{'x': 2.0, 'y': 2.0},
+              const <String, Object?>{'x': 2.0, 'y': 2.0},
             ],
             'parsing': false,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -33059,22 +32944,23 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'string values, null and NaN',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd'],
+      datasets: [
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>['10', '-5', '7.5', 'abc'],
           },
-          <String, Object?>{
+        ),
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[null, double.nan, 4.0, '2'],
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -34156,23 +34042,22 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsed: parsing false, an absent value key and a null value',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 'a'},
-              <String, Object?>{'x': 'b', 'y': null},
+              const <String, Object?>{'x': 'a'},
+              const <String, Object?>{'x': 'b', 'y': null},
             ],
             'parsing': false,
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -34922,7 +34807,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: inflateAmount '2'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -34935,8 +34820,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -35717,21 +35602,18 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsed: inflateAmount null',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, -3.0],
-            'inflateAmount': null,
-            'borderWidth': 1.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([10.0, 5.0, -3.0]),
+          borderWidth: 1,
+          extra: const <String, Object?>{'inflateAmount': null},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -36512,7 +36394,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsed: inflateAmount true',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -36525,8 +36407,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -37307,7 +37189,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: inflateAmount 'abc'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -37320,8 +37202,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -38102,20 +37984,17 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsed: base 5',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, -3.0],
-            'base': 5.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([10.0, 5.0, -3.0]),
+          extra: const <String, Object?>{'base': 5.0},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -38856,7 +38735,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: base '5'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -38868,8 +38747,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -39610,21 +39489,18 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsed: base 5 with minBarLength 20',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5.0, 6.0, 0.0],
-            'base': 5.0,
-            'minBarLength': 20.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([5.0, 6.0, 0.0]),
+          minBarLength: 20,
+          extra: const <String, Object?>{'base': 5.0},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -40338,7 +40214,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: base '5' with minBarLength 20",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -40351,8 +40227,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -41066,7 +40942,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: base '0' with minBarLength 10",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -41079,8 +40955,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -41791,21 +41667,18 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsed: base 0 with minBarLength 10',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[0.0, 0.01, 3.0],
-            'base': 0.0,
-            'minBarLength': 10.0,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([0.0, 0.01, 3.0]),
+          minBarLength: 10,
+          extra: const <String, Object?>{'base': 0.0},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -42516,7 +42389,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: base ''",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -42528,8 +42401,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -43270,7 +43143,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: base 'abc'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -43282,8 +43155,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -44041,7 +43914,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsed: base true',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -44053,8 +43926,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -44795,7 +44668,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: minBarLength '20'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -44807,8 +44680,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[48.025390625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -45643,20 +45516,17 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: barThickness '20'",
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, -3.0],
-            'barThickness': '20',
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([10.0, 5.0, -3.0]),
+          extra: const <String, Object?>{'barThickness': '20'},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -46398,21 +46268,18 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: barThickness 'flex' with grouped false",
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, -3.0],
-            'barThickness': BarThickness.flex,
-            'grouped': false,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([10.0, 5.0, -3.0]),
+          barThickness: BarThickness.flex,
+          grouped: false,
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -47172,20 +47039,17 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsed: maxBarThickness null',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[10.0, 5.0, -3.0],
-            'maxBarThickness': null,
-          },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([10.0, 5.0, -3.0]),
+          extra: const <String, Object?>{'maxBarThickness': null},
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -47927,7 +47791,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: maxBarThickness '30'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -47939,8 +47803,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -48682,7 +48546,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: "parsed: base 'b' on a category value axis",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -48702,8 +48566,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -49285,92 +49149,86 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsed: xAxisKey null',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a'],
+      datasets: [
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 'a', 'y': 1.0},
+              const <String, Object?>{'x': 'a', 'y': 1.0},
             ],
-            'parsing': <String, Object?>{'xAxisKey': null},
+            'parsing': const <String, Object?>{'xAxisKey': null},
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: xAxisKey 5',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a'],
+      datasets: [
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 'a', 'y': 1.0},
+              const <String, Object?>{'x': 'a', 'y': 1.0},
             ],
-            'parsing': <String, Object?>{'xAxisKey': 5.0},
+            'parsing': const <String, Object?>{'xAxisKey': 5.0},
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: a bad yAxisKey on a category index axis',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <String, Object?>{'x': 'q', 'y': 1.0},
-              <String, Object?>{'x': 'r', 'y': 2.0},
+              const <String, Object?>{'x': 'q', 'y': 1.0},
+              const <String, Object?>{'x': 'r', 'y': 2.0},
             ],
-            'parsing': <String, Object?>{'yAxisKey': 5.0},
+            'parsing': const <String, Object?>{'yAxisKey': 5.0},
           },
-        ],
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: stacked List items with parsing false',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        BarDataset(
+          extra: <String, Object?>{
             'data': <Object?>[
-              <Object?>[0.0, 1.0],
-              <Object?>[1.0, 2.0],
+              const <Object?>[0.0, 1.0],
+              const <Object?>[1.0, 2.0],
             ],
             'parsing': false,
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': StackMode.on},
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+        ),
+      ],
+      scales: const [
+        CategoryAxis(.x, stacked: StackMode.on),
+        LinearAxis(.y, stacked: StackMode.on),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
         'scales': <String, Object?>{
@@ -50173,32 +50031,27 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'parsed: stacked numbers with parsing false',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0],
-            'parsing': false,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': StackMode.on},
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b'],
+      datasets: [
+        BarDataset(
+          data: DatasetData.values([1.0, 2.0]),
+          extra: const <String, Object?>{'parsing': false},
+        ),
+      ],
+      scales: const [
+        CategoryAxis(.x, stacked: StackMode.on),
+        LinearAxis(.y, stacked: StackMode.on),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -50215,8 +50068,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 469.2],
         'scales': <String, Object?>{
@@ -51113,7 +50966,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 2',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -51130,8 +50983,8 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 469.2],
         'scales': <String, Object?>{
