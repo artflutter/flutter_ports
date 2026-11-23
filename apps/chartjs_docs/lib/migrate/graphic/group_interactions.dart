@@ -98,11 +98,13 @@ final ChartConfig _config = ChartConfig(
     mode: NearestInteractionMode(),
     intersect: false,
   ),
-  tooltip: graphicTooltip(
-    position: const AtPointerPositioner(),
-    title: _dateAndName,
-    label: _value,
-  ),
+  pluginOptions: [
+    graphicTooltip(
+      position: const AtPointerPositioner(),
+      title: _dateAndName,
+      label: _value,
+    ),
+  ],
   plugins: [
     _fadeOtherGroups,
     // The crosshair follows the pointer in x and has no horizontal line.

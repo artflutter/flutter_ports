@@ -1163,7 +1163,7 @@ void main() {
           ),
         ],
         animation: ChartAnimation.none,
-        tooltip: ChartTooltip(enabled: false),
+        pluginOptions: [TooltipOptions(enabled: false)],
         responsive: false,
         disabledPlugins: [PluginOff<LegendPlugin>()],
       );
@@ -1742,7 +1742,7 @@ void main() {
           ],
           animation: ChartAnimation.none,
           legend: const ChartLegend(display: false),
-          tooltip: const ChartTooltip(enabled: false),
+          pluginOptions: const [TooltipOptions(enabled: false)],
           responsive: false,
           events: const [],
         );

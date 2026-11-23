@@ -28,14 +28,13 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   maintainAspectRatio: false,
   padding: apexPadding.copyWith(bottom: 0),
   legend: apexLegend,
-  tooltip: apexTooltip(),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
-  pluginOptions: [zoom.options],
+  pluginOptions: [apexTooltip(), zoom.options],
   scales: [apexCategoryAxis(), apexValueAxis(min: 0, max: 120, stepSize: 20)],
 );
 

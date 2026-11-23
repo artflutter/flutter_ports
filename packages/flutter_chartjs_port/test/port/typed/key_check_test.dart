@@ -32,7 +32,10 @@ import 'package:flutter_test/flutter_test.dart';
 //   for the point options, without the prefix `point`
 //   (`core.datasetController.js`, `resolveDataElementOptions`).
 // A path that is the start of a defaults path is a group: the check goes on
-// in its Map. A font Map and a padding Map are values, not groups.
+// in its Map. A font Map and a padding Map are values, not groups. An options
+// object of `ChartConfig.pluginOptions` (the `TooltipOptions` at
+// `options.plugins.tooltip`, Chart.js ADR 0192) is a value too: it has one
+// field for each option of its plugin, so it lowers no key of its own.
 //
 // When the submodule third_party/Chart.js is checked out, a test reads
 // `src/types/index.d.ts` and checks that each allowlist line declares its
@@ -78,9 +81,6 @@ const Map<String, int> _allowlist = {
   'options.plugins.legend.labels.font': 2489,
   'options.plugins.legend.labels.usePointStyle': 2528,
   'options.plugins.legend.textDirection': 2550,
-  'options.plugins.tooltip.textDirection': 2967,
-  'options.plugins.tooltip.mode': 1610,
-  'options.plugins.tooltip.intersect': 1615,
   'options.animation.onProgress': 1802,
   'options.animation.onComplete': 1806,
   'options.animation.animateRotate': 298,
@@ -310,51 +310,52 @@ List<ChartConfig> _configs() {
         padding: _padding,
         fullSize: true,
       ),
-      tooltip: ChartTooltip(
-        textDirection: .rtl,
-        enabled: true,
-        mode: const IndexInteractionMode(),
-        intersect: false,
-        backgroundColor: const ChartPaint.solid(_red),
-        titleColor: const ChartPaint.solid(_red),
-        titleFont: _font,
-        bodyColor: const ChartPaint.solid(_red),
-        bodyFont: _font,
-        footerColor: const ChartPaint.solid(_red),
-        footerFont: _font,
-        padding: _padding,
-        cornerRadius: 6,
-        displayColors: true,
-        caretSize: 0,
-        caretPadding: 16,
-        bodyAlign: .center,
-        callbacks: TooltipCallbacks(
-          title: (tooltip, arg) {
-            final text = _text(arg);
-            return text == null
-                ? null
-                : text.isEmpty
-                ? <String>[]
-                : [text];
-          },
-          label: (tooltip, arg) {
-            final text = _label(arg);
-            return text == null
-                ? null
-                : text.isEmpty
-                ? <String>[]
-                : [text];
-          },
-          footer: (tooltip, arg) {
-            final text = _text(arg);
-            return text == null
-                ? null
-                : text.isEmpty
-                ? <String>[]
-                : [text];
-          },
+      pluginOptions: [
+        TooltipOptions(
+          textDirection: .rtl,
+          enabled: true,
+          mode: const IndexInteractionMode(),
+          intersect: false,
+          backgroundColor: const ChartPaint.solid(_red),
+          titleColor: const ChartPaint.solid(_red),
+          titleFont: _font,
+          bodyColor: const ChartPaint.solid(_red),
+          bodyFont: _font,
+          footerColor: const ChartPaint.solid(_red),
+          footerFont: _font,
+          padding: _padding,
+          displayColors: true,
+          caretSize: 0,
+          caretPadding: 16,
+          bodyAlign: .center,
+          callbacks: TooltipCallbacks(
+            title: (tooltip, arg) {
+              final text = _text(arg);
+              return text == null
+                  ? null
+                  : text.isEmpty
+                  ? <String>[]
+                  : [text];
+            },
+            label: (tooltip, arg) {
+              final text = _label(arg);
+              return text == null
+                  ? null
+                  : text.isEmpty
+                  ? <String>[]
+                  : [text];
+            },
+            footer: (tooltip, arg) {
+              final text = _text(arg);
+              return text == null
+                  ? null
+                  : text.isEmpty
+                  ? <String>[]
+                  : [text];
+            },
+          ),
         ),
-      ),
+      ],
       filler: const ChartFiller(propagate: true),
       interaction: const ChartInteraction(
         mode: NearestInteractionMode(),

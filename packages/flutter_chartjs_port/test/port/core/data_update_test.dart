@@ -759,7 +759,7 @@ void main() {
     ChartConfigurationScope cfg() {
       final c = config('bar');
       ((c['options']! as JsObjectFace)['plugins']! as OptionScope).jsAddAll(
-        <String, Object?>{'tooltip': true, 'legend': true},
+        <String, Object?>{'tooltip': const TooltipOptions(), 'legend': true},
       );
       return c;
     }
@@ -880,7 +880,7 @@ void main() {
             'display': true,
             'text': ['Fixed subtitle'],
           },
-          'tooltip': true,
+          'tooltip': const TooltipOptions(),
           'colors': true,
           'filler': true,
           'decimation': <String, Object?>{'enabled': false},
@@ -1017,7 +1017,7 @@ void main() {
         ..['borderColor'] = border ?? <Object?>[blue, red];
       if (plugins) {
         ((cfg['options']! as JsObjectFace)['plugins']! as OptionScope).jsAddAll(
-          <String, Object?>{'tooltip': true, 'legend': true},
+          <String, Object?>{'tooltip': const TooltipOptions(), 'legend': true},
         );
       }
       return cfg;

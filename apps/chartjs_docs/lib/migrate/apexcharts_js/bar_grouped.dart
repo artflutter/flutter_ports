@@ -22,7 +22,7 @@ final ChartConfig _config = ChartConfig(
   legend: apexJsLegend(square: true),
   // tooltip: {shared: true, intersect: false}: one row for each series of
   // the hovered year.
-  tooltip: apexTooltip(horizontal: true),
+  pluginOptions: [apexTooltip(horizontal: true)],
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,

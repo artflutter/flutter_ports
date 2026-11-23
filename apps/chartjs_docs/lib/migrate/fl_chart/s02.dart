@@ -30,6 +30,10 @@ List<String>? _left(Scale scale, double value, int index, List<Tick> ticks) => [
   },
 ];
 
+/// The title of the tooltip: null keeps the title of Chart.js.
+List<String>? _tooltipTitle(TooltipModel tooltip, List<TooltipItem> items) =>
+    null;
+
 ChartConfig _config(List<num> ys, {required bool average}) {
   final colors = average ? [_avg, _avg] : _colors;
   return fills(
@@ -54,11 +58,13 @@ ChartConfig _config(List<num> ys, {required bool average}) {
         ),
       ],
       interaction: const ChartInteraction(mode: flX, intersect: false),
-      tooltip: ChartTooltip(
-        enabled: !average,
-        displayColors: false,
-        callbacks: TooltipCallbacks(title: (tooltip, _) => null),
-      ),
+      pluginOptions: [
+        TooltipOptions(
+          enabled: !average,
+          displayColors: false,
+          callbacks: const TooltipCallbacks(title: _tooltipTitle),
+        ),
+      ],
       plugins: [_border],
       scales: [
         LinearAxis(

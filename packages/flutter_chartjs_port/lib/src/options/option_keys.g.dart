@@ -167,18 +167,6 @@ enum OptionKey(
   /// The key `beginAtZero`.
   beginAtZero('beginAtZero'),
 
-  /// The key `bodyAlign`.
-  bodyAlign('bodyAlign'),
-
-  /// The key `bodyColor`.
-  bodyColor('bodyColor'),
-
-  /// The key `bodyFont`.
-  bodyFont('bodyFont'),
-
-  /// The key `bodySpacing`.
-  bodySpacing('bodySpacing'),
-
   /// The key `border`.
   border('border'),
 
@@ -218,9 +206,6 @@ enum OptionKey(
   /// The key `boxHeight`.
   boxHeight('boxHeight'),
 
-  /// The key `boxPadding`.
-  boxPadding('boxPadding'),
-
   /// The key `boxWidth`.
   boxWidth('boxWidth'),
 
@@ -235,12 +220,6 @@ enum OptionKey(
 
   /// The key `capBezierPoints`.
   capBezierPoints('capBezierPoints'),
-
-  /// The key `caretPadding`.
-  caretPadding('caretPadding'),
-
-  /// The key `caretSize`.
-  caretSize('caretSize'),
 
   /// The key `categoryPercentage`.
   categoryPercentage('categoryPercentage'),
@@ -262,9 +241,6 @@ enum OptionKey(
 
   /// The key `colors`.
   colors('colors'),
-
-  /// The key `cornerRadius`.
-  cornerRadius('cornerRadius'),
 
   /// The key `count`.
   count('count'),
@@ -311,9 +287,6 @@ enum OptionKey(
   /// The key `display`.
   display('display'),
 
-  /// The key `displayColors`.
-  displayColors('displayColors'),
-
   /// The key `displayFormats`.
   displayFormats('displayFormats'),
 
@@ -347,9 +320,6 @@ enum OptionKey(
   /// The key `events`.
   events('events'),
 
-  /// The key `external`.
-  external('external'),
-
   /// The key `fill`.
   fill('fill'),
 
@@ -364,21 +334,6 @@ enum OptionKey(
 
   /// The key `font`.
   font('font'),
-
-  /// The key `footerAlign`.
-  footerAlign('footerAlign'),
-
-  /// The key `footerColor`.
-  footerColor('footerColor'),
-
-  /// The key `footerFont`.
-  footerFont('footerFont'),
-
-  /// The key `footerMarginTop`.
-  footerMarginTop('footerMarginTop'),
-
-  /// The key `footerSpacing`.
-  footerSpacing('footerSpacing'),
 
   /// The key `forceOverride`.
   forceOverride('forceOverride'),
@@ -482,9 +437,6 @@ enum OptionKey(
   /// The key `isoWeekday`.
   isoWeekday('isoWeekday'),
 
-  /// The key `itemSort`.
-  itemSort('itemSort'),
-
   /// The key `key`.
   key('key'),
 
@@ -571,9 +523,6 @@ enum OptionKey(
 
   /// The key `month`.
   month('month'),
-
-  /// The key `multiKeyBackground`.
-  multiKeyBackground('multiKeyBackground'),
 
   /// The key `normalized`.
   normalized('normalized'),
@@ -866,21 +815,6 @@ enum OptionKey(
   /// The key `title`.
   title('title'),
 
-  /// The key `titleAlign`.
-  titleAlign('titleAlign'),
-
-  /// The key `titleColor`.
-  titleColor('titleColor'),
-
-  /// The key `titleFont`.
-  titleFont('titleFont'),
-
-  /// The key `titleMarginBottom`.
-  titleMarginBottom('titleMarginBottom'),
-
-  /// The key `titleSpacing`.
-  titleSpacing('titleSpacing'),
-
   /// The key `to`.
   to('to'),
 
@@ -920,9 +854,6 @@ enum OptionKey(
   /// The key `x`.
   x('x'),
 
-  /// The key `xAlign`.
-  xAlign('xAlign'),
-
   /// The key `xAxisID`.
   xAxisID('xAxisID'),
 
@@ -934,9 +865,6 @@ enum OptionKey(
 
   /// The key `y`.
   y('y'),
-
-  /// The key `yAlign`.
-  yAlign('yAlign'),
 
   /// The key `yAxisID`.
   yAxisID('yAxisID'),

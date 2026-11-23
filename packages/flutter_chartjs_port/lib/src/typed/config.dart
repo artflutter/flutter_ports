@@ -102,9 +102,6 @@ final class const ChartConfig({
   /// The subtitle below the title: `options.plugins.subtitle`.
   final ChartTitle? subtitle,
 
-  /// The tooltip: `options.plugins.tooltip`.
-  final ChartTooltip? tooltip,
-
   /// The filler, the plugin that fills the area of a dataset with a `fill`:
   /// `options.plugins.filler`.
   final ChartFiller? filler,
@@ -159,10 +156,16 @@ final class const ChartConfig({
   /// The chart gets a copy of the List. `==` compares its items.
   final List<String>? events,
 
-  /// The options of add-on plugins: each goes to
-  /// `options.plugins.<pluginId>` (Chart.js ADR 0148). A plugin and its
-  /// options come apart: a plugin that `Chart.register` adds for all charts
-  /// takes the options of each chart here.
+  /// The options of the plugins as objects: each goes to
+  /// `options.plugins.<pluginId>` (Chart.js ADRs 0148 and 0192), for
+  /// example the [TooltipOptions] of the tooltip and the options of an
+  /// add-on plugin. A plugin and its options come apart: a plugin that
+  /// `Chart.register` adds for all charts takes the options of each chart
+  /// here.
+  ///
+  /// ```dart
+  /// pluginOptions: const [TooltipOptions(mode: IndexInteractionMode())],
+  /// ```
   ///
   /// `==` compares the options one by one with `==`.
   final List<PluginOptions<Object?>>? pluginOptions,
@@ -223,7 +226,6 @@ final class const ChartConfig({
     ChartLegend? legend,
     ChartTitle? title,
     ChartTitle? subtitle,
-    ChartTooltip? tooltip,
     ChartFiller? filler,
     ChartInteraction? interaction,
     ChartAnimation? animation,
@@ -249,7 +251,6 @@ final class const ChartConfig({
     legend: legend ?? this.legend,
     title: title ?? this.title,
     subtitle: subtitle ?? this.subtitle,
-    tooltip: tooltip ?? this.tooltip,
     filler: filler ?? this.filler,
     interaction: interaction ?? this.interaction,
     animation: animation ?? this.animation,
@@ -286,7 +287,6 @@ final class const ChartConfig({
     ('legend', legend),
     ('title', title),
     ('subtitle', subtitle),
-    ('tooltip', tooltip),
     ('filler', filler),
     ('interaction', interaction),
     ('animation', animation),

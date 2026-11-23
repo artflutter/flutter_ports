@@ -46,8 +46,9 @@ List<String>? _mm(Scale scale, double value, int index, List<Tick> ticks) => [
   '${value.round()}mm',
 ];
 
-String? _tooltipLabel(TooltipItem item) =>
-    '${item.label.join(" ")} : ${item.formattedValue}mm';
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) => [
+  '${item.label.join(" ")} : ${item.formattedValue}mm',
+];
 
 List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>
     const [];
@@ -112,23 +113,14 @@ final ChartConfig _config = ChartConfig(
     intersect: false,
     axis: .x,
   ),
-  tooltip: ChartTooltip(
-    backgroundColor: const ChartPaint.solid(_tooltip),
-    displayColors: false,
-    yAlign: .bottom,
-    extra: const {},
-    callbacks: TooltipCallbacks(
-      title: _noTitle,
-      label: (tooltip, arg) {
-        final text = _tooltipLabel(arg);
-        return text == null
-            ? null
-            : text.isEmpty
-            ? <String>[]
-            : [text];
-      },
+  pluginOptions: const [
+    TooltipOptions(
+      backgroundColor: ChartPaint.solid(_tooltip),
+      displayColors: false,
+      yAlign: .bottom,
+      callbacks: TooltipCallbacks(title: _noTitle, label: _tooltipLabel),
     ),
-  ),
+  ],
   plugins: [_zoneKey],
   scales: const [
     // DateTimeAxis(interval: 5, intervalType: years, edge labels shifted)

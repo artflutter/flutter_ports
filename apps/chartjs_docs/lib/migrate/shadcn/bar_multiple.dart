@@ -33,7 +33,9 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   padding: const EdgeInsets.all(5),
   legend: shadcnNoLegend,
   // <ChartTooltipContent indicator="dashed" />
-  tooltip: shadcnTooltip(tip, const ShadcnTooltipContent(indicator: .dashed)),
+  pluginOptions: [
+    shadcnTooltip(tip, const ShadcnTooltipContent(indicator: .dashed)),
+  ],
   interaction: shadcnInteraction(),
   animation: shadcnBarAnimation,
   scales: [

@@ -49,27 +49,30 @@ Map<String, Object?> fixture() {
           'legend': false,
           'title': false,
           'filler': false,
-          'tooltip': <String, Object?>{
+          // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+          'tooltip': TooltipOptions(
             // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
-            'mode': const PointInteractionMode(),
-            'intersect': true,
+            mode: const PointInteractionMode(),
+            intersect: true,
             // spriteText: use white background to hide any gaps between fonts
-            'backgroundColor': 'white',
-            'borderColor': 'black',
-            'borderWidth': 1,
-            'callbacks': TooltipCallbacks(
+            // DIVERGES(chartjs): adapt-direct-colors, the native paint.
+            backgroundColor: const ChartPaint.solid(Color(0xFFFFFFFF)),
+            // DIVERGES(chartjs): adapt-direct-colors, the native paint.
+            borderColor: const ChartPaint.solid(Color(0xFF000000)),
+            borderWidth: 1,
+            callbacks: TooltipCallbacks(
               beforeLabel: (tooltip, arg) => 'before label'.split('\n'),
               label: (tooltip, arg) => ['label'],
               afterLabel: (tooltip, arg) =>
                   'after1\nafter2\nafter3\nafter4\nafter5'.split('\n'),
             ),
             // DIVERGES(chartjs): adapt-flutter-border-radius, a BorderRadius.
-            'cornerRadius': const BorderRadius.only(
+            cornerRadius: const BorderRadius.only(
               topLeft: Radius.circular(10),
               topRight: Radius.circular(20),
               bottomRight: Radius.circular(5),
             ),
-          },
+          ),
         },
       },
       'plugins': <Plugin<Object?>>[

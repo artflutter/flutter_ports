@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/font_record.dart';
 import '../../support/light_theme.dart';
+import '../../support/tooltip_option_fields.dart';
 
 // The theme keys of the title, subtitle, legend and tooltip plugins
 // (Chart.js ADR 0147): a compiled theme reaches the options of the plugin
@@ -24,7 +25,9 @@ import '../../support/light_theme.dart';
 // The light pixel test (light_pixels_test.dart) shows that the light preset
 // paints the bytes of the unthemed chart.
 //
-// The reads use `jsGet`, and no resolver goes to `equals`.
+// The reads use `jsGet`, and no resolver goes to `equals`. The tooltip
+// options are one TooltipOptions (Chart.js ADR 0192): the test reads the
+// typed fields of the resolved options of the tooltip, `tooltip.options`.
 //
 // flutter_test_config.dart registers the plugins with the built-in
 // components (Chart.js ADR 0041, section 1).
@@ -53,16 +56,24 @@ const List<String> _pluginKeys = [
 ];
 
 /// The plugin options of the plugin [id] of [chart]: the options of its
-/// descriptor (core.plugins.js:175-188).
-Object _pluginOptions(Chart chart, String id) => chart.plugins.cache!
-    .firstWhere((descriptor) => descriptor.plugin.id == id)
-    .options;
+/// descriptor (core.plugins.js:175-188). For the tooltip, the resolved
+/// TooltipOptions of `chart.tooltip`: the descriptor has the merged object,
+/// and the tooltip gives the fonts and the box sizes their fallbacks
+/// (Chart.js ADR 0192), as the resolver of upstream does.
+Object _pluginOptions(Chart chart, String id) => id == 'tooltip'
+    ? chart.tooltip!.options! as TooltipOptions
+    : chart.plugins.cache!
+          .firstWhere((descriptor) => descriptor.plugin.id == id)
+          .options;
 
-/// The value of the dot path [path] in [root].
+/// The value of the dot path [path] in [root]: the typed field of a
+/// [TooltipOptions], else the read by name.
 Object? _at(Object? root, String path) {
   var node = root;
   for (final key in path.split('.')) {
-    node = jsGet(node, key);
+    node = node is TooltipOptions
+        ? tooltipOptionFields(node)[key] ?? undefined
+        : jsGet(node, key);
   }
   return node;
 }

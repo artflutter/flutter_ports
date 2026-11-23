@@ -139,7 +139,9 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
     ),
     (
       Text('TooltipGuide()'),
-      DocText('`tooltip` with a `TooltipPositioner` at the end of the bars'),
+      DocText(
+        '`TooltipOptions` with a `TooltipPositioner` at the end of the bars',
+      ),
     ),
     (
       Text('TooltipGuide(multiTuples: true)'),

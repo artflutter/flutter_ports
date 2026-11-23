@@ -110,7 +110,7 @@ class _BarSample8State() extends State<BarSample8> {
           borderSkipped: BorderSkip.none,
         ),
       ],
-      tooltip: const ChartTooltip(enabled: false),
+      pluginOptions: const [TooltipOptions(enabled: false)],
       events: const [],
       plugins: [_dashedBars, _errorBars(_data)],
       scales: [

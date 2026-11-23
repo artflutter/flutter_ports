@@ -35,7 +35,7 @@ final ChartConfig _config = ChartConfig(
   title: apexJsTitle('Fiction Books Sales'),
   // legend: {position: 'top', horizontalAlign: 'left'}
   legend: apexJsLegend(position: .top, align: .start, square: true),
-  tooltip: apexJsBarTooltip(value: _thousands, horizontal: true),
+  pluginOptions: [apexJsBarTooltip(value: _thousands, horizontal: true)],
   interaction: const ChartInteraction(
     mode: NearestInteractionMode(),
     intersect: true,

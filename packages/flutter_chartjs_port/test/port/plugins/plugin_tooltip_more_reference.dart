@@ -88,7 +88,7 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{'mode': IndexInteractionMode()},
+          'tooltip': TooltipOptions(mode: IndexInteractionMode()),
         },
       },
     },
@@ -3836,11 +3836,11 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{
-            'mode': NearestInteractionMode(),
-            'intersect': false,
-            'position': NearestTooltipPositioner(),
-          },
+          'tooltip': TooltipOptions(
+            mode: NearestInteractionMode(),
+            intersect: false,
+            position: NearestTooltipPositioner(),
+          ),
         },
       },
     },
@@ -5299,15 +5299,15 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{
-            'mode': const IndexInteractionMode(),
-            'intersect': false,
-            'callbacks': TooltipCallbacks(
+          'tooltip': TooltipOptions(
+            mode: const IndexInteractionMode(),
+            intersect: false,
+            callbacks: TooltipCallbacks(
               labelColor:
                   functions['roundLabelColor']!
                       as TooltipItemCallback<TooltipLabelStyle>,
             ),
-          },
+          ),
         },
       },
     },
@@ -7155,18 +7155,18 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{
-            'mode': NearestInteractionMode(),
-            'intersect': true,
-            'cornerRadius': BorderRadius.only(
+          'tooltip': TooltipOptions(
+            mode: NearestInteractionMode(),
+            intersect: true,
+            cornerRadius: BorderRadius.only(
               topLeft: Radius.circular(2),
               topRight: Radius.circular(8),
               bottomRight: Radius.circular(4),
             ),
-            'caretSize': 8.0,
-            'borderWidth': 2.0,
-            'borderColor': 'orange',
-          },
+            caretSize: 8,
+            borderWidth: 2,
+            borderColor: ChartPaint.solid(Color.fromRGBO(255, 165, 0, 1)),
+          ),
         },
       },
     },
@@ -9437,12 +9437,12 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
           'filler': false,
           'subtitle': false,
           'title': false,
-          'tooltip': <String, Object?>{
-            'mode': IndexInteractionMode(),
-            'intersect': false,
-            'bodyAlign': TextAlign.center,
-            'boxPadding': 3.0,
-          },
+          'tooltip': TooltipOptions(
+            mode: IndexInteractionMode(),
+            intersect: false,
+            bodyAlign: TextAlign.center,
+            boxPadding: 3,
+          ),
         },
       },
     },
@@ -11784,10 +11784,10 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
             'display': true,
             'text': <String>['Chart title'],
           },
-          'tooltip': <String, Object?>{
-            'mode': IndexInteractionMode(),
-            'intersect': false,
-          },
+          'tooltip': TooltipOptions(
+            mode: IndexInteractionMode(),
+            intersect: false,
+          ),
         },
       },
     },

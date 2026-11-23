@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the resolved plugin option classes.
-import 'dart:ui' show TextAlign;
-
+import 'package:flutter/animation.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
@@ -61,26 +61,7 @@ void main() {
     });
 
     test('a number', () {
-      final options = TooltipOptions.of(<String, Object?>{
-        'caretSize': '5',
-        'bodySpacing': 2.0,
-      });
-      expect(options.caretSize, 5);
-      expect(options.bodySpacing, 2);
       expect(LegendLabelOptions.of(<String, Object?>{}).padding, isNaN);
-    });
-
-    test('the border width of the canvas setter', () {
-      expect(TooltipOptions.of(<String, Object?>{}).borderWidth, isNull);
-      expect(
-        TooltipOptions.of(<String, Object?>{'borderWidth': 2.0}).borderWidth,
-        2,
-      );
-      // JS null is no number: no ToNumber (Chart.js ADR 0174).
-      expect(
-        TooltipOptions.of(<String, Object?>{'borderWidth': null}).borderWidth,
-        isNull,
-      );
     });
 
     test('the lines of a text', () {
@@ -119,11 +100,6 @@ void main() {
         'font': const ChartTextStyle(fontSize: 20),
       }).font;
       expect(font.fontSize, 20);
-      expect(
-        TooltipOptions.of(<String, Object?>{'bodyAlign': TextAlign.right})
-            .bodyAlign,
-        TextAlign.right,
-      );
       expect(LegendLabelOptions.of(<String, Object?>{}).textAlign, isNull);
       expect(
         FillerOptions.of(<String, Object?>{
@@ -146,6 +122,112 @@ void main() {
         const ScaleValuePosition('x', 0.0),
       );
       expect(TitleOptions.of(<String, Object?>{}).position, isNull);
+    });
+  });
+
+  // The tooltip options are one object of the app (Chart.js ADR 0192): the
+  // plugin service merges the objects of the scopes with `merge`, and
+  // `ChartView` compares two configs with `==`.
+  group('TooltipOptions', () {
+    List<String> title(TooltipModel tooltip, List<TooltipItem> items) => [
+      'title',
+    ];
+    List<String> label(TooltipModel tooltip, TooltipItem item) => ['label'];
+
+    test('merge takes each field that the other options set', () {
+      const base = TooltipOptions(
+        enabled: true,
+        caretSize: 5,
+        bodyAlign: TextAlign.left,
+        padding: EdgeInsets.all(6),
+        borderWidth: 0,
+      );
+      final merged = base.merge(
+        const TooltipOptions(caretSize: 8, bodyAlign: TextAlign.right),
+      );
+      expect(merged.enabled, isTrue);
+      expect(merged.caretSize, 8);
+      expect(merged.bodyAlign, TextAlign.right);
+      expect(merged.padding, const EdgeInsets.all(6));
+      expect(merged.borderWidth, 0);
+      expect(merged.boxWidth, isNull);
+      expect(base.merge(const TooltipOptions()), base);
+      expect(const TooltipOptions().merge(base), base);
+    });
+
+    test(
+      'merge merges the fonts, the animation and the callbacks by field',
+      () {
+        final base = TooltipOptions(
+          titleFont: const ChartTextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+          animation: const TooltipAnimation(
+            duration: Duration(milliseconds: 400),
+          ),
+          callbacks: TooltipCallbacks(title: title),
+        );
+        final merged = base.merge(
+          TooltipOptions(
+            titleFont: const ChartTextStyle(fontSize: 20),
+            animation: const TooltipAnimation(delay: Duration(milliseconds: 5)),
+            callbacks: TooltipCallbacks(label: label),
+          ),
+        );
+        expect(merged.titleFont!.fontWeight, FontWeight.bold);
+        expect(merged.titleFont!.fontSize, 20);
+        expect(merged.animation!.duration, const Duration(milliseconds: 400));
+        expect(merged.animation!.delay, const Duration(milliseconds: 5));
+        expect(merged.callbacks!.title, same(title));
+        expect(merged.callbacks!.label, same(label));
+        // `off` ends the fallback, as the `false` of a scope upstream.
+        expect(
+          base
+              .merge(const TooltipOptions(animation: TooltipAnimation.off))
+              .animation,
+          TooltipAnimation.off,
+        );
+      },
+    );
+
+    test('merge keeps the animation items of the classes that the other '
+        'options have no item of', () {
+      const x = XAnimation(duration: Duration(milliseconds: 100));
+      const opacity = OpacityAnimation(duration: Duration(milliseconds: 200));
+      const newOpacity = OpacityAnimation.off();
+      final merged = const TooltipOptions(animations: [x, opacity])
+          .merge(const TooltipOptions(animations: [newOpacity]));
+      expect(merged.animations, [same(x), same(newOpacity)]);
+    });
+
+    test('== and hashCode compare the fields', () {
+      TooltipOptions make({double caretSize = 5}) => TooltipOptions(
+        enabled: true,
+        caretSize: caretSize,
+        backgroundColor: const ChartPaint.solid(Color(0xcc000000)),
+        titleFont: const ChartTextStyle(fontWeight: FontWeight.bold),
+        cornerRadius: const BorderRadius.all(Radius.circular(6)),
+        animations: const [OpacityAnimation(easing: Curves.linear)],
+        mode: const IndexInteractionMode(),
+        events: const ['click'],
+      );
+      expect(make(), make());
+      expect(make().hashCode, make().hashCode);
+      expect(make(), isNot(make(caretSize: 6)));
+      expect(const TooltipOptions(), const TooltipOptions());
+      expect(
+        const TooltipOptions(events: ['click']),
+        isNot(const TooltipOptions(events: ['click', 'mousemove'])),
+      );
+      expect(
+        const TooltipOptions(enabled: false),
+        isNot(const TooltipOptions()),
+      );
+    });
+
+    test('the plugin id is tooltip', () {
+      expect(const TooltipOptions().pluginId, 'tooltip');
     });
   });
 

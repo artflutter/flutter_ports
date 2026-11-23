@@ -20,7 +20,7 @@ final ChartConfig _config = ChartConfig(
   title: apexJsTitle('Product Trends by Month'),
   // One series: ApexCharts.js shows no legend.
   legend: const ChartLegend(display: false),
-  tooltip: apexTooltip(),
+  pluginOptions: [apexTooltip()],
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,

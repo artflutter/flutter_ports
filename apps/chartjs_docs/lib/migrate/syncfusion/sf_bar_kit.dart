@@ -158,13 +158,15 @@ num sfValue(TooltipItem item) => item.raw! as num;
 
 /// `TooltipBehavior(enable: true)`. With [header], the tooltip shows the
 /// series name, a line and a marker, as the default of Syncfusion. Without
-/// it, it is `header: ''` and `canShowMarker: false`.
-ChartTooltip sfTooltip({
+/// it, it is `header: ''` and `canShowMarker: false`. The label callback
+/// closes over [text]: a replica builds the options once, in a top-level
+/// final, so they stay `==` across builds.
+TooltipOptions sfTooltip({
   required String Function(TooltipItem item) text,
   bool header = false,
   InteractionMode? mode,
   TooltipItemFilter? filter,
-}) => ChartTooltip(
+}) => TooltipOptions(
   mode: mode,
   filter: filter,
   backgroundColor: const .solid(Sf.tooltip),
@@ -177,26 +179,33 @@ ChartTooltip sfTooltip({
   bodyColor: const .solid(Sf.tooltipText),
   bodyFont: sfLabelFont,
   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
-  cornerRadius: 5,
+  cornerRadius: const BorderRadius.all(Radius.circular(5)),
   displayColors: header,
   position: const SfTipPositioner(),
   yAlign: .bottom,
   caretSize: 6,
   caretPadding: 0,
-  extra: const {
-    'titleAlign': TextAlign.center,
-    'titleMarginBottom': 11,
-    'usePointStyle': true,
-    'boxPadding': 4,
-  },
+  titleAlign: TextAlign.center,
+  titleMarginBottom: 11,
+  usePointStyle: true,
+  boxPadding: 4,
   callbacks: TooltipCallbacks(
-    title: (tooltip, items) =>
-        header ? [items.first.datasetLabel ?? ''] : const [],
+    title: header ? _seriesTitle : _noHeader,
     label: (tooltip, item) => [text(item)],
     labelColor: _marker,
-    labelPointStyle: (tooltip, item) => const .draw(CirclePointStyle()),
+    labelPointStyle: _circleMarker,
   ),
 );
+
+List<String> _seriesTitle(TooltipModel tooltip, List<TooltipItem> items) => [
+  items.first.datasetLabel ?? '',
+];
+
+List<String> _noHeader(TooltipModel tooltip, List<TooltipItem> items) =>
+    const [];
+
+TooltipLabelPointStyle _circleMarker(TooltipModel tooltip, TooltipItem item) =>
+    const .draw(CirclePointStyle());
 
 // The marker: a circle of the series color with a white border.
 TooltipLabelStyle _marker(TooltipModel tooltip, TooltipItem item) {

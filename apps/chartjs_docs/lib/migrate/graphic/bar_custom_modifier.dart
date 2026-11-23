@@ -76,12 +76,11 @@ final ChartConfig _config = ChartConfig(
   animation: ChartAnimation.none,
   legend: const ChartLegend(display: false),
   // The demo has no tooltip: a tap only feeds the double tap.
-  tooltip: const ChartTooltip(enabled: false),
   plugins: [
     zoomPlugin,
     tapSelection(onDoubleTap: resetRange),
   ],
-  pluginOptions: const [horizontalRange],
+  pluginOptions: const [TooltipOptions(enabled: false), horizontalRange],
   events: const ['click'],
 );
 

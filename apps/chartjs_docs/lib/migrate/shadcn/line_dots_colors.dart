@@ -45,14 +45,16 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   // margin={{top: 24, left: 24, right: 24}}
   padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
   legend: shadcnNoLegend,
-  tooltip: shadcnTooltip(
-    tip,
-    const ShadcnTooltipContent(
-      indicator: .line,
-      name: 'Visitors',
-      hideLabel: true,
+  pluginOptions: [
+    shadcnTooltip(
+      tip,
+      const ShadcnTooltipContent(
+        indicator: .line,
+        name: 'Visitors',
+        hideLabel: true,
+      ),
     ),
-  ),
+  ],
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
   // No XAxis: the points go from the left to the right edge of the plot.

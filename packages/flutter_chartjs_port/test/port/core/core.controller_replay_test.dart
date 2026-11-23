@@ -58,7 +58,7 @@ Chart _chart(
   _Counts counts, {
   ChartAnimation animation = ChartAnimation.none,
   List<ChartTransition>? transitions,
-  ChartTooltip? tooltip,
+  TooltipOptions? tooltip,
 }) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
@@ -73,7 +73,7 @@ Chart _chart(
       ],
       animation: animation,
       transitions: transitions,
-      tooltip: tooltip,
+      pluginOptions: tooltip == null ? null : [tooltip],
       onHover: (event, active, chart) => counts.hit('onHover'),
       scales: const [LinearAxis(.y, min: 0, max: 4)],
     ),
@@ -160,7 +160,7 @@ void main() {
           },
         ),
         transitions: const [HoverTransition.off()],
-        tooltip: const ChartTooltip(extra: {'animation': false}),
+        tooltip: const TooltipOptions(animation: TooltipAnimation.off),
       );
       await _hover(chart, counts);
 

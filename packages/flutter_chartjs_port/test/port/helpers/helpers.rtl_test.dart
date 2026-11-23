@@ -83,20 +83,33 @@ void main() {
   });
 
   group('native direction options', () {
-    test('typed scopes and raw options retain the native enum', () {
+    test('typed scopes, options objects and raw options retain the native '
+        'enum', () {
       final legend = LegendOptionsScope()..textDirection = TextDirection.rtl;
-      final tooltip = TooltipOptionsScope()..textDirection = TextDirection.ltr;
       expect(legend.textDirectionCell, isA<OptValue<TextDirection>>());
       expect(legend.readKey(OptionKey.textDirection), TextDirection.rtl);
       expect(LegendOptions.of(legend).textDirection, TextDirection.rtl);
-      expect(TooltipOptions.of(tooltip).textDirection, TextDirection.ltr);
+      // The tooltip options are one object (Chart.js ADR 0192): the merge of
+      // the scopes keeps the enum of the last scope that sets it.
+      const tooltip = TooltipOptions(textDirection: TextDirection.ltr);
+      expect(tooltip.textDirection, TextDirection.ltr);
+      expect(
+        tooltip.merge(const TooltipOptions()).textDirection,
+        TextDirection.ltr,
+      );
+      expect(
+        tooltip
+            .merge(const TooltipOptions(textDirection: TextDirection.rtl))
+            .textDirection,
+        TextDirection.rtl,
+      );
+      expect(const TooltipOptions().textDirection, isNull);
       // Maps: the subject is the raw options path of `of`.
       expect(
         LegendOptions.of({'textDirection': TextDirection.rtl}).textDirection,
         TextDirection.rtl,
       );
       expect(LegendOptions.of({}).textDirection, isNull);
-      expect(TooltipOptions.of({'textDirection': null}).textDirection, isNull);
     });
 
     test('a scriptable direction resolves at its context', () {

@@ -25,6 +25,15 @@ BarDataset _trade(
   barPercentage: 1 - spacing,
 );
 
+// The tooltip, built once: a new one in each build would update the chart.
+final TooltipOptions _tooltip = sfTooltip(
+  header: true,
+  text: (item) {
+    final point = item.raw! as DataPoint;
+    return '${sfNumber(point.y! as num)} : ${sfNumber(point.x! as num)}%';
+  },
+);
+
 ChartConfig _config(double width, double spacing) => ChartConfig(
   indexAxis: const YAxis(),
   datasets: [
@@ -49,13 +58,7 @@ ChartConfig _config(double width, double spacing) => ChartConfig(
   padding: sfPadding,
   title: sfTitle('Exports & Imports of US'),
   legend: sfLegend(const SfBarIcon(), reverse: true),
-  tooltip: sfTooltip(
-    header: true,
-    text: (item) {
-      final point = item.raw! as DataPoint;
-      return '${sfNumber(point.y! as num)} : ${sfNumber(point.x! as num)}%';
-    },
-  ),
+  pluginOptions: [_tooltip],
   plugins: [sfTooltipLook],
   scales: [
     // NumericAxis(minimum: 2005, maximum: 2011, interval: 1) as the index

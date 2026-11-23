@@ -44,7 +44,9 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   legend: shadcnLegend,
   // <ChartTooltip content={<ChartTooltipContent hideLabel />} />, with the
   // cursor: a muted band under the hovered month.
-  tooltip: shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
+  pluginOptions: [
+    shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
+  ],
   interaction: shadcnInteraction(),
   animation: shadcnBarAnimation,
   plugins: [shadcnCursor],

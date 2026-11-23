@@ -89,7 +89,7 @@ class _Sample5State() extends State<Sample5> {
       padding: const EdgeInsets.only(top: 12),
       onClick: _click,
       interaction: const ChartInteraction(mode: flX, intersect: false),
-      tooltip: const ChartTooltip(enabled: false),
+      pluginOptions: const [TooltipOptions(enabled: false)],
       plugins: [_pinned, areaBorder(Fl.white54)],
       scales: const [
         CategoryAxis(

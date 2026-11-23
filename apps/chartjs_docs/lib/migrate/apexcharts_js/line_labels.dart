@@ -39,7 +39,7 @@ final ChartConfig _config = ChartConfig(
   title: apexJsTitle('Average High & Low Temperature'),
   // legend: {position: 'top', horizontalAlign: 'right', floating: true}
   legend: apexJsLegend(position: .top, align: .end),
-  tooltip: apexTooltip(),
+  pluginOptions: [apexTooltip()],
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,

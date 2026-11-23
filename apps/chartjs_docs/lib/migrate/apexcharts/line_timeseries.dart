@@ -33,14 +33,13 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   maintainAspectRatio: false,
   padding: apexPadding,
   legend: const ChartLegend(display: false),
-  tooltip: apexTooltip(),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
-  pluginOptions: [zoom.options],
+  pluginOptions: [apexTooltip(), zoom.options],
   scales: [
     // xaxis: {type: 'datetime'}: a tick at the start of a day, 'dd MMM'.
     const TimeAxis(

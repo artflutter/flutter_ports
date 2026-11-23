@@ -34,7 +34,9 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
   legend: shadcnNoLegend,
   // indicator="line" with one row: the month goes into the row.
-  tooltip: shadcnTooltip(tip, const ShadcnTooltipContent(indicator: .line)),
+  pluginOptions: [
+    shadcnTooltip(tip, const ShadcnTooltipContent(indicator: .line)),
+  ],
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
   // <LabelList position="top" offset={12} className="fill-foreground" fontSize={12} />

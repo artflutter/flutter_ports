@@ -16,5 +16,5 @@
 # - One more stringIndex read selects the upstream resolver cache by the joined
 #   native arc prefixes (ADR 0093), not a user option name.
 jsGet 59
-stringIndex 14
+stringIndex 12
 jsObjectKeys 3

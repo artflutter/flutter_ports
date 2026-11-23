@@ -2412,7 +2412,7 @@ void main() {
                         : null,
                     animation: typed.ChartAnimation.none,
                     legend: const typed.ChartLegend(display: false),
-                    tooltip: const typed.ChartTooltip(enabled: false),
+                    pluginOptions: const [typed.TooltipOptions(enabled: false)],
                     responsive: true,
                     maintainAspectRatio: false,
                     events: const [],
@@ -4265,7 +4265,7 @@ void main() {
                               }
                             : null,
                       ),
-                      tooltip: typed.ChartTooltip(enabled: tooltips),
+                      pluginOptions: [typed.TooltipOptions(enabled: tooltips)],
                       responsive: true,
                       maintainAspectRatio: false,
                       events: tooltips

@@ -71,7 +71,10 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
     ),
     (Text('ChartTitle'), DocText('`title: ChartTitle(...)`')),
     (Text('Legend'), DocText('`legend: ChartLegend(...)`')),
-    (Text('TooltipBehavior'), DocText('`tooltip: ChartTooltip(...)`')),
+    (
+      Text('TooltipBehavior'),
+      DocText('`TooltipOptions(...)` in `pluginOptions`'),
+    ),
     (
       Text('TrackballBehavior'),
       DocText(

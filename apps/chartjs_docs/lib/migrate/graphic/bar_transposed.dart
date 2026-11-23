@@ -89,7 +89,7 @@ final ChartConfig _config = ChartConfig(
     intersect: false,
     axis: .y,
   ),
-  tooltip: const ChartTooltip(enabled: false),
+  pluginOptions: const [TooltipOptions(enabled: false)],
   plugins: [barLabels(_sold), tapSelection()],
   events: const ['click'],
 );

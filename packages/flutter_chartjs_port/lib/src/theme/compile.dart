@@ -210,25 +210,33 @@ ChartOptionsScope? compileChartTheme({
   // replaces the `'#fff'` of the tooltip `titleColor`, `bodyColor`,
   // `footerColor` and `multiKeyBackground`
   // (`plugin.tooltip.js:1280, 1287, 1292, 1305`).
-  if (inverseSurface != null) {
-    t.tooltip.backgroundColor = ChartPaint.solid(inverseSurface);
-  }
-  if (onInverseSurface != null) {
-    t.tooltip
-      ..titleColor = ChartPaint.solid(onInverseSurface)
-      ..bodyColor = ChartPaint.solid(onInverseSurface)
-      ..footerColor = ChartPaint.solid(onInverseSurface)
-      ..multiKeyBackground = ChartPaint.solid(onInverseSurface);
-  }
-  // The three tooltip fonts in the order of the tooltip defaults
+  //
+  // The three tooltip fonts come in the order of the tooltip defaults
   // (`plugin.tooltip.js:1281-1297`). They route to the global `font`
   // (`plugin.tooltip.js:1327-1331`). `titleFont` and `footerFont` set the
   // weight `'bold'` locally (`plugin.tooltip.js:1281-1283, 1295-1297`), so
   // they get the font token without its weight. `bodyFont` sets nothing
   // locally (`plugin.tooltip.js:1289-1290`) and gets the whole font token.
-  if (emitWithoutWeight) t.tooltip.titleFont = fontWithoutWeight;
-  if (baseFont != null) t.tooltip.bodyFont = baseFont;
-  if (emitWithoutWeight) t.tooltip.footerFont = fontWithoutWeight;
+  //
+  // The options of the tooltip are one immutable [TooltipOptions] (Chart.js
+  // ADR 0192): the theme writes one object with each key that it themes.
+  final onInverse = onInverseSurface == null
+      ? null
+      : ChartPaint.solid(onInverseSurface);
+  final tooltip = TooltipOptions(
+    backgroundColor: inverseSurface == null
+        ? null
+        : ChartPaint.solid(inverseSurface),
+    titleColor: onInverse,
+    titleFont: emitWithoutWeight ? fontWithoutWeight : null,
+    bodyColor: onInverse,
+    bodyFont: baseFont,
+    footerColor: onInverse,
+    footerFont: emitWithoutWeight ? fontWithoutWeight : null,
+    multiKeyBackground: onInverse,
+  );
+  // `plugins.tooltip`: an immutable object, no scope of the tree.
+  if (tooltip != const TooltipOptions()) t._plugins.tooltip = tooltip;
 
   // `plugins.colors.$borderColors` gets the colors at their alpha.
   // `plugins.colors.$backgroundColors` gets the same colors with the alpha
@@ -318,10 +326,6 @@ final class _ThemeTree() {
   late final LegendTitleOptionsScope legendTitle = _legend.title = add(
     LegendTitleOptionsScope(),
   );
-
-  /// `plugins.tooltip`.
-  late final TooltipOptionsScope tooltip = _plugins.tooltip =
-      add<TooltipOptionsScope>(TooltipOptionsScope());
 
   /// `plugins.colors`.
   late final ColorsOptionsScope colors = _plugins.colors =

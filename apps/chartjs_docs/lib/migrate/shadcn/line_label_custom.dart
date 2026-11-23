@@ -33,14 +33,16 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   aspectRatio: 16 / 9,
   padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
   legend: shadcnNoLegend,
-  tooltip: shadcnTooltip(
-    tip,
-    const ShadcnTooltipContent(
-      indicator: .line,
-      name: 'Visitors',
-      hideLabel: true,
+  pluginOptions: [
+    shadcnTooltip(
+      tip,
+      const ShadcnTooltipContent(
+        indicator: .line,
+        name: 'Visitors',
+        hideLabel: true,
+      ),
     ),
-  ),
+  ],
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
   // <LabelList dataKey="browser" formatter={(value) => chartConfig[value]?.label} ...>

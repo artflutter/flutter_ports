@@ -7,11 +7,10 @@ library;
 
 import 'dart:collection';
 import 'dart:ui' as native_ui;
-import 'dart:ui' show TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter/painting.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -22,9 +21,13 @@ import '../fixtures/index.dart' as fixture;
 // `Chart` is the class of core.controller.dart, with the static members
 // `Chart.registry` and `Chart.defaults`. `Chart.helpers.merge` is `merge` of
 // helpers.core.dart. `toEqual` is `equals`, and `jasmine.objectContaining`
-// of the tooltip is [_tooltipWith]. `toEqualOptions` is the matcher of
-// chartjs_test_utils. `jasmine.triggerMouseEvent` is
-// triggerMouseEvent of chartjs_test_utils (Chart.js ADR 0022, section 6).
+// of the tooltip is [_tooltipWith]. The tooltip options are one
+// `TooltipOptions` (Chart.js ADR 0192): a case gives them in
+// `ChartConfig.pluginOptions` of a typed config, and reads the resolved
+// options of `tooltip.options` by their typed fields ([_optionsOf]):
+// `toEqualOptions` of them is one `expect` for each field.
+// `jasmine.triggerMouseEvent` is triggerMouseEvent of chartjs_test_utils
+// (Chart.js ADR 0022, section 6).
 //
 // Each chart case is a `testWidgets` case with the harness of Chart.js ADR
 // 0022, section 2. `chart.tooltip` is the field of `Chart`, a
@@ -91,39 +94,83 @@ Matcher _activeAt(int datasetIndex, int index) => isA<ActiveElement>()
     .having((e) => e.datasetIndex, 'datasetIndex', datasetIndex)
     .having((e) => e.index, 'index', index);
 
-/// The two datasets of most cases (:10-17, :40-51): `Dataset 1` with the
-/// data [10, 20, 30] and `Dataset 2` with [40, 40, 40], each with the
-/// options [extra1] and [extra2].
-AnyObject _twoDatasets({
-  AnyObject extra1 = const {},
-  AnyObject extra2 = const {},
-}) => <String, Object?>{
-  'datasets': <Object?>[
-    <String, Object?>{
-      'label': 'Dataset 1',
-      'data': <Object?>[10, 20, 30],
-      'pointHoverBorderColor': const ChartPaint.solid(
-        native_ui.Color.fromRGBO(255, 0, 0, 1),
-      ),
-      'pointHoverBackgroundColor': const ChartPaint.solid(
-        native_ui.Color.fromRGBO(0, 255, 0, 1),
-      ),
-      ...extra1,
-    },
-    <String, Object?>{
-      'label': 'Dataset 2',
-      'data': <Object?>[40, 40, 40],
-      'pointHoverBorderColor': const ChartPaint.solid(
-        native_ui.Color.fromRGBO(0, 0, 255, 1),
-      ),
-      'pointHoverBackgroundColor': const ChartPaint.solid(
-        native_ui.Color.fromRGBO(0, 255, 255, 1),
-      ),
-      ...extra2,
-    },
+/// The paint `rgb(255, 0, 0)`.
+const ChartPaint _red = ChartPaint.solid(
+  native_ui.Color.fromRGBO(255, 0, 0, 1),
+);
+
+/// The paint `rgb(0, 255, 0)`.
+const ChartPaint _green = ChartPaint.solid(
+  native_ui.Color.fromRGBO(0, 255, 0, 1),
+);
+
+/// The paint `rgb(0, 0, 255)`.
+const ChartPaint _blue = ChartPaint.solid(
+  native_ui.Color.fromRGBO(0, 0, 255, 1),
+);
+
+/// The paint `rgb(0, 255, 255)`.
+const ChartPaint _cyan = ChartPaint.solid(
+  native_ui.Color.fromRGBO(0, 255, 255, 1),
+);
+
+/// The chart of the typed config [config].
+Chart _acquire(ChartConfig config) =>
+    acquireChartRoot(ChartConfigLowering(config).lower());
+
+/// The labels `['Point 1', 'Point 2', 'Point 3']` of most cases, a new List.
+List<Object> _pointLabels() => <Object>['Point 1', 'Point 2', 'Point 3'];
+
+/// `Dataset 1` of most cases (:10-17, :40-51): the data [10, 20, 30],
+/// with the options [order] and [extra].
+LineDataset _dataset1({int? order, Map<String, Object?>? extra}) => LineDataset(
+  label: 'Dataset 1',
+  data: const .values([10, 20, 30]),
+  order: order,
+  pointHoverBorderColor: const .constant(_red),
+  pointHoverBackgroundColor: const .constant(_green),
+  extra: extra,
+);
+
+/// `Dataset 2` of most cases (:10-17, :40-51): the data [40, 40, 40],
+/// with the option [order].
+LineDataset _dataset2({int? order}) => LineDataset(
+  label: 'Dataset 2',
+  data: const .values([40, 40, 40]),
+  order: order,
+  pointHoverBorderColor: const .constant(_blue),
+  pointHoverBackgroundColor: const .constant(_cyan),
+);
+
+/// The line chart of most cases: the tooltip options [tooltip], the
+/// datasets [datasets] (default `Dataset 1` and `Dataset 2`), the labels
+/// `Point 1` to `Point 3`, the axes [scales] and the options [extra].
+ChartConfig _lineConfig(
+  TooltipOptions tooltip, {
+  List<Dataset>? datasets,
+  List<ChartAxis>? scales,
+  Map<String, Object?>? extra,
+}) => ChartConfig(
+  datasets: datasets ?? [_dataset1(), _dataset2()],
+  labels: _pointLabels(),
+  scales: scales,
+  pluginOptions: [tooltip],
+  extra: extra,
+);
+
+/// The chart of the two `should tolerate ... removed on events outside
+/// chartArea` cases (:1701-1716, :1736-1751).
+ChartConfig _toleranceConfig() => _lineConfig(
+  const TooltipOptions(mode: IndexInteractionMode(), intersect: false),
+  datasets: [
+    const LineDataset(label: 'Dataset 1', data: .values([10, 20, 30])),
+    const LineDataset(label: 'Dataset 2', data: .values([10, 25, 35])),
   ],
-  'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
-};
+);
+
+/// `tooltip.options`, the resolved options of [tooltip].
+TooltipOptions _optionsOf(Tooltip tooltip) =>
+    tooltip.options! as TooltipOptions;
 
 /// The one dataset of the `active elements` cases (:1609-1615).
 AnyObject _oneDataset() => <String, Object?>{
@@ -148,11 +195,6 @@ ChartConfigurationScope _line(AnyObject data, [AnyObject? options]) =>
       ..type = 'line'
       ..data = mergeExtra(ChartDataScope(), data)
       ..options = mergeExtra(ChartOptionsScope(), options));
-
-/// `{plugins: {tooltip: tooltip}}`.
-AnyObject _tooltipOptions(AnyObject tooltip) => <String, Object?>{
-  'plugins': <String, Object?>{'tooltip': tooltip},
-};
 
 /// The label color of the default `labelColor` for a line point with the
 /// default colors (:157-163).
@@ -343,7 +385,7 @@ final class _TextAlignChart() implements IChart {
   @override
   AnyObject get options => <String, Object?>{
     'plugins': <String, Object?>{
-      'tooltip': <String, Object?>{'animation': false},
+      'tooltip': const TooltipOptions(animation: TooltipAnimation.off),
     },
   };
 
@@ -403,8 +445,8 @@ void main() {
         );
 
         final callbacks =
-            jsGet(jsGet(jsGet(_defaults(), 'plugins'), 'tooltip'), 'callbacks')!
-                as TooltipCallbacks;
+            (jsGet(jsGet(_defaults(), 'plugins'), 'tooltip')! as TooltipOptions)
+                .callbacks!;
         Object? label() =>
             callbacks.label!(const _CallbackTooltip(), tooltipItem);
 
@@ -421,25 +463,20 @@ void main() {
       testWidgets('Should only use x distance when intersect is false', (
         tester,
       ) async {
-        final chart = acquireChartRoot(
-          _line(_twoDatasets(), <String, Object?>{
-            'plugins': <String, Object?>{
-              'tooltip': <String, Object?>{
+        final chart = _acquire(
+          _lineConfig(
+            const TooltipOptions(
+              mode: IndexInteractionMode(),
+              intersect: false,
+              padding: EdgeInsets.only(left: 6, top: 6, right: 6, bottom: 6),
+            ),
+            extra: <String, Object?>{
+              'hover': <String, Object?>{
                 'mode': const IndexInteractionMode(),
                 'intersect': false,
-                'padding': const EdgeInsets.only(
-                  left: 6,
-                  top: 6,
-                  right: 6,
-                  bottom: 6,
-                ),
               },
             },
-            'hover': <String, Object?>{
-              'mode': const IndexInteractionMode(),
-              'intersect': false,
-            },
-          }),
+          ),
         );
 
         // Trigger an event over top of the
@@ -455,77 +492,56 @@ void main() {
           _point(point.x, chart.chartArea!.top + 10),
         );
 
-        final options = tooltip.options!;
-        expect(jsGet(options, 'padding'), const EdgeInsets.all(6));
+        final options = _optionsOf(tooltip);
+        expect(options.padding, const EdgeInsets.all(6));
         expect(tooltip.xAlign, TooltipXAlign.left);
         expect(tooltip.yAlign, TooltipYAlign.center);
         expect(
-          jsGet(options, 'bodyColor'),
+          options.bodyColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         );
 
-        expect(jsGet(options, 'bodyFont'), _fontFields(_modelFont()));
+        expect(options.bodyFont, _fontFields(_modelFont()));
+
+        expect(options.bodyAlign, TextAlign.left);
+        expect(options.bodySpacing, 2);
 
         expect(
-          options,
-          toEqualOptions(<String, Object?>{
-            'bodyAlign': TextAlign.left,
-            'bodySpacing': 2,
-          }),
-        );
-
-        expect(
-          jsGet(options, 'titleColor'),
+          options.titleColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         );
-        expect(
-          jsGet(options, 'titleFont'),
-          _fontFields(_modelFont(bold: true)),
-        );
+        expect(options.titleFont, _fontFields(_modelFont(bold: true)));
+
+        expect(options.titleAlign, TextAlign.left);
+        expect(options.titleSpacing, 2);
+        expect(options.titleMarginBottom, 6);
 
         expect(
-          options,
-          toEqualOptions(<String, Object?>{
-            'titleAlign': TextAlign.left,
-            'titleSpacing': 2,
-            'titleMarginBottom': 6,
-          }),
-        );
-
-        expect(
-          jsGet(options, 'footerColor'),
+          options.footerColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         );
-        expect(
-          jsGet(options, 'footerFont'),
-          _fontFields(_modelFont(bold: true)),
-        );
+        expect(options.footerFont, _fontFields(_modelFont(bold: true)));
 
-        expect(
-          options,
-          toEqualOptions(<String, Object?>{
-            'footerAlign': TextAlign.left,
-            'footerSpacing': 2,
-            'footerMarginTop': 6,
-          }),
-        );
+        expect(options.footerAlign, TextAlign.left);
+        expect(options.footerSpacing, 2);
+        expect(options.footerMarginTop, 6);
 
+        // Appearance
+        expect(options.caretSize, 5);
+        expect(options.caretPadding, 2);
         expect(
-          options,
-          toEqualOptions(<String, Object?>{
-            // Appearance
-            'caretSize': 5,
-            'caretPadding': 2,
-            'cornerRadius': 6,
-            'backgroundColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 0, 0, 0.8),
-            ),
-            'multiKeyBackground': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(255, 255, 255, 1),
-            ),
-            'displayColors': true,
-          }),
+          options.cornerRadius,
+          const BorderRadius.all(Radius.circular(6)),
         );
+        expect(
+          options.backgroundColor,
+          const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.8)),
+        );
+        expect(
+          options.multiKeyBackground,
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
+        );
+        expect(options.displayColors, true);
 
         expect(
           tooltip,
@@ -549,13 +565,9 @@ void main() {
       testWidgets('Should only display if intersecting if intersect is set', (
         tester,
       ) async {
-        final chart = acquireChartRoot(
-          _line(
-            _twoDatasets(),
-            _tooltipOptions(<String, Object?>{
-              'mode': const IndexInteractionMode(),
-              'intersect': true,
-            }),
+        final chart = _acquire(
+          _lineConfig(
+            const TooltipOptions(mode: IndexInteractionMode(), intersect: true),
           ),
         );
 
@@ -572,13 +584,9 @@ void main() {
     });
 
     testWidgets('Should display in single mode', (tester) async {
-      final chart = acquireChartRoot(
-        _line(
-          _twoDatasets(),
-          _tooltipOptions(<String, Object?>{
-            'mode': const NearestInteractionMode(),
-            'intersect': true,
-          }),
+      final chart = _acquire(
+        _lineConfig(
+          const TooltipOptions(mode: NearestInteractionMode(), intersect: true),
         ),
       );
 
@@ -589,60 +597,42 @@ void main() {
       await triggerMouseEvent(chart, 'mousemove', point);
       // Check and see if tooltip was displayed
       final tooltip = _tooltipOf(chart);
-      final options = tooltip.options!;
+      final options = _optionsOf(tooltip);
 
-      expect(jsGet(options, 'padding'), const EdgeInsets.all(6));
+      expect(options.padding, const EdgeInsets.all(6));
       expect(tooltip.xAlign, TooltipXAlign.left);
       expect(tooltip.yAlign, TooltipYAlign.center);
 
-      expect(jsGet(options, 'bodyFont'), _fontFields(_modelFont()));
+      expect(options.bodyFont, _fontFields(_modelFont()));
 
+      expect(options.bodyAlign, TextAlign.left);
+      expect(options.bodySpacing, 2);
+
+      expect(options.titleFont, _fontFields(_modelFont(bold: true)));
+
+      expect(options.titleAlign, TextAlign.left);
+      expect(options.titleSpacing, 2);
+      expect(options.titleMarginBottom, 6);
+
+      expect(options.footerFont, _fontFields(_modelFont(bold: true)));
+
+      expect(options.footerAlign, TextAlign.left);
+      expect(options.footerSpacing, 2);
+      expect(options.footerMarginTop, 6);
+
+      // Appearance
+      expect(options.caretSize, 5);
+      expect(options.caretPadding, 2);
+      expect(options.cornerRadius, const BorderRadius.all(Radius.circular(6)));
       expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          'bodyAlign': TextAlign.left,
-          'bodySpacing': 2,
-        }),
+        options.backgroundColor,
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.8)),
       );
-
-      expect(jsGet(options, 'titleFont'), _fontFields(_modelFont(bold: true)));
-
       expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          'titleAlign': TextAlign.left,
-          'titleSpacing': 2,
-          'titleMarginBottom': 6,
-        }),
+        options.multiKeyBackground,
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
       );
-
-      expect(jsGet(options, 'footerFont'), _fontFields(_modelFont(bold: true)));
-
-      expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          'footerAlign': TextAlign.left,
-          'footerSpacing': 2,
-          'footerMarginTop': 6,
-        }),
-      );
-
-      expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          // Appearance
-          'caretSize': 5,
-          'caretPadding': 2,
-          'cornerRadius': 6,
-          'backgroundColor': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(0, 0, 0, 0.8),
-          ),
-          'multiKeyBackground': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(255, 255, 255, 1),
-          ),
-          'displayColors': true,
-        }),
-      );
+      expect(options.displayColors, true);
 
       expect(tooltip.opacity, 1);
       expect(tooltip.title, equals(<Object?>['Point 2']));
@@ -666,12 +656,11 @@ void main() {
     testWidgets('Should display information from user callbacks', (
       tester,
     ) async {
-      final chart = acquireChartRoot(
-        _line(
-          _twoDatasets(),
-          _tooltipOptions(<String, Object?>{
-            'mode': const IndexInteractionMode(),
-            'callbacks': TooltipCallbacks(
+      final chart = _acquire(
+        _lineConfig(
+          TooltipOptions(
+            mode: const IndexInteractionMode(),
+            callbacks: TooltipCallbacks(
               beforeTitle: (tooltip, arg) => 'beforeTitle'.split('\n'),
               title: (tooltip, arg) => 'title'.split('\n'),
               afterTitle: (tooltip, arg) => 'afterTitle'.split('\n'),
@@ -691,7 +680,7 @@ void main() {
                     rotation: 42,
                   ),
             ),
-          }),
+          ),
         ),
       );
 
@@ -702,57 +691,39 @@ void main() {
       await triggerMouseEvent(chart, 'mousemove', point);
       // Check and see if tooltip was displayed
       final tooltip = _tooltipOf(chart);
-      final options = tooltip.options!;
+      final options = _optionsOf(tooltip);
 
-      expect(jsGet(options, 'padding'), const EdgeInsets.all(6));
+      expect(options.padding, const EdgeInsets.all(6));
       expect(tooltip.xAlign, TooltipXAlign.left);
       expect(tooltip.yAlign, TooltipYAlign.center);
 
-      expect(jsGet(options, 'bodyFont'), _fontFields(_modelFont()));
+      expect(options.bodyFont, _fontFields(_modelFont()));
 
+      expect(options.bodyAlign, TextAlign.left);
+      expect(options.bodySpacing, 2);
+
+      expect(options.titleFont, _fontFields(_modelFont(bold: true)));
+
+      expect(options.titleSpacing, 2);
+      expect(options.titleMarginBottom, 6);
+
+      expect(options.footerFont, _fontFields(_modelFont(bold: true)));
+
+      expect(options.footerAlign, TextAlign.left);
+      expect(options.footerSpacing, 2);
+      expect(options.footerMarginTop, 6);
+
+      // Appearance
+      expect(options.caretSize, 5);
+      expect(options.caretPadding, 2);
+      expect(options.cornerRadius, const BorderRadius.all(Radius.circular(6)));
       expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          'bodyAlign': TextAlign.left,
-          'bodySpacing': 2,
-        }),
+        options.backgroundColor,
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.8)),
       );
-
-      expect(jsGet(options, 'titleFont'), _fontFields(_modelFont(bold: true)));
-
       expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          'titleSpacing': 2,
-          'titleMarginBottom': 6,
-        }),
-      );
-
-      expect(jsGet(options, 'footerFont'), _fontFields(_modelFont(bold: true)));
-
-      expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          'footerAlign': TextAlign.left,
-          'footerSpacing': 2,
-          'footerMarginTop': 6,
-        }),
-      );
-
-      expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          // Appearance
-          'caretSize': 5,
-          'caretPadding': 2,
-          'cornerRadius': 6,
-          'backgroundColor': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(0, 0, 0, 0.8),
-          ),
-          'multiKeyBackground': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(255, 255, 255, 1),
-          ),
-        }),
+        options.multiKeyBackground,
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
       );
 
       Matcher callbackBodyItem() => _bodyItemOf(
@@ -789,44 +760,39 @@ void main() {
     testWidgets('Should provide context object to user callbacks', (
       tester,
     ) async {
-      final chart = acquireChartRoot(
-        ChartConfigurationScope()
-          ..type = 'line'
-          ..data = mergeExtra(ChartDataScope(), <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'label': 'Dataset 1',
+      final chart = _acquire(
+        ChartConfig(
+          datasets: const [
+            // The data items are the objects `{x, y}` of upstream, which
+            // the chart parses.
+            LineDataset(
+              label: 'Dataset 1',
+              extra: <String, Object?>{
                 'data': <Object?>[
                   <String, Object?>{'x': 1, 'y': 10},
                   <String, Object?>{'x': 2, 'y': 20},
                   <String, Object?>{'x': 3, 'y': 30},
                 ],
               },
-            ],
-          })
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear'},
-            },
-            'plugins': <String, Object?>{
-              'tooltip': <String, Object?>{
-                'mode': const IndexInteractionMode(),
-                'callbacks': TooltipCallbacks(
-                  beforeLabel: (tooltip, ctx) {
-                    final parsed = ctx.parsed;
-                    return [
-                      jsToString(
-                        jsAdd(
-                          jsAdd(jsGet(parsed, 'x'), ','),
-                          jsGet(parsed, 'y'),
-                        ),
-                      ),
-                    ];
-                  },
-                ),
-              },
-            },
-          }),
+            ),
+          ],
+          scales: const [LinearAxis(.x)],
+          pluginOptions: [
+            TooltipOptions(
+              mode: const IndexInteractionMode(),
+              callbacks: TooltipCallbacks(
+                beforeLabel: (tooltip, ctx) {
+                  final parsed = ctx.parsed;
+                  return [
+                    jsToString(
+                      jsAdd(jsAdd(jsGet(parsed, 'x'), ','), jsGet(parsed, 'y')),
+                    ),
+                  ];
+                },
+              ),
+            ),
+          ],
+        ),
       );
 
       // Trigger an event over top of the
@@ -838,15 +804,13 @@ void main() {
     });
 
     testWidgets('Should allow sorting items', (tester) async {
-      final chart = acquireChartRoot(
-        _line(
-          _twoDatasets(),
-          _tooltipOptions(<String, Object?>{
-            'mode': const IndexInteractionMode(),
+      final chart = _acquire(
+        _lineConfig(
+          TooltipOptions(
+            mode: const IndexInteractionMode(),
             // DIVERGES(chartjs): adapt-native-tooltip-item, a typed function.
-            'itemSort': (TooltipItem a, TooltipItem b, Object data) =>
-                a.datasetIndex > b.datasetIndex ? -1 : 1,
-          }),
+            itemSort: (a, b, data) => a.datasetIndex > b.datasetIndex ? -1 : 1,
+          ),
         ),
       );
 
@@ -880,13 +844,9 @@ void main() {
     });
 
     testWidgets('Should allow reversing items', (tester) async {
-      final chart = acquireChartRoot(
-        _line(
-          _twoDatasets(),
-          _tooltipOptions(<String, Object?>{
-            'mode': const IndexInteractionMode(),
-            'reverse': true,
-          }),
+      final chart = _acquire(
+        _lineConfig(
+          const TooltipOptions(mode: IndexInteractionMode(), reverse: true),
         ),
       );
 
@@ -920,12 +880,10 @@ void main() {
     });
 
     testWidgets('Should follow dataset order', (tester) async {
-      final chart = acquireChartRoot(
-        _line(
-          _twoDatasets(extra1: const {'order': 10}, extra2: const {'order': 5}),
-          _tooltipOptions(<String, Object?>{
-            'mode': const IndexInteractionMode(),
-          }),
+      final chart = _acquire(
+        _lineConfig(
+          const TooltipOptions(mode: IndexInteractionMode()),
+          datasets: [_dataset1(order: 10), _dataset2(order: 5)],
         ),
       );
 
@@ -961,32 +919,29 @@ void main() {
     testWidgets('should filter items from the tooltip using the callback', (
       tester,
     ) async {
-      final chart = acquireChartRoot(
-        _line(
-          _twoDatasets(extra1: const {'tooltipHidden': true}),
-          _tooltipOptions(<String, Object?>{
-            'mode': const IndexInteractionMode(),
+      final chart = _acquire(
+        _lineConfig(
+          TooltipOptions(
+            mode: const IndexInteractionMode(),
             // DIVERGES(chartjs): adapt-native-tooltip-item, a typed function.
-            'filter':
-                (
-                  TooltipItem tooltipItem,
-                  int index,
-                  List<TooltipItem> items,
-                  Object data,
-                ) {
-                  // For testing purposes remove the first dataset that has a
-                  // tooltipHidden property
-                  return !jsTruthy(
-                    jsGet(
-                      jsGetIndex(
-                        jsGet(data, 'datasets'),
-                        tooltipItem.datasetIndex.toDouble(),
-                      ),
-                      'tooltipHidden',
-                    ),
-                  );
-                },
-          }),
+            filter: (tooltipItem, index, items, data) {
+              // For testing purposes remove the first dataset that has a
+              // tooltipHidden property
+              return !jsTruthy(
+                jsGet(
+                  jsGetIndex(
+                    jsGet(data, 'datasets'),
+                    tooltipItem.datasetIndex.toDouble(),
+                  ),
+                  'tooltipHidden',
+                ),
+              );
+            },
+          ),
+          datasets: [
+            _dataset1(extra: const {'tooltipHidden': true}),
+            _dataset2(),
+          ],
         ),
       );
 
@@ -1019,10 +974,13 @@ void main() {
     testWidgets('should set the caretPadding based on a config setting', (
       tester,
     ) async {
-      final chart = acquireChartRoot(
-        _line(
-          _twoDatasets(extra1: const {'tooltipHidden': true}),
-          _tooltipOptions(<String, Object?>{'caretPadding': 10}),
+      final chart = _acquire(
+        _lineConfig(
+          const TooltipOptions(caretPadding: 10),
+          datasets: [
+            _dataset1(extra: const {'tooltipHidden': true}),
+            _dataset2(),
+          ],
         ),
       );
 
@@ -1034,28 +992,42 @@ void main() {
       // Check and see if tooltip was displayed
       final tooltip = _tooltipOf(chart);
 
-      expect(
-        tooltip.options,
-        toEqualOptions(<String, Object?>{
-          // Positioning
-          'caretPadding': 10,
-        }),
-      );
+      // Positioning
+      expect(_optionsOf(tooltip).caretPadding, 10);
     });
 
     for (final type in ['line', 'bar']) {
       testWidgets('Should have dataPoints in a $type chart', (tester) async {
-        final chart = acquireChartRoot(
-          ChartConfigurationScope()
-            ..type = type
-            ..data = mergeExtra(ChartDataScope(), _twoDatasets())
-            ..options = mergeExtra(
-              ChartOptionsScope(),
-              _tooltipOptions(<String, Object?>{
-                'mode': const NearestInteractionMode(),
-                'intersect': true,
-              }),
+        // The bar chart has the datasets of the line chart: the bar
+        // dataset has no parameter of the two point hover colors.
+        final datasets = type == 'line'
+            ? <Dataset>[_dataset1(), _dataset2()]
+            : <Dataset>[
+                const BarDataset(
+                  label: 'Dataset 1',
+                  data: .values([10, 20, 30]),
+                  extra: {
+                    'pointHoverBorderColor': _red,
+                    'pointHoverBackgroundColor': _green,
+                  },
+                ),
+                const BarDataset(
+                  label: 'Dataset 2',
+                  data: .values([40, 40, 40]),
+                  extra: {
+                    'pointHoverBorderColor': _blue,
+                    'pointHoverBackgroundColor': _cyan,
+                  },
+                ),
+              ];
+        final chart = _acquire(
+          _lineConfig(
+            const TooltipOptions(
+              mode: NearestInteractionMode(),
+              intersect: true,
             ),
+            datasets: datasets,
+          ),
         );
 
         // Trigger an event over top of the element
@@ -1100,16 +1072,15 @@ void main() {
     testWidgets('Should not update if active element has not changed', (
       tester,
     ) async {
-      final chart = acquireChartRoot(
-        _line(
-          _twoDatasets(),
-          _tooltipOptions(<String, Object?>{
-            'mode': const NearestInteractionMode(),
-            'intersect': true,
-            'callbacks': TooltipCallbacks(
+      final chart = _acquire(
+        _lineConfig(
+          TooltipOptions(
+            mode: const NearestInteractionMode(),
+            intersect: true,
+            callbacks: TooltipCallbacks(
               title: (tooltip, arg) => 'registering callback...'.split('\n'),
             ),
-          }),
+          ),
         ),
       );
 
@@ -1136,24 +1107,21 @@ void main() {
       'Should update if active elements are the same, but the position has '
       'changed',
       (tester) async {
-        final chart = acquireChartRoot(
-          _line(_twoDatasets(), <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': StackMode.on},
-              'y': <String, Object?>{'stacked': StackMode.on},
-            },
-            'plugins': <String, Object?>{
-              'tooltip': <String, Object?>{
-                'mode': const NearestInteractionMode(),
-                'position': const NearestTooltipPositioner(),
-                'intersect': true,
-                'callbacks': TooltipCallbacks(
-                  title: (tooltip, arg) =>
-                      'registering callback...'.split('\n'),
-                ),
-              },
-            },
-          }),
+        final chart = _acquire(
+          _lineConfig(
+            TooltipOptions(
+              mode: const NearestInteractionMode(),
+              position: const NearestTooltipPositioner(),
+              intersect: true,
+              callbacks: TooltipCallbacks(
+                title: (tooltip, arg) => 'registering callback...'.split('\n'),
+              ),
+            ),
+            scales: const [
+              CategoryAxis(.x, stacked: StackMode.on),
+              LinearAxis(.y, stacked: StackMode.on),
+            ],
+          ),
         );
 
         // Trigger an event over top of the
@@ -1189,13 +1157,12 @@ void main() {
           // the option holds a positioner object, which records its calls.
           final positioner = _RecordingPositioner();
 
-          final chart = acquireChartRoot(
-            _line(
-              _twoDatasets(),
-              _tooltipOptions(<String, Object?>{
-                'mode': const NearestInteractionMode(),
-                'position': positioner,
-              }),
+          final chart = _acquire(
+            _lineConfig(
+              TooltipOptions(
+                mode: const NearestInteractionMode(),
+                position: positioner,
+              ),
             ),
           );
 
@@ -1327,39 +1294,30 @@ void main() {
       'Should avoid tooltip truncation in x axis if there is enough space to '
       'show tooltip without truncation',
       (tester) async {
-        final chart = acquireChartRoot(
-          ChartConfigurationScope()
-            ..type = 'pie'
-            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[50, 50],
-                  'backgroundColor': <Object?>[
-                    const ChartPaint.solid(
-                      native_ui.Color.fromRGBO(255, 0, 0, 1),
-                    ),
-                    const ChartPaint.solid(
-                      native_ui.Color.fromRGBO(0, 255, 0, 1),
-                    ),
-                  ],
-                  'label': 'Dataset 1',
-                },
-              ],
-              'labels': <Object?>[
-                'Red long tooltip text to avoid unnecessary loop steps',
-                'Green long tooltip text to avoid unnecessary loop steps',
-              ],
-            })
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
-              'responsive': true,
-              'animation': <String, Object?>{
-                // without this slice center point is calculated wrong
-                'animateRotate': false,
-              },
-              'plugins': <String, Object?>{
-                'tooltip': <String, Object?>{'animation': false},
-              },
-            }),
+        // The case writes into the labels: a List that is not const.
+        final labels = <Object>[
+          'Red long tooltip text to avoid unnecessary loop steps',
+          'Green long tooltip text to avoid unnecessary loop steps',
+        ];
+        final chart = _acquire(
+          ChartConfig(
+            datasets: const [
+              PieDataset(
+                data: [50, 50],
+                backgroundColor: .indexed([_red, _green]),
+                label: 'Dataset 1',
+              ),
+            ],
+            labels: labels,
+            responsive: true,
+            animation: const ChartAnimation(
+              // without this slice center point is calculated wrong
+              animateRotate: false,
+            ),
+            pluginOptions: const [
+              TooltipOptions(animation: TooltipAnimation.off),
+            ],
+          ),
         );
 
         Future<void> testSlice(int slice, int count) async {
@@ -1406,12 +1364,11 @@ void main() {
     testWidgets('Should split newlines into separate lines in user callbacks', (
       tester,
     ) async {
-      final chart = acquireChartRoot(
-        _line(
-          _twoDatasets(),
-          _tooltipOptions(<String, Object?>{
-            'mode': const IndexInteractionMode(),
-            'callbacks': TooltipCallbacks(
+      final chart = _acquire(
+        _lineConfig(
+          TooltipOptions(
+            mode: const IndexInteractionMode(),
+            callbacks: TooltipCallbacks(
               beforeTitle: (tooltip, arg) => 'beforeTitle\nnewline'.split('\n'),
               title: (tooltip, arg) => 'title\nnewline'.split('\n'),
               afterTitle: (tooltip, arg) => 'afterTitle\nnewline'.split('\n'),
@@ -1427,7 +1384,7 @@ void main() {
               labelTextColor: (tooltip, arg) =>
                   const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
             ),
-          }),
+          ),
         ),
       );
 
@@ -1439,58 +1396,40 @@ void main() {
 
       // Check and see if tooltip was displayed
       final tooltip = _tooltipOf(chart);
-      final options = tooltip.options!;
+      final options = _optionsOf(tooltip);
 
-      expect(jsGet(options, 'padding'), const EdgeInsets.all(6));
+      expect(options.padding, const EdgeInsets.all(6));
       expect(tooltip.xAlign, TooltipXAlign.center);
       expect(tooltip.yAlign, TooltipYAlign.top);
 
-      expect(jsGet(options, 'bodyFont'), _fontFields(_modelFont()));
+      expect(options.bodyFont, _fontFields(_modelFont()));
 
+      expect(options.bodyAlign, TextAlign.left);
+      expect(options.bodySpacing, 2);
+
+      expect(options.titleFont, _fontFields(_modelFont(bold: true)));
+
+      expect(options.titleAlign, TextAlign.left);
+      expect(options.titleSpacing, 2);
+      expect(options.titleMarginBottom, 6);
+
+      expect(options.footerFont, _fontFields(_modelFont(bold: true)));
+
+      expect(options.footerAlign, TextAlign.left);
+      expect(options.footerSpacing, 2);
+      expect(options.footerMarginTop, 6);
+
+      // Appearance
+      expect(options.caretSize, 5);
+      expect(options.caretPadding, 2);
+      expect(options.cornerRadius, const BorderRadius.all(Radius.circular(6)));
       expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          'bodyAlign': TextAlign.left,
-          'bodySpacing': 2,
-        }),
+        options.backgroundColor,
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.8)),
       );
-
-      expect(jsGet(options, 'titleFont'), _fontFields(_modelFont(bold: true)));
-
       expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          'titleAlign': TextAlign.left,
-          'titleSpacing': 2,
-          'titleMarginBottom': 6,
-        }),
-      );
-
-      expect(jsGet(options, 'footerFont'), _fontFields(_modelFont(bold: true)));
-
-      expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          'footerAlign': TextAlign.left,
-          'footerSpacing': 2,
-          'footerMarginTop': 6,
-        }),
-      );
-
-      expect(
-        options,
-        toEqualOptions(<String, Object?>{
-          // Appearance
-          'caretSize': 5,
-          'caretPadding': 2,
-          'cornerRadius': 6,
-          'backgroundColor': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(0, 0, 0, 0.8),
-          ),
-          'multiKeyBackground': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(255, 255, 255, 1),
-          ),
-        }),
+        options.multiKeyBackground,
+        const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
       );
 
       Matcher newlineBodyItem() => _bodyItemOf(
@@ -1535,8 +1474,7 @@ void main() {
 
     group('text align', () {
       AnyObject makeView(TextAlign title, TextAlign body, TextAlign footer) {
-        final model = <String, Object?>{};
-        return model..addAll(<String, Object?>{
+        return <String, Object?>{
           // Positioning
           'x': 100,
           'y': 100,
@@ -1545,54 +1483,56 @@ void main() {
           'xAlign': TooltipXAlign.left,
           'yAlign': TooltipYAlign.top,
 
-          'options': <String, Object?>{
-            'setContext': () => model['options'],
-            'enabled': true,
+          // The options are one TooltipOptions (Chart.js ADR 0192): the
+          // `setContext` of upstream gives the options themselves, so they
+          // have no `scripted`, and the draw resolves them.
+          'options': TooltipOptions(
+            enabled: true,
 
-            'padding': const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
 
             // Body
-            'bodyFont': _modelFont(),
-            'bodyColor': const ChartPaint.solid(
+            bodyFont: _modelFont(),
+            bodyColor: const ChartPaint.solid(
               native_ui.Color.fromRGBO(255, 255, 255, 1),
             ),
-            'bodyAlign': body,
-            'bodySpacing': 2,
+            bodyAlign: body,
+            bodySpacing: 2,
 
             // Title
-            'titleFont': _modelFont(bold: true),
-            'titleColor': const ChartPaint.solid(
+            titleFont: _modelFont(bold: true),
+            titleColor: const ChartPaint.solid(
               native_ui.Color.fromRGBO(255, 255, 255, 1),
             ),
-            'titleAlign': title,
-            'titleSpacing': 2,
-            'titleMarginBottom': 6,
+            titleAlign: title,
+            titleSpacing: 2,
+            titleMarginBottom: 6,
 
             // Footer
-            'footerFont': _modelFont(bold: true),
-            'footerColor': const ChartPaint.solid(
+            footerFont: _modelFont(bold: true),
+            footerColor: const ChartPaint.solid(
               native_ui.Color.fromRGBO(255, 255, 255, 1),
             ),
-            'footerAlign': footer,
-            'footerSpacing': 2,
-            'footerMarginTop': 6,
+            footerAlign: footer,
+            footerSpacing: 2,
+            footerMarginTop: 6,
 
             // Appearance
-            'caretSize': 5,
-            'cornerRadius': 6,
-            'caretPadding': 2,
-            'borderColor': const ChartPaint.solid(
+            caretSize: 5,
+            cornerRadius: const BorderRadius.all(Radius.circular(6)),
+            caretPadding: 2,
+            borderColor: const ChartPaint.solid(
               native_ui.Color.fromRGBO(170, 170, 170, 1),
             ),
-            'borderWidth': 1,
-            'backgroundColor': const ChartPaint.solid(
+            borderWidth: 1,
+            backgroundColor: const ChartPaint.solid(
               native_ui.Color.fromRGBO(0, 0, 0, 0.8),
             ),
-            'multiKeyBackground': const ChartPaint.solid(
+            multiKeyBackground: const ChartPaint.solid(
               native_ui.Color.fromRGBO(255, 255, 255, 1),
             ),
-            'displayColors': false,
-          },
+            displayColors: false,
+          ),
           'opacity': 1,
 
           // Text
@@ -1626,7 +1566,7 @@ void main() {
               ),
             ),
           ],
-        });
+        };
       }
 
       // The mock records each declared parameter: the absent arguments of
@@ -1963,28 +1903,18 @@ void main() {
       testWidgets(
         'should update active elements when datasets are removed and added',
         (tester) async {
-          final dataset = <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10, 20, 30],
-            'pointHoverBorderColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
-            'pointHoverBackgroundColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 255, 0, 1),
-            ),
-          };
-          final chart = acquireChartRoot(
-            _line(
-              <String, Object?>{
-                'datasets': <Object?>[dataset],
-                'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
-              },
-              _tooltipOptions(<String, Object?>{
-                'mode': const NearestInteractionMode(),
-                'intersect': true,
-              }),
+          final chart = _acquire(
+            _lineConfig(
+              const TooltipOptions(
+                mode: NearestInteractionMode(),
+                intersect: true,
+              ),
+              datasets: [_dataset1()],
             ),
           );
+          // `dataset`, the dataset object of the chart: the case puts it
+          // back after its removal.
+          final dataset = (chart.data['datasets']! as List<Object?>)[0];
 
           final meta = chart.getDatasetMeta(0);
           final point = meta.data[1];
@@ -2010,26 +1940,9 @@ void main() {
     testWidgets(
       'should tolerate datasets removed on events outside chartArea',
       (tester) async {
-        final dataset1 = <String, Object?>{
-          'label': 'Dataset 1',
-          'data': <Object?>[10, 20, 30],
-        };
-        final dataset2 = <String, Object?>{
-          'label': 'Dataset 2',
-          'data': <Object?>[10, 25, 35],
-        };
-        final chart = acquireChartRoot(
-          _line(
-            <String, Object?>{
-              'datasets': <Object?>[dataset1, dataset2],
-              'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
-            },
-            _tooltipOptions(<String, Object?>{
-              'mode': const IndexInteractionMode(),
-              'intersect': false,
-            }),
-          ),
-        );
+        final chart = _acquire(_toleranceConfig());
+        // `dataset1`, the first dataset object of the chart.
+        final dataset1 = (chart.data['datasets']! as List<Object?>)[0];
 
         final meta = chart.getDatasetMeta(0);
         final point = meta.data[1];
@@ -2056,26 +1969,10 @@ void main() {
     testWidgets(
       'should tolerate elements removed on events outside chartArea',
       (tester) async {
-        final dataset1 = <String, Object?>{
-          'label': 'Dataset 1',
-          'data': <Object?>[10, 20, 30],
-        };
-        final dataset2 = <String, Object?>{
-          'label': 'Dataset 2',
-          'data': <Object?>[10, 25, 35],
-        };
-        final chart = acquireChartRoot(
-          _line(
-            <String, Object?>{
-              'datasets': <Object?>[dataset1, dataset2],
-              'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
-            },
-            _tooltipOptions(<String, Object?>{
-              'mode': const IndexInteractionMode(),
-              'intersect': false,
-            }),
-          ),
-        );
+        final chart = _acquire(_toleranceConfig());
+        // `dataset1`, the first dataset object of the chart.
+        final dataset1 =
+            (chart.data['datasets']! as List<Object?>)[0]! as JsObjectFace;
 
         final meta = chart.getDatasetMeta(0);
         final point = meta.data[1];
@@ -2104,12 +2001,10 @@ void main() {
       testWidgets('should not be called on events not in plugin events array', (
         tester,
       ) async {
-        final chart = acquireChartRoot(
-          _line(
-            _oneDataset(),
-            _tooltipOptions(<String, Object?>{
-              'events': <Object?>['click'],
-            }),
+        final chart = _acquire(
+          _lineConfig(
+            const TooltipOptions(events: ['click']),
+            datasets: [_dataset1()],
           ),
         );
 
@@ -2127,11 +2022,10 @@ void main() {
       'should use default callback if user callback returns undefined',
       (tester) async {
         Null returnsDefault(Object? tooltip, Object? arg) => null;
-        final chart = acquireChartRoot(
-          _line(
-            _twoDatasets(),
-            _tooltipOptions(<String, Object?>{
-              'callbacks': TooltipCallbacks(
+        final chart = _acquire(
+          _lineConfig(
+            TooltipOptions(
+              callbacks: TooltipCallbacks(
                 beforeTitle: returnsDefault,
                 title: returnsDefault,
                 afterTitle: returnsDefault,
@@ -2146,7 +2040,7 @@ void main() {
                 labelTextColor: returnsDefault,
                 labelPointStyle: returnsDefault,
               ),
-            }),
+            ),
           ),
         );
         final tooltip = _tooltipOf(chart);
@@ -2214,7 +2108,7 @@ final class _NoChart() implements IChart {
 
 final class const _CallbackTooltip() implements TooltipModel {
   @override
-  Object get options => const <String, Object?>{};
+  Object get options => const TooltipOptions();
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

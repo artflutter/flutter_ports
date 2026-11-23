@@ -5,10 +5,16 @@ library;
 
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:meta/meta.dart';
 
 /// The 14 tooltip hooks. An absent field inherits the corresponding hook.
 /// A null callback result selects its built-in default; an empty text list
 /// emits no lines. Raw and typed configurations use this same value.
+///
+/// Two callback sets with equal functions are `==` (Chart.js ADR 0192): a
+/// tear-off of a top-level function or a static method is equal at each
+/// build, and a new closure is a new value.
+@immutable
 final class const TooltipCallbacks({
   /// The `beforeTitle` hook; null inherits it.
   final TooltipItemsCallback? beforeTitle,
@@ -75,6 +81,43 @@ final class const TooltipCallbacks({
       labelPointStyle: other.labelPointStyle ?? labelPointStyle,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TooltipCallbacks &&
+          other.beforeTitle == beforeTitle &&
+          other.title == title &&
+          other.afterTitle == afterTitle &&
+          other.beforeBody == beforeBody &&
+          other.afterBody == afterBody &&
+          other.beforeLabel == beforeLabel &&
+          other.label == label &&
+          other.afterLabel == afterLabel &&
+          other.beforeFooter == beforeFooter &&
+          other.footer == footer &&
+          other.afterFooter == afterFooter &&
+          other.labelColor == labelColor &&
+          other.labelTextColor == labelTextColor &&
+          other.labelPointStyle == labelPointStyle;
+
+  @override
+  int get hashCode => Object.hash(
+    beforeTitle,
+    title,
+    afterTitle,
+    beforeBody,
+    afterBody,
+    beforeLabel,
+    label,
+    afterLabel,
+    beforeFooter,
+    footer,
+    afterFooter,
+    labelColor,
+    labelTextColor,
+    labelPointStyle,
+  );
 }
 
 /// Internal reconciliation metadata; callback bodies are read live by lowering.

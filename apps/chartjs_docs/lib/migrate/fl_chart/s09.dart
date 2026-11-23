@@ -15,6 +15,16 @@ ChartPaint _zero(Object? c, Color color) =>
 /// The grid dash of both axes, and no axis line.
 const AxisBorder _border = AxisBorder(dash: [8, 2], display: false);
 
+/// The title of the tooltip: null keeps the title of Chart.js.
+List<String>? _tooltipTitle(TooltipModel tooltip, List<TooltipItem> items) =>
+    null;
+
+/// The label of the tooltip: x, then y with two decimals.
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) {
+  final p = item.parsed! as JsObjectFace;
+  return ['${p['x']}, ${(p['y']! as num).toStringAsFixed(2)}'];
+}
+
 final ChartConfig _config = fills(
   ChartConfig(
     datasets: [
@@ -36,19 +46,15 @@ final ChartConfig _config = fills(
       intersect: false,
       axis: .x,
     ),
-    tooltip: ChartTooltip(
-      backgroundColor: const ChartPaint.solid(Colors.black),
-      displayColors: false,
-      bodyColor: const ChartPaint.solid(Fl.pink),
-      bodyFont: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-      callbacks: TooltipCallbacks(
-        title: (tooltip, _) => null,
-        label: (tooltip, i) {
-          final p = i.parsed! as JsObjectFace;
-          return ['${p['x']}, ${(p['y']! as num).toStringAsFixed(2)}'];
-        },
+    pluginOptions: const [
+      TooltipOptions(
+        backgroundColor: ChartPaint.solid(Colors.black),
+        displayColors: false,
+        bodyColor: ChartPaint.solid(Fl.pink),
+        bodyFont: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        callbacks: TooltipCallbacks(title: _tooltipTitle, label: _tooltipLabel),
       ),
-    ),
+    ],
     plugins: [touchIndicator(color: Fl.pink, fromValue: 0)],
     scales: [
       LinearAxis(

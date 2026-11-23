@@ -3,6 +3,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'dart:ui';
+
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../fixture_events.dart';
@@ -56,16 +58,19 @@ Map<String, Object?> fixture() {
           'legend': false,
           'title': false,
           'filler': false,
-          'tooltip': <String, Object?>{
+          // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+          'tooltip': TooltipOptions(
             // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
-            'mode': const PointInteractionMode(),
-            'intersect': true,
+            mode: const PointInteractionMode(),
+            intersect: true,
             // spriteText: use white background to hide any gaps between fonts
-            'backgroundColor': 'white',
-            'borderColor': 'black',
-            'borderWidth': 1,
-            'callbacks': TooltipCallbacks(label: (tooltip, arg) => ['label']),
-          },
+            // DIVERGES(chartjs): adapt-direct-colors, the native paint.
+            backgroundColor: const ChartPaint.solid(Color(0xFFFFFFFF)),
+            // DIVERGES(chartjs): adapt-direct-colors, the native paint.
+            borderColor: const ChartPaint.solid(Color(0xFF000000)),
+            borderWidth: 1,
+            callbacks: TooltipCallbacks(label: (tooltip, arg) => ['label']),
+          ),
         },
       },
       'plugins': <Plugin<Object?>>[

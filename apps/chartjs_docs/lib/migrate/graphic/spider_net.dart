@@ -111,11 +111,13 @@ final ChartConfig _config = ChartConfig(
     intersect: false,
     axis: .xy,
   ),
-  tooltip: graphicTooltip(
-    position: const TopLeftPositioner(),
-    title: _index,
-    label: _typeValue,
-  ),
+  pluginOptions: [
+    graphicTooltip(
+      position: const TopLeftPositioner(),
+      title: _index,
+      label: _typeValue,
+    ),
+  ],
   plugins: [_radialAxis, polarCrosshair, tooltipShadow],
 );
 

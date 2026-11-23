@@ -22,7 +22,7 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 30, 16, 0),
   legend: const ChartLegend(display: false),
-  tooltip: apexJsBarTooltip(horizontal: true),
+  pluginOptions: [apexJsBarTooltip(horizontal: true)],
   interaction: const ChartInteraction(
     mode: NearestInteractionMode(),
     intersect: true,

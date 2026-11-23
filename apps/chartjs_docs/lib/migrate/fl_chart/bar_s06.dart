@@ -96,7 +96,7 @@ final ChartConfig _config = flBars(
           extra: {'data': _rods(activity)},
         ),
     ],
-    tooltip: const ChartTooltip(enabled: false),
+    pluginOptions: const [TooltipOptions(enabled: false)],
     events: const [],
     plugins: [_extraLines],
     scales: [

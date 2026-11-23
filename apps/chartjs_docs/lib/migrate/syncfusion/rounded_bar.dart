@@ -32,9 +32,11 @@ final ChartConfig _config = ChartConfig(
   padding: sfPadding,
   title: sfTitle('Population growth rate of countries'),
   legend: const ChartLegend(display: false),
-  tooltip: sfTooltip(
-    text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}',
-  ),
+  pluginOptions: [
+    sfTooltip(
+      text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}',
+    ),
+  ],
   plugins: [sfTooltipLook],
   scales: [
     sfCategoryAxis(direction: .y, reverse: true),

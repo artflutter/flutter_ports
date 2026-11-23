@@ -10,9 +10,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0052, section 9: the change test of a typed config is
 // `ChartConfig ==`. An `==` config gives no update, also from a parent that
-// builds the config in each build. The event and tooltip callbacks lower to
-// trampolines that call the callback of the newest config, so a new closure
-// there gives no update. A new `...For` closure is a new value and gives an
+// builds the config in each build. The event callbacks and the tooltip
+// callbacks of a dataset lower to trampolines that call the callback of the
+// newest config, so a new closure there gives no update. The `TooltipOptions`
+// of `pluginOptions` compare with `==`: a new closure there is a new value
+// and gives an update. A new `...For` closure is a new value and gives an
 // update. `ChartView.raw` keeps the identity test of Chart.js ADR 0049,
 // section 4. The update count is the `beforeUpdate` count of a registered
 // spy plugin, which the config does not name.
@@ -469,15 +471,17 @@ void main() {
         datasets: const [
           BarDataset(label: 'A', data: .values([1, 2])),
         ],
-        tooltip: ChartTooltip(
-          callbacks: TooltipCallbacks(
-            label: (tooltip, item) => switch (text) {
-              null => null,
-              final String text => text.isEmpty ? <String>[] : [text],
-            },
-          ),
-        ),
         animation: ChartAnimation.none,
+        pluginOptions: [
+          TooltipOptions(
+            callbacks: TooltipCallbacks(
+              label: (tooltip, item) => switch (text) {
+                null => null,
+                final String text => text.isEmpty ? <String>[] : [text],
+              },
+            ),
+          ),
+        ],
       );
       await tester.pumpWidget(_box(ChartView(config: config())));
       final chart = _chart(tester);

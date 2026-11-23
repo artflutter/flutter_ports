@@ -16,14 +16,16 @@ const tooltipStyle = ChartConfig(
       borderColor: .constant(.solid(teal)),
     ),
   ],
-  tooltip: ChartTooltip(
-    backgroundColor: .solid(Color(0xF0FFFFFF)),
-    titleColor: .solid(Color(0xFF17243B)),
-    bodyColor: .solid(Color(0xFF475569)),
-    titleFont: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-    padding: EdgeInsets.all(12),
-    cornerRadius: 10,
-    displayColors: false,
-  ),
+  pluginOptions: [
+    TooltipOptions(
+      backgroundColor: .solid(Color(0xF0FFFFFF)),
+      titleColor: .solid(Color(0xFF17243B)),
+      bodyColor: .solid(Color(0xFF475569)),
+      titleFont: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+      padding: EdgeInsets.all(12),
+      cornerRadius: BorderRadius.all(Radius.circular(10)),
+      displayColors: false,
+    ),
+  ],
 );
 // #enddocregion sample

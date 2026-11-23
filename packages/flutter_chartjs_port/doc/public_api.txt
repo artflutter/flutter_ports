@@ -91,6 +91,8 @@ CanvasTextBaseline
 CanvasTextLayout
 CanvasTextMetricsData
 CanvasTextMetricsSource
+CaretXAnimation
+CaretYAnimation
 CartesianAxis
 CartesianScaleOptions
 CategoryAxis
@@ -139,7 +141,6 @@ ChartTheme
 ChartThemeData
 ChartThemeSwitch
 ChartTitle
-ChartTooltip
 ChartTransition
 ChartValue
 ChartView
@@ -259,6 +260,7 @@ InteractionAxis
 InteractionHandler
 InteractionMode
 InteractionModeFunction
+InteractionOptionValues
 InteractionOptionsScope
 InteractionRangeSearch
 InterpolatedPoint
@@ -357,6 +359,7 @@ NoFill
 NonZeroDouble
 NullValueScale
 OffsetAnimation
+OpacityAnimation
 Opt
 OptForeign
 OptFunction
@@ -533,6 +536,7 @@ TitleOptions
 TitleOptionsScope
 TitlePlugin
 Tooltip
+TooltipAnimation
 TooltipBodyItem
 TooltipCallbacks
 TooltipDatasetOptionsScope
@@ -547,11 +551,11 @@ TooltipLabelPointStyle
 TooltipLabelStyle
 TooltipModel
 TooltipOptions
-TooltipOptionsScope
 TooltipPlugin
 TooltipPoint
 TooltipPosition
 TooltipPositioner
+TooltipScript
 TooltipXAlign
 TooltipYAlign
 TransitionOptionsScope
@@ -857,7 +861,6 @@ lowerFiller
 lowerInteraction
 lowerLegend
 lowerTitle
-lowerTooltip
 lowerTransitions
 lttbDecimation
 maxAtlasInstances
@@ -1152,6 +1155,8 @@ CanvasTextBaseline
 CanvasTextLayout
 CanvasTextMetricsData
 CanvasTextMetricsSource
+CaretXAnimation
+CaretYAnimation
 CartesianAxis
 CartesianScaleOptions
 CategoryAxis
@@ -1200,7 +1205,6 @@ ChartTheme
 ChartThemeData
 ChartThemeSwitch
 ChartTitle
-ChartTooltip
 ChartTransition
 ChartValue
 ChartView
@@ -1318,6 +1322,7 @@ InteractionAxis
 InteractionHandler
 InteractionMode
 InteractionModeFunction
+InteractionOptionValues
 InteractionOptionsScope
 InteractionRangeSearch
 InterpolatedPoint
@@ -1417,6 +1422,7 @@ NoFill
 NonZeroDouble
 NullValueScale
 OffsetAnimation
+OpacityAnimation
 Opt
 OptForeign
 OptFunction
@@ -1592,6 +1598,7 @@ TimeUnit
 TitleOptions
 TitleOptionsScope
 TitlePlugin
+TooltipAnimation
 TooltipBodyItem
 TooltipCallbacks
 TooltipDatasetOptionsScope
@@ -1606,11 +1613,11 @@ TooltipLabelPointStyle
 TooltipLabelStyle
 TooltipModel
 TooltipOptions
-TooltipOptionsScope
 TooltipPlugin
 TooltipPoint
 TooltipPosition
 TooltipPositioner
+TooltipScript
 TooltipXAlign
 TooltipYAlign
 TransitionOptionsScope
@@ -1929,7 +1936,6 @@ lowerFiller
 lowerInteraction
 lowerLegend
 lowerTitle
-lowerTooltip
 lowerTransitions
 lttbDecimation
 maxAtlasInstances

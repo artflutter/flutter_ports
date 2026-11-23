@@ -75,7 +75,7 @@ class _BarSample2State() extends State<BarSample2> {
   ChartConfig _config() => flBars(
     ChartConfig(
       datasets: [_rods(_left, Fl.red), _rods(_right, Fl.yellow)],
-      tooltip: const ChartTooltip(enabled: false),
+      pluginOptions: const [TooltipOptions(enabled: false)],
       plugins: [_labels, _touch],
       scales: [
         groupAxis(

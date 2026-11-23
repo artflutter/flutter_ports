@@ -267,6 +267,39 @@ final class SpacingAnimation extends PropertyAnimation {
   const new off() : super(duration: Duration.zero);
 }
 
+/// The animation of `caretX`: the x of the tip of the caret of the
+/// tooltip, an item of `TooltipOptions.animations`.
+final class CaretXAnimation extends PropertyAnimation {
+  /// The animation options of `caretX`.
+  const new({super.duration, super.delay, super.easing, super.loop});
+
+  /// No animation of `caretX`: a change shows at once. It is the
+  /// duration 0.
+  const new off() : super(duration: Duration.zero);
+}
+
+/// The animation of `caretY`: the y of the tip of the caret of the
+/// tooltip, an item of `TooltipOptions.animations`.
+final class CaretYAnimation extends PropertyAnimation {
+  /// The animation options of `caretY`.
+  const new({super.duration, super.delay, super.easing, super.loop});
+
+  /// No animation of `caretY`: a change shows at once. It is the
+  /// duration 0.
+  const new off() : super(duration: Duration.zero);
+}
+
+/// The animation of `opacity`: the opacity of the tooltip, an item of
+/// `TooltipOptions.animations`.
+final class OpacityAnimation extends PropertyAnimation {
+  /// The animation options of `opacity`.
+  const new({super.duration, super.delay, super.easing, super.loop});
+
+  /// No animation of `opacity`: a change shows at once. It is the
+  /// duration 0.
+  const new off() : super(duration: Duration.zero);
+}
+
 /// The animation of one update mode of a chart: an item of
 /// `ChartConfig.transitions`. Each mode has its ready class. The type of an
 /// item names its mode.

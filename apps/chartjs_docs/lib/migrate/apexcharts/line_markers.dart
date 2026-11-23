@@ -38,14 +38,16 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   padding: apexPadding,
   // One series: no legend, as in apexcharts_flutter.
   legend: const ChartLegend(display: false),
-  tooltip: apexTooltip(value: _dollars),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
-  pluginOptions: [zoom.options],
+  pluginOptions: [
+    apexTooltip(value: _dollars),
+    zoom.options,
+  ],
   scales: [
     apexCategoryAxis(title: 'Week'),
     apexValueAxis(

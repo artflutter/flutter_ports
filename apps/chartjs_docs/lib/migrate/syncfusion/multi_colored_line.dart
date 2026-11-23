@@ -40,8 +40,9 @@ List<String>? _mm(Scale scale, double value, int index, List<Tick> ticks) => [
   '${value.round()}mm',
 ];
 
-String? _tooltipLabel(TooltipItem item) =>
-    '${item.label.join(" ")} : ${item.formattedValue}mm';
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) => [
+  '${item.label.join(" ")} : ${item.formattedValue}mm',
+];
 
 // TrackballBehavior draws a vertical line at the active point.
 final _trackball = Plugin<Object?>(
@@ -92,23 +93,19 @@ final ChartConfig _config = ChartConfig(
     intersect: false,
     axis: .x,
   ),
-  tooltip: ChartTooltip(
-    backgroundColor: const ChartPaint.solid(_tooltip),
-    yAlign: .bottom,
-    extra: const {'usePointStyle': true, 'boxPadding': 4},
-    callbacks: TooltipCallbacks(
-      labelColor: _tooltipMarker,
-      title: _noTitle,
-      label: (tooltip, arg) {
-        final text = _tooltipLabel(arg);
-        return text == null
-            ? null
-            : text.isEmpty
-            ? <String>[]
-            : [text];
-      },
+  pluginOptions: const [
+    TooltipOptions(
+      backgroundColor: ChartPaint.solid(_tooltip),
+      yAlign: .bottom,
+      usePointStyle: true,
+      boxPadding: 4,
+      callbacks: TooltipCallbacks(
+        labelColor: _tooltipMarker,
+        title: _noTitle,
+        label: _tooltipLabel,
+      ),
     ),
-  ),
+  ],
   plugins: [_trackball],
   scales: const [
     // DateTimeAxis(intervalType: years, dateFormat: y)

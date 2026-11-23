@@ -153,7 +153,7 @@ class _BarSample7State() extends State<BarSample7> {
             order: turn < 2 ? 1 : 0,
           ),
         ],
-        tooltip: const ChartTooltip(enabled: false),
+        pluginOptions: const [TooltipOptions(enabled: false)],
         plugins: [_labels, _touch],
         scales: horizontal ? [values, groups] : [groups, values],
       ),

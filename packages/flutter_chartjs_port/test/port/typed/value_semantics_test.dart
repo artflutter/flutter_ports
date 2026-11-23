@@ -37,6 +37,15 @@ double _radiusFor(ScriptableContext context) => 3;
 /// A scriptable point style.
 PointStyle _styleFor(ScriptableContext context) => const RectPointStyle();
 
+/// A tooltip label callback.
+List<String>? _tooltipLabel(TooltipModel tooltip, TooltipItem item) => null;
+
+/// A tooltip script that changes nothing.
+TooltipOptions? _tooltipScript(
+  ScriptableTooltipContext context,
+  TooltipOptions options,
+) => null;
+
 /// A tick callback.
 List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
     null;
@@ -598,11 +607,14 @@ void main() {
           LinearAxis(.y, min: _runtime(0)),
         ],
         legend: ChartLegend(onClick: (_, _, _) {}),
-        tooltip: ChartTooltip(
-          callbacks: TooltipCallbacks(label: (tooltip, item) => null),
-        ),
         animation: ChartAnimation(onComplete: (details) {}),
         onClick: (_, _, _) {},
+        // A top-level tear-off: the options object compares it with `==`.
+        pluginOptions: [
+          TooltipOptions(
+            callbacks: TooltipCallbacks(label: _runtime(_tooltipLabel)),
+          ),
+        ],
         extra: {
           'plugins': {
             'decimation': {'enabled': _runtime(true)},
@@ -788,14 +800,6 @@ void main() {
         ChartLegend(onLeave: (_, _, _) {}),
       );
       _expectEqual(
-        ChartTooltip(
-          callbacks: TooltipCallbacks(footer: (tooltip, items) => ['a']),
-        ),
-        ChartTooltip(
-          callbacks: TooltipCallbacks(footer: (tooltip, items) => ['b']),
-        ),
-      );
-      _expectEqual(
         ChartAnimation(onProgress: (details) {}),
         ChartAnimation(onProgress: (details) {}),
       );
@@ -803,6 +807,89 @@ void main() {
         ChartAnimation(onProgress: (details) {}),
         isNot(const ChartAnimation()),
       );
+    });
+
+    group('TooltipOptions in pluginOptions', () {
+      ChartConfig config(TooltipOptions tooltip) =>
+          ChartConfig(datasets: const [BarDataset()], pluginOptions: [tooltip]);
+
+      test('compare by value', () {
+        _expectEqual(
+          config(
+            TooltipOptions(
+              textDirection: .rtl,
+              caretSize: 0,
+              caretPadding: _runtime(16),
+              bodyAlign: .center,
+              animation: const TooltipAnimation(
+                duration: Duration(milliseconds: 150),
+              ),
+            ),
+          ),
+          config(
+            const TooltipOptions(
+              textDirection: .rtl,
+              caretSize: 0,
+              caretPadding: 16,
+              bodyAlign: .center,
+              animation: TooltipAnimation(
+                duration: Duration(milliseconds: 150),
+              ),
+            ),
+          ),
+        );
+        for (final changed in [
+          const TooltipOptions(enabled: false),
+          const TooltipOptions(textDirection: .ltr),
+          const TooltipOptions(caretPadding: 8),
+          const TooltipOptions(bodyAlign: .right),
+          const TooltipOptions(animation: TooltipAnimation.off),
+        ]) {
+          expect(config(changed), isNot(config(const TooltipOptions())));
+        }
+        expect(
+          const ChartConfig(datasets: [BarDataset()]),
+          isNot(config(const TooltipOptions())),
+        );
+      });
+
+      test('a new closure is a new value', () {
+        expect(
+          config(
+            TooltipOptions(
+              callbacks: TooltipCallbacks(footer: (tooltip, items) => ['a']),
+            ),
+          ),
+          isNot(
+            config(
+              TooltipOptions(
+                callbacks: TooltipCallbacks(footer: (tooltip, items) => ['a']),
+              ),
+            ),
+          ),
+        );
+        expect(
+          config(TooltipOptions(scripted: (context, options) => null)),
+          isNot(config(TooltipOptions(scripted: (context, options) => null))),
+        );
+      });
+
+      test('a top-level tear-off is equal', () {
+        _expectEqual(
+          config(
+            const TooltipOptions(
+              callbacks: TooltipCallbacks(label: _tooltipLabel),
+              scripted: _tooltipScript,
+            ),
+          ),
+          config(
+            TooltipOptions(
+              callbacks: TooltipCallbacks(label: _runtime(_tooltipLabel)),
+              scripted: _runtime(_tooltipScript),
+            ),
+          ),
+        );
+      });
     });
 
     test('a tick format compares with ==', () {
@@ -944,32 +1031,9 @@ void main() {
           const ChartLegend(textDirection: .rtl).copyWith(textDirection: .ltr),
         ),
         (
-          const ChartTooltip(textDirection: .rtl),
-          const ChartTooltip(textDirection: .rtl).copyWith(),
-          const ChartTooltip(textDirection: .rtl).copyWith(textDirection: .ltr),
-        ),
-        (
-          const ChartTooltip(caretSize: 0, caretPadding: 16),
-          const ChartTooltip(caretSize: 0, caretPadding: 16).copyWith(),
-          const ChartTooltip(
-            caretSize: 0,
-            caretPadding: 16,
-          ).copyWith(caretPadding: 8),
-        ),
-        (
-          const ChartTooltip(bodyAlign: .center),
-          const ChartTooltip(bodyAlign: .center).copyWith(),
-          const ChartTooltip(bodyAlign: .center).copyWith(bodyAlign: .right),
-        ),
-        (
           const ChartTitle(),
           const ChartTitle().copyWith(),
           const ChartTitle().copyWith(text: ['T']),
-        ),
-        (
-          const ChartTooltip(),
-          const ChartTooltip().copyWith(),
-          const ChartTooltip().copyWith(enabled: false),
         ),
         (
           const ChartInteraction(),
@@ -1034,7 +1098,6 @@ void main() {
         'legend',
         'title',
         'subtitle',
-        'tooltip',
         'filler',
         'interaction',
         'animation',
@@ -1113,16 +1176,6 @@ void main() {
         'textDirection',
         'extra',
       ]);
-      expect(
-        names(const ChartTooltip()),
-        containsAllInOrder([
-          'textDirection',
-          'caretSize',
-          'caretPadding',
-          'bodyAlign',
-          'extra',
-        ]),
-      );
       expect(names(ChartAnimation.none).first, 'none');
       expect(
         ChartConfig(

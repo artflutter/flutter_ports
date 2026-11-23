@@ -33,7 +33,9 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   padding: const EdgeInsets.symmetric(horizontal: 12),
   legend: shadcnNoLegend,
   // <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-  tooltip: shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
+  pluginOptions: [
+    shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
+  ],
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
   scales: [

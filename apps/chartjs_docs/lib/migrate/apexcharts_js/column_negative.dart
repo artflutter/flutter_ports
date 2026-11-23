@@ -74,14 +74,13 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 36, 10, 0),
   legend: const ChartLegend(display: false),
-  tooltip: apexJsBarTooltip(),
   interaction: const ChartInteraction(
     mode: NearestInteractionMode(),
     intersect: true,
   ),
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexJsColumnCrosshair, apexTooltipLook]),
-  pluginOptions: [zoom.options],
+  pluginOptions: [apexJsBarTooltip(), zoom.options],
   scales: [
     apexJsCategoryAxis(
       callback: _monthTick,

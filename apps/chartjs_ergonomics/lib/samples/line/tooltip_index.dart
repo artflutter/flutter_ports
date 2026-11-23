@@ -21,6 +21,8 @@ const tooltipIndex = ChartConfig(
     ),
   ],
   // One tooltip for all datasets at the x of the pointer.
-  tooltip: ChartTooltip(mode: IndexInteractionMode(), intersect: false),
+  pluginOptions: [
+    TooltipOptions(mode: IndexInteractionMode(), intersect: false),
+  ],
 );
 // #enddocregion sample

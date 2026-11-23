@@ -27,6 +27,12 @@ BarDataset _medals(
   barPercentage: 1 - spacing,
 );
 
+// The tooltip, built once: a new one in each build would update the chart.
+final TooltipOptions _tooltip = sfTooltip(
+  header: true,
+  text: (item) => '${item.label.join(' ')} : ${sfValue(item)}',
+);
+
 ChartConfig _config(double width, double spacing) => ChartConfig(
   labels: const ['Norway', 'USA', 'Germany', 'Canada', 'Netherlands'],
   datasets: [
@@ -38,10 +44,7 @@ ChartConfig _config(double width, double spacing) => ChartConfig(
   padding: sfPadding,
   title: sfTitle('Winter olympic medals count - 2022'),
   legend: sfLegend(const SfColumnIcon()),
-  tooltip: sfTooltip(
-    header: true,
-    text: (item) => '${item.label.join(' ')} : ${sfValue(item)}',
-  ),
+  pluginOptions: [_tooltip],
   plugins: [sfTooltipLook],
   scales: [sfCategoryAxis(), sfValueAxis(min: 0, max: 20, stepSize: 4)],
 );

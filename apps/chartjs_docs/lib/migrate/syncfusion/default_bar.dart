@@ -52,10 +52,12 @@ final ChartConfig _config = ChartConfig(
   title: sfTitle('Tourism - Number of arrivals'),
   // `order` also sorts the legend: reverse gives 2015, 2016, 2017.
   legend: sfLegend(const SfBarIcon(), reverse: true),
-  tooltip: sfTooltip(
-    header: true,
-    text: (item) => '${item.label.join(' ')} : ${sfCompact(sfValue(item))}',
-  ),
+  pluginOptions: [
+    sfTooltip(
+      header: true,
+      text: (item) => '${item.label.join(' ')} : ${sfCompact(sfValue(item))}',
+    ),
+  ],
   plugins: [sfTooltipLook],
   scales: [
     // The first category at the bottom, as in Syncfusion.

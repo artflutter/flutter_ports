@@ -26,7 +26,9 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   // margin={{top: 20}}: room for the labels, and 0 on the other sides.
   padding: const EdgeInsets.only(top: 20),
   legend: shadcnNoLegend,
-  tooltip: shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
+  pluginOptions: [
+    shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
+  ],
   interaction: shadcnInteraction(),
   animation: shadcnBarAnimation,
   // <LabelList position="top" offset={12} className="fill-foreground" fontSize={12} />

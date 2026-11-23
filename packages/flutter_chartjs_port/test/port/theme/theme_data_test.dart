@@ -16,6 +16,7 @@ import '../../support/color_json.dart';
 import '../../support/font_record.dart';
 import '../../support/light_theme.dart';
 import '../../support/scale_border.dart';
+import '../../support/tooltip_option_fields.dart';
 
 // theming.md §8 test 7 (Chart.js ADR 0147 §10): the value
 // equality, `copyWith`, `lerp` and the diagnostics of `ChartThemeData`, the
@@ -137,23 +138,40 @@ Map<String, Object?> _slots(Object? value, [String prefix = '']) {
     return {prefix: value is Curve ? '$value' : value};
   }
   return {
-    for (final key in jsObjectKeys(value))
+    for (final key in _keys(value))
       if (prefix.isNotEmpty || key != 'transitions')
-        ..._slots(jsGet(value, key), prefix.isEmpty ? key : '$prefix.$key'),
+        ..._slots(_get(value, key), prefix.isEmpty ? key : '$prefix.$key'),
   };
 }
 
 /// Whether [value] is an object of a compiled theme: a Map, or a typed scope
 /// with its face (Chart.js ADR 0054 §5).
+/// The [TooltipOptions] of `plugins.tooltip` is an object too: its keys are
+/// its fields that it sets (Chart.js ADR 0192, [setTooltipOptionFields]).
 bool _isObject(Object? value) =>
-    value is Map<String, Object?> || value is JsObjectFace;
+    value is Map<String, Object?> ||
+    value is JsObjectFace ||
+    value is TooltipOptions;
+
+/// The own keys of the object [value] in the `Object.keys` order: for a
+/// [TooltipOptions], the fields that it sets in the order of upstream.
+List<String> _keys(Object? value) => value is TooltipOptions
+    ? setTooltipOptionFields(value).keys.toList()
+    : jsObjectKeys(value);
+
+/// The value of [key] in the object [value]: the typed field of a
+/// [TooltipOptions] ([undefined] for a field that it does not set), else
+/// the read by name.
+Object? _get(Object? value, String key) => value is TooltipOptions
+    ? setTooltipOptionFields(value)[key] ?? undefined
+    : jsGet(value, key);
 
 /// [value] as plain Dart values for a compare with a Map literal: an object
 /// gives a new Map of its own keys in the `Object.keys` order, each value
 /// read through its face; another value is itself.
 Object? _plain(Object? value) => _isObject(value)
     ? <String, Object?>{
-        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
+        for (final key in _keys(value)) key: _plain(_get(value, key)),
       }
     : value is ScaleBorder
     ? upstreamBorderOf(value, routeColor: false)
@@ -165,7 +183,7 @@ Object? _plain(Object? value) => _isObject(value)
 Object? _at(Object? root, String path) {
   var node = root;
   for (final key in path.split('.')) {
-    node = jsGet(node, key);
+    node = _get(node, key);
   }
   return node;
 }

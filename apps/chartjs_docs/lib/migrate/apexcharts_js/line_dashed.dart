@@ -45,7 +45,7 @@ final ChartConfig _config = ChartConfig(
   padding: const EdgeInsets.fromLTRB(4, 0, 10, 0),
   title: apexJsTitle('Page Statistics'),
   legend: apexJsLegend(),
-  tooltip: apexTooltip(),
+  pluginOptions: [apexTooltip()],
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,

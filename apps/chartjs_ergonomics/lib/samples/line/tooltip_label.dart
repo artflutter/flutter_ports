@@ -15,9 +15,11 @@ const tooltipLabel = ChartConfig(
       borderColor: .constant(.solid(teal)),
     ),
   ],
-  tooltip: ChartTooltip(
-    callbacks: TooltipCallbacks(title: monthTitle, label: unitsLabel),
-  ),
+  pluginOptions: [
+    TooltipOptions(
+      callbacks: TooltipCallbacks(title: monthTitle, label: unitsLabel),
+    ),
+  ],
 );
 
 List<String>? monthTitle(TooltipModel tooltip, List<TooltipItem> items) => [

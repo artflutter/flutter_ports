@@ -136,7 +136,7 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
     ],
     animation: ChartAnimation.none,
     legend: const ChartLegend(display: false),
-    tooltip: const ChartTooltip(enabled: false),
+    pluginOptions: const [TooltipOptions(enabled: false)],
     responsive: false,
     maintainAspectRatio: false,
     padding: EdgeInsets.zero,

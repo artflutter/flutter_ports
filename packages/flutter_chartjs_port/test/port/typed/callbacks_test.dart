@@ -209,19 +209,27 @@ void main() {
       tester,
     ) async {
       final items = <TooltipItem>[];
-      final chart = acquireChart(
-        _bar(<String, Object?>{
-          'plugins': <String, Object?>{
-            'tooltip': <String, Object?>{
-              'callbacks': TooltipCallbacks(
-                label: (tooltip, item) {
-                  items.add(item);
-                  return ['L'];
-                },
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            labels: const ['a', 'b', 'c'],
+            datasets: const [
+              BarDataset(label: 'A', data: .values([1, 2, 3])),
+              BarDataset(label: 'B', data: .values([3, 2, 7])),
+            ],
+            animation: ChartAnimation.none,
+            pluginOptions: [
+              TooltipOptions(
+                callbacks: TooltipCallbacks(
+                  label: (tooltip, item) {
+                    items.add(item);
+                    return ['L'];
+                  },
+                ),
               ),
-            },
-          },
-        }),
+            ],
+          ),
+        ).lower(),
       );
       await triggerMouseEvent(
         chart,
@@ -404,7 +412,7 @@ void main() {
       ChartEventHandler? onClick,
       ChartEventHandler? onHover,
       ChartLegend? legend,
-      ChartTooltip? tooltip,
+      TooltipOptions? tooltip,
       List<ChartAxis>? scales,
     }) => ChartConfig(
       labels: const ['a', 'b', 'c'],
@@ -414,8 +422,8 @@ void main() {
       ],
       scales: scales,
       legend: legend,
-      tooltip: tooltip,
       animation: ChartAnimation.none,
+      pluginOptions: tooltip == null ? null : [tooltip],
       onClick: onClick,
       onHover: onHover,
     );
@@ -524,7 +532,7 @@ void main() {
       final nulls = await tooltipOf(
         ChartConfigLowering(
           typedBar(
-            tooltip: ChartTooltip(
+            tooltip: TooltipOptions(
               callbacks: TooltipCallbacks(
                 title: (tooltip, items) => null,
                 label: (tooltip, item) => null,
@@ -538,7 +546,7 @@ void main() {
       final texts = await tooltipOf(
         ChartConfigLowering(
           typedBar(
-            tooltip: ChartTooltip(
+            tooltip: TooltipOptions(
               callbacks: TooltipCallbacks(
                 title: (tooltip, items) => ['T ${items.length}'],
                 label: (tooltip, item) => [

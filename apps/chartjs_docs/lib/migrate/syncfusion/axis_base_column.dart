@@ -32,6 +32,11 @@ List<String>? _wrap(Scale scale, double value, int index, List<Tick> ticks) {
   return [if (label.length * 7 > room) ...label.split(' ') else label];
 }
 
+// The tooltip, built once: a new one in each build would update the chart.
+final TooltipOptions _tooltip = sfTooltip(
+  text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}',
+);
+
 ChartConfig _config(double crossAt) => ChartConfig(
   labels: _countries,
   datasets: [
@@ -49,9 +54,7 @@ ChartConfig _config(double crossAt) => ChartConfig(
   padding: sfPadding,
   title: sfTitle('Population growth rate of countries'),
   legend: const ChartLegend(display: false),
-  tooltip: sfTooltip(
-    text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}',
-  ),
+  pluginOptions: [_tooltip],
   plugins: [
     sfTooltipLook,
     sfDataLabels(

@@ -2764,7 +2764,7 @@ const Map<String, String> observationDigests = {
   'focused fallbacks: interaction, tooltip, legend labels (plain)':
       'b36ae0eac9fb356924e4e0d673593fde848c799d1a7f5021ec7347139a4c7725',
   'focused fallbacks: interaction, tooltip, legend labels (trace)':
-      'e12f909262f34057aa000e073c6c50e55105483b29182030e82b07ec8f7bd9b8',
+      'fe6ae10612bfad6b36d5deadaf18ef63c903a63ae4c983400ed5faa021244c40',
   'focused hover prefixes (plain)':
       '5ee9a2b673684213bcddc568dc0898c2cc04f1245152c76a5248e02066f83f52',
   'focused hover prefixes (trace)':

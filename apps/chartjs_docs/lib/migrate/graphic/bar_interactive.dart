@@ -69,11 +69,13 @@ final ChartConfig _config = ChartConfig(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
-  tooltip: graphicTooltip(
-    position: const CenterPositioner(),
-    title: _genreLine,
-    label: _soldLine,
-  ),
+  pluginOptions: [
+    graphicTooltip(
+      position: const CenterPositioner(),
+      title: _genreLine,
+      label: _soldLine,
+    ),
+  ],
   plugins: [
     selectedElevation(color: Gx.primary),
     barLabels(_sold),

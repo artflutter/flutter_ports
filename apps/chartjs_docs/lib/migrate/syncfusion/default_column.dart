@@ -32,9 +32,11 @@ final ChartConfig _config = ChartConfig(
   title: sfTitle('Population growth of various countries'),
   legend: const ChartLegend(display: false),
   // TooltipBehavior(header: '', canShowMarker: false)
-  tooltip: sfTooltip(
-    text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}%',
-  ),
+  pluginOptions: [
+    sfTooltip(
+      text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}%',
+    ),
+  ],
   plugins: [
     sfTooltipLook,
     // DataLabelSettings(isVisible: true, textStyle: TextStyle(fontSize: 10))

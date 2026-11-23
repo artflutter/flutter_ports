@@ -105,9 +105,11 @@ Chart _chart(String type, {required bool colors, ChartOptionsScope? theme}) {
         },
       },
     ),
-    tooltip: ChartTooltip(
-      callbacks: TooltipCallbacks(footer: (tooltip, arg) => ['Footer']),
-    ),
+    pluginOptions: [
+      TooltipOptions(
+        callbacks: TooltipCallbacks(footer: (tooltip, arg) => ['Footer']),
+      ),
+    ],
     scales: cartesian
         ? [
             if (type == 'bar' || type == 'line')

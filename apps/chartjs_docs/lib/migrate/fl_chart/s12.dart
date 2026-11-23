@@ -11,6 +11,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// The price in whole dollars, as the label of the tooltip.
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) => [
+  '\$${item.formattedValue.split('.').first}',
+];
+
 class const Sample12({super.key}) extends StatefulWidget {
   @override
   State<Sample12> createState() => _Sample12State();
@@ -81,6 +86,14 @@ class _Sample12State() extends State<Sample12> {
     });
   }
 
+  /// The date of the point, as the title of the tooltip.
+  List<String> _tooltipTitle(TooltipModel tooltip, List<TooltipItem> items) {
+    final date =
+        _history![((items.first.parsed! as JsObjectFace)['x']! as num).toInt()]
+            .$1;
+    return ['${date.year}/${date.month}/${date.day}'];
+  }
+
   ChartConfig _config() => fills(
     clip: true,
     ChartConfig(
@@ -110,24 +123,21 @@ class _Sample12State() extends State<Sample12> {
         intersect: false,
         axis: .x,
       ),
-      tooltip: ChartTooltip(
-        backgroundColor: const ChartPaint.solid(Colors.black),
-        displayColors: false,
-        titleColor: const ChartPaint.solid(Color(0xFF2FCC3A)),
-        titleFont: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-        bodyColor: const ChartPaint.solid(Fl.yellow),
-        bodyFont: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        callbacks: TooltipCallbacks(
-          title: (tooltip, items) {
-            final date =
-                _history![((items.first.parsed! as JsObjectFace)['x']! as num)
-                        .toInt()]
-                    .$1;
-            return ['${date.year}/${date.month}/${date.day}'];
-          },
-          label: (tooltip, i) => ['\$${i.formattedValue.split('.').first}'],
+      pluginOptions: [
+        TooltipOptions(
+          backgroundColor: const ChartPaint.solid(Colors.black),
+          displayColors: false,
+          titleColor: const ChartPaint.solid(Color(0xFF2FCC3A)),
+          titleFont: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          bodyColor: const ChartPaint.solid(Fl.yellow),
+          bodyFont: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          // A tear-off of a method of this state is equal at each build.
+          callbacks: TooltipCallbacks(
+            title: _tooltipTitle,
+            label: _tooltipLabel,
+          ),
         ),
-      ),
+      ],
       plugins: _plugins,
       scales: [
         LinearAxis(

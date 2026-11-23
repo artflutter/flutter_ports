@@ -4,10 +4,9 @@ library;
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui' show FontWeight;
 
 import 'package:flutter/animation.dart' show Curve;
-import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:test/test.dart';
 
@@ -30,10 +29,18 @@ import 'package:test/test.dart';
 //   (a function default compares by its presence), each leaf of the roots
 //   is an inventory path, each object of the roots is a typed scope, and the
 //   keys of each declaration site keep their order in their object.
+//
+// The tooltip options are one TooltipOptions object (Chart.js ADR 0192):
+// each inventory path `plugins.tooltip.<key>` and each census path
+// `options.plugins.tooltip.<key>` maps to the field `<key>` of the class, and
+// the test compares the value of the field. The tooltip has no
+// `defaultRoutes` and no `descriptors`: their inventory entries are the
+// named exceptions of [_tooltipExceptions] and [_tooltipRoutes].
 
 import '../../support/color_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/scale_border.dart';
+import '../../support/tooltip_option_fields.dart';
 
 /// The dataset kinds: a census path under `data.datasets[]` maps when one
 /// of them maps it.
@@ -122,7 +129,17 @@ const _callbackFields = <String>{
   'footer',
   'afterFooter',
 };
-Object? _field(Object? value, String key) => value is TooltipCallbacks
+Object? _field(Object? value, String key) => value is TooltipOptions
+    // The typed field of the tooltip options (Chart.js ADR 0192): Dart
+    // `null` for a field that the options do not set.
+    ? (tooltipOptionFields(value).containsKey(key)
+          ? tooltipOptionFields(value)[key]
+          : undefined)
+    : value is AnimationSettings
+    ? _settingsFields(value)[key] ?? undefined
+    : value is List<PropertyAnimation>
+    ? value.where((item) => _animationName(item) == key).lastOrNull ?? undefined
+    : value is TooltipCallbacks
     ? switch (key) {
         'beforeTitle' => value.beforeTitle,
         'title' => value.title,
@@ -141,6 +158,77 @@ Object? _field(Object? value, String key) => value is TooltipCallbacks
         _ => undefined,
       }
     : jsGet(value, key);
+
+/// The prefix of the inventory paths of the tooltip options.
+const String _tooltipPrefix = 'plugins.tooltip.';
+
+/// The inventory paths of the tooltip that have no value in the port, each
+/// with its reason (Chart.js ADR 0192: one TooltipOptions object, no
+/// `defaultRoutes` and no `descriptors`; the fallbacks are Dart code of
+/// `Tooltip._resolved` and `Tooltip._animationsSpec`).
+const Map<String, String> _tooltipExceptions = {
+  'defaults plugins.tooltip.boxHeight':
+      'the size of the body font when no options set it, a fallback of '
+      'Tooltip._resolved (plugin.tooltip.js:1303)',
+  'defaults plugins.tooltip.boxWidth':
+      'the size of the body font when no options set it, a fallback of '
+      'Tooltip._resolved (plugin.tooltip.js:1304)',
+  'defaults plugins.tooltip.animations.numbers.properties':
+      'x, y, width, height, caretX and caretY take the settings of '
+      '`animation` with no item (Tooltip._animationsSpec, row '
+      'adapt-property-animations)',
+  'descriptors plugins.tooltip._scriptable':
+      'no descriptors: TooltipOptions.scripted stands for the scriptable '
+      'options (row adapt-tooltip-scripted)',
+  'descriptors plugins.tooltip._indexable':
+      'no descriptors: a field has one value',
+  'descriptors plugins.tooltip.callbacks._scriptable':
+      'no descriptors: the callbacks are typed functions (Chart.js ADR 0125)',
+  'descriptors plugins.tooltip.callbacks._indexable':
+      'no descriptors: the callbacks are typed functions (Chart.js ADR 0125)',
+  'descriptors plugins.tooltip.animation._fallback':
+      'no descriptors: TooltipAnimation.off is the `false` of `animation`',
+  'descriptors plugins.tooltip.animations._fallback':
+      'no descriptors: an item of `animations` takes each null parameter '
+      'from `animation` (Tooltip._animationsSpec)',
+};
+
+/// The inventory paths of the tooltip fonts with a route of `defaultRoutes`
+/// (plugin.tooltip.js:1327-1331). The port has no route (Chart.js ADR 0192):
+/// `Tooltip._resolved` merges the font of the defaults over
+/// `Chart.defaults.font` with `toFont`. The test compares the routed value
+/// with that `toFont` result.
+const Set<String> _tooltipRoutes = {
+  'plugins.tooltip.titleFont',
+  'plugins.tooltip.bodyFont',
+  'plugins.tooltip.footerFont',
+};
+
+/// The name of the item [item] of the tooltip `animations`: the property of
+/// its class (row adapt-property-animations).
+String _animationName(PropertyAnimation item) => switch (item) {
+  XAnimation() => 'x',
+  YAnimation() => 'y',
+  WidthAnimation() => 'width',
+  HeightAnimation() => 'height',
+  CaretXAnimation() => 'caretX',
+  CaretYAnimation() => 'caretY',
+  OpacityAnimation() => 'opacity',
+  _ => '${item.runtimeType}',
+};
+
+/// [time] in milliseconds, or Dart `null`.
+double? _milliseconds(Duration? time) =>
+    time == null ? null : time.inMicroseconds / 1000;
+
+/// The fields of the animation settings [settings] by their upstream names,
+/// a time in milliseconds.
+Map<String, Object?> _settingsFields(AnimationSettings settings) => {
+  'duration': ?_milliseconds(settings.duration),
+  'delay': ?_milliseconds(settings.delay),
+  'easing': ?settings.easing,
+  'loop': ?settings.loop,
+};
 
 bool _isCallbackField(ScopeKind root, String path) {
   final parts = path.split('.');
@@ -381,6 +469,12 @@ String? _fontFieldMismatch(TextStyle font, String field, Object? expected) {
   return same ? null : '$field: $actual != $upstream';
 }
 
+/// Whether the census path [path] is `options.plugins.tooltip` or a path
+/// under it.
+bool _isTooltipCensusPath(String path) =>
+    path == 'options.plugins.tooltip' ||
+    path.startsWith('options.plugins.tooltip.');
+
 /// The census rows of [file]: `(when, path, kind)`.
 List<(String, String, String)> _census(String file) => [
   for (final line in File(file).readAsLinesSync())
@@ -415,7 +509,13 @@ Object? _read(Object? root, String path) {
 }
 
 /// The keys of the object [value], or Dart `null` for another value.
-List<String>? _keysOf(Object? value) => value is TooltipCallbacks
+List<String>? _keysOf(Object? value) => value is TooltipOptions
+    ? setTooltipOptionFields(value).keys.toList()
+    : value is AnimationSettings
+    ? _settingsFields(value).keys.toList()
+    : value is List<PropertyAnimation>
+    ? [for (final item in value) _animationName(item)]
+    : value is TooltipCallbacks
     ? _callbackFields.where((key) => _field(value, key) != null).toList()
     : isObject(value)
     ? jsObjectKeys(value)
@@ -478,6 +578,13 @@ String? _mismatch(Object? actual, Object? expected) {
   }
   if (expected is String && isKeywordEnum(actual)) {
     return (actual! as Enum).name == expected ? null : '$actual != $expected';
+  }
+  // Upstream has a number where the port has a BorderRadius (row
+  // adapt-flutter-border-radius).
+  if (actual is BorderRadius && expected is num) {
+    return actual == BorderRadius.all(Radius.circular(expected.toDouble()))
+        ? null
+        : '$actual != $expected';
   }
   if (actual is EdgeInsets) {
     if (expected is num) {
@@ -587,6 +694,21 @@ void main() {
         final paths = values[group]! as Map<String, Object?>;
         final problems = <String>[];
         for (final MapEntry(key: path, :value) in paths.entries) {
+          if (_tooltipExceptions.containsKey('$group $path')) continue;
+          // A tooltip path: `plugins.tooltip` holds a TooltipOptions, and
+          // the next segment is a field of it (Chart.js ADR 0192).
+          if (group == 'defaults' && path.startsWith(_tooltipPrefix)) {
+            final tooltip = _walk(root, ['plugins', 'tooltip']);
+            final field = path.substring(_tooltipPrefix.length).split('.')[0];
+            if (tooltip.shape == null ||
+                tooltip.shape! & ShapeBits.typed != ShapeBits.pluginOptions) {
+              problems.add('$path: plugins.tooltip is no PluginOptions');
+            } else if (!tooltipOptionFields(const TooltipOptions())
+                .containsKey(field)) {
+              problems.add('$path: no field $field of TooltipOptions');
+            }
+            continue;
+          }
           // A field of a font object: the font path holds a TextStyle.
           final font = _fontField.firstMatch(path);
           if (font != null && _isFontPath(root, font[1]!)) continue;
@@ -609,6 +731,27 @@ void main() {
         expect(problems, isEmpty);
       });
     }
+
+    test('each tooltip exception is an inventory path', () {
+      // No stale exception (Chart.js ADR 0192).
+      for (final entry in _tooltipExceptions.keys) {
+        final [group, path] = entry.split(' ');
+        expect(
+          (values[group]! as Map<String, Object?>).containsKey(path),
+          isTrue,
+          reason: entry,
+        );
+      }
+      for (final path in _tooltipRoutes) {
+        expect(
+          (values['defaults']! as Map<String, Object?>)[path],
+          isA<Map<String, Object?>>().having((route) => route.keys, 'keys', [
+            'route',
+          ]),
+          reason: path,
+        );
+      }
+    });
 
     test('each key of each static declaration site is a key of its kind', () {
       final sites = inventory['sites']! as List<Object?>;
@@ -673,6 +816,14 @@ void main() {
         for (final MapEntry(key: path, value: expected) in paths.entries) {
           if (_animationType.hasMatch(path)) continue;
           if (_isInflateAuto(path, expected)) continue;
+          if (_tooltipExceptions.containsKey('$name $path')) continue;
+          // A tooltip font: the routed value is the font of the defaults
+          // merged over Chart.defaults.font (Tooltip._resolved).
+          if (name == 'defaults' && _tooltipRoutes.contains(path)) {
+            final mismatch = _mismatch(toFont(_read(root, path)), expected);
+            if (mismatch != null) problems.add('$path: $mismatch');
+            continue;
+          }
           // A field of a font object: the field of the TextStyle.
           final font = _fontField.firstMatch(path);
           final fontValue = font == null ? null : _read(root, font[1]!);
@@ -801,6 +952,9 @@ void main() {
             _ => null,
           };
         }
+        // The tooltip has no descriptors (Chart.js ADR 0192,
+        // [_tooltipExceptions]).
+        if (kind == 'field descriptors' && id == 'tooltip') continue;
         if (object == null || keys == null) continue;
         // The port has no animation option `type` (row
         // adapt-animation-option-types).
@@ -808,7 +962,11 @@ void main() {
           for (final key in keys.cast<String>())
             if (key != 'type' || object is! AnimationOptionsScope) key,
         ];
-        final actual = _keysOf(object);
+        // A TooltipOptions has no key order: the order of its fields is the
+        // order of its constructor, which follows the upstream defaults.
+        final actual = object is TooltipOptions
+            ? tooltipOptionFields(object).keys.toList()
+            : _keysOf(object);
         if (actual == null) {
           problems.add('$file:${site['line']} not an object');
           continue;
@@ -883,6 +1041,24 @@ void main() {
         final extra = extras.where((e) => _under(path, e)).firstOrNull;
         if (extra != null) {
           usedExtras.add(extra);
+          continue;
+        }
+        // The tooltip options of the Map model are one TooltipOptions
+        // (Chart.js ADR 0192): the Map is the object, and each key is a
+        // field of it, whose Dart type takes the typed form of each recorded
+        // kind (a function is `scripted`, the `false` of `animation` is
+        // TooltipAnimation.off, a keyword is its enum or class).
+        if (_isTooltipCensusPath(path)) {
+          final field = path.length == 'options.plugins.tooltip'.length
+              ? null
+              : path
+                    .substring('options.plugins.tooltip.'.length)
+                    .split('.')[0]
+                    .replaceAll('[]', '');
+          if (field != null &&
+              !tooltipOptionFields(const TooltipOptions()).containsKey(field)) {
+            problems.add('$path ($kind): no field of TooltipOptions');
+          }
           continue;
         }
         final mapped = walks.where((w) => w.shape != null).toList();

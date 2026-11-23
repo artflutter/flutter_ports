@@ -26,7 +26,7 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   padding: apexPadding.copyWith(bottom: 0),
   legend: apexLegend,
-  tooltip: apexTooltip(),
+  pluginOptions: [apexTooltip()],
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,

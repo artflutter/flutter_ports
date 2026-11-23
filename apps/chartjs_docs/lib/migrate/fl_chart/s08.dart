@@ -52,6 +52,15 @@ final List<Plugin<Object?>> _plugins = [
   areaBorder(Fl.white54),
 ];
 
+/// The title of the tooltip: null keeps the title of Chart.js.
+List<String>? _tooltipTitle(TooltipModel tooltip, List<TooltipItem> items) =>
+    null;
+
+/// The label of the tooltip: the value alone.
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) => [
+  item.formattedValue,
+];
+
 final ChartConfig _config = fills(
   ChartConfig(
     datasets: [
@@ -79,15 +88,14 @@ final ChartConfig _config = fills(
       ),
     ],
     interaction: const ChartInteraction(mode: flX, intersect: false),
-    tooltip: ChartTooltip(
-      backgroundColor: const ChartPaint.solid(Fl.red),
-      displayColors: false,
-      bodyFont: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      callbacks: TooltipCallbacks(
-        title: (tooltip, _) => null,
-        label: (tooltip, i) => [i.formattedValue],
+    pluginOptions: const [
+      TooltipOptions(
+        backgroundColor: ChartPaint.solid(Fl.red),
+        displayColors: false,
+        bodyFont: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        callbacks: TooltipCallbacks(title: _tooltipTitle, label: _tooltipLabel),
       ),
-    ),
+    ],
     plugins: _plugins,
     scales: [
       const LinearAxis(

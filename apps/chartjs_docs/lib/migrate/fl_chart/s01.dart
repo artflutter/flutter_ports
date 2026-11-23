@@ -89,21 +89,33 @@ List<String>? _left(Scale scale, double value, int index, List<Tick> ticks) => [
   },
 ];
 
+/// The title of the tooltip: null keeps the title of Chart.js.
+List<String>? _tooltipTitle(TooltipModel tooltip, List<TooltipItem> items) =>
+    null;
+
+/// The label of the tooltip: the value alone.
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) => [
+  item.formattedValue,
+];
+
 ChartConfig _config(bool main) => fills(
   ChartConfig(
     datasets: main ? _first : _second,
     animation: const ChartAnimation(duration: Duration(milliseconds: 250)),
     interaction: const ChartInteraction(mode: flX, intersect: false),
-    tooltip: main
-        ? ChartTooltip(
-            backgroundColor: .solid(Fl.blueGrey.withValues(alpha: 0.8)),
-            displayColors: false,
-            callbacks: TooltipCallbacks(
-              title: (tooltip, _) => null,
-              label: (tooltip, i) => [i.formattedValue],
-            ),
-          )
-        : const ChartTooltip(enabled: false),
+    pluginOptions: [
+      if (main)
+        TooltipOptions(
+          backgroundColor: .solid(Fl.blueGrey.withValues(alpha: 0.8)),
+          displayColors: false,
+          callbacks: const TooltipCallbacks(
+            title: _tooltipTitle,
+            label: _tooltipLabel,
+          ),
+        )
+      else
+        const TooltipOptions(enabled: false),
+    ],
     plugins: [_indicator],
     scales: [
       LinearAxis(

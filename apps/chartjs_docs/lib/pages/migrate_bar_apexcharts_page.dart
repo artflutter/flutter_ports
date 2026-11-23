@@ -62,7 +62,9 @@ DocPageContent apexChartsBarMigrationPage() => migrationPage(
     (Text('legend'), DocText('`legend: ChartLegend(...)`')),
     (
       Text('tooltip'),
-      DocText('`tooltip: ChartTooltip(...)` with the mode `index`'),
+      DocText(
+        '`TooltipOptions(...)` in `pluginOptions`, with the mode `index`',
+      ),
     ),
     (Text('chart.animations'), DocText('`animation: ChartAnimation(...)`')),
   ],

@@ -64,8 +64,9 @@ List<String>? _percent(
   List<Tick> ticks,
 ) => ['${value == value.roundToDouble() ? value.round() : value}%'];
 
-String? _tooltipLabel(TooltipItem item) =>
-    '${item.label.join(" ")} : ${item.formattedValue}%';
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) => [
+  '${item.label.join(" ")} : ${item.formattedValue}%',
+];
 
 List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>
     const [];
@@ -113,23 +114,14 @@ final ChartConfig _config = ChartConfig(
   ),
   legend: const ChartLegend(display: false),
   // TooltipBehavior(header: '', canShowMarker: false)
-  tooltip: ChartTooltip(
-    backgroundColor: const .solid(_tooltip),
-    displayColors: false,
-    yAlign: .bottom,
-    extra: const {},
-    callbacks: TooltipCallbacks(
-      title: _noTitle,
-      label: (tooltip, arg) {
-        final text = _tooltipLabel(arg);
-        return text == null
-            ? null
-            : text.isEmpty
-            ? <String>[]
-            : [text];
-      },
+  pluginOptions: const [
+    TooltipOptions(
+      backgroundColor: .solid(_tooltip),
+      displayColors: false,
+      yAlign: .bottom,
+      callbacks: TooltipCallbacks(title: _noTitle, label: _tooltipLabel),
     ),
-  ),
+  ],
   plugins: [_highLow],
   scales: [
     // DateTimeAxis(intervalType: months, interval: 3, dateFormat: yMMM)

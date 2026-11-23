@@ -43,7 +43,14 @@ List<String>? _percent(
   List<Tick> ticks,
 ) => ['${value.round()}%'];
 
-String? _tooltipTitle(List<TooltipItem> items) => items.first.datasetLabel;
+List<String>? _tooltipTitle(TooltipModel tooltip, List<TooltipItem> items) {
+  final label = items.first.datasetLabel;
+  return label == null
+      ? null
+      : label.isEmpty
+      ? const []
+      : [label];
+}
 
 // The marker in the tooltip: a filled circle with a white border.
 TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, TooltipItem item) =>
@@ -52,9 +59,9 @@ TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, TooltipItem item) =>
       backgroundColor: ChartPaint.solid(_colors[item.datasetIndex]),
     );
 
-String? _tooltipLabel(TooltipItem item) {
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) {
   final year = (item.parsed! as JsObjectFace)['x']! as num;
-  return '${year.round()} : ${item.formattedValue}%';
+  return ['${year.round()} : ${item.formattedValue}%'];
 }
 
 final ChartConfig _config = ChartConfig(
@@ -76,34 +83,20 @@ final ChartConfig _config = ChartConfig(
     labelColor: ChartPaint.solid(_text),
     labelFont: TextStyle(fontSize: 13),
   ),
-  tooltip: ChartTooltip(
-    backgroundColor: const ChartPaint.solid(_tooltip),
-    yAlign: .bottom,
-    extra: const {
-      'titleAlign': TextAlign.center,
-      'usePointStyle': true,
-      'boxPadding': 4,
-    },
-    callbacks: TooltipCallbacks(
-      labelColor: _tooltipMarker,
-      title: (tooltip, arg) {
-        final text = _tooltipTitle(arg);
-        return text == null
-            ? null
-            : text.isEmpty
-            ? <String>[]
-            : [text];
-      },
-      label: (tooltip, arg) {
-        final text = _tooltipLabel(arg);
-        return text == null
-            ? null
-            : text.isEmpty
-            ? <String>[]
-            : [text];
-      },
+  pluginOptions: const [
+    TooltipOptions(
+      backgroundColor: ChartPaint.solid(_tooltip),
+      yAlign: .bottom,
+      titleAlign: TextAlign.center,
+      usePointStyle: true,
+      boxPadding: 4,
+      callbacks: TooltipCallbacks(
+        labelColor: _tooltipMarker,
+        title: _tooltipTitle,
+        label: _tooltipLabel,
+      ),
     ),
-  ),
+  ],
   scales: const [
     // NumericAxis(interval: 2, edgeLabelPlacement: shift), no grid lines.
     LinearAxis(

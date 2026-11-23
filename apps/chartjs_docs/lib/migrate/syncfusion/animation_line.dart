@@ -62,7 +62,7 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
         maintainAspectRatio: false,
         padding: const EdgeInsets.all(10),
         legend: const ChartLegend(display: false),
-        tooltip: const ChartTooltip(enabled: false),
+        pluginOptions: const [TooltipOptions(enabled: false)],
         animation: const ChartAnimation(duration: Duration(milliseconds: 1500)),
         // The original has no tooltip and no selection.
         events: const [],

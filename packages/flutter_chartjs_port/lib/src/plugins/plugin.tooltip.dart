@@ -239,6 +239,16 @@ TooltipItem _createTooltipItem(IChart chart, ActiveElement item) {
   );
 }
 
+/// The fonts of the resolved options of the tooltip ([Tooltip._resolved]):
+/// each is the [ChartTextStyle] of [toFont].
+extension on TooltipOptions {
+  ChartTextStyle get _titleFont => titleFont! as ChartTextStyle;
+
+  ChartTextStyle get _bodyFont => bodyFont! as ChartTextStyle;
+
+  ChartTextStyle get _footerFont => footerFont! as ChartTextStyle;
+}
+
 /// plugin.tooltip.js:148 `getTooltipSize(tooltip, options)`: the size of
 /// the tooltip, a record of the object `{width, height}`.
 ///
@@ -252,16 +262,16 @@ TooltipItem _createTooltipItem(IChart chart, ActiveElement item) {
 ) {
   final ctx = tooltip.chart.ctx!;
   final Tooltip(:body, :footer, :title) = tooltip;
-  final boxWidth = options.boxWidth;
-  final boxHeight = options.boxHeight;
-  final bodyFont = options.bodyFont;
-  final titleFont = options.titleFont;
-  final footerFont = options.footerFont;
+  final boxWidth = options.boxWidth!;
+  final boxHeight = options.boxHeight!;
+  final bodyFont = options._bodyFont;
+  final titleFont = options._titleFont;
+  final footerFont = options._footerFont;
   final titleLineCount = title!.length;
   final footerLineCount = footer!.length;
   final bodyLineItemCount = body!.length;
 
-  final padding = options.padding;
+  final padding = options.padding!;
   var height = padding.vertical;
   var width = 0.0;
 
@@ -279,24 +289,24 @@ TooltipItem _createTooltipItem(IChart chart, ActiveElement item) {
   if (titleLineCount != 0) {
     height +=
         titleLineCount * titleFont.lineHeight! +
-        (titleLineCount - 1) * options.titleSpacing +
-        options.titleMarginBottom;
+        (titleLineCount - 1) * options.titleSpacing! +
+        options.titleMarginBottom!;
   }
   if (combinedBodyLength.isNonZero) {
     // Body lines may include some extra height depending on boxHeight
-    final bodyLineHeight = options.displayColors
+    final bodyLineHeight = options.displayColors!
         ? math.max(boxHeight, bodyFont.lineHeight!)
         : bodyFont.lineHeight!;
     height +=
         bodyLineItemCount * bodyLineHeight +
         (combinedBodyLength - bodyLineItemCount) * bodyFont.lineHeight! +
-        (combinedBodyLength - 1) * options.bodySpacing;
+        (combinedBodyLength - 1) * options.bodySpacing!;
   }
   if (footerLineCount != 0) {
     height +=
-        options.footerMarginTop +
+        options.footerMarginTop! +
         footerLineCount * footerFont.lineHeight! +
-        (footerLineCount - 1) * options.footerSpacing;
+        (footerLineCount - 1) * options.footerSpacing!;
   }
 
   // Title width
@@ -316,8 +326,8 @@ TooltipItem _createTooltipItem(IChart chart, ActiveElement item) {
   tooltip.afterBody!.forEach(maxLineWidth);
 
   // Body lines may include some extra width due to the color box
-  widthPadding = options.displayColors
-      ? (boxWidth + 2 + options.boxPadding)
+  widthPadding = options.displayColors!
+      ? (boxWidth + 2 + options.boxPadding!)
       : 0;
   for (final bodyItem in body) {
     bodyItem.before.forEach(maxLineWidth);
@@ -417,7 +427,7 @@ bool _doesNotFitWithAlign(
   _PositionAndSize size,
 ) {
   final (:x, :width, y: _, height: _, xAlign: _, yAlign: _) = size;
-  final caret = options.caretSize + options.caretPadding;
+  final caret = options.caretSize! + options.caretPadding!;
   if (xAlign == TooltipXAlign.left && x + width + caret > chart.width) {
     return true;
   }
@@ -522,9 +532,9 @@ double _alignY(
   ({TooltipXAlign xAlign, TooltipYAlign yAlign}) alignment,
   IChart chart,
 ) {
-  final caretSize = options.caretSize;
-  final caretPadding = options.caretPadding;
-  final cornerRadius = options.cornerRadius;
+  final caretSize = options.caretSize!;
+  final caretPadding = options.caretPadding!;
+  final cornerRadius = options.cornerRadius!;
   final (:xAlign, :yAlign) = alignment;
   final paddingAndSize = caretSize + caretPadding;
   final topLeft = cornerRadius.topLeft.x;
@@ -556,7 +566,7 @@ double _alignY(
 /// plugin.tooltip.js:331 `getAlignedX(tooltip, align, options)`.
 // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
 double _getAlignedX(Tooltip tooltip, TextAlign? align, TooltipOptions options) {
-  final padding = options.padding;
+  final padding = options.padding!;
 
   return align == TextAlign.center
       ? tooltip.x + tooltip.width / 2
@@ -583,17 +593,22 @@ ScriptableTooltipContext _createTooltipContext(
 /// The per-item callback overlay. The dataset only participates at the
 /// six per-item call sites, never in the title/body/footer group hooks.
 TooltipCallbacks _callbacksFor(TooltipOptions options, TooltipItem item) {
+  final callbacks = options.callbacks ?? const TooltipCallbacks();
   final datasetOptions = optionOf(item.dataset, OptionKey.tooltip);
   if (isNullOrUndef(datasetOptions) || datasetOptions == false) {
-    return options.callbacks;
+    return callbacks;
   }
-  return options.callbacks.merge(
+  return callbacks.merge(
     tooltipCallbacksOf(optionOf(datasetOptions, OptionKey.callbacks)),
   );
 }
 
-bool _isDatasetMode(TooltipModel tooltip) =>
-    TooltipOptions.of(tooltip.options).mode is DatasetInteractionMode;
+/// `this.options.mode === 'dataset'` of plugin.tooltip.js:369 and :389: the
+/// resolved options of the tooltip, with the `mode` of the interaction.
+bool _isDatasetMode(TooltipModel tooltip) => switch (tooltip.options) {
+  final TooltipOptions options => options.mode is DatasetInteractionMode,
+  _ => false,
+};
 
 /// plugin.tooltip.js:364 the default `title(tooltipItems)`. Args are:
 /// (tooltipItems, data)
@@ -675,8 +690,13 @@ TooltipLabelStyle _defaultLabelColor(TooltipModel tooltip, TooltipItem item) {
   );
 }
 
+/// plugin.tooltip.js:415 the default `labelTextColor()`:
+/// `this.options.bodyColor`.
 ChartPaint _defaultLabelTextColor(TooltipModel tooltip, TooltipItem item) =>
-    chartPaintOf(TooltipOptions.of(tooltip.options).bodyColor, strict: false);
+    switch (tooltip.options) {
+      TooltipOptions(:final bodyColor?) => bodyColor,
+      _ => const ChartPaint.unchanged(),
+    };
 
 TooltipLabelPointStyle _defaultLabelPointStyle(
   TooltipModel tooltip,
@@ -831,7 +851,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     _opacity = 0;
     _active = [];
     _tooltipItems = [];
-    options = config.options;
+    _setOptions(config.options);
   }
 
   /// plugin.tooltip.js:457 `class Tooltip` as a value (Chart.js ADR 0020,
@@ -996,42 +1016,117 @@ class Tooltip(({IChart chart, Object? options}) config)
   set labelTextColors(List<ChartPaint> value) => _labelTextColors = value;
 
   /// plugin.tooltip.js:498 `initialize(options)`.
+  ///
+  /// [options] are the merged [TooltipOptions] of the plugin (Chart.js ADR
+  /// 0192). The tooltip keeps them resolved in [options]: the interaction
+  /// options, the fonts and the box sizes of the update ([_resolved]).
   void initialize(Object? options) {
-    this.options = options;
+    _setOptions(options);
     _cachedAnimations = null;
     _context = null;
   }
 
-  /// `this.options.setContext(this.getContext())` (plugin.tooltip.js:515,
-  /// :639, :1041).
+  /// The merged options of the plugin that [initialize] got, before the
+  /// fallbacks of [_resolved]. Dart `null` before the first options.
+  TooltipOptions? _source;
+
+  /// The resolved options that [_setOptions] gave to [options].
+  TooltipOptions? _base;
+
+  /// Gives [options] the resolved options of the merged options [options].
+  /// A value that is not a [TooltipOptions] stops a debug build.
+  void _setOptions(Object? options) {
+    assert(
+      options == null || options is TooltipOptions,
+      'The options of the tooltip are a TooltipOptions, not $options.',
+    );
+    final source = options is TooltipOptions ? options : null;
+    _source = source;
+    this.options = _base = source == null ? null : _resolved(source, null);
+  }
+
+  /// The options [source] with the fallbacks of upstream, and the result
+  /// [scripted] of [TooltipOptions.scripted] merged over them:
   ///
-  /// The resolver of a chart gives its typed `setContext`. A plain Map with
-  /// a `setContext` function (`plugin.tooltip.tests.js:1391`) gives the
-  /// read by name and a call with no `this` (Chart.js ADR 0039, section 7,
-  /// and Chart.js ADR 0173). Options without `setContext` throw where
-  /// upstream throws.
+  /// - `mode`, `intersect`, `axis` and `includeInvisible` that [source]
+  ///   does not set come from `options.interaction` of the chart, the
+  ///   `additionalOptionScopes` of plugin.tooltip.js:1347.
+  /// - The three fonts merge over `Chart.defaults.font` ([toFont]), the
+  ///   `defaultRoutes` of plugin.tooltip.js:1327-1331.
+  /// - `boxWidth` and `boxHeight` that the options do not set are the size
+  ///   of the body font, the defaults of plugin.tooltip.js:1303-1304.
+  // DIVERGES(chartjs): adapt-native-plugin-options, the fallbacks in Dart.
+  TooltipOptions _resolved(TooltipOptions source, TooltipOptions? scripted) {
+    final options = scripted == null ? source : source.merge(scripted);
+    final chartOptions = chart.options;
+    final interaction = isObject(chartOptions)
+        ? optionOf(chartOptions, OptionKey.interaction)
+        : undefined;
+    Object? fromInteraction(OptionKey key) =>
+        isObject(interaction) ? optionOf(interaction, key) : undefined;
+    final intersect = fromInteraction(OptionKey.intersect);
+    final includeInvisible = fromInteraction(OptionKey.includeInvisible);
+    final bodyFont = toFont(options.bodyFont);
+    return options.merge(
+      TooltipOptions(
+        mode:
+            options.mode ?? InteractionMode.of(fromInteraction(OptionKey.mode)),
+        intersect: options.intersect ?? (intersect is bool ? intersect : null),
+        axis:
+            options.axis ?? InteractionAxis.of(fromInteraction(OptionKey.axis)),
+        includeInvisible:
+            options.includeInvisible ??
+            (includeInvisible is bool ? includeInvisible : null),
+        titleFont: toFont(options.titleFont),
+        bodyFont: bodyFont,
+        footerFont: toFont(options.footerFont),
+        boxWidth: options.boxWidth ?? bodyFont.fontSize,
+        boxHeight: options.boxHeight ?? bodyFont.fontSize,
+      ),
+    );
+  }
+
+  /// `this.options.setContext(this.getContext())` (plugin.tooltip.js:515,
+  /// :639, :1041): the resolved options with the result of
+  /// [TooltipOptions.scripted] for the context of the tooltip.
+  ///
+  /// Options that a write by name gave the tooltip resolve here. Options
+  /// that are not a [TooltipOptions] throw a [TypeError], as the call of
+  /// `setContext` of `undefined` throws upstream.
+  // DIVERGES(chartjs): adapt-tooltip-scripted, one function for the options.
   TooltipOptions _resolveOptions() {
-    final options = this.options ?? undefined;
-    if (options is OptionView) {
-      return TooltipOptions.of(options.setContext(getContext()));
-    }
-    // Options of a spec or of user code: the read by name and a typed call
-    // with no `this` (Chart.js ADR 0173).
-    // DIVERGES(chartjs): adapt-option-function-types, a typed call.
-    return TooltipOptions.of(switch (jsGet(options, 'setContext')) {
-      final Object? Function(Object?) setContext => setContext(getContext()),
-      final Object? Function() setContext => setContext(),
-      _ => throw TypeError(),
-    });
+    final base = _contextFreeOptions();
+    final source = _isBase ? _source! : base;
+    final script = source.scripted;
+    if (script == null) return base;
+    final scripted = script(getContext(), base);
+    return scripted == null ? base : _resolved(source, scripted);
+  }
+
+  /// Whether [options] are the resolved options of [_setOptions], not
+  /// options of a write by name.
+  bool get _isBase => options != null && identical(options, _base);
+
+  /// `this.options` of plugin.tooltip.js:1173, :1195 and :1217: the
+  /// resolved options with no context, so with no [TooltipOptions.scripted].
+  /// Options that are not a [TooltipOptions] throw a [TypeError].
+  TooltipOptions _contextFreeOptions() {
+    if (_isBase) return _base!;
+    final options = this.options;
+    if (options is! TooltipOptions) throw TypeError();
+    return _resolved(options, null);
   }
 
   /// plugin.tooltip.js:507 `_resolveAnimations()`.
   ///
-  /// `opts` is the JS `&&` chain of the raw values. The cache and the freeze
-  /// run only for options whose `_cacheable` is truthy: a chart gives a
-  /// context resolver with `_cacheable` false (differences.md
-  /// `js-semantics-object-freeze`). `opts._cacheable` of `undefined` throws
-  /// the [TypeError] of [jsGet].
+  /// `opts` is `options.enabled && chart.options.animation &&
+  /// options.animations`: the animations of the tooltip, from the items of
+  /// `animations` and the settings of `animation` ([_animationsSpec]), or
+  /// `false`. A chart gives a context resolver with `_cacheable` false
+  /// (differences.md `js-semantics-object-freeze`): the write of the cache
+  /// of plugin.tooltip.js:518-520 never runs for a chart, and the port never
+  /// writes it. A cache that a write by name gave the tooltip serves until
+  /// [initialize], as upstream.
   Animations _resolveAnimations() {
     final cached = _cachedAnimations;
 
@@ -1041,27 +1136,61 @@ class Tooltip(({IChart chart, Object? options}) config)
 
     final chart = this.chart;
     final options = _resolveOptions();
-    final enabled = options.enabled;
-    final animation = enabled
-        ? optionOf(chart.options, OptionKey.animation)
-        : enabled;
-    final opts = jsTruthy(animation) ? options.animations : animation;
-    final animations = Animations(this.chart, opts);
-    if (_isCacheable(opts)) {
-      _cachedAnimations = jsObjectFreeze(animations);
-    }
-
-    return animations;
+    final chartOptions = chart.options;
+    final animation = (options.enabled ?? false) && isObject(chartOptions)
+        ? optionOf(chartOptions, OptionKey.animation)
+        : false;
+    return Animations(
+      this.chart,
+      jsTruthy(animation) ? _animationsSpec(options) ?? false : false,
+    );
   }
 
-  /// `opts._cacheable` with ToBoolean: the typed slot of a resolver, else
-  /// the read by name. `undefined` and JS `null` throw the [TypeError] of
-  /// the read.
-  static bool _isCacheable(Object? opts) => switch (opts) {
-    final OptionView view => view.cacheable,
-    final OptionResolver resolver => resolver.cacheable,
-    _ => jsTruthy(jsGet(opts, '_cacheable')),
-  };
+  /// The properties of the tooltip that it animates, in the order of the
+  /// `animations` defaults (plugin.tooltip.js:1315-1323), each with the test
+  /// of its item class.
+  static final List<(String, bool Function(PropertyAnimation))>
+  _animatedProperties = [
+    ('x', (item) => item is XAnimation),
+    ('y', (item) => item is YAnimation),
+    ('width', (item) => item is WidthAnimation),
+    ('height', (item) => item is HeightAnimation),
+    ('caretX', (item) => item is CaretXAnimation),
+    ('caretY', (item) => item is CaretYAnimation),
+    ('opacity', (item) => item is OpacityAnimation),
+  ];
+
+  /// The animation config of `new Animations(chart, opts)` for the options
+  /// [options]: one entry for each property of [_animatedProperties], with
+  /// the parameters of its item of `animations`, else of `animation` (the
+  /// `_fallback: 'animation'` of plugin.tooltip.js:1342-1344). Dart `null`
+  /// for [TooltipAnimation.off], the `false` of upstream.
+  // DIVERGES(chartjs): adapt-property-animations, the items of the options.
+  static AnimationsSpecScope? _animationsSpec(TooltipOptions options) {
+    final settings = options.animation;
+    if (settings != null && settings.isOff) return null;
+    final items = options.animations ?? const <PropertyAnimation>[];
+    final spec = AnimationsSpecScope();
+    for (final (name, isItem) in _animatedProperties) {
+      PropertyAnimation? item;
+      for (final candidate in items) {
+        if (isItem(candidate)) item = candidate;
+      }
+      final cfg = AnimationOptionsScope()..properties = <Object?>[name];
+      if (item?.duration ?? settings?.duration case final duration?) {
+        cfg.duration = duration.inMicroseconds / 1000;
+      }
+      if (item?.delay ?? settings?.delay case final delay?) {
+        cfg.delay = delay.inMicroseconds / 1000;
+      }
+      if (item?.easing ?? settings?.easing case final easing?) {
+        cfg.easing = easing;
+      }
+      if (item?.loop ?? settings?.loop case final loop?) cfg.loop = loop;
+      spec.store(name, OptScope<AnimationOptionsScope>(cfg));
+    }
+    return spec;
+  }
 
   /// plugin.tooltip.js:528 `getContext()`. @protected
   ///
@@ -1097,16 +1226,16 @@ class Tooltip(({IChart chart, Object? options}) config)
   /// plugin.tooltip.js:533 `getTitle(context, options)`.
   List<String> getTitle(List<TooltipItem> items, TooltipOptions options) {
     return <String>[
-      ...?options.callbacks.beforeTitle?.call(this, items),
-      ...(options.callbacks.title?.call(this, items) ??
+      ...?options.callbacks!.beforeTitle?.call(this, items),
+      ...(options.callbacks!.title?.call(this, items) ??
           _defaultTitle(this, items)),
-      ...?options.callbacks.afterTitle?.call(this, items),
+      ...?options.callbacks!.afterTitle?.call(this, items),
     ];
   }
 
   /// plugin.tooltip.js:548 `getBeforeBody`.
   List<String> getBeforeBody(List<TooltipItem> items, TooltipOptions options) =>
-      [...?options.callbacks.beforeBody?.call(this, items)];
+      [...?options.callbacks!.beforeBody?.call(this, items)];
 
   /// plugin.tooltip.js:554 `getBody`: direct calls, with dataset overlays.
   List<TooltipBodyItem> getBody(
@@ -1131,14 +1260,14 @@ class Tooltip(({IChart chart, Object? options}) config)
 
   /// plugin.tooltip.js:575 `getAfterBody`.
   List<String> getAfterBody(List<TooltipItem> items, TooltipOptions options) =>
-      [...?options.callbacks.afterBody?.call(this, items)];
+      [...?options.callbacks!.afterBody?.call(this, items)];
 
   /// plugin.tooltip.js:582 `getFooter`.
   List<String> getFooter(List<TooltipItem> items, TooltipOptions options) {
     return <String>[
-      ...?options.callbacks.beforeFooter?.call(this, items),
-      ...?options.callbacks.footer?.call(this, items),
-      ...?options.callbacks.afterFooter?.call(this, items),
+      ...?options.callbacks!.beforeFooter?.call(this, items),
+      ...?options.callbacks!.footer?.call(this, items),
+      ...?options.callbacks!.afterFooter?.call(this, items),
     ];
   }
 
@@ -1335,8 +1464,8 @@ class Tooltip(({IChart chart, Object? options}) config)
     TooltipOptions options,
   ) {
     final Tooltip(:xAlign, :yAlign) = this;
-    final caretSize = options.caretSize;
-    final cornerRadius = options.cornerRadius;
+    final caretSize = options.caretSize!;
+    final cornerRadius = options.cornerRadius!;
     final topLeft = cornerRadius.topLeft.x;
     final topRight = cornerRadius.topRight.x;
     final bottomLeft = cornerRadius.bottomLeft.x;
@@ -1411,7 +1540,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     int i;
 
     if (length != 0) {
-      final rtlHelper = getRtlAdapter(options.rtl, x, width);
+      final rtlHelper = getRtlAdapter(options.rtl ?? false, x, width);
 
       // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
       final titleAlign = options.titleAlign;
@@ -1422,8 +1551,8 @@ class Tooltip(({IChart chart, Object? options}) config)
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
         ..textBaseline = CanvasTextBaseline.middle;
 
-      final titleFont = options.titleFont;
-      final titleSpacing = options.titleSpacing;
+      final titleFont = options._titleFont;
+      final titleSpacing = options.titleSpacing!;
 
       ctx
         ..fillStyle = canvasStyle(options.titleColor)
@@ -1439,7 +1568,7 @@ class Tooltip(({IChart chart, Object? options}) config)
 
         if (i + 1 == length) {
           // If Last, add margin, remove spacing
-          pt.y += options.titleMarginBottom - titleSpacing;
+          pt.y += options.titleMarginBottom! - titleSpacing;
         }
       }
     }
@@ -1455,9 +1584,9 @@ class Tooltip(({IChart chart, Object? options}) config)
   ) {
     final labelColor = _labelColors![i];
     final labelPointStyle = _labelPointStyles![i];
-    final boxHeight = options.boxHeight;
-    final boxWidth = options.boxWidth;
-    final bodyFont = options.bodyFont;
+    final boxHeight = options.boxHeight!;
+    final boxWidth = options.boxWidth!;
+    final bodyFont = options._bodyFont;
     final colorX = _getAlignedX(this, TextAlign.left, options);
     final rtlColorX = rtlHelper.x(colorX);
     final yOffSet = boxHeight < bodyFont.lineHeight!
@@ -1465,7 +1594,7 @@ class Tooltip(({IChart chart, Object? options}) config)
         : 0;
     final colorY = pt.y + yOffSet;
 
-    if (options.usePointStyle) {
+    if (options.usePointStyle ?? false) {
       final drawOptions = PointOptions()
         // fit the circle in the box
         ..storeKey(OptionKey.radius, math.min(boxWidth, boxHeight) / 2)
@@ -1581,18 +1710,19 @@ class Tooltip(({IChart chart, Object? options}) config)
     TooltipOptions options,
   ) {
     final body = this.body;
-    final bodySpacing = options.bodySpacing;
+    final bodySpacing = options.bodySpacing!;
     // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
     final bodyAlign = options.bodyAlign;
-    final displayColors = options.displayColors;
-    final boxHeight = options.boxHeight;
-    final boxWidth = options.boxWidth;
+    final displayColors = options.displayColors!;
+    final boxHeight = options.boxHeight!;
+    final boxWidth = options.boxWidth!;
+    // Upstream reads `boxPadding` only with the color boxes.
     final boxPadding = options.boxPadding;
-    final bodyFont = options.bodyFont;
+    final bodyFont = options._bodyFont;
     var bodyLineHeight = bodyFont.lineHeight!;
     var xLinePadding = 0.0;
 
-    final rtlHelper = getRtlAdapter(options.rtl, x, width);
+    final rtlHelper = getRtlAdapter(options.rtl ?? false, x, width);
 
     void fillLineOfText(String line) {
       ctx.fillText(
@@ -1622,8 +1752,8 @@ class Tooltip(({IChart chart, Object? options}) config)
 
     xLinePadding = displayColors && bodyAlignForCalculation != TextAlign.right
         ? bodyAlign == TextAlign.center
-              ? (boxWidth / 2 + boxPadding)
-              : (boxWidth + 2 + boxPadding)
+              ? (boxWidth / 2 + boxPadding!)
+              : (boxWidth + 2 + boxPadding!)
         : 0;
 
     // Draw body lines now
@@ -1670,20 +1800,20 @@ class Tooltip(({IChart chart, Object? options}) config)
     int i;
 
     if (length != 0) {
-      final rtlHelper = getRtlAdapter(options.rtl, x, width);
+      final rtlHelper = getRtlAdapter(options.rtl ?? false, x, width);
 
       // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
       final footerAlign = options.footerAlign;
       pt
         ..x = _getAlignedX(this, footerAlign, options)
-        ..y += options.footerMarginTop;
+        ..y += options.footerMarginTop!;
 
       ctx
         ..textAlign = rtlHelper.textAlign(footerAlign)
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
         ..textBaseline = CanvasTextBaseline.middle;
 
-      final footerFont = options.footerFont;
+      final footerFont = options._footerFont;
 
       ctx
         ..fillStyle = canvasStyle(options.footerColor)
@@ -1695,7 +1825,7 @@ class Tooltip(({IChart chart, Object? options}) config)
           rtlHelper.x(pt.x),
           pt.y + footerFont.lineHeight! / 2,
         );
-        pt.y += footerFont.lineHeight! + options.footerSpacing;
+        pt.y += footerFont.lineHeight! + options.footerSpacing!;
       }
     }
   }
@@ -1711,7 +1841,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     final Tooltip(:xAlign, :yAlign) = this;
     final TooltipPoint(:x, :y) = pt;
     final (:width, :height) = tooltipSize;
-    final corners = options.cornerRadius;
+    final corners = options.cornerRadius!;
     final topLeft = corners.topLeft.x;
     final topRight = corners.topRight.x;
     final bottomLeft = corners.bottomLeft.x;
@@ -1832,7 +1962,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     // IE11/Edge does not like very small opacities, so snap to 0
     opacity = opacity.abs() < 1e-3 ? 0 : opacity;
 
-    final padding = options.padding;
+    final padding = options.padding!;
 
     // Truthy/falsey value for empty tooltip
     final hasTooltipContent =
@@ -1842,7 +1972,7 @@ class Tooltip(({IChart chart, Object? options}) config)
         afterBody!.isNotEmpty ||
         footer!.isNotEmpty;
 
-    if (options.enabled && hasTooltipContent) {
+    if (options.enabled! && hasTooltipContent) {
       ctx
         ..save()
         ..globalAlpha = opacity;
@@ -1947,7 +2077,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     }
     _ignoreReplayEvents = false;
 
-    final options = TooltipOptions.of(this.options ?? undefined);
+    final options = _contextFreeOptions();
     final lastActive = _active;
     final active = _getActiveElements(e, lastActive, replay, chartArea);
 
@@ -1966,7 +2096,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     if (changed) {
       _active = active;
 
-      if (options.enabled || options.external != null) {
+      if ((options.enabled ?? false) || options.external != null) {
         _eventPosition = TooltipPosition()
           ..x = e.x
           ..y = e.y;
@@ -1992,7 +2122,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     Object? replay,
     Object? inChartArea,
   ) {
-    final options = TooltipOptions.of(this.options ?? undefined);
+    final options = _contextFreeOptions();
 
     if (e.type == 'mouseout') {
       return [];
@@ -2026,11 +2156,11 @@ class Tooltip(({IChart chart, Object? options}) config)
     final active = chart.getElementsAtEventForMode(
       e,
       options.mode,
-      options.view,
+      options,
       replay is bool ? replay : (jsTruthy(replay) ? true : null),
     );
 
-    if (options.reverse) {
+    if (options.reverse ?? false) {
       _reverseInPlace(active);
     }
 
@@ -2047,11 +2177,7 @@ class Tooltip(({IChart chart, Object? options}) config)
   bool _positionChanged(List<ActiveElement> active, Object? e) {
     final caretX = _caretX ?? undefined;
     final caretY = _caretY ?? undefined;
-    final position = _position(
-      TooltipOptions.of(options ?? undefined),
-      active,
-      e,
-    );
+    final position = _position(_contextFreeOptions(), active, e);
     return !identical(position, false) &&
         (!_strictEquals(caretX, _readX(position)) ||
             !_strictEquals(caretY, _readY(position)));
@@ -2123,6 +2249,16 @@ class Tooltip(({IChart chart, Object? options}) config)
       case 'caretY':
         _caretY = toNumberProp(prop, value);
       // DIVERGES(chartjs): adapt-tooltip-align-enums, the enum value.
+      // The options of the tooltip are a TooltipOptions (Chart.js ADR 0192):
+      // a write by name keeps them unresolved, and [_contextFreeOptions]
+      // resolves them at each read.
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      case 'options':
+        options = switch (value) {
+          Undefined() => null,
+          final TooltipOptions tooltipOptions => tooltipOptions,
+          _ => throw ArgumentError.value(value, prop, 'Not a TooltipOptions'),
+        };
       case 'xAlign':
         _xAlign = toObjectProp<TooltipXAlign>(prop, value);
       case 'yAlign':
@@ -2199,40 +2335,24 @@ class Tooltip(({IChart chart, Object? options}) config)
 /// An absent argument, [undefined] and JS `null` throw the [TypeError] of
 /// the read `config.chart`, as upstream. A member with the value
 /// [undefined] gives Dart `null`. A `chart` that is not a `types.Chart` and
-/// an `options` that is not an object (a Map or a typed object) throw a
+/// an `options` that is not a [TooltipOptions] (Chart.js ADR 0192) throw a
 /// [TypeError]. Upstream stores such a value and reads its members later.
 // DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
 ({IChart chart, Object? options}) _tooltipConfig(List<Object?> args) {
   final config = args.isEmpty ? undefined : args[0];
   return (
     chart: _orNull(jsGet(config, 'chart'))! as IChart,
-    options: jsObjectOrNull(jsGet(config, 'options')),
+    options: _orNull(jsGet(config, 'options')) as TooltipOptions?,
   );
 }
 
 /// Dart `null` for the [undefined] sentinel, else [value].
 Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 
-/// plugin.tooltip.js:1303-1304 the default `boxHeight` and `boxWidth`:
-/// `(ctx, opts) => opts.bodyFont.size`, the typed reads of the sub-resolver.
-///
-/// The font is a `TextStyle` (row `adapt-text-style-fonts`): the size is its
-/// `fontSize`.
-// DIVERGES(chartjs): adapt-text-style-fonts, the size of a TextStyle.
-Object? _bodyFontSize(Object? ctx, Object? opts) {
-  // The raw font of upstream `opts.bodyFont.size`: no `toFont`.
-  final font = optionOf(opts, OptionKey.bodyFont);
-  return font is TextStyle ? font.fontSize ?? undefined : undefined;
-}
-
-/// plugin.tooltip.js:1334 the `_scriptable` descriptor of the plugin.
-bool _scriptableDescriptor(String name) =>
-    name != 'filter' && name != 'itemSort' && name != 'external';
-
 /// plugin.tooltip.js:1228 `afterInit(chart, _args, options)`.
 void _afterInit(IChart chart, PluginHookArgs _, TooltipOptions options) {
-  if (jsTruthy(options.view)) {
-    chart.tooltip = Tooltip((chart: chart, options: options.view));
+  if (jsTruthy(options)) {
+    chart.tooltip = Tooltip((chart: chart, options: options));
   }
 }
 
@@ -2240,7 +2360,7 @@ void _afterInit(IChart chart, PluginHookArgs _, TooltipOptions options) {
 /// continues the update: `true` is the `undefined` result of upstream.
 bool _beforeUpdate(IChart chart, UpdateHookArgs _, TooltipOptions options) {
   if (chart.tooltip != null) {
-    (chart.tooltip! as Tooltip).initialize(options.view);
+    (chart.tooltip! as Tooltip).initialize(options);
   }
   return true;
 }
@@ -2248,7 +2368,7 @@ bool _beforeUpdate(IChart chart, UpdateHookArgs _, TooltipOptions options) {
 /// plugin.tooltip.js:1240 `reset(chart, _args, options)`.
 void _reset(IChart chart, PluginHookArgs _, TooltipOptions options) {
   if (chart.tooltip != null) {
-    (chart.tooltip! as Tooltip).initialize(options.view);
+    (chart.tooltip! as Tooltip).initialize(options);
   }
 }
 
@@ -2314,109 +2434,84 @@ final class TooltipPlugin() extends Plugin<TooltipOptions> {
   this
     : super(
         id: 'tooltip',
-        // The hooks get the resolved options (Chart.js ADR 0182).
-        options: TooltipOptions.of,
+        // The hooks get the merged TooltipOptions (Chart.js ADR 0192).
         afterInit: _afterInit,
         beforeUpdate: _beforeUpdate,
         reset: _reset,
         afterDraw: _afterDraw,
         afterEvent: _afterEvent,
-        // plugin.tooltip.js:1275-1325. A typed scope of the kind
-        // `TooltipOptions`
-        // (Chart.js ADR 0054 §3).
-        defaults: TooltipOptionsScope()
-          ..enabled = true
-          ..externalCell = optNull
+        // plugin.tooltip.js:1275-1325: one TooltipOptions with each default
+        // (Chart.js ADR 0192). `boxHeight` and `boxWidth` are the size of
+        // the body font when no options set them (:1303-1304): the tooltip
+        // gives that size ([Tooltip._resolved]).
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        defaults: const TooltipOptions(
+          enabled: true,
           // DIVERGES(chartjs): adapt-tooltip-positioner-objects, the
           // positioner.
-          ..position = const AverageTooltipPositioner()
-          ..backgroundColor = const ChartPaint.solid(
-            ui.Color.fromRGBO(0, 0, 0, 0.8),
-          )
-          ..titleColor = const ChartPaint.solid(
-            ui.Color.fromRGBO(255, 255, 255, 1),
-          )
+          position: AverageTooltipPositioner(),
+          backgroundColor: ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.8)),
+          titleColor: ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1)),
           // DIVERGES(chartjs): adapt-text-style-fonts, the font is a
           // ChartTextStyle.
-          ..titleFont = const ChartTextStyle(fontWeight: ui.FontWeight.bold)
-          ..titleSpacing = 2.0
-          ..titleMarginBottom = 6.0
+          titleFont: ChartTextStyle(fontWeight: ui.FontWeight.bold),
+          titleSpacing: 2,
+          titleMarginBottom: 6,
           // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-          ..titleAlign = TextAlign.left
-          ..bodyColor = const ChartPaint.solid(
-            ui.Color.fromRGBO(255, 255, 255, 1),
-          )
-          ..bodySpacing = 2.0
+          titleAlign: TextAlign.left,
+          bodyColor: ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1)),
+          bodySpacing: 2,
           // DIVERGES(chartjs): adapt-text-style-fonts, the font is a
           // ChartTextStyle.
-          ..bodyFont = const ChartTextStyle()
+          bodyFont: ChartTextStyle(),
           // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-          ..bodyAlign = TextAlign.left
-          ..footerColor = const ChartPaint.solid(
-            ui.Color.fromRGBO(255, 255, 255, 1),
-          )
-          ..footerSpacing = 2.0
-          ..footerMarginTop = 6.0
+          bodyAlign: TextAlign.left,
+          footerColor: ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1)),
+          footerSpacing: 2,
+          footerMarginTop: 6,
           // DIVERGES(chartjs): adapt-text-style-fonts, the font is a
           // ChartTextStyle.
-          ..footerFont = const ChartTextStyle(fontWeight: ui.FontWeight.bold)
+          footerFont: ChartTextStyle(fontWeight: ui.FontWeight.bold),
           // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-          ..footerAlign = TextAlign.left
-          ..padding = const EdgeInsets.all(6)
-          ..caretPadding = 2.0
-          ..caretSize = 5.0
-          ..cornerRadius = 6.0
-          ..boxHeightCell = const OptFunction<double>(_bodyFontSize)
-          ..boxWidthCell = const OptFunction<double>(_bodyFontSize)
-          ..multiKeyBackground = const ChartPaint.solid(
+          footerAlign: TextAlign.left,
+          padding: EdgeInsets.all(6),
+          caretPadding: 2,
+          caretSize: 5,
+          // DIVERGES(chartjs): adapt-flutter-border-radius, the corners.
+          cornerRadius: BorderRadius.all(Radius.circular(6)),
+          multiKeyBackground: ChartPaint.solid(
             ui.Color.fromRGBO(255, 255, 255, 1),
-          )
-          ..displayColors = true
-          ..boxPadding = 0.0
-          ..borderColor = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0))
-          ..borderWidth = 0.0
-          ..animation = (AnimationOptionsScope()
-            ..duration = 400.0
-            // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
-            ..easing = Curves.easeOutQuart)
-          ..animations = (AnimationsSpecScope()
-            // DIVERGES(chartjs): adapt-animation-option-types, no `type`.
-            ..numbers = (AnimationOptionsScope()
-              ..properties = <Object?>[
-                'x',
-                'y',
-                'width',
-                'height',
-                'caretX',
-                'caretY',
-              ])
-            ..opacity = (AnimationOptionsScope()
-              // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
-              ..easing = Curves.linear
-              ..duration = 200.0))
-          ..callbacks = _defaultCallbacks,
-        // plugin.tooltip.js:1327-1331.
-        defaultRoutes: const {
-          'bodyFont': 'font',
-          'footerFont': 'font',
-          'titleFont': 'font',
-        },
-        // plugin.tooltip.js:1333-1346. A typed scope of the kind `Descriptors`.
-        descriptors: DescriptorsScope()
-          ..descScriptable = _scriptableDescriptor
-          ..descIndexable = false
-          ..jsWrite(
-            'callbacks',
-            DescriptorsScope()
-              ..descScriptable = false
-              ..descIndexable = false,
-          )
-          ..jsWrite('animation', DescriptorsScope()..descFallback = false)
-          ..jsWrite(
-            'animations',
-            DescriptorsScope()..descFallback = 'animation',
           ),
-        // Resolve additionally from `interaction` options and defaults.
+          displayColors: true,
+          boxPadding: 0,
+          borderColor: ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0)),
+          borderWidth: 0,
+          // DIVERGES(chartjs): adapt-property-animations, the settings and
+          // the items of the properties.
+          animation: TooltipAnimation(
+            duration: Duration(milliseconds: 400),
+            // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
+            easing: Curves.easeOutQuart,
+          ),
+          // `numbers` (x, y, width, height, caretX, caretY) take the
+          // settings of `animation`: they need no item.
+          animations: [
+            OpacityAnimation(
+              // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
+              easing: Curves.linear,
+              duration: Duration(milliseconds: 200),
+            ),
+          ],
+          callbacks: _defaultCallbacks,
+        ),
+        // plugin.tooltip.js:1327-1346: the routes of the fonts and the
+        // descriptors are the fallbacks of [Tooltip._resolved] and
+        // [Tooltip._animationsSpec]: the options are not resolved.
+        // DIVERGES(chartjs): adapt-native-plugin-options, no routes and no
+        // descriptors.
+        // Resolve additionally from `interaction` options and defaults: the
+        // plugin service takes no more scope for a TooltipOptions, and the
+        // tooltip reads `options.interaction` ([Tooltip._resolved]).
         additionalOptionScopes: const ['interaction'],
         // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
         // opt-in.

@@ -67,11 +67,11 @@ DocPageContent graphicMigrationPage() => migrationPage(
     ),
     (
       Text('PointSelection and TooltipGuide'),
-      DocText('`tooltip` and `interaction`'),
+      DocText('`TooltipOptions` in `pluginOptions`, and `interaction`'),
     ),
     (
       Text('TooltipGuide(anchor:, align:, offset:)'),
-      DocText('a subclass of `TooltipPositioner` in `ChartTooltip.position`'),
+      DocText('a subclass of `TooltipPositioner` in `TooltipOptions.position`'),
     ),
     (
       Text('CrosshairGuide'),

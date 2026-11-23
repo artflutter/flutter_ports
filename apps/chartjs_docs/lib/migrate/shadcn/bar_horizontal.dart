@@ -28,11 +28,9 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   // margin={{left: -20}}: the other sides are 0.
   padding: EdgeInsets.zero,
   legend: shadcnNoLegend,
-  tooltip: shadcnTooltip(
-    tip,
-    const ShadcnTooltipContent(hideLabel: true),
-    true,
-  ),
+  pluginOptions: [
+    shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true), true),
+  ],
   interaction: shadcnInteraction(horizontal: true),
   animation: shadcnBarAnimation,
   scales: [

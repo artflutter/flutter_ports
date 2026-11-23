@@ -151,7 +151,10 @@ DocPageContent shadcnMigrationPage() => migrationPage(
     ),
     (
       Text('<ChartTooltip content={<ChartTooltipContent />} />'),
-      DocText('`ChartTooltip(enabled: false, external: ...)` and a widget'),
+      DocText(
+        '`TooltipOptions(enabled: false, external: ...)` in '
+        '`pluginOptions` and a widget',
+      ),
     ),
     (
       Text('the cursor of ChartTooltip'),

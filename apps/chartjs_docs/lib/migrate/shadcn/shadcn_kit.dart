@@ -352,6 +352,13 @@ typedef ShadcnTipState = ({
 final class ShadcnTip() {
   final ValueNotifier<ShadcnTipState?> state = ValueNotifier(null);
 
+  /// The options of `ChartTooltipContent` that [external] shows.
+  ShadcnTooltipContent content = const ShadcnTooltipContent();
+
+  /// The option `external` of the chart. Two tear-offs of the same tip are
+  /// `==`, so a new config of each build gives no chart update.
+  void external(TooltipModel tooltip, bool replay) => show(tooltip, content);
+
   void show(TooltipModel tooltip, ShadcnTooltipContent content) {
     final items = tooltip.dataPoints ?? const <TooltipItem>[];
     if (tooltip.opacity == 0 || items.isEmpty) {
@@ -392,19 +399,28 @@ Color _tipColorOf(TooltipItem item) {
 }
 
 /// `ChartTooltip` with `ChartTooltipContent`: Chart.js draws no tooltip,
-/// and gives each change to [tip].
-ChartTooltip shadcnTooltip(
+/// and gives each change to [tip], which shows [content].
+///
+/// The options are `==` for the same [tip] and [horizontal]: the config
+/// function of [ShadcnChart] runs at each build, and equal options give no
+/// chart update.
+TooltipOptions shadcnTooltip(
   ShadcnTip tip, [
   ShadcnTooltipContent content = const ShadcnTooltipContent(),
   bool horizontal = false,
-]) => ChartTooltip(
-  enabled: false,
-  mode: const IndexInteractionMode(),
-  intersect: false,
-  axis: horizontal ? .y : .x,
-  position: ShadcnTipPositioner(horizontal: horizontal),
-  external: (tooltip, replay) => tip.show(tooltip, content),
-);
+]) {
+  tip.content = content;
+  return TooltipOptions(
+    enabled: false,
+    mode: const IndexInteractionMode(),
+    intersect: false,
+    axis: horizontal ? .y : .x,
+    position: horizontal
+        ? const ShadcnTipPositioner(horizontal: true)
+        : const ShadcnTipPositioner(),
+    external: tip.external,
+  );
+}
 
 /// The place of the Recharts tooltip: the hovered index on the index axis,
 /// and the pointer on the value axis.

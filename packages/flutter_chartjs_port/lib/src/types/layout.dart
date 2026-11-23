@@ -131,6 +131,20 @@ abstract interface class LayoutBoxOptions() {
   Object? layoutOption(OptionKey key);
 }
 
+/// Options of resolved values that the interaction modes read: the
+/// `intersect`, `axis` and `includeInvisible` of `core.interaction.js`
+/// (Chart.js ADR 0192). [interactionOption] gives the value of such a key:
+/// the [undefined] sentinel for a key that is not set.
+///
+/// ```dart
+/// final intersect = readOption(tooltipOptions, OptionKey.intersect);
+/// ```
+// DIVERGES(chartjs): adapt-native-plugin-options, options of resolved values.
+abstract interface class InteractionOptionValues() {
+  /// The value of the interaction option [key], or [undefined].
+  Object? interactionOption(OptionKey key);
+}
+
 /// layout.d.ts:5 `LayoutItem`.
 ///
 /// `core.layouts.js` also reads three members that layout.d.ts does not

@@ -87,7 +87,7 @@ ChartConfig _config(double width) {
               maxBarThickness: barsWidth,
             ),
       ],
-      tooltip: const ChartTooltip(enabled: false),
+      pluginOptions: const [TooltipOptions(enabled: false)],
       events: const [],
       scales: [
         groupAxis(

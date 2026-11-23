@@ -54,7 +54,7 @@ class _SfAnimationBarState() extends State<SfAnimationBar> {
         maintainAspectRatio: false,
         padding: sfPadding,
         legend: const ChartLegend(display: false),
-        tooltip: const ChartTooltip(enabled: false),
+        pluginOptions: const [TooltipOptions(enabled: false)],
         animation: const ChartAnimation(duration: Duration(milliseconds: 1500)),
         events: const [],
         scales: [

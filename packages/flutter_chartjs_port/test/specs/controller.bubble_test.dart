@@ -47,7 +47,9 @@ import '../support/draw_recorder.dart';
 // The tooltip case (:363) reads `chart.tooltip`, the field of `Chart` (a
 // `types.TooltipModel?`), through the interface.
 // `chart.options.plugins.tooltip = value` writes the key `tooltip` of the
-// Map `chart.options['plugins']`.
+// options view `chart.options['plugins']`. `{mode: 'dataset'}` is the
+// `TooltipOptions` of that mode, the one options object of the tooltip
+// (Chart.js ADR 0192).
 
 /// `chart.data.datasets[index]`.
 JsObjectFace _dataset(Chart chart, int index) =>
@@ -517,7 +519,7 @@ void main() {
       );
 
       (chart.options['plugins']! as JsObjectFace)['tooltip'] =
-          <String, Object?>{'mode': const DatasetInteractionMode()};
+          const TooltipOptions(mode: DatasetInteractionMode());
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);
 

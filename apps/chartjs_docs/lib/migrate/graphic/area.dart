@@ -69,11 +69,13 @@ final ChartConfig _config = ChartConfig(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
-  tooltip: graphicTooltip(
-    position: const FollowYPositioner(),
-    title: _date,
-    label: _value,
-  ),
+  pluginOptions: [
+    graphicTooltip(
+      position: const FollowYPositioner(),
+      title: _date,
+      label: _value,
+    ),
+  ],
   plugins: [crosshair(), tooltipShadow],
 );
 

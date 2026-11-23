@@ -61,7 +61,7 @@ List<BenchCase> helperCases() => [
       },
       'plugins': <String, Object?>{
         'legend': <String, Object?>{'display': true, 'align': 'center'},
-        'tooltip': <String, Object?>{'enabled': true},
+        'tooltip': const TooltipOptions(enabled: true),
       },
     };
     return (n) {

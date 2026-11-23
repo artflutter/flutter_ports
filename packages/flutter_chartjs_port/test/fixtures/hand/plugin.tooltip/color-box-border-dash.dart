@@ -45,11 +45,12 @@ Map<String, Object?> fixture() => <String, Object?>{
         'legend': false,
         'title': false,
         'filler': false,
-        'tooltip': <String, Object?>{
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'tooltip': TooltipOptions(
           // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
-          'mode': const NearestInteractionMode(),
-          'intersect': false,
-          'callbacks': TooltipCallbacks(
+          mode: const NearestInteractionMode(),
+          intersect: false,
+          callbacks: TooltipCallbacks(
             label: (tooltip, arg) => ['​'],
             labelColor: (tooltip, tooltipItem) {
               final meta = tooltipItem.chart.getDatasetMeta(
@@ -65,7 +66,7 @@ Map<String, Object?> fixture() => <String, Object?>{
               );
             },
           ),
-        },
+        ),
       },
 
       'layout': <String, Object?>{'padding': const EdgeInsets.all(15)},

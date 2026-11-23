@@ -35,14 +35,16 @@ ChartConfig _config(ShadcnTip tip, int active) {
     maintainAspectRatio: false,
     padding: const EdgeInsets.symmetric(horizontal: 12),
     legend: shadcnNoLegend,
-    tooltip: shadcnTooltip(
-      tip,
-      ShadcnTooltipContent(
-        name: 'Page Views',
-        width: 150,
-        labelFormatter: (date) => shortDate(date, year: true),
+    pluginOptions: [
+      shadcnTooltip(
+        tip,
+        ShadcnTooltipContent(
+          name: 'Page Views',
+          width: 150,
+          labelFormatter: (date) => shortDate(date, year: true),
+        ),
       ),
-    ),
+    ],
     interaction: shadcnInteraction(),
     animation: shadcnBarAnimation,
     // The cursor of the tooltip: a muted band under the hovered day.

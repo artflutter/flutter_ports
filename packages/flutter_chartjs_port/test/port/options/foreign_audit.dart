@@ -317,5 +317,4 @@ const Set<String> reviewedForeignPairs = {
   'TickOptionsScope\tprecision\tstring',
   'TickOptionsScope\tstepSize\tstring',
   'TimeScaleTimeOptionsScope\tisoWeekday\tstring',
-  'TooltipOptionsScope\tbackgroundColor\tstring',
 };

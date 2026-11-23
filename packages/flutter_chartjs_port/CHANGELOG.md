@@ -1,3 +1,15 @@
+## Unreleased
+
+- BREAKING: the tooltip options are one immutable object, `TooltipOptions` (Chart.js ADR 0192). `ChartTooltip`
+  and `ChartConfig.tooltip` are gone: give `pluginOptions: [TooltipOptions(...)]`, with each Chart.js tooltip
+  option as a field (`titleAlign`, `usePointStyle`, `boxPadding`, ...; `cornerRadius` is a `BorderRadius`). A
+  raw config holds the object in `options.plugins.tooltip`; a Map there stops a debug build. The scriptable form
+  of the options is one function, `scripted: (context, options) => TooltipOptions(...)`. `animation` takes a
+  `TooltipAnimation` (`TooltipAnimation.off` for `false`) and `animations` the property items, with the new
+  `CaretXAnimation`, `CaretYAnimation` and `OpacityAnimation`. `TooltipOptions.of` and `TooltipOptions.view`
+  are gone. `ChartConfig ==` compares the object with `==`: a new closure in it gives a chart update, and
+  `TooltipCallbacks` compare their functions.
+
 ## 0.1.0-beta.4
 
 - The typed axes have no ids (Chart.js ADR 0191). `ChartConfig.scales` is a `List<ChartAxis>`, and

@@ -16,8 +16,8 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../support/animation_spec_input.dart';
 import '../../support/color_json.dart';
 import '../../support/data_label.dart';
-import '../../support/drop_extra_args.dart';
 import '../../support/light_theme.dart';
+import '../../support/tooltip_option_fields.dart';
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
 import '../core/animation_reference.dart';
@@ -472,30 +472,36 @@ final class _FakeElement(final double px) extends Element {
   Offset tooltipPosition([bool? useFinalPosition]) => Offset(px, 1);
 }
 
-/// The probe chart of the groups: a line chart with the labels A, B and C,
-/// one dataset `one` with the data 10, 20 and 30, the legend off, and the
-/// tooltip options [tooltipOptions]. [extra] goes into the chart options.
-ChartConfigurationScope _probeChart([
-  Object? tooltipOptions,
-  AnyObject extra = const {},
-]) => (ChartConfigurationScope()
-  ..type = 'line'
-  ..data = mergeExtra(ChartDataScope(), <String, Object?>{
-    'labels': <Object?>['A', 'B', 'C'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'one',
-        'data': <Object?>[10, 20, 30],
-      },
+/// The probe chart of the groups, a typed config: a line chart with the
+/// labels A, B and C, the dataset [first] (`one` with the data 10, 20 and
+/// 30), then [more], the legend off unless [legend] is given, and the
+/// tooltip options [tooltip] (Chart.js ADR 0192). [tooltipOff] turns the
+/// tooltip plugin off (`plugins.tooltip: false`).
+ChartConfigurationScope _probeChart({
+  TooltipOptions? tooltip,
+  bool tooltipOff = false,
+  LineDataset? first,
+  List<Dataset> more = const [],
+  ChartLegend? legend,
+  ChartAnimation? animation,
+  List<Plugin<Object?>>? plugins,
+}) => ChartConfigLowering(
+  ChartConfig(
+    labels: const ['A', 'B', 'C'],
+    datasets: [
+      first ?? const LineDataset(label: 'one', data: .values([10, 20, 30])),
+      ...more,
     ],
-  })
-  ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
-    'plugins': <String, Object?>{
-      'legend': false,
-      'tooltip': tooltipOptions ?? <String, Object?>{},
-    },
-    ...extra,
-  }));
+    legend: legend,
+    animation: animation,
+    plugins: plugins,
+    pluginOptions: tooltip == null ? null : [tooltip],
+    disabledPlugins: [
+      if (legend == null) const PluginOff<LegendPlugin>(),
+      if (tooltipOff) const PluginOff<TooltipPlugin>(),
+    ],
+  ),
+).lower();
 
 /// The tooltip of [chart], as the class of the plugin.
 Tooltip _tooltipOf(Chart chart) => chart.tooltip! as Tooltip;
@@ -626,30 +632,32 @@ void main() {
       List<TooltipItem>? titleItems;
       final returned = <String>['one line'];
       final chart = acquireChartRoot(
-        _probeChart({
-          'callbacks': TooltipCallbacks(
-            beforeTitle: (tooltip, items) {
-              titleItems = items;
-              return [];
-            },
-            title: (tooltip, items) {
-              expect(identical(items, titleItems), isTrue);
-              return [];
-            },
-            beforeBody: (tooltip, items) {
-              expect(identical(items, titleItems), isTrue);
-              return returned;
-            },
-            label: (tooltip, item) {
-              expect(identical(item, titleItems!.single), isTrue);
-              return returned;
-            },
-            footer: (tooltip, items) {
-              expect(identical(items, titleItems), isTrue);
-              return [];
-            },
+        _probeChart(
+          tooltip: TooltipOptions(
+            callbacks: TooltipCallbacks(
+              beforeTitle: (tooltip, items) {
+                titleItems = items;
+                return [];
+              },
+              title: (tooltip, items) {
+                expect(identical(items, titleItems), isTrue);
+                return [];
+              },
+              beforeBody: (tooltip, items) {
+                expect(identical(items, titleItems), isTrue);
+                return returned;
+              },
+              label: (tooltip, item) {
+                expect(identical(item, titleItems!.single), isTrue);
+                return returned;
+              },
+              footer: (tooltip, items) {
+                expect(identical(items, titleItems), isTrue);
+                return [];
+              },
+            ),
           ),
-        }),
+        ),
       );
       _activate(chart);
       final tooltip = _tooltipOf(chart);
@@ -667,14 +675,16 @@ void main() {
         'native zero border width suppresses the swatch stroke ($radius)',
         (tester) async {
           final chart = acquireChartRoot(
-            _probeChart({
-              'callbacks': TooltipCallbacks(
-                labelColor: (tooltip, item) => TooltipLabelStyle(
-                  borderWidth: 0,
-                  borderRadius: BorderRadius.all(Radius.circular(radius)),
+            _probeChart(
+              tooltip: TooltipOptions(
+                callbacks: TooltipCallbacks(
+                  labelColor: (tooltip, item) => TooltipLabelStyle(
+                    borderWidth: 0,
+                    borderRadius: BorderRadius.all(Radius.circular(radius)),
+                  ),
                 ),
               ),
-            }),
+            ),
           );
           _activate(chart);
           final ctx = _StyleContext();
@@ -714,29 +724,33 @@ void main() {
         var chartCalls = 0;
         var datasetCalls = 0;
         var datasetTitleCalls = 0;
-        final config = _probeChart({
-          'callbacks': TooltipCallbacks(
-            title: (tooltip, items) => ['chart title'],
-            label: (tooltip, item) {
-              chartCalls++;
-              return ['chart label'];
-            },
+        final chart = acquireChartRoot(
+          _probeChart(
+            tooltip: TooltipOptions(
+              callbacks: TooltipCallbacks(
+                title: (tooltip, items) => ['chart title'],
+                label: (tooltip, item) {
+                  chartCalls++;
+                  return ['chart label'];
+                },
+              ),
+            ),
+            first: LineDataset(
+              label: 'one',
+              data: const .values([10, 20, 30]),
+              tooltipCallbacks: TooltipCallbacks(
+                title: (tooltip, items) {
+                  datasetTitleCalls++;
+                  return ['wrong title'];
+                },
+                label: (tooltip, item) {
+                  datasetCalls++;
+                  return null;
+                },
+              ),
+            ),
           ),
-        });
-        final datasets = jsGet(config['data'], 'datasets')! as List<Object?>;
-        (datasets[0]! as Map<String, Object?>)['tooltip'] = {
-          'callbacks': TooltipCallbacks(
-            title: (tooltip, items) {
-              datasetTitleCalls++;
-              return ['wrong title'];
-            },
-            label: (tooltip, item) {
-              datasetCalls++;
-              return null;
-            },
-          ),
-        };
-        final chart = acquireChartRoot(config);
+        );
         _activate(chart);
         final tooltip = _tooltipOf(chart);
         expect(tooltip.title, ['chart title']);
@@ -754,19 +768,23 @@ void main() {
     ) async {
       const fill = native_ui.Color(0xff123456);
       const border = native_ui.Color(0xffabcdef);
-      final config = _probeChart({
-        'bodyColor': const ChartPaint.solid(fill),
-        'callbacks': TooltipCallbacks(
-          labelColor: (tooltip, item) => TooltipLabelStyle(),
-          labelTextColor: (tooltip, item) => const ChartPaint.unchanged(),
+      final chart = acquireChartRoot(
+        _probeChart(
+          tooltip: TooltipOptions(
+            bodyColor: const ChartPaint.solid(fill),
+            callbacks: TooltipCallbacks(
+              labelColor: (tooltip, item) => TooltipLabelStyle(),
+              labelTextColor: (tooltip, item) => const ChartPaint.unchanged(),
+            ),
+          ),
+          first: const LineDataset(
+            label: 'one',
+            data: .values([10, 20, 30]),
+            backgroundColor: .constant(ChartPaint.solid(fill)),
+            borderColor: .constant(ChartPaint.solid(border)),
+          ),
         ),
-      });
-      final datasets = jsGet(config['data'], 'datasets')! as List<Object?>;
-      (datasets[0]! as Map<String, Object?>).addAll({
-        'backgroundColor': const ChartPaint.solid(fill),
-        'borderColor': const ChartPaint.solid(border),
-      });
-      final chart = acquireChartRoot(config);
+      );
       _activate(chart);
       final tooltip = _tooltipOf(chart);
       final style = tooltip.labelColors!.single;
@@ -886,16 +904,24 @@ void main() {
       expect(identical(Tooltip.jsClass['positioners'], undefined), isTrue);
     });
 
-    test('new Tooltip(config) keeps the chart and the options', () {
-      final chart = _FakeChart();
-      final options = <String, Object?>{'enabled': true};
+    test('new Tooltip(config) keeps the chart and the resolved options', () {
+      // Upstream keeps `config.options` itself. The port keeps the
+      // TooltipOptions with the fallbacks of Tooltip._resolved (Chart.js ADR
+      // 0192): the box sizes of the body font, the size 12 of
+      // Chart.defaults.font.
+      final chart = _CacheChart();
+      const options = TooltipOptions(enabled: true, caretSize: 3);
       final constructed = _construct([
         <String, Object?>{'chart': chart, 'options': options},
       ]);
       expect(constructed, isA<Tooltip>());
       final value = constructed! as Tooltip;
       expect(value.chart, same(chart));
-      expect(value.options, same(options));
+      final resolved = value.options! as TooltipOptions;
+      expect(resolved.enabled, isTrue);
+      expect(resolved.caretSize, 3);
+      expect(resolved.boxWidth, 12);
+      expect(resolved.boxHeight, 12);
     });
 
     test('new Tooltip() and new Tooltip(undefined) throw a TypeError', () {
@@ -907,21 +933,30 @@ void main() {
 
     test('the plugin has the hooks and the keys of the upstream object', () {
       // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
-      // object are its hooks, and `id`, `defaults`, `defaultRoutes`,
-      // `descriptors` and `additionalOptionScopes` its fields. `_element` is
-      // no field: the class is `Tooltip.jsClass`. The port has no table of
-      // positioners (row `adapt-tooltip-positioner-objects`).
+      // object are its hooks, and `id`, `defaults` and
+      // `additionalOptionScopes` its fields. `_element` is no field: the
+      // class is `Tooltip.jsClass`. The port has no table of positioners
+      // (row `adapt-tooltip-positioner-objects`). The upstream keys
+      // `defaultRoutes` and `descriptors` have no field: their fallbacks are
+      // Dart code of Tooltip._resolved (Chart.js ADR 0192).
       expect(pluginHookNames(tooltip), _upstreamHooks);
       expect(tooltip.id, 'tooltip');
-      expect(tooltip.defaultRoutes, isNotNull);
-      expect(tooltip.descriptors, isNotNull);
+      expect(tooltip.defaultRoutes, isNull);
+      expect(tooltip.descriptors, isNull);
       expect(tooltip.additionalOptionScopes, ['interaction']);
-      final defaults = tooltip.defaults! as JsObjectFace;
-      expect(jsObjectKeys(defaults), _upstreamDefaultsKeys);
-      expect(
-        _callbackNamesOf(defaults['callbacks']! as TooltipCallbacks),
-        _callbackNames,
-      );
+      final defaults = tooltip.defaults! as TooltipOptions;
+      // Each key of the upstream defaults is a set field, except `external`
+      // (upstream `null`) and `boxHeight` and `boxWidth` (upstream the
+      // functions of the size of the body font, which Tooltip._resolved
+      // gives). Each other field is not set.
+      const unset = {'external', 'boxHeight', 'boxWidth'};
+      final fields = tooltipOptionFields(defaults);
+      expect(fields.keys, containsAll(_upstreamDefaultsKeys));
+      for (final MapEntry(:key, :value) in fields.entries) {
+        final set = _upstreamDefaultsKeys.contains(key) && !unset.contains(key);
+        expect(value != null, set, reason: key);
+      }
+      expect(_callbackNamesOf(defaults.callbacks!), _callbackNames);
     });
   });
 
@@ -1154,15 +1189,17 @@ void main() {
       TooltipModel? self;
       List<Object?>? args;
       final chart = acquireChartRoot(
-        _probeChart(<String, Object?>{
-          'position': _TestPositioner((tooltip, items, eventPosition) {
-            self = tooltip;
-            args = [items.isNotEmpty, jsGet(eventPosition, 'x')];
-            return TooltipPosition()
-              ..x = 10
-              ..y = 20;
-          }),
-        }),
+        _probeChart(
+          tooltip: TooltipOptions(
+            position: _TestPositioner((tooltip, items, eventPosition) {
+              self = tooltip;
+              args = [items.isNotEmpty, jsGet(eventPosition, 'x')];
+              return TooltipPosition()
+                ..x = 10
+                ..y = 20;
+            }),
+          ),
+        ),
       );
       _activate(chart);
       final t = _tooltipOf(chart);
@@ -1180,15 +1217,17 @@ void main() {
       // The probe output `pos_fixedAlign`: x 44.962890625, y 46.2, caretX
       // 100, caretY 100, xAlign right, yAlign bottom.
       final chart = acquireChartRoot(
-        _probeChart(<String, Object?>{
-          'position': _TestPositioner(
-            (tooltip, items, eventPosition) => TooltipPosition()
-              ..x = 100
-              ..y = 100
-              ..xAlign = TooltipXAlign.right
-              ..yAlign = TooltipYAlign.bottom,
+        _probeChart(
+          tooltip: TooltipOptions(
+            position: _TestPositioner(
+              (tooltip, items, eventPosition) => TooltipPosition()
+                ..x = 100
+                ..y = 100
+                ..xAlign = TooltipXAlign.right
+                ..yAlign = TooltipYAlign.bottom,
+            ),
           ),
-        }),
+        ),
       );
       _activate(chart);
       final t = _tooltipOf(chart);
@@ -1204,11 +1243,13 @@ void main() {
       // The probe output `pos_empty`: x NaN, y NaN, caretX and caretY
       // undefined, xAlign right, yAlign center.
       final chart = acquireChartRoot(
-        _probeChart(<String, Object?>{
-          'position': _TestPositioner(
-            (tooltip, items, eventPosition) => TooltipPosition(),
+        _probeChart(
+          tooltip: TooltipOptions(
+            position: _TestPositioner(
+              (tooltip, items, eventPosition) => TooltipPosition(),
+            ),
           ),
-        }),
+        ),
       );
       _activate(chart);
       final t = _tooltipOf(chart);
@@ -1225,13 +1266,15 @@ void main() {
       // caretY '50', y 26.6). The write by name of caretX throws (Chart.js
       // ADR 0039, section 5).
       final chart = acquireChartRoot(
-        _probeChart(<String, Object?>{
-          'position': _TestPositioner(
-            (tooltip, items, eventPosition) => TooltipPosition()
-              ..x = '100'
-              ..y = '50',
+        _probeChart(
+          tooltip: TooltipOptions(
+            position: _TestPositioner(
+              (tooltip, items, eventPosition) => TooltipPosition()
+                ..x = '100'
+                ..y = '50',
+            ),
           ),
-        }),
+        ),
       );
       expect(() => _activate(chart), throwsA(isA<ArgumentError>()));
     });
@@ -1245,13 +1288,15 @@ void main() {
       // writes of opacity, x, y, width and height (Chart.js ADR 0039,
       // section 5).
       final chart = acquireChartRoot(
-        _probeChart(<String, Object?>{
-          'position': _TestPositioner(
-            (tooltip, items, eventPosition) => TooltipPosition()
-              ..x = null
-              ..y = null,
+        _probeChart(
+          tooltip: TooltipOptions(
+            position: _TestPositioner(
+              (tooltip, items, eventPosition) => TooltipPosition()
+                ..x = null
+                ..y = null,
+            ),
           ),
-        }),
+        ),
       );
       expect(() => _activate(chart), throwsA(isA<ArgumentError>()));
       final t = _tooltipOf(chart);
@@ -1277,16 +1322,16 @@ void main() {
       // second throw of Animation.cancel.
       final chart = acquireChartRoot(
         _probeChart(
-          <String, Object?>{
-            'position': _TestPositioner(
+          tooltip: TooltipOptions(
+            position: _TestPositioner(
               (tooltip, items, eventPosition) => TooltipPosition()
                 ..x = null
                 ..y = null,
             ),
-          },
-          <String, Object?>{
-            'animation': <String, Object?>{'duration': 1000},
-          },
+          ),
+          animation: const ChartAnimation(
+            duration: Duration(milliseconds: 1000),
+          ),
         ),
       );
       _activate(chart);
@@ -1361,9 +1406,11 @@ void main() {
         ]) {
       testWidgets('a title callback: $name', (tester) async {
         final chart = acquireChartRoot(
-          _probeChart(<String, Object?>{
-            'callbacks': TooltipCallbacks(title: callback),
-          }),
+          _probeChart(
+            tooltip: TooltipOptions(
+              callbacks: TooltipCallbacks(title: callback),
+            ),
+          ),
         );
         _activate(chart);
         final t = _tooltipOf(chart);
@@ -1378,8 +1425,7 @@ void main() {
     }
 
     test('default callbacks expose native fields', () {
-      final callbacks =
-          (tooltip.defaults! as JsObjectFace)['callbacks']! as TooltipCallbacks;
+      final callbacks = (tooltip.defaults! as TooltipOptions).callbacks!;
       expect(callbacks.labelTextColor, isNotNull);
       expect(callbacks.title, isNotNull);
     });
@@ -1421,27 +1467,19 @@ void main() {
     ) async {
       // The probe output `datasetMode`: title [d], body [['1: 10'],
       // ['undefined: 20']].
-      final chart = acquireChartRoot(
-        ChartConfigurationScope()
-          ..type = 'line'
-          ..data = mergeExtra(ChartDataScope(), <String, Object?>{
-            'labels': <Object?>[1, null],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'label': 'd',
-                'data': <Object?>[10, 20],
-              },
-            ],
-          })
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
-            'plugins': <String, Object?>{
-              'legend': false,
-              'tooltip': <String, Object?>{
-                'mode': const DatasetInteractionMode(),
-              },
-            },
-          }),
-      );
+      final config = ChartConfigLowering(
+        const ChartConfig(
+          datasets: [
+            LineDataset(label: 'd', data: .values([10, 20])),
+          ],
+          pluginOptions: [TooltipOptions(mode: DatasetInteractionMode())],
+          disabledPlugins: [PluginOff<LegendPlugin>()],
+        ),
+      ).lower();
+      // The typed labels have no null label: the labels of the probe go
+      // into the lowered data.
+      (jsGet(config, 'data')! as ChartDataScope).labels = <Object?>[1, null];
+      final chart = acquireChartRoot(config);
       final t = _tooltipOf(chart)
         ..setActiveElements([
           const ActiveElement(datasetIndex: 0, index: 0),
@@ -1465,40 +1503,26 @@ void main() {
       // ['#fff', 'red'], width 66.037109375, height 79.6,
       // x 273.00732421875, y 207.09999999999997.
       final chart = acquireChartRoot(
-        ChartConfigurationScope()
-          ..type = 'line'
-          ..data = mergeExtra(ChartDataScope(), <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'label': 'one',
-                'data': <Object?>[10, 20, 30],
-              },
-              <String, Object?>{
-                'label': 'two',
-                'data': <Object?>[5, 15, 25],
-                'tooltip': <String, Object?>{
-                  'callbacks': TooltipCallbacks(
-                    label: (tooltip, item) => ['D1 ${item.formattedValue}'],
-                    beforeLabel: (tooltip, arg) => 'pre'.split('\n'),
-                    labelTextColor: (tooltip, arg) => const ChartPaint.solid(
-                      native_ui.Color.fromRGBO(255, 0, 0, 1),
-                    ),
-                    title: (tooltip, arg) => 'not used'.split('\n'),
-                  ),
-                },
-              },
-            ],
-          })
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
-            'plugins': <String, Object?>{
-              'legend': false,
-              'tooltip': <String, Object?>{
-                'mode': const IndexInteractionMode(),
-                'intersect': false,
-              },
-            },
-          }),
+        _probeChart(
+          tooltip: const TooltipOptions(
+            mode: IndexInteractionMode(),
+            intersect: false,
+          ),
+          more: [
+            LineDataset(
+              label: 'two',
+              data: const .values([5, 15, 25]),
+              tooltipCallbacks: TooltipCallbacks(
+                label: (tooltip, item) => ['D1 ${item.formattedValue}'],
+                beforeLabel: (tooltip, arg) => 'pre'.split('\n'),
+                labelTextColor: (tooltip, arg) => const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+                ),
+                title: (tooltip, arg) => 'not used'.split('\n'),
+              ),
+            ),
+          ],
+        ),
       );
       final t = _tooltipOf(chart)
         ..setActiveElements([
@@ -1532,9 +1556,11 @@ void main() {
     ) async {
       // The probe output `titleNoop`: title [B].
       final chart = acquireChartRoot(
-        _probeChart(<String, Object?>{
-          'callbacks': TooltipCallbacks(title: (tooltip, arg) => null),
-        }),
+        _probeChart(
+          tooltip: TooltipOptions(
+            callbacks: TooltipCallbacks(title: (tooltip, arg) => null),
+          ),
+        ),
       );
       _activate(chart);
       expect(_tooltipOf(chart).title, ['B']);
@@ -1549,9 +1575,11 @@ void main() {
       // width, y, x, opacity; `_cachedAnimations` undefined; `_cacheable`
       // false on the options and on `options.animations`.
       final chart = acquireChartRoot(
-        _probeChart(null, <String, Object?>{
-          'animation': <String, Object?>{'duration': 1000},
-        }),
+        _probeChart(
+          animation: const ChartAnimation(
+            duration: Duration(milliseconds: 1000),
+          ),
+        ),
       );
       final t = _tooltipOf(chart);
       _activate(chart);
@@ -1565,13 +1593,11 @@ void main() {
         'opacity',
       ]);
       expect(identical(t['_cachedAnimations'], undefined), isTrue);
-      final options =
-          callDroppingExtraArgs(jsGet(t.options, 'setContext'), [
-                t.getContext(),
-              ])!
-              as JsObjectFace;
-      expect(jsGet(options, '_cacheable'), false);
-      expect(jsGet(jsGet(options, 'animations'), '_cacheable'), false);
+      // The `_cacheable` false of the context resolver: the port has no
+      // resolver (Chart.js ADR 0192), and a second update writes no cache
+      // either.
+      _activate(chart, 2);
+      expect(identical(t['_cachedAnimations'], undefined), isTrue);
 
       // After the end of the animations, $animations keeps its entries
       // (Chart.js ADR 0039, section 13 item 2).
@@ -1581,28 +1607,29 @@ void main() {
       expect(t.opacity, 1);
     });
 
-    test('options without a context cache and freeze the animations', () {
-      // plugin.tooltip.js:518-520 runs only for options whose `_cacheable`
-      // is truthy (js-semantics-object-freeze). A plain Map with a
-      // `setContext` function stands for options without a context.
-      final options = <String, Object?>{};
-      options.addAll(<String, Object?>{
-        'setContext': () => options,
-        'enabled': true,
-        'animations': <String, Object?>{'_cacheable': true},
-      });
+    test('a cache written by name serves each update until initialize', () {
+      // plugin.tooltip.js:510-512 returns `_cachedAnimations` when it is
+      // set, and initialize clears it (:500). The port writes no cache of its
+      // own (the `_cacheable` false of a chart, Chart.js ADR 0192), so the
+      // test writes it by name. The animations are off: the fake chart has
+      // no canvas for an animation.
+      const options = TooltipOptions(
+        enabled: true,
+        animation: TooltipAnimation.off,
+      );
       final t = Tooltip((chart: _CacheChart(), options: null))
         ..initialize(options)
         ..['opacity'] = 1.0;
       t.update();
-      final cached = t['_cachedAnimations'];
-      expect(cached, isA<Animations>());
-      expect(cached, isNot(isA<JsFreezable>()));
+      expect(identical(t['_cachedAnimations'], undefined), isTrue);
       expect(t.opacity, 0);
+      final cached = Animations(t.chart, false);
       t
+        ..['_cachedAnimations'] = cached
         ..['opacity'] = 1.0
         ..update();
       expect(t['_cachedAnimations'], same(cached));
+      expect(t.opacity, 0);
       // initialize clears the cache.
       t.initialize(options);
       expect(identical(t['_cachedAnimations'], undefined), isTrue);
@@ -1632,8 +1659,8 @@ void main() {
     List<String> drawOrder({bool cancel = false}) {
       final order = <String>[];
       final chart = acquireChartRoot(
-        _probeChart()
-          ..['plugins'] = <Plugin<Object?>>[
+        _probeChart(
+          plugins: [
             // The keys of the arguments of upstream are `tooltip` and, before
             // the draw, `cancelable`: the native arguments (Chart.js ADR 0144)
             // have the field `tooltip`, and the kind of the hook is the
@@ -1661,6 +1688,7 @@ void main() {
               },
             ),
           ],
+        ),
       );
       _activate(chart);
       order.clear();
@@ -1695,10 +1723,11 @@ void main() {
     testWidgets('plugins.tooltip false gives no chart.tooltip', (tester) async {
       // The probe output `optionsFalse`: no tooltip, also after the enable
       // and update(): only afterInit writes chart.tooltip.
-      final chart = acquireChartRoot(_probeChart(false));
+      final chart = acquireChartRoot(_probeChart(tooltipOff: true));
       expect(chart.tooltip, isNull);
+      // The native form of the `{}` of the probe (Chart.js ADR 0192).
       (jsGet(chart.options, 'plugins')! as JsObjectFace)['tooltip'] =
-          <String, Object?>{};
+          const TooltipOptions();
       chart.update();
       expect(chart.tooltip, isNull);
     });
@@ -1715,16 +1744,20 @@ void main() {
       final chart = acquireChartRoot(_probeChart());
       final t = _tooltipOf(chart);
       final options = t.options;
-      t
-        ..initialize(<String, Object?>{})
-        // A typed context in place of `{}` (row `adapt-typed-contexts`).
-        ..[r'$context'] = ScriptableTooltipContext(
-          null,
-          tooltip: null,
-          tooltipItems: null,
-        );
+      // The native form of `initialize({})` (Chart.js ADR 0192).
+      t.initialize(const TooltipOptions());
+      expect(t.options, isNot(equals(options)));
+      // A typed context in place of `{}` (row `adapt-typed-contexts`).
+      t[r'$context'] = ScriptableTooltipContext(
+        null,
+        tooltip: null,
+        tooltipItems: null,
+      );
       chart.reset();
-      expect(identical(t.options, options), isTrue);
+      // The resolved options of the plugin options again: an equal object,
+      // because the tooltip resolves the merged options at each initialize
+      // (Tooltip._resolved), where upstream gets the cached resolver.
+      expect(t.options, equals(options));
       expect(identical(t[r'$context'], undefined), isTrue);
     });
   });
@@ -1738,11 +1771,13 @@ void main() {
       final entries = <String>[];
       late final Chart chart;
       chart = acquireChartRoot(
-        _probeChart(<String, Object?>{
-          'external': (TooltipModel tooltip, bool replay) {
-            entries.add('$replay ${identical(tooltip, chart.tooltip)}');
-          },
-        }),
+        _probeChart(
+          tooltip: TooltipOptions(
+            external: (tooltip, replay) {
+              entries.add('$replay ${identical(tooltip, chart.tooltip)}');
+            },
+          ),
+        ),
       );
       final point = chart.getDatasetMeta(0).data[1];
       await triggerMouseEvent(chart, 'mousemove', point);
@@ -1783,16 +1818,13 @@ void main() {
     // build in Node.js v24.12.0 on x64), on the probe chart with a second
     // dataset `two` (data 1, 2 and 3), mode index, intersect false, and the
     // items {datasetIndex: 0, index: 1} and {datasetIndex: 1, index: 1}.
-    ChartConfigurationScope twoDatasets(AnyObject tooltipOptions) {
-      final config = _probeChart(tooltipOptions);
-      (jsGet(config['data'], 'datasets')! as List<Object?>).add(
-        <String, Object?>{
-          'label': 'two',
-          'data': <Object?>[1, 2, 3],
-        },
-      );
-      return config;
-    }
+    ChartConfigurationScope twoDatasets(TooltipOptions tooltipOptions) =>
+        _probeChart(
+          tooltip: tooltipOptions,
+          more: [
+            const LineDataset(label: 'two', data: .values([1, 2, 3])),
+          ],
+        );
 
     void activateBoth(Chart chart) => _tooltipOf(chart).setActiveElements(
       [
@@ -1809,30 +1841,26 @@ void main() {
       // itemSort call.
       final seen = <List<Object?>>[];
       final chart = acquireChartRoot(
-        twoDatasets(<String, Object?>{
-          'mode': const IndexInteractionMode(),
-          'intersect': false,
-          'filter':
-              (
-                TooltipItem item,
-                int index,
-                List<TooltipItem> items,
-                Object data,
-              ) {
-                seen.add([
-                  'filter',
-                  item.datasetIndex,
-                  index,
-                  items.length,
-                  identical(items[index], item),
-                ]);
-                return true;
-              },
-          'itemSort': (TooltipItem a, TooltipItem b, Object data) {
-            seen.add(['itemSort', identical(data, a.chart.data)]);
-            return 0;
-          },
-        }),
+        twoDatasets(
+          TooltipOptions(
+            mode: const IndexInteractionMode(),
+            intersect: false,
+            filter: (item, index, items, data) {
+              seen.add([
+                'filter',
+                item.datasetIndex,
+                index,
+                items.length,
+                identical(items[index], item),
+              ]);
+              return true;
+            },
+            itemSort: (a, b, data) {
+              seen.add(['itemSort', identical(data, a.chart.data)]);
+              return 0;
+            },
+          ),
+        ),
       );
       activateBoth(chart);
       expect(seen, [
@@ -1848,18 +1876,14 @@ void main() {
       // The probe output `readsThis`: the data points [1, 0] and the body
       // [[two: 2], [one: 20]].
       final chart = acquireChartRoot(
-        twoDatasets(<String, Object?>{
-          'mode': const IndexInteractionMode(),
-          'intersect': false,
-          'filter': (
-            TooltipItem item,
-            int index,
-            List<TooltipItem> items,
-            Object data,
-          ) => true,
-          'itemSort': (TooltipItem a, TooltipItem b, Object data) =>
-              b.datasetIndex - a.datasetIndex,
-        }),
+        twoDatasets(
+          TooltipOptions(
+            mode: const IndexInteractionMode(),
+            intersect: false,
+            filter: (item, index, items, data) => true,
+            itemSort: (a, b, data) => b.datasetIndex - a.datasetIndex,
+          ),
+        ),
       );
       activateBoth(chart);
       final t = _tooltipOf(chart);
@@ -1876,12 +1900,11 @@ void main() {
       'an RTL legend does not change the following tooltip direction',
       (tester) async {
         final chart = acquireChartRoot(
-          _probeChart(null, {
-            'plugins': {
-              'legend': {'textDirection': native_ui.TextDirection.rtl},
-              'tooltip': <String, Object?>{},
-            },
-          }),
+          _probeChart(
+            legend: const ChartLegend(
+              textDirection: native_ui.TextDirection.rtl,
+            ),
+          ),
         );
         _activate(chart);
         final ctx = _StyleContext()..direction = native_ui.TextDirection.ltr;
@@ -1909,7 +1932,7 @@ void main() {
         tester,
       ) async {
         final chart = acquireChartRoot(
-          _probeChart(<String, Object?>{'textDirection': direction}),
+          _probeChart(tooltip: TooltipOptions(textDirection: direction)),
         );
         _activate(chart);
         final tooltip = _tooltipOf(chart);
@@ -1947,7 +1970,11 @@ void main() {
       tester,
     ) async {
       final chart = acquireChartRoot(
-        _probeChart({'textDirection': native_ui.TextDirection.rtl}),
+        _probeChart(
+          tooltip: const TooltipOptions(
+            textDirection: native_ui.TextDirection.rtl,
+          ),
+        ),
       );
       _activate(chart);
       final ctx = _StyleContext()

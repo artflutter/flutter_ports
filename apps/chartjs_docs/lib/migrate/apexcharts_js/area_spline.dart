@@ -47,14 +47,13 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   // just before its dataset by default: the first area would cover the
   // second line.
   filler: const ChartFiller(drawTime: .beforeDatasetsDraw),
-  tooltip: apexTooltip(),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
-  pluginOptions: [zoom.options],
+  pluginOptions: [apexTooltip(), zoom.options],
   scales: [
     // xaxis: {type: 'datetime'}, and tooltip.x.format: 'dd/MM/yy HH:mm'.
     const TimeAxis(

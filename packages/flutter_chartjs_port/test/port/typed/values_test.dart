@@ -45,7 +45,7 @@ void main() {
   group('InteractionMode', () {
     test('the dot shorthands give the mode objects of the core', () {
       const interaction = ChartInteraction(mode: IndexInteractionMode());
-      const tooltip = ChartTooltip(mode: DatasetInteractionMode());
+      const tooltip = TooltipOptions(mode: DatasetInteractionMode());
       expect(interaction.mode, same(const IndexInteractionMode()));
       expect(tooltip.mode, same(const DatasetInteractionMode()));
       expect(

@@ -40,7 +40,7 @@ final ChartConfig _config = fills(
         borderColor: .constant(.solid(Fl.red)),
       ),
     ],
-    tooltip: const ChartTooltip(enabled: false),
+    pluginOptions: const [TooltipOptions(enabled: false)],
     events: const [],
     scales: [
       const CategoryAxis(

@@ -38,12 +38,14 @@ final ChartConfig _config = ChartConfig(
   legend: const ChartLegend(display: false),
   // TooltipBehavior(enable: true): the series name, a marker and the point.
   // The tooltip takes the front column under the pointer.
-  tooltip: sfTooltip(
-    header: true,
-    mode: const PointInteractionMode(),
-    filter: (item, index, items, data) => index == 0,
-    text: (item) => '${item.label.join(' ')} : ${sfCompact(sfValue(item))}',
-  ),
+  pluginOptions: [
+    sfTooltip(
+      header: true,
+      mode: const PointInteractionMode(),
+      filter: (item, index, items, data) => index == 0,
+      text: (item) => '${item.label.join(' ')} : ${sfCompact(sfValue(item))}',
+    ),
+  ],
   plugins: [sfTooltipLook],
   scales: [
     sfCategoryAxis(),

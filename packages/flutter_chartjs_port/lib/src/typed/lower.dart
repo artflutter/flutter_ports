@@ -294,9 +294,6 @@ final class ChartConfigLowering(
     if (config.subtitle case final subtitle?) {
       plugins.subtitle = lowerTitle(subtitle);
     }
-    if (config.tooltip case final tooltip?) {
-      plugins.tooltip = lowerTooltip(tooltip, this);
-    }
     if (config.filler case final filler?) plugins.filler = lowerFiller(filler);
     // The options objects of add-on plugins, each under its plugin id
     // (Chart.js ADR 0148).

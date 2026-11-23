@@ -80,11 +80,6 @@ final ChartConfig _config = ChartConfig(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
-  tooltip: graphicTooltip(
-    position: const CenterPositioner(),
-    title: _index,
-    label: _typeValue,
-  ),
   plugins: [
     // `RectShape(labelPosition: 0.5)`: the label in the middle of the bar.
     barLabels(
@@ -98,7 +93,14 @@ final ChartConfig _config = ChartConfig(
     zoomPlugin,
     tapSelection(onDoubleTap: resetRange),
   ],
-  pluginOptions: const [horizontalRange],
+  pluginOptions: [
+    graphicTooltip(
+      position: const CenterPositioner(),
+      title: _index,
+      label: _typeValue,
+    ),
+    horizontalRange,
+  ],
   events: const ['click'],
 );
 

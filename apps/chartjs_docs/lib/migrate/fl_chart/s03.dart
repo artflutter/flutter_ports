@@ -42,6 +42,23 @@ final List<Plugin<Object?>> _plugins = [
   areaBorder(Fl.white54),
 ];
 
+/// Only the points between the first and the last day.
+bool _inner(
+  TooltipItem item,
+  int index,
+  List<TooltipItem> items,
+  Object data,
+) => item.dataIndex != 0 && item.dataIndex != 6;
+
+/// The day of the first item, as the title of the tooltip.
+List<String>? _tooltipTitle(TooltipModel tooltip, List<TooltipItem> items) =>
+    items.isEmpty ? null : items.first.label;
+
+/// The value in k calories, as the label of the tooltip.
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) => [
+  '${item.formattedValue} k calories',
+];
+
 class const Sample3({super.key}) extends StatefulWidget {
   @override
   State<Sample3> createState() => _Sample3State();
@@ -100,20 +117,21 @@ class _Sample3State() extends State<Sample3> {
       ],
       onHover: _hover,
       interaction: const ChartInteraction(mode: flX, intersect: false),
-      tooltip: ChartTooltip(
-        backgroundColor: const ChartPaint.solid(Fl.green),
-        titleColor: const ChartPaint.solid(Colors.black),
-        bodyColor: const ChartPaint.solid(Colors.black),
-        displayColors: false,
-        titleFont: const TextStyle(fontWeight: FontWeight.bold),
-        bodyFont: const TextStyle(fontWeight: FontWeight.w900),
-        filter: (item, index, items, data) =>
-            item.dataIndex != 0 && item.dataIndex != 6,
-        callbacks: TooltipCallbacks(
-          title: (tooltip, items) => items.isEmpty ? null : items.first.label,
-          label: (tooltip, item) => ['${item.formattedValue} k calories'],
+      pluginOptions: const [
+        TooltipOptions(
+          backgroundColor: ChartPaint.solid(Fl.green),
+          titleColor: ChartPaint.solid(Colors.black),
+          bodyColor: ChartPaint.solid(Colors.black),
+          displayColors: false,
+          titleFont: TextStyle(fontWeight: FontWeight.bold),
+          bodyFont: TextStyle(fontWeight: FontWeight.w900),
+          filter: _inner,
+          callbacks: TooltipCallbacks(
+            title: _tooltipTitle,
+            label: _tooltipLabel,
+          ),
         ),
-      ),
+      ],
       plugins: _plugins,
       scales: [
         CategoryAxis(

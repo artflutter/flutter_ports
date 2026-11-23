@@ -725,6 +725,50 @@ void _wrapFunctions(Object? value, String path, List<String> trace) {
 /// The recorder of [value] when it is a function with an exact arity, else
 /// Dart `null`.
 Object? _wrapped(Object? value, String path, List<String> trace) {
+  // The tooltip options are one TooltipOptions (Chart.js ADR 0192): trace
+  // each function field with the path of its field. `scripted` stands for
+  // the scriptable options of the Map: it gets the context, as they did.
+  if (value is TooltipOptions) {
+    final scripted = value.scripted;
+    final external = value.external;
+    final filter = value.filter;
+    final itemSort = value.itemSort;
+    final callbacks = value.callbacks;
+    return value.merge(
+      TooltipOptions(
+        scripted: scripted == null
+            ? null
+            : (context, options) {
+                trace.add(_traceLine('$path.scripted', [context]));
+                return scripted(context, options);
+              },
+        external: external == null
+            ? null
+            : (tooltip, replay) {
+                trace.add(_traceLine('$path.external', [replay]));
+                external(tooltip, replay);
+              },
+        filter: filter == null
+            ? null
+            : (item, index, items, data) {
+                trace.add(
+                  _traceLine('$path.filter', [item, index.toDouble(), data]),
+                );
+                return filter(item, index, items, data);
+              },
+        itemSort: itemSort == null
+            ? null
+            : (a, b, data) {
+                trace.add(_traceLine('$path.itemSort', [a, b, data]));
+                return itemSort(a, b, data);
+              },
+        callbacks: callbacks == null
+            ? null
+            : _wrapped(callbacks, '$path.callbacks', trace)!
+                  as TooltipCallbacks,
+      ),
+    );
+  }
   // The explicit tooltip is the former JS this; trace its item argument.
   if (value is TooltipCallbacks) {
     return TooltipCallbacks(
@@ -1575,11 +1619,16 @@ final List<_Case> _focusedCases = [
         },
         'interaction': <String, Object?>{'axis': InteractionAxis.x},
         'plugins': <String, Object?>{
-          'tooltip': <String, Object?>{
-            'backgroundColor': (Object? ctx) =>
-                const ChartPaint.solid(native_ui.Color.fromRGBO(1, 2, 3, 0.5)),
-            'callbacks': TooltipCallbacks(label: (tooltip, item) => ['item']),
-          },
+          // The scriptable backgroundColor of the Map model is the result
+          // of `scripted` (Chart.js ADR 0192).
+          'tooltip': TooltipOptions(
+            scripted: (context, options) => const TooltipOptions(
+              backgroundColor: ChartPaint.solid(
+                native_ui.Color.fromRGBO(1, 2, 3, 0.5),
+              ),
+            ),
+            callbacks: TooltipCallbacks(label: (tooltip, item) => ['item']),
+          ),
           'legend': <String, Object?>{
             'labels': <String, Object?>{
               'font': (Object? ctx) => const ChartTextStyle(fontSize: 11),

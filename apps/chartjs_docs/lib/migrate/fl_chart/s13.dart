@@ -131,7 +131,7 @@ class _Sample13State() extends State<Sample13> {
       ],
       onHover: _hover,
       interaction: const ChartInteraction(mode: flX, intersect: false),
-      tooltip: const ChartTooltip(enabled: false),
+      pluginOptions: const [TooltipOptions(enabled: false)],
       plugins: [_errorBars],
       scales: [
         LinearAxis(

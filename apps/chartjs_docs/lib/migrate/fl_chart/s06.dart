@@ -43,6 +43,19 @@ List<String>? _hideBottom(
   List<Tick> ticks,
 ) => [if (value == 6) '' else '${value.toInt()}'];
 
+/// The text color of a label: the color of its line.
+ChartPaint _labelTextColor(TooltipModel tooltip, TooltipItem item) =>
+    ChartPaint.solid(item.datasetIndex == 0 ? _orange : Fl.blue);
+
+/// The title of the tooltip: null keeps the title of Chart.js.
+List<String>? _tooltipTitle(TooltipModel tooltip, List<TooltipItem> items) =>
+    null;
+
+/// The label of the tooltip: the value alone.
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) => [
+  item.formattedValue,
+];
+
 final ChartConfig _config = fills(
   ChartConfig(
     datasets: [
@@ -53,18 +66,19 @@ final ChartConfig _config = fills(
       mode: NearestInteractionMode(),
       intersect: true,
     ),
-    tooltip: ChartTooltip(
-      backgroundColor: const ChartPaint.solid(Colors.white),
-      cornerRadius: 0,
-      displayColors: false,
-      bodyFont: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      callbacks: TooltipCallbacks(
-        labelTextColor: (tooltip, item) =>
-            ChartPaint.solid(item.datasetIndex == 0 ? _orange : Fl.blue),
-        title: (tooltip, _) => null,
-        label: (tooltip, i) => [i.formattedValue],
+    pluginOptions: const [
+      TooltipOptions(
+        backgroundColor: ChartPaint.solid(Colors.white),
+        cornerRadius: BorderRadius.zero,
+        displayColors: false,
+        bodyFont: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        callbacks: TooltipCallbacks(
+          labelTextColor: _labelTextColor,
+          title: _tooltipTitle,
+          label: _tooltipLabel,
+        ),
       ),
-    ),
+    ],
     scales: [
       LinearAxis(
         .x,

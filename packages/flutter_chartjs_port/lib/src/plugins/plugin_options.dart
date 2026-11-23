@@ -12,6 +12,11 @@
 /// option gives its value at that read. Each hook of the update gets the
 /// same object. A field that still holds the raw value says why.
 ///
+/// The tooltip is the exception (Chart.js ADR 0192): [TooltipOptions] is one
+/// immutable `PluginOptions` object with a nullable field for each option,
+/// which the plugin service merges from the defaults to the chart, and the
+/// tooltip resolves the fallbacks of upstream itself.
+///
 /// A class takes the name of its `index.d.ts` interface (`LegendOptions`,
 /// `TitleOptions`, `TooltipOptions`, `FillerOptions`, `DecimationOptions`)
 /// or a port-only name for an inline type of `index.d.ts`
@@ -588,330 +593,476 @@ final class const LegendTitleOptions({
   String toString() => 'LegendTitleOptions(display: $display, text: $text)';
 }
 
-/// `TooltipOptions` (`index.d.ts`): the resolved options of the tooltip
-/// plugin (`plugin.tooltip.js:1275-1325`), with the keys of the
-/// `interaction` scope that the tooltip reads (`mode`, `reverse`).
+/// `TooltipOptions` (`index.d.ts:2795`): the options of the tooltip plugin
+/// (`plugin.tooltip.js:1275-1325`), one immutable object with one nullable
+/// field for each option (Chart.js ADR 0192). A null field is not set.
 ///
-/// The plugin makes one object from the resolved options of each update
-/// ([TooltipOptions.of]). The tooltip resolves its options again with its
-/// own context where upstream calls `setContext` (plugin.tooltip.js:515).
+/// An app gives the options in `ChartConfig.pluginOptions`, or in
+/// `options.plugins.tooltip` of a raw config. A Map there stops a debug
+/// build. The plugin service merges the options of the defaults, the theme
+/// and the chart from the defaults to the chart ([merge]), as for the
+/// options of an add-on (Chart.js ADR 0148): no resolver runs. The tooltip
+/// then fills [mode], [intersect], [axis] and [includeInvisible] from
+/// `options.interaction` (the `additionalOptionScopes` of upstream), merges
+/// the three fonts over `Chart.defaults.font` (the `defaultRoutes` of
+/// upstream), gives [boxWidth] and [boxHeight] the size of [bodyFont], and
+/// merges the result of [scripted] at each read with its context.
 ///
 /// ```dart
-/// final options = TooltipOptions.of({'enabled': false, 'caretSize': 5});
-/// print(options.caretSize); // 5.0
+/// ChartConfig(
+///   datasets: [LineDataset(data: .values([3, 5, 2]))],
+///   pluginOptions: const [
+///     TooltipOptions(mode: IndexInteractionMode(), intersect: false),
+///   ],
+/// );
 /// ```
-// DIVERGES(chartjs): adapt-native-plugin-options, resolved values.
+// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
 @immutable
 final class const TooltipOptions({
-  /// `animations`, the raw value: `false` or the scope of the animations.
-  required final Object? animations,
+  /// `enabled`: whether the chart draws the tooltip. The default is `true`.
+  /// With `false`, an [external] function still gets each change.
+  final bool? enabled,
 
-  /// `backgroundColor`, the raw value: the canvas takes a paint or a Flutter
-  /// `Color`.
-  required final Object? backgroundColor,
+  /// `external`: the function that shows the tooltip of the app. The tooltip
+  /// calls it after an update that changed its state.
+  final TooltipExternal? external,
 
-  /// `bodyAlign`, a Flutter [TextAlign] (row `adapt-flutter-text-align`).
-  required final TextAlign? bodyAlign,
+  /// `position`: the object that finds the position of the tooltip (row
+  /// `adapt-tooltip-positioner-objects`). The default is
+  /// `AverageTooltipPositioner()`.
+  final TooltipPositioner? position,
 
-  /// `bodyColor`, the raw value: the canvas takes a paint or a Flutter `Color`.
-  required final Object? bodyColor,
+  /// `backgroundColor`: the paint of the box.
+  final ChartPaint? backgroundColor,
 
-  /// `bodyFont`: the [toFont] of the option value.
-  required final ChartTextStyle bodyFont,
+  /// `titleColor`: the paint of the title text.
+  final ChartPaint? titleColor,
 
-  /// `bodySpacing`: its number.
-  required final double bodySpacing,
+  /// `titleFont`: the font of the title. The tooltip merges it over
+  /// `Chart.defaults.font` ([toFont], the route of
+  /// plugin.tooltip.js:1327-1331). The color of the font is not read: set
+  /// [titleColor].
+  final TextStyle? titleFont,
 
-  /// `borderColor`, the raw value: the canvas takes a paint or a Flutter
-  /// `Color`.
-  required final Object? borderColor,
+  /// `titleSpacing`: the space between two title lines, in pixels.
+  final double? titleSpacing,
 
-  /// `borderWidth`: Dart `null` for an absent value, else its number, as the
-  /// canvas setter `lineWidth` takes it ([canvasNumber]).
-  required final double? borderWidth,
+  /// `titleMarginBottom`: the space below the title, in pixels.
+  final double? titleMarginBottom,
 
-  /// `boxHeight`: its number.
-  required final double boxHeight,
+  /// `titleAlign`: the horizontal align of the title lines (row
+  /// `adapt-flutter-text-align`).
+  final TextAlign? titleAlign,
 
-  /// `boxPadding`: its number.
-  required final double boxPadding,
+  /// `bodyColor`: the paint of the label text.
+  final ChartPaint? bodyColor,
 
-  /// `boxWidth`: its number.
-  required final double boxWidth,
+  /// `bodySpacing`: the space between two label items, in pixels.
+  final double? bodySpacing,
 
-  /// `callbacks`.
-  required final TooltipCallbacks callbacks,
+  /// `bodyFont`: the font of the label lines, merged over `Chart.defaults.font`
+  /// as [titleFont].
+  final TextStyle? bodyFont,
 
-  /// `caretPadding`: its number.
-  required final double caretPadding,
+  /// `bodyAlign`: the horizontal align of the label lines.
+  final TextAlign? bodyAlign,
 
-  /// `caretSize`: its number.
-  required final double caretSize,
+  /// `footerColor`: the paint of the footer text.
+  final ChartPaint? footerColor,
 
-  /// `cornerRadius`: the corners of the number or the Flutter
-  /// [BorderRadius] of the option ([toTRBLCorners], row
+  /// `footerSpacing`: the space between two footer lines, in pixels.
+  final double? footerSpacing,
+
+  /// `footerMarginTop`: the space above the footer, in pixels.
+  final double? footerMarginTop,
+
+  /// `footerFont`: the font of the footer, merged over `Chart.defaults.font` as
+  /// [titleFont].
+  final TextStyle? footerFont,
+
+  /// `footerAlign`: the horizontal align of the footer lines.
+  final TextAlign? footerAlign,
+
+  /// `padding`: the space in the box around the text (Chart.js ADR 0123).
+  final EdgeInsets? padding,
+
+  /// `caretPadding`: the extra distance from the tip of the caret to the point
+  /// of the tooltip, in pixels.
+  final double? caretPadding,
+
+  /// `caretSize`: the size of the caret, in pixels.
+  final double? caretSize,
+
+  /// `cornerRadius`: the corners of the box (row
   /// `adapt-flutter-border-radius`).
-  required final BorderRadius cornerRadius,
+  final BorderRadius? cornerRadius,
 
-  /// `displayColors`.
-  required final bool displayColors,
+  /// `boxHeight`: the height of a color box, in pixels. Null gives the size of
+  /// [bodyFont] (plugin.tooltip.js:1303).
+  final double? boxHeight,
 
-  /// `enabled`.
-  required final bool enabled,
+  /// `boxWidth`: the width of a color box, in pixels. Null gives the size of
+  /// [bodyFont] (plugin.tooltip.js:1304).
+  final double? boxWidth,
 
-  /// `external`: the function itself, or Dart `null` for no function (row
-  /// `adapt-native-tooltip-item`).
-  required final TooltipExternal? external,
+  /// `multiKeyBackground`: the paint behind a color box.
+  final ChartPaint? multiKeyBackground,
 
-  /// `filter`: the function itself, or Dart `null` for no function (row
-  /// `adapt-native-tooltip-item`).
-  required final TooltipItemFilter? filter,
+  /// `displayColors`: whether each label line shows the color box of its item.
+  final bool? displayColors,
 
-  /// `footerAlign`, a Flutter [TextAlign] (row `adapt-flutter-text-align`).
-  required final TextAlign? footerAlign,
+  /// `boxPadding`: the space between a color box and its text, in pixels.
+  final double? boxPadding,
 
-  /// `footerColor`, the raw value: the canvas takes a paint or a Flutter
-  /// `Color`.
-  required final Object? footerColor,
+  /// `borderColor`: the paint of the border of the box.
+  final ChartPaint? borderColor,
 
-  /// `footerFont`: the [toFont] of the option value.
-  required final ChartTextStyle footerFont,
+  /// `borderWidth`: the width of the border of the box, in pixels.
+  final double? borderWidth,
 
-  /// `footerMarginTop`: its number.
-  required final double footerMarginTop,
+  /// `animation`: the animation of a change of the tooltip: the settings of
+  /// each property without an item of [animations]. [TooltipAnimation.off]
+  /// turns the animations of the tooltip off (`animation: false`).
+  final TooltipAnimation? animation,
 
-  /// `footerSpacing`: its number.
-  required final double footerSpacing,
+  /// `animations`: the animation of single properties of the tooltip:
+  /// [XAnimation], [YAnimation], [WidthAnimation], [HeightAnimation],
+  /// [CaretXAnimation], [CaretYAnimation] and [OpacityAnimation]. A parameter
+  /// that is null takes the value of [animation]. [merge] keeps each item whose
+  /// class the other options have no item of.
+  final List<PropertyAnimation>? animations,
 
-  /// `itemSort`: the function itself, or Dart `null` for no function (row
-  /// `adapt-native-tooltip-item`).
-  required final TooltipItemComparator? itemSort,
+  /// `callbacks`: the native callbacks of the text, the colors and the point
+  /// styles (Chart.js ADR 0125). [merge] merges them by field.
+  final TooltipCallbacks? callbacks,
 
-  /// `mode`: the mode itself, or Dart `null` for a value that is not a
-  /// mode (row `adapt-interaction-mode-objects`).
-  required final InteractionMode? mode,
+  /// `xAlign`: the place of the box beside its caret along x. Null gives the
+  /// place that the tooltip finds for its size.
+  final TooltipXAlign? xAlign,
 
-  /// `multiKeyBackground`, the raw value: the canvas takes a paint or a
-  /// Flutter `Color`.
-  required final Object? multiKeyBackground,
+  /// `yAlign`: the place of the box beside its caret along y. Null gives the
+  /// place that the tooltip finds for its size.
+  final TooltipYAlign? yAlign,
 
-  /// `padding`.
-  required final EdgeInsets padding,
+  /// `itemSort`: the order of two items. The sort is stable ([jsSort]).
+  final TooltipItemComparator? itemSort,
 
-  /// `position`: the positioner itself, or Dart `null` for a value that is
-  /// not a positioner (row `adapt-tooltip-positioner-objects`).
-  required final TooltipPositioner? position,
+  /// `filter`: whether the tooltip shows an item. It runs before [itemSort].
+  final TooltipItemFilter? filter,
 
-  /// `reverse`.
-  required final bool reverse,
+  /// `usePointStyle`: whether a color box is the point style of its item.
+  final bool? usePointStyle,
 
-  /// `rtl`.
-  required final bool rtl,
+  /// `rtl`: whether the tooltip draws from right to left.
+  final bool? rtl,
 
-  /// `textDirection`.
-  required final TextDirection? textDirection,
+  /// `textDirection`: the text direction of the canvas during the draw. Null
+  /// keeps the direction of the canvas (Chart.js ADR 0124).
+  final TextDirection? textDirection,
 
-  /// `titleAlign`, a Flutter [TextAlign] (row `adapt-flutter-text-align`).
-  required final TextAlign? titleAlign,
+  /// `mode` (`CoreInteractionOptions`, index.d.ts:1605): the items of the
+  /// tooltip. Null gives the `mode` of `options.interaction`.
+  final InteractionMode? mode,
 
-  /// `titleColor`, the raw value: the canvas takes a paint or a Flutter
-  /// `Color`.
-  required final Object? titleColor,
+  /// `intersect`: whether the tooltip shows only when the pointer is on an
+  /// item. Null gives the `intersect` of `options.interaction`.
+  final bool? intersect,
 
-  /// `titleFont`: the [toFont] of the option value.
-  required final ChartTextStyle titleFont,
+  /// `axis`: the axes of the distance from the event to an item. Null gives the
+  /// `axis` of `options.interaction`.
+  final InteractionAxis? axis,
 
-  /// `titleMarginBottom`: its number.
-  required final double titleMarginBottom,
+  /// `includeInvisible`: whether an event also hits the items outside the chart
+  /// area. Null gives the `includeInvisible` of `options.interaction`.
+  final bool? includeInvisible,
 
-  /// `titleSpacing`: its number.
-  required final double titleSpacing,
+  /// `reverse`: whether the tooltip reverses the order of its active items
+  /// (plugin.tooltip.js:1202).
+  final bool? reverse,
 
-  /// `usePointStyle`.
-  required final bool usePointStyle,
+  /// The scriptable options of upstream as one function: the tooltip calls
+  /// it with its context and the options of the update at each read, and
+  /// merges the result over them. The result gives only the options that
+  /// change.
+  ///
+  /// ```dart
+  /// TooltipOptions(
+  ///   scripted: (context, options) => TooltipOptions(
+  ///     backgroundColor: context.tooltipItems!.length > 1 ? multi : single,
+  ///   ),
+  /// );
+  /// ```
+  // DIVERGES(chartjs): adapt-tooltip-scripted, one function for the options.
+  final TooltipScript? scripted,
 
-  /// `xAlign`.
-  required final TooltipXAlign? xAlign,
-
-  /// `yAlign`.
-  required final TooltipYAlign? yAlign,
-
-  /// The resolved options that gave these values, or Dart `null` for options
-  /// that a program makes. The tooltip resolves them again with its context,
-  /// and the interaction mode reads `intersect`, `axis` and
-  /// `includeInvisible` from them. It is not a part of `==`.
-  final Object? view,
-}) {
-  /// The options with the given values.
+  /// `events`: the event types of the plugin, the option that the event
+  /// filter of the chart reads (`core.controller.js:1170`, Chart.js ADR
+  /// 0150). Null gives the `events` of the chart.
+  @override final List<String>? events,
+}) extends PluginOptions<TooltipOptions> implements InteractionOptionValues {
+  /// The tooltip options.
   this;
 
-  /// The options of the resolved options [options]: one read of each key.
-  /// A [TooltipOptions] stays itself.
-  // ignore: prefer_constructors_over_static_methods
-  static TooltipOptions of(Object? options) {
-    if (options is TooltipOptions) return options;
-    return TooltipOptions(
-      animations: optionOf(options, OptionKey.animations),
-      backgroundColor: optionOf(options, OptionKey.backgroundColor),
-      bodyAlign: canvasTextAlign(optionOf(options, OptionKey.bodyAlign)),
-      bodyColor: optionOf(options, OptionKey.bodyColor),
-      bodyFont: toFont(optionOf(options, OptionKey.bodyFont)),
-      bodySpacing: jsToNumber(optionOf(options, OptionKey.bodySpacing)),
-      borderColor: optionOf(options, OptionKey.borderColor),
-      borderWidth: canvasNumber(optionOf(options, OptionKey.borderWidth)),
-      boxHeight: jsToNumber(optionOf(options, OptionKey.boxHeight)),
-      boxPadding: jsToNumber(optionOf(options, OptionKey.boxPadding)),
-      boxWidth: jsToNumber(optionOf(options, OptionKey.boxWidth)),
-      callbacks: tooltipCallbacksOf(optionOf(options, OptionKey.callbacks)),
-      caretPadding: jsToNumber(optionOf(options, OptionKey.caretPadding)),
-      caretSize: jsToNumber(optionOf(options, OptionKey.caretSize)),
-      cornerRadius: toTRBLCorners(optionOf(options, OptionKey.cornerRadius)),
-      displayColors: boolOption(
-        optionOf(options, OptionKey.displayColors),
-        OptionKey.displayColors,
-      ),
-      enabled: boolOption(
-        optionOf(options, OptionKey.enabled),
-        OptionKey.enabled,
-      ),
-      external: functionOption<TooltipExternal>(
-        optionOf(options, OptionKey.external),
-        OptionKey.external,
-      ),
-      filter: functionOption<TooltipItemFilter>(
-        optionOf(options, OptionKey.filter),
-        OptionKey.filter,
-      ),
-      footerAlign: canvasTextAlign(optionOf(options, OptionKey.footerAlign)),
-      footerColor: optionOf(options, OptionKey.footerColor),
-      footerFont: toFont(optionOf(options, OptionKey.footerFont)),
-      footerMarginTop: jsToNumber(optionOf(options, OptionKey.footerMarginTop)),
-      footerSpacing: jsToNumber(optionOf(options, OptionKey.footerSpacing)),
-      itemSort: functionOption<TooltipItemComparator>(
-        optionOf(options, OptionKey.itemSort),
-        OptionKey.itemSort,
-      ),
-      mode: InteractionMode.of(optionOf(options, OptionKey.mode)),
-      multiKeyBackground: optionOf(options, OptionKey.multiKeyBackground),
-      padding: paddingOption(optionOf(options, OptionKey.padding)),
-      position: TooltipPositioner.of(optionOf(options, OptionKey.position)),
-      reverse: boolOption(
-        optionOf(options, OptionKey.reverse),
-        OptionKey.reverse,
-      ),
-      rtl: boolOption(optionOf(options, OptionKey.rtl), OptionKey.rtl),
-      textDirection: textDirectionOption(
-        optionOf(options, OptionKey.textDirection),
-      ),
-      titleAlign: canvasTextAlign(optionOf(options, OptionKey.titleAlign)),
-      titleColor: optionOf(options, OptionKey.titleColor),
-      titleFont: toFont(optionOf(options, OptionKey.titleFont)),
-      titleMarginBottom: jsToNumber(
-        optionOf(options, OptionKey.titleMarginBottom),
-      ),
-      titleSpacing: jsToNumber(optionOf(options, OptionKey.titleSpacing)),
-      usePointStyle: boolOption(
-        optionOf(options, OptionKey.usePointStyle),
-        OptionKey.usePointStyle,
-      ),
-      xAlign: TooltipXAlign.of(optionOf(options, OptionKey.xAlign)),
-      yAlign: TooltipYAlign.of(optionOf(options, OptionKey.yAlign)),
-      view: options,
+  @override
+  String get pluginId => 'tooltip';
+
+  /// These options with each field that [over] sets. The fonts, [animation]
+  /// and [callbacks] merge by field, as the resolver of upstream merges the
+  /// keys of an object option, and [animations] keep each item whose class
+  /// [over] has no item of.
+  @override
+  TooltipOptions merge(TooltipOptions over) => TooltipOptions(
+    enabled: over.enabled ?? enabled,
+    external: over.external ?? external,
+    position: over.position ?? position,
+    backgroundColor: over.backgroundColor ?? backgroundColor,
+    titleColor: over.titleColor ?? titleColor,
+    titleFont: titleFont?.merge(over.titleFont) ?? over.titleFont,
+    titleSpacing: over.titleSpacing ?? titleSpacing,
+    titleMarginBottom: over.titleMarginBottom ?? titleMarginBottom,
+    titleAlign: over.titleAlign ?? titleAlign,
+    bodyColor: over.bodyColor ?? bodyColor,
+    bodySpacing: over.bodySpacing ?? bodySpacing,
+    bodyFont: bodyFont?.merge(over.bodyFont) ?? over.bodyFont,
+    bodyAlign: over.bodyAlign ?? bodyAlign,
+    footerColor: over.footerColor ?? footerColor,
+    footerSpacing: over.footerSpacing ?? footerSpacing,
+    footerMarginTop: over.footerMarginTop ?? footerMarginTop,
+    footerFont: footerFont?.merge(over.footerFont) ?? over.footerFont,
+    footerAlign: over.footerAlign ?? footerAlign,
+    padding: over.padding ?? padding,
+    caretPadding: over.caretPadding ?? caretPadding,
+    caretSize: over.caretSize ?? caretSize,
+    cornerRadius: over.cornerRadius ?? cornerRadius,
+    boxHeight: over.boxHeight ?? boxHeight,
+    boxWidth: over.boxWidth ?? boxWidth,
+    multiKeyBackground: over.multiKeyBackground ?? multiKeyBackground,
+    displayColors: over.displayColors ?? displayColors,
+    boxPadding: over.boxPadding ?? boxPadding,
+    borderColor: over.borderColor ?? borderColor,
+    borderWidth: over.borderWidth ?? borderWidth,
+    animation: animation?.merge(over.animation) ?? over.animation,
+    animations: _mergeAnimations(animations, over.animations),
+    callbacks: callbacks?.merge(over.callbacks) ?? over.callbacks,
+    xAlign: over.xAlign ?? xAlign,
+    yAlign: over.yAlign ?? yAlign,
+    itemSort: over.itemSort ?? itemSort,
+    filter: over.filter ?? filter,
+    usePointStyle: over.usePointStyle ?? usePointStyle,
+    rtl: over.rtl ?? rtl,
+    textDirection: over.textDirection ?? textDirection,
+    mode: over.mode ?? mode,
+    intersect: over.intersect ?? intersect,
+    axis: over.axis ?? axis,
+    includeInvisible: over.includeInvisible ?? includeInvisible,
+    reverse: over.reverse ?? reverse,
+    scripted: over.scripted ?? scripted,
+    events: over.events ?? events,
+  );
+
+  /// The value of the interaction option [key] for the interaction modes,
+  /// which read `intersect`, `axis` and `includeInvisible` of the options
+  /// that they get (`core.interaction.js`), or [undefined].
+  @override
+  Object? interactionOption(OptionKey key) => switch (key) {
+    OptionKey.intersect => intersect ?? undefined,
+    OptionKey.axis => axis ?? undefined,
+    OptionKey.includeInvisible => includeInvisible ?? undefined,
+    OptionKey.mode => mode ?? undefined,
+    _ => undefined,
+  };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TooltipOptions &&
+          other.enabled == enabled &&
+          other.external == external &&
+          other.position == position &&
+          other.backgroundColor == backgroundColor &&
+          other.titleColor == titleColor &&
+          other.titleFont == titleFont &&
+          other.titleSpacing == titleSpacing &&
+          other.titleMarginBottom == titleMarginBottom &&
+          other.titleAlign == titleAlign &&
+          other.bodyColor == bodyColor &&
+          other.bodySpacing == bodySpacing &&
+          other.bodyFont == bodyFont &&
+          other.bodyAlign == bodyAlign &&
+          other.footerColor == footerColor &&
+          other.footerSpacing == footerSpacing &&
+          other.footerMarginTop == footerMarginTop &&
+          other.footerFont == footerFont &&
+          other.footerAlign == footerAlign &&
+          other.padding == padding &&
+          other.caretPadding == caretPadding &&
+          other.caretSize == caretSize &&
+          other.cornerRadius == cornerRadius &&
+          other.boxHeight == boxHeight &&
+          other.boxWidth == boxWidth &&
+          other.multiKeyBackground == multiKeyBackground &&
+          other.displayColors == displayColors &&
+          other.boxPadding == boxPadding &&
+          other.borderColor == borderColor &&
+          other.borderWidth == borderWidth &&
+          other.animation == animation &&
+          _nullableListEquals(other.animations, animations) &&
+          other.callbacks == callbacks &&
+          other.xAlign == xAlign &&
+          other.yAlign == yAlign &&
+          other.itemSort == itemSort &&
+          other.filter == filter &&
+          other.usePointStyle == usePointStyle &&
+          other.rtl == rtl &&
+          other.textDirection == textDirection &&
+          other.mode == mode &&
+          other.intersect == intersect &&
+          other.axis == axis &&
+          other.includeInvisible == includeInvisible &&
+          other.reverse == reverse &&
+          other.scripted == scripted &&
+          _nullableListEquals(other.events, events);
+
+  @override
+  int get hashCode => Object.hashAll([
+    enabled,
+    external,
+    position,
+    backgroundColor,
+    titleColor,
+    titleFont,
+    titleSpacing,
+    titleMarginBottom,
+    titleAlign,
+    bodyColor,
+    bodySpacing,
+    bodyFont,
+    bodyAlign,
+    footerColor,
+    footerSpacing,
+    footerMarginTop,
+    footerFont,
+    footerAlign,
+    padding,
+    caretPadding,
+    caretSize,
+    cornerRadius,
+    boxHeight,
+    boxWidth,
+    multiKeyBackground,
+    displayColors,
+    boxPadding,
+    borderColor,
+    borderWidth,
+    animation,
+    if (animations case final items?) Object.hashAll(items) else null,
+    callbacks,
+    xAlign,
+    yAlign,
+    itemSort,
+    filter,
+    usePointStyle,
+    rtl,
+    textDirection,
+    mode,
+    intersect,
+    axis,
+    includeInvisible,
+    reverse,
+    scripted,
+    if (events case final types?) Object.hashAll(types) else null,
+  ]);
+
+  @override
+  String toString() =>
+      'TooltipOptions(enabled: $enabled, mode: $mode, position: $position)';
+}
+
+/// [TooltipOptions.scripted]: the options that change for the tooltip
+/// context [context], over the options [options] of the update. Dart `null`
+/// changes nothing.
+// DIVERGES(chartjs): adapt-tooltip-scripted, one function for the options.
+typedef TooltipScript = TooltipOptions? Function(
+  ScriptableTooltipContext context,
+  TooltipOptions options,
+);
+
+/// The items of [base] whose class [over] has no item of, then the items
+/// of [over]: the merge of the `animations` scopes by property.
+List<PropertyAnimation>? _mergeAnimations(
+  List<PropertyAnimation>? base,
+  List<PropertyAnimation>? over,
+) {
+  if (base == null || over == null) return over ?? base;
+  return [
+    for (final item in base)
+      if (!over.any((o) => o.runtimeType == item.runtimeType)) item,
+    ...over,
+  ];
+}
+
+/// Whether the nullable Lists [a] and [b] have equal items in the same
+/// order.
+bool _nullableListEquals<T>(List<T>? a, List<T>? b) =>
+    a == null || b == null ? identical(a, b) : _listEquals(a, b);
+
+/// `animation` of the tooltip: the length, the wait, the curve and the
+/// repeat of a change of the tooltip (`plugin.tooltip.js:1311-1314`). The
+/// default is 400 milliseconds on `Curves.easeOutQuart`. [off] is the
+/// `animation: false` of upstream: the tooltip shows each change at once.
+///
+/// ```dart
+/// TooltipOptions(
+///   animation: TooltipAnimation(duration: Duration(milliseconds: 150)),
+/// );
+/// ```
+// DIVERGES(chartjs): adapt-property-animations, the settings object.
+@immutable
+final class TooltipAnimation extends AnimationSettings {
+  /// The animation settings of the tooltip. A null parameter takes the
+  /// value of the defaults.
+  const new({super.duration, super.delay, super.easing, super.loop})
+    : isOff = false;
+
+  const new _off() : isOff = true;
+
+  /// No animation: `animation: false`.
+  static const TooltipAnimation off = TooltipAnimation._off();
+
+  /// Whether this is [off].
+  final bool isOff;
+
+  /// These settings with each parameter that [over] sets. [off] on either
+  /// side wins over the settings below it: the `false` of a scope ends the
+  /// fallback of upstream.
+  TooltipAnimation merge(TooltipAnimation? over) {
+    if (over == null) return this;
+    if (over.isOff || isOff) return over;
+    return TooltipAnimation(
+      duration: over.duration ?? duration,
+      delay: over.delay ?? delay,
+      easing: over.easing ?? easing,
+      loop: over.loop ?? loop,
     );
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TooltipOptions &&
-          other.animations == animations &&
-          other.backgroundColor == backgroundColor &&
-          other.bodyAlign == bodyAlign &&
-          other.bodyColor == bodyColor &&
-          other.bodyFont == bodyFont &&
-          other.bodySpacing == bodySpacing &&
-          other.borderColor == borderColor &&
-          other.borderWidth == borderWidth &&
-          other.boxHeight == boxHeight &&
-          other.boxPadding == boxPadding &&
-          other.boxWidth == boxWidth &&
-          other.callbacks == callbacks &&
-          other.caretPadding == caretPadding &&
-          other.caretSize == caretSize &&
-          other.cornerRadius == cornerRadius &&
-          other.displayColors == displayColors &&
-          other.enabled == enabled &&
-          other.external == external &&
-          other.filter == filter &&
-          other.footerAlign == footerAlign &&
-          other.footerColor == footerColor &&
-          other.footerFont == footerFont &&
-          other.footerMarginTop == footerMarginTop &&
-          other.footerSpacing == footerSpacing &&
-          other.itemSort == itemSort &&
-          other.mode == mode &&
-          other.multiKeyBackground == multiKeyBackground &&
-          other.padding == padding &&
-          other.position == position &&
-          other.reverse == reverse &&
-          other.rtl == rtl &&
-          other.textDirection == textDirection &&
-          other.titleAlign == titleAlign &&
-          other.titleColor == titleColor &&
-          other.titleFont == titleFont &&
-          other.titleMarginBottom == titleMarginBottom &&
-          other.titleSpacing == titleSpacing &&
-          other.usePointStyle == usePointStyle &&
-          other.xAlign == xAlign &&
-          other.yAlign == yAlign;
+      other is TooltipAnimation &&
+          other.isOff == isOff &&
+          other.duration == duration &&
+          other.delay == delay &&
+          other.easing == easing &&
+          other.loop == loop;
 
   @override
-  int get hashCode => Object.hashAll([
-    animations,
-    backgroundColor,
-    bodyAlign,
-    bodyColor,
-    bodyFont,
-    bodySpacing,
-    borderColor,
-    borderWidth,
-    boxHeight,
-    boxPadding,
-    boxWidth,
-    callbacks,
-    caretPadding,
-    caretSize,
-    cornerRadius,
-    displayColors,
-    enabled,
-    external,
-    filter,
-    footerAlign,
-    footerColor,
-    footerFont,
-    footerMarginTop,
-    footerSpacing,
-    itemSort,
-    mode,
-    multiKeyBackground,
-    padding,
-    position,
-    reverse,
-    rtl,
-    textDirection,
-    titleAlign,
-    titleColor,
-    titleFont,
-    titleMarginBottom,
-    titleSpacing,
-    usePointStyle,
-    xAlign,
-    yAlign,
-  ]);
+  int get hashCode => Object.hash(isOff, duration, delay, easing, loop);
 
   @override
-  String toString() =>
-      'TooltipOptions(enabled: $enabled, mode: $mode, position: $position)';
+  String toString() => isOff
+      ? 'TooltipAnimation.off'
+      : 'TooltipAnimation(duration: $duration, easing: $easing)';
 }
 
 /// `FillerOptions` (`index.d.ts`): the resolved options of the filler plugin

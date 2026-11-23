@@ -324,8 +324,7 @@ ChartConfig(
     position: .bottom,
     labelFont: TextStyle(fontSize: 12),
   ),
-  title: const ChartTitle(display: true, text: 'Votes'),
-  tooltip: const ChartTooltip(backgroundColor: .solid(Colors.black87), cornerRadius: 4),
+  title: const ChartTitle(display: true, text: ['Votes']),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
@@ -335,8 +334,20 @@ ChartConfig(
     easing: Curves.easeOutQuart,
   ),
   elements: const ChartElements(bar: BarElementStyle(borderRadius: 4)),
+  pluginOptions: const [
+    TooltipOptions(
+      backgroundColor: .solid(Colors.black87),
+      cornerRadius: BorderRadius.all(Radius.circular(4)),
+    ),
+  ],
 )
 ```
+
+The tooltip options are one `TooltipOptions` object in `pluginOptions`, as the options of an add-on
+plugin: each Chart.js tooltip option is a field. `ChartConfig ==` compares it with `==`, so a new
+closure in it (a callback or `scripted`) gives a chart update; give a tear-off of a function or a
+method. `scripted` gives the options that depend on the tooltip context:
+`scripted: (context, options) => TooltipOptions(backgroundColor: ...)`.
 
 `subtitle` takes a `ChartTitle` too, `filler` sets the filler plugin, and
 `animation: ChartAnimation.none` turns the animations off. `indexAxis: const YAxis()` gives a
@@ -399,7 +410,7 @@ class _VotesPageState() extends State<VotesPage> {
         ],
         onClick: _onClick,
         legend: ChartLegend(onClick: _onLegendClick),
-        tooltip: ChartTooltip(callbacks: TooltipCallbacks(label: _label)),
+        pluginOptions: [TooltipOptions(callbacks: TooltipCallbacks(label: _label))],
       ),
     );
   }
@@ -422,7 +433,7 @@ class _VotesPageState() extends State<VotesPage> {
   `legend.legendHitBoxes` exposes native `LegendHitBox` objects with mutable geometry, integer
   row/column membership, and overridable `contains`, `center`, `copyWith` and `merge`.
   The `equalsTo` extension compares hit-box fields explicitly; `==` retains identity equality.
-- `ChartTooltip.callbacks` takes a `TooltipCallbacks` object, also in a raw config. Its text
+- `TooltipOptions.callbacks` takes a `TooltipCallbacks` object, also in a raw config. Its text
   hooks return a list of lines: `null` requests the built-in default and `[]` emits no text.
   Each callback receives the tooltip model and its item or item list. Dataset `tooltipCallbacks`
   override the six per-item hooks. Callback objects merge field by field with `merge`.

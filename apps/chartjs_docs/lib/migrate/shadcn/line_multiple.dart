@@ -35,7 +35,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   padding: const EdgeInsets.symmetric(horizontal: 12),
   legend: shadcnNoLegend,
   // <ChartTooltipContent />: the month, then one row for each line.
-  tooltip: shadcnTooltip(tip),
+  pluginOptions: [shadcnTooltip(tip)],
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
   scales: [

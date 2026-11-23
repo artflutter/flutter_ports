@@ -1409,7 +1409,7 @@ void main() {
             labels: const ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
             datasets: [datasets[type]!(values(0))],
             animation: ChartAnimation.none,
-            tooltip: const ChartTooltip(enabled: false),
+            pluginOptions: const [TooltipOptions(enabled: false)],
             responsive: false,
             // The labels of a legend read each arc in the layout, also with
             // `display: false`: this test counts the reads of the update.
@@ -1454,7 +1454,7 @@ void main() {
                       labels: const ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
                       datasets: [datasets[type]!(values(0))],
                       animation: ChartAnimation.none,
-                      tooltip: const ChartTooltip(enabled: false),
+                      pluginOptions: const [TooltipOptions(enabled: false)],
                       disabledPlugins: const [PluginOff<LegendPlugin>()],
                     ),
                     updateMode: UpdateMode.none,

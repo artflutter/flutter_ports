@@ -50,6 +50,15 @@ final Map<String, PluginHook<Object>> _hooks = {
 /// `destroy` of the decimation, which no chart calls.
 const Set<String> _removedKeys = {'_element: class', 'destroy(1)'};
 
+/// The keys of an upstream plugin object that its native plugin has no
+/// field for, by plugin id: the tooltip options are one TooltipOptions
+/// object (Chart.js ADR 0192), with no `defaultRoutes` and no
+/// `descriptors`. Their fallbacks (the fonts over `Chart.defaults.font`, the
+/// animation items over `animation`) are Dart code of the tooltip.
+const Map<String, Set<String>> _removedPluginKeys = {
+  'tooltip': {'defaultRoutes', 'descriptors'},
+};
+
 /// The hooks whose args have the dataset `index`.
 const Set<PluginHook<Object>> _indexHooks = {
   PluginHook.beforeDatasetUpdate,
@@ -247,13 +256,21 @@ void _recordHooks<O>(
           return f(chart, args, options);
         };
 
-  final saved = Plugin<O>(id: plugin.id, options: plugin.options);
+  // The defaults keep the assert of a plugin without `options`: a plugin
+  // whose defaults are a PluginOptions gets the merged object (Chart.js ADR
+  // 0192, the tooltip).
+  final saved = Plugin<O>(
+    id: plugin.id,
+    options: plugin.options,
+    defaults: plugin.defaults,
+  );
   _copyHooks(saved, plugin);
   _copyHooks(
     plugin,
     Plugin<O>(
       id: plugin.id,
       options: plugin.options,
+      defaults: plugin.defaults,
       install: hook(PluginHook.install, plugin.install),
       start: hook(PluginHook.start, plugin.start),
       stop: hook(PluginHook.stop, plugin.stop),
@@ -424,7 +441,9 @@ void main() {
               'id': plugin['id'],
               'keys': [
                 for (final text in plugin['keys']! as List<Object?>)
-                  if (!_removedKeys.contains(text))
+                  if (!_removedKeys.contains(text) &&
+                      !(_removedPluginKeys[plugin['id']]?.contains(text) ??
+                          false))
                     _referenceKeyText(text! as String),
               ]..sort(),
             },

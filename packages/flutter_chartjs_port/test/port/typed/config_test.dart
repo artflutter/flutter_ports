@@ -291,6 +291,18 @@ void main() {
       tester,
     ) async {
       final points = [DataPoint(-10, 0), DataPoint(0, 10), DataPoint(10, 5)];
+      final tooltip = TooltipOptions(
+        callbacks: TooltipCallbacks(
+          label: (tooltip, arg) {
+            final text = _pointLabel(arg);
+            return text == null
+                ? null
+                : text.isEmpty
+                ? <String>[]
+                : [text];
+          },
+        ),
+      );
       final typed = ChartConfigLowering(
         ChartConfig(
           datasets: [
@@ -303,22 +315,13 @@ void main() {
             ),
           ],
           scales: const [LinearAxis(.x, position: .bottom)],
-          tooltip: ChartTooltip(
-            callbacks: TooltipCallbacks(
-              label: (tooltip, arg) {
-                final text = _pointLabel(arg);
-                return text == null
-                    ? null
-                    : text.isEmpty
-                    ? <String>[]
-                    : [text];
-              },
-            ),
-          ),
           animation: ChartAnimation.none,
+          pluginOptions: [tooltip],
         ),
       ).lower();
-      final twin = <String, Object?>{
+
+      /// The raw twin with the tooltip options [tooltip].
+      Map<String, Object?> twinOf(TooltipOptions tooltip) => <String, Object?>{
         'type': 'scatter',
         'data': <String, Object?>{
           'datasets': <Object?>[
@@ -338,23 +341,25 @@ void main() {
               'position': ChartPosition.bottom,
             },
           },
-          'plugins': <String, Object?>{
-            'tooltip': <String, Object?>{
-              'callbacks': TooltipCallbacks(
-                label: (tooltip, item) {
-                  final parsed = item.parsed! as JsObjectFace;
-                  final text =
-                      '(${(parsed['x']! as num).toInt()}, '
-                      '${(parsed['y']! as num).toInt()})';
-                  return [text];
-                },
-              ),
-            },
-          },
+          'plugins': <String, Object?>{'tooltip': tooltip},
           'animation': false,
         },
       };
-      expectTwin(typed, twin);
+      // The options object goes to the chart as it is.
+      expectTwin(typed, twinOf(tooltip));
+      final twin = twinOf(
+        TooltipOptions(
+          callbacks: TooltipCallbacks(
+            label: (tooltip, item) {
+              final parsed = item.parsed! as JsObjectFace;
+              final text =
+                  '(${(parsed['x']! as num).toInt()}, '
+                  '${(parsed['y']! as num).toInt()})';
+              return [text];
+            },
+          ),
+        ),
+      );
 
       /// The label lines of the tooltip of a hover on point 1 of [config].
       Future<List<Object?>> labelsOf(Object config) async {

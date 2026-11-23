@@ -38,7 +38,7 @@ final ChartConfig _config = fills(
         ),
       ),
     ],
-    tooltip: const ChartTooltip(enabled: false),
+    pluginOptions: const [TooltipOptions(enabled: false)],
     events: const [],
     plugins: _plugins,
     scales: [

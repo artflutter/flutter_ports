@@ -90,7 +90,9 @@ import '../support/list_splice.dart';
 //   `chart._active` is `chart.active`, and `tooltip._active` is
 //   `_tooltipActive(tooltip)`.
 // - `chart.options.plugins.tooltip = value` writes the key `tooltip` of the
-//   Map `chart.options['plugins']`.
+//   options view `chart.options['plugins']`. The value is a
+//   `TooltipOptions`, the one options object of the tooltip (Chart.js ADR
+//   0192), not a Map.
 
 /// :3 `const overrides = Chart.overrides`: `overrides.line`.
 JsObjectFace get _line => jsGet(Chart.overrides, 'line')! as JsObjectFace;
@@ -2311,30 +2313,30 @@ void main() {
 
       testWidgets('should update tooltip options', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigurationScope()
-            ..type = 'line'
-            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
-              'labels': <Object?>['A', 'B', 'C', 'D'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 20, 30, 100],
-                },
+          ChartConfigLowering(
+            const ChartConfig(
+              labels: ['A', 'B', 'C', 'D'],
+              datasets: [
+                LineDataset(data: .values([10, 20, 30, 100])),
               ],
-            })
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
-              'responsive': true,
-            }),
+              responsive: true,
+            ),
+          ).lower(),
         );
 
-        final newTooltipConfig = <String, Object?>{
-          'mode': const DatasetInteractionMode(),
-          'intersect': false,
-        };
+        // The tooltip options are one TooltipOptions (Chart.js ADR 0192).
+        const newTooltipConfig = TooltipOptions(
+          mode: DatasetInteractionMode(),
+          intersect: false,
+        );
         (chart.options['plugins']! as JsObjectFace)['tooltip'] =
             newTooltipConfig;
 
         chart.update();
-        expect(chart.tooltip!.options, toEqualOptions(newTooltipConfig));
+        // `toEqualOptions(newTooltipConfig)`: each field of the new config.
+        final options = chart.tooltip!.options! as TooltipOptions;
+        expect(options.mode, newTooltipConfig.mode);
+        expect(options.intersect, newTooltipConfig.intersect);
       });
 
       testWidgets('should update the tooltip on update', (tester) async {
@@ -2607,8 +2609,16 @@ void main() {
           void iterateOptions() {
             for (final plugin in chart.plugins.cache!) {
               // triggering bug https://github.com/chartjs/Chart.js/issues/9368
-              // The options are a resolver, an object with no prototype.
-              expect(plugin.options, isA<JsProxyObject>());
+              // The options are a resolver, an object with no prototype. The
+              // options of a plugin whose defaults are a PluginOptions (the
+              // tooltip, Chart.js ADR 0192) are the merged options object.
+              // DIVERGES(chartjs): adapt-native-plugin-options, one object.
+              expect(
+                plugin.options,
+                plugin.plugin.defaults is PluginOptions<Object?>
+                    ? isA<PluginOptions<Object?>>()
+                    : isA<JsProxyObject>(),
+              );
             }
           }
 

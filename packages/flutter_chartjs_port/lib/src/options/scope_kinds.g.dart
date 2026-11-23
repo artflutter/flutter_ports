@@ -216,10 +216,6 @@ enum ScopeKind(
   /// `plugins.subtitle`.
   titleOptions('TitleOptions'),
 
-  /// index.d.ts:2795 TooltipOptions (index.d.ts:1605 CoreInteractionOptions),
-  /// the scope `plugins.tooltip`.
-  tooltipOptions('TooltipOptions'),
-
   /// index.d.ts:2974 TooltipDatasetOptions, the `tooltip` object of a dataset
   /// (read at plugin.tooltip.js:357).
   tooltipDatasetOptions('TooltipDatasetOptions'),
@@ -333,8 +329,6 @@ enum ScopeKind(
         return LegendTitleOptionsScope();
       case ScopeKind.titleOptions:
         return TitleOptionsScope();
-      case ScopeKind.tooltipOptions:
-        return TooltipOptionsScope();
       case ScopeKind.tooltipDatasetOptions:
         return TooltipDatasetOptionsScope();
       case ScopeKind.fillerOptions:
@@ -440,8 +434,6 @@ enum ScopeKind(
         return LegendTitleOptionsScope;
       case ScopeKind.titleOptions:
         return TitleOptionsScope;
-      case ScopeKind.tooltipOptions:
-        return TooltipOptionsScope;
       case ScopeKind.tooltipDatasetOptions:
         return TooltipDatasetOptionsScope;
       case ScopeKind.fillerOptions:
@@ -1327,54 +1319,6 @@ enum ScopeKind(
           OptionKey.weight,
           OptionKey.events,
         ];
-      case ScopeKind.tooltipOptions:
-        return const [
-          OptionKey.mode,
-          OptionKey.intersect,
-          OptionKey.axis,
-          OptionKey.includeInvisible,
-          OptionKey.enabled,
-          OptionKey.external,
-          OptionKey.position,
-          OptionKey.xAlign,
-          OptionKey.yAlign,
-          OptionKey.itemSort,
-          OptionKey.filter,
-          OptionKey.backgroundColor,
-          OptionKey.boxPadding,
-          OptionKey.titleColor,
-          OptionKey.titleFont,
-          OptionKey.titleSpacing,
-          OptionKey.titleMarginBottom,
-          OptionKey.titleAlign,
-          OptionKey.bodySpacing,
-          OptionKey.bodyColor,
-          OptionKey.bodyFont,
-          OptionKey.bodyAlign,
-          OptionKey.footerSpacing,
-          OptionKey.footerMarginTop,
-          OptionKey.footerColor,
-          OptionKey.footerFont,
-          OptionKey.footerAlign,
-          OptionKey.padding,
-          OptionKey.caretPadding,
-          OptionKey.caretSize,
-          OptionKey.cornerRadius,
-          OptionKey.multiKeyBackground,
-          OptionKey.displayColors,
-          OptionKey.boxWidth,
-          OptionKey.boxHeight,
-          OptionKey.usePointStyle,
-          OptionKey.borderColor,
-          OptionKey.borderWidth,
-          OptionKey.rtl,
-          OptionKey.textDirection,
-          OptionKey.animation,
-          OptionKey.animations,
-          OptionKey.callbacks,
-          OptionKey.reverse,
-          OptionKey.events,
-        ];
       case ScopeKind.tooltipDatasetOptions:
         return const [OptionKey.callbacks];
       case ScopeKind.fillerOptions:
@@ -1671,7 +1615,7 @@ enum ScopeKind(
           case OptionKey.title:
             return 34;
           case OptionKey.tooltip:
-            return 34;
+            return 5506;
           default:
             return 0;
         }
@@ -3127,101 +3071,6 @@ enum ScopeKind(
           default:
             return 0;
         }
-      case ScopeKind.tooltipOptions:
-        switch (key) {
-          case OptionKey.mode:
-            return 256;
-          case OptionKey.intersect:
-            return 2;
-          case OptionKey.axis:
-            return 768;
-          case OptionKey.includeInvisible:
-            return 2;
-          case OptionKey.enabled:
-            return 2;
-          case OptionKey.external:
-            return 8;
-          case OptionKey.position:
-            return 384;
-          case OptionKey.xAlign:
-            return 1664;
-          case OptionKey.yAlign:
-            return 1792;
-          case OptionKey.itemSort:
-            return 8;
-          case OptionKey.filter:
-            return 8;
-          case OptionKey.backgroundColor:
-            return 4864;
-          case OptionKey.boxPadding:
-            return 1;
-          case OptionKey.titleColor:
-            return 4864;
-          case OptionKey.titleFont:
-            return 4096;
-          case OptionKey.titleSpacing:
-            return 1;
-          case OptionKey.titleMarginBottom:
-            return 1;
-          case OptionKey.titleAlign:
-            return 2688;
-          case OptionKey.bodySpacing:
-            return 1;
-          case OptionKey.bodyColor:
-            return 4864;
-          case OptionKey.bodyFont:
-            return 4096;
-          case OptionKey.bodyAlign:
-            return 2688;
-          case OptionKey.footerSpacing:
-            return 1;
-          case OptionKey.footerMarginTop:
-            return 1;
-          case OptionKey.footerColor:
-            return 4864;
-          case OptionKey.footerFont:
-            return 4096;
-          case OptionKey.footerAlign:
-            return 2688;
-          case OptionKey.padding:
-            return 4480;
-          case OptionKey.caretPadding:
-            return 1;
-          case OptionKey.caretSize:
-            return 1;
-          case OptionKey.cornerRadius:
-            return 6273;
-          case OptionKey.multiKeyBackground:
-            return 4864;
-          case OptionKey.displayColors:
-            return 2;
-          case OptionKey.boxWidth:
-            return 1;
-          case OptionKey.boxHeight:
-            return 1;
-          case OptionKey.usePointStyle:
-            return 2;
-          case OptionKey.borderColor:
-            return 4864;
-          case OptionKey.borderWidth:
-            return 1;
-          case OptionKey.rtl:
-            return 2;
-          case OptionKey.textDirection:
-            return 4608;
-          case OptionKey.animation:
-            return 34;
-          case OptionKey.animations:
-            return 34;
-          case OptionKey.callbacks:
-            return 4736;
-          case OptionKey.reverse:
-            return 2;
-          case OptionKey.events:
-            return 16;
-          default:
-            return 0;
-        }
       case ScopeKind.tooltipDatasetOptions:
         switch (key) {
           case OptionKey.callbacks:
@@ -3357,8 +3206,6 @@ enum ScopeKind(
             return ScopeKind.titleOptions;
           case OptionKey.title:
             return ScopeKind.titleOptions;
-          case OptionKey.tooltip:
-            return ScopeKind.tooltipOptions;
           default:
             return null;
         }
@@ -3675,15 +3522,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.titleOptions:
         return null;
-      case ScopeKind.tooltipOptions:
-        switch (key) {
-          case OptionKey.animation:
-            return ScopeKind.animationOptions;
-          case OptionKey.animations:
-            return ScopeKind.animationsSpec;
-          default:
-            return null;
-        }
       case ScopeKind.tooltipDatasetOptions:
         return null;
       case ScopeKind.fillerOptions:
@@ -3788,8 +3626,6 @@ enum ScopeKind(
       case ScopeKind.legendTitleOptions:
         return 64;
       case ScopeKind.titleOptions:
-        return 64;
-      case ScopeKind.tooltipOptions:
         return 64;
       case ScopeKind.tooltipDatasetOptions:
         return 64;
@@ -3896,8 +3732,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.titleOptions:
         return null;
-      case ScopeKind.tooltipOptions:
-        return null;
       case ScopeKind.tooltipDatasetOptions:
         return null;
       case ScopeKind.fillerOptions:
@@ -4002,8 +3836,6 @@ enum ScopeKind(
       case ScopeKind.legendTitleOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.titleOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.tooltipOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.tooltipDatasetOptions:
         return classifyUnion(raw, 64);

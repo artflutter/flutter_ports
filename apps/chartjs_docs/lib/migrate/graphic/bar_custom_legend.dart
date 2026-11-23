@@ -93,18 +93,20 @@ final ChartConfig _config = ChartConfig(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
-  tooltip: graphicTooltip(
-    position: const CenterPositioner(),
-    title: _index,
-    label: _typeValue,
-  ),
   plugins: [
     barCrosshair,
     tooltipShadow,
     zoomPlugin,
     tapSelection(onDoubleTap: resetRange),
   ],
-  pluginOptions: const [horizontalRange],
+  pluginOptions: [
+    graphicTooltip(
+      position: const CenterPositioner(),
+      title: _index,
+      label: _typeValue,
+    ),
+    horizontalRange,
+  ],
   events: const ['click'],
 );
 

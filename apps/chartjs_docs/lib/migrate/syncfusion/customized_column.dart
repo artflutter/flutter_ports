@@ -52,9 +52,11 @@ final ChartConfig _config = ChartConfig(
   padding: sfPadding,
   title: sfTitle('PC vendor shipments - 2015 Q1'),
   legend: const ChartLegend(display: false),
-  tooltip: sfTooltip(
-    text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}M',
-  ),
+  pluginOptions: [
+    sfTooltip(
+      text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}M',
+    ),
+  ],
   plugins: [
     sfTooltipLook,
     sfPlotBorder,

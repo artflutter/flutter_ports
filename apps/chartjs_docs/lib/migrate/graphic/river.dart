@@ -114,12 +114,14 @@ final ChartConfig _config = ChartConfig(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
-  tooltip: graphicTooltip(
-    position: const FollowYPositioner(),
-    title: _date,
-    label: _typeValue,
-    filter: _isBand,
-  ),
+  pluginOptions: [
+    graphicTooltip(
+      position: const FollowYPositioner(),
+      title: _date,
+      label: _typeValue,
+      filter: _isBand,
+    ),
+  ],
   plugins: [crosshair(), tooltipShadow],
 );
 

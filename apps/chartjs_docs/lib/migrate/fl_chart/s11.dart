@@ -96,7 +96,7 @@ class _Sample11State() extends State<Sample11> {
                           LineDataset(data: .points(<DataPoint>[])),
                         ],
                         animation: ChartAnimation.none,
-                        tooltip: const ChartTooltip(enabled: false),
+                        pluginOptions: const [TooltipOptions(enabled: false)],
                         scales: [
                           _axis(.x, _baseX, .bottom),
                           _axis(.x, _baseX, .top),

@@ -468,12 +468,9 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     },
     'plugins': <String, Object?>{
       'legend': <String, Object?>{'display': false},
-      'tooltip': <String, Object?>{
-        'callbacks': const TooltipCallbacks(
-          label: _tooltipLabel,
-          title: _tooltipTitle,
-        ),
-      },
+      'tooltip': const TooltipOptions(
+        callbacks: TooltipCallbacks(label: _tooltipLabel, title: _tooltipTitle),
+      ),
     },
     'scales': <String, Object?>{
       'x': <String, Object?>{

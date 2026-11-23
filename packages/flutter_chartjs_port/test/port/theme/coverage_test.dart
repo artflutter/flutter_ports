@@ -15,6 +15,7 @@ import 'package:test/test.dart';
 import '../../support/color_json.dart';
 import '../../support/light_theme.dart';
 import '../../support/scale_border.dart';
+import '../../support/tooltip_option_fields.dart';
 
 // theming.md §8 test 4, the coverage snapshot (Chart.js ADR 0147,
 // Consequences). The test compares the compiled light preset with the
@@ -195,6 +196,11 @@ Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
   if (value is TextStyle) return _fontLeaves(prefix, value);
   // A border gives its fields (row adapt-native-scale-border).
   if (value is ScaleBorder) return borderLeaves(prefix, value);
+  // The fields that the TooltipOptions of plugins.tooltip sets (Chart.js
+  // ADR 0192).
+  if (value is TooltipOptions) {
+    return _leaves(setTooltipOptionFields(value), prefix);
+  }
   if (!_isObject(value)) return {prefix: value};
   return {
     for (final key in jsObjectKeys(value))
@@ -468,7 +474,13 @@ void main() {
       final snapshot =
           jsonDecode(snapshotFile!.readAsStringSync()) as Map<String, Object?>;
       const hint = 'Run with $_updateVariable=1 to write the snapshot again.';
-      expect(leaves.keys.toList(), snapshot.keys.toList(), reason: hint);
+      // The paths below plugins.tooltip compare as a set at their place: a
+      // TooltipOptions has no key order (Chart.js ADR 0192).
+      expect(
+        tooltipPathsSorted(leaves.keys),
+        tooltipPathsSorted(snapshot.keys),
+        reason: hint,
+      );
       for (final MapEntry(key: path, :value) in leaves.entries) {
         expect(
           _same(path, value, snapshot[path]),

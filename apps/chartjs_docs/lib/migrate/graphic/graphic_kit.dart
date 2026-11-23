@@ -126,43 +126,42 @@ bool ordinalTick(int index, int length, int count) {
   return index >= first && (index - first) % step == 0;
 }
 
-/// The tooltip window of Graphic: a white box with 12 px gray text.
-ChartTooltip graphicTooltip({
+/// The tooltip window of Graphic: a white box with 12 px gray text. Its
+/// callbacks close over [title] and [label]: a replica builds it once, in a
+/// top-level final, so the options stay `==` across builds.
+TooltipOptions graphicTooltip({
   required TooltipPositioner position,
   String? Function(List<TooltipItem> items)? title,
   String? Function(TooltipItem item)? label,
   TooltipItemFilter? filter,
-  Map<String, Object?> extra = const {},
-}) => ChartTooltip(
+}) => TooltipOptions(
   backgroundColor: const ChartPaint.solid(Gx.tooltipBackground),
   titleColor: const ChartPaint.solid(Gx.tooltipText),
   titleFont: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
   bodyColor: const ChartPaint.solid(Gx.tooltipText),
   bodyFont: const TextStyle(fontSize: 12),
   padding: const EdgeInsets.all(5),
-  cornerRadius: _radius,
+  cornerRadius: const BorderRadius.all(Radius.circular(_radius)),
   displayColors: false,
   position: position,
   filter: filter,
   caretSize: 0,
   caretPadding: 0,
-  extra: {
-    'titleMarginBottom': 0,
-    'titleSpacing': 0,
-    'bodySpacing': 0,
-    // No title line unless [title] gives one.
-    if (title == null) 'callbacks': const TooltipCallbacks(title: _noTitle),
-    ...extra,
-  },
+  titleMarginBottom: 0,
+  titleSpacing: 0,
+  bodySpacing: 0,
   callbacks: TooltipCallbacks(
-    title: (tooltip, arg) {
-      final text = title?.call(arg);
-      return text == null
-          ? null
-          : text.isEmpty
-          ? <String>[]
-          : [text];
-    },
+    // No title line unless [title] gives one.
+    title: title == null
+        ? _noTitle
+        : (tooltip, arg) {
+            final text = title(arg);
+            return text == null
+                ? null
+                : text.isEmpty
+                ? <String>[]
+                : [text];
+          },
     label: (tooltip, arg) {
       final text = label?.call(arg);
       return text == null

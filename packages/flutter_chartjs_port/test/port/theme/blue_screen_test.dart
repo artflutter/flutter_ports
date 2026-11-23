@@ -12,6 +12,7 @@ import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/tooltip_option_fields.dart';
 import '../scales/scale_chart_harness.dart' show drawCalls;
 
 // theming.md §8 test 6, the full blue screen (Chart.js ADR 0147 §17;
@@ -235,9 +236,11 @@ Chart _chart(
         'labels': ?legendLabels,
       },
     ),
-    tooltip: ChartTooltip(
-      callbacks: TooltipCallbacks(footer: (tooltip, arg) => ['Footer']),
-    ),
+    pluginOptions: [
+      TooltipOptions(
+        callbacks: TooltipCallbacks(footer: (tooltip, arg) => ['Footer']),
+      ),
+    ],
     scales: cartesian
         ? [
             if (type == 'bar' || type == 'line')
@@ -405,6 +408,12 @@ Iterable<(String, Object?)> _themeColors(
   Object? node, [
   String path = '',
 ]) => switch (node) {
+  // The fields that the TooltipOptions of plugins.tooltip sets (Chart.js
+  // ADR 0192).
+  final TooltipOptions options => _themeColors(
+    setTooltipOptionFields(options),
+    path,
+  ),
   final Object map when map is Map<String, Object?> || map is JsObjectFace => [
     for (final key in jsObjectKeys(map))
       if (key == 'color' || key.endsWith('Color') || key.endsWith('Background'))

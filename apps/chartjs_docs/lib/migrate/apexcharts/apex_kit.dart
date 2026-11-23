@@ -130,12 +130,15 @@ const ChartAnimation apexAnimation = ChartAnimation(
 
 /// The shared tooltip of apexcharts_flutter: one row for each series at the
 /// hovered index, under a title bar. [value] writes a value, and [title]
-/// writes the title of the hovered items.
-ChartTooltip apexTooltip({
+/// writes the title of the hovered items. The title and the label callbacks
+/// close over [title] and [value]: a replica builds the options once, in a
+/// top-level final or in the state of `ApexZoomChart`, so they stay `==`
+/// across builds.
+TooltipOptions apexTooltip({
   String Function(num value) value = apexNumber,
   String Function(List<TooltipItem> items)? title,
   bool horizontal = false,
-}) => ChartTooltip(
+}) => TooltipOptions(
   mode: const IndexInteractionMode(),
   intersect: false,
   axis: horizontal ? .y : .x,
@@ -147,17 +150,15 @@ ChartTooltip apexTooltip({
   bodyColor: const .solid(Apex.text),
   bodyFont: const TextStyle(fontSize: 13),
   padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
-  cornerRadius: 5,
+  cornerRadius: const BorderRadius.all(Radius.circular(5)),
   caretSize: 0,
   caretPadding: 8,
-  extra: const {
-    'titleMarginBottom': 13,
-    'bodySpacing': 4,
-    'boxWidth': 10,
-    'boxHeight': 10,
-    'boxPadding': 6,
-    'usePointStyle': true,
-  },
+  titleMarginBottom: 13,
+  bodySpacing: 4,
+  boxWidth: 10,
+  boxHeight: 10,
+  boxPadding: 6,
+  usePointStyle: true,
   callbacks: TooltipCallbacks(
     title: (tooltip, items) => [
       title?.call(items) ?? items.first.label.join(' '),
@@ -165,16 +166,23 @@ ChartTooltip apexTooltip({
     label: (tooltip, item) => [
       '${item.datasetLabel}: ${value(_valueOf(item, horizontal))}',
     ],
-    labelColor: (tooltip, item) {
-      final color = apexSeriesColor(tooltip.chart as Chart, item.datasetIndex);
-      return TooltipLabelStyle(
-        borderColor: .solid(color),
-        backgroundColor: .solid(color),
-      );
-    },
-    labelPointStyle: (tooltip, item) => const .draw(CirclePointStyle()),
+    labelColor: _apexMarkerColor,
+    labelPointStyle: _apexMarkerStyle,
   ),
 );
+
+TooltipLabelStyle _apexMarkerColor(TooltipModel tooltip, TooltipItem item) {
+  final color = apexSeriesColor(tooltip.chart as Chart, item.datasetIndex);
+  return TooltipLabelStyle(
+    borderColor: .solid(color),
+    backgroundColor: .solid(color),
+  );
+}
+
+TooltipLabelPointStyle _apexMarkerStyle(
+  TooltipModel tooltip,
+  TooltipItem item,
+) => const .draw(CirclePointStyle());
 
 num _valueOf(TooltipItem item, bool horizontal) {
   final parsed = item.parsed! as JsObjectFace;

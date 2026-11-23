@@ -1081,7 +1081,13 @@ class Config([Object? config]) implements ChartConfiguration {
     return _cachedKeys(
       '$type-plugin-$id',
       () => [
-        ['plugins.$id', ...?plugin.additionalOptionScopes],
+        [
+          'plugins.$id',
+          // DIVERGES(chartjs): adapt-native-plugin-options, an options object
+          // reads its additional scopes itself (Chart.js ADR 0192).
+          if (plugin.defaults is! PluginOptions<Object?>)
+            ...?plugin.additionalOptionScopes,
+        ],
       ],
     );
   }

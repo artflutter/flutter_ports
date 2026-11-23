@@ -436,6 +436,11 @@ Object _mergeOptions(List<Object?> scopes) {
       // from a boolean (core.plugins.js:146-151).
       case false:
         break;
+      // The `true` of a plugin on with its defaults: `getOpts` gives `{}`,
+      // and the scope `plugins.<id>` of the options keeps the `true`, where
+      // upstream reads no option from a boolean.
+      case true:
+        break;
       default:
         assert(false, 'The options of this plugin are its PluginOptions.');
     }

@@ -31,10 +31,12 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   padding: const EdgeInsets.all(5),
   legend: shadcnNoLegend,
   // <ChartTooltipContent hideLabel hideIndicator />
-  tooltip: shadcnTooltip(
-    tip,
-    const ShadcnTooltipContent(hideLabel: true, hideIndicator: true),
-  ),
+  pluginOptions: [
+    shadcnTooltip(
+      tip,
+      const ShadcnTooltipContent(hideLabel: true, hideIndicator: true),
+    ),
+  ],
   interaction: shadcnInteraction(),
   animation: shadcnBarAnimation,
   // <LabelList position="top" dataKey="month" fillOpacity={1} />: the month

@@ -1674,6 +1674,7 @@ Object? readOption(Object? options, OptionKey key) => switch (options) {
   final ElementOptions elementOptions => elementOptions.valueOf(key),
   final OptionScope scope => scope.readKey(key),
   final LayoutBoxOptions box => box.layoutOption(key),
+  final InteractionOptionValues values => values.interactionOption(key),
   _ => jsGet(options, key.jsName),
 };
 

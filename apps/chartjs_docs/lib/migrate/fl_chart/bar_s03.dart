@@ -67,7 +67,7 @@ class _BarSample3State() extends State<BarSample3> {
         duration: Duration(milliseconds: 100),
         easing: Curves.easeOutQuad,
       ),
-      tooltip: const ChartTooltip(enabled: false),
+      pluginOptions: const [TooltipOptions(enabled: false)],
       plugins: [_labels, _touch],
       scales: [
         // A category axis places the groups as `BarChartAlignment.spaceAround`.

@@ -122,7 +122,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       Text('Legend'),
       DocText('`legend: ChartLegend(...)`, a `PointStyle` for the icon'),
     ),
-    (Text('TooltipBehavior'), DocText('`tooltip: ChartTooltip(...)`')),
+    (
+      Text('TooltipBehavior'),
+      DocText('`TooltipOptions(...)` in `pluginOptions`'),
+    ),
     (
       Text('format, header of TooltipBehavior'),
       DocText('the `label` and `title` callbacks'),

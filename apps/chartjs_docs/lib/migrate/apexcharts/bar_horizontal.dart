@@ -24,7 +24,7 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   padding: apexPadding,
   legend: const ChartLegend(display: false),
-  tooltip: apexTooltip(horizontal: true),
+  pluginOptions: [apexTooltip(horizontal: true)],
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,

@@ -19,17 +19,19 @@ const List<String> _genres = [
 
 /// `TooltipGuide(backgroundColor: Colors.black, elevation: 5, textStyle:
 /// Defaults.textStyle, variables: ['genre', 'sold'])`.
-final ChartTooltip _tooltip =
+final TooltipOptions _tooltip =
     graphicTooltip(
       position: const CenterPositioner(),
       title: (items) => 'genre: ${_genres[items.first.dataIndex]}',
       label: (item) => 'sold: ${item.raw}',
-    ).copyWith(
-      backgroundColor: const .solid(Color(0xFF000000)),
-      titleColor: const .solid(Gx.text),
-      titleFont: const TextStyle(fontSize: 10, fontWeight: FontWeight.normal),
-      bodyColor: const .solid(Gx.text),
-      bodyFont: const TextStyle(fontSize: 10),
+    ).merge(
+      const TooltipOptions(
+        backgroundColor: .solid(Color(0xFF000000)),
+        titleColor: .solid(Gx.text),
+        titleFont: TextStyle(fontSize: 10, fontWeight: FontWeight.normal),
+        bodyColor: .solid(Gx.text),
+        bodyFont: TextStyle(fontSize: 10),
+      ),
     );
 
 final List<Plugin<Object?>> _plugins = [
@@ -118,7 +120,7 @@ class _GraphicBarAutoUpdateState() extends State<GraphicBarAutoUpdate> {
         mode: IndexInteractionMode(),
         intersect: false,
       ),
-      tooltip: _tooltip,
+      pluginOptions: [_tooltip],
       plugins: _plugins,
       // No `mouseout`: the selection stays when the pointer leaves.
       events: const ['mousemove', 'click', 'touchstart', 'touchmove'],

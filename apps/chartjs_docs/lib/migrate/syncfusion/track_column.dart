@@ -34,9 +34,11 @@ final ChartConfig _config = ChartConfig(
   title: sfTitle('Marks of a student'),
   legend: sfLegend(const SfColumnIcon()),
   // format: 'point.y marks in point.x'
-  tooltip: sfTooltip(
-    text: (item) => '${sfValue(item)} marks in ${item.label.join(' ')}',
-  ),
+  pluginOptions: [
+    sfTooltip(
+      text: (item) => '${sfValue(item)} marks in ${item.label.join(' ')}',
+    ),
+  ],
   plugins: [
     sfTooltipLook,
     // isTrackVisible: true, trackColor: Color.fromRGBO(198, 201, 207, 1)

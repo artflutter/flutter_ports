@@ -18,6 +18,7 @@ import '../../support/length_json.dart';
 import '../../support/light_theme.dart';
 import '../../support/mode_json.dart';
 import '../../support/scale_border.dart';
+import '../../support/tooltip_option_fields.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0147). These
 // tests cover theming.md §3.3 (the emitted keys, only the token paths, the
@@ -65,30 +66,44 @@ String _jsonRaw(Object? value) => switch (value) {
   ScaleBorder() => _jsonRaw(upstreamBorderOf(value)),
   final List<Object?> list => '[${list.map(_json).join(',')}]',
   final Object map when _isObject(map) =>
-    '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
+    '{${_keys(map).map((k) => _entry(map, k)).join(',')}}',
   _ => throw ArgumentError.value(value, 'value', 'has no JSON form'),
 };
 
 /// Whether [value] is an object of a compiled theme: a Map, or a typed
 /// scope with its face (Chart.js ADR 0054 §5).
+/// The [TooltipOptions] of `plugins.tooltip` is an object too: its keys are
+/// its fields that it sets (Chart.js ADR 0192, [setTooltipOptionFields]).
 bool _isObject(Object? value) =>
-    value is Map<String, Object?> || value is JsObjectFace;
+    value is Map<String, Object?> ||
+    value is JsObjectFace ||
+    value is TooltipOptions;
 
-/// The own keys of the object [value] in the `Object.keys` order.
-List<String> _keys(Object? value) => jsObjectKeys(value);
+/// The own keys of the object [value] in the `Object.keys` order: for a
+/// [TooltipOptions], the fields that it sets in the order of upstream.
+List<String> _keys(Object? value) => value is TooltipOptions
+    ? setTooltipOptionFields(value).keys.toList()
+    : jsObjectKeys(value);
+
+/// The value of [key] in the object [value]: the typed field of a
+/// [TooltipOptions] ([undefined] for a field that it does not set), else
+/// the read by name.
+Object? _get(Object? value, String key) => value is TooltipOptions
+    ? setTooltipOptionFields(value)[key] ?? undefined
+    : jsGet(value, key);
 
 /// [value] as plain Dart values for a compare with a Map literal: an
 /// object gives a new Map of its own keys in the `Object.keys` order, each
 /// value read through its face; another value is itself.
 Object? _plain(Object? value) => _isObject(value)
     ? <String, Object?>{
-        for (final key in _keys(value)) key: _plain(jsGet(value, key)),
+        for (final key in _keys(value)) key: _plain(_get(value, key)),
       }
     : value;
 
 /// The JSON member `"key":value` of [key] in [map].
 String _entry(Object map, String key) =>
-    '${jsonEncode(key)}:${_json(jsGet(map, key))}';
+    '${jsonEncode(key)}:${_json(_get(map, key))}';
 
 /// The leaves of [value] by dot path, in key order. A List is a leaf.
 Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
@@ -97,7 +112,7 @@ Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
   if (!_isObject(value)) return {prefix: value};
   return {
     for (final key in _keys(value))
-      ..._leaves(jsGet(value, key), prefix.isEmpty ? key : '$prefix.$key'),
+      ..._leaves(_get(value, key), prefix.isEmpty ? key : '$prefix.$key'),
   };
 }
 
@@ -106,7 +121,7 @@ Iterable<(String, Object)> _nodes(Object? value, [String path = '']) sync* {
   if (_isObject(value)) {
     yield (path, value!);
     for (final key in _keys(value)) {
-      yield* _nodes(jsGet(value, key), path.isEmpty ? key : '$path.$key');
+      yield* _nodes(_get(value, key), path.isEmpty ? key : '$path.$key');
     }
   } else if (value is List<Object?>) {
     yield (path, value);
@@ -222,7 +237,7 @@ String Function(Object?) _labeller(List<(Object?, String)> named) {
 Object? _at(Object? root, String path) {
   var node = root;
   for (final key in path.split('.')) {
-    node = jsGet(node, key);
+    node = _get(node, key);
   }
   return node;
 }
@@ -393,44 +408,49 @@ void main() {
         ),
         ..._transitionLeaves,
       });
-      expect(leaves.keys, [
-        'color',
-        'scale.ticks.color',
-        'scale.ticks.backdropColor',
-        'scale.ticks.font',
-        'scale.title.color',
-        'scale.title.font',
-        'scale.grid.color',
-        'scale.border.color',
-        'scales.radialLinear.pointLabels.color',
-        'scales.radialLinear.pointLabels.font',
-        'scales.radialLinear.angleLines.color',
-        'plugins.title.color',
-        'plugins.title.font',
-        'plugins.subtitle.color',
-        'plugins.subtitle.font',
-        'plugins.legend.labels.font',
-        'plugins.legend.title.font',
-        'plugins.tooltip.backgroundColor',
-        'plugins.tooltip.titleColor',
-        'plugins.tooltip.bodyColor',
-        'plugins.tooltip.footerColor',
-        'plugins.tooltip.multiKeyBackground',
-        'plugins.tooltip.titleFont',
-        'plugins.tooltip.bodyFont',
-        'plugins.tooltip.footerFont',
-        r'plugins.colors.$borderColors',
-        r'plugins.colors.$backgroundColors',
-        'elements.point.borderColor',
-        'elements.point.backgroundColor',
-        'elements.line.borderColor',
-        'elements.line.backgroundColor',
-        'elements.bar.borderColor',
-        'elements.bar.backgroundColor',
-        'elements.arc.backgroundColor',
-        'elements.arc.borderColor',
-        ..._transitionLeaves.keys,
-      ]);
+      // The paths below plugins.tooltip compare as a set at their place: a
+      // TooltipOptions has no key order (Chart.js ADR 0192).
+      expect(
+        tooltipPathsSorted(leaves.keys),
+        tooltipPathsSorted([
+          'color',
+          'scale.ticks.color',
+          'scale.ticks.backdropColor',
+          'scale.ticks.font',
+          'scale.title.color',
+          'scale.title.font',
+          'scale.grid.color',
+          'scale.border.color',
+          'scales.radialLinear.pointLabels.color',
+          'scales.radialLinear.pointLabels.font',
+          'scales.radialLinear.angleLines.color',
+          'plugins.title.color',
+          'plugins.title.font',
+          'plugins.subtitle.color',
+          'plugins.subtitle.font',
+          'plugins.legend.labels.font',
+          'plugins.legend.title.font',
+          'plugins.tooltip.backgroundColor',
+          'plugins.tooltip.titleColor',
+          'plugins.tooltip.bodyColor',
+          'plugins.tooltip.footerColor',
+          'plugins.tooltip.multiKeyBackground',
+          'plugins.tooltip.titleFont',
+          'plugins.tooltip.bodyFont',
+          'plugins.tooltip.footerFont',
+          r'plugins.colors.$borderColors',
+          r'plugins.colors.$backgroundColors',
+          'elements.point.borderColor',
+          'elements.point.backgroundColor',
+          'elements.line.borderColor',
+          'elements.line.backgroundColor',
+          'elements.bar.borderColor',
+          'elements.bar.backgroundColor',
+          'elements.arc.backgroundColor',
+          'elements.arc.borderColor',
+          ..._transitionLeaves.keys,
+        ]),
+      );
     });
 
     test('each color token emits its keys of theming.md §4', () {
@@ -1174,12 +1194,17 @@ void main() {
         'tooltip',
         'colors',
       ]);
-      expect(_keys(_at(compiled, 'plugins.tooltip')), [
-        ...tooltipColors,
-        'titleFont',
-        'bodyFont',
-        'footerFont',
-      ]);
+      // A TooltipOptions has no key order (Chart.js ADR 0192): its keys
+      // compare as a set.
+      expect(
+        _keys(_at(compiled, 'plugins.tooltip')),
+        unorderedEquals([
+          ...tooltipColors,
+          'titleFont',
+          'bodyFont',
+          'footerFont',
+        ]),
+      );
       // The same order without the other tokens.
       final tooltipOnly = compileChartTheme(
         onInverseSurface: _red,
@@ -1191,12 +1216,15 @@ void main() {
         'legend',
         'tooltip',
       ]);
-      expect(_keys(_at(tooltipOnly, 'plugins.tooltip')), [
-        ...tooltipColors.skip(1),
-        'titleFont',
-        'bodyFont',
-        'footerFont',
-      ]);
+      expect(
+        _keys(_at(tooltipOnly, 'plugins.tooltip')),
+        unorderedEquals([
+          ...tooltipColors.skip(1),
+          'titleFont',
+          'bodyFont',
+          'footerFont',
+        ]),
+      );
     });
   });
 
@@ -1206,6 +1234,9 @@ void main() {
       final nodes = _nodes(compiled).toList();
       expect(nodes.length, greaterThan(10));
       for (final (path, node) in nodes) {
+        // The TooltipOptions of plugins.tooltip is an immutable object
+        // (Chart.js ADR 0192): it has no write to freeze.
+        if (node is TooltipOptions) continue;
         expect(node, isA<JsFreezable>(), reason: path);
         expect((node as JsFreezable).isFrozen, isTrue, reason: path);
       }
@@ -1241,20 +1272,25 @@ void main() {
         'options': <String, Object?>{},
         themeConfigKey: compiled,
       });
+      // The title: the tooltip options of the theme are one immutable
+      // TooltipOptions with no resolver (Chart.js ADR 0192).
       final scopes = config.getOptionScopes(
         undefined,
-        config.pluginScopeKeys(Plugin<Object?>(id: 'tooltip')),
+        config.pluginScopeKeys(Plugin<Object?>(id: 'title')),
       );
-      expect(scopes.first, same(_at(compiled, 'plugins.tooltip')));
+      expect(scopes.first, same(_at(compiled, 'plugins.title')));
       final resolver = config.createResolver(scopes, <String, Object?>{});
       expect(
-        resolver['backgroundColor'],
-        const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.8)),
+        resolver['color'],
+        const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
+      // A value of the type of the key: the write throws for the freeze
+      // alone (a string would be a foreign pair of the oracle O2).
       expect(
-        () => resolver['backgroundColor'] = 'x',
+        () => resolver['color'] = const ChartPaint.solid(_red),
         throwsA(isA<TypeError>()),
       );
+      expect(_at(compiled, 'plugins.tooltip'), isA<TooltipOptions>());
     });
   });
 

@@ -130,7 +130,7 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
         easing: Curves.linear,
       ),
       legend: const ChartLegend(display: false),
-      tooltip: const ChartTooltip(enabled: false),
+      pluginOptions: const [TooltipOptions(enabled: false)],
       plugins: [_labels],
       // The demo has no selection.
       events: const [],

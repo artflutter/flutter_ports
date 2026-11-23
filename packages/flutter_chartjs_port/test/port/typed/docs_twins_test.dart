@@ -917,25 +917,27 @@ ChartConfig _barTyped() => ChartConfig(
     font: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     padding: EdgeInsets.only(top: 4, bottom: 8),
   ),
-  tooltip: ChartTooltip(
-    mode: const IndexInteractionMode(),
-    intersect: false,
-    backgroundColor: const ChartPaint.solid(Color(0xCC000000)),
-    padding: const EdgeInsets.all(10),
-    cornerRadius: 4,
-    displayColors: false,
-    titleFont: const TextStyle(fontSize: 13),
-    callbacks: TooltipCallbacks(
-      label: (tooltip, arg) {
-        final text = _barLabel(arg);
-        return text == null
-            ? null
-            : text.isEmpty
-            ? <String>[]
-            : [text];
-      },
+  pluginOptions: [
+    TooltipOptions(
+      mode: const IndexInteractionMode(),
+      intersect: false,
+      backgroundColor: const ChartPaint.solid(Color(0xCC000000)),
+      padding: const EdgeInsets.all(10),
+      cornerRadius: const BorderRadius.all(Radius.circular(4)),
+      displayColors: false,
+      titleFont: const TextStyle(fontSize: 13),
+      callbacks: TooltipCallbacks(
+        label: (tooltip, arg) {
+          final text = _barLabel(arg);
+          return text == null
+              ? null
+              : text.isEmpty
+              ? <String>[]
+              : [text];
+        },
+      ),
     ),
-  ),
+  ],
 );
 
 /// The raw twin of `_barTyped`.
@@ -1060,20 +1062,20 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         ),
         'padding': const EdgeInsets.only(top: 4, bottom: 8),
       },
-      'tooltip': <String, Object?>{
-        'mode': const IndexInteractionMode(),
-        'intersect': false,
-        'backgroundColor': const ChartPaint.solid(
+      'tooltip': TooltipOptions(
+        mode: const IndexInteractionMode(),
+        intersect: false,
+        backgroundColor: const ChartPaint.solid(
           native_ui.Color.fromRGBO(0, 0, 0, 0.8),
         ),
-        'titleFont': const ChartTextStyle(fontSize: 13),
-        'padding': const EdgeInsets.all(10),
-        'cornerRadius': 4,
-        'displayColors': false,
-        'callbacks': TooltipCallbacks(
+        titleFont: const TextStyle(fontSize: 13),
+        padding: const EdgeInsets.all(10),
+        cornerRadius: const BorderRadius.all(Radius.circular(4)),
+        displayColors: false,
+        callbacks: TooltipCallbacks(
           label: (tooltip, arg) => [jsToString(_rawBarLabel(arg))],
         ),
-      },
+      ),
     },
   },
 };
@@ -1522,20 +1524,22 @@ ChartConfig _pieTypeTyped() => ChartConfig(
     position: .right,
     labelFont: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
   ),
-  tooltip: ChartTooltip(
-    bodyColor: const ChartPaint.solid(_yellow),
-    bodyFont: const TextStyle(fontSize: 14),
-    callbacks: TooltipCallbacks(
-      footer: (tooltip, arg) {
-        final text = _budgetFooter(arg);
-        return text == null
-            ? null
-            : text.isEmpty
-            ? <String>[]
-            : [text];
-      },
+  pluginOptions: [
+    TooltipOptions(
+      bodyColor: const ChartPaint.solid(_yellow),
+      bodyFont: const TextStyle(fontSize: 14),
+      callbacks: TooltipCallbacks(
+        footer: (tooltip, arg) {
+          final text = _budgetFooter(arg);
+          return text == null
+              ? null
+              : text.isEmpty
+              ? <String>[]
+              : [text];
+        },
+      ),
     ),
-  ),
+  ],
 );
 
 /// The raw twin of `_pieTypeTyped`.
@@ -1576,15 +1580,15 @@ Map<String, Object?> _pieTypeRaw() => <String, Object?>{
           ),
         },
       },
-      'tooltip': <String, Object?>{
-        'bodyColor': const ChartPaint.solid(
+      'tooltip': TooltipOptions(
+        bodyColor: const ChartPaint.solid(
           native_ui.Color.fromRGBO(255, 205, 86, 1),
         ),
-        'bodyFont': const ChartTextStyle(fontSize: 14),
-        'callbacks': TooltipCallbacks(
+        bodyFont: const TextStyle(fontSize: 14),
+        callbacks: TooltipCallbacks(
           footer: (tooltip, arg) => [jsToString(_rawBudgetFooter(arg))],
         ),
-      },
+      ),
     },
   },
 };
@@ -1857,19 +1861,21 @@ ChartConfig _radarTypeTyped() => ChartConfig(
     point: PointElementStyle(hitRadius: 6, borderWidth: 1),
     line: LineElementStyle(borderWidth: 2),
   ),
-  tooltip: ChartTooltip(
-    titleColor: const ChartPaint.solid(_yellow),
-    callbacks: TooltipCallbacks(
-      title: (tooltip, arg) {
-        final text = _radarTitle(arg);
-        return text == null
-            ? null
-            : text.isEmpty
-            ? <String>[]
-            : [text];
-      },
+  pluginOptions: [
+    TooltipOptions(
+      titleColor: const ChartPaint.solid(_yellow),
+      callbacks: TooltipCallbacks(
+        title: (tooltip, arg) {
+          final text = _radarTitle(arg);
+          return text == null
+              ? null
+              : text.isEmpty
+              ? <String>[]
+              : [text];
+        },
+      ),
     ),
-  ),
+  ],
 );
 
 /// The raw twin of `_radarTypeTyped`.
@@ -1949,14 +1955,14 @@ Map<String, Object?> _radarTypeRaw() => <String, Object?>{
       'line': <String, Object?>{'borderWidth': 2},
     },
     'plugins': <String, Object?>{
-      'tooltip': <String, Object?>{
-        'titleColor': const ChartPaint.solid(
+      'tooltip': TooltipOptions(
+        titleColor: const ChartPaint.solid(
           native_ui.Color.fromRGBO(255, 205, 86, 1),
         ),
-        'callbacks': TooltipCallbacks(
+        callbacks: TooltipCallbacks(
           title: (tooltip, arg) => [jsToString(_rawRadarTitle(arg))],
         ),
-      },
+      ),
     },
   },
 };

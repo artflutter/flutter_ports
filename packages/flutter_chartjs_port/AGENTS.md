@@ -306,11 +306,11 @@ repository.
       the generators write the mode class into the reference data (`DartMode` of
       `tool/reference/scale_chart_common.mjs`), and a compare with upstream JSON text puts a
       marker on both sides (`withModeMarkers` of `test/support/mode_json.dart`). The typed API
-      takes the same object (`ChartInteraction.mode`, `ChartTooltip.mode`). The option `axis` of
+      takes the same object (`ChartInteraction.mode`, `TooltipOptions.mode`). The option `axis` of
       the same scopes holds the enum `InteractionAxis` (`x`, `y`, `xy`, `r`; row
       `adapt-interaction-axis-enum`, the schema shape `interactionAxis`): the search code tests
       its values (`usesX`, `usesY`), a keyword stops a debug build in `InteractionAxis.of`, and the
-      typed API has `ChartInteraction.axis` and `ChartTooltip.axis`. The scale option `axis` stays
+      typed API has `ChartInteraction.axis` and `TooltipOptions.axis`. The scale option `axis` stays
       text. `layouts` is a record
       of `addBox`, `removeBox`, `configure` and `update`. A box is a `LayoutItem` of `lib/src/types/layout.dart`.
       The position of a box is the interface `LayoutPosition` of the same file (row
@@ -578,17 +578,29 @@ repository.
     that a test finds this way has a private class. The
     key `_element` of upstream has no field (the tests read `Legend.jsClass`, `Title.jsClass` and
     `Tooltip.jsClass`), and the decimation plugin has no `destroy`. The options of each built-in
-    plugin are an immutable final class of resolved values of the port-only pure
-    `plugin_options.dart` (Chart.js ADR 0182, row `adapt-native-plugin-options`): `TitleOptions.of`
+    plugin are an immutable final class of the port-only pure `plugin_options.dart` (row
+    `adapt-native-plugin-options`). The title, legend, filler, decimation and colors classes hold
+    resolved values (Chart.js ADR 0182): `TitleOptions.of`
     and the other `of` methods read each key once, at the first hook of an update, and each hook of
     the update gets the same object. A field has the type of its key in the schema: a number, a
-    `ChartTextStyle`, a `TextAlign`, an enum or the lines of a text. The colors, the tooltip
-    `cornerRadius` and `animations`, and the legend label `borderRadius`, `pointStyle` and
-    `generateLabels` stay `Object?`. `Title.options` is a `TitleOptions?` and `Legend.options` a
-    `LegendOptions`; the layout reads their layout keys through `LayoutBoxOptions`. The tooltip
-    keeps the resolved view and makes a `TooltipOptions` at each `setContext` of upstream.
-    `LegendOptions.view` and `TooltipOptions.view` keep the resolved view; a test that needs a read
-    in upstream order reads it. A test reads a hook field of a plugin through `hookOf`. The library exports no class `Title`, `Legend` or
+    `ChartTextStyle`, a `TextAlign`, an enum or the lines of a text. The colors, and the legend label
+    `borderRadius`, `pointStyle` and `generateLabels` stay `Object?`. `Title.options` is a
+    `TitleOptions?` and `Legend.options` a `LegendOptions`; the layout reads their layout keys
+    through `LayoutBoxOptions`. `LegendOptions.view` keeps the resolved view; a test that needs a
+    read in upstream order reads it. `TooltipOptions` is one immutable `PluginOptions` with a
+    nullable field for each tooltip option, `merge`, `==` and `hashCode` (Chart.js ADR 0192): an
+    app gives it in `ChartConfig.pluginOptions` or in `options.plugins.tooltip` of a raw config (a
+    Map there stops a debug build), and the plugin service merges the objects of the defaults, the
+    theme and the chart, with no resolver and no additional scope (`Config.pluginScopeKeys`). The
+    plugin defaults are one `const TooltipOptions`, with no `defaultRoutes` and no `descriptors`.
+    `Tooltip._resolved` gives the fallbacks of upstream in Dart (the interaction options of the
+    chart, the fonts over `Chart.defaults.font`, the box sizes of the body font), and
+    `tooltip.options` holds the resolved object; the interaction modes read it through
+    `InteractionOptionValues`. A scriptable tooltip option is the one function
+    `TooltipOptions.scripted` (row `adapt-tooltip-scripted`), which the tooltip calls where upstream
+    calls `setContext`. `animation` is a `TooltipAnimation` (`TooltipAnimation.off`) and
+    `animations` a `List<PropertyAnimation>` (also `CaretXAnimation`, `CaretYAnimation` and
+    `OpacityAnimation`); `Tooltip._animationsSpec` builds the animation config from them. A test reads a hook field of a plugin through `hookOf`. The library exports no class `Title`, `Legend` or
     `Tooltip`. `plugin.decimation.dart`, `plugin_options.dart` and the files of `plugin.filler/` are
     pure layers. The other plugin files are not: `plugin.title`, `plugin.legend` and
     `plugin.subtitle` reach `helpers.extras`, `plugin.tooltip` imports `core.animations`, and
@@ -675,7 +687,7 @@ repository.
       the Flutter `TextAlign`, as each text align (below).
     - The `xAlign` and `yAlign` of the tooltip (the options, the model and `TooltipPosition`) hold
       the enums `TooltipXAlign` and `TooltipYAlign` of `lib/src/types/align.dart` (row
-      `adapt-tooltip-align-enums`); the typed API has `ChartTooltip.xAlign` and `yAlign`.
+      `adapt-tooltip-align-enums`); an app gives them in `TooltipOptions.xAlign` and `yAlign`.
     - The text aligns hold the Flutter `TextAlign` (row `adapt-flutter-text-align`), also in a
       raw config: the canvas `textAlign`, `labels.textAlign` of the legend and a legend item,
       `titleAlign`, `bodyAlign` and `footerAlign` of the tooltip, a label item of a scale and the
@@ -817,8 +829,8 @@ repository.
       gone. A positioner name stops a debug build in `TooltipPositioner.of`. The base class and
       `TooltipPosition` are in the pure `tooltip_position.dart`, because `opt.dart` reads the
       type. The generators write the positioner class into the reference data (`DartPositioner`),
-      and a positioner of a test has the name `'fn:positioner:<key>'` there. The typed API has
-      `ChartTooltip.position`. The tooltip items and body items are the native `TooltipItem` and
+      and a positioner of a test has the name `'fn:positioner:<key>'` there. An app gives it in
+      `TooltipOptions.position`. The tooltip items and body items are the native `TooltipItem` and
       `TooltipBodyItem` of `lib/src/types/tooltip_item.dart` (row `adapt-native-tooltip-item`). The
       label colors, label point styles and positions are typed classes (`TooltipLabelStyle`,
       `TooltipLabelPointStyle`, `TooltipPosition`). The access by name
@@ -977,7 +989,7 @@ repository.
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 75 names. 26 of them are the classes of
+    `typed.dart` is its export list of 74 names. 26 of them are the classes of
     `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
     `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
     19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of
@@ -1024,8 +1036,10 @@ repository.
     of `lower.dart`: `x`, `y`, `r`, then `x1`, `y1`), a dataset names its axis by the axis object
     (`yAxis`), and `chart.scaleOf(axis)` gives the scale (Chart.js ADR 0191); an axis takes its `border` as an `AxisBorder` (a
     `RadialAxisBorder` for `RadialLinearAxis`) of `lib/chartjs.dart` (Chart.js ADR 0141).
-    `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`,
-    `ChartInteraction` and `ChartAnimation`. `elements.dart` has `ChartElements` and the 4 element
+    `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartFiller`,
+    `ChartInteraction` and `ChartAnimation`. The tooltip has no group: a config gives its
+    `TooltipOptions` in `ChartConfig.pluginOptions` (Chart.js ADR 0192), and `==` compares the
+    object with its `==`, so a new closure in it is a new value. `elements.dart` has `ChartElements` and the 4 element
     styles. `callbacks.dart` has `ChartScript`, a function of the typed dataset or data context
     (`ScriptableContext`). The event callbacks take the function types
     of the core (Chart.js ADR 0130). Each

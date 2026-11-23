@@ -45,6 +45,23 @@ final class const _RodEnd() extends TooltipPositioner {
   }
 }
 
+/// Only the items of the four rods, not of their mirrors.
+bool _rodItems(
+  TooltipItem item,
+  int index,
+  List<TooltipItem> items,
+  Object data,
+) => item.datasetIndex < 4;
+
+/// No title: fl_chart shows only the value.
+List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>
+    const [];
+
+/// The sum of the rod items of the day.
+List<String> _rodSum(TooltipModel tooltip, TooltipItem item) => [
+  _items[item.dataIndex].reduce((a, b) => a + b).toString(),
+];
+
 class const BarSample5({super.key}) extends StatefulWidget {
   @override
   State<BarSample5> createState() => _BarSample5State();
@@ -201,25 +218,22 @@ class _BarSample5State() extends State<BarSample5> {
           for (var item = 0; item < 4; item++) _rod(item, mirror: true),
         ],
         // fl_chart shows the tooltip of the touched rod at its end.
-        tooltip: ChartTooltip(
-          position: const _RodEnd(),
-          backgroundColor: const .solid(_tooltipColor),
-          bodyColor: const .solid(Colors.cyan),
-          bodyFont: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          displayColors: false,
-          cornerRadius: 4,
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-          filter: (item, index, items, data) => item.datasetIndex < 4,
-          callbacks: TooltipCallbacks(
-            title: (tooltip, items) => const [],
-            label: (tooltip, item) => [
-              _items[item.dataIndex].reduce((a, b) => a + b).toString(),
-            ],
+        pluginOptions: const [
+          TooltipOptions(
+            position: _RodEnd(),
+            backgroundColor: .solid(_tooltipColor),
+            bodyColor: .solid(Colors.cyan),
+            bodyFont: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            displayColors: false,
+            cornerRadius: BorderRadius.all(Radius.circular(4)),
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
+            filter: _rodItems,
+            callbacks: TooltipCallbacks(title: _noTitle, label: _rodSum),
+            caretSize: 0,
+            caretPadding: 16,
+            bodyAlign: .center,
           ),
-          caretSize: 0,
-          caretPadding: 16,
-          bodyAlign: .center,
-        ),
+        ],
         plugins: [_letters, _touch],
         scales: [
           groupAxis(

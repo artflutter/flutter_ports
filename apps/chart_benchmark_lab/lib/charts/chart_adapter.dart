@@ -234,10 +234,12 @@ class const BenchmarkChart({
           ),
         ],
         animation: cj.ChartAnimation.none,
-        tooltip: cj.ChartTooltip(enabled: config.tooltips),
         responsive: true,
         maintainAspectRatio: false,
-        pluginOptions: config.zooms ? [_chartJsZoom] : null,
+        pluginOptions: [
+          cj.TooltipOptions(enabled: config.tooltips),
+          if (config.zooms) _chartJsZoom,
+        ],
         events: config.tooltips
             ? const [
                 'mousemove',
@@ -461,12 +463,14 @@ class const BenchmarkChart({
         },
         animation: cj.ChartAnimation.none,
         legend: const cj.ChartLegend(display: false),
-        tooltip: cj.ChartTooltip(enabled: config.tooltips),
         responsive: true,
         maintainAspectRatio: false,
         // A radial scale has no radius option: the padding gives its share.
-        // The options of the zoom plugin (Chart.js ADR 0148).
-        pluginOptions: config.zooms ? [_chartJsZoom] : null,
+        // The tooltip and zoom plugin options (Chart.js ADR 0148).
+        pluginOptions: [
+          cj.TooltipOptions(enabled: config.tooltips),
+          if (config.zooms) _chartJsZoom,
+        ],
         padding: switch (config.type) {
           ChartType.polarArea => EdgeInsets.all(
             size.shortestSide * (1 - sliceExtent) / 2,

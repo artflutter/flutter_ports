@@ -14,6 +14,6 @@
 # filter, itemSort and external are typed functions (row
 # adapt-native-tooltip-item).
 # jsObjectKeys 1: the values of a borderWidth object of user code.
-jsGet 15
+jsGet 13
 stringIndex 2
 jsObjectKeys 1

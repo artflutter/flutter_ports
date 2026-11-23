@@ -81,12 +81,13 @@ Map<String, Object?> fixture() {
           'legend': false,
           'title': false,
           'filler': false,
-          'tooltip': <String, Object?>{
+          // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+          'tooltip': TooltipOptions(
             // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
-            'mode': const NearestInteractionMode(),
-            'intersect': false,
-            'callbacks': TooltipCallbacks(label: (tooltip, arg) => ['​']),
-          },
+            mode: const NearestInteractionMode(),
+            intersect: false,
+            callbacks: TooltipCallbacks(label: (tooltip, arg) => ['​']),
+          ),
         },
 
         'layout': <String, Object?>{'padding': const EdgeInsets.all(15)},

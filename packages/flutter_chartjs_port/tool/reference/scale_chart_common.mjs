@@ -1218,6 +1218,34 @@ class NativeTooltipStyle { constructor(value) { this.value = value; } }
 class NativeTooltipPointStyle { constructor(value) { this.value = value; } }
 class NativeTooltipPaint { constructor(value) { this.value = value; } }
 
+/**
+ * The tooltip options of an input config (`options.plugins.tooltip`): the
+ * TooltipOptions object of the port (Chart.js ADR 0192). A function of the
+ * generator (filter, itemSort, external, a custom positioner, a callback)
+ * comes from the `functions` table of the Dart test file.
+ */
+class NativeTooltipOptions { constructor(value) { this.value = value; } }
+
+/** The function type of each function option of the tooltip. */
+const TOOLTIP_FUNCTION_TYPES = {
+  filter: 'TooltipItemFilter',
+  itemSort: 'TooltipItemComparator',
+  external: 'TooltipExternal',
+};
+
+/** The paint options of the tooltip. */
+const TOOLTIP_PAINTS = new Set([
+  'backgroundColor', 'titleColor', 'bodyColor', 'footerColor', 'borderColor', 'multiKeyBackground',
+]);
+
+/** Whether the tooltip options [value] hold a function of the generator. */
+function tooltipOptionsHaveFunctions(value) {
+  return Object.keys(value).some(
+    (k) => k in TOOLTIP_FUNCTION_TYPES || k === 'callbacks' ||
+      (k === 'position' && !(value[k] in POSITIONER_CLASSES)),
+  );
+}
+
 /** Native padding literal (row adapt-edge-insets-padding). */
 export class DartPadding {
   constructor(value) { this.value = value; }
@@ -1556,6 +1584,9 @@ const POSITIONER_CLASSES = {
  * its row. Another value stays.
  */
 function keyedValue(k, value, owner) {
+  if (k === 'tooltip' && owner === 'plugins' && value && value.constructor === Object) {
+    return new NativeTooltipOptions(value);
+  }
   if (k === 'callbacks' && value && value.constructor === Object &&
       Object.values(value).every(v => typeof v === 'function' || typeof v === 'string' && v.startsWith('fn:'))) {
     return new NativeTooltipCallbacks(value);
@@ -1872,6 +1903,40 @@ function dart(v, state, owner) {
     });
     return `TooltipCallbacks(${fields.join(', ')})`;
   }
+  if (v instanceof NativeTooltipOptions) {
+    state.tooltipValues = true;
+    const write = () => {
+      const fields = Object.keys(v.value).map((k) => {
+        const x = v.value[k];
+        const fnType = TOOLTIP_FUNCTION_TYPES[k];
+        if (fnType) {
+          const name = typeof x === 'function' ? x.dartName : x.slice(3);
+          if (!name) throw new Error(`Unnamed tooltip function ${k}`);
+          state.tooltipCallbacks = true;
+          return `${k}: functions[${dart(name, state)}]! as ${fnType}`;
+        }
+        if (k === 'position' && typeof x === 'string' && !(x in POSITIONER_CLASSES)) {
+          state.tooltipCallbacks = true;
+          return `position: functions[${dart(`positioner:${x}`, state)}]! as TooltipPositioner`;
+        }
+        if (TOOLTIP_PAINTS.has(k)) return `${k}: ${dart(new NativeTooltipPaint(x), state)}`;
+        if (k === 'events') return `events: <String>[${x.map((e) => dart(e, state)).join(', ')}]`;
+        if (k === 'animation' && x === false) return 'animation: TooltipAnimation.off';
+        if (k === 'cornerRadius') {
+          state.borderRadii = true;
+          return `cornerRadius: ${dartBorderRadius(x)}`;
+        }
+        if (typeof x === 'number') return `${k}: ${nativeNumber(x)}`;
+        if (x && x.constructor === Object && !['padding', 'callbacks'].includes(k)) {
+          throw new Error(`A tooltip option object with no field form: ${k}`);
+        }
+        return `${k}: ${dart(keyedValue(k, x, 'tooltip'), state, k)}`;
+      });
+      return `TooltipOptions(${fields.join(', ')})`;
+    };
+    if (tooltipOptionsHaveFunctions(v.value)) return write();
+    return constLeaves ? nativeConstant(write) : write();
+  }
   if (v instanceof NativeTooltipPaint) {
     state.tooltipValues = true;
     if (v.value == null || v.value === false) return nativeConstant(() => 'ChartPaint.unchanged()');
@@ -2057,6 +2122,7 @@ function constLiteral(v, owner, write) {
 function hasNumberFormat(v, owner) {
   if (v instanceof DartFill) return v.split;
   if (v instanceof DartNumberFormat || v instanceof NativeTooltipStyle || v instanceof NativeTooltipCallbacks) return true;
+  if (v instanceof NativeTooltipOptions) return tooltipOptionsHaveFunctions(v.value);
   if (Array.isArray(v)) return v.some((x) => hasNumberFormat(x, owner));
   if (v === null || typeof v !== 'object' || v.constructor !== Object) return false;
   return Object.keys(v).some((k) => hasNumberFormat(keyedValue(k, v[k], owner), k));

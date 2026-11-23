@@ -204,13 +204,13 @@ BarDataset apexJsBar(
 
 /// The tooltip of a bar series: `tooltip: {shared: false, intersect: true}`,
 /// the defaults of a bar chart. One row for the bar under the pointer.
-ChartTooltip apexJsBarTooltip({
+TooltipOptions apexJsBarTooltip({
   String Function(num value) value = apexNumber,
   bool horizontal = false,
 }) => apexTooltip(
   value: value,
   horizontal: horizontal,
-).copyWith(mode: const NearestInteractionMode(), intersect: true);
+).merge(const TooltipOptions(mode: NearestInteractionMode(), intersect: true));
 
 /// `grid.row.colors` with `grid.row.opacity`: bands of the colors between
 /// the grid lines of the y axis, from the top.

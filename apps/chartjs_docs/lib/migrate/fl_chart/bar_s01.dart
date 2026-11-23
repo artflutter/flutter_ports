@@ -64,6 +64,16 @@ final Plugin<Object?> _backRods = Plugin(
   },
 );
 
+/// The day of the bar, as the title of the tooltip.
+List<String> _tooltipTitle(TooltipModel tooltip, List<TooltipItem> items) => [
+  _days[items.first.dataIndex],
+];
+
+/// The value of the bar, as the label of the tooltip.
+List<String> _tooltipLabel(TooltipModel tooltip, TooltipItem item) => [
+  _values[item.dataIndex].toStringAsFixed(1),
+];
+
 class const BarSample1({super.key}) extends StatefulWidget {
   @override
   State<BarSample1> createState() => _BarSample1State();
@@ -148,30 +158,37 @@ class _BarSample1State() extends State<BarSample1> {
           duration: Duration(milliseconds: 250),
           easing: Curves.linear,
         ),
-        tooltip: ChartTooltip(
-          enabled: !_playing,
-          backgroundColor: const .solid(Fl.blueGrey),
-          displayColors: false,
-          cornerRadius: 4,
-          padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
-          // fl_chart puts the tooltip right of the bar, 10 pixels into it.
-          xAlign: TooltipXAlign.left,
-          yAlign: TooltipYAlign.bottom,
-          titleColor: const .solid(Colors.white),
-          titleFont: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          bodyColor: const .solid(Colors.white),
-          bodyFont: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          callbacks: TooltipCallbacks(
-            title: (tooltip, items) => [_days[items.first.dataIndex]],
-            label: (tooltip, item) => [
-              _values[item.dataIndex].toStringAsFixed(1),
-            ],
+        pluginOptions: [
+          TooltipOptions(
+            enabled: !_playing,
+            backgroundColor: const .solid(Fl.blueGrey),
+            displayColors: false,
+            cornerRadius: const BorderRadius.all(Radius.circular(4)),
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+            // fl_chart puts the tooltip right of the bar, 10 pixels into it.
+            xAlign: TooltipXAlign.left,
+            yAlign: TooltipYAlign.bottom,
+            titleColor: const .solid(Colors.white),
+            titleFont: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            bodyColor: const .solid(Colors.white),
+            bodyFont: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+            callbacks: const TooltipCallbacks(
+              title: _tooltipTitle,
+              label: _tooltipLabel,
+            ),
+            caretSize: 0,
+            caretPadding: -10,
+            bodyAlign: .center,
+            titleMarginBottom: 4,
+            titleAlign: TextAlign.center,
           ),
-          caretSize: 0,
-          caretPadding: -10,
-          bodyAlign: .center,
-          extra: const {'titleMarginBottom': 4, 'titleAlign': TextAlign.center},
-        ),
+        ],
         plugins: [_backRods, _touch],
         scales: [
           groupAxis(

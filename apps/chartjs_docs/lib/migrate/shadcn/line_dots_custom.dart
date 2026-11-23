@@ -66,7 +66,9 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   aspectRatio: 16 / 9,
   padding: const EdgeInsets.symmetric(horizontal: 12),
   legend: shadcnNoLegend,
-  tooltip: shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
+  pluginOptions: [
+    shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
+  ],
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
   scales: [shadcnCategoryAxis(), shadcnValueAxis(_desktop)],

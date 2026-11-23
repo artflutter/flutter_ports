@@ -26,9 +26,11 @@ final ChartConfig _config = ChartConfig(
   padding: sfPadding,
   title: sfTitle('Working hours of employees'),
   legend: const ChartLegend(display: false),
-  tooltip: sfTooltip(
-    text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}',
-  ),
+  pluginOptions: [
+    sfTooltip(
+      text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}',
+    ),
+  ],
   plugins: [
     sfTooltipLook,
     // isTrackVisible: true, trackColor: Color.fromRGBO(198, 201, 207, 1)

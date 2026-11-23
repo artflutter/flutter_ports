@@ -124,11 +124,11 @@ AnyObject barChartOptions() => <String, Object?>{
       'display': true,
       'text': ['Bar chart'],
     },
-    'tooltip': <String, Object?>{
-      'mode': 'index',
-      'intersect': false,
-      'padding': const EdgeInsets.symmetric(vertical: 6),
-    },
+    'tooltip': const TooltipOptions(
+      mode: IndexInteractionMode(),
+      intersect: false,
+      padding: EdgeInsets.symmetric(vertical: 6),
+    ),
   },
   'animation': <String, Object?>{
     'duration': 400.0,

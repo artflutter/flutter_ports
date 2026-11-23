@@ -1075,9 +1075,17 @@ Tooltip callbacks use the native `TooltipCallbacks` object in chart and dataset 
 Its 14 hooks are typed functions with an explicit tooltip argument. Text hooks return `List<String>?`: null invokes
 the built-in default, and an empty list emits no lines. Fields merge with `other.field ?? field`. A hook gets the
 native `TooltipItem`. Result paints/styles are native values; default producers resolve their
-rendered forms. The typed API uses `ChartTooltip.callbacks` and `Dataset.tooltipCallbacks`; the old `titleText`,
+rendered forms. The typed API uses `TooltipOptions.callbacks` and `Dataset.tooltipCallbacks`; the old `titleText`,
 `labelText` and `footerText` parameters are removed. Reference generators emit native expected values; no callback
 Map adapter is present in the runtime.
+
+The tooltip options are one immutable object, `TooltipOptions` (Chart.js ADR 0192, rows
+`adapt-native-plugin-options` and `adapt-tooltip-scripted`): a `PluginOptions` with a nullable field for each
+option, in `ChartConfig.pluginOptions` of a typed config or in `options.plugins.tooltip` of a raw config, where a
+Map stops a debug build. `ChartTooltip`, `ChartConfig.tooltip` and the scope kind `TooltipOptions` are gone. The
+scriptable form of the options is the one function `scripted`, `(context, options) => TooltipOptions(...)`. A test
+that gives tooltip options gives a typed config; the generated data and the hand fixtures hold the object in their
+raw configs, and no helper turns a Map into options.
 
 A tooltip item is the native extensible class `TooltipItem` of `lib/src/types/tooltip_item.dart` (row
 `adapt-native-tooltip-item`). It is immutable: `datasetIndex` and
@@ -1088,7 +1096,7 @@ A tooltip item is the native extensible class `TooltipItem` of `lib/src/types/to
 `getLabelAndValue` of a dataset controller returns `({List<String> label, String value})`: a falsy label is the
 empty List (`dataLabelLinesOf`). The tooltip options `filter`, `itemSort` and `external` hold the typed functions
 `TooltipItemFilter`, `TooltipItemComparator` and `TooltipExternal` of `tooltip_callbacks.dart`, also in a raw
-config, with no `this`; a function of another type stops a debug build. The typed API has `ChartTooltip.filter`,
+config, with no `this`; a function of another type stops a debug build. `TooltipOptions` has `filter`,
 `itemSort` and `external`. `types.TypedTooltipItem`, `ChartTooltipItem` and the two records of
 `plugin.tooltip.dart` are removed. In the tests, `test/support/data_label.dart` gives the native label of a
 reference label (`nativeDataLabel`) and the plain forms of the native items.

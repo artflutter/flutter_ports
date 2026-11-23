@@ -28,9 +28,11 @@ final ChartConfig _config = ChartConfig(
   padding: const EdgeInsets.all(10),
   title: sfTitle('Land area of various cities (sq.km)'),
   legend: const ChartLegend(display: false),
-  tooltip: sfTooltip(
-    text: (item) => '${item.label.join(' ')} : ${sfValue(item)} sq.km',
-  ),
+  pluginOptions: [
+    sfTooltip(
+      text: (item) => '${item.label.join(' ')} : ${sfValue(item)} sq.km',
+    ),
+  ],
   plugins: [
     sfTooltipLook,
     // labelAlignment: ChartDataLabelAlignment.top: inside the end.
