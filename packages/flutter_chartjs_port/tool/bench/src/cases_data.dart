@@ -147,17 +147,21 @@ LineOptions _lineStyle() => LineOptions(<String, Object?>{
   'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(75, 192, 192, 1)),
 });
 
-BenchCase _curve(int count, String mode) => BenchCase(
+BenchCase _curve(
+  int count,
+  String mode,
+  CubicInterpolationMode interpolation,
+) => BenchCase(
   'data',
   'curve/${mode}_$count',
   () {
     final points = _splinePoints(count);
-    final options = <String, Object?>{
+    final options = LineOptions(<String, Object?>{
       'tension': 0.4,
-      'cubicInterpolationMode': mode,
+      'cubicInterpolationMode': interpolation,
       'capBezierPoints': true,
       'spanGaps': false,
-    };
+    });
     const area = _Area(0, 0, 10000, 600);
     return (n) {
       var acc = 0;
@@ -174,10 +178,10 @@ BenchCase _curve(int count, String mode) => BenchCase(
 
 /// The data cases.
 List<BenchCase> dataCases() => [
-  _curve(1000, 'default'),
-  _curve(10000, 'default'),
-  _curve(1000, 'monotone'),
-  _curve(10000, 'monotone'),
+  _curve(1000, 'default', const DefaultCubicInterpolationMode()),
+  _curve(10000, 'default', const DefaultCubicInterpolationMode()),
+  _curve(1000, 'monotone', const MonotoneCubicInterpolationMode()),
+  _curve(10000, 'monotone', const MonotoneCubicInterpolationMode()),
   BenchCase(
     'data',
     'segment/compute_10k_gaps',

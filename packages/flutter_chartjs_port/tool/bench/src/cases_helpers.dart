@@ -27,7 +27,7 @@ List<BenchCase> helperCases() => [
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        acc += (clone(config)! as AnyObject).length;
+        acc += jsObjectKeys(clone(config)).length;
       }
       return acc;
     };
@@ -44,26 +44,30 @@ List<BenchCase> helperCases() => [
   }, per: 'merge({}, config) of a bar config'),
   BenchCase('core', 'mergeIf/options_over_defaults', () {
     final options = barChartOptions();
-    final scaleDefaults = <String, Object?>{
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'category',
-          'offset': true,
-          'grid': <String, Object?>{'offset': true, 'display': true},
-          'ticks': <String, Object?>{'autoSkip': true, 'padding': 3.0},
-        },
-        'y': <String, Object?>{
-          'type': 'linear',
-          'beginAtZero': true,
-          'grace': 0.0,
-          'ticks': <String, Object?>{'padding': 3.0},
-        },
-      },
-      'plugins': <String, Object?>{
-        'legend': <String, Object?>{'display': true, 'align': 'center'},
-        'tooltip': const TooltipOptions(enabled: true),
-      },
-    };
+    // The scale and plugin defaults as the options scope of a typed config.
+    final scaleDefaults = lowerConfig(
+      const ChartConfig(
+        datasets: [BarDataset()],
+        scales: [
+          CategoryAxis(
+            .x,
+            grid: AxisGrid(offset: true, display: true),
+            ticks: AxisTicks(autoSkip: true, padding: 3),
+            extra: {'offset': true},
+          ),
+          LinearAxis(
+            .y,
+            beginAtZero: true,
+            ticks: AxisTicks(padding: 3),
+            extra: {'grace': ValueGrace(0)},
+          ),
+        ],
+        pluginOptions: [
+          LegendOptions(display: true, align: ChartAlign.center),
+          TooltipOptions(enabled: true),
+        ],
+      ),
+    ).optionsCell!.raw!;
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {

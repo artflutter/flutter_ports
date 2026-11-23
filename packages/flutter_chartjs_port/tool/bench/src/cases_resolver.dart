@@ -69,7 +69,7 @@ int _readAll(Object resolver, List<String> names) {
 /// The resolver cases.
 List<BenchCase> resolverCases() => [
   BenchCase('resolver', 'resolver/cold_create_read10', () {
-    final scopes = barElementScopes(staticBarDataset(0), barChartOptions());
+    final scopes = barElementScopes(staticBarScopes());
     final names = barOptionNames();
     return (n) {
       var acc = 0;
@@ -80,7 +80,7 @@ List<BenchCase> resolverCases() => [
     };
   }, per: 'createResolver over 7 bar scopes + 10 first reads'),
   BenchCase('resolver', 'resolver/warm_read10', () {
-    final scopes = barElementScopes(staticBarDataset(0), barChartOptions());
+    final scopes = barElementScopes(staticBarScopes());
     final names = barOptionNames();
     final resolver = createResolver(scopes, ['bar', '']);
     _readAll(resolver, names);
@@ -93,7 +93,7 @@ List<BenchCase> resolverCases() => [
     };
   }, per: '10 cached reads of one resolver'),
   BenchCase('resolver', 'resolver/named_static_element', () {
-    final scopes = barElementScopes(staticBarDataset(0), barChartOptions());
+    final scopes = barElementScopes(staticBarScopes());
     final names = barOptionNames();
     final resolver = createResolver(scopes, ['bar', '']);
     final sub = createResolver(scopes, ['bar', '']);
@@ -112,7 +112,7 @@ List<BenchCase> resolverCases() => [
     };
   }, per: 'resolveNamedOptions of a bar element, static options, 10 names'),
   BenchCase('resolver', 'resolver/scriptable_attach_read10', () {
-    final scopes = barElementScopes(scriptableBarDataset(0), barChartOptions());
+    final scopes = barElementScopes(scriptableBarScopes());
     final names = barOptionNames();
     final resolver = createResolver(scopes, ['bar', '']);
     final contexts = dataContexts(100);
@@ -126,7 +126,7 @@ List<BenchCase> resolverCases() => [
     };
   }, per: '_attachContext + 10 reads (2 scriptable, 1 indexable)'),
   BenchCase('resolver', 'resolver/named_scriptable_element', () {
-    final scopes = barElementScopes(scriptableBarDataset(0), barChartOptions());
+    final scopes = barElementScopes(scriptableBarScopes());
     final names = barOptionNames();
     final resolver = createResolver(scopes, ['bar', '']);
     final sub = createResolver(scopes, ['bar', '']);
@@ -191,7 +191,7 @@ List<BenchCase> resolverCases() => [
     };
   }, per: 'resolver.ticks.font.size, all cached'),
   BenchCase('resolver', 'resolver/descriptors', () {
-    final scopes = barElementScopes(staticBarDataset(0), barChartOptions());
+    final scopes = barElementScopes(staticBarScopes());
     final resolver = createResolver(scopes, ['bar', '']);
     descriptorsOf(resolver);
     return (n) {
@@ -205,7 +205,7 @@ List<BenchCase> resolverCases() => [
     };
   }, per: '_descriptors + isScriptable + isIndexable'),
   BenchCase('resolver', 'resolver/object_keys_warm', () {
-    final scopes = barElementScopes(staticBarDataset(0), barChartOptions());
+    final scopes = barElementScopes(staticBarScopes());
     final resolver = createResolver(scopes, ['bar', '']);
     jsObjectKeys(resolver);
     return (n) {
@@ -217,7 +217,7 @@ List<BenchCase> resolverCases() => [
     };
   }, per: 'Object.keys(resolver), _keys cached'),
   BenchCase('resolver', 'resolver/object_keys_cold', () {
-    final scopes = barElementScopes(staticBarDataset(0), barChartOptions());
+    final scopes = barElementScopes(staticBarScopes());
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
