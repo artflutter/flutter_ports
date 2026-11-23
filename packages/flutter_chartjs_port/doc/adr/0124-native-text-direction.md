@@ -1,6 +1,7 @@
 # Chart.js ADR 0124: Native text direction and scoped restoration
 
 - Status: accepted (2026-11-12): native and browser tests, fixtures, analysis and port checks pass.
+- Superseded in part by: [Chart.js ADR 0192](0192-tooltip-options-object.md) (2026-11-23), for the field of `ChartTooltip`
 - Date: 2026-11-12
 - Related: ADR 0116 (native fonts), ADR 0123 (native padding).
 - Difference: `adapt-text-direction`.

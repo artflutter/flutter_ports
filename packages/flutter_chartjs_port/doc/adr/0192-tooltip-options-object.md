@@ -1,6 +1,6 @@
 # Chart.js ADR 0192: The tooltip options are one object
 
-- Status: proposed
+- Status: accepted (2026-11-23): its code is on main, and all the gates of AGENTS.md pass.
 - Date: 2026-11-23
 - Supersedes: of [Chart.js ADR 0182](0182-resolved-plugin-option-classes.md), item 1 for `TooltipOptions`, item 4,
   item 5 for `TooltipOptions.view`, and item 7 for the tooltip `cornerRadius` and `animations`; of
