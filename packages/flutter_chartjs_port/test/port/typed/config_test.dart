@@ -6,7 +6,6 @@ import 'dart:ui' as native_ui;
 import 'dart:ui' show Color;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -19,8 +18,9 @@ import 'twin.dart';
 // Sections 2 and 11, the whole-config twins: a typed bar chart (the docs
 // config of docs/charts/bar.md), a typed mixed chart (docs/charts/mixed.md)
 // and a typed scatter chart with a tooltip label callback lower to the Map
-// of their raw twins, with the key order. The charts of the two Maps have
-// equal elements and equal tooltip lines. The lowering of each field is in
+// of their raw twins, with the key order. The chart of the typed config
+// has the dataset types and the tooltip lines of the docs (Chart.js ADR
+// 0195: no chart of a raw twin). The lowering of each field is in
 // lowering_test.dart.
 //
 // flutter_test_config.dart registers the built-in components before
@@ -40,26 +40,6 @@ const List<(int, int, int)> _rainbow = [
   (54, 162, 235),
   (153, 102, 255),
   (201, 203, 207),
-];
-
-/// The position, the size and the colors of each element of each dataset
-/// of [chart].
-List<List<Object?>> _elements(Chart chart) => [
-  for (
-    var i = 0;
-    i < (_byName(chart.data, 'datasets')! as List<Object?>).length;
-    i++
-  )
-    for (final element in chart.getDatasetMeta(i).data.cast<chartjs.Element>())
-      [
-        i,
-        element.x,
-        element.y,
-        element['width'],
-        element['height'],
-        _byName(element.options, 'backgroundColor'),
-        _byName(element.options, 'borderColor'),
-      ],
 ];
 
 /// The label line of a scatter point: `(x, y)`.
@@ -207,7 +187,6 @@ void main() {
         },
       };
       expectTwin(typed, twin);
-      expect(_elements(acquireChartRoot(typed)), _elements(acquireChart(twin)));
     });
 
     testWidgets('a mixed chart, the docs config of docs/charts/mixed.md', (
@@ -277,8 +256,6 @@ void main() {
       };
       expectTwin(typed, twin);
       final typedChart = acquireChartRoot(typed);
-      final twinChart = acquireChart(twin);
-      expect(_elements(typedChart), _elements(twinChart));
       expect(
         [
           for (final i in [0, 1]) typedChart.getDatasetMeta(i).type,
@@ -347,22 +324,9 @@ void main() {
       };
       // The options object goes to the chart as it is.
       expectTwin(typed, twinOf(tooltip));
-      final twin = twinOf(
-        TooltipOptions(
-          callbacks: TooltipCallbacks(
-            label: (tooltip, item) {
-              final parsed = item.parsed! as JsObjectFace;
-              final text =
-                  '(${(parsed['x']! as num).toInt()}, '
-                  '${(parsed['y']! as num).toInt()})';
-              return [text];
-            },
-          ),
-        ),
-      );
 
       /// The label lines of the tooltip of a hover on point 1 of [config].
-      Future<List<Object?>> labelsOf(Object config) async {
+      Future<List<Object?>> labelsOf(ChartConfigurationScope config) async {
         final chart = acquireChartRoot(config);
         await triggerMouseEvent(
           chart,
@@ -372,19 +336,9 @@ void main() {
         return [for (final item in chart.tooltip!.body!) item.lines];
       }
 
-      final typedLines = await labelsOf(typed);
-      expect(typedLines, await labelsOf(twin));
-      expect(typedLines, [
+      expect(await labelsOf(typed), [
         ['(0, 10)'],
       ]);
     });
   });
 }
-
-/// The read by name `object[key]` of an object of a chart: a Map of a raw
-/// config, or a typed object through its face (Chart.js ADR 0054 §5).
-Object? _byName(Object? object, String key) => switch (object) {
-  final Map<Object?, Object?> map => map[key],
-  final JsObjectFace face => face[key],
-  _ => null,
-};

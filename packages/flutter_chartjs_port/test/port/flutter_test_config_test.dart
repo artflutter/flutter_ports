@@ -289,10 +289,13 @@ void main() {
       expect(_colorsRestored, _colorsRuns == 2);
     });
 
-    testWidgets('a chart of acquireChart resolves the element defaults', (
+    testWidgets('a chart of acquireChartRoot resolves the element defaults', (
       tester,
     ) async {
-      final chart = acquireChart();
+      final chart = acquireChartRoot(
+        ChartConfigLowering(const ChartConfig(datasets: [LineDataset()]))
+            .lower(),
+      );
       final elements = jsGet(chart.options, 'elements');
       expect(jsGet(jsGet(elements, 'point'), 'radius'), 3);
       expect(jsGet(jsGet(elements, 'line'), 'tension'), 0);

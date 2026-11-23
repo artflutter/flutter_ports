@@ -58,29 +58,25 @@ import '../support/tick_label.dart';
 // - A chart config is a typed `ChartConfig` (Chart.js ADR 0052). The
 //   three cases of a custom scale class keep a Map config: the scale type
 //   of the class has no axis class. The options with no parameter go
-//   through `extra`. The case with no title stroke reads the title options
+//   through `extra`, also a scale with a custom id and the axis ids of a
+//   dataset: the typed axes have the ids `x`, `y`, `x1` and so on (Chart.js
+//   ADR 0191). The case with no title stroke reads the title options
 //   through the face: `undefined` has no typed form.
 
 /// The chart of the typed [config] (Chart.js ADR 0052).
 Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
-/// The raw config of a scatter chart with [datasets] and the scales
-/// [scales] by id: the specs of the scale ids (Chart.js ADR 0191 leaves the
-/// ids of Chart.js to the raw configs).
-Map<String, Object?> _scatter(
-  List<Map<String, Object?>> datasets,
-  Map<String, Object?> scales,
-) => <String, Object?>{
-  'type': 'scatter',
-  'data': <String, Object?>{'datasets': datasets},
-  'options': <String, Object?>{'scales': scales},
-};
-
-/// The data points `{x, y}` of [points].
-List<Object?> _points(List<(num, num)> points) => [
-  for (final (x, y) in points) <String, Object?>{'x': x, 'y': y},
-];
+/// The typed config of a scatter chart with the two datasets of the
+/// overrides specs and the scales [scales] by id in `extra`: the specs of
+/// the scale ids (Chart.js ADR 0191 gives the typed axes no custom id).
+ChartConfig _scatter(Map<String, Object?> scales) => ChartConfig(
+  datasets: [
+    ScatterDataset(data: .points([DataPoint(100, 100), DataPoint(-100, -100)])),
+    ScatterDataset(data: .points([DataPoint(10, 10), DataPoint(-10, -10)])),
+  ],
+  extra: {'scales': scales},
+);
 
 /// The member read `object.key` of the option object [object]: a resolver,
 /// read through its face (Chart.js ADR 0054 §5).
@@ -607,23 +603,31 @@ void main() {
         'position options',
         (tester) async {
           Chart createChart() {
-            return acquireChart(
-              _scatter(
-                [
-                  <String, Object?>{
-                    'data': _points([(0, 0), (1, 1), (2, 2)]),
-                    'xAxisID': 'customIDx',
-                    'yAxisID': 'customIDy',
-                  },
+            return _acquire(
+              ChartConfig(
+                datasets: [
+                  ScatterDataset(
+                    data: .points([
+                      DataPoint(0, 0),
+                      DataPoint(1, 1),
+                      DataPoint(2, 2),
+                    ]),
+                    extra: const {
+                      'xAxisID': 'customIDx',
+                      'yAxisID': 'customIDy',
+                    },
+                  ),
                 ],
-                {
-                  'customIDx': <String, Object?>{
-                    'type': 'linear',
-                    'display': ScaleDisplay.off,
-                  },
-                  'customIDy': <String, Object?>{
-                    'type': 'linear',
-                    'display': ScaleDisplay.off,
+                extra: const {
+                  'scales': {
+                    'customIDx': {
+                      'type': 'linear',
+                      'display': ScaleDisplay.off,
+                    },
+                    'customIDy': {
+                      'type': 'linear',
+                      'display': ScaleDisplay.off,
+                    },
                   },
                 },
               ),
@@ -808,20 +812,10 @@ void main() {
 
     group('overrides', () {
       testWidgets('should create new scale', (tester) async {
-        final chart = acquireChart(
-          _scatter(
-            [
-              <String, Object?>{
-                'data': _points([(100, 100), (-100, -100)]),
-              },
-              <String, Object?>{
-                'data': _points([(10, 10), (-10, -10)]),
-              },
-            ],
-            {
-              'x2': <String, Object?>{'type': 'linear', 'min': -20, 'max': 20},
-            },
-          ),
+        final chart = _acquire(
+          _scatter(const {
+            'x2': {'type': 'linear', 'min': -20, 'max': 20},
+          }),
         );
 
         expect(
@@ -831,25 +825,15 @@ void main() {
       });
 
       testWidgets('should create new scale with custom name', (tester) async {
-        final chart = acquireChart(
-          _scatter(
-            [
-              <String, Object?>{
-                'data': _points([(100, 100), (-100, -100)]),
-              },
-              <String, Object?>{
-                'data': _points([(10, 10), (-10, -10)]),
-              },
-            ],
-            {
-              'scaleX': <String, Object?>{
-                'type': 'linear',
-                'axis': const XAxis(),
-                'min': -20,
-                'max': 20,
-              },
+        final chart = _acquire(
+          _scatter(const {
+            'scaleX': {
+              'type': 'linear',
+              'axis': XAxis(),
+              'min': -20,
+              'max': 20,
             },
-          ),
+          }),
         );
 
         expect(
@@ -869,24 +853,10 @@ void main() {
         'should throw error on scale with custom name without axis type',
         (tester) async {
           expect(
-            () => acquireChart(
-              _scatter(
-                [
-                  <String, Object?>{
-                    'data': _points([(100, 100), (-100, -100)]),
-                  },
-                  <String, Object?>{
-                    'data': _points([(10, 10), (-10, -10)]),
-                  },
-                ],
-                {
-                  'scaleX': <String, Object?>{
-                    'type': 'linear',
-                    'min': -20,
-                    'max': 20,
-                  },
-                },
-              ),
+            () => _acquire(
+              _scatter(const {
+                'scaleX': {'type': 'linear', 'min': -20, 'max': 20},
+              }),
             ),
             throwsA(
               isA<StateError>().having(
@@ -903,25 +873,15 @@ void main() {
       testWidgets('should read options first to determine axis', (
         tester,
       ) async {
-        final chart = acquireChart(
-          _scatter(
-            [
-              <String, Object?>{
-                'data': _points([(100, 100), (-100, -100)]),
-              },
-              <String, Object?>{
-                'data': _points([(10, 10), (-10, -10)]),
-              },
-            ],
-            {
-              'xavier': <String, Object?>{
-                'type': 'linear',
-                'axis': const YAxis(),
-                'min': -20,
-                'max': 20,
-              },
+        final chart = _acquire(
+          _scatter(const {
+            'xavier': {
+              'type': 'linear',
+              'axis': YAxis(),
+              'min': -20,
+              'max': 20,
             },
-          ),
+          }),
         );
 
         expect(chart.scales['xavier']!.axis, isA<YAxis>());

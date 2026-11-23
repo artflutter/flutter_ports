@@ -12,9 +12,8 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../support/drop_extra_args.dart';
 
 // Chart.js ADR 0052, section 6: the views and the details objects of the
-// typed callbacks over the objects of a real chart. The raw callbacks of
-// these charts cast the arguments of the chart to the views, as the
-// lowering of the typed config does: `ActiveElement`, `ChartContext`,
+// typed callbacks over the objects of a real chart. Each chart has a typed
+// config (Chart.js ADR 0195): `ActiveElement`, `ChartContext`,
 // `TooltipItem` and `LegendItem` give `int` indexes and the
 // values of the objects, and a `List<ActiveElement>` is a `List<ActiveElement>`
 // with no copy. The unit cases pin the rule for the JS `undefined`, an
@@ -24,31 +23,36 @@ import '../../support/drop_extra_args.dart';
 // config (Chart.js ADR 0052, section 2, rules 6 and 7): the trampolines of
 // `onClick`, `onHover` and the legend give the details with `int` indexes
 // and call the callback of the newest config; a tooltip text of Dart `null`
-// gives the default text; a tick format gets the scale and gives the
-// labels of a raw `JsFunction`; an animation callback gets the details of
-// the `AnimationEvent`.
+// gives the default text; an animation callback gets the details of the
+// `AnimationEvent`.
 //
 // VM only: the chart cases are `testWidgets` cases of the harness.
 
 /// A bar chart with the labels `a`, `b`, `c` and the datasets `A` and `B`,
-/// with no animation and the options [options].
-Map<String, Object?> _bar(Map<String, Object?> options) => <String, Object?>{
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'A',
-        'data': <Object?>[1, 2, 3],
-      },
-      <String, Object?>{
-        'label': 'B',
-        'data': <Object?>[3, 2, 7],
-      },
-    ],
-  },
-  'options': <String, Object?>{'animation': false, ...options},
-};
+/// with no animation, and the parameters [onClick], [onHover], [legend],
+/// [tooltip] and [scales].
+ChartConfig _bar({
+  ChartEventHandler? onClick,
+  ChartEventHandler? onHover,
+  LegendOptions? legend,
+  TooltipOptions? tooltip,
+  List<ChartAxis>? scales,
+}) => ChartConfig(
+  labels: const ['a', 'b', 'c'],
+  datasets: const [
+    BarDataset(label: 'A', data: .values([1, 2, 3])),
+    BarDataset(label: 'B', data: .values([3, 2, 7])),
+  ],
+  scales: scales,
+  animation: ChartAnimation.none,
+  pluginOptions: [?legend, ?tooltip],
+  onClick: onClick,
+  onHover: onHover,
+);
+
+/// The chart of the typed [config] (Chart.js ADR 0195).
+Chart _acquire(ChartConfig config) =>
+    acquireChartRoot(ChartConfigLowering(config).lower());
 
 /// The center of the legend hit box [index] of [chart].
 Map<String, Object?> _legendBox(Chart chart, int index) {
@@ -67,17 +71,13 @@ void main() {
     ) async {
       Object? active;
       ({ChartEvent event, List<ActiveElement> hits, Chart chart})? details;
-      final chart = acquireChart(
-        _bar(<String, Object?>{
-          'onClick': (Object? event, Object? elements, Object? chart) {
+      final chart = _acquire(
+        _bar(
+          onClick: (event, elements, chart) {
             active = elements;
-            details = (
-              event: event! as ChartEvent,
-              hits: elements! as List<ActiveElement>,
-              chart: chart! as Chart,
-            );
+            details = (event: event, hits: elements, chart: chart);
           },
-        }),
+        ),
       );
       final element = chart.getDatasetMeta(1).data[2];
       await triggerMouseEvent(chart, 'click', element);
@@ -93,12 +93,12 @@ void main() {
 
     testWidgets('the hits go back to setActiveElements', (tester) async {
       List<ActiveElement>? hits;
-      final chart = acquireChart(
-        _bar(<String, Object?>{
-          'onHover': (Object? event, Object? elements, Object? chart) {
-            hits = elements! as List<ActiveElement>;
+      final chart = _acquire(
+        _bar(
+          onHover: (event, elements, chart) {
+            hits = elements;
           },
-        }),
+        ),
       );
       await triggerMouseEvent(
         chart,
@@ -128,34 +128,35 @@ void main() {
       // Chart.js keeps one context object for each element and sets its
       // `active` at each resolution: the state at the call.
       final activeAtCall = <(int?, bool)>[];
-      ChartPaint record(ScriptableContext context, Object? options) {
+      ChartPaint record(ScriptableContext context) {
         contexts.add(context);
         activeAtCall.add((context.dataIndex, context.active));
         return const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1));
       }
 
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[5, 7],
-              'borderColor': record,
-              'hoverBorderColor': record,
-            },
+      final chart = _acquire(
+        ChartConfig(
+          labels: const ['a', 'b'],
+          datasets: [
+            LineDataset(
+              data: const .values([5, 7]),
+              borderColor: ChartValue.resolver(record),
+              hoverBorderColor: ChartValue.resolver(record),
+            ),
           ],
-        },
-        'options': <String, Object?>{
-          'animation': false,
-          'layout': <String, Object?>{
-            'padding': (ContextObject context, Object? options) {
-              contexts.add(context);
-              return EdgeInsets.zero;
+          animation: ChartAnimation.none,
+          // A scriptable padding has no parameter: `padding` takes an
+          // `EdgeInsets`.
+          extra: {
+            'layout': {
+              'padding': (ContextObject context, Object? options) {
+                contexts.add(context);
+                return EdgeInsets.zero;
+              },
             },
           },
-        },
-      });
+        ),
+      );
 
       final chartContext = contexts.whereType<ScriptableChartContext>().first;
       expect(chartContext.chart, same(chart));
@@ -375,25 +376,25 @@ void main() {
     testWidgets('a tick callback gets the scale and the tick', (tester) async {
       final calls =
           <({Scale scale, double value, int index, List<Tick> ticks})>[];
-      final chart = acquireChart(
-        _bar(<String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'ticks': <String, Object?>{
-                'callback':
-                    (Scale scale, double value, int index, List<Tick> ticks) {
-                      calls.add((
-                        scale: scale,
-                        value: value,
-                        index: index,
-                        ticks: ticks,
-                      ));
-                      return ['T'];
-                    },
-              },
-            },
-          },
-        }),
+      final chart = _acquire(
+        _bar(
+          scales: [
+            LinearAxis(
+              .y,
+              ticks: AxisTicks(
+                callback: (scale, value, index, ticks) {
+                  calls.add((
+                    scale: scale,
+                    value: value,
+                    index: index,
+                    ticks: ticks,
+                  ));
+                  return ['T'];
+                },
+              ),
+            ),
+          ],
+        ),
       );
 
       final scale = chart.scales['y']!;
@@ -405,33 +406,12 @@ void main() {
   });
 
   group('the lowered callbacks in a chart', () {
-    /// A typed bar chart with the labels `a`, `b`, `c` and the datasets `A`
-    /// and `B`, with no animation, as [_bar].
-    ChartConfig typedBar({
-      ChartEventHandler? onClick,
-      ChartEventHandler? onHover,
-      LegendOptions? legend,
-      TooltipOptions? tooltip,
-      List<ChartAxis>? scales,
-    }) => ChartConfig(
-      labels: const ['a', 'b', 'c'],
-      datasets: const [
-        BarDataset(label: 'A', data: .values([1, 2, 3])),
-        BarDataset(label: 'B', data: .values([3, 2, 7])),
-      ],
-      scales: scales,
-      animation: ChartAnimation.none,
-      pluginOptions: [?legend, ?tooltip],
-      onClick: onClick,
-      onHover: onHover,
-    );
-
     testWidgets('onClick gets int hits, from the newest config', (
       tester,
     ) async {
       final calls = <(String, List<ActiveElement>, Chart, ChartEvent)>[];
       final lowering = ChartConfigLowering(
-        typedBar(
+        _bar(
           onClick: (event, hits, chart) =>
               calls.add(('first', hits, chart, event)),
         ),
@@ -451,7 +431,7 @@ void main() {
 
       // A new config with another closure: the trampoline of the chart
       // calls it with no new lowering.
-      lowering.config = typedBar(
+      lowering.config = _bar(
         onClick: (event, hits, chart) =>
             calls.add(('second', hits, chart, event)),
       );
@@ -463,7 +443,7 @@ void main() {
       final hits = <List<ActiveElement>>[];
       final chart = acquireChartRoot(
         ChartConfigLowering(
-          typedBar(onHover: (event, elements, chart) => hits.add(elements)),
+          _bar(onHover: (event, elements, chart) => hits.add(elements)),
         ).lower(),
       );
       await triggerMouseEvent(
@@ -481,7 +461,7 @@ void main() {
       final items = <LegendItem>[];
       final chart = acquireChartRoot(
         ChartConfigLowering(
-          typedBar(
+          _bar(
             legend: LegendOptions(
               onClick: (event, item, legend) => items.add(item),
             ),
@@ -519,7 +499,7 @@ void main() {
         ];
       }
 
-      final defaults = await tooltipOf(ChartConfigLowering(typedBar()).lower());
+      final defaults = await tooltipOf(ChartConfigLowering(_bar()).lower());
       expect(defaults, [
         ['c'],
         [
@@ -529,7 +509,7 @@ void main() {
       ]);
       final nulls = await tooltipOf(
         ChartConfigLowering(
-          typedBar(
+          _bar(
             tooltip: TooltipOptions(
               callbacks: TooltipCallbacks(
                 title: (tooltip, items) => null,
@@ -543,7 +523,7 @@ void main() {
       expect(nulls, defaults);
       final texts = await tooltipOf(
         ChartConfigLowering(
-          typedBar(
+          _bar(
             tooltip: TooltipOptions(
               callbacks: TooltipCallbacks(
                 title: (tooltip, items) => ['T ${items.length}'],
@@ -567,47 +547,6 @@ void main() {
       ]);
     });
 
-    testWidgets('a tick callback is the callback of the raw config', (
-      tester,
-    ) async {
-      final scales = <Scale>[];
-      List<String>? callback(
-        Scale scale,
-        double value,
-        int index,
-        List<Tick> ticks,
-      ) {
-        scales.add(scale);
-        return index.isEven ? ['$value'] : null;
-      }
-
-      final typed = acquireChartRoot(
-        ChartConfigLowering(
-          typedBar(
-            scales: [LinearAxis(.y, ticks: AxisTicks(callback: callback))],
-          ),
-        ).lower(),
-      );
-      final scale = typed.scales['y']!;
-      expect(scales.last, same(scale));
-      final twin = acquireChart(
-        _bar(<String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'linear',
-              'ticks': <String, Object?>{'callback': callback},
-            },
-          },
-        }),
-      );
-
-      List<Object?> labels(Chart chart) => [
-        for (final tick in chart.scales['y']!.ticks!) tick.label,
-      ];
-      expect(labels(typed), isNotEmpty);
-      expect(labels(typed), labels(twin));
-    });
-
     testWidgets('an animation callback gets the event', (tester) async {
       final details = <IAnimationEvent>[];
       final lowering = ChartConfigLowering(
@@ -618,7 +557,7 @@ void main() {
       );
       final options = lowering.lower()['options']! as JsObjectFace;
       final onComplete = (options['animation']! as JsObjectFace)['onComplete'];
-      final chart = acquireChart(_bar(const <String, Object?>{}));
+      final chart = _acquire(_bar());
       callDroppingExtraArgs(onComplete, [
         AnimationEvent(
           chart: chart,
