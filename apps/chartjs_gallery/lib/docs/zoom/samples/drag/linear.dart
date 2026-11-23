@@ -4,15 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/docs/zoom/samples/basic.dart';
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show
-        DragOptions,
-        Mode,
-        ModifierKey,
-        PanOptions,
-        ZoomChart,
-        ZoomOptions,
-        ZoomPluginOptions;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The sample `Linear Scales` of `docs/samples/drag/linear.md:5-113`: a
@@ -27,11 +19,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// - The colors of the drag rectangle (`:66-68`) are `Color` values
 ///   (Chart.js ADR 0061): `'rgb(54, 162, 235)'` is
 ///   `Color.fromRGBO(54, 162, 235, 1)`.
-/// - The zoom options are one immutable `ZoomPluginOptions` (Chart.js ADR
-///   0148). The handler that writes `zoomOptions.zoom.drag.enabled`
-///   (`:97-100`) makes the merge with the new value and writes it into the
-///   config (`setZoomSampleOptions`) before `chart.update()`.
-/// - The options get the docs defaults (`setZoomDocsDefaults`).
+/// - The config is a typed `ChartConfig` (Chart.js ADR 0195), and the zoom
+///   options are one immutable `ZoomPluginOptions` in its `pluginOptions`
+///   (Chart.js ADR 0148). The handler that writes
+///   `zoomOptions.zoom.drag.enabled` (`:97-100`) makes the merge with the
+///   new value and writes it into the options of the chart
+///   (`setZoomSampleOptions`) before `chart.update()`.
+/// - The config gets the docs defaults (`withZoomDocsDefaults`).
 ///
 /// The sample has no `console.log`: [log] gets no line.
 ZoomDocsSample zoomDragLinearSample(ZoomDocsLog log) {
@@ -68,26 +62,24 @@ ZoomDocsSample zoomDragLinearSample(ZoomDocsLog log) {
   String zoomStatus() => dragEnabled() ? 'enabled' : 'disabled';
 
   // <block:config:1>
-  final config = <String, Object?>{
-    'type': 'scatter',
-    'data': data,
-    'options': <String, Object?>{
-      'scales': scales,
-      'plugins': <String, Object?>{
-        'zoom': zoomOptions,
+  final config = withZoomDocsDefaults(
+    ChartConfig(
+      datasets: data,
+      scales: scales,
+      pluginOptions: [
+        zoomOptions,
         // The scriptable text is the one function `scripted` (Chart.js ADR
         // 0197).
-        'title': TitleOptions(
+        TitleOptions(
           display: true,
           position: ChartPosition.bottom,
           scripted: (context, options) =>
               TitleOptions(text: ['Zoom: ${zoomStatus()}']),
         ),
-      },
-    },
-  };
+      ],
+    ),
+  );
   // </block:config>
-  setZoomDocsDefaults(config['options']! as Map<String, Object?>);
 
   final actions = <ZoomDocsAction>[
     (
@@ -98,7 +90,7 @@ ZoomDocsSample zoomDragLinearSample(ZoomDocsLog log) {
             zoom: ZoomOptions(drag: DragOptions(enabled: !dragEnabled())),
           ),
         );
-        setZoomSampleOptions(config, zoomOptions);
+        setZoomSampleOptions(chart, zoomOptions);
         chart.update();
       },
       isOn: (_) => dragEnabled(),

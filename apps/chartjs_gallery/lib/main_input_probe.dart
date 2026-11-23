@@ -1,6 +1,4 @@
 // Original code, not ported from Chart.js: the input probe of Chart.js ADR 0112.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use
 // The header text names the probe and the ADR, and has no URI.
 // ignore_for_file: lines_longer_than_80_chars
 
@@ -29,7 +27,7 @@ const int inputProbePoints = int.fromEnvironment('POINTS', defaultValue: 20000);
 
 /// The input probe of Chart.js ADR 0112 (section "Measurement").
 ///
-/// It shows one `ChartView.raw` line chart of [inputProbePoints] points on a
+/// It shows one typed `ChartView` line chart of [inputProbePoints] points on a
 /// linear x axis, with the plugin of chartjs-plugin-zoom
 /// ([registerZoomComponents]): the wheel and the pinch zoom, and the pan in
 /// the mode `'xy'`. The chart has `animation: false`, as the zoom cases of
@@ -341,68 +339,67 @@ File get inputProbeLinesFile =>
 
 /// The config of the chart: a line chart of [points] points on linear
 /// scales, with the zoom options and the inline [plugin].
-Map<String, Object?> inputProbeConfig(int points, Plugin<Object?> plugin) =>
-    <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Probe',
-            'data': inputProbeData(points),
-            'borderColor': const ChartPaint.solid(Color(0xFF36A2EB)),
-            'borderWidth': 1.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'animation': false,
-        'maintainAspectRatio': false,
-        'parsing': false,
-        'layout': <String, Object?>{
-          'padding': const EdgeInsets.only(right: inputProbeRightPadding),
-        },
-        // Stable axes for zoom and pan: only round tick values (no bounds),
-        // no rotation of the x labels, and a fixed y-axis width. Then a step
-        // changes no axis size, and the plot area stays in place.
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'type': 'linear',
-            'ticks': <String, Object?>{
-              'includeBounds': false,
-              'maxRotation': 0,
-              'minRotation': 0,
-            },
-            // The x axis asks for room at the sides for half of its first and
-            // last label, from the positions of these ticks. A pan moves them,
-            // so the room changes in each step. The fixed layout padding at the
-            // right gives the last label its room.
-            'afterFit': (Object? scale) {
-              (scale! as Scale)
-                ..paddingLeft = 0
-                ..paddingRight = 0;
-            },
-          },
-          'y': <String, Object?>{
-            'type': 'linear',
-            'ticks': <String, Object?>{'includeBounds': false},
-            'afterFit': (Object? scale) {
-              (scale! as Scale).width = inputProbeYAxisWidth;
-            },
-          },
-        },
-        'plugins': <String, Object?>{
-          'zoom': const ZoomPluginOptions(
-            pan: PanOptions(enabled: true, mode: Mode.xy),
-            zoom: ZoomOptions(
-              wheel: WheelOptions(enabled: true),
-              pinch: PinchOptions(enabled: true),
-              mode: Mode.xy,
-            ),
-          ),
+///
+/// The tick options `includeBounds` and `minRotation` go through
+/// `AxisTicks.extra`, and the scale hook `afterFit` through the `extra` of
+/// the axis: the typed classes have no such parameters.
+ChartConfig inputProbeConfig(int points, Plugin<Object?> plugin) => ChartConfig(
+  datasets: [
+    LineDataset(
+      label: 'Probe',
+      data: .points(inputProbeData(points)),
+      borderColor: const .constant(.solid(Color(0xFF36A2EB))),
+      borderWidth: 1,
+    ),
+  ],
+  animation: ChartAnimation.none,
+  maintainAspectRatio: false,
+  parsing: false,
+  padding: const EdgeInsets.only(right: inputProbeRightPadding),
+  // Stable axes for zoom and pan: only round tick values (no bounds),
+  // no rotation of the x labels, and a fixed y-axis width. Then a step
+  // changes no axis size, and the plot area stays in place.
+  scales: [
+    LinearAxis(
+      .x,
+      ticks: const AxisTicks(
+        maxRotation: 0,
+        extra: {'includeBounds': false, 'minRotation': 0.0},
+      ),
+      // The x axis asks for room at the sides for half of its first and
+      // last label, from the positions of these ticks. A pan moves them,
+      // so the room changes in each step. The fixed layout padding at the
+      // right gives the last label its room.
+      extra: {
+        'afterFit': (Scale scale) {
+          scale
+            ..paddingLeft = 0
+            ..paddingRight = 0;
         },
       },
-      'plugins': <Plugin<Object?>>[plugin],
-    };
+    ),
+    LinearAxis(
+      .y,
+      ticks: const AxisTicks(extra: {'includeBounds': false}),
+      extra: {
+        'afterFit': (Scale scale) {
+          scale.width = inputProbeYAxisWidth;
+        },
+      },
+    ),
+  ],
+  pluginOptions: const [
+    ZoomPluginOptions(
+      pan: PanOptions(enabled: true, mode: Mode.xy),
+      zoom: ZoomOptions(
+        wheel: WheelOptions(enabled: true),
+        pinch: PinchOptions(enabled: true),
+        mode: Mode.xy,
+      ),
+    ),
+  ],
+  plugins: [plugin],
+);
 
 /// The app of the probe.
 class const InputProbeApp({
@@ -446,7 +443,7 @@ class InputProbePageState() extends State<InputProbePage> {
   /// The chart, after its creation.
   Chart? chart;
 
-  late final Map<String, Object?> _config = inputProbeConfig(
+  late final ChartConfig _config = inputProbeConfig(
     widget.points,
     recorder.plugin,
   );
@@ -520,7 +517,7 @@ class InputProbePageState() extends State<InputProbePage> {
             ),
           ),
           Expanded(
-            child: ChartView.raw(
+            child: ChartView(
               key: const ValueKey('probe.host'),
               config: _config,
               onChartCreated: (chart) => this.chart = chart,

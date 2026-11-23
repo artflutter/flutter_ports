@@ -8,7 +8,8 @@
 /// - [StressAxesScene]: the data objects of N points, at the positions of a
 ///   `StressPointField`.
 /// - [stressAxesConfig]: the config of the chart, a `LineController` chart
-///   of points without a line.
+///   of points without a line, and [stressAxesTypedConfig], its typed form
+///   for a `ChartView`.
 ///
 /// `StressChartTiming` (`lib/demo/stress_timing.dart`) gives the time of the
 /// parts of the chart path.
@@ -18,9 +19,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, Plugin;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Chart, ChartClip, CirclePointStyle, ParsedItem, XAxis, YAxis;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The scale types of the stress mode `axes`.
 ///
@@ -89,21 +88,16 @@ final class StressAxesScene(
 
   /// `data.labels`: the label of each point for a category axis, else
   /// empty.
-  final List<Object?> labels = [
+  final List<String> labels = [
     if (x == StressAxisType.category)
       for (var i = 0; i < n; i++) 'Point $i',
   ];
 
-  /// The data objects `{x, y}`: parsed items, the data items of
+  /// The data objects `{x, y}`: [DataPoint] items, the data items of
   /// `parsing: false`.
-  final List<ParsedItem> data = [
+  final List<DataPoint> data = [
     for (var i = 0; i < n; i++)
-      ParsedItem.of(
-        const XAxis(),
-        _xValue(x, i, n),
-        const YAxis(),
-        stressAxesValue(positions.y[i], y),
-      ),
+      DataPoint(_xValue(x, i, n), stressAxesValue(positions.y[i], y)),
   ];
 
   /// The x of the point [i] of [n] points: it increases with [i].
@@ -191,6 +185,57 @@ Map<String, Object?> stressAxesConfig({
   },
   'plugins': <Plugin<Object?>>[...plugins],
 };
+
+/// The axis [axis] of the type [type] for a typed config, with [ticks].
+ChartAxis _stressAxis(
+  StressAxisType type,
+  CartesianAxis axis, {
+  AxisTicks? ticks,
+}) => switch (type) {
+  StressAxisType.linear => LinearAxis(axis, ticks: ticks),
+  StressAxisType.logarithmic => LogarithmicAxis(axis, ticks: ticks),
+  StressAxisType.category => CategoryAxis(axis, ticks: ticks),
+  StressAxisType.time => TimeAxis(axis, ticks: ticks),
+};
+
+/// The config of a chart of the stress mode `axes` for a `ChartView`
+/// (Chart.js ADR 0195): the typed form of [stressAxesConfig] with the same
+/// parameters, without the options of the benchmark. The dataset holds the
+/// data List of [scene] by reference.
+///
+/// The point radius is the dataset option `pointRadius`, the typed form of
+/// the dataset option `radius`. `layout.autoPadding: false` goes through
+/// `extra` ([stressNoAutoPadding]).
+ChartConfig stressAxesTypedConfig({
+  required StressAxesScene scene,
+  required bool autoSkip,
+  List<Plugin<Object?>> plugins = const [],
+}) => ChartConfig(
+  labels: scene.labels.isEmpty ? null : scene.labels,
+  datasets: [
+    LineDataset(
+      data: .points(scene.data),
+      backgroundColor: const .constant(stressChartBackground),
+      borderColor: const .constant(ChartPaint.solid(ui.Color(0xFF36A2EB))),
+      borderWidth: 1,
+      pointStyle: const .constant(CirclePointStyle()),
+      pointRadius: const .constant(3),
+      showLine: false,
+      clip: ChartClip.none,
+    ),
+  ],
+  scales: [
+    _stressAxis(scene.x, .x, ticks: AxisTicks(autoSkip: autoSkip)),
+    _stressAxis(scene.y, .y),
+  ],
+  parsing: false,
+  maintainAspectRatio: false,
+  animation: ChartAnimation.none,
+  events: const [],
+  disabledPlugins: stressDisabledPlugins,
+  plugins: [...plugins],
+  extra: stressNoAutoPadding,
+);
 
 /// The tick count after the auto skip and the `labelRotation` of the x scale
 /// of [chart], or Dart `null` before the first layout.

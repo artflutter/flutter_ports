@@ -1,6 +1,4 @@
 // Original code, not ported from chartjs-plugin-zoom: the zoom gallery page.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
@@ -112,15 +110,14 @@ const Map<String, ({String key, IconData icon, String text})> _actionSegments =
 /// and its actions, with the changes that the sample file states. The
 /// page registers the zoom plugin for all charts at its first build, as the
 /// docs do (`registerZoomComponents`), and each sample gives its
-/// `ZoomPluginOptions` in `options.plugins.zoom`. The chart is a
-/// `ChartView.raw`: each sample is the config of a docs page, a raw Chart.js
-/// config. A typed config gives the same object in
-/// `ChartConfig.pluginOptions` (Chart.js ADR 0148).
+/// `ZoomPluginOptions` in `ChartConfig.pluginOptions` (Chart.js ADR 0148).
+/// The chart is a typed `ChartView`: each sample is the config of a docs
+/// page as a typed `ChartConfig`.
 ///
 /// The page makes the sample once for each variant, so that a rebuild of
-/// the page gives the `ChartView` the same Map: no update, and the zoom
-/// range stays. An action writes new zoom options into the config of the
-/// sample and updates the chart itself, as the docs do. The action line has one
+/// the page gives the `ChartView` the same config: no update, and the zoom
+/// range stays. An action writes new zoom options into the options of the
+/// chart and updates the chart itself, as the docs do. The action line has one
 /// segment for each action of the sample: a toggle shows the state of its
 /// option, and `reset` (`Reset zoom`) puts back the first range.
 ///
@@ -151,6 +148,9 @@ class ZoomPageState() extends State<ZoomPage> {
   /// The sample of the variant.
   late ZoomDocsSample _sample = _makeSample();
 
+  /// The config of [_sample] with the inline plugin of the readout.
+  late ChartConfig _config = _configOf(_sample);
+
   /// The chart, once it exists. For the tests.
   @visibleForTesting
   Chart? get chart => _chart;
@@ -166,15 +166,18 @@ class ZoomPageState() extends State<ZoomPage> {
 
   ZoomPageVariant get _current => zoomPageVariants[_variant];
 
-  /// The sample of the current variant, with the inline plugin of the
-  /// readout. The components are registered first.
+  /// The sample of the current variant. The components are registered
+  /// first.
   ZoomDocsSample _makeSample() {
     registerZoomComponents();
     final sample = _current.sample(_log);
-    sample.config['plugins'] = <Plugin<Object?>>[_readoutPlugin];
     _output = sample.output;
     return sample;
   }
+
+  /// The config of [sample] with the inline plugin of the readout.
+  ChartConfig _configOf(ZoomDocsSample sample) =>
+      sample.config.copyWith(plugins: [_readoutPlugin]);
 
   /// The console of the sample: the readout shows the last line.
   void _log(String line) {
@@ -212,6 +215,7 @@ class ZoomPageState() extends State<ZoomPage> {
     setState(() {
       _variant = variant;
       _sample = _makeSample();
+      _config = _configOf(_sample);
       // The old view unmounts and destroys its chart. The new view starts
       // the chart of the variant in its first layout.
       _chart = null;
@@ -311,9 +315,9 @@ class ZoomPageState() extends State<ZoomPage> {
           ),
           KeyedSubtree(
             key: ValueKey(_variant),
-            child: ChartView.raw(
+            child: ChartView(
               key: const ValueKey('zoom.host'),
-              config: _sample.config,
+              config: _config,
               onChartCreated: _onChart,
               semanticLabel: 'Zoom and pan chart: ${current.text}',
             ),

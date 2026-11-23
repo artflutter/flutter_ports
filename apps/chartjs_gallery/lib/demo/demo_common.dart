@@ -18,7 +18,7 @@ String valueText(Object? value) => switch (value) {
 };
 
 /// The read by name `object[key]` of an object of the chart: a Map of the
-/// app (the raw config of `ChartView.raw`), or a typed object of the chart
+/// app (a raw config of `new Chart`), or a typed object of the chart
 /// (an options view, a context, a typed scope of a typed config) through
 /// its face [JsObjectFace]. Another value gives Dart `null`.
 Object? readByName(Object? object, String key) => switch (object) {

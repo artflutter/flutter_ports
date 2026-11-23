@@ -189,6 +189,15 @@ final class const ChartBenchScene({
   /// that makes the chart of the scene itself calls it after
   /// `chart.destroy()`.
   final VoidCallback? dispose,
+
+  /// The config of the chart of the scene for a `ChartView` host (Chart.js
+  /// ADR 0195): the typed form of [config] with the same data Lists and
+  /// inline plugins, without the options of the benchmark host
+  /// ([chartBenchOptions] and the platform) and with
+  /// `maintainAspectRatio: false`, as `stressHostConfig` makes [config] for
+  /// a chart host. Dart `null` for a scene that the stress tab does not
+  /// show in a `ChartView`.
+  final ChartConfig? viewConfig,
 }) {
   /// A chart with the config [config]. [change] changes the data before
   /// each update. [takeParts] gives the times of the parts. [describe]
@@ -419,12 +428,12 @@ final class _BenchSeries(
   final StressPointField field = StressPointField(datasets * n);
 
   /// The data of each dataset.
-  final List<List<Object?>> data = [];
+  final List<List<double?>> data = [];
 
   /// `data.labels`: `Point <i>`.
-  List<Object?> labels() => [for (var i = 0; i < n; i++) 'Point $i'];
+  List<String> labels() => [for (var i = 0; i < n; i++) 'Point $i'];
 
-  Object? _value(int k, int i) => gapEvery > 0 && i % gapEvery == gapEvery - 1
+  double? _value(int k, int i) => gapEvery > 0 && i % gapEvery == gapEvery - 1
       ? null
       : offset + scale * field.y[k * n + i];
 
@@ -456,6 +465,23 @@ Map<String, Object?> _benchDataset(
   'borderWidth': 1.0,
   ...?more,
 };
+
+/// The typed form of [_benchDataset] for a line dataset, with [fill] and
+/// [pointRadius].
+LineDataset _benchLineDataset(
+  int k,
+  List<double?> data, {
+  FillTarget? fill,
+  double? pointRadius,
+}) => LineDataset(
+  label: 'Dataset ${k + 1}',
+  data: .values(data),
+  borderColor: .constant(.solid(_benchBorders[k % _benchBorders.length])),
+  backgroundColor: .constant(.solid(_benchFills[k % _benchFills.length])),
+  borderWidth: 1,
+  fill: fill,
+  pointRadius: pointRadius == null ? null : .constant(pointRadius),
+);
 
 /// The config of a chart of [type] with the labels of [series], the
 /// [datasets], [chartBenchOptions] and the chart options [options].
@@ -720,6 +746,23 @@ ChartBenchScene _tooltipScene(
     takeParts: timing.take,
     prepare: prepare,
     frame: frame,
+    viewConfig: ChartConfig(
+      labels: series.labels(),
+      datasets: [
+        for (var k = 0; k < datasets; k++) _benchLineDataset(k, series.data[k]),
+      ],
+      maintainAspectRatio: false,
+      animation: animate ? null : ChartAnimation.none,
+      interaction: const ChartInteraction(
+        mode: IndexInteractionMode(),
+        intersect: false,
+      ),
+      disabledPlugins: [
+        const PluginOff<LegendPlugin>(),
+        if (!tooltip) const PluginOff<TooltipPlugin>(),
+      ],
+      plugins: timing.plugins,
+    ),
   );
 }
 
@@ -872,10 +915,15 @@ ChartBenchCase _fillCase(String name, ChartBenchCall call) => _pluginCase(
       _ => _BenchSeries(3, n),
     };
     final Map<String, Object?> scales;
-    final List<Object?> fills;
+    final List<ChartAxis> axes;
+    final List<FillTarget> fills;
     switch (name) {
       case 'gaps':
         scales = _benchHiddenScales(min: -1, max: 1);
+        axes = [
+          stressHiddenCategoryAxis,
+          stressHiddenLinearAxis(.y, min: -1, max: 1),
+        ];
         fills = [
           for (var k = 0; k < 3; k++)
             FillTarget.toOrigin.split(
@@ -885,6 +933,10 @@ ChartBenchCase _fillCase(String name, ChartBenchCall call) => _pluginCase(
         ];
       case 'stack':
         scales = _benchHiddenScales(min: 0, max: 3, stacked: true);
+        axes = [
+          stressHiddenCategoryAxis,
+          stressHiddenLinearAxis(.y, min: 0, max: 3, stacked: true),
+        ];
         fills = [
           FillTarget.toStacked,
           FillTarget.toStacked,
@@ -894,6 +946,7 @@ ChartBenchCase _fillCase(String name, ChartBenchCall call) => _pluginCase(
         scales = <String, Object?>{
           'r': stressHiddenScale('radialLinear', min: 0, max: 1),
         };
+        axes = const [stressHiddenRadialAxis];
         fills = [
           FillTarget.toOrigin,
           FillTarget.toPrevious,
@@ -921,6 +974,35 @@ ChartBenchCase _fillCase(String name, ChartBenchCall call) => _pluginCase(
       ),
       change: series.step,
       takeParts: timing.take,
+      viewConfig: ChartConfig(
+        labels: series.labels(),
+        datasets: [
+          for (var k = 0; k < 3; k++)
+            if (name == 'radar')
+              RadarDataset(
+                label: 'Dataset ${k + 1}',
+                data: series.data[k],
+                borderColor: .constant(.solid(_benchBorders[k])),
+                backgroundColor: .constant(.solid(_benchFills[k])),
+                borderWidth: 1,
+                fill: fills[k],
+                pointRadius: const .constant(0),
+              )
+            else
+              _benchLineDataset(
+                k,
+                series.data[k],
+                fill: fills[k],
+                pointRadius: 0,
+              ),
+        ],
+        scales: axes,
+        maintainAspectRatio: false,
+        animation: ChartAnimation.none,
+        events: const [],
+        disabledPlugins: stressDisabledPlugins,
+        plugins: timing.plugins,
+      ),
     );
   },
 );
@@ -972,6 +1054,21 @@ ChartBenchCase _boxCase(
       ),
       change: series.step,
       takeParts: timing.take,
+      viewConfig: ChartConfig(
+        labels: series.labels(),
+        datasets: [
+          for (var k = 0; k < 3; k++) _benchLineDataset(k, series.data[k]),
+        ],
+        maintainAspectRatio: false,
+        animation: ChartAnimation.none,
+        events: const [],
+        pluginOptions: [
+          if (title)
+            const TitleOptions(display: true, text: ['Chart.js Line Chart']),
+        ],
+        disabledPlugins: [if (!legend) const PluginOff<LegendPlugin>()],
+        plugins: timing.plugins,
+      ),
     );
   },
 );

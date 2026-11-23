@@ -95,10 +95,9 @@ final class StressPointField(int count) {
   }
 
   /// The data objects `{x, y}` of the first [n] points, at their positions:
-  /// parsed items, the data items of `parsing: false`.
-  List<ParsedItem> data(int n) => [
-    for (var i = 0; i < n; i++)
-      ParsedItem.of(const XAxis(), x[i], const YAxis(), y[i]),
+  /// [DataPoint] items, the data items of `parsing: false`.
+  List<DataPoint> data(int n) => [
+    for (var i = 0; i < n; i++) DataPoint(x[i], y[i]),
   ];
 
   /// Writes the positions of the points into the data objects [data].
@@ -172,15 +171,16 @@ final class StressChartScene(
 
   /// `data.labels`: `Point <i>` for bar, doughnut, pie, polarArea and
   /// radar; empty for line, scatter and bubble.
-  final List<Object?> labels = [
+  final List<String> labels = [
     if (_labeled(type))
       for (var i = 0; i < n; i++) 'Point $i',
   ];
 
   /// The dataset data:
-  /// - line, scatter: the data objects `{x, y}` of `field.data(n)`;
-  /// - bubble: `{x, y, r}` with `r = 2 + 4 * (vx / 0.3)^2`;
-  /// - bar, radar: the numbers `y`;
+  /// - line, scatter: the [DataPoint] objects `{x, y}` of `field.data(n)`;
+  /// - bubble: the [DataPoint] objects `{x, y, r}` with
+  ///   `r = 2 + 4 * (vx / 0.3)^2`;
+  /// - bar, radar: the numbers `y`, a `List<double>`;
   /// - doughnut, pie, polarArea: the numbers `0.05 + 0.95 * y`.
   final List<Object?> data = _data(type, n, field);
 
@@ -206,16 +206,13 @@ final class StressChartScene(
   ) {
     if (type.points) return field.data(n);
     if (type == StressChartType.bubble) {
-      return <ParsedItem>[
+      return <DataPoint>[
         for (var i = 0; i < n; i++)
-          ParsedItem()
-            ..x = field.x[i]
-            ..y = field.y[i]
-            ..r = _radius(field.vx[i]),
+          DataPoint.bubble(field.x[i], field.y[i], _radius(field.vx[i])),
       ];
     }
     final arcs = _arcs(type);
-    return [
+    return <double>[
       for (var i = 0; i < n; i++)
         if (arcs) 0.05 + 0.95 * field.y[i] else field.y[i],
     ];
@@ -402,4 +399,194 @@ Map<String, Object?> stressChartConfig({
     },
     'plugins': <Plugin<Object?>>[...plugins],
   };
+}
+
+/// The plugins that the stress and benchmark charts of a typed config turn
+/// off: the legend, the typed form of [stressPluginOptions].
+const List<PluginOff<Plugin<Object?>>> stressDisabledPlugins = [
+  PluginOff<LegendPlugin>(),
+];
+
+/// The options of a typed stress config with no parameter of `ChartConfig`:
+/// `layout.autoPadding: false`.
+const Map<String, Object?> stressNoAutoPadding = {
+  'layout': {'autoPadding': false},
+};
+
+/// The hidden category axis of [stressHiddenScale] for a typed config.
+const CategoryAxis stressHiddenCategoryAxis = CategoryAxis(
+  .x,
+  display: ScaleDisplay.off,
+  ticks: AxisTicks(display: false),
+);
+
+/// The hidden linear axis [axis] of [stressHiddenScale] for a typed config,
+/// with the user bounds [min] and [max], stacked with [stacked].
+LinearAxis stressHiddenLinearAxis(
+  CartesianAxis axis, {
+  double? min,
+  double? max,
+  bool stacked = false,
+}) => LinearAxis(
+  axis,
+  display: ScaleDisplay.off,
+  stacked: stacked ? StackMode.on : null,
+  ticks: const AxisTicks(display: false),
+  min: min,
+  max: max,
+);
+
+/// The hidden radial linear axis of [stressHiddenScale] for a typed config,
+/// with the bounds 0 and 1.
+const RadialLinearAxis stressHiddenRadialAxis = RadialLinearAxis(
+  display: ScaleDisplay.off,
+  ticks: AxisTicks(display: false),
+  min: 0,
+  max: 1,
+);
+
+/// The two hidden linear axes of the fractions 0 to 1 with no tick labels:
+/// the typed form of `unitScales(hideTicks: true)`.
+const List<ChartAxis> stressUnitAxes = [
+  LinearAxis(
+    .x,
+    display: ScaleDisplay.off,
+    ticks: AxisTicks(display: false),
+    suggestedMin: 0,
+    suggestedMax: 1,
+  ),
+  LinearAxis(
+    .y,
+    display: ScaleDisplay.off,
+    ticks: AxisTicks(display: false),
+    min: 0,
+    max: 1,
+  ),
+];
+
+/// The axes of a type of the stress mode `chart` for a typed config: the
+/// typed form of the scales of [stressChartConfig], or Dart `null` for no
+/// axes.
+List<ChartAxis>? _stressAxes(StressChartType type) => switch (type) {
+  StressChartType.line || StressChartType.scatter => stressUnitAxes,
+  StressChartType.bar => [
+    stressHiddenCategoryAxis,
+    stressHiddenLinearAxis(.y, min: 0, max: 1),
+  ],
+  StressChartType.bubble => [
+    stressHiddenLinearAxis(.x, min: 0, max: 1),
+    stressHiddenLinearAxis(.y, min: 0, max: 1),
+  ],
+  StressChartType.doughnut || StressChartType.pie => null,
+  StressChartType.polarArea ||
+  StressChartType.radar => const [stressHiddenRadialAxis],
+};
+
+/// The config of the stress mode `chart` for a `ChartView` (Chart.js ADR
+/// 0195): the typed form of [stressChartConfig] with the same parameters,
+/// without the options of the benchmark. The dataset holds the data List of
+/// [scene] by reference, so a write of the scene and `chart.update()` move
+/// the items, as with [stressChartConfig].
+///
+/// The point radius of line and scatter is the dataset option
+/// `pointRadius`, the typed form of the dataset option `radius`.
+ChartConfig stressChartTypedConfig({
+  required StressChartScene scene,
+  required bool scriptable,
+  bool indexed = false,
+  bool showLine = false,
+  bool animate = false,
+  List<Plugin<Object?>> plugins = const [],
+}) {
+  if (indexed && scriptable) {
+    throw ArgumentError('Choose indexed or scriptable colors, not both.');
+  }
+  final type = scene.type;
+  if (showLine && !type.points) {
+    throw ArgumentError.value(showLine, 'showLine', 'Not line or scatter');
+  }
+  final background = indexed
+      ? const ChartValue<ChartPaint>.indexed(stressIndexedBackground)
+      : scriptable
+      ? const ChartValue<ChartPaint>.resolver(stressScriptableBackground)
+      : const ChartValue<ChartPaint>.constant(stressChartBackground);
+  const border = ChartValue<ChartPaint>.constant(
+    ChartPaint.solid(ui.Color(0xFF36A2EB)),
+  );
+  final data = scene.data;
+  final dataset = switch (type) {
+    StressChartType.line => LineDataset(
+      data: .points(data as List<DataPoint>),
+      backgroundColor: background,
+      borderColor: border,
+      borderWidth: 1,
+      pointStyle: const .constant(CirclePointStyle()),
+      pointRadius: const .constant(3),
+      showLine: showLine,
+      clip: ChartClip.none,
+    ),
+    StressChartType.scatter => ScatterDataset(
+      data: .points(data as List<DataPoint>),
+      backgroundColor: background,
+      borderColor: border,
+      borderWidth: 1,
+      pointStyle: const .constant(CirclePointStyle()),
+      pointRadius: const .constant(3),
+      showLine: showLine,
+      clip: ChartClip.none,
+    ),
+    StressChartType.bar => BarDataset(
+      data: .values(data as List<num?>),
+      backgroundColor: background,
+      borderColor: border,
+      borderWidth: 1,
+    ),
+    StressChartType.bubble => BubbleDataset(
+      data: data as List<DataPoint>,
+      backgroundColor: background,
+      borderColor: border,
+      borderWidth: 1,
+    ),
+    StressChartType.doughnut => DoughnutDataset(
+      data: data as List<num?>,
+      backgroundColor: background,
+      borderColor: border,
+      borderWidth: 1,
+    ),
+    StressChartType.pie => PieDataset(
+      data: data as List<num?>,
+      backgroundColor: background,
+      borderColor: border,
+      borderWidth: 1,
+    ),
+    StressChartType.polarArea => PolarAreaDataset(
+      data: data as List<num?>,
+      backgroundColor: background,
+      borderColor: border,
+      borderWidth: 1,
+    ),
+    StressChartType.radar => RadarDataset(
+      data: data as List<num?>,
+      backgroundColor: background,
+      borderColor: border,
+      borderWidth: 1,
+    ),
+  };
+  return ChartConfig(
+    datasets: [dataset],
+    labels: scene.labels.isEmpty ? null : scene.labels,
+    scales: _stressAxes(type),
+    parsing: type.points ? false : null,
+    maintainAspectRatio: false,
+    animation: animate
+        ? const ChartAnimation(
+            duration: Duration(milliseconds: stressAnimateMs),
+            loop: true,
+          )
+        : ChartAnimation.none,
+    events: const [],
+    disabledPlugins: stressDisabledPlugins,
+    plugins: [...plugins],
+    extra: type.points ? stressNoAutoPadding : null,
+  );
 }

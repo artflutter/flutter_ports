@@ -302,8 +302,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     It opens the zoom page `lib/plugins/zoom_page.dart`. Its variants are the ports of four samples
     of the docs of chartjs-plugin-zoom (`docs/samples/basic.md`, `drag/linear.md`,
     `wheel/category.md` and `pan/toggle.md`) in `lib/docs/zoom/samples/`, with rule-2 headers. The
-    chart is a `ChartView.raw`. The actions of a sample, for example "Reset zoom", call the zoom
-    API on the chart of `onChartCreated`. `test/zoom_page_test.dart` pins the page (seam H20).
+    chart is a typed `ChartView`: each sample gives a `ChartConfig` with its `ZoomPluginOptions`
+    in `pluginOptions`. The actions of a sample, for example "Reset zoom", call the zoom API on
+    the chart of `onChartCreated`; a toggle writes new zoom options into the options of the chart
+    (`setZoomSampleOptions`) and calls `chart.update()`, so the config stays and the zoom range
+    stays. `test/zoom_page_test.dart` pins the page (seam H20).
   - The page "Phase 3: canvas and host" has the tabs Canvas, Events, Text, Stress, Elements, Core
     and Axes. The Core tab (`lib/demo/core_demo.dart`) runs a `LineController` chart with the
     typed config of Chart.js ADR 0052 §13, on two hidden linear axes (the typed form of
@@ -312,7 +315,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `elements.point.hoverBorderWidth` go through `extra`. The duration of the hover transition is a
     `HoverTransition` of `ChartConfig.transitions`. Thus `gallery:build:web` compiles the typed path with dart2wasm. Its controls are
     above the chart: `mode`, `axis`, one line of toggles and commands, `hover` and `update`. The
-    Axes tab (`lib/demo/axes_demo.dart`) runs a `LineController` chart on the scales of phase 6.
+    Axes tab (`lib/demo/axes_demo.dart`) runs a `LineController` chart on the scales of phase 6,
+    with a typed config that `build` makes from the control values, as the Core tab does; the data
+    commands change the data Lists in place and call `chart.update()`.
     `x`, `y` and `N` are above the chart, and the other parameters are after the readout
     (Chart.js ADR 0031 §10.7, Open). The plugins of
     `registerables` run with their defaults in both tabs: the legend and the tooltip show. A legend
@@ -340,7 +345,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     fills the radar of the mode `chart`. `lib/demo/stress_timing.dart` has `StressChartTiming`, with
     the parts `elements`, `layout`, `datasetsUpdate` and `datasetsDraw`. `lib/main_stress.dart` is
     the profiling entry. In the modes `chart`, `axes` and `plugins`, its define `HOST` selects the
-    host: `canvas` (`ChartCanvas`, the default) or `view` (`ChartView`). `BATCHES` (15) splits the
+    host: `canvas` (`ChartCanvas`, the default) or `view` (`ChartView` with the typed twin of the
+    config: `stressChartTypedConfig`, `stressAxesTypedConfig` and `ChartBenchScene.viewConfig`).
+    `BATCHES` (15) splits the
     timed window into batches, and each `STRESS` line has the batch figures `buildP50Ms`,
     `buildP90Ms`, `rasterP50Ms` and `rasterP90Ms`. Only the `STRESS` lines of the modes `chart`,
     `axes` and `plugins` have the key `host`. Its defines `SEMANTICS` and
@@ -365,7 +372,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     into the input cases (`chartBenchZoomCasesWith`), so each step takes `chart.updateRanges` of
     Chart.js ADR 0111; each zoom BENCH line has the key `rangeUpdates`. performance.md §69 has the
     figures of the zoom cases.
-  - `lib/main_input_probe.dart` is the input probe of Chart.js ADR 0112: one `ChartView.raw` line
+  - `lib/main_input_probe.dart` is the input probe of Chart.js ADR 0112: one typed `ChartView` line
     chart of 20000 points (`--dart-define=POINTS=<n>`) with `animation: false` and the zoom plugin
     (`registerZoomComponents`; wheel, pinch, pan `'xy'`). For each frame it counts the
     `PointerMoveEvent`s of each pointer (a global route of the pointer router), the

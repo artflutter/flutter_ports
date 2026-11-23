@@ -1,6 +1,4 @@
 import 'dart:math' as math;
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -713,7 +711,7 @@ class StressDemoState() extends State<StressDemo> {
   // [_viewKey], the meter of its plugins, and the meter of each chart that a
   // ChartView made.
   Object? _viewKey;
-  Map<String, Object?>? _viewConfig;
+  ChartConfig? _viewConfig;
   late _PluginMeter _viewMeter;
   final Expando<_StressMeter> _viewMeters = Expando('stress meters');
   List<Object?> _chartData = const [];
@@ -1105,24 +1103,55 @@ class StressDemoState() extends State<StressDemo> {
   /// The inline plugin `stressLabels` draws the M labels and the title in
   /// its `afterDraw` hook, as the other modes draw them after their items.
   /// The plugin of [StressChartTiming] times the parts.
-  Map<String, Object?> _chartConfig() {
+  Map<String, Object?> _chartConfig() => stressChartConfig(
+    scene: _newChartScene(),
+    scriptable: _scriptable,
+    indexed: _indexed,
+    showLine: _effectiveShowLine,
+    animate: _call == StressChartCall.animate,
+    plugins: [_labelsPlugin, _timing.plugin],
+  );
+
+  /// The config of the `ChartView` of the mode [StressMode.chart]: the
+  /// typed form of [_chartConfig] (`stressChartTypedConfig`).
+  ChartConfig _chartViewConfig() => stressChartTypedConfig(
+    scene: _newChartScene(),
+    scriptable: _scriptable,
+    indexed: _indexed,
+    showLine: _effectiveShowLine,
+    animate: _call == StressChartCall.animate,
+    plugins: [_labelsPlugin, _timing.plugin],
+  );
+
+  /// A new scene of the mode [StressMode.chart], with the components
+  /// registered first.
+  StressChartScene _newChartScene() {
     registerGalleryComponents();
     final scene = _chartScene = StressChartScene(_type, _n, _field);
     _chartData = scene.data;
-    return stressChartConfig(
-      scene: scene,
-      scriptable: _scriptable,
-      indexed: _indexed,
-      showLine: _effectiveShowLine,
-      animate: _call == StressChartCall.animate,
-      plugins: [_labelsPlugin, _timing.plugin],
-    );
+    return scene;
   }
 
   /// The config of `new Chart(canvas, config)` of the mode
   /// [StressMode.axes]: a `LineController` chart on the scales of
   /// `stressAxesConfig`, and the timing plugin of [StressChartTiming].
-  Map<String, Object?> _axesChartConfig() {
+  Map<String, Object?> _axesChartConfig() => stressAxesConfig(
+    scene: _newAxesScene(),
+    autoSkip: _autoSkip,
+    plugins: [_labelsPlugin, _timing.plugin],
+  );
+
+  /// The config of the `ChartView` of the mode [StressMode.axes]: the typed
+  /// form of [_axesChartConfig] (`stressAxesTypedConfig`).
+  ChartConfig _axesViewConfig() => stressAxesTypedConfig(
+    scene: _newAxesScene(),
+    autoSkip: _autoSkip,
+    plugins: [_labelsPlugin, _timing.plugin],
+  );
+
+  /// A new scene of the mode [StressMode.axes], with the components
+  /// registered first.
+  StressAxesScene _newAxesScene() {
     registerGalleryComponents();
     final scene = _axesScene = StressAxesScene(
       _n,
@@ -1131,11 +1160,7 @@ class StressDemoState() extends State<StressDemo> {
       positions: _field,
     );
     _chartData = scene.data;
-    return stressAxesConfig(
-      scene: scene,
-      autoSkip: _autoSkip,
-      plugins: [_labelsPlugin, _timing.plugin],
-    );
+    return scene;
   }
 
   /// The config of `new Chart(canvas, config)` of the mode
@@ -1146,30 +1171,45 @@ class StressDemoState() extends State<StressDemo> {
   /// the part `tooltipDraw` in the tooltip scenes. The inline plugin
   /// `stressLabels` comes first, as in the mode [StressMode.chart].
   Map<String, Object?> _pluginChartConfig() {
+    final config = stressHostConfig(_newPluginScene().config);
+    config['plugins'] = <Plugin<Object?>>[
+      _labelsPlugin,
+      ...config['plugins']! as List<Plugin<Object?>>,
+    ];
+    return config;
+  }
+
+  /// The config of the `ChartView` of the mode [StressMode.plugins]: the
+  /// typed config of the benchmark scene (`ChartBenchScene.viewConfig`),
+  /// with the inline plugin `stressLabels` first, as [_pluginChartConfig].
+  ChartConfig _pluginViewConfig() {
+    final config = _newPluginScene().viewConfig!;
+    return config.copyWith(plugins: [_labelsPlugin, ...?config.plugins]);
+  }
+
+  /// A new benchmark scene of the plugin case and the call, for N points in
+  /// each dataset, with the components registered first.
+  ChartBenchScene _newPluginScene() {
     registerGalleryComponents();
     final scene = _pluginScene = stressPluginBenchCase(
       _pluginCase,
       _call,
     ).scene(_n);
-    final config = stressHostConfig(scene.config);
-    config['plugins'] = <Plugin<Object?>>[
-      _labelsPlugin,
-      ...config['plugins']! as List<Plugin<Object?>>,
-    ];
     _chartData = const [];
-    return config;
+    return scene;
   }
 
-  /// The host of the chart of [config] for the host key [hostKey], with the
-  /// key [key] and the height [height] ([StressHost]): a [ChartCanvas] that
-  /// makes a [_StressChart] of a new config, or a [ChartView] of one config
-  /// for each host key, with the plugins of a [_PluginMeter] around its
-  /// inline plugins. [onChart] gets the chart.
+  /// The host of the chart for the host key [hostKey], with the key [key]
+  /// and the height [height] ([StressHost]): a [ChartCanvas] that makes a
+  /// [_StressChart] of a new config of [config], or a [ChartView] of one
+  /// typed config of [viewConfig] for each host key, with the plugins of a
+  /// [_PluginMeter] around its inline plugins. [onChart] gets the chart.
   Widget _chartHost({
     required Object hostKey,
     required String key,
     required double height,
     required Map<String, Object?> Function() config,
+    required ChartConfig Function() viewConfig,
     required ValueChanged<Chart> onChart,
   }) {
     if (widget.host == StressHost.canvas) {
@@ -1182,22 +1222,20 @@ class StressDemoState() extends State<StressDemo> {
       );
     }
     // One config for each host: a rebuild of the tab gives the ChartView
-    // the same Map, thus no update (Chart.js ADR 0049, section 4).
+    // the same config, thus no update (Chart.js ADR 0049, section 4).
     final viewKey = (_mode, hostKey);
     if (_viewKey != viewKey || _viewConfig == null) {
       final meter = _viewMeter = _PluginMeter();
-      final viewConfig = _viewConfig = config();
-      viewConfig['plugins'] = <Plugin<Object?>>[
-        meter.first,
-        ...viewConfig['plugins']! as List<Plugin<Object?>>,
-        meter.last,
-      ];
+      final config = viewConfig();
+      _viewConfig = config.copyWith(
+        plugins: [meter.first, ...?config.plugins, meter.last],
+      );
       _viewKey = viewKey;
     }
     final meter = _viewMeter;
     return SizedBox(
       height: height,
-      child: ChartView.raw(
+      child: ChartView(
         key: ValueKey(key),
         config: _viewConfig!,
         onChartCreated: (chart) {
@@ -2451,6 +2489,7 @@ class StressDemoState() extends State<StressDemo> {
                         key: 'stress.plugins.host',
                         height: height,
                         config: _pluginChartConfig,
+                        viewConfig: _pluginViewConfig,
                         onChart: (chart) {
                           _stressChart = chart;
                           _animating = false;
@@ -2484,6 +2523,7 @@ class StressDemoState() extends State<StressDemo> {
                         key: axes ? 'stress.axes.host' : 'stress.chart.host',
                         height: height,
                         config: axes ? _axesChartConfig : _chartConfig,
+                        viewConfig: axes ? _axesViewConfig : _chartViewConfig,
                         onChart: (chart) {
                           _stressChart = chart;
                           _animating = false;

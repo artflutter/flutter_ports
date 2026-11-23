@@ -1,6 +1,4 @@
 // Original code, not ported from Chart.js: the gallery demo of phase 6.
-// ChartView.raw is deprecated (Chart.js ADR 0195); this file still uses it.
-// ignore_for_file: deprecated_member_use
 
 import 'dart:math' as math;
 import 'dart:ui' as ui;
@@ -116,12 +114,14 @@ _datasetStyles = [
 /// and the y axis is a `LinearScale` or a `LogarithmicScale`.
 ///
 /// The ported code does the work:
-/// - The datasets have `parsing: true`. Thus `parse` of the scale reads the
-///   `x` of each data object: the label of a category point (`P4`), and the
-///   ISO date of a time point (`2024-01-04`), through the default date
-///   adapter (Chart.js ADR 0024).
-/// - A control writes the user options, then calls `chart.update()`. A new
-///   scale type gives a new scale (`buildOrUpdateScales`,
+/// - The chart parses its data (the default `parsing: true`). Thus `parse`
+///   of the scale reads the `x` of each [DataPoint]: the label of a
+///   category point (`P4`), and the ISO date text of a time point
+///   (`2024-01-04`), through the default date adapter (Chart.js ADR 0024).
+/// - The chart is a typed `ChartView` (Chart.js ADR 0195). `build` makes
+///   the `ChartConfig` from the control values: a control changes a value
+///   in `setState`, and the view updates the chart with the new config. A
+///   new scale type gives a new scale (`buildOrUpdateScales`,
 ///   core.controller.js:354). The scales find their data limits, ticks,
 ///   label sizes, rotation and auto skip, and the layout fits them.
 /// - The readout shows the state of each scale, the chart area, and the
@@ -195,41 +195,14 @@ class AxesDemoState() extends State<AxesDemo> {
       [for (var i = 0; i < _count; i++) _random.nextDouble()],
   ];
 
-  /// The datasets of the chart. [_fillData] gives them their data.
-  late final List<Map<String, Object?>> _datasets = [
-    for (final style in _datasetStyles)
-      <String, Object?>{
-        'label': style.label,
-        'data': <Map<String, Object?>>[],
-        'parsing': true,
-        'backgroundColor': ChartPaint.solid(style.background),
-        'borderColor': ChartPaint.solid(style.border),
-        'pointStyle': style.style,
-      },
+  /// The data of each dataset. [_fillData] gives new Lists.
+  late final List<List<DataPoint>> _data = [
+    for (var d = 0; d < _datasetStyles.length; d++) <DataPoint>[],
   ];
 
-  /// The data of the chart: `labels` and `datasets`. It is a
-  /// `ChartDataScope`, the data object of the chart: a write of `labels`
-  /// reaches the chart, as `chart.data.labels = ...` upstream.
-  late final ChartDataScope _data = ChartDataScope()
-    ..labels = <Object?>[]
-    ..datasets = _datasets;
-
-  // The user options. A control writes into them, then calls update().
-  late final Map<String, Object?> _options = {
-    'maintainAspectRatio': false,
-    'animation': false,
-    'locale': _locale,
-    'layout': <String, Object?>{'padding': const EdgeInsets.all(8)},
-    'elements': <String, Object?>{
-      'point': <String, Object?>{
-        'radius': 4.0,
-        'hoverRadius': 7.0,
-        'borderWidth': 1.0,
-      },
-    },
-    'scales': _scales(),
-  };
+  /// The labels of the chart: one for each point of a category axis, else
+  /// none. [_fillData] gives a new List.
+  List<Object> _labels = <Object>[];
 
   /// The inline plugin `axesPointer`: the position of each event in the
   /// canvas, also outside the chart area, from the hook `afterEvent`. The
@@ -254,8 +227,7 @@ class AxesDemoState() extends State<AxesDemo> {
 
   /// The data objects of the dataset [index].
   @visibleForTesting
-  List<Map<String, Object?>> dataOf(int index) =>
-      (_datasets[index]['data']! as List<Object?>).cast<Map<String, Object?>>();
+  List<DataPoint> dataOf(int index) => _data[index];
 
   /// The rows of the readout: name and value.
   @visibleForTesting
@@ -319,21 +291,23 @@ class AxesDemoState() extends State<AxesDemo> {
       ? math.pow(10, fraction * 4).toDouble()
       : 10 + fraction * 90;
 
-  Map<String, Object?> _item(int i, double fraction) => <String, Object?>{
-    'x': _xValue(i),
-    'y': _yValue(fraction),
+  /// The data object `{x, y}` of the point [i]: the `x` of the x scale
+  /// type, a number, a label or an ISO date text, which the scale parses.
+  DataPoint _item(int i, double fraction) => switch (_xValue(i)) {
+    final String x => DataPoint.label(x, _yValue(fraction)),
+    final x => DataPoint(x as double, _yValue(fraction)),
   };
 
-  /// New data arrays for the count and the scale types. The chart takes a
-  /// new array as a new data array (`_dataCheck`).
+  /// New data Lists for the count and the scale types. The chart takes a
+  /// new List as a new data array (`_dataCheck`).
   void _fillData() {
-    for (var d = 0; d < _datasets.length; d++) {
+    for (var d = 0; d < _data.length; d++) {
       final fractions = _fractions[d];
-      _datasets[d]['data'] = <Map<String, Object?>>[
+      _data[d] = [
         for (var i = 0; i < fractions.length; i++) _item(i, fractions[i]),
       ];
     }
-    _data['labels'] = <Object?>[
+    _labels = <Object>[
       if (_xType == 'category')
         for (var i = 0; i < _fractions.first.length; i++) _label(i),
     ];
@@ -341,64 +315,123 @@ class AxesDemoState() extends State<AxesDemo> {
 
   // Options.
 
-  Map<String, Object?> _scales() => <String, Object?>{
-    'x': _scale('x', _xType, _xPosition),
-    'y': _scale('y', _yType, _yPosition),
-  };
+  /// The axis [axis] of the scale type [type] at [position], with the
+  /// options of the controls.
+  ///
+  /// `ticks.minRotation` and `ticks.maxTicksLimit` go through
+  /// `AxisTicks.extra`, and `beginAtZero` of a logarithmic axis through
+  /// `extra`: the typed classes have no such parameters. A category and a
+  /// time axis do not read `beginAtZero`.
+  ChartAxis _axis(CartesianAxis axis, String type, ChartPosition position) {
+    final ticks = AxisTicks(
+      autoSkip: _autoSkip,
+      maxRotation: _maxRotation,
+      align: _align,
+      font: ChartTextStyle(fontSize: _fontSize),
+      extra: {
+        'minRotation': _minRotation,
+        if (_maxTicksLimit > 0) 'maxTicksLimit': _maxTicksLimit,
+      },
+    );
+    final grid = AxisGrid(display: _gridDisplay, offset: _gridOffset);
+    final border = AxisBorder(display: _borderDisplay);
+    final title = AxisTitle(
+      display: _titleDisplay,
+      text: ['${axis is XAxis ? 'x' : 'y'}: $type'],
+    );
+    return switch (type) {
+      'logarithmic' => LogarithmicAxis(
+        axis,
+        position: position,
+        reverse: _reverse,
+        bounds: _bounds,
+        ticks: ticks,
+        grid: grid,
+        border: border,
+        title: title,
+        extra: {'beginAtZero': _beginAtZero},
+      ),
+      'category' => CategoryAxis(
+        axis,
+        position: position,
+        reverse: _reverse,
+        bounds: _bounds,
+        ticks: ticks,
+        grid: grid,
+        border: border,
+        title: title,
+      ),
+      'time' => TimeAxis(
+        axis,
+        position: position,
+        reverse: _reverse,
+        unit: _timeUnit,
+        bounds: _bounds,
+        ticks: ticks,
+        grid: grid,
+        border: border,
+        title: title,
+      ),
+      _ => LinearAxis(
+        axis,
+        position: position,
+        reverse: _reverse,
+        beginAtZero: _beginAtZero,
+        bounds: _bounds,
+        ticks: ticks,
+        grid: grid,
+        border: border,
+        title: title,
+      ),
+    };
+  }
 
-  Map<String, Object?> _scale(
-    String axis,
-    String type,
-    ChartPosition position,
-  ) => <String, Object?>{
-    'type': type,
-    'position': position,
-    'reverse': _reverse,
-    'beginAtZero': _beginAtZero,
-    if (_bounds != null) 'bounds': _bounds,
-    if (type == 'time' && _timeUnit != null)
-      'time': <String, Object?>{'unit': _timeUnit},
-    'ticks': <String, Object?>{
-      'autoSkip': _autoSkip,
-      'maxRotation': _maxRotation,
-      'minRotation': _minRotation,
-      if (_maxTicksLimit > 0) 'maxTicksLimit': _maxTicksLimit,
-      'align': _align,
-      'font': ChartTextStyle(fontSize: _fontSize),
-    },
-    'grid': <String, Object?>{'display': _gridDisplay, 'offset': _gridOffset},
-    'border': AxisBorder(display: _borderDisplay),
-    'title': <String, Object?>{
-      'display': _titleDisplay,
-      'text': ['$axis: $type'],
-    },
-  };
+  /// The inline plugins of the chart: one List, so that the configs of two
+  /// builds are `==`.
+  late final List<Plugin<Object?>> _plugins = [_pointerPlugin];
 
-  /// The config of the `ChartView`, made once: a rebuild of the tab gives
-  /// the view the same Map, thus no update (Chart.js ADR 0049, section 4).
-  /// A control writes into the user options and calls `update()`.
-  late final Map<String, Object?> _config = <String, Object?>{
-    'type': 'line',
-    'data': _data,
-    'options': _options,
-    'plugins': <Plugin<Object?>>[_pointerPlugin],
-  };
+  /// The config of the `ChartView` for the control values and the data
+  /// Lists. A rebuild with the same values gives a config that is `==` to
+  /// the last one, thus no update (Chart.js ADR 0052, section 9). The chart
+  /// option `locale` goes through `extra`: `ChartConfig` has no such
+  /// parameter.
+  ChartConfig _config() => ChartConfig(
+    labels: _labels,
+    datasets: [
+      for (var d = 0; d < _datasetStyles.length; d++)
+        LineDataset(
+          label: _datasetStyles[d].label,
+          data: .points(_data[d]),
+          backgroundColor: .constant(.solid(_datasetStyles[d].background)),
+          borderColor: .constant(.solid(_datasetStyles[d].border)),
+          pointStyle: .constant(_datasetStyles[d].style),
+        ),
+    ],
+    scales: [_axis(.x, _xType, _xPosition), _axis(.y, _yType, _yPosition)],
+    maintainAspectRatio: false,
+    animation: ChartAnimation.none,
+    padding: const EdgeInsets.all(8),
+    elements: const ChartElements(
+      point: PointElementStyle(radius: 4, hoverRadius: 7, borderWidth: 1),
+    ),
+    plugins: _plugins,
+    extra: {'locale': _locale},
+  );
 
   void _onChart(Chart chart) {
     _chart = chart;
     _readout.value++;
   }
 
-  /// Changes a control value. The chart reads the user options again in
-  /// `update()`, as after `chart.options.scales.x.type = 'time'` upstream.
-  /// [data] gives new data arrays first.
+  /// Changes a control value. The next build gives the view a new config,
+  /// and the view updates the chart after the frame, as after
+  /// `chart.options.scales.x.type = 'time'` and `chart.update()` upstream.
+  /// [data] gives new data Lists first.
   void _change(VoidCallback change, {bool data = false}) {
-    setState(change);
-    if (data) _fillData();
-    _options
-      ..['locale'] = _locale
-      ..['scales'] = _scales();
-    _chart?.update();
+    setState(() {
+      change();
+      if (data) _fillData();
+    });
     _readout.value++;
   }
 
@@ -418,11 +451,11 @@ class AxesDemoState() extends State<AxesDemo> {
 
   /// New `y` values in place.
   void _randomize() {
-    for (var d = 0; d < _datasets.length; d++) {
+    for (var d = 0; d < _data.length; d++) {
       final fractions = _fractions[d];
       final data = dataOf(d);
       for (var i = 0; i < data.length; i++) {
-        data[i]['y'] = _yValue(fractions[i] = _random.nextDouble());
+        data[i].y = _yValue(fractions[i] = _random.nextDouble());
       }
     }
     _chart?.update();
@@ -434,11 +467,11 @@ class AxesDemoState() extends State<AxesDemo> {
   /// the controller get the change (`notifyArrayListeners`, differences.md
   /// `platform-array-events`).
   void _resize({required bool add}) {
-    final labels = _data['labels']! as List<Object?>;
+    final labels = _labels;
     final length = _fractions.first.length;
     if (!add && length <= 1) return;
     setState(() => _count = add ? length + 1 : length - 1);
-    for (var d = 0; d < _datasets.length; d++) {
+    for (var d = 0; d < _data.length; d++) {
       final fractions = _fractions[d];
       final data = dataOf(d);
       if (add) {
@@ -687,10 +720,7 @@ class AxesDemoState() extends State<AxesDemo> {
                 builder: (context, constraints) => SizedBox(
                   key: const ValueKey('axes.host'),
                   height: constraints.maxWidth >= 560 ? 360 : 300,
-                  child: ChartView.raw(
-                    config: _config,
-                    onChartCreated: _onChart,
-                  ),
+                  child: ChartView(config: _config(), onChartCreated: _onChart),
                 ),
               ),
               const SizedBox(height: 12),
