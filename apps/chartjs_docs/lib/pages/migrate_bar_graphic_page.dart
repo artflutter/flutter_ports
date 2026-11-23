@@ -161,7 +161,7 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
     ),
     (
       Text('CustomAnnotation and TagAnnotation as a legend'),
-      DocText('`ChartLegend(usePointStyle: true)`'),
+      DocText('`LegendLabelOptions(usePointStyle: true)`'),
     ),
     (
       Text('AxisGuide(tickLine: TickLine())'),
@@ -337,7 +337,7 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
       notes: const [
         DocText(
           'Graphic draws this legend with annotations. Chart.js has a legend: '
-          '`ChartLegend` at the bottom with `usePointStyle: true`. A tap on '
+          '`LegendOptions` at the bottom with `usePointStyle: true`. A tap on '
           'an item also hides its type.',
         ),
         DocText(

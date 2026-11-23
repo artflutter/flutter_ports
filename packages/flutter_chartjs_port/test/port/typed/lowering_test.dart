@@ -1113,61 +1113,6 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
   ),
 };
 
-/// The cases of the parameters of [ChartLegend] and the twin `legend` Map.
-const Map<String, (ChartLegend, Map<String, Object?>)> _legend = {
-  'textDirection': (
-    ChartLegend(textDirection: native_ui.TextDirection.rtl),
-    {'textDirection': native_ui.TextDirection.rtl},
-  ),
-  'display': (ChartLegend(display: false), {'display': false}),
-  'position': (
-    ChartLegend(position: .chartArea),
-    {'position': ChartPosition.chartArea},
-  ),
-  'align': (ChartLegend(align: .start), {'align': ChartAlign.start}),
-  'reverse': (ChartLegend(reverse: true), {'reverse': true}),
-  'labelColor': (
-    ChartLegend(labelColor: ChartPaint.solid(_red)),
-    {
-      'labels': {'color': _redValue},
-    },
-  ),
-  'labelFont': (
-    ChartLegend(labelFont: _font),
-    {
-      'labels': {'font': _fontValue},
-    },
-  ),
-  'boxWidth': (
-    ChartLegend(boxWidth: 12),
-    {
-      'labels': {'boxWidth': 12},
-    },
-  ),
-  'boxHeight': (
-    ChartLegend(boxHeight: 6),
-    {
-      'labels': {'boxHeight': 6},
-    },
-  ),
-  'labelPadding': (
-    ChartLegend(labelPadding: 3),
-    {
-      'labels': {'padding': 3},
-    },
-  ),
-  'usePointStyle': (
-    ChartLegend(usePointStyle: true),
-    {
-      'labels': {'usePointStyle': true},
-    },
-  ),
-  'onClick': (ChartLegend(onClick: _onLegend), {'onClick': _function}),
-  'onHover': (ChartLegend(onHover: _onLegend), {'onHover': _function}),
-  'onLeave': (ChartLegend(onLeave: _onLegend), {'onLeave': _function}),
-  'extra': (ChartLegend(extra: {'maxHeight': 50}), {'maxHeight': 50}),
-};
-
 /// The cases of the parameters of [ChartTitle] and the twin Map.
 const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
   'display': (ChartTitle(display: true), {'display': true}),
@@ -1287,10 +1232,10 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       },
     },
   ),
-  'legend': (
-    ChartConfig(datasets: [BarDataset()], legend: ChartLegend()),
+  'pluginOptions of the legend': (
+    ChartConfig(datasets: [BarDataset()], pluginOptions: [LegendOptions()]),
     {
-      'plugins': {'legend': <String, Object?>{}},
+      'plugins': {'legend': LegendOptions()},
     },
   ),
   'title': (
@@ -1372,7 +1317,6 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       maintainAspectRatio: true,
       aspectRatio: 2,
       padding: EdgeInsets.all(1),
-      legend: ChartLegend(display: true),
       title: ChartTitle(display: true),
       subtitle: ChartTitle(display: false),
       interaction: ChartInteraction(intersect: true),
@@ -1380,7 +1324,10 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       onClick: _onEvent,
       onHover: _onEvent,
       events: ['click'],
-      pluginOptions: [TooltipOptions(enabled: true)],
+      pluginOptions: [
+        LegendOptions(display: true),
+        TooltipOptions(enabled: true),
+      ],
       extra: {'locale': native_ui.Locale('en', 'US')},
     ),
     {
@@ -1395,9 +1342,9 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
         'padding': EdgeInsets.only(left: 1, top: 1, right: 1, bottom: 1),
       },
       'plugins': {
-        'legend': {'display': true},
         'title': {'display': true},
         'subtitle': {'display': false},
+        'legend': LegendOptions(display: true),
         'tooltip': TooltipOptions(enabled: true),
       },
       'interaction': {'intersect': true},
@@ -2365,20 +2312,49 @@ void main() {
   });
 
   group('the option groups', () {
-    group('each parameter of ChartLegend', () {
-      for (final MapEntry(key: name, value: (legend, twin))
-          in _legend.entries) {
-        test(name, () {
-          expectTwin(
-            _options(
-              ChartConfig(datasets: const [BarDataset()], legend: legend),
-            ),
-            {
-              'plugins': {'legend': twin},
-            },
-          );
-        });
-      }
+    group('LegendOptions in pluginOptions', () {
+      test('reach options.plugins.legend as the object itself', () {
+        const legend = LegendOptions(
+          textDirection: native_ui.TextDirection.rtl,
+          display: false,
+          position: ChartPosition.chartArea,
+          align: ChartAlign.start,
+          reverse: true,
+          maxHeight: 50,
+          onClick: _onLegend,
+          onHover: _onLegend,
+          onLeave: _onLegend,
+          labels: LegendLabelOptions(
+            color: ChartPaint.solid(_red),
+            font: _font,
+            boxWidth: 12,
+            boxHeight: 6,
+            padding: 3,
+            usePointStyle: true,
+          ),
+          title: LegendTitleOptions(display: true, text: ['L']),
+        );
+        final options = _options(
+          const ChartConfig(datasets: [BarDataset()], pluginOptions: [legend]),
+        );
+        expect(jsGet(jsGet(options, 'plugins'), 'legend'), same(legend));
+      });
+
+      test('a const object reaches each lowering as the same object', () {
+        const legend = LegendOptions(display: false);
+        const config = ChartConfig(
+          datasets: [BarDataset()],
+          pluginOptions: [legend],
+        );
+        expect(
+          jsGet(jsGet(_options(config), 'plugins'), 'legend'),
+          same(legend),
+        );
+        expect(
+          jsGet(jsGet(_options(config), 'plugins'), 'legend'),
+          same(legend),
+        );
+      });
     });
 
     group('each parameter of ChartTitle, as the title and the subtitle', () {
@@ -2540,25 +2516,27 @@ void main() {
           },
         ),
       );
+      const legend = LegendOptions(
+        display: true,
+        position: ChartPosition.bottom,
+        align: ChartAlign.start,
+        reverse: true,
+        labels: LegendLabelOptions(
+          color: ChartPaint.solid(_red),
+          font: _font,
+          boxWidth: 20,
+          boxHeight: 10,
+          padding: 4,
+          usePointStyle: true,
+        ),
+        onClick: _onLegend,
+        onHover: _onLegend,
+        onLeave: _onLegend,
+        fullSize: false,
+      );
       final options = _options(
         ChartConfig(
           datasets: const [BarDataset()],
-          legend: const ChartLegend(
-            display: true,
-            position: .bottom,
-            align: .start,
-            reverse: true,
-            labelColor: ChartPaint.solid(_red),
-            labelFont: _font,
-            boxWidth: 20,
-            boxHeight: 10,
-            labelPadding: 4,
-            usePointStyle: true,
-            onClick: _onLegend,
-            onHover: _onLegend,
-            onLeave: _onLegend,
-            extra: {'fullSize': false},
-          ),
           title: const ChartTitle(
             display: true,
             text: ['T'],
@@ -2585,29 +2563,11 @@ void main() {
             onComplete: _onAnimation,
             animateRotate: false,
           ),
-          pluginOptions: [tooltip],
+          pluginOptions: [legend, tooltip],
         ),
       );
       expectTwin(options, {
         'plugins': {
-          'legend': {
-            'display': true,
-            'position': ChartPosition.bottom,
-            'align': ChartAlign.start,
-            'reverse': true,
-            'labels': {
-              'color': _redValue,
-              'font': _fontValue,
-              'boxWidth': 20,
-              'boxHeight': 10,
-              'padding': 4,
-              'usePointStyle': true,
-            },
-            'onClick': _function,
-            'onHover': _function,
-            'onLeave': _function,
-            'fullSize': false,
-          },
           'title': {
             'display': true,
             'text': ['T'],
@@ -2624,6 +2584,7 @@ void main() {
             'fullSize': false,
             'weight': 1,
           },
+          'legend': legend,
           'tooltip': tooltip,
         },
         'interaction': {
@@ -2723,12 +2684,12 @@ void main() {
       test('a built-in plugin off is the false of extra', () {
         const typed = ChartConfig(
           datasets: [BarDataset()],
-          legend: ChartLegend(display: true),
+          pluginOptions: [LegendOptions(display: true)],
           disabledPlugins: [PluginOff<LegendPlugin>()],
         );
         const raw = ChartConfig(
           datasets: [BarDataset()],
-          legend: ChartLegend(display: true),
+          pluginOptions: [LegendOptions(display: true)],
           extra: {
             'plugins': {'legend': false},
           },
@@ -2804,14 +2765,11 @@ void main() {
           const ChartConfig(
             datasets: [BarDataset()],
             responsive: true,
-            legend: ChartLegend(display: true),
+            title: ChartTitle(display: true, text: ['T']),
             extra: {
               'responsive': false,
               'plugins': {
-                'legend': {
-                  'display': false,
-                  'title': {'display': true},
-                },
+                'title': {'display': false, 'padding': EdgeInsets.all(2)},
                 'decimation': {'enabled': true},
               },
               'locale': native_ui.Locale('de', 'DE'),
@@ -2821,9 +2779,10 @@ void main() {
         {
           'responsive': false,
           'plugins': {
-            'legend': {
+            'title': {
               'display': false,
-              'title': {'display': true},
+              'text': ['T'],
+              'padding': const EdgeInsets.all(2),
             },
             'decimation': {'enabled': true},
           },
@@ -2837,7 +2796,7 @@ void main() {
         datasets: [
           BarDataset(data: .values([1])),
         ],
-        legend: ChartLegend(display: false),
+        pluginOptions: [LegendOptions(display: false)],
       );
       final a = ChartConfigLowering(config).lower();
       final b = ChartConfigLowering(config).lower();

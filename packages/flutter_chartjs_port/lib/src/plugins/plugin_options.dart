@@ -12,10 +12,11 @@
 /// option gives its value at that read. Each hook of the update gets the
 /// same object. A field that still holds the raw value says why.
 ///
-/// The tooltip is the exception (Chart.js ADR 0192): [TooltipOptions] is one
-/// immutable `PluginOptions` object with a nullable field for each option,
-/// which the plugin service merges from the defaults to the chart, and the
-/// tooltip resolves the fallbacks of upstream itself.
+/// The tooltip and the legend are the exceptions (Chart.js ADRs 0192 and
+/// 0193): [TooltipOptions] and [LegendOptions] are each one immutable
+/// `PluginOptions` object with a nullable field for each option, which the
+/// plugin service merges from the defaults to the chart, and the plugin
+/// resolves the fallbacks of upstream itself.
 ///
 /// A class takes the name of its `index.d.ts` interface (`LegendOptions`,
 /// `TitleOptions`, `TooltipOptions`, `FillerOptions`, `DecimationOptions`)
@@ -50,11 +51,6 @@ Object? optionOf(Object? options, OptionKey key) => readOption(options, key);
 double? _truthyNumber(Object? value) =>
     jsTruthy(value) ? jsToNumber(value) : null;
 
-/// The number of the option value [value] for a destructuring default of
-/// upstream: Dart `null` for [undefined], else its `ToNumber`.
-double? _definedNumber(Object? value) =>
-    identical(value, undefined) ? null : jsToNumber(value);
-
 /// The lines of the text option [value], as `renderText` draws them
 /// (`helpers.canvas.ts:457`): each item of a List, else the value itself,
 /// as a `ToString`.
@@ -66,21 +62,6 @@ List<String> _textLines(Object? value) {
     'A title text takes a List<String> of its lines, not $value.',
   );
   return const <String>[];
-}
-
-/// The corners of a truthy corner option [value] ([toTRBLCorners]), else
-/// Dart `null`: the test `borderRadius || ...` of upstream.
-BorderRadius? _truthyCorners(Object? value) =>
-    jsTruthy(value) ? toTRBLCorners(value) : null;
-
-/// The [LayoutPosition] of a `position` option value, or Dart `null` for a
-/// value that is not one. A keyword of Chart.js stops a debug build.
-LayoutPosition? _layoutPosition(Object? value) {
-  assert(
-    value is! String,
-    'A position takes a LayoutPosition, not the name "$value".',
-  );
-  return value is LayoutPosition ? value : null;
 }
 
 /// `TitleOptions` (`index.d.ts`): the resolved options of the title and the
@@ -204,133 +185,146 @@ bool _listEquals<T>(List<T> a, List<T> b) {
   return true;
 }
 
-/// `LegendOptions` (`index.d.ts`): the resolved options of the legend plugin
-/// (`plugin.legend.js:636-712`).
+/// `LegendOptions` (`index.d.ts:2422`): the options of the legend plugin
+/// (`plugin.legend.js:636-712`), one immutable object with one nullable
+/// field for each option (Chart.js ADR 0193). A null field is not set.
 ///
-/// The plugin makes one object from the resolved options of each update
-/// ([LegendOptions.of]). A scriptable option gives its value at that read.
-/// The layout reads `display`, `fullSize`, `position` and `weight` through
-/// [layoutOption].
+/// An app gives the options in `ChartConfig.pluginOptions`, or in
+/// `options.plugins.legend` of a raw config. A Map there stops a debug
+/// build. The plugin service merges the options of the defaults, the
+/// overrides of the chart type, the theme and the chart from the defaults
+/// to the chart ([merge]), as for the options of an add-on (Chart.js ADR
+/// 0148): no resolver runs. The legend then gives the label and title
+/// colors that no options set the `color` of the chart options (the
+/// default function of `plugin.legend.js:661, 707`), merges the two fonts
+/// over `Chart.defaults.font` ([toFont]), and merges the result of
+/// [scripted] with the chart context once for each update. The layout reads
+/// `display`, `fullSize`, `position` and `weight` through [layoutOption].
 ///
 /// ```dart
-/// final options = LegendOptions.of({'display': false});
-/// print(options.display); // false
+/// ChartConfig(
+///   datasets: [LineDataset(data: .values([3, 5, 2]))],
+///   pluginOptions: const [
+///     LegendOptions(
+///       position: ChartPosition.bottom,
+///       labels: LegendLabelOptions(usePointStyle: true),
+///     ),
+///   ],
+/// );
 /// ```
-// DIVERGES(chartjs): adapt-native-plugin-options, resolved values.
+// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
 @immutable
 final class const LegendOptions({
-  /// `align`, a [ChartAlign] (row `adapt-chart-align-enum`).
-  required final ChartAlign? align,
+  /// `display`: whether the chart shows the legend. The default is `true`.
+  final bool? display,
 
-  /// `display`.
-  required final bool display,
+  /// `position`: the side of the chart of the legend, a [ChartPosition] or
+  /// a [ScaleValuePosition] (row `adapt-chart-position-enum`). The default
+  /// is [ChartPosition.top].
+  final LayoutPosition? position,
 
-  /// `fullSize`: the truthiness of the option value.
-  required final bool fullSize,
+  /// `align`: the alignment of the items along the side (row
+  /// `adapt-chart-align-enum`). The default is [ChartAlign.center].
+  final ChartAlign? align,
 
-  /// `labels`. A falsy option value gives the label options of `{}`
-  /// (`plugin.legend.js:105`).
-  required final LegendLabelOptions labels,
+  /// `maxHeight`: the largest height of the legend, in pixels. Null or 0
+  /// takes the height that the layout gives.
+  final double? maxHeight,
 
-  /// `maxHeight`: the number of a truthy value, else Dart `null`
-  /// (`plugin.legend.js:154`).
-  required final double? maxHeight,
+  /// `maxWidth`: the largest width of the legend, in pixels. Null or 0 takes
+  /// the width that the layout gives.
+  final double? maxWidth,
 
-  /// `maxWidth`: the number of a truthy value, else Dart `null`
-  /// (`plugin.legend.js:153`).
-  required final double? maxWidth,
+  /// `fullSize`: whether the box takes the full width or height of the
+  /// canvas. The default is `true`.
+  final bool? fullSize,
 
-  /// `onClick`: the function, or Dart `null` for no function (Chart.js ADR
-  /// 0130).
-  required final LegendEventHandler? onClick,
+  /// `reverse`: whether the items come in the reverse order. The default is
+  /// `false`.
+  final bool? reverse,
 
-  /// `onHover`: the function, or Dart `null` for no function (Chart.js ADR
-  /// 0130).
-  required final LegendEventHandler? onHover,
+  /// `weight`: the order of the boxes on one side of the chart. The default
+  /// is 1000.
+  final double? weight,
 
-  /// `onLeave`: the function, or Dart `null` for no function (Chart.js ADR
-  /// 0130).
-  required final LegendEventHandler? onLeave,
+  /// `onClick`: the function of a click on an item (Chart.js ADR 0130). The
+  /// default hides or shows the data of the item.
+  final LegendEventHandler? onClick,
 
-  /// `position`, a [LayoutPosition] (row `adapt-chart-position-enum`).
-  required final LayoutPosition? position,
+  /// `onHover`: the function of a pointer that moves onto an item.
+  final LegendEventHandler? onHover,
 
-  /// `reverse`.
-  required final bool reverse,
+  /// `onLeave`: the function of a pointer that leaves an item.
+  final LegendEventHandler? onLeave,
 
-  /// `rtl`.
-  required final bool rtl,
+  /// `labels`: the options of the items. [merge] merges them by field.
+  final LegendLabelOptions? labels,
 
-  /// `textDirection`.
-  required final TextDirection? textDirection,
+  /// `rtl`: whether the legend draws from right to left.
+  final bool? rtl,
 
-  /// `title`. A falsy option value gives the title options of `{}`.
-  required final LegendTitleOptions title,
+  /// `textDirection`: the text direction of the canvas during the draw. Null
+  /// keeps the direction of the canvas (Chart.js ADR 0124).
+  final TextDirection? textDirection,
 
-  /// `weight`: a number, or Dart `null` for no number.
-  required final num? weight,
+  /// `title`: the options of the title of the legend. [merge] merges them by
+  /// field.
+  final LegendTitleOptions? title,
 
-  /// The resolved options that gave these values, or Dart `null` for options
-  /// that a program makes. The legend reads its proofs for a hidden legend
-  /// from them (row `adapt-hidden-legend-items`). It is not a part of `==`.
-  final Object? view,
-}) implements LayoutBoxOptions {
-  /// The options with the given values.
+  /// The scriptable options of upstream as one function: the legend calls
+  /// it with the chart context and the options of the update once for each
+  /// update, and merges the result over them. The result gives only the
+  /// options that change.
+  ///
+  /// ```dart
+  /// LegendOptions(
+  ///   scripted: (context, options) => LegendOptions(
+  ///     labels: LegendLabelOptions(color: paintFor(context.chart)),
+  ///   ),
+  /// );
+  /// ```
+  // DIVERGES(chartjs): adapt-legend-scripted, one function for the options.
+  final LegendScript? scripted,
+
+  /// `events`: the event types of the plugin, the option that the event
+  /// filter of the chart reads (`core.controller.js:1170`, Chart.js ADR
+  /// 0150). Null gives the `events` of the chart.
+  @override final List<String>? events,
+}) extends PluginOptions<LegendOptions> implements LayoutBoxOptions {
+  /// The legend options.
   this;
 
-  /// The options of the resolved options [options]: one read of each key.
-  /// A [LegendOptions] stays itself.
-  // ignore: prefer_constructors_over_static_methods
-  static LegendOptions of(Object? options) {
-    if (options is LegendOptions) return options;
-    final labels = optionOf(options, OptionKey.labels);
-    final title = optionOf(options, OptionKey.title);
-    final weight = optionOf(options, OptionKey.weight);
-    return LegendOptions(
-      align: ChartAlign.of(optionOf(options, OptionKey.align)),
-      display: boolOption(
-        optionOf(options, OptionKey.display),
-        OptionKey.display,
-      ),
-      fullSize: jsTruthy(optionOf(options, OptionKey.fullSize)),
-      labels: LegendLabelOptions.of(
-        jsTruthy(labels) ? labels : <String, Object?>{},
-      ),
-      maxHeight: _truthyNumber(optionOf(options, OptionKey.maxHeight)),
-      maxWidth: _truthyNumber(optionOf(options, OptionKey.maxWidth)),
-      onClick: functionOption<LegendEventHandler>(
-        optionOf(options, OptionKey.onClick),
-        OptionKey.onClick,
-      ),
-      onHover: functionOption<LegendEventHandler>(
-        optionOf(options, OptionKey.onHover),
-        OptionKey.onHover,
-      ),
-      onLeave: functionOption<LegendEventHandler>(
-        optionOf(options, OptionKey.onLeave),
-        OptionKey.onLeave,
-      ),
-      position: _layoutPosition(optionOf(options, OptionKey.position)),
-      reverse: boolOption(
-        optionOf(options, OptionKey.reverse),
-        OptionKey.reverse,
-      ),
-      rtl: boolOption(optionOf(options, OptionKey.rtl), OptionKey.rtl),
-      textDirection: textDirectionOption(
-        optionOf(options, OptionKey.textDirection),
-      ),
-      title: LegendTitleOptions.of(
-        jsTruthy(title) ? title : <String, Object?>{},
-      ),
-      weight: weight is num ? weight : null,
-      view: options,
-    );
-  }
+  @override
+  String get pluginId => 'legend';
+
+  /// These options with each field that [over] sets. [labels] and [title]
+  /// merge by field, as the resolver of upstream merges the keys of an
+  /// object option.
+  @override
+  LegendOptions merge(LegendOptions over) => LegendOptions(
+    display: over.display ?? display,
+    position: over.position ?? position,
+    align: over.align ?? align,
+    maxHeight: over.maxHeight ?? maxHeight,
+    maxWidth: over.maxWidth ?? maxWidth,
+    fullSize: over.fullSize ?? fullSize,
+    reverse: over.reverse ?? reverse,
+    weight: over.weight ?? weight,
+    onClick: over.onClick ?? onClick,
+    onHover: over.onHover ?? onHover,
+    onLeave: over.onLeave ?? onLeave,
+    labels: labels?.merge(over.labels) ?? over.labels,
+    rtl: over.rtl ?? rtl,
+    textDirection: over.textDirection ?? textDirection,
+    title: title?.merge(over.title) ?? over.title,
+    scripted: over.scripted ?? scripted,
+    events: over.events ?? events,
+  );
 
   @override
   Object? layoutOption(OptionKey key) => switch (key) {
-    OptionKey.display => display,
-    OptionKey.fullSize => fullSize,
+    OptionKey.display => display ?? undefined,
+    OptionKey.fullSize => fullSize ?? undefined,
     OptionKey.position => position ?? undefined,
     OptionKey.weight => weight ?? undefined,
     _ => undefined,
@@ -340,40 +334,44 @@ final class const LegendOptions({
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is LegendOptions &&
-          other.align == align &&
           other.display == display &&
-          other.fullSize == fullSize &&
-          other.labels == labels &&
+          other.position == position &&
+          other.align == align &&
           other.maxHeight == maxHeight &&
           other.maxWidth == maxWidth &&
+          other.fullSize == fullSize &&
+          other.reverse == reverse &&
+          other.weight == weight &&
           other.onClick == onClick &&
           other.onHover == onHover &&
           other.onLeave == onLeave &&
-          other.position == position &&
-          other.reverse == reverse &&
+          other.labels == labels &&
           other.rtl == rtl &&
           other.textDirection == textDirection &&
           other.title == title &&
-          other.weight == weight;
+          other.scripted == scripted &&
+          _nullableListEquals(other.events, events);
 
   @override
-  int get hashCode => Object.hash(
-    align,
+  int get hashCode => Object.hashAll([
     display,
-    fullSize,
-    labels,
+    position,
+    align,
     maxHeight,
     maxWidth,
+    fullSize,
+    reverse,
+    weight,
     onClick,
     onHover,
     onLeave,
-    position,
-    reverse,
+    labels,
     rtl,
     textDirection,
     title,
-    weight,
-  );
+    scripted,
+    if (events case final types?) Object.hashAll(types) else null,
+  ]);
 
   @override
   String toString() =>
@@ -381,140 +379,142 @@ final class const LegendOptions({
       'labels: $labels)';
 }
 
-/// The `labels` of `LegendOptions` (`index.d.ts`, an inline type): the
-/// resolved label options of the legend (`plugin.legend.js:664-705`).
+/// [LegendOptions.scripted]: the options that change for the chart context
+/// [context], over the options [options] of the update. Dart `null` changes
+/// nothing.
+// DIVERGES(chartjs): adapt-legend-scripted, one function for the options.
+typedef LegendScript = LegendOptions? Function(
+  ScriptableChartContext context,
+  LegendOptions options,
+);
+
+/// The `labels` of `LegendOptions` (`index.d.ts:2469`, an inline type): the
+/// options of the items of the legend (`plugin.legend.js:660-705`), with a
+/// nullable field for each option. A null field is not set.
 ///
 /// ```dart
-/// final labels = LegendLabelOptions.of({'usePointStyle': true});
-/// print(labels.usePointStyle); // true
+/// const LegendOptions(
+///   labels: LegendLabelOptions(usePointStyle: true, padding: 16),
+/// );
 /// ```
-// DIVERGES(chartjs): adapt-native-plugin-options, resolved values.
+// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
 @immutable
 final class const LegendLabelOptions({
-  /// `borderRadius`: the corners of a truthy number or of the Flutter
-  /// [BorderRadius] of the option ([toTRBLCorners]), else Dart `null`
-  /// (`plugin.legend.js:692`, row `adapt-flutter-border-radius`).
-  required final BorderRadius? borderRadius,
+  /// `boxWidth`: the width of the color box of an item, in pixels. The
+  /// default is 40.
+  final double? boxWidth,
 
-  /// `boxHeight`: Dart `null` for an absent value, else its number
-  /// (`plugin.legend.js:25`, row `adapt-legend-number-options`).
-  required final double? boxHeight,
+  /// `boxHeight`: the height of the color box of an item, in pixels. Null
+  /// gives the size of [font] (`plugin.legend.js:25`).
+  final double? boxHeight,
 
-  /// `boxWidth`: Dart `null` for an absent value, else its number
-  /// (`plugin.legend.js:25`, row `adapt-legend-number-options`).
-  required final double? boxWidth,
+  /// `color`: the paint of the item text. Null gives the `color` of the
+  /// chart options (`plugin.legend.js:661`).
+  final ChartPaint? color,
 
-  /// `color`: a [ChartPaint] or a Flutter `Color`, which the legend item and
-  /// the canvas take.
-  required final Object? color,
+  /// `font`: the font of the item text. The legend merges it over
+  /// `Chart.defaults.font` ([toFont]). The color of the font is not read:
+  /// set [color].
+  final TextStyle? font,
 
-  /// `filter`: the function, or Dart `null` for no function (Chart.js ADR
-  /// 0130).
-  required final LegendItemFilter? filter,
+  /// `padding`: the space between the items, in pixels. The default is 10.
+  final double? padding,
 
-  /// `font`: the [toFont] of the option value.
-  required final ChartTextStyle font,
+  /// `pointStyleWidth`: the width of the point style of an item with
+  /// [usePointStyle], in pixels. Null or 0 gives the size of the box.
+  final double? pointStyleWidth,
 
-  /// `generateLabels`, the option value: `plugin.legend.dart` reads it as a
-  /// `LegendLabelsGenerator`, a function of the `Chart` class, which this
-  /// core layer does not import.
-  required final Object? generateLabels,
+  /// `generateLabels`: the `LegendLabelsGenerator` of the legend,
+  /// `List<LegendItem> Function(Chart chart)`, which gives the items. The
+  /// type names the `Chart` class, which this core layer does not import: a
+  /// function of another type stops a debug build in the legend.
+  final Function? generateLabels,
 
-  /// `padding`: its number (row `adapt-legend-number-options`).
-  required final double padding,
+  /// `filter`: whether the legend shows an item (Chart.js ADR 0130).
+  final LegendItemFilter? filter,
 
-  /// `pointStyle`: a `PointStyle` or a boolean, which the legend item keeps.
-  required final Object? pointStyle,
+  /// `sort`: the order of two items. The sort is stable ([jsSort]).
+  final LegendItemComparator? sort,
 
-  /// `pointStyleWidth`: the number of a truthy value, else Dart `null`
-  /// (`plugin.legend.js:29`, `:336`).
-  required final double? pointStyleWidth,
+  /// `pointStyle`: the point style of each item with [usePointStyle]. Null
+  /// gives the point style of the dataset.
+  final PointStyle? pointStyle,
 
-  /// `sort`: the function, or Dart `null` for no function (Chart.js ADR
-  /// 0130).
-  required final LegendItemComparator? sort,
+  /// `textAlign`: the horizontal align of the item text (row
+  /// `adapt-flutter-text-align`).
+  final TextAlign? textAlign,
 
-  /// `textAlign`, a Flutter [TextAlign] (row `adapt-flutter-text-align`).
-  required final TextAlign? textAlign,
+  /// `usePointStyle`: whether an item shows its point style in place of the
+  /// color box. The default is `false`.
+  final bool? usePointStyle,
 
-  /// `useBorderRadius`.
-  required final bool useBorderRadius,
+  /// `useBorderRadius`: whether the color box has the corners of
+  /// [borderRadius], or of the dataset. The default is `false`.
+  final bool? useBorderRadius,
 
-  /// `usePointStyle`.
-  required final bool usePointStyle,
+  /// `borderRadius`: the corners of the color box with [useBorderRadius]
+  /// (row `adapt-flutter-border-radius`).
+  final BorderRadius? borderRadius,
 }) {
-  /// The options with the given values.
+  /// The label options.
   this;
 
-  /// The label options of the resolved options [options]: one read of each
-  /// key.
-  // ignore: prefer_constructors_over_static_methods
-  static LegendLabelOptions of(Object? options) => LegendLabelOptions(
-    borderRadius: _truthyCorners(optionOf(options, OptionKey.borderRadius)),
-    boxHeight: _definedNumber(optionOf(options, OptionKey.boxHeight)),
-    boxWidth: _definedNumber(optionOf(options, OptionKey.boxWidth)),
-    color: optionOf(options, OptionKey.color),
-    filter: functionOption<LegendItemFilter>(
-      optionOf(options, OptionKey.filter),
-      OptionKey.filter,
-    ),
-    font: toFont(optionOf(options, OptionKey.font)),
-    generateLabels: optionOf(options, OptionKey.generateLabels),
-    padding: jsToNumber(optionOf(options, OptionKey.padding)),
-    pointStyle: optionOf(options, OptionKey.pointStyle),
-    pointStyleWidth: _truthyNumber(
-      optionOf(options, OptionKey.pointStyleWidth),
-    ),
-    sort: functionOption<LegendItemComparator>(
-      optionOf(options, OptionKey.sort),
-      OptionKey.sort,
-    ),
-    textAlign: canvasTextAlign(optionOf(options, OptionKey.textAlign)),
-    useBorderRadius: boolOption(
-      optionOf(options, OptionKey.useBorderRadius),
-      OptionKey.useBorderRadius,
-    ),
-    usePointStyle: boolOption(
-      optionOf(options, OptionKey.usePointStyle),
-      OptionKey.usePointStyle,
-    ),
-  );
+  /// These options with each field that [over] sets. [font] merges by field.
+  /// Null [over] gives these options.
+  LegendLabelOptions merge(LegendLabelOptions? over) => over == null
+      ? this
+      : LegendLabelOptions(
+          boxWidth: over.boxWidth ?? boxWidth,
+          boxHeight: over.boxHeight ?? boxHeight,
+          color: over.color ?? color,
+          font: font?.merge(over.font) ?? over.font,
+          padding: over.padding ?? padding,
+          pointStyleWidth: over.pointStyleWidth ?? pointStyleWidth,
+          generateLabels: over.generateLabels ?? generateLabels,
+          filter: over.filter ?? filter,
+          sort: over.sort ?? sort,
+          pointStyle: over.pointStyle ?? pointStyle,
+          textAlign: over.textAlign ?? textAlign,
+          usePointStyle: over.usePointStyle ?? usePointStyle,
+          useBorderRadius: over.useBorderRadius ?? useBorderRadius,
+          borderRadius: over.borderRadius ?? borderRadius,
+        );
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is LegendLabelOptions &&
-          other.borderRadius == borderRadius &&
-          other.boxHeight == boxHeight &&
           other.boxWidth == boxWidth &&
+          other.boxHeight == boxHeight &&
           other.color == color &&
-          other.filter == filter &&
           other.font == font &&
-          other.generateLabels == generateLabels &&
           other.padding == padding &&
-          other.pointStyle == pointStyle &&
           other.pointStyleWidth == pointStyleWidth &&
+          other.generateLabels == generateLabels &&
+          other.filter == filter &&
           other.sort == sort &&
+          other.pointStyle == pointStyle &&
           other.textAlign == textAlign &&
+          other.usePointStyle == usePointStyle &&
           other.useBorderRadius == useBorderRadius &&
-          other.usePointStyle == usePointStyle;
+          other.borderRadius == borderRadius;
 
   @override
   int get hashCode => Object.hash(
-    borderRadius,
-    boxHeight,
     boxWidth,
+    boxHeight,
     color,
-    filter,
     font,
-    generateLabels,
     padding,
-    pointStyle,
     pointStyleWidth,
+    generateLabels,
+    filter,
     sort,
+    pointStyle,
     textAlign,
-    useBorderRadius,
     usePointStyle,
+    useBorderRadius,
+    borderRadius,
   );
 
   @override
@@ -522,71 +522,76 @@ final class const LegendLabelOptions({
       'LegendLabelOptions(usePointStyle: $usePointStyle, padding: $padding)';
 }
 
-/// The `title` of `LegendOptions` (`index.d.ts`, an inline type): the
-/// resolved title options of the legend (`plugin.legend.js:706-711`).
+/// The `title` of `LegendOptions` (`index.d.ts:2552`, an inline type): the
+/// options of the title of the legend (`plugin.legend.js:706-711`), with a
+/// nullable field for each option. A null field is not set.
 ///
 /// ```dart
-/// final title = LegendTitleOptions.of({'display': true, 'text': ['Series']});
-/// print(title.text); // [Series]
+/// const LegendOptions(
+///   title: LegendTitleOptions(display: true, text: ['Series']),
+/// );
 /// ```
-// DIVERGES(chartjs): adapt-native-plugin-options, resolved values.
+// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
 @immutable
 final class const LegendTitleOptions({
-  /// `color`: a [ChartPaint] or a Flutter `Color`, which the canvas takes.
-  required final Object? color,
+  /// `display`: whether the legend shows its title. The default is `false`.
+  final bool? display,
 
-  /// `display`.
-  required final bool display,
+  /// `color`: the paint of the title text. Null gives the `color` of the
+  /// chart options (`plugin.legend.js:707`).
+  final ChartPaint? color,
 
-  /// `font`: the [toFont] of the option value.
-  required final ChartTextStyle font,
+  /// `font`: the font of the title. The legend merges it over
+  /// `Chart.defaults.font` ([toFont]).
+  final TextStyle? font,
 
-  /// `padding`.
-  required final EdgeInsets padding,
+  /// `position`: the alignment of the title along the legend (row
+  /// `adapt-chart-align-enum`). The default is [ChartAlign.center].
+  final ChartAlign? position,
 
-  /// `position`, a [ChartAlign] (row `adapt-chart-align-enum`).
-  required final ChartAlign? position,
+  /// `padding`: the space around the title (Chart.js ADR 0123). Null is no
+  /// space.
+  final EdgeInsets? padding,
 
-  /// `text`: its lines.
-  required final List<String> text,
+  /// `text`: the lines of the title (row `adapt-title-text-lines`). The
+  /// default is `['']`.
+  final List<String>? text,
 }) {
-  /// The options with the given values.
+  /// The title options.
   this;
 
-  /// The title options of the resolved options [options]: one read of each
-  /// key.
-  // ignore: prefer_constructors_over_static_methods
-  static LegendTitleOptions of(Object? options) => LegendTitleOptions(
-    color: optionOf(options, OptionKey.color),
-    display: boolOption(
-      optionOf(options, OptionKey.display),
-      OptionKey.display,
-    ),
-    font: toFont(optionOf(options, OptionKey.font)),
-    padding: paddingOption(optionOf(options, OptionKey.padding)),
-    position: ChartAlign.of(optionOf(options, OptionKey.position)),
-    text: _textLines(optionOf(options, OptionKey.text)),
-  );
+  /// These options with each field that [over] sets. [font] merges by field.
+  /// Null [over] gives these options.
+  LegendTitleOptions merge(LegendTitleOptions? over) => over == null
+      ? this
+      : LegendTitleOptions(
+          display: over.display ?? display,
+          color: over.color ?? color,
+          font: font?.merge(over.font) ?? over.font,
+          position: over.position ?? position,
+          padding: over.padding ?? padding,
+          text: over.text ?? text,
+        );
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is LegendTitleOptions &&
-          other.color == color &&
           other.display == display &&
+          other.color == color &&
           other.font == font &&
-          other.padding == padding &&
           other.position == position &&
-          _listEquals(other.text, text);
+          other.padding == padding &&
+          _nullableListEquals(other.text, text);
 
   @override
   int get hashCode => Object.hash(
-    color,
     display,
+    color,
     font,
-    padding,
     position,
-    Object.hashAll(text),
+    padding,
+    text == null ? null : Object.hashAll(text!),
   );
 
   @override

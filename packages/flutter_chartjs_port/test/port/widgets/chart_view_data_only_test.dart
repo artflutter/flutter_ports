@@ -1119,7 +1119,7 @@ void main() {
       int step,
       List<Object> labels, {
       Dataset? dataset,
-      ChartLegend? legend = const ChartLegend(display: false),
+      LegendOptions? legend = const LegendOptions(display: false),
       ChartTitle? title,
     }) => ChartConfig(
       labels: labels,
@@ -1131,7 +1131,7 @@ void main() {
         _ => _categoryAxes,
       },
       animation: ChartAnimation.none,
-      legend: legend,
+      pluginOptions: [?legend],
       title: title,
     );
 
@@ -1156,7 +1156,7 @@ void main() {
           WidgetTester tester,
           _Spy spy, {
           required bool dataOnly,
-          ChartLegend? legend = const ChartLegend(display: false),
+          LegendOptions? legend = const LegendOptions(display: false),
         }) async {
           final labels = _newLabels();
           ChartConfig at(int step, ChartTitle? title) =>
@@ -1252,7 +1252,7 @@ void main() {
           tester,
         ) async {
           final spy = _spyOnChart();
-          const legend = ChartLegend(display: true);
+          const legend = LegendOptions(display: true);
           expect(
             await run(tester, spy, dataOnly: true, legend: legend),
             await run(tester, spy, dataOnly: false, legend: legend),
@@ -1704,7 +1704,7 @@ void main() {
           borderWidth: 0,
         ),
       ],
-    ).copyWith(legend: ChartLegend(position: position));
+    ).copyWith(pluginOptions: [LegendOptions(position: position)]);
 
     List<List<double>> hitBoxes(Chart chart) => [
       for (final box in chart.legend!.legendHitBoxes)
@@ -1824,7 +1824,7 @@ void main() {
       int step,
       double radius, {
       Map<String, Object?>? xExtra,
-      ChartLegend? legend,
+      LegendOptions? legend,
     }) => ChartConfig(
       datasets: [
         BubbleDataset(
@@ -1849,7 +1849,7 @@ void main() {
         ),
       ],
       animation: ChartAnimation.none,
-      legend: legend,
+      pluginOptions: [?legend],
     );
 
     /// The pixels of each tick: a new radius runs a layout, and the same
@@ -1857,7 +1857,7 @@ void main() {
     Future<void> expectPixels(
       WidgetTester tester, {
       Map<String, Object?>? xExtra,
-      ChartLegend? legend,
+      LegendOptions? legend,
     }) async {
       final spy = _spyOnChart();
       Future<List<Object>> run({required bool dataOnly}) async {
@@ -1910,7 +1910,7 @@ void main() {
     testWidgets('adjusts the hit boxes of its new fit once', (tester) async {
       await expectPixels(
         tester,
-        legend: const ChartLegend(position: ChartPosition.left),
+        legend: const LegendOptions(position: ChartPosition.left),
       );
     });
   });

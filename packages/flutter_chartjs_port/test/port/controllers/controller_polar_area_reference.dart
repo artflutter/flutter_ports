@@ -81,10 +81,10 @@ typedef ControllerPolarAreaReferenceWidth = ({
 });
 
 /// The cases.
-const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
+final List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   (
     name: 'default',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
@@ -103,8 +103,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -7993,7 +7993,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'startAngle',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -8010,8 +8010,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -8869,7 +8869,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'angle',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -8885,8 +8885,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -10874,7 +10874,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'toggleDataVisibility',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -10885,8 +10885,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -13889,7 +13889,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'spacing with the default spacingMode',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -13902,8 +13902,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -14764,7 +14764,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'spacing with the chart-level spacingMode override',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -14779,8 +14779,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'spacingMode': ArcSpacingMode.parallel,
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -15641,7 +15641,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'scale r min and max',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -15657,8 +15657,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -16357,7 +16357,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'reset',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -16375,8 +16375,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -18326,7 +18326,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'point labels',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['North', 'East', 'South', 'West'],
@@ -18344,8 +18344,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -19173,7 +19173,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'parsed: parsing false, an absent r',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -19189,8 +19189,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -19844,7 +19844,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'parsed: parsing false, a null r',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -19860,8 +19860,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -20521,7 +20521,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'parsed: parsing false, numbers',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -20533,8 +20533,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -21196,7 +21196,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'parsed: parsing false, Lists',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -21211,8 +21211,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -21877,7 +21877,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'parsed: parsing false, string r values',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -21893,8 +21893,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -22617,7 +22617,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'parsed: parsing false, number r values',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -22633,8 +22633,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -23294,7 +23294,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'parsed: parsing false, a null item',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -23310,14 +23310,14 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'interfaces: an rScale that is not radial',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -23333,14 +23333,14 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -23357,8 +23357,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -24304,7 +24304,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 2',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -24321,8 +24321,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -25268,7 +25268,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, no options',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -25280,8 +25280,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -26346,7 +26346,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, chart spacing 12, spacingMode parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -26361,8 +26361,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'spacingMode': ArcSpacingMode.parallel,
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -27427,7 +27427,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, dataset spacing 5, spacingMode parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -27441,8 +27441,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -28507,7 +28507,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, datasets.polarArea spacing 4, parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -28526,8 +28526,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -29592,7 +29592,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, elements.arc spacing 3, parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -29611,8 +29611,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -30677,7 +30677,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, elements.arc spacing 0, angular',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -30696,8 +30696,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -31762,7 +31762,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, chart spacing 12, elements.arc spacing 0',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -31779,8 +31779,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -32845,7 +32845,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, chart spacing 7, elements.arc spacing fn 0',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -32862,8 +32862,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -33928,7 +33928,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, chart spacing 7, elements.arc parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -33945,8 +33945,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -35011,7 +35011,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, dataset spacing 0, chart spacing 7',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -35024,8 +35024,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{'spacing': 7.0},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -36090,7 +36090,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing, dataset angular, chart parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -36103,8 +36103,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{'spacingMode': ArcSpacingMode.parallel},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -37169,7 +37169,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: spacing hover, elements.arc angular',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -37188,8 +37188,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -38687,7 +38687,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: sharing, no options',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -38699,14 +38699,14 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'interfaces: sharing, chart spacing 12, spacingMode parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -38721,8 +38721,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'spacingMode': ArcSpacingMode.parallel,
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -39705,7 +39705,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: sharing, dataset spacing 5, spacingMode parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -39719,8 +39719,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -40703,7 +40703,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: sharing, datasets.polarArea spacing 4, parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -40722,8 +40722,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -41706,7 +41706,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: sharing, elements.arc spacing 3, parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -41725,8 +41725,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -42709,7 +42709,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: sharing, elements.arc spacing 0, angular',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -42728,14 +42728,14 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'interfaces: sharing, chart spacing 12, elements.arc spacing 0',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -42752,14 +42752,14 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'interfaces: sharing, chart spacing 7, elements.arc spacing fn 0',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -42776,8 +42776,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -43760,7 +43760,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: sharing, chart spacing 7, elements.arc parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -43777,8 +43777,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -44761,7 +44761,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'interfaces: sharing, dataset spacing 0, chart spacing 7',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -44774,14 +44774,14 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{'spacing': 7.0},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'interfaces: sharing, dataset angular, chart parallel',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarAreaSharing',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -44794,14 +44794,14 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{'spacingMode': ArcSpacingMode.parallel},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'legend: items',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -44819,19 +44819,18 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{
-              'pointStyle': CirclePointStyle(),
-              'textAlign': TextAlign.left,
-              'useBorderRadius': true,
-              'borderRadius': 0.0,
-            },
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              pointStyle: CirclePointStyle(),
+              textAlign: TextAlign.left,
+              useBorderRadius: true,
+            ),
+          ),
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -45597,7 +45596,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'legend: click',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -45615,19 +45614,18 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{
-              'pointStyle': CirclePointStyle(),
-              'textAlign': TextAlign.left,
-              'useBorderRadius': true,
-              'borderRadius': 0.0,
-            },
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              pointStyle: CirclePointStyle(),
+              textAlign: TextAlign.left,
+              useBorderRadius: true,
+            ),
+          ),
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -47090,7 +47088,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'legend: click twice',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -47108,19 +47106,18 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{
-              'pointStyle': CirclePointStyle(),
-              'textAlign': TextAlign.left,
-              'useBorderRadius': true,
-              'borderRadius': 0.0,
-            },
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              pointStyle: CirclePointStyle(),
+              textAlign: TextAlign.left,
+              useBorderRadius: true,
+            ),
+          ),
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -49057,7 +49054,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'legend: items without labels',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>[],
@@ -49071,19 +49068,18 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{
-              'pointStyle': CirclePointStyle(),
-              'textAlign': TextAlign.left,
-              'useBorderRadius': true,
-              'borderRadius': 0.0,
-            },
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              pointStyle: CirclePointStyle(),
+              textAlign: TextAlign.left,
+              useBorderRadius: true,
+            ),
+          ),
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 10.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -49689,7 +49685,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
   ),
   (
     name: 'legend: off',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'polarArea',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -49709,8 +49705,8 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
         'plugins': <String, Object?>{'legend': false},
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{

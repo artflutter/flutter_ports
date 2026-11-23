@@ -92,13 +92,13 @@ final ChartConfig _config = ChartConfig(
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
-  legend: const ChartLegend(display: false),
   // A `PointSelection` without `dim`: the point nearest to the pointer.
   interaction: const ChartInteraction(
     mode: NearestInteractionMode(),
     intersect: false,
   ),
   pluginOptions: [
+    const LegendOptions(display: false),
     graphicTooltip(
       position: const AtPointerPositioner(),
       title: _dateAndName,

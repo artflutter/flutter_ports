@@ -32,7 +32,7 @@ Scale createCategoryScale({
       labels: labels,
       datasets: const [BarDataset()],
       padding: EdgeInsets.zero,
-      legend: const ChartLegend(display: false),
+      pluginOptions: const [LegendOptions(display: false)],
       scales: [
         CategoryAxis(
           .x,

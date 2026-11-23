@@ -31,10 +31,10 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   // The 16:9 of ChartContainer, and margin={{left: 12, right: 12}}.
   aspectRatio: 16 / 9,
   padding: const EdgeInsets.symmetric(horizontal: 12),
-  legend: shadcnNoLegend,
   // <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
   pluginOptions: [
     shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
+    shadcnNoLegend,
   ],
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,

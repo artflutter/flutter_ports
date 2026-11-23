@@ -36,8 +36,6 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: apexPadding,
-  // One series: no legend, as in apexcharts_flutter.
-  legend: const ChartLegend(display: false),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
@@ -45,6 +43,8 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
   pluginOptions: [
+    // One series: no legend, as in apexcharts_flutter.
+    const LegendOptions(display: false),
     apexTooltip(value: _dollars),
     zoom.options,
   ],

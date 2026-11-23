@@ -48,9 +48,10 @@ List<Object?> _spyOnUpdate(Chart chart) {
 }
 
 /// `config.plugins.legend.onClick` of the override scope [config] of
-/// `Chart.overrides` (:113, :118, :189, :194).
+/// `Chart.overrides` (:113, :118, :189, :194). The legend options are one
+/// `LegendOptions` (Chart.js ADR 0193).
 Object? _onClick(Object? config) =>
-    jsGet(jsGet(jsGet(config, 'plugins'), 'legend'), 'onClick');
+    (jsGet(jsGet(config, 'plugins'), 'legend')! as LegendOptions).onClick;
 
 /// The config of the doughnut and polar area cases of [type] (:4-15, :98-109,
 /// :125-136, :174-185).
@@ -151,13 +152,14 @@ void main() {
                 ])
               ..options = mergeExtra((ChartOptionsScope()), {
                 'plugins': <String, Object?>{
-                  'legend': <String, Object?>{
-                    'labels': <String, Object?>{
-                      'useBorderRadius': true,
-                      'borderRadius': 5,
-                      'textAlign': TextAlign.left,
-                    },
-                  },
+                  // The legend options are one object (Chart.js ADR 0193).
+                  'legend': const LegendOptions(
+                    labels: LegendLabelOptions(
+                      useBorderRadius: true,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
                 },
               }),
           );

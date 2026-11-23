@@ -27,8 +27,8 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   aspectRatio: 16 / 9,
   // margin={{left: -20}}: the other sides are 0.
   padding: EdgeInsets.zero,
-  legend: shadcnNoLegend,
   pluginOptions: [
+    shadcnNoLegend,
     shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true), true),
   ],
   interaction: shadcnInteraction(horizontal: true),

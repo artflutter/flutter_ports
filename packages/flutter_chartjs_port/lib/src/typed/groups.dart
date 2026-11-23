@@ -1,10 +1,10 @@
 // Original code, not ported from Chart.js: the option groups of the typed API.
 
 /// The option groups of the typed API (Chart.js ADR 0052, sections 1 and
-/// 6): the plugins [ChartLegend], [ChartTitle] and [ChartFiller], and the
-/// options [ChartInteraction] and [ChartAnimation] of `ChartConfig`. The
-/// tooltip options are one `TooltipOptions` in `ChartConfig.pluginOptions`
-/// (Chart.js ADR 0192).
+/// 6): the plugins [ChartTitle] and [ChartFiller], and the options
+/// [ChartInteraction] and [ChartAnimation] of `ChartConfig`. The legend and
+/// the tooltip options are one `LegendOptions` and one `TooltipOptions` in
+/// `ChartConfig.pluginOptions` (Chart.js ADRs 0192 and 0193).
 ///
 /// The callbacks of a group get one details object. The chart calls the
 /// callback of the newest config: `==` of a group compares a callback only
@@ -12,186 +12,11 @@
 /// chart.
 library;
 
-import 'dart:ui';
-
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-
-/// The legend: the options of the legend plugin, `options.plugins.legend`
-/// (`docs/configuration/legend.md`).
-///
-/// The legend shows an item for each dataset, or for each data item of a
-/// pie, a doughnut and a polar area chart. A click on an item hides or
-/// shows its data. An [onClick] replaces that default toggle, as in
-/// Chart.js.
-@immutable
-final class const ChartLegend({
-  /// Whether the chart shows the legend: `display`. The default is `true`.
-  final bool? display,
-
-  /// The side of the chart of the legend: `position`. The default is
-  /// [ChartPosition.top]. [ChartPosition.chartArea] puts the legend in the
-  /// chart area.
-  final ChartPosition? position,
-
-  /// The alignment of the legend along its side: `align`.
-  final ChartAlign? align,
-
-  /// Whether the items come in the reverse order: `reverse`.
-  final bool? reverse,
-
-  /// The color of the item text: `labels.color`.
-  final ChartPaint? labelColor,
-
-  /// The font of the item text: `labels.font`. The color of the font is
-  /// not read: set [labelColor].
-  final TextStyle? labelFont,
-
-  /// The width of the color box of an item, in pixels: `labels.boxWidth`.
-  /// The default is 40.
-  final double? boxWidth,
-
-  /// The height of the color box of an item, in pixels:
-  /// `labels.boxHeight`. The default is the font size.
-  final double? boxHeight,
-
-  /// The space between the items, in pixels: `labels.padding`. The default
-  /// is 10.
-  final double? labelPadding,
-
-  /// Whether the item shows the point style of its data in place of the
-  /// color box: `labels.usePointStyle`.
-  final bool? usePointStyle,
-
-  /// The function of a click on an item: `onClick`. It replaces the
-  /// default toggle of the visibility.
-  final LegendEventHandler? onClick,
-
-  /// The function of a pointer that moves onto an item: `onHover`.
-  final LegendEventHandler? onHover,
-
-  /// The function of a pointer that leaves an item: `onLeave`.
-  final LegendEventHandler? onLeave,
-
-  /// The text direction during drawing. Null keeps the canvas direction.
-  final TextDirection? textDirection,
-
-  /// The Chart.js legend options that have no parameter, for example
-  /// `{'title': {'display': true, 'text': ['Votes']}}`.
-  ///
-  /// The entries go into the legend Map last: an entry wins over a
-  /// parameter with the same key. A Map value merges into the Map of the
-  /// key, a List or another value replaces it. The chart gets a copy of
-  /// each Map and the Lists of the app.
-  final Map<String, Object?>? extra,
-}) with Diagnosticable {
-  /// The legend options.
-  this;
-
-  /// A copy of these legend options with the given parameters. A
-  /// parameter that is `null` keeps its value.
-  ChartLegend copyWith({
-    bool? display,
-    ChartPosition? position,
-    ChartAlign? align,
-    bool? reverse,
-    ChartPaint? labelColor,
-    TextStyle? labelFont,
-    double? boxWidth,
-    double? boxHeight,
-    double? labelPadding,
-    bool? usePointStyle,
-    LegendEventHandler? onClick,
-    LegendEventHandler? onHover,
-    LegendEventHandler? onLeave,
-    TextDirection? textDirection,
-    Map<String, Object?>? extra,
-  }) => ChartLegend(
-    display: display ?? this.display,
-    position: position ?? this.position,
-    align: align ?? this.align,
-    reverse: reverse ?? this.reverse,
-    labelColor: labelColor ?? this.labelColor,
-    labelFont: labelFont ?? this.labelFont,
-    boxWidth: boxWidth ?? this.boxWidth,
-    boxHeight: boxHeight ?? this.boxHeight,
-    labelPadding: labelPadding ?? this.labelPadding,
-    usePointStyle: usePointStyle ?? this.usePointStyle,
-    onClick: onClick ?? this.onClick,
-    onHover: onHover ?? this.onHover,
-    onLeave: onLeave ?? this.onLeave,
-    textDirection: textDirection ?? this.textDirection,
-    extra: extra ?? this.extra,
-  );
-
-  List<TypedProperty> get _props => [
-    ('display', display),
-    ('position', position),
-    ('align', align),
-    ('reverse', reverse),
-    ('labelColor', labelColor),
-    ('labelFont', labelFont),
-    ('boxWidth', boxWidth),
-    ('boxHeight', boxHeight),
-    ('labelPadding', labelPadding),
-    ('usePointStyle', usePointStyle),
-    ('onClick', byPresence(onClick)),
-    ('onHover', byPresence(onHover)),
-    ('onLeave', byPresence(onLeave)),
-    ('textDirection', textDirection),
-    ('extra', byEntries(extra)),
-  ];
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ChartLegend && propsEqual(_props, other._props);
-
-  @override
-  int get hashCode => propsHash(_props);
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    addProps(properties, _props);
-  }
-}
-
-/// The `legend` scope of [legend] (Chart.js ADR 0052, section 2; Chart.js
-/// ADR 0054 §7). The handlers lower to trampolines that call the handler of
-/// the newest config of [lowering].
-LegendOptionsScope lowerLegend(
-  ChartLegend legend,
-  ChartConfigLowering lowering,
-) {
-  final labels = LegendLabelOptionsScope();
-  put(labels, OptionKey.color, legend.labelColor);
-  put(labels, OptionKey.font, legend.labelFont);
-  put(labels, OptionKey.boxWidth, legend.boxWidth);
-  put(labels, OptionKey.boxHeight, legend.boxHeight);
-  put(labels, OptionKey.padding, legend.labelPadding);
-  put(labels, OptionKey.usePointStyle, legend.usePointStyle);
-  final scope = LegendOptionsScope();
-  put(scope, OptionKey.display, legend.display);
-  put(scope, OptionKey.position, legend.position);
-  put(scope, OptionKey.align, legend.align);
-  put(scope, OptionKey.reverse, legend.reverse);
-  if (labels.ownKeyCount != 0) scope.labels = labels;
-  if (legend.onClick != null) {
-    scope.onClick = legendTrampoline(() => lowering.config.legend?.onClick);
-  }
-  if (legend.onHover != null) {
-    scope.onHover = legendTrampoline(() => lowering.config.legend?.onHover);
-  }
-  if (legend.onLeave != null) {
-    scope.onLeave = legendTrampoline(() => lowering.config.legend?.onLeave);
-  }
-  put(scope, OptionKey.textDirection, legend.textDirection);
-  return mergeExtra(scope, legend.extra);
-}
 
 /// A title or a subtitle: the options of the title plugin,
 /// `options.plugins.title`, or of the subtitle plugin,
@@ -230,8 +55,13 @@ final class const ChartTitle({
   /// chart: `fullSize`. The default is `true`.
   final bool? fullSize,
 
-  /// The Chart.js title options that have no parameter. The rules of
-  /// [ChartLegend.extra] apply.
+  /// The Chart.js title options that have no parameter, for example
+  /// `{'weight': 2000}`.
+  ///
+  /// The entries go into the title Map last: an entry wins over a
+  /// parameter with the same key. A Map value merges into the Map of the
+  /// key, a List or another value replaces it. The chart gets a copy of
+  /// each Map and the Lists of the app.
   final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The title options.
@@ -326,7 +156,7 @@ final class const ChartInteraction({
   final bool? includeInvisible,
 
   /// The Chart.js interaction options that have no parameter. The rules of
-  /// [ChartLegend.extra] apply.
+  /// [ChartTitle.extra] apply.
   final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The interaction options.
@@ -398,7 +228,7 @@ final class const ChartFiller({
   final FillerDrawTime? drawTime,
 
   /// The Chart.js filler options that have no parameter, for example
-  /// `{'events': ['click']}`. The rules of [ChartLegend.extra] apply.
+  /// `{'events': ['click']}`. The rules of [ChartTitle.extra] apply.
   final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The filler options.
@@ -500,7 +330,7 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
   final AnimationEventHandler? onComplete;
 
   /// The Chart.js animation options that have no parameter. The rules of
-  /// [ChartLegend.extra] apply.
+  /// [ChartTitle.extra] apply.
   final Map<String, Object?>? extra;
 
   /// Whether this is [none].

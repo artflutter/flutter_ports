@@ -103,7 +103,6 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
-  legend: const ChartLegend(display: false),
   // `PointSelection(dim: Dim.x, variable: 'index')`: all types at the index
   // of the point nearest to the pointer.
   interaction: const ChartInteraction(
@@ -112,6 +111,7 @@ final ChartConfig _config = ChartConfig(
     axis: .xy,
   ),
   pluginOptions: [
+    const LegendOptions(display: false),
     graphicTooltip(
       position: const TopLeftPositioner(),
       title: _index,

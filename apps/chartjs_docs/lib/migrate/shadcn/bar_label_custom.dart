@@ -27,10 +27,10 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   aspectRatio: 16 / 9,
   // margin={{right: 16}}
   padding: const EdgeInsets.only(right: 16),
-  legend: shadcnNoLegend,
   // indicator="line" with one row: the month goes into the row.
   pluginOptions: [
     shadcnTooltip(tip, const ShadcnTooltipContent(indicator: .line), true),
+    shadcnNoLegend,
   ],
   interaction: shadcnInteraction(horizontal: true),
   animation: shadcnBarAnimation,

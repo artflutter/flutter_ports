@@ -53,14 +53,17 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   padding: const EdgeInsets.fromLTRB(4, 0, 10, 0),
   // title.style: {fontSize: '16px', color: '#666'}
   title: apexJsTitle('Forecast', size: 16, color: const Color(0xFF666666)),
-  legend: const ChartLegend(display: false),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
-  pluginOptions: [apexTooltip(), zoom.options],
+  pluginOptions: [
+    const LegendOptions(display: false),
+    apexTooltip(),
+    zoom.options,
+  ],
   scales: [
     // xaxis: {type: 'datetime', tickAmount: 10}, labels 'dd MMM'. Chart.js
     // puts a tick at each point and skips the ticks that do not fit.

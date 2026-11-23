@@ -73,7 +73,6 @@ final ChartConfig _config = ChartConfig(
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
-  legend: const ChartLegend(display: false),
   // `PointSelection(variable: 'index')`: a tap selects all the bars of an
   // index.
   interaction: const ChartInteraction(
@@ -94,6 +93,7 @@ final ChartConfig _config = ChartConfig(
     tapSelection(onDoubleTap: resetRange),
   ],
   pluginOptions: [
+    const LegendOptions(display: false),
     graphicTooltip(
       position: const CenterPositioner(),
       title: _index,

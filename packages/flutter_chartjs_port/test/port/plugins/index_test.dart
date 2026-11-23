@@ -54,8 +54,11 @@ const Set<String> _removedKeys = {'_element: class', 'destroy(1)'};
 /// field for, by plugin id: the tooltip options are one TooltipOptions
 /// object (Chart.js ADR 0192), with no `defaultRoutes` and no
 /// `descriptors`. Their fallbacks (the fonts over `Chart.defaults.font`, the
-/// animation items over `animation`) are Dart code of the tooltip.
+/// animation items over `animation`) are Dart code of the tooltip. The
+/// legend options are one LegendOptions object (Chart.js ADR 0193), with no
+/// `descriptors`: `scripted` stands for the scriptable options.
 const Map<String, Set<String>> _removedPluginKeys = {
+  'legend': {'descriptors'},
   'tooltip': {'defaultRoutes', 'descriptors'},
 };
 

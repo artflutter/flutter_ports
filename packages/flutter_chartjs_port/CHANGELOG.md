@@ -1,5 +1,16 @@
 ## Unreleased
 
+- BREAKING: the legend options are one immutable object, `LegendOptions` (Chart.js ADR 0193). `ChartLegend`
+  and `ChartConfig.legend` are gone: give `pluginOptions: [LegendOptions(...)]`, with each Chart.js legend
+  option as a field; `labels` and `title` are a `LegendLabelOptions` and a `LegendTitleOptions`
+  (`ChartLegend.labelColor`, `labelFont`, `labelPadding`, `boxWidth`, `boxHeight` and `usePointStyle` are
+  `labels: LegendLabelOptions(color:, font:, padding:, boxWidth:, boxHeight:, usePointStyle:)`; the label
+  `borderRadius` is a `BorderRadius`). A raw config holds the object in `options.plugins.legend`; a Map there
+  stops a debug build. The scriptable form of the options is one function, `scripted: (context, options) =>
+  LegendOptions(...)`, which the legend calls with the chart context once for each update. `LegendOptions.of`,
+  `LegendOptions.view`, `LegendOptionsScope`, `LegendLabelOptionsScope` and `LegendTitleOptionsScope` are
+  gone. `ChartConfig ==` compares the object with `==`: a new closure in it (a handler, a filter) gives a chart
+  update, where `ChartLegend` compared its handlers by presence; give a tear-off.
 - `ChartView.raw` is deprecated (Chart.js ADR 0195): use `ChartView(config: ChartConfig(...))`. The 0.1.0 release
   removes `ChartView.raw` and the raw Map config. Its behavior does not change in the beta.
 - BREAKING: the tooltip options are one immutable object, `TooltipOptions` (Chart.js ADR 0192). `ChartTooltip`

@@ -89,8 +89,9 @@ Map<String, Object?> _state(PolarAreaController c) {
 }
 
 /// `C.Chart.overrides.polarArea.plugins.legend`.
-Object? _legendFunctions() =>
-    jsGet(jsGet(jsGet(overrides, 'polarArea'), 'plugins'), 'legend');
+LegendOptions _legendFunctions() =>
+    jsGet(jsGet(jsGet(overrides, 'polarArea'), 'plugins'), 'legend')!
+        as LegendOptions;
 
 /// The probe `realLegend` of the generator: the items and the hit boxes of
 /// the real legend. It reads `legendItems` through `types.LegendElement`
@@ -110,10 +111,7 @@ Object? _realLegend(Chart chart) {
 /// a chart with the legend plugin off (no `chart.legend`), or the name of
 /// its error.
 Object? _noLegend(Chart chart) {
-  final generateLabels = jsGet(
-    jsGet(_legendFunctions(), 'labels'),
-    'generateLabels',
-  );
+  final generateLabels = _legendFunctions().labels!.generateLabels;
   try {
     return callDroppingExtraArgs(generateLabels, [chart]);
     // The JS `catch (e)` of the probe: a JS TypeError is a Dart TypeError.
@@ -332,7 +330,7 @@ void main() {
 
     test('overrides holds the same legend functions in each read', () {
       Object? generateLabels(Object? fns) =>
-          jsGet(jsGet(fns, 'labels'), 'generateLabels');
+          (fns! as LegendOptions).labels!.generateLabels;
       final own = jsGet(
         jsGet(PolarAreaController.overrides, 'plugins'),
         'legend',
@@ -342,9 +340,9 @@ void main() {
       expect(generateLabels(first), isA<Function>());
       expect(generateLabels(first), same(generateLabels(second)));
       expect(generateLabels(first), same(generateLabels(own)));
-      expect(jsGet(first, 'onClick'), isA<Function>());
-      expect(jsGet(first, 'onClick'), same(jsGet(second, 'onClick')));
-      expect(jsGet(first, 'onClick'), same(jsGet(own, 'onClick')));
+      expect(first.onClick, isA<Function>());
+      expect(first.onClick, same(second.onClick));
+      expect(first.onClick, same((own! as LegendOptions).onClick));
     });
 
     testWidgets('onClick toggles the index and updates the chart once', (
@@ -363,7 +361,7 @@ void main() {
       final chart = acquireChartRoot(config);
       final legend = chart.legend!;
       updates = 0;
-      callDroppingExtraArgs(jsGet(_legendFunctions(), 'onClick'), [
+      callDroppingExtraArgs(_legendFunctions().onClick, [
         <String, Object?>{},
         LegendItem(text: ['item'], index: 1),
         legend,
@@ -390,7 +388,7 @@ void main() {
         final chart = acquireChartRoot(
           _one(<Object?>['a', 'b', 'c'], <Object?>[1.0, 2.0, 3.0]),
         );
-        callDroppingExtraArgs(jsGet(_legendFunctions(), 'onClick'), [
+        callDroppingExtraArgs(_legendFunctions().onClick, [
           <String, Object?>{},
           LegendItem(text: ['item'], index: index),
           chart.legend,
@@ -416,7 +414,7 @@ void main() {
       final chart = acquireChartRoot(
         _one(<Object?>['a', 'b', 'c'], <Object?>[1.0, 2.0, 3.0]),
       );
-      callDroppingExtraArgs(jsGet(_legendFunctions(), 'onClick'), [
+      callDroppingExtraArgs(_legendFunctions().onClick, [
         <String, Object?>{},
         LegendItem(text: ['item'], index: 1),
         chart.legend,

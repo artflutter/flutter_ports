@@ -15,6 +15,6 @@ const noLegend = ChartConfig(
       borderColor: .constant(.solid(teal)),
     ),
   ],
-  legend: ChartLegend(display: false),
+  pluginOptions: [LegendOptions(display: false)],
 );
 // #enddocregion sample

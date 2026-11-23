@@ -130,17 +130,6 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   Object? get nativeLegendGenerator =>
       supportsDataUpdates ? _generateLabels : null;
 
-  /// `const {labels: {...}} = chart.legend.options` of [_generateLabels].
-  @override
-  // DIVERGES(chartjs): adapt-hidden-legend-items, the reads of the generator.
-  List<OptionKey> get nativeLegendLabelKeys => const [
-    OptionKey.pointStyle,
-    OptionKey.textAlign,
-    OptionKey.color,
-    OptionKey.useBorderRadius,
-    OptionKey.borderRadius,
-  ];
-
   @override
   DataUpdateShape get dataUpdateShape => DataUpdateShape.scalar;
 
@@ -211,7 +200,8 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       !name.startsWith('hoverBorderDash');
 
   /// controller.doughnut.js:88 `static overrides`, a typed scope of the
-  /// kind `ChartOptions` (Chart.js ADR 0054 §3).
+  /// kind `ChartOptions` (Chart.js ADR 0054 §3). The legend options are one
+  /// [LegendOptions] (Chart.js ADR 0193).
   ///
   /// The legend functions are the tear-offs of the top-level functions
   /// [_generateLabels] and [_onClick]: each read gives the same function
@@ -220,9 +210,10 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     ..aspectRatio = 1.0
     // Need to override these to give a nice default
     ..plugins = (PluginOptionsByTypeScope()
-      ..legend = (LegendOptionsScope()
-        ..labels = (LegendLabelOptionsScope()..generateLabels = _generateLabels)
-        ..onClick = _onClick));
+      ..legend = const LegendOptions(
+        labels: LegendLabelOptions(generateLabels: _generateLabels),
+        onClick: _onClick,
+      ));
 
   /// controller.doughnut.js:37 `class DoughnutController extends
   /// DatasetController` as a value (Chart.js ADR 0020, section 3).
@@ -845,13 +836,15 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
 // DIVERGES(chartjs): adapt-native-legend-item, native legend entries.
 List<LegendItem> _generateLabels(IChart chart) {
   final data = chart.data;
-  // The resolved label options of the legend (Chart.js ADR 0182).
-  // DIVERGES(chartjs): adapt-native-plugin-options, the resolved values.
-  final labelsOptions = LegendOptions.of(chart.legend!.options).labels;
+  // The label options of the legend (Chart.js ADR 0193).
+  // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+  final labelsOptions =
+      (chart.legend!.options as LegendOptions).labels ??
+      const LegendLabelOptions();
   final pointStyle = labelsOptions.pointStyle;
   final textAlign = labelsOptions.textAlign;
   final color = labelsOptions.color;
-  final useBorderRadius = labelsOptions.useBorderRadius;
+  final useBorderRadius = labelsOptions.useBorderRadius ?? false;
   final borderRadius = labelsOptions.borderRadius;
   // The data object of the user. Upstream reads `data.labels` twice: a read
   // of the data object has no side effect.

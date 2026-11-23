@@ -297,20 +297,24 @@ void main() {
   group('LegendItem and LegendEventHandler', () {
     testWidgets('a legend onClick gets a dataset item', (tester) async {
       ({ChartEvent event, LegendItem item, LegendElement legend})? details;
-      final chart = acquireChart(
-        _bar(<String, Object?>{
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{
-              'onClick': (Object? event, Object? item, Object? legend) {
-                details = (
-                  event: event! as ChartEvent,
-                  item: item! as LegendItem,
-                  legend: legend! as LegendElement,
-                );
-              },
-            },
-          },
-        }),
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            labels: const ['a', 'b', 'c'],
+            datasets: const [
+              BarDataset(label: 'A', data: .values([1, 2, 3])),
+              BarDataset(label: 'B', data: .values([3, 2, 7])),
+            ],
+            animation: ChartAnimation.none,
+            pluginOptions: [
+              LegendOptions(
+                onClick: (event, item, legend) {
+                  details = (event: event, item: item, legend: legend);
+                },
+              ),
+            ],
+          ),
+        ).lower(),
       );
       await triggerMouseEvent(chart, 'click', _legendBox(chart, 1));
 
@@ -334,27 +338,22 @@ void main() {
     testWidgets('a doughnut legend item has the data index', (tester) async {
       LegendItem? clicked;
       final chart =
-          acquireChart(<String, Object?>{
-              'type': 'doughnut',
-              'data': <String, Object?>{
-                'labels': <Object?>['a', 'b', 'c'],
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[1, 2, 3],
-                  },
-                ],
-              },
-              'options': <String, Object?>{
-                'animation': false,
-                'plugins': <String, Object?>{
-                  'legend': <String, Object?>{
-                    'onClick': (Object? event, Object? item, Object? legend) {
-                      clicked = item! as LegendItem;
-                    },
-                  },
-                },
-              },
-            })
+          acquireChartRoot(
+              ChartConfigLowering(
+                ChartConfig(
+                  labels: const ['a', 'b', 'c'],
+                  datasets: const [
+                    DoughnutDataset(data: [1, 2, 3]),
+                  ],
+                  animation: ChartAnimation.none,
+                  pluginOptions: [
+                    LegendOptions(
+                      onClick: (event, item, legend) => clicked = item,
+                    ),
+                  ],
+                ),
+              ).lower(),
+            )
             ..toggleDataVisibility(2)
             ..update();
       await triggerMouseEvent(chart, 'click', _legendBox(chart, 2));
@@ -411,7 +410,7 @@ void main() {
     ChartConfig typedBar({
       ChartEventHandler? onClick,
       ChartEventHandler? onHover,
-      ChartLegend? legend,
+      LegendOptions? legend,
       TooltipOptions? tooltip,
       List<ChartAxis>? scales,
     }) => ChartConfig(
@@ -421,9 +420,8 @@ void main() {
         BarDataset(label: 'B', data: .values([3, 2, 7])),
       ],
       scales: scales,
-      legend: legend,
       animation: ChartAnimation.none,
-      pluginOptions: tooltip == null ? null : [tooltip],
+      pluginOptions: [?legend, ?tooltip],
       onClick: onClick,
       onHover: onHover,
     );
@@ -484,7 +482,7 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           typedBar(
-            legend: ChartLegend(
+            legend: LegendOptions(
               onClick: (event, item, legend) => items.add(item),
             ),
           ),

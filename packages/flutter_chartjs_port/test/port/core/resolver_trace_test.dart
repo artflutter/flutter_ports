@@ -184,6 +184,17 @@ Object? _applyStep(Chart chart, List<Object?> step) {
       return _optionsOf(result);
     case ['readOption', final String key]:
       return _valueOf(jsGet(chart.options, key), 0);
+    case ['setOption', 'plugins.legend.position', final Object? value]:
+      // The legend options are one immutable object (Chart.js ADR 0193): the
+      // write of the key is a new object with the key in the plugins of the
+      // chart options.
+      final plugins = jsGet(chart.options, 'plugins')!;
+      final legend = jsGet(plugins, 'legend')! as LegendOptions;
+      jsSet(
+        plugins,
+        'legend',
+        legend.merge(LegendOptions(position: value! as LayoutPosition)),
+      );
     case ['setOption', final String path, final Object? value]:
       final (object, key) = _parentOf(chart.options, path);
       jsSet(
@@ -209,11 +220,12 @@ Object? _applyStep(Chart chart, List<Object?> step) {
     case ['readScale', final String id, final String path]:
       return _valueOf(_readPath(chart.scales[id]!.optionsView, path), 0);
     case ['readLegend', final String path]:
-      // The legend keeps the resolved `LegendOptions` (Chart.js ADR 0182).
-      final options = LegendOptions.of(chart.legend!.options);
+      // The legend keeps its options with the fallbacks of the update
+      // (Chart.js ADR 0193).
+      final options = chart.legend!.options as LegendOptions;
       return _valueOf(switch (path) {
         'position' => options.position,
-        'labels.color' => options.labels.color,
+        'labels.color' => referencePaintValue(options.labels!.color!),
         _ => throw StateError('Unknown legend option: $path'),
       }, 0);
     case ['legendItems', final String key]:
@@ -309,11 +321,15 @@ Matcher _throwsError(Map<String, Object?> error) => switch (error['name']) {
   final name => throw ArgumentError.value(name, 'name', 'No Dart type'),
 };
 
-/// Runs the case [c]: the setup, `acquireChart` (the step `['init']`), then
-/// each step, and compares each step with its expected entry.
-void _runCase(ResolverTraceReferenceCase c) {
-  final trace = <Object?>[];
-  final functions = resolverTraceFunctions(trace);
+/// Runs the case [c] with the user functions [functions], which write into
+/// [trace]: the setup, `acquireChart` (the step `['init']`), then each step,
+/// and compares each step with its expected entry.
+void _runCase(
+  ResolverTraceReferenceCase c,
+  List<Object?> trace,
+  Map<String, Object?> functions,
+) {
+  trace.clear();
   if (c.setup case final setup?) resolverTraceSetups[setup]!(functions);
   // A Map: the config comes from the generated reference data.
   final config = copyReference(c.config, functions)! as AnyObject;
@@ -354,16 +370,6 @@ void _runCase(ResolverTraceReferenceCase c) {
   expect(error, isNull, reason: 'the case has an error after its last step');
 }
 
-/// The cases whose trace differs from upstream by a row of
-/// `doc/differences.md`, by case name.
-const Map<String, String> _diverges = {
-  // The plugin resolves the legend options at the start of the chart and at
-  // its first update: two calls of a scriptable label color (Chart.js ADR
-  // 0182). Upstream reads the color once, in the build of the labels.
-  'plugin: a scriptable legend label color':
-      'diverges: adapt-native-plugin-options',
-};
-
 void main() {
   testReferenceOrigin(
     node: resolverTraceReferenceNode,
@@ -372,9 +378,14 @@ void main() {
     commit: resolverTraceReferenceCommit,
   );
 
-  for (final c in resolverTraceReference) {
+  // The user functions of the cases write into one trace: the tests of the
+  // file run one after the other. A function of the legend options of a
+  // config reads them (Chart.js ADR 0193).
+  final trace = <Object?>[];
+  final functions = resolverTraceFunctions(trace);
+  for (final c in resolverTraceReference(functions)) {
     testWidgets(c.name, (tester) async {
-      atNow(resolverTraceReferenceNow, () => _runCase(c));
-    }, skip: _diverges.containsKey(c.name));
+      atNow(resolverTraceReferenceNow, () => _runCase(c, trace, functions));
+    });
   }
 }

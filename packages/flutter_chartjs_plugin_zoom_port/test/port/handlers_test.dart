@@ -50,9 +50,11 @@ ChartConfig _config(ZoomPluginOptions zoom, {bool legend = false}) =>
         LinearAxis(.y, min: 0, max: 100),
       ],
       maintainAspectRatio: false,
-      legend: ChartLegend(display: legend),
       animation: ChartAnimation.none,
-      pluginOptions: [zoom],
+      pluginOptions: [
+        LegendOptions(display: legend),
+        zoom,
+      ],
     );
 
 /// A `ChartView` of [_config] in a box of 400 x 300 at the top left of the

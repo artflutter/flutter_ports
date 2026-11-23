@@ -49,7 +49,8 @@ Map<String, Object?> fixture() => <String, Object?>{
       'plugins': <String, Object?>{
         'filler': <String, Object?>{'propagate': false},
         'datalabels': <String, Object?>{'display': false},
-        'legend': <String, Object?>{'display': false},
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'legend': const LegendOptions(display: false),
       },
     },
   },

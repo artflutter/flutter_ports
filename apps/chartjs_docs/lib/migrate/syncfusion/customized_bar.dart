@@ -66,8 +66,8 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   padding: sfPadding,
   title: sfTitle('Popular Android apps in the Google play store'),
-  legend: const ChartLegend(display: false),
   pluginOptions: [
+    const LegendOptions(display: false),
     sfTooltip(
       text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}',
     ),

@@ -267,7 +267,7 @@ DocPageContent apexJsBarMigrationPage() => migrationPage(
         ),
         DocText(
           "`legend: {position: 'top', horizontalAlign: 'left'}` is "
-          '`ChartLegend(position: .top, align: .start)`.',
+          '`LegendOptions(position: .top, align: .start)`.',
         ),
         DocText(
           '`dataLabels.total` writes the sum of each stack after its end.',

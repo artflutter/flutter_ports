@@ -606,10 +606,73 @@ import 'hand/plugin.legend/borderRadius/legend-border-radius.dart'
     as plugin_legend_borderradius_legend_border_radius;
 import 'hand/plugin.legend/horizontal-rtl-hitbox.dart'
     as plugin_legend_horizontal_rtl_hitbox;
+import 'hand/plugin.legend/label-textAlign/center.dart'
+    as plugin_legend_label_textalign_center;
+import 'hand/plugin.legend/label-textAlign/horizontal-left.dart'
+    as plugin_legend_label_textalign_horizontal_left;
+import 'hand/plugin.legend/label-textAlign/horizontal-right.dart'
+    as plugin_legend_label_textalign_horizontal_right;
+import 'hand/plugin.legend/label-textAlign/horizontal-rtl-left.dart'
+    as plugin_legend_label_textalign_horizontal_rtl_left;
+import 'hand/plugin.legend/label-textAlign/horizontal-rtl-right.dart'
+    as plugin_legend_label_textalign_horizontal_rtl_right;
+import 'hand/plugin.legend/label-textAlign/left.dart'
+    as plugin_legend_label_textalign_left;
+import 'hand/plugin.legend/label-textAlign/right.dart'
+    as plugin_legend_label_textalign_right;
+import 'hand/plugin.legend/label-textAlign/rtl-center.dart'
+    as plugin_legend_label_textalign_rtl_center;
+import 'hand/plugin.legend/label-textAlign/rtl-left.dart'
+    as plugin_legend_label_textalign_rtl_left;
+import 'hand/plugin.legend/label-textAlign/rtl-right.dart'
+    as plugin_legend_label_textalign_rtl_right;
+import 'hand/plugin.legend/legend-doughnut-bottom-center-mulitiline.dart'
+    as plugin_legend_legend_doughnut_bottom_center_mulitiline;
+import 'hand/plugin.legend/legend-doughnut-bottom-center-single.dart'
+    as plugin_legend_legend_doughnut_bottom_center_single;
+import 'hand/plugin.legend/legend-doughnut-bottom-end-mulitiline.dart'
+    as plugin_legend_legend_doughnut_bottom_end_mulitiline;
+import 'hand/plugin.legend/legend-doughnut-bottom-start-mulitiline.dart'
+    as plugin_legend_legend_doughnut_bottom_start_mulitiline;
+import 'hand/plugin.legend/legend-doughnut-left-center-mulitiline.dart'
+    as plugin_legend_legend_doughnut_left_center_mulitiline;
+import 'hand/plugin.legend/legend-doughnut-left-center-single.dart'
+    as plugin_legend_legend_doughnut_left_center_single;
+import 'hand/plugin.legend/legend-doughnut-left-default-center.dart'
+    as plugin_legend_legend_doughnut_left_default_center;
+import 'hand/plugin.legend/legend-doughnut-left-end-mulitiline.dart'
+    as plugin_legend_legend_doughnut_left_end_mulitiline;
+import 'hand/plugin.legend/legend-doughnut-left-start-mulitiline.dart'
+    as plugin_legend_legend_doughnut_left_start_mulitiline;
 import 'hand/plugin.legend/legend-doughnut-point-style.dart'
     as plugin_legend_legend_doughnut_point_style;
+import 'hand/plugin.legend/legend-doughnut-right-center-mulitiline-labels.dart'
+    as plugin_legend_legend_doughnut_right_center_mulitiline_labels;
+import 'hand/plugin.legend/legend-doughnut-right-center-mulitiline.dart'
+    as plugin_legend_legend_doughnut_right_center_mulitiline;
+import 'hand/plugin.legend/legend-doughnut-right-center-single.dart'
+    as plugin_legend_legend_doughnut_right_center_single;
+import 'hand/plugin.legend/legend-doughnut-right-default-center.dart'
+    as plugin_legend_legend_doughnut_right_default_center;
+import 'hand/plugin.legend/legend-doughnut-right-end-mulitiline.dart'
+    as plugin_legend_legend_doughnut_right_end_mulitiline;
+import 'hand/plugin.legend/legend-doughnut-right-start-mulitiline.dart'
+    as plugin_legend_legend_doughnut_right_start_mulitiline;
+import 'hand/plugin.legend/legend-doughnut-top-center-mulitiline.dart'
+    as plugin_legend_legend_doughnut_top_center_mulitiline;
+import 'hand/plugin.legend/legend-doughnut-top-center-single.dart'
+    as plugin_legend_legend_doughnut_top_center_single;
+import 'hand/plugin.legend/legend-doughnut-top-end-mulitiline.dart'
+    as plugin_legend_legend_doughnut_top_end_mulitiline;
+import 'hand/plugin.legend/legend-doughnut-top-start-mulitiline.dart'
+    as plugin_legend_legend_doughnut_top_start_mulitiline;
+import 'hand/plugin.legend/legend-line-chart-area.dart'
+    as plugin_legend_legend_line_chart_area;
 import 'hand/plugin.legend/maxWidth/infinity.dart'
     as plugin_legend_maxwidth_infinity;
+import 'hand/plugin.legend/maxWidth/undefined.dart'
+    as plugin_legend_maxwidth_undefined;
+import 'hand/plugin.legend/maxWidth/value.dart' as plugin_legend_maxwidth_value;
 import 'hand/plugin.legend/padding/2cols-with-padding.dart'
     as plugin_legend_padding_2cols_with_padding;
 import 'hand/plugin.legend/padding/add-column.dart'
@@ -618,6 +681,30 @@ import 'hand/plugin.legend/pointStyle-width/legend-pointStyle-width-default.dart
     as plugin_legend_pointstyle_width_legend_pointstyle_width_default;
 import 'hand/plugin.legend/pointStyle-width/legend-pointStyle-width.dart'
     as plugin_legend_pointstyle_width_legend_pointstyle_width;
+import 'hand/plugin.legend/title/bottom-center-center.dart'
+    as plugin_legend_title_bottom_center_center;
+import 'hand/plugin.legend/title/bottom-end-end.dart'
+    as plugin_legend_title_bottom_end_end;
+import 'hand/plugin.legend/title/bottom-start-start.dart'
+    as plugin_legend_title_bottom_start_start;
+import 'hand/plugin.legend/title/left-center-center.dart'
+    as plugin_legend_title_left_center_center;
+import 'hand/plugin.legend/title/left-end-end.dart'
+    as plugin_legend_title_left_end_end;
+import 'hand/plugin.legend/title/left-start-start.dart'
+    as plugin_legend_title_left_start_start;
+import 'hand/plugin.legend/title/right-center-center.dart'
+    as plugin_legend_title_right_center_center;
+import 'hand/plugin.legend/title/right-end-end.dart'
+    as plugin_legend_title_right_end_end;
+import 'hand/plugin.legend/title/right-start-start.dart'
+    as plugin_legend_title_right_start_start;
+import 'hand/plugin.legend/title/top-center-center.dart'
+    as plugin_legend_title_top_center_center;
+import 'hand/plugin.legend/title/top-end-end.dart'
+    as plugin_legend_title_top_end_end;
+import 'hand/plugin.legend/title/top-start-start.dart'
+    as plugin_legend_title_top_start_start;
 import 'hand/plugin.title/scriptable-options.dart'
     as plugin_title_scriptable_options;
 import 'hand/plugin.tooltip/box-padding.dart' as plugin_tooltip_box_padding;
@@ -706,150 +793,6 @@ void Function() specs(String path) =>
 /// function of `hand/<path>.dart` and the first 12 hex digits of the
 /// `sha256` of the upstream file in `doc/upstream/manifest.json`.
 final Map<String, HandFixture> handFixtures = {
-  'scale.radialLinear/pointLabels/border-radius.js': (
-    load: scale_radiallinear_pointlabels_border_radius.fixture,
-    sha256: 'b05b82ebab93',
-  ),
-  'scale.radialLinear/pointLabels/background.js': (
-    load: scale_radiallinear_pointlabels_background.fixture,
-    sha256: '1a660eaebfd1',
-  ),
-  'scale.category/max-ticks-limit-norotation.js': (
-    load: scale_category_max_ticks_limit_norotation.fixture,
-    sha256: '3878d06f86cf',
-  ),
-  'scale.category/max-ticks-limit-b.js': (
-    load: scale_category_max_ticks_limit_b.fixture,
-    sha256: '37b4891b511e',
-  ),
-  'scale.category/max-ticks-limit-a.js': (
-    load: scale_category_max_ticks_limit_a.fixture,
-    sha256: '09cf84f34777',
-  ),
-  'plugin.legend/padding/2cols-with-padding.js': (
-    load: plugin_legend_padding_2cols_with_padding.fixture,
-    sha256: 'ea51cab97ce5',
-  ),
-  'plugin.filler/radar/beforeDraw.js': (
-    load: plugin_filler_radar_beforedraw.fixture,
-    sha256: '7e340f017db3',
-  ),
-  'core.scale/tick-backdrop.js': (
-    load: core_scale_tick_backdrop.fixture,
-    sha256: '89d425983ffd',
-  ),
-  'core.scale/tick-backdrop-rotation.js': (
-    load: core_scale_tick_backdrop_rotation.fixture,
-    sha256: '2244f2079be2',
-  ),
-  'core.layouts/no-boxes-all-padding.js': (
-    load: core_layouts_no_boxes_all_padding.fixture,
-    sha256: 'a96320f7bf65',
-  ),
-  'controller.radar/borderJoinStyle/value.js': (
-    load: controller_radar_borderjoinstyle_value.fixture,
-    sha256: '89e13072caed',
-  ),
-  'controller.radar/borderDashOffset/value.js': (
-    load: controller_radar_borderdashoffset_value.fixture,
-    sha256: '96d39068cbc3',
-  ),
-  'controller.radar/borderCapStyle/value.js': (
-    load: controller_radar_bordercapstyle_value.fixture,
-    sha256: '681c1ef30ff1',
-  ),
-  'controller.line/stacking/order-specified.js': (
-    load: controller_line_stacking_order_specified.fixture,
-    sha256: '024ef20c876d',
-  ),
-  'controller.line/stacking/order-default.js': (
-    load: controller_line_stacking_order_default.fixture,
-    sha256: 'c244c7024756',
-  ),
-  'controller.line/fill/value.js': (
-    load: controller_line_fill_value.fixture,
-    sha256: 'd7169e78d375',
-  ),
-  'controller.line/fill/order.js': (
-    load: controller_line_fill_order.fixture,
-    sha256: '0e9b577b1cdd',
-  ),
-  'controller.line/fill/order-default.js': (
-    load: controller_line_fill_order_default.fixture,
-    sha256: '80f197d5f920',
-  ),
-  'controller.line/clip/specified.json': (
-    load: controller_line_clip_specified.fixture,
-    sha256: '343d3d39e643',
-  ),
-  'controller.line/clip/default-y.json': (
-    load: controller_line_clip_default_y.fixture,
-    sha256: 'ffe6d9f64bef',
-  ),
-  'controller.line/clip/default-y-min.json': (
-    load: controller_line_clip_default_y_min.fixture,
-    sha256: 'fd1f2d662266',
-  ),
-  'controller.line/clip/default-y-max.json': (
-    load: controller_line_clip_default_y_max.fixture,
-    sha256: '473da4a46f1f',
-  ),
-  'controller.line/clip/default-x.json': (
-    load: controller_line_clip_default_x.fixture,
-    sha256: '7e49d010b700',
-  ),
-  'controller.line/clip/default-x-min.json': (
-    load: controller_line_clip_default_x_min.fixture,
-    sha256: '7807f219cc9b',
-  ),
-  'controller.line/clip/default-x-max.json': (
-    load: controller_line_clip_default_x_max.fixture,
-    sha256: '73cc805e9739',
-  ),
-  'controller.line/borderWidth/zero.js': (
-    load: controller_line_borderwidth_zero.fixture,
-    sha256: 'b4e97a0f35c7',
-  ),
-  'controller.line/borderWidth/value.js': (
-    load: controller_line_borderwidth_value.fixture,
-    sha256: 'd68efe1a3394',
-  ),
-  'controller.line/borderJoinStyle/value.js': (
-    load: controller_line_borderjoinstyle_value.fixture,
-    sha256: '72a31c1febf4',
-  ),
-  'controller.line/borderDashOffset/value.js': (
-    load: controller_line_borderdashoffset_value.fixture,
-    sha256: 'd1ed7ceb00c9',
-  ),
-  'controller.line/borderDash/value.js': (
-    load: controller_line_borderdash_value.fixture,
-    sha256: '1a34431b0f91',
-  ),
-  'controller.line/borderColor/value.js': (
-    load: controller_line_bordercolor_value.fixture,
-    sha256: '164e97fb2070',
-  ),
-  'controller.line/borderCapStyle/value.js': (
-    load: controller_line_bordercapstyle_value.fixture,
-    sha256: '6d92a06c46c9',
-  ),
-  'controller.line/backgroundColor/value.js': (
-    load: controller_line_backgroundcolor_value.fixture,
-    sha256: 'ef8a36037f5c',
-  ),
-  'controller.doughnut/pie-offset.js': (
-    load: controller_doughnut_pie_offset.fixture,
-    sha256: '7068af66954b',
-  ),
-  'controller.doughnut/doughnut-offset.js': (
-    load: controller_doughnut_doughnut_offset.fixture,
-    sha256: '57720a497a90',
-  ),
-  'controller.bar/chart-area-clip.js': (
-    load: controller_bar_chart_area_clip.fixture,
-    sha256: '2f9db5b62975',
-  ),
   'controller.bar/aligned-pixels.js': (
     load: controller_bar_aligned_pixels.fixture,
     sha256: 'ead0a91b2318',
@@ -914,6 +857,10 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_bar_borderwidth_scriptable.fixture,
     sha256: '7e6144b33e6b',
   ),
+  'controller.bar/chart-area-clip.js': (
+    load: controller_bar_chart_area_clip.fixture,
+    sha256: '2f9db5b62975',
+  ),
   'controller.bar/data/object-index-axis-y.js': (
     load: controller_bar_data_object_index_axis_y.fixture,
     sha256: 'b335b7fe6d0e',
@@ -977,6 +924,10 @@ final Map<String, HandFixture> handFixtures = {
   'controller.bar/stacking/replace-data.js': (
     load: controller_bar_stacking_replace_data.fixture,
     sha256: '7baadef1b563',
+  ),
+  'controller.bubble/clip.js': (
+    load: controller_bubble_clip.fixture,
+    sha256: 'c41c15bc92c3',
   ),
   'controller.bubble/hover-radius-zero.js': (
     load: controller_bubble_hover_radius_zero.fixture,
@@ -1046,6 +997,10 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_doughnut_doughnut_hidden.fixture,
     sha256: '9bf0028a556b',
   ),
+  'controller.doughnut/doughnut-offset.js': (
+    load: controller_doughnut_doughnut_offset.fixture,
+    sha256: '57720a497a90',
+  ),
   'controller.doughnut/doughnut-outer-radius-percent.js': (
     load: controller_doughnut_doughnut_outer_radius_percent.fixture,
     sha256: '73d3f8802949',
@@ -1066,37 +1021,101 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_doughnut_event_replay.fixture,
     sha256: 'b60b32f584d9',
   ),
+  'controller.doughnut/pie-offset.js': (
+    load: controller_doughnut_pie_offset.fixture,
+    sha256: '7068af66954b',
+  ),
   'controller.line/backgroundColor/scriptable.js': (
     load: controller_line_backgroundcolor_scriptable.fixture,
     sha256: '6b335045acd5',
+  ),
+  'controller.line/backgroundColor/value.js': (
+    load: controller_line_backgroundcolor_value.fixture,
+    sha256: 'ef8a36037f5c',
   ),
   'controller.line/borderCapStyle/scriptable.js': (
     load: controller_line_bordercapstyle_scriptable.fixture,
     sha256: '30478ff89367',
   ),
+  'controller.line/borderCapStyle/value.js': (
+    load: controller_line_bordercapstyle_value.fixture,
+    sha256: '6d92a06c46c9',
+  ),
   'controller.line/borderColor/scriptable.js': (
     load: controller_line_bordercolor_scriptable.fixture,
     sha256: '9a669efd152f',
+  ),
+  'controller.line/borderColor/value.js': (
+    load: controller_line_bordercolor_value.fixture,
+    sha256: '164e97fb2070',
   ),
   'controller.line/borderDash/scriptable.js': (
     load: controller_line_borderdash_scriptable.fixture,
     sha256: 'c4d800f85779',
   ),
+  'controller.line/borderDash/value.js': (
+    load: controller_line_borderdash_value.fixture,
+    sha256: '1a34431b0f91',
+  ),
   'controller.line/borderDashOffset/scriptable.js': (
     load: controller_line_borderdashoffset_scriptable.fixture,
     sha256: '4d56a82aa879',
+  ),
+  'controller.line/borderDashOffset/value.js': (
+    load: controller_line_borderdashoffset_value.fixture,
+    sha256: 'd1ed7ceb00c9',
   ),
   'controller.line/borderJoinStyle/scriptable.js': (
     load: controller_line_borderjoinstyle_scriptable.fixture,
     sha256: 'df4607aa4d1a',
   ),
+  'controller.line/borderJoinStyle/value.js': (
+    load: controller_line_borderjoinstyle_value.fixture,
+    sha256: '72a31c1febf4',
+  ),
   'controller.line/borderWidth/scriptable.js': (
     load: controller_line_borderwidth_scriptable.fixture,
     sha256: 'd3b61f6f0aa2',
   ),
+  'controller.line/borderWidth/value.js': (
+    load: controller_line_borderwidth_value.fixture,
+    sha256: 'd68efe1a3394',
+  ),
+  'controller.line/borderWidth/zero.js': (
+    load: controller_line_borderwidth_zero.fixture,
+    sha256: 'b4e97a0f35c7',
+  ),
+  'controller.line/clip/default-x-max.json': (
+    load: controller_line_clip_default_x_max.fixture,
+    sha256: '73cc805e9739',
+  ),
+  'controller.line/clip/default-x-min.json': (
+    load: controller_line_clip_default_x_min.fixture,
+    sha256: '7807f219cc9b',
+  ),
+  'controller.line/clip/default-x.json': (
+    load: controller_line_clip_default_x.fixture,
+    sha256: '7e49d010b700',
+  ),
+  'controller.line/clip/default-y-max.json': (
+    load: controller_line_clip_default_y_max.fixture,
+    sha256: '473da4a46f1f',
+  ),
+  'controller.line/clip/default-y-min.json': (
+    load: controller_line_clip_default_y_min.fixture,
+    sha256: 'fd1f2d662266',
+  ),
+  'controller.line/clip/default-y.json': (
+    load: controller_line_clip_default_y.fixture,
+    sha256: 'ffe6d9f64bef',
+  ),
   'controller.line/clip/false.js': (
     load: controller_line_clip_false.fixture,
     sha256: 'f7987ae35e19',
+  ),
+  'controller.line/clip/specified.json': (
+    load: controller_line_clip_specified.fixture,
+    sha256: '343d3d39e643',
   ),
   'controller.line/cubicInterpolationMode/scriptable.js': (
     load: controller_line_cubicinterpolationmode_scriptable.fixture,
@@ -1110,13 +1129,29 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_line_fill_no_border.fixture,
     sha256: '2c4c06669722',
   ),
+  'controller.line/fill/order-default.js': (
+    load: controller_line_fill_order_default.fixture,
+    sha256: '80f197d5f920',
+  ),
+  'controller.line/fill/order.js': (
+    load: controller_line_fill_order.fixture,
+    sha256: '0e9b577b1cdd',
+  ),
   'controller.line/fill/scriptable.js': (
     load: controller_line_fill_scriptable.fixture,
     sha256: '6a79addf5883',
   ),
+  'controller.line/fill/value.js': (
+    load: controller_line_fill_value.fixture,
+    sha256: 'd7169e78d375',
+  ),
   'controller.line/issue-8902.js': (
     load: controller_line_issue_8902.fixture,
     sha256: '748de10df6e0',
+  ),
+  'controller.line/non-numeric-y.json': (
+    load: controller_line_non_numeric_y.fixture,
+    sha256: '98d3079a8f72',
   ),
   'controller.line/point-style-offscreen-canvas.json': (
     load: controller_line_point_style_offscreen_canvas.fixture,
@@ -1126,17 +1161,41 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_line_point_style.fixture,
     sha256: 'b660424602f0',
   ),
+  'controller.line/pointBackgroundColor/indexable.js': (
+    load: controller_line_pointbackgroundcolor_indexable.fixture,
+    sha256: '4e6165c671f4',
+  ),
   'controller.line/pointBackgroundColor/scriptable.js': (
     load: controller_line_pointbackgroundcolor_scriptable.fixture,
     sha256: 'a1d05086a20c',
+  ),
+  'controller.line/pointBackgroundColor/value.js': (
+    load: controller_line_pointbackgroundcolor_value.fixture,
+    sha256: '172cce47e400',
+  ),
+  'controller.line/pointBorderColor/indexable.js': (
+    load: controller_line_pointbordercolor_indexable.fixture,
+    sha256: 'e035eaae8d79',
   ),
   'controller.line/pointBorderColor/scriptable.js': (
     load: controller_line_pointbordercolor_scriptable.fixture,
     sha256: '470ee8700c7c',
   ),
+  'controller.line/pointBorderColor/value.js': (
+    load: controller_line_pointbordercolor_value.fixture,
+    sha256: '0b6c7b638f62',
+  ),
+  'controller.line/pointBorderWidth/indexable.js': (
+    load: controller_line_pointborderwidth_indexable.fixture,
+    sha256: 'db079757f7cf',
+  ),
   'controller.line/pointBorderWidth/scriptable.js': (
     load: controller_line_pointborderwidth_scriptable.fixture,
     sha256: '43f2ab05206b',
+  ),
+  'controller.line/pointBorderWidth/value.js': (
+    load: controller_line_pointborderwidth_value.fixture,
+    sha256: '0d634475c832',
   ),
   'controller.line/pointStyle/indexable.js': (
     load: controller_line_pointstyle_indexable.fixture,
@@ -1150,6 +1209,10 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_line_pointstyle_value.fixture,
     sha256: '61ce6f0b6cd8',
   ),
+  'controller.line/radius/indexable.js': (
+    load: controller_line_radius_indexable.fixture,
+    sha256: 'a99264fb9ba2',
+  ),
   'controller.line/radius/scriptable-to-value.js': (
     load: controller_line_radius_scriptable_to_value.fixture,
     sha256: 'f645b7cc3706',
@@ -1157,6 +1220,10 @@ final Map<String, HandFixture> handFixtures = {
   'controller.line/radius/scriptable.js': (
     load: controller_line_radius_scriptable.fixture,
     sha256: '0defd6fe8d7a',
+  ),
+  'controller.line/radius/value.js': (
+    load: controller_line_radius_value.fixture,
+    sha256: '3c6a12ca99e0',
   ),
   'controller.line/rotation/indexable.js': (
     load: controller_line_rotation_indexable.fixture,
@@ -1193,6 +1260,22 @@ final Map<String, HandFixture> handFixtures = {
   'controller.line/segments/spanGaps.js': (
     load: controller_line_segments_spangaps.fixture,
     sha256: '84de0635c353',
+  ),
+  'controller.line/showLine/dataset.js': (
+    load: controller_line_showline_dataset.fixture,
+    sha256: 'c862fa5f1bed',
+  ),
+  'controller.line/showLine/false.js': (
+    load: controller_line_showline_false.fixture,
+    sha256: 'cb7b1512cfcc',
+  ),
+  'controller.line/stacking/order-default.js': (
+    load: controller_line_stacking_order_default.fixture,
+    sha256: 'c244c7024756',
+  ),
+  'controller.line/stacking/order-specified.js': (
+    load: controller_line_stacking_order_specified.fixture,
+    sha256: '024ef20c876d',
   ),
   'controller.line/stacking/single.js': (
     load: controller_line_stacking_single.fixture,
@@ -1263,49 +1346,109 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_radar_backgroundcolor_scriptable.fixture,
     sha256: 'f22197417af4',
   ),
+  'controller.radar/backgroundColor/value.js': (
+    load: controller_radar_backgroundcolor_value.fixture,
+    sha256: 'a811a3838ef7',
+  ),
   'controller.radar/borderCapStyle/scriptable.js': (
     load: controller_radar_bordercapstyle_scriptable.fixture,
     sha256: '5a54608b60d1',
+  ),
+  'controller.radar/borderCapStyle/value.js': (
+    load: controller_radar_bordercapstyle_value.fixture,
+    sha256: '681c1ef30ff1',
   ),
   'controller.radar/borderColor/scriptable.js': (
     load: controller_radar_bordercolor_scriptable.fixture,
     sha256: '4c83d879eb43',
   ),
+  'controller.radar/borderColor/value.js': (
+    load: controller_radar_bordercolor_value.fixture,
+    sha256: '3a09140dbed0',
+  ),
   'controller.radar/borderDash/scriptable.js': (
     load: controller_radar_borderdash_scriptable.fixture,
     sha256: '5d91acf7da68',
+  ),
+  'controller.radar/borderDash/value.js': (
+    load: controller_radar_borderdash_value.fixture,
+    sha256: '0508684d06e9',
   ),
   'controller.radar/borderDashOffset/scriptable.js': (
     load: controller_radar_borderdashoffset_scriptable.fixture,
     sha256: '258285ab5d6a',
   ),
+  'controller.radar/borderDashOffset/value.js': (
+    load: controller_radar_borderdashoffset_value.fixture,
+    sha256: '96d39068cbc3',
+  ),
   'controller.radar/borderJoinStyle/scriptable.js': (
     load: controller_radar_borderjoinstyle_scriptable.fixture,
     sha256: '7bf9703db017',
+  ),
+  'controller.radar/borderJoinStyle/value.js': (
+    load: controller_radar_borderjoinstyle_value.fixture,
+    sha256: '89e13072caed',
   ),
   'controller.radar/borderWidth/scriptable.js': (
     load: controller_radar_borderwidth_scriptable.fixture,
     sha256: '0e135ebaad8c',
   ),
+  'controller.radar/borderWidth/value.js': (
+    load: controller_radar_borderwidth_value.fixture,
+    sha256: 'fbbcd39a64ed',
+  ),
+  'controller.radar/borderWidth/zero.js': (
+    load: controller_radar_borderwidth_zero.fixture,
+    sha256: '5e733e2d4e66',
+  ),
   'controller.radar/fill/scriptable.js': (
     load: controller_radar_fill_scriptable.fixture,
     sha256: '2e41806f6eec',
+  ),
+  'controller.radar/fill/value.js': (
+    load: controller_radar_fill_value.fixture,
+    sha256: 'abe43fe26e56',
   ),
   'controller.radar/point-style.json': (
     load: controller_radar_point_style.fixture,
     sha256: '783139172038',
   ),
+  'controller.radar/pointBackgroundColor/indexable.js': (
+    load: controller_radar_pointbackgroundcolor_indexable.fixture,
+    sha256: 'ab9b4df9fe3c',
+  ),
   'controller.radar/pointBackgroundColor/scriptable.js': (
     load: controller_radar_pointbackgroundcolor_scriptable.fixture,
     sha256: '8397c25979c5',
+  ),
+  'controller.radar/pointBackgroundColor/value.js': (
+    load: controller_radar_pointbackgroundcolor_value.fixture,
+    sha256: 'a31e04268653',
+  ),
+  'controller.radar/pointBorderColor/indexable.js': (
+    load: controller_radar_pointbordercolor_indexable.fixture,
+    sha256: 'c3d832027132',
   ),
   'controller.radar/pointBorderColor/scriptable.js': (
     load: controller_radar_pointbordercolor_scriptable.fixture,
     sha256: 'a013479b11e7',
   ),
+  'controller.radar/pointBorderColor/value.js': (
+    load: controller_radar_pointbordercolor_value.fixture,
+    sha256: 'e43b2e05b356',
+  ),
+  'controller.radar/pointBorderWidth/indexable.js': (
+    load: controller_radar_pointborderwidth_indexable.fixture,
+    sha256: '475d60b260a4',
+  ),
   'controller.radar/pointBorderWidth/scriptable.js': (
     load: controller_radar_pointborderwidth_scriptable.fixture,
     sha256: '3a4626248004',
+  ),
+  'controller.radar/pointBorderWidth/value.js': (
+    load: controller_radar_pointborderwidth_value.fixture,
+    sha256: 'b7b6ebbc3e28',
   ),
   'controller.radar/pointStyle/indexable.js': (
     load: controller_radar_pointstyle_indexable.fixture,
@@ -1319,9 +1462,17 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_radar_pointstyle_value.fixture,
     sha256: 'bf236ef43caa',
   ),
+  'controller.radar/radius/indexable.js': (
+    load: controller_radar_radius_indexable.fixture,
+    sha256: 'ab44e9e099c8',
+  ),
   'controller.radar/radius/scriptable.js': (
     load: controller_radar_radius_scriptable.fixture,
     sha256: '15fbd64fc078',
+  ),
+  'controller.radar/radius/value.js': (
+    load: controller_radar_radius_value.fixture,
+    sha256: 'b4068839907a',
   ),
   'controller.radar/rotation/indexable.js': (
     load: controller_radar_rotation_indexable.fixture,
@@ -1334,6 +1485,10 @@ final Map<String, HandFixture> handFixtures = {
   'controller.radar/rotation/value.js': (
     load: controller_radar_rotation_value.fixture,
     sha256: '708f548ebe96',
+  ),
+  'controller.radar/showLine/value.js': (
+    load: controller_radar_showline_value.fixture,
+    sha256: '9cb757de6148',
   ),
   'controller.scatter/showLine/changed.js': (
     load: controller_scatter_showline_changed.fixture,
@@ -1355,9 +1510,41 @@ final Map<String, HandFixture> handFixtures = {
     load: core_layouts_hidden_vertical_boxes.fixture,
     sha256: 'a17c3b74bfd2',
   ),
+  'core.layouts/no-boxes-all-padding.js': (
+    load: core_layouts_no_boxes_all_padding.fixture,
+    sha256: 'a96320f7bf65',
+  ),
   'core.layouts/scriptable.js': (
     load: core_layouts_scriptable.fixture,
     sha256: '9fea029461b5',
+  ),
+  'core.layouts/stacked-boxes-max-index-without-clip.js': (
+    load: core_layouts_stacked_boxes_max_index_without_clip.fixture,
+    sha256: '5fd3d94af843',
+  ),
+  'core.layouts/stacked-boxes-max-index.js': (
+    load: core_layouts_stacked_boxes_max_index.fixture,
+    sha256: '11ec7a29bd91',
+  ),
+  'core.layouts/stacked-boxes-max-without-clip.js': (
+    load: core_layouts_stacked_boxes_max_without_clip.fixture,
+    sha256: 'c60139535633',
+  ),
+  'core.layouts/stacked-boxes-max.js': (
+    load: core_layouts_stacked_boxes_max.fixture,
+    sha256: '49fe800eca9e',
+  ),
+  'core.layouts/stacked-boxes-with-weight.js': (
+    load: core_layouts_stacked_boxes_with_weight.fixture,
+    sha256: '18b738bc7f49',
+  ),
+  'core.layouts/stacked-boxes.js': (
+    load: core_layouts_stacked_boxes.fixture,
+    sha256: '29d14ae0cdd4',
+  ),
+  'core.scale/border-behind-elements.js': (
+    load: core_scale_border_behind_elements.fixture,
+    sha256: 'c7bb57a9a680',
   ),
   'core.scale/cartesian-axis-border-settings.json': (
     load: core_scale_cartesian_axis_border_settings.fixture,
@@ -1419,6 +1606,14 @@ final Map<String, HandFixture> handFixtures = {
     load: core_scale_crossalignment_mirror_cross_align_right_near.fixture,
     sha256: 'd231166d04c1',
   ),
+  'core.scale/grid/border-over-grid.js': (
+    load: core_scale_grid_border_over_grid.fixture,
+    sha256: 'ce9325e1ccf6',
+  ),
+  'core.scale/grid/colors.js': (
+    load: core_scale_grid_colors.fixture,
+    sha256: '49074bd4571b',
+  ),
   'core.scale/grid/scriptable-borderDash.js': (
     load: core_scale_grid_scriptable_borderdash.fixture,
     sha256: 'bfa50f9c0576',
@@ -1426,6 +1621,14 @@ final Map<String, HandFixture> handFixtures = {
   'core.scale/label-offset-vertical-axes.json': (
     load: core_scale_label_offset_vertical_axes.fixture,
     sha256: 'de6c83a1cd77',
+  ),
+  'core.scale/tick-backdrop-rotation.js': (
+    load: core_scale_tick_backdrop_rotation.fixture,
+    sha256: '2244f2079be2',
+  ),
+  'core.scale/tick-backdrop.js': (
+    load: core_scale_tick_backdrop.fixture,
+    sha256: '89d425983ffd',
   ),
   'core.scale/tick-drawing.json': (
     load: core_scale_tick_drawing.fixture,
@@ -1491,9 +1694,41 @@ final Map<String, HandFixture> handFixtures = {
     load: element_line_skip_last.fixture,
     sha256: '95674218f4f7',
   ),
+  'element.line/skip/middle-span.js': (
+    load: element_line_skip_middle_span.fixture,
+    sha256: '286b611bb77a',
+  ),
   'element.line/skip/middle.js': (
     load: element_line_skip_middle.fixture,
     sha256: 'b018d834ca72',
+  ),
+  'element.line/stepped/after.js': (
+    load: element_line_stepped_after.fixture,
+    sha256: '4814c2dd8861',
+  ),
+  'element.line/stepped/before.js': (
+    load: element_line_stepped_before.fixture,
+    sha256: '53f54cd7cead',
+  ),
+  'element.line/stepped/default.js': (
+    load: element_line_stepped_default.fixture,
+    sha256: '19c155a10d08',
+  ),
+  'element.line/stepped/middle.js': (
+    load: element_line_stepped_middle.fixture,
+    sha256: '6278d250c29b',
+  ),
+  'element.line/tension/default.js': (
+    load: element_line_tension_default.fixture,
+    sha256: '3c43071e0eb7',
+  ),
+  'element.line/tension/one.js': (
+    load: element_line_tension_one.fixture,
+    sha256: '9299be5059f9',
+  ),
+  'element.line/tension/zero.js': (
+    load: element_line_tension_zero.fixture,
+    sha256: '42c2b3b64ad4',
   ),
   'element.point/point-style-circle.json': (
     load: element_point_point_style_circle.fixture,
@@ -1576,6 +1811,22 @@ final Map<String, HandFixture> handFixtures = {
     load: plugin_filler_line_boundary_above_below_line_null.fixture,
     sha256: '5fd8772ba62b',
   ),
+  'plugin.filler/line/boundary/end-span.json': (
+    load: plugin_filler_line_boundary_end_span.fixture,
+    sha256: 'b8d82d21bbed',
+  ),
+  'plugin.filler/line/boundary/end.json': (
+    load: plugin_filler_line_boundary_end.fixture,
+    sha256: '8e9560da3312',
+  ),
+  'plugin.filler/line/boundary/origin-span-dual.json': (
+    load: plugin_filler_line_boundary_origin_span_dual.fixture,
+    sha256: 'dd7cb6f60abe',
+  ),
+  'plugin.filler/line/boundary/origin-span.json': (
+    load: plugin_filler_line_boundary_origin_span.fixture,
+    sha256: '70e44ba3f128',
+  ),
   'plugin.filler/line/boundary/origin-spline-above.json': (
     load: plugin_filler_line_boundary_origin_spline_above.fixture,
     sha256: '464229ae7cf8',
@@ -1595,6 +1846,18 @@ final Map<String, HandFixture> handFixtures = {
   'plugin.filler/line/boundary/origin-stepped.json': (
     load: plugin_filler_line_boundary_origin_stepped.fixture,
     sha256: '1219a3329e87',
+  ),
+  'plugin.filler/line/boundary/origin.json': (
+    load: plugin_filler_line_boundary_origin.fixture,
+    sha256: 'f543e133289d',
+  ),
+  'plugin.filler/line/boundary/start-span.json': (
+    load: plugin_filler_line_boundary_start_span.fixture,
+    sha256: '2eeca87ccb38',
+  ),
+  'plugin.filler/line/boundary/start.json': (
+    load: plugin_filler_line_boundary_start.fixture,
+    sha256: '799aeeee22de',
   ),
   'plugin.filler/line/dataset/border.json': (
     load: plugin_filler_line_dataset_border.fixture,
@@ -1656,363 +1919,6 @@ final Map<String, HandFixture> handFixtures = {
     load: plugin_filler_line_dataset_stepped.fixture,
     sha256: 'ccfddf63096b',
   ),
-  'plugin.filler/line/points-outside-canvas-update.js': (
-    load: plugin_filler_line_points_outside_canvas_update.fixture,
-    sha256: 'cff53652abd9',
-  ),
-  'plugin.filler/line/segments/alignToPixels.js': (
-    load: plugin_filler_line_segments_aligntopixels.fixture,
-    sha256: '7bafe2061cdb',
-  ),
-  'plugin.filler/line/segments/gap.js': (
-    load: plugin_filler_line_segments_gap.fixture,
-    sha256: '7c65b2aa556b',
-  ),
-  'plugin.filler/line/segments/slope.js': (
-    load: plugin_filler_line_segments_slope.fixture,
-    sha256: '2c5be7cc3c3d',
-  ),
-  'plugin.filler/line/vertical.js': (
-    load: plugin_filler_line_vertical.fixture,
-    sha256: 'ea3de3ba05d4',
-  ),
-  'plugin.filler/radar/dataset/border.json': (
-    load: plugin_filler_radar_dataset_border.fixture,
-    sha256: '94b5a3ac3142',
-  ),
-  'plugin.filler/radar/dataset/default.json': (
-    load: plugin_filler_radar_dataset_default.fixture,
-    sha256: '7f9fa3d736bc',
-  ),
-  'plugin.filler/radar/dataset/span.json': (
-    load: plugin_filler_radar_dataset_span.fixture,
-    sha256: '49fce1b429f2',
-  ),
-  'plugin.filler/radar/dataset/spline.json': (
-    load: plugin_filler_radar_dataset_spline.fixture,
-    sha256: 'f9bd42c61ec9',
-  ),
-  'plugin.legend/borderRadius/legend-border-radius.js': (
-    load: plugin_legend_borderradius_legend_border_radius.fixture,
-    sha256: '819fb07d37b6',
-  ),
-  'plugin.legend/horizontal-rtl-hitbox.js': (
-    load: plugin_legend_horizontal_rtl_hitbox.fixture,
-    sha256: '9936ce127cee',
-  ),
-  'plugin.legend/legend-doughnut-point-style.json': (
-    load: plugin_legend_legend_doughnut_point_style.fixture,
-    sha256: '45bf9d8ecf21',
-  ),
-  'plugin.legend/maxWidth/infinity.js': (
-    load: plugin_legend_maxwidth_infinity.fixture,
-    sha256: '66c879c203c1',
-  ),
-  'plugin.legend/padding/add-column.js': (
-    load: plugin_legend_padding_add_column.fixture,
-    sha256: 'bd23e530172e',
-  ),
-  'plugin.legend/pointStyle-width/legend-pointStyle-width-default.json': (
-    load:
-        plugin_legend_pointstyle_width_legend_pointstyle_width_default.fixture,
-    sha256: 'd2952260c1a8',
-  ),
-  'plugin.legend/pointStyle-width/legend-pointStyle-width.json': (
-    load: plugin_legend_pointstyle_width_legend_pointstyle_width.fixture,
-    sha256: 'b903fe95c19e',
-  ),
-  'plugin.title/scriptable-options.js': (
-    load: plugin_title_scriptable_options.fixture,
-    sha256: '2a67dd8b043d',
-  ),
-  'plugin.tooltip/box-padding.js': (
-    load: plugin_tooltip_box_padding.fixture,
-    sha256: 'f1046694a16a',
-  ),
-  'plugin.tooltip/caret-position.js': (
-    load: plugin_tooltip_caret_position.fixture,
-    sha256: '204d3723a843',
-  ),
-  'plugin.tooltip/color-box-border-dash.js': (
-    load: plugin_tooltip_color_box_border_dash.fixture,
-    sha256: 'a13adb1b6eef',
-  ),
-  'plugin.tooltip/color-box-border-radius.js': (
-    load: plugin_tooltip_color_box_border_radius.fixture,
-    sha256: '98d9572c8437',
-  ),
-  'plugin.tooltip/corner-radius.js': (
-    load: plugin_tooltip_corner_radius.fixture,
-    sha256: '6806969b8ac2',
-  ),
-  'plugin.tooltip/opacity.js': (
-    load: plugin_tooltip_opacity.fixture,
-    sha256: '82f95f0a2fd0',
-  ),
-  'plugin.tooltip/point-style.js': (
-    load: plugin_tooltip_point_style.fixture,
-    sha256: '4d3b800e358b',
-  ),
-  'plugin.tooltip/positioning.js': (
-    load: plugin_tooltip_positioning.fixture,
-    sha256: '9644a47dcf84',
-  ),
-  'scale.category/invalid-data.js': (
-    load: scale_category_invalid_data.fixture,
-    sha256: 'ecf9428ec7ed',
-  ),
-  'scale.category/ticks-from-data.js': (
-    load: scale_category_ticks_from_data.fixture,
-    sha256: 'fdce887c4022',
-  ),
-  'scale.linear/grace/grace-10%.js': (
-    load: scale_linear_grace_grace_10_.fixture,
-    sha256: '0dc72726ef0f',
-  ),
-  'scale.linear/grace/grace-beginAtZero.js': (
-    load: scale_linear_grace_grace_beginatzero.fixture,
-    sha256: '5b2a4a7e4b8d',
-  ),
-  'scale.linear/grace/grace-neg.js': (
-    load: scale_linear_grace_grace_neg.fixture,
-    sha256: '627ac78c9874',
-  ),
-  'scale.linear/grace/grace-pos.js': (
-    load: scale_linear_grace_grace_pos.fixture,
-    sha256: '4df42ffe516b',
-  ),
-  'scale.linear/grace/grace.js': (
-    load: scale_linear_grace_grace.fixture,
-    sha256: 'ec3dadb2725a',
-  ),
-  'scale.linear/grace/issue-8912.js': (
-    load: scale_linear_grace_issue_8912.fixture,
-    sha256: '187500e243fa',
-  ),
-  'scale.linear/tick-count-data-limits.js': (
-    load: scale_linear_tick_count_data_limits.fixture,
-    sha256: 'd9342d4c09c8',
-  ),
-  'scale.radialLinear/anglelines-scriptable.js': (
-    load: scale_radiallinear_anglelines_scriptable.fixture,
-    sha256: '08e36231a454',
-  ),
-  'scale.radialLinear/gridlines-scriptable.js': (
-    load: scale_radiallinear_gridlines_scriptable.fixture,
-    sha256: '13a35dcc04b0',
-  ),
-  'scale.radialLinear/pointLabels/scriptable-color-small.js': (
-    load: scale_radiallinear_pointlabels_scriptable_color_small.fixture,
-    sha256: '00b299f9172d',
-  ),
-  'scale.radialLinear/ticks-below-zero.js': (
-    load: scale_radiallinear_ticks_below_zero.fixture,
-    sha256: 'c255b6ba2824',
-  ),
-  'scale.time/autoskip-major.js': (
-    load: scale_time_autoskip_major.fixture,
-    sha256: 'b0621b5b41ca',
-  ),
-  'scale.time/bar-large-gap-between-data.js': (
-    load: scale_time_bar_large_gap_between_data.fixture,
-    sha256: '64deb58590c8',
-  ),
-  'scale.time/custom-parser.js': (
-    load: scale_time_custom_parser.fixture,
-    sha256: '890aed904f37',
-  ),
-  'scale.time/data-ty.js': (
-    load: scale_time_data_ty.fixture,
-    sha256: 'cae64c65a083',
-  ),
-  'scale.time/data-xy.js': (
-    load: scale_time_data_xy.fixture,
-    sha256: 'f14f7eb1956c',
-  ),
-  'scale.time/labels-date.js': (
-    load: scale_time_labels_date.fixture,
-    sha256: '7c9efdf5f808',
-  ),
-  'scale.time/offset-auto-skip-ticks.js': (
-    load: scale_time_offset_auto_skip_ticks.fixture,
-    sha256: 'f82acaad46f8',
-  ),
-  'scale.time/offset-with-no-ticks.js': (
-    load: scale_time_offset_with_no_ticks.fixture,
-    sha256: '8b06d8cab19e',
-  ),
-  'scale.timeseries/financial-daily.js': (
-    load: scale_timeseries_financial_daily.fixture,
-    sha256: 'cd96e74c519b',
-  ),
-  'controller.bubble/clip.js': (
-    load: controller_bubble_clip.fixture,
-    sha256: 'c41c15bc92c3',
-  ),
-  'controller.line/non-numeric-y.json': (
-    load: controller_line_non_numeric_y.fixture,
-    sha256: '98d3079a8f72',
-  ),
-  'controller.line/pointBackgroundColor/indexable.js': (
-    load: controller_line_pointbackgroundcolor_indexable.fixture,
-    sha256: '4e6165c671f4',
-  ),
-  'controller.line/pointBackgroundColor/value.js': (
-    load: controller_line_pointbackgroundcolor_value.fixture,
-    sha256: '172cce47e400',
-  ),
-  'controller.line/pointBorderColor/indexable.js': (
-    load: controller_line_pointbordercolor_indexable.fixture,
-    sha256: 'e035eaae8d79',
-  ),
-  'controller.line/pointBorderColor/value.js': (
-    load: controller_line_pointbordercolor_value.fixture,
-    sha256: '0b6c7b638f62',
-  ),
-  'controller.line/pointBorderWidth/indexable.js': (
-    load: controller_line_pointborderwidth_indexable.fixture,
-    sha256: 'db079757f7cf',
-  ),
-  'controller.line/pointBorderWidth/value.js': (
-    load: controller_line_pointborderwidth_value.fixture,
-    sha256: '0d634475c832',
-  ),
-  'controller.line/radius/indexable.js': (
-    load: controller_line_radius_indexable.fixture,
-    sha256: 'a99264fb9ba2',
-  ),
-  'controller.line/radius/value.js': (
-    load: controller_line_radius_value.fixture,
-    sha256: '3c6a12ca99e0',
-  ),
-  'controller.line/showLine/dataset.js': (
-    load: controller_line_showline_dataset.fixture,
-    sha256: 'c862fa5f1bed',
-  ),
-  'controller.line/showLine/false.js': (
-    load: controller_line_showline_false.fixture,
-    sha256: 'cb7b1512cfcc',
-  ),
-  'controller.radar/backgroundColor/value.js': (
-    load: controller_radar_backgroundcolor_value.fixture,
-    sha256: 'a811a3838ef7',
-  ),
-  'controller.radar/borderColor/value.js': (
-    load: controller_radar_bordercolor_value.fixture,
-    sha256: '3a09140dbed0',
-  ),
-  'controller.radar/borderDash/value.js': (
-    load: controller_radar_borderdash_value.fixture,
-    sha256: '0508684d06e9',
-  ),
-  'controller.radar/borderWidth/value.js': (
-    load: controller_radar_borderwidth_value.fixture,
-    sha256: 'fbbcd39a64ed',
-  ),
-  'controller.radar/borderWidth/zero.js': (
-    load: controller_radar_borderwidth_zero.fixture,
-    sha256: '5e733e2d4e66',
-  ),
-  'controller.radar/fill/value.js': (
-    load: controller_radar_fill_value.fixture,
-    sha256: 'abe43fe26e56',
-  ),
-  'controller.radar/pointBackgroundColor/indexable.js': (
-    load: controller_radar_pointbackgroundcolor_indexable.fixture,
-    sha256: 'ab9b4df9fe3c',
-  ),
-  'controller.radar/pointBackgroundColor/value.js': (
-    load: controller_radar_pointbackgroundcolor_value.fixture,
-    sha256: 'a31e04268653',
-  ),
-  'controller.radar/pointBorderColor/indexable.js': (
-    load: controller_radar_pointbordercolor_indexable.fixture,
-    sha256: 'c3d832027132',
-  ),
-  'controller.radar/pointBorderColor/value.js': (
-    load: controller_radar_pointbordercolor_value.fixture,
-    sha256: 'e43b2e05b356',
-  ),
-  'controller.radar/pointBorderWidth/indexable.js': (
-    load: controller_radar_pointborderwidth_indexable.fixture,
-    sha256: '475d60b260a4',
-  ),
-  'controller.radar/pointBorderWidth/value.js': (
-    load: controller_radar_pointborderwidth_value.fixture,
-    sha256: 'b7b6ebbc3e28',
-  ),
-  'controller.radar/radius/indexable.js': (
-    load: controller_radar_radius_indexable.fixture,
-    sha256: 'ab44e9e099c8',
-  ),
-  'controller.radar/radius/value.js': (
-    load: controller_radar_radius_value.fixture,
-    sha256: 'b4068839907a',
-  ),
-  'controller.radar/showLine/value.js': (
-    load: controller_radar_showline_value.fixture,
-    sha256: '9cb757de6148',
-  ),
-  'element.line/skip/middle-span.js': (
-    load: element_line_skip_middle_span.fixture,
-    sha256: '286b611bb77a',
-  ),
-  'element.line/stepped/after.js': (
-    load: element_line_stepped_after.fixture,
-    sha256: '4814c2dd8861',
-  ),
-  'element.line/stepped/before.js': (
-    load: element_line_stepped_before.fixture,
-    sha256: '53f54cd7cead',
-  ),
-  'element.line/stepped/default.js': (
-    load: element_line_stepped_default.fixture,
-    sha256: '19c155a10d08',
-  ),
-  'element.line/stepped/middle.js': (
-    load: element_line_stepped_middle.fixture,
-    sha256: '6278d250c29b',
-  ),
-  'element.line/tension/default.js': (
-    load: element_line_tension_default.fixture,
-    sha256: '3c43071e0eb7',
-  ),
-  'element.line/tension/one.js': (
-    load: element_line_tension_one.fixture,
-    sha256: '9299be5059f9',
-  ),
-  'element.line/tension/zero.js': (
-    load: element_line_tension_zero.fixture,
-    sha256: '42c2b3b64ad4',
-  ),
-  'plugin.filler/line/boundary/end-span.json': (
-    load: plugin_filler_line_boundary_end_span.fixture,
-    sha256: 'b8d82d21bbed',
-  ),
-  'plugin.filler/line/boundary/end.json': (
-    load: plugin_filler_line_boundary_end.fixture,
-    sha256: '8e9560da3312',
-  ),
-  'plugin.filler/line/boundary/origin-span-dual.json': (
-    load: plugin_filler_line_boundary_origin_span_dual.fixture,
-    sha256: 'dd7cb6f60abe',
-  ),
-  'plugin.filler/line/boundary/origin-span.json': (
-    load: plugin_filler_line_boundary_origin_span.fixture,
-    sha256: '70e44ba3f128',
-  ),
-  'plugin.filler/line/boundary/origin.json': (
-    load: plugin_filler_line_boundary_origin.fixture,
-    sha256: 'f543e133289d',
-  ),
-  'plugin.filler/line/boundary/start-span.json': (
-    load: plugin_filler_line_boundary_start_span.fixture,
-    sha256: '2eeca87ccb38',
-  ),
-  'plugin.filler/line/boundary/start.json': (
-    load: plugin_filler_line_boundary_start.fixture,
-    sha256: '799aeeee22de',
-  ),
   'plugin.filler/line/drawTimeFillFalse/beforeDatasetDraw.js': (
     load: plugin_filler_line_drawtimefillfalse_beforedatasetdraw.fixture,
     sha256: 'cdfb18aeb044',
@@ -2033,6 +1939,22 @@ final Map<String, HandFixture> handFixtures = {
     load: plugin_filler_line_points_outside_canvas_initial.fixture,
     sha256: '009594cd8979',
   ),
+  'plugin.filler/line/points-outside-canvas-update.js': (
+    load: plugin_filler_line_points_outside_canvas_update.fixture,
+    sha256: 'cff53652abd9',
+  ),
+  'plugin.filler/line/segments/alignToPixels.js': (
+    load: plugin_filler_line_segments_aligntopixels.fixture,
+    sha256: '7bafe2061cdb',
+  ),
+  'plugin.filler/line/segments/gap.js': (
+    load: plugin_filler_line_segments_gap.fixture,
+    sha256: '7c65b2aa556b',
+  ),
+  'plugin.filler/line/segments/slope.js': (
+    load: plugin_filler_line_segments_slope.fixture,
+    sha256: '2c5be7cc3c3d',
+  ),
   'plugin.filler/line/shape.js': (
     load: plugin_filler_line_shape.fixture,
     sha256: '8a625d91544e',
@@ -2048,6 +1970,14 @@ final Map<String, HandFixture> handFixtures = {
   'plugin.filler/line/value.json': (
     load: plugin_filler_line_value.fixture,
     sha256: '434c45f78dea',
+  ),
+  'plugin.filler/line/vertical.js': (
+    load: plugin_filler_line_vertical.fixture,
+    sha256: 'ea3de3ba05d4',
+  ),
+  'plugin.filler/radar/beforeDraw.js': (
+    load: plugin_filler_radar_beforedraw.fixture,
+    sha256: '7e340f017db3',
   ),
   'plugin.filler/radar/boundary/end-circular.json': (
     load: plugin_filler_radar_boundary_end_circular.fixture,
@@ -2093,9 +2023,318 @@ final Map<String, HandFixture> handFixtures = {
     load: plugin_filler_radar_boundary_start.fixture,
     sha256: 'f8744ee79db8',
   ),
+  'plugin.filler/radar/dataset/border.json': (
+    load: plugin_filler_radar_dataset_border.fixture,
+    sha256: '94b5a3ac3142',
+  ),
+  'plugin.filler/radar/dataset/default.json': (
+    load: plugin_filler_radar_dataset_default.fixture,
+    sha256: '7f9fa3d736bc',
+  ),
+  'plugin.filler/radar/dataset/span.json': (
+    load: plugin_filler_radar_dataset_span.fixture,
+    sha256: '49fce1b429f2',
+  ),
+  'plugin.filler/radar/dataset/spline.json': (
+    load: plugin_filler_radar_dataset_spline.fixture,
+    sha256: 'f9bd42c61ec9',
+  ),
   'plugin.filler/radar/value.json': (
     load: plugin_filler_radar_value.fixture,
     sha256: 'aaa76214d47d',
+  ),
+  'plugin.legend/borderRadius/legend-border-radius.js': (
+    load: plugin_legend_borderradius_legend_border_radius.fixture,
+    sha256: '819fb07d37b6',
+  ),
+  'plugin.legend/horizontal-rtl-hitbox.js': (
+    load: plugin_legend_horizontal_rtl_hitbox.fixture,
+    sha256: '9936ce127cee',
+  ),
+  'plugin.legend/label-textAlign/center.js': (
+    load: plugin_legend_label_textalign_center.fixture,
+    sha256: 'e3be05aa8c24',
+  ),
+  'plugin.legend/label-textAlign/horizontal-left.js': (
+    load: plugin_legend_label_textalign_horizontal_left.fixture,
+    sha256: '10cd63040297',
+  ),
+  'plugin.legend/label-textAlign/horizontal-right.js': (
+    load: plugin_legend_label_textalign_horizontal_right.fixture,
+    sha256: '2111136e56fd',
+  ),
+  'plugin.legend/label-textAlign/horizontal-rtl-left.js': (
+    load: plugin_legend_label_textalign_horizontal_rtl_left.fixture,
+    sha256: '6592d373e581',
+  ),
+  'plugin.legend/label-textAlign/horizontal-rtl-right.js': (
+    load: plugin_legend_label_textalign_horizontal_rtl_right.fixture,
+    sha256: '5c49ba37a57c',
+  ),
+  'plugin.legend/label-textAlign/left.js': (
+    load: plugin_legend_label_textalign_left.fixture,
+    sha256: '6a23f638e40b',
+  ),
+  'plugin.legend/label-textAlign/right.js': (
+    load: plugin_legend_label_textalign_right.fixture,
+    sha256: 'd6e83cc4bac9',
+  ),
+  'plugin.legend/label-textAlign/rtl-center.js': (
+    load: plugin_legend_label_textalign_rtl_center.fixture,
+    sha256: 'd5d3e08a45aa',
+  ),
+  'plugin.legend/label-textAlign/rtl-left.js': (
+    load: plugin_legend_label_textalign_rtl_left.fixture,
+    sha256: '9a7268ff9c32',
+  ),
+  'plugin.legend/label-textAlign/rtl-right.js': (
+    load: plugin_legend_label_textalign_rtl_right.fixture,
+    sha256: 'fbdd122559a9',
+  ),
+  'plugin.legend/legend-doughnut-bottom-center-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_bottom_center_mulitiline.fixture,
+    sha256: '77c5b286e14a',
+  ),
+  'plugin.legend/legend-doughnut-bottom-center-single.json': (
+    load: plugin_legend_legend_doughnut_bottom_center_single.fixture,
+    sha256: '9aaf4d12535c',
+  ),
+  'plugin.legend/legend-doughnut-bottom-end-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_bottom_end_mulitiline.fixture,
+    sha256: '2d9c9932b2dc',
+  ),
+  'plugin.legend/legend-doughnut-bottom-start-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_bottom_start_mulitiline.fixture,
+    sha256: 'f5ba64d7d71a',
+  ),
+  'plugin.legend/legend-doughnut-left-center-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_left_center_mulitiline.fixture,
+    sha256: '126b8911625f',
+  ),
+  'plugin.legend/legend-doughnut-left-center-single.json': (
+    load: plugin_legend_legend_doughnut_left_center_single.fixture,
+    sha256: '8e7623f20d43',
+  ),
+  'plugin.legend/legend-doughnut-left-default-center.json': (
+    load: plugin_legend_legend_doughnut_left_default_center.fixture,
+    sha256: '0d424666b8d4',
+  ),
+  'plugin.legend/legend-doughnut-left-end-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_left_end_mulitiline.fixture,
+    sha256: 'd7f1039c05db',
+  ),
+  'plugin.legend/legend-doughnut-left-start-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_left_start_mulitiline.fixture,
+    sha256: '2ea0336af675',
+  ),
+  'plugin.legend/legend-doughnut-point-style.json': (
+    load: plugin_legend_legend_doughnut_point_style.fixture,
+    sha256: '45bf9d8ecf21',
+  ),
+  'plugin.legend/legend-doughnut-right-center-mulitiline-labels.json': (
+    load: plugin_legend_legend_doughnut_right_center_mulitiline_labels.fixture,
+    sha256: 'bbd3bc84ac71',
+  ),
+  'plugin.legend/legend-doughnut-right-center-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_right_center_mulitiline.fixture,
+    sha256: 'e71f27673cca',
+  ),
+  'plugin.legend/legend-doughnut-right-center-single.json': (
+    load: plugin_legend_legend_doughnut_right_center_single.fixture,
+    sha256: '841368c910cf',
+  ),
+  'plugin.legend/legend-doughnut-right-default-center.json': (
+    load: plugin_legend_legend_doughnut_right_default_center.fixture,
+    sha256: 'f2161b207223',
+  ),
+  'plugin.legend/legend-doughnut-right-end-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_right_end_mulitiline.fixture,
+    sha256: '11fa62a18f94',
+  ),
+  'plugin.legend/legend-doughnut-right-start-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_right_start_mulitiline.fixture,
+    sha256: 'a90b6bb40f1b',
+  ),
+  'plugin.legend/legend-doughnut-top-center-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_top_center_mulitiline.fixture,
+    sha256: '6a78f70123e9',
+  ),
+  'plugin.legend/legend-doughnut-top-center-single.json': (
+    load: plugin_legend_legend_doughnut_top_center_single.fixture,
+    sha256: '107b3735a4f7',
+  ),
+  'plugin.legend/legend-doughnut-top-end-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_top_end_mulitiline.fixture,
+    sha256: 'd974cb48496f',
+  ),
+  'plugin.legend/legend-doughnut-top-start-mulitiline.json': (
+    load: plugin_legend_legend_doughnut_top_start_mulitiline.fixture,
+    sha256: 'f44ef28e839c',
+  ),
+  'plugin.legend/legend-line-chart-area.json': (
+    load: plugin_legend_legend_line_chart_area.fixture,
+    sha256: 'bea07feafefd',
+  ),
+  'plugin.legend/maxWidth/infinity.js': (
+    load: plugin_legend_maxwidth_infinity.fixture,
+    sha256: '66c879c203c1',
+  ),
+  'plugin.legend/maxWidth/undefined.js': (
+    load: plugin_legend_maxwidth_undefined.fixture,
+    sha256: '63eaad803fbc',
+  ),
+  'plugin.legend/maxWidth/value.js': (
+    load: plugin_legend_maxwidth_value.fixture,
+    sha256: '0a076add5350',
+  ),
+  'plugin.legend/padding/2cols-with-padding.js': (
+    load: plugin_legend_padding_2cols_with_padding.fixture,
+    sha256: 'ea51cab97ce5',
+  ),
+  'plugin.legend/padding/add-column.js': (
+    load: plugin_legend_padding_add_column.fixture,
+    sha256: 'bd23e530172e',
+  ),
+  'plugin.legend/pointStyle-width/legend-pointStyle-width-default.json': (
+    load:
+        plugin_legend_pointstyle_width_legend_pointstyle_width_default.fixture,
+    sha256: 'd2952260c1a8',
+  ),
+  'plugin.legend/pointStyle-width/legend-pointStyle-width.json': (
+    load: plugin_legend_pointstyle_width_legend_pointstyle_width.fixture,
+    sha256: 'b903fe95c19e',
+  ),
+  'plugin.legend/title/bottom-center-center.js': (
+    load: plugin_legend_title_bottom_center_center.fixture,
+    sha256: '30e8784ec142',
+  ),
+  'plugin.legend/title/bottom-end-end.js': (
+    load: plugin_legend_title_bottom_end_end.fixture,
+    sha256: '7bb5a79c8ad2',
+  ),
+  'plugin.legend/title/bottom-start-start.js': (
+    load: plugin_legend_title_bottom_start_start.fixture,
+    sha256: '17b7d477015e',
+  ),
+  'plugin.legend/title/left-center-center.js': (
+    load: plugin_legend_title_left_center_center.fixture,
+    sha256: 'af66d7c01f7e',
+  ),
+  'plugin.legend/title/left-end-end.js': (
+    load: plugin_legend_title_left_end_end.fixture,
+    sha256: 'c4015274fe5c',
+  ),
+  'plugin.legend/title/left-start-start.js': (
+    load: plugin_legend_title_left_start_start.fixture,
+    sha256: '70f168d3bd17',
+  ),
+  'plugin.legend/title/right-center-center.js': (
+    load: plugin_legend_title_right_center_center.fixture,
+    sha256: '06f58695894d',
+  ),
+  'plugin.legend/title/right-end-end.js': (
+    load: plugin_legend_title_right_end_end.fixture,
+    sha256: '2254432957e1',
+  ),
+  'plugin.legend/title/right-start-start.js': (
+    load: plugin_legend_title_right_start_start.fixture,
+    sha256: 'a11c759d2429',
+  ),
+  'plugin.legend/title/top-center-center.js': (
+    load: plugin_legend_title_top_center_center.fixture,
+    sha256: '587008dba99c',
+  ),
+  'plugin.legend/title/top-end-end.js': (
+    load: plugin_legend_title_top_end_end.fixture,
+    sha256: '7c8115ddea42',
+  ),
+  'plugin.legend/title/top-start-start.js': (
+    load: plugin_legend_title_top_start_start.fixture,
+    sha256: '5f59112baca5',
+  ),
+  'plugin.title/scriptable-options.js': (
+    load: plugin_title_scriptable_options.fixture,
+    sha256: '2a67dd8b043d',
+  ),
+  'plugin.tooltip/box-padding.js': (
+    load: plugin_tooltip_box_padding.fixture,
+    sha256: 'f1046694a16a',
+  ),
+  'plugin.tooltip/caret-position.js': (
+    load: plugin_tooltip_caret_position.fixture,
+    sha256: '204d3723a843',
+  ),
+  'plugin.tooltip/color-box-border-dash.js': (
+    load: plugin_tooltip_color_box_border_dash.fixture,
+    sha256: 'a13adb1b6eef',
+  ),
+  'plugin.tooltip/color-box-border-radius.js': (
+    load: plugin_tooltip_color_box_border_radius.fixture,
+    sha256: '98d9572c8437',
+  ),
+  'plugin.tooltip/corner-radius.js': (
+    load: plugin_tooltip_corner_radius.fixture,
+    sha256: '6806969b8ac2',
+  ),
+  'plugin.tooltip/opacity.js': (
+    load: plugin_tooltip_opacity.fixture,
+    sha256: '82f95f0a2fd0',
+  ),
+  'plugin.tooltip/point-style.js': (
+    load: plugin_tooltip_point_style.fixture,
+    sha256: '4d3b800e358b',
+  ),
+  'plugin.tooltip/positioning.js': (
+    load: plugin_tooltip_positioning.fixture,
+    sha256: '9644a47dcf84',
+  ),
+  'scale.category/invalid-data.js': (
+    load: scale_category_invalid_data.fixture,
+    sha256: 'ecf9428ec7ed',
+  ),
+  'scale.category/max-ticks-limit-a.js': (
+    load: scale_category_max_ticks_limit_a.fixture,
+    sha256: '09cf84f34777',
+  ),
+  'scale.category/max-ticks-limit-b.js': (
+    load: scale_category_max_ticks_limit_b.fixture,
+    sha256: '37b4891b511e',
+  ),
+  'scale.category/max-ticks-limit-norotation.js': (
+    load: scale_category_max_ticks_limit_norotation.fixture,
+    sha256: '3878d06f86cf',
+  ),
+  'scale.category/ticks-from-data.js': (
+    load: scale_category_ticks_from_data.fixture,
+    sha256: 'fdce887c4022',
+  ),
+  'scale.linear/grace/grace-10%.js': (
+    load: scale_linear_grace_grace_10_.fixture,
+    sha256: '0dc72726ef0f',
+  ),
+  'scale.linear/grace/grace-beginAtZero.js': (
+    load: scale_linear_grace_grace_beginatzero.fixture,
+    sha256: '5b2a4a7e4b8d',
+  ),
+  'scale.linear/grace/grace-neg.js': (
+    load: scale_linear_grace_grace_neg.fixture,
+    sha256: '627ac78c9874',
+  ),
+  'scale.linear/grace/grace-pos.js': (
+    load: scale_linear_grace_grace_pos.fixture,
+    sha256: '4df42ffe516b',
+  ),
+  'scale.linear/grace/grace.js': (
+    load: scale_linear_grace_grace.fixture,
+    sha256: 'ec3dadb2725a',
+  ),
+  'scale.linear/grace/issue-8912.js': (
+    load: scale_linear_grace_issue_8912.fixture,
+    sha256: '187500e243fa',
+  ),
+  'scale.linear/tick-count-data-limits.js': (
+    load: scale_linear_tick_count_data_limits.fixture,
+    sha256: 'd9342d4c09c8',
   ),
   'scale.logarithmic/large-range.js': (
     load: scale_logarithmic_large_range.fixture,
@@ -2121,49 +2360,9 @@ final Map<String, HandFixture> handFixtures = {
     load: scale_logarithmic_small_range.fixture,
     sha256: '3aae77bb8618',
   ),
-  'scale.time/negative-times.js': (
-    load: scale_time_negative_times.fixture,
-    sha256: '86c7641fd3d9',
-  ),
-  'scale.timeseries/data-timestamps.js': (
-    load: scale_timeseries_data_timestamps.fixture,
-    sha256: '6f5160d4e038',
-  ),
-  'core.layouts/stacked-boxes-max-index-without-clip.js': (
-    load: core_layouts_stacked_boxes_max_index_without_clip.fixture,
-    sha256: '5fd3d94af843',
-  ),
-  'core.layouts/stacked-boxes-max-index.js': (
-    load: core_layouts_stacked_boxes_max_index.fixture,
-    sha256: '11ec7a29bd91',
-  ),
-  'core.layouts/stacked-boxes-max-without-clip.js': (
-    load: core_layouts_stacked_boxes_max_without_clip.fixture,
-    sha256: 'c60139535633',
-  ),
-  'core.layouts/stacked-boxes-max.js': (
-    load: core_layouts_stacked_boxes_max.fixture,
-    sha256: '49fe800eca9e',
-  ),
-  'core.layouts/stacked-boxes-with-weight.js': (
-    load: core_layouts_stacked_boxes_with_weight.fixture,
-    sha256: '18b738bc7f49',
-  ),
-  'core.layouts/stacked-boxes.js': (
-    load: core_layouts_stacked_boxes.fixture,
-    sha256: '29d14ae0cdd4',
-  ),
-  'core.scale/border-behind-elements.js': (
-    load: core_scale_border_behind_elements.fixture,
-    sha256: 'c7bb57a9a680',
-  ),
-  'core.scale/grid/border-over-grid.js': (
-    load: core_scale_grid_border_over_grid.fixture,
-    sha256: 'ce9325e1ccf6',
-  ),
-  'core.scale/grid/colors.js': (
-    load: core_scale_grid_colors.fixture,
-    sha256: '49074bd4571b',
+  'scale.radialLinear/anglelines-scriptable.js': (
+    load: scale_radiallinear_anglelines_scriptable.fixture,
+    sha256: '08e36231a454',
   ),
   'scale.radialLinear/border-dash.json': (
     load: scale_radiallinear_border_dash.fixture,
@@ -2172,6 +2371,70 @@ final Map<String, HandFixture> handFixtures = {
   'scale.radialLinear/circular-border-dash.json': (
     load: scale_radiallinear_circular_border_dash.fixture,
     sha256: '17246932f778',
+  ),
+  'scale.radialLinear/gridlines-scriptable.js': (
+    load: scale_radiallinear_gridlines_scriptable.fixture,
+    sha256: '13a35dcc04b0',
+  ),
+  'scale.radialLinear/pointLabels/background.js': (
+    load: scale_radiallinear_pointlabels_background.fixture,
+    sha256: '1a660eaebfd1',
+  ),
+  'scale.radialLinear/pointLabels/border-radius.js': (
+    load: scale_radiallinear_pointlabels_border_radius.fixture,
+    sha256: 'b05b82ebab93',
+  ),
+  'scale.radialLinear/pointLabels/scriptable-color-small.js': (
+    load: scale_radiallinear_pointlabels_scriptable_color_small.fixture,
+    sha256: '00b299f9172d',
+  ),
+  'scale.radialLinear/ticks-below-zero.js': (
+    load: scale_radiallinear_ticks_below_zero.fixture,
+    sha256: 'c255b6ba2824',
+  ),
+  'scale.time/autoskip-major.js': (
+    load: scale_time_autoskip_major.fixture,
+    sha256: 'b0621b5b41ca',
+  ),
+  'scale.time/bar-large-gap-between-data.js': (
+    load: scale_time_bar_large_gap_between_data.fixture,
+    sha256: '64deb58590c8',
+  ),
+  'scale.time/custom-parser.js': (
+    load: scale_time_custom_parser.fixture,
+    sha256: '890aed904f37',
+  ),
+  'scale.time/data-ty.js': (
+    load: scale_time_data_ty.fixture,
+    sha256: 'cae64c65a083',
+  ),
+  'scale.time/data-xy.js': (
+    load: scale_time_data_xy.fixture,
+    sha256: 'f14f7eb1956c',
+  ),
+  'scale.time/labels-date.js': (
+    load: scale_time_labels_date.fixture,
+    sha256: '7c9efdf5f808',
+  ),
+  'scale.time/negative-times.js': (
+    load: scale_time_negative_times.fixture,
+    sha256: '86c7641fd3d9',
+  ),
+  'scale.time/offset-auto-skip-ticks.js': (
+    load: scale_time_offset_auto_skip_ticks.fixture,
+    sha256: 'f82acaad46f8',
+  ),
+  'scale.time/offset-with-no-ticks.js': (
+    load: scale_time_offset_with_no_ticks.fixture,
+    sha256: '8b06d8cab19e',
+  ),
+  'scale.timeseries/data-timestamps.js': (
+    load: scale_timeseries_data_timestamps.fixture,
+    sha256: '6f5160d4e038',
+  ),
+  'scale.timeseries/financial-daily.js': (
+    load: scale_timeseries_financial_daily.fixture,
+    sha256: 'cd96e74c519b',
   ),
 };
 

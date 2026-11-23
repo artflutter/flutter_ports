@@ -28,7 +28,7 @@ void main() {
           ..data = ChartDataScope()
           ..options = mergeExtra(ChartOptionsScope(), {
             'plugins': {
-              'legend': {'display': false},
+              'legend': const LegendOptions(display: false),
               'title': {
                 'display': true,
                 'text': ['OD pairs on hexagon level'],

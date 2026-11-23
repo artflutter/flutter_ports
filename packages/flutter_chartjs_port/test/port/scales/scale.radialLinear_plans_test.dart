@@ -1355,7 +1355,7 @@ void main() {
                   ),
                 ],
                 animation: ChartAnimation.none,
-                legend: const ChartLegend(display: false),
+                pluginOptions: const [LegendOptions(display: false)],
                 maintainAspectRatio: false,
                 events: const [],
               ),

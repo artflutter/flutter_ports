@@ -69,6 +69,8 @@ const Set<String> _classValueKeys = {
   'fill',
   'grace',
   'indexAxis',
+  // The legend options are one LegendOptions object (Chart.js ADR 0193).
+  'legend',
   'pointStyle',
   'radius',
   'segment',

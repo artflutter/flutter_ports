@@ -23,7 +23,8 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'plugins': <String, Object?>{
         // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-        'legend': <String, Object?>{'position': ChartPosition.left},
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'legend': const LegendOptions(position: ChartPosition.left),
       },
       'layout': <String, Object?>{
         'padding': const EdgeInsets.only(left: 30, top: 55, right: 30),

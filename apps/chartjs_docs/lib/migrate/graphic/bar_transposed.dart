@@ -81,7 +81,6 @@ final ChartConfig _config = ChartConfig(
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
-  legend: const ChartLegend(display: false),
   // `PointSelection(dim: Dim.x)`: a tap selects the bar nearest along the
   // genre axis.
   interaction: const ChartInteraction(
@@ -89,7 +88,10 @@ final ChartConfig _config = ChartConfig(
     intersect: false,
     axis: .y,
   ),
-  pluginOptions: const [TooltipOptions(enabled: false)],
+  pluginOptions: const [
+    LegendOptions(display: false),
+    TooltipOptions(enabled: false),
+  ],
   plugins: [barLabels(_sold), tapSelection()],
   events: const ['click'],
 );

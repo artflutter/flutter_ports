@@ -22,15 +22,12 @@ import 'controller_chart_harness.dart';
 // `defaults.plugins.colors.enabled = false` (Chart.js ADR 0041, section 1).
 
 /// `overrides[type].plugins.legend`.
-Object? _legendOverrides([String type = 'pie']) =>
-    jsGet(jsGet(overrides[type], 'plugins'), 'legend');
+LegendOptions _legendOverrides([String type = 'pie']) =>
+    jsGet(jsGet(overrides[type], 'plugins'), 'legend')! as LegendOptions;
 
 /// `generateLabels(chart)` of `overrides.pie.plugins.legend.labels`.
 List<Object?> _generateLabels(Chart chart) =>
-    callDroppingExtraArgs(
-          jsGet(jsGet(_legendOverrides(), 'labels'), 'generateLabels'),
-          [chart],
-        )!
+    callDroppingExtraArgs(_legendOverrides().labels!.generateLabels, [chart])!
         as List<Object?>;
 
 /// The config of a pie chart with the labels a, b, c and one dataset with
@@ -119,7 +116,7 @@ void main() {
       final legend = chart.legend!;
       final before = updates;
 
-      callDroppingExtraArgs(jsGet(_legendOverrides(), 'onClick'), [
+      callDroppingExtraArgs(_legendOverrides().onClick, [
         <String, Object?>{},
         LegendItem(text: ['item'], index: 1),
         legend,
@@ -139,9 +136,8 @@ void main() {
     test('the legend functions of overrides.pie are the doughnut functions in '
         'each read', () {
       Object? generateLabels([String type = 'pie']) =>
-          jsGet(jsGet(_legendOverrides(type), 'labels'), 'generateLabels');
-      Object? onClick([String type = 'pie']) =>
-          jsGet(_legendOverrides(type), 'onClick');
+          _legendOverrides(type).labels!.generateLabels;
+      Object? onClick([String type = 'pie']) => _legendOverrides(type).onClick;
       expect(generateLabels(), isA<Function>());
       expect(onClick(), isA<Function>());
       expect(identical(generateLabels(), generateLabels()), isTrue);

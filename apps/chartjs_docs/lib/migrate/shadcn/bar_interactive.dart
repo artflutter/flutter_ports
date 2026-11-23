@@ -34,8 +34,8 @@ ChartConfig _config(ShadcnTip tip, int active) {
     ],
     maintainAspectRatio: false,
     padding: const EdgeInsets.symmetric(horizontal: 12),
-    legend: shadcnNoLegend,
     pluginOptions: [
+      shadcnNoLegend,
       shadcnTooltip(
         tip,
         ShadcnTooltipContent(

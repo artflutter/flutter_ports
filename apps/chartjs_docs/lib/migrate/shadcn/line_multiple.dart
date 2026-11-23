@@ -33,9 +33,8 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   ],
   aspectRatio: 16 / 9,
   padding: const EdgeInsets.symmetric(horizontal: 12),
-  legend: shadcnNoLegend,
   // <ChartTooltipContent />: the month, then one row for each line.
-  pluginOptions: [shadcnTooltip(tip)],
+  pluginOptions: [shadcnTooltip(tip), shadcnNoLegend],
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
   scales: [

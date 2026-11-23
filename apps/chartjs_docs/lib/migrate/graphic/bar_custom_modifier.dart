@@ -74,13 +74,16 @@ final ChartConfig _config = ChartConfig(
   padding: const EdgeInsets.only(top: 5, right: 10, bottom: 20),
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
-  legend: const ChartLegend(display: false),
   // The demo has no tooltip: a tap only feeds the double tap.
   plugins: [
     zoomPlugin,
     tapSelection(onDoubleTap: resetRange),
   ],
-  pluginOptions: const [TooltipOptions(enabled: false), horizontalRange],
+  pluginOptions: const [
+    LegendOptions(display: false),
+    TooltipOptions(enabled: false),
+    horizontalRange,
+  ],
   events: const ['click'],
 );
 

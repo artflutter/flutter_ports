@@ -2764,7 +2764,7 @@ const Map<String, String> observationDigests = {
   'focused fallbacks: interaction, tooltip, legend labels (plain)':
       'b36ae0eac9fb356924e4e0d673593fde848c799d1a7f5021ec7347139a4c7725',
   'focused fallbacks: interaction, tooltip, legend labels (trace)':
-      'fe6ae10612bfad6b36d5deadaf18ef63c903a63ae4c983400ed5faa021244c40',
+      '100db7b1573e40cf1a6f7d2e2e55c3da3d1ff9b1f3158bc16a72ceac9e8bbeb6',
   'focused hover prefixes (plain)':
       '5ee9a2b673684213bcddc568dc0898c2cc04f1245152c76a5248e02066f83f52',
   'focused hover prefixes (trace)':
@@ -2920,7 +2920,7 @@ const Map<String, String> observationDigests = {
   'trace plugin: a scriptable legend label color (plain)':
       'cd709644e63366a172740255096bad2178886c1badd40bef45cfdc580421f31f',
   'trace plugin: a scriptable legend label color (trace)':
-      'fd648d1ae9fc74319f043a0018eb5371e5c1edd159e72139689a75917e9421a0',
+      'fdcb490266fd63751673745c92c1dbea81c2c6cf02706e6e1edc9495b5c0060f',
   'trace plugin: an inline plugin writes the dataset colors in beforeLayout (plain)':
       '414e9c980ec1808534674e334f31cf4d2180d3369b70e62a670eacf67735aa27',
   'trace plugin: an inline plugin writes the dataset colors in beforeLayout (trace)':

@@ -12,14 +12,16 @@
 /// Each hook is a private function of the hook type `(types.Chart chart,
 /// args, LegendOptions options)` (Chart.js ADR 0150, in place of the
 /// upstream parameter counts of Chart.js ADR 0038, section 3): the argument
-/// class of its hook, and the [LegendOptions] of the resolved options
-/// (Chart.js ADR 0182). The box keeps that object. `chart.legend`
+/// class of its hook, and the [LegendOptions] that the plugin service merged
+/// from the defaults to the chart (Chart.js ADR 0193). `chart.legend`
 /// is a field of `types.Chart`: Dart `null` stands for JS `undefined` and
 /// for the `delete` of `plugin.legend.js:609`.
 ///
 /// The box reads the typed fields of [LegendOptions], [LegendLabelOptions]
-/// and `LegendTitleOptions` of `plugin_options.dart` (Chart.js ADR 0182).
-/// `LegendOptions.of` read each key once, at the first hook of the update.
+/// and `LegendTitleOptions` of `plugin_options.dart`. The `beforeUpdate`
+/// hook gives the box the options with the fallbacks of upstream
+/// ([_resolvedOptions]): the colors of the chart and the result of
+/// `scripted`.
 ///
 /// The fields of the box start as the fields of `Scale` start: NaN for the
 /// edges, `maxWidth` and `maxHeight`, the `undefined` sentinel for
@@ -71,9 +73,11 @@ const double _sqrt2 = 1.4142135623730951;
   var boxHeight = labelOpts.boxHeight ?? fontSize;
   var boxWidth = labelOpts.boxWidth ?? fontSize;
 
-  if (labelOpts.usePointStyle) {
+  if (labelOpts.usePointStyle ?? false) {
     boxHeight = math.min(boxHeight, fontSize);
-    boxWidth = labelOpts.pointStyleWidth ?? math.min(boxWidth, fontSize);
+    boxWidth =
+        _truthyNumber(labelOpts.pointStyleWidth) ??
+        math.min(boxWidth, fontSize);
   }
 
   return (
@@ -100,7 +104,24 @@ bool _itemsEqual(LegendItem? a, LegendItem? b) =>
 /// (differences.md `adapt-legend-number-options`).
 double _labelPadding(LegendLabelOptions labelOpts) =>
     // DIVERGES(chartjs): adapt-legend-number-options, the padding is a number.
-    labelOpts.padding;
+    labelOpts.padding ?? double.nan;
+
+/// The number option [value] for a test `value || x` of upstream: Dart
+/// `null` for an absent value, 0 and NaN.
+double? _truthyNumber(double? value) =>
+    value == null || value == 0 || value.isNaN ? null : value;
+
+/// The reads of the options of a box with the upstream value of an absent
+/// object: `options.labels || {}` (plugin.legend.js:105) and the reads of
+/// the members of `undefined`.
+extension on LegendOptions {
+  /// `labels`, or the label options of `{}`.
+  LegendLabelOptions get labelsOrEmpty => labels ?? const LegendLabelOptions();
+
+  /// `title`, or the title options of `{}`.
+  LegendTitleOptions get titleOrEmpty =>
+      this.title ?? const LegendTitleOptions();
+}
 
 /// The JS operator `===` on two raw values: two numbers compare by value
 /// (NaN is not equal to itself, and -0 equals +0), two strings by their code
@@ -125,10 +146,12 @@ class Legend(
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
   /// 4). The `construct` closure of [jsClass] reads it from a JS value.
   this {
-    super.options = switch (config.options) {
-      null => null,
-      final Object options => LegendOptions.of(options),
-    };
+    final options = config.options;
+    assert(
+      options == null || options is LegendOptions,
+      'The options of the legend are a LegendOptions, not $options.',
+    );
+    super.options = options is LegendOptions ? options : null;
   }
 
   /// plugin.legend.js:41 `class Legend` as a value (Chart.js ADR 0020,
@@ -284,13 +307,14 @@ class Legend(
   @override
   ScaleAxis? get axis => null;
 
-  /// plugin.legend.js:63 `options`, the resolved [LegendOptions] (Chart.js
-  /// ADR 0182).
+  /// plugin.legend.js:63 `options`, the [LegendOptions] of the last hook
+  /// (Chart.js ADR 0193): from the `beforeUpdate` hook, with the fallbacks of
+  /// [_resolvedOptions].
   ///
   /// [LegendElement.options] is not nullable. Thus the read of a
   /// legend without options throws a [TypeError], as the first member read
   /// of `this.options` throws upstream (Chart.js ADR 0038, section 7).
-  // DIVERGES(chartjs): adapt-native-plugin-options, the resolved values.
+  // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
   @override
   LegendOptions get options => super.options! as LegendOptions;
 
@@ -314,23 +338,19 @@ class Legend(
   /// [legendItems] runs later.
   ///
   /// [datasetsUpdated] is true after `_updateDatasets` of the same update. The
-  /// mark does the first read of the label color by the generators: the view
-  /// keeps the result, so a later build reads no options of the chart.
+  /// options of the box hold the label color of the update, so a later build
+  /// reads no options of the chart.
   // DIVERGES(chartjs): adapt-hidden-legend-items, the build of an unread list.
   void _buildLabelsOrMark({required bool datasetsUpdated}) {
     final options = this.options;
-    final view = options.view;
     _markStyles = null;
-    final waits =
-        view is OptionView &&
-        _itemsCanWait(view, datasetsUpdated: datasetsUpdated);
+    final waits = _itemsCanWait(options, datasetsUpdated: datasetsUpdated);
     final styles = _markStyles;
     _markStyles = null;
     // The state that the resolve of each item of the build leaves in its arc.
     if (waits && (styles == null || styles.writeContexts())) {
       _pendingOptions = options;
       _pendingStyles = styles;
-      optionOf(optionOf(view, OptionKey.labels), OptionKey.color);
     } else {
       // Only the write of a build ends the wait of the last mark. Thus after a
       // build that throws, a read gives the last snapshot of upstream.
@@ -347,31 +367,28 @@ class Legend(
   /// [adjustHitBoxes] and [draw] return at `display`), the build runs no user
   /// code, and the box has last built items for a read that cannot run it.
   // DIVERGES(chartjs): adapt-hidden-legend-items, the guards of the mark.
-  bool _itemsCanWait(OptionView options, {required bool datasetsUpdated}) =>
+  bool _itemsCanWait(LegendOptions options, {required bool datasetsUpdated}) =>
       _legendItems != null &&
       _buildRunsNoUserCode(
         options,
         atMark: true,
         datasetsUpdated: datasetsUpdated,
       ) &&
-      identical(optionOf(options.proxy, OptionKey.display), false);
+      options.display == false;
 
   /// Whether [buildLabels] with [options] runs no user code and throws nothing.
   ///
-  /// The reads go through the resolvers behind the views: they give the raw
-  /// option values and call no function. Each failed test returns at once, and
-  /// the reads before it are the first reads of an ordinary build, in its
-  /// order: the generator first, then only the keys of the built-in generator
-  /// of that controller. Thus a failed test leaves the ordinary path with its
-  /// reads and its order. The data reads have no cache and add no meta.
+  /// The options are one object of values (Chart.js ADR 0193): their reads
+  /// run no user code, and they hold the label color of their update. Each
+  /// failed test returns at once. The data reads have no cache and add no
+  /// meta.
   ///
-  /// [atMark] is true at a mark. After it, the reads of [options] are in its
-  /// cache, and this function reads no options of the chart: a new update can
-  /// have replaced them with options that nothing read yet. See
+  /// [atMark] is true at a mark. After it, this function reads no options of
+  /// the chart: a new update can have replaced them. See
   /// [_stylesRunNoUserCode] for the style of each item.
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of no user code.
   bool _buildRunsNoUserCode(
-    OptionView options, {
+    LegendOptions options, {
     required bool atMark,
     bool datasetsUpdated = false,
   }) {
@@ -381,11 +398,9 @@ class Legend(
         !identical(chart.legend, this)) {
       return false;
     }
-    final root = options.proxy;
-    if (root is! OptionResolver) return false;
-    final labels = root.readKey(OptionKey.labels);
-    if (labels is! OptionResolver) return false;
-    final generator = labels.readKey(OptionKey.generateLabels);
+    final labels = options.labels;
+    if (labels == null) return false;
+    final generator = labels.generateLabels;
     // The generator of this file has one item for each dataset.
     if (identical(generator, _generateLabels)) return false;
     // Native containers: no user getter or List operator runs in a build. The
@@ -409,31 +424,15 @@ class Legend(
     if (controller is! DatasetController || controller.index != 0) return false;
     final builtIn = controller.nativeLegendGenerator;
     if (builtIn == null || !identical(builtIn, generator)) return false;
-    // A user descriptor runs at the read of each function value of a build.
-    if (!identical(
-      labels.readKey(OptionKey.descScriptable),
-      _labelsScriptableDescriptor,
-    )) {
-      return false;
-    }
-    for (final key in controller.nativeLegendLabelKeys) {
-      if (key == OptionKey.color
-          ? !_labelColorIsPlain(chart, labels, atMark: atMark)
-          : !_plainOption(labels.readKey(key))) {
-        return false;
-      }
-    }
     return _stylesRunNoUserCode(
           controller,
           items.length,
-          root,
-          labels,
+          options,
           atMark: atMark,
           datasetsUpdated: datasetsUpdated,
         ) &&
-        !jsTruthy(labels.readKey(OptionKey.filter)) &&
-        !jsTruthy(labels.readKey(OptionKey.sort)) &&
-        _plainOption(root.readKey(OptionKey.reverse));
+        labels.filter == null &&
+        labels.sort == null;
   }
 
   /// Whether each `getStyle(i)` of a build with the items of [count] labels
@@ -445,8 +444,7 @@ class Legend(
   bool _stylesRunNoUserCode(
     DatasetController controller,
     int count,
-    OptionResolver root,
-    OptionResolver labels, {
+    LegendOptions options, {
     required bool atMark,
     required bool datasetsUpdated,
   }) {
@@ -461,12 +459,7 @@ class Legend(
       return true;
     }
     if (!atMark) return false;
-    return (_markStyles = _indexedItemStyles(
-          controller,
-          count,
-          root,
-          labels,
-        )) !=
+    return (_markStyles = _indexedItemStyles(controller, count, options)) !=
         null;
   }
 
@@ -476,10 +469,7 @@ class Legend(
   // DIVERGES(chartjs): adapt-hidden-legend-items, the build at a read.
   void _buildPendingItems() {
     final pending = _pendingOptions;
-    final view = pending?.view;
-    if (pending == null ||
-        view is! OptionView ||
-        !_buildRunsNoUserCode(view, atMark: false)) {
+    if (pending == null || !_buildRunsNoUserCode(pending, atMark: false)) {
       return;
     }
     final current = super.options;
@@ -531,15 +521,17 @@ class Legend(
   /// List in place.
   void buildLabels() {
     final opts = options;
-    final labelOpts = opts.labels;
+    final labelOpts = opts.labelsOrEmpty;
     // DIVERGES(chartjs): adapt-native-callbacks, typed functions.
-    final generate = functionOption<LegendLabelsGenerator>(
-      labelOpts.generateLabels,
-      OptionKey.generateLabels,
+    final generate = labelOpts.generateLabels;
+    assert(
+      generate == null || generate is LegendLabelsGenerator,
+      'The option generateLabels holds a LegendLabelsGenerator (Chart.js ADR '
+      '0130), not $generate.',
     );
-    var legendItems = generate == null
-        ? <LegendItem>[]
-        : generate(chart as Chart);
+    var legendItems = generate is LegendLabelsGenerator
+        ? generate(chart as Chart)
+        : <LegendItem>[];
 
     final filter = labelOpts.filter;
     if (filter != null) {
@@ -554,7 +546,7 @@ class Legend(
       legendItems = jsSort(legendItems, (a, b) => sort(a, b, chart.data));
     }
 
-    if (opts.reverse) {
+    if (opts.reverse ?? false) {
       _reverseInPlace(legendItems);
     }
 
@@ -571,13 +563,13 @@ class Legend(
     final options = this.options;
     final ctx = this.ctx;
 
-    if (!options.display) {
+    if (!(options.display ?? false)) {
       this.width = this.height = 0;
       return;
     }
 
-    final labelOpts = options.labels;
-    final labelFont = labelOpts.font;
+    final labelOpts = options.labelsOrEmpty;
+    final labelFont = toFont(labelOpts.font);
     final fontSize = labelFont.fontSize!;
     final titleHeight = _computeTitleHeight();
     final (:boxWidth, :boxHeight, :itemHeight) = _getBoxSize(
@@ -598,8 +590,11 @@ class Legend(
       width = _fitCols(titleHeight, labelFont, boxWidth, itemHeight) + 10;
     }
 
-    this.width = math.min(width, options.maxWidth ?? maxWidth);
-    this.height = math.min(height, options.maxHeight ?? maxHeight);
+    this.width = math.min(width, _truthyNumber(options.maxWidth) ?? maxWidth);
+    this.height = math.min(
+      height,
+      _truthyNumber(options.maxHeight) ?? maxHeight,
+    );
   }
 
   /// plugin.legend.js:160 `_fitRows(titleHeight, fontSize, boxWidth,
@@ -614,7 +609,7 @@ class Legend(
   ) {
     final ctx = this.ctx!;
     final maxWidth = this.maxWidth;
-    final padding = _labelPadding(options.labels);
+    final padding = _labelPadding(options.labelsOrEmpty);
     final hitboxes = legendHitBoxes = [];
     // Width of each line of legend boxes. Labels wrap onto multiple lines
     // when there are too many to fit on one
@@ -674,7 +669,7 @@ class Legend(
   ) {
     final ctx = this.ctx!;
     final maxHeight = this.maxHeight;
-    final padding = _labelPadding(options.labels);
+    final padding = _labelPadding(options.labelsOrEmpty);
     final hitboxes = legendHitBoxes = [];
     final columnSizes = this.columnSizes = [];
     final heightLimit = maxHeight - titleHeight;
@@ -735,15 +730,15 @@ class Legend(
   // DIVERGES(chartjs): adapt-native-legend-hit-box, native mutable geometry.
   void adjustHitBoxes() {
     final options = this.options;
-    if (!options.display) {
+    if (!(options.display ?? false)) {
       return;
     }
     final titleHeight = _computeTitleHeight();
     final hitboxes = legendHitBoxes;
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
     final align = options.align;
-    final padding = _labelPadding(options.labels);
-    final rtlHelper = getRtlAdapter(options.rtl, left, width);
+    final padding = _labelPadding(options.labelsOrEmpty);
+    final rtlHelper = getRtlAdapter(options.rtl ?? false, left, width);
     if (isHorizontal()) {
       var row = 0;
       var left = alignStartEnd(
@@ -832,7 +827,7 @@ class Legend(
   /// (Chart.js ADR 0038, section 7).
   @override
   void draw([ChartArea? chartArea]) {
-    if (options.display) {
+    if (options.display ?? false) {
       final ctx = this.ctx!;
       clipArea(ctx, this);
 
@@ -849,12 +844,12 @@ class Legend(
     final ctx = this.ctx!;
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
     final align = opts.align;
-    final labelOpts = opts.labels;
+    final labelOpts = opts.labelsOrEmpty;
     // The singleton read of `defaults.color` (:286): the typed read of the
     // key, with the result of the Map read of the defaults.
     final defaultColor = defaults.lookup(OptionKey.color)?.raw;
-    final rtlHelper = getRtlAdapter(opts.rtl, left, width);
-    final labelFont = labelOpts.font;
+    final rtlHelper = getRtlAdapter(opts.rtl ?? false, left, width);
+    final labelFont = toFont(labelOpts.font);
     final padding = _labelPadding(labelOpts);
     final fontSize = labelFont.fontSize!;
     final halfFontSize = fontSize / 2;
@@ -904,7 +899,7 @@ class Legend(
         )
         ..setLineDash(canvasLineDash(legendItem.lineDash ?? <double>[]));
 
-      if (labelOpts.usePointStyle) {
+      if (labelOpts.usePointStyle ?? false) {
         // Recalculate x and y for drawPoint() because its expecting
         // x and y to be center of figure (instead of top left)
         final drawOptions = _LegendPointOptions(
@@ -924,7 +919,7 @@ class Legend(
           centerY,
           // `labelOpts.pointStyleWidth && boxWidth`: a falsy value draws the
           // style with the radius alone, as Dart `null` does.
-          labelOpts.pointStyleWidth != null ? boxWidth : null,
+          _truthyNumber(labelOpts.pointStyleWidth) != null ? boxWidth : null,
         );
       } else {
         // Draw box as legend symbol
@@ -1067,7 +1062,7 @@ class Legend(
           textAlign,
           x + boxWidth + halfFontSize,
           isHorizontal ? x + width : right,
-          opts.rtl,
+          opts.rtl ?? false,
         );
 
         // Fill the actual label
@@ -1103,15 +1098,15 @@ class Legend(
   /// @protected
   void drawTitle() {
     final opts = options;
-    final titleOpts = opts.title;
-    final titleFont = titleOpts.font;
-    final titlePadding = titleOpts.padding;
+    final titleOpts = opts.titleOrEmpty;
+    final titleFont = toFont(titleOpts.font);
+    final titlePadding = titleOpts.padding ?? EdgeInsets.zero;
 
-    if (!titleOpts.display) {
+    if (!(titleOpts.display ?? false)) {
       return;
     }
 
-    final rtlHelper = getRtlAdapter(opts.rtl, this.left, width);
+    final rtlHelper = getRtlAdapter(opts.rtl ?? false, this.left, width);
     final ctx = this.ctx!;
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
     final position = titleOpts.position;
@@ -1141,7 +1136,10 @@ class Legend(
           alignStartEnd(
             opts.align,
             top,
-            bottom - maxHeight - opts.labels.padding - _computeTitleHeight(),
+            bottom -
+                maxHeight -
+                _labelPadding(opts.labelsOrEmpty) -
+                _computeTitleHeight(),
           );
     }
 
@@ -1159,15 +1157,15 @@ class Legend(
       ..fillStyle = color
       ..font = titleFont;
 
-    renderText(ctx, titleOpts.text, x, y, titleFont);
+    renderText(ctx, titleOpts.text ?? const <String>[], x, y, titleFont);
   }
 
   /// plugin.legend.js:493 `_computeTitleHeight()`.
   double _computeTitleHeight() {
-    final titleOpts = options.title;
-    final titleFont = titleOpts.font;
-    final titlePadding = titleOpts.padding;
-    return titleOpts.display
+    final titleOpts = options.titleOrEmpty;
+    final titleFont = toFont(titleOpts.font);
+    final titlePadding = titleOpts.padding ?? EdgeInsets.zero;
+    return (titleOpts.display ?? false)
         ? titleFont.lineHeight! + titlePadding.vertical
         : 0;
   }
@@ -1249,34 +1247,6 @@ final Set<Type> _nativeDatasetLists = {
   const <Object?>[].runtimeType,
 };
 
-/// Whether the read of the raw option value [value] through a view gives the
-/// value itself with no user code: a function is scriptable, an array can be
-/// indexable, and an object gives a new view.
-// DIVERGES(chartjs): adapt-hidden-legend-items, a proof of no user code.
-bool _plainOption(Object? value) =>
-    !isFunction(value) && value is! List && !isObject(value);
-
-/// Whether the read of the label option `color` by a generator runs no user
-/// code: a plain value, or the default function [_chartColor] over a plain
-/// `color` of the chart options. After the mark ([atMark] false), the view of
-/// the label options has the result of the function, and no read reaches the
-/// chart options.
-// DIVERGES(chartjs): adapt-hidden-legend-items, a proof of no user code.
-bool _labelColorIsPlain(
-  IChart chart,
-  OptionResolver labels, {
-  required bool atMark,
-}) {
-  final color = labels.readKey(OptionKey.color);
-  if (_plainOption(color)) return true;
-  if (!identical(color, _chartColor)) return false;
-  if (!atMark) return true;
-  final chartOptions = chart.options;
-  if (chartOptions is! OptionView) return false;
-  final root = chartOptions.proxy;
-  return root is OptionResolver && _plainOption(root.readKey(OptionKey.color));
-}
-
 /// Whether each call `getStyle(i)` of a built-in generator reads a cached
 /// entry, with no user code and no context. [Legend._stylesRunNoUserCode] asks
 /// this function first.
@@ -1312,25 +1282,20 @@ bool _styleReadsRunNoUserCode(
 /// arc. Dart `null` leaves the ordinary path at its first reads.
 ///
 /// An ordinary build writes the context of its first resolve before it reads
-/// the next keys of the arcs, and `filter`, `sort` and `reverse`. So this proof
-/// comes after their reads only when they have no reader: the scopes of the box
-/// are native, and each value that makes a sub resolver stops the proof before
-/// its read ([OptionResolver.peekKey]). A user arc at index 0 reads its context
-/// in the first resolve. A visible legend reads its items: it takes no such
-/// proof.
+/// `filter`, `sort` and `reverse`. The options of the box are one object of
+/// values (Chart.js ADR 0193), so these reads have no reader, and this proof
+/// can come first. A user arc at index 0 reads its context in the first
+/// resolve. A visible legend reads its items: it takes no such proof.
 // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of Chart.js ADR 0099.
 _IndexedItemStyles? _indexedItemStyles(
   DatasetController controller,
   int count,
-  OptionResolver root,
-  OptionResolver labels,
+  LegendOptions options,
 ) {
-  if (!root.scopesAreNative ||
-      !labels.scopesAreNative ||
-      !identical(root.peekKey(OptionKey.display), false) ||
-      jsTruthy(labels.peekKey(OptionKey.filter)) ||
-      jsTruthy(labels.peekKey(OptionKey.sort)) ||
-      !_plainOption(root.peekKey(OptionKey.reverse))) {
+  final labels = options.labelsOrEmpty;
+  if (options.display != false ||
+      labels.filter != null ||
+      labels.sort != null) {
     return null;
   }
   final meta = controller.cachedMeta;
@@ -1528,7 +1493,7 @@ final class _RoundedRect({
 /// An absent argument, [undefined] and JS `null` throw the [TypeError] of
 /// the read `config.chart`, as upstream. A member with the value
 /// [undefined] gives Dart `null`. A `chart` that is not a `types.Chart`, an
-/// `options` that is not an object (a Map or a typed object) and a `ctx`
+/// `options` that is not a [LegendOptions] (Chart.js ADR 0193) and a `ctx`
 /// that is not a context throw a [TypeError]. Upstream stores such a value
 /// and reads its members later.
 // DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
@@ -1538,7 +1503,7 @@ final class _RoundedRect({
   final config = args.isEmpty ? undefined : args[0];
   return (
     chart: _orNull(jsGet(config, 'chart'))! as IChart,
-    options: jsObjectOrNull(jsGet(config, 'options')),
+    options: _orNull(jsGet(config, 'options')) as LegendOptions?,
     ctx: _orNull(jsGet(config, 'ctx')) as CanvasRenderingContext2D?,
   );
 }
@@ -1564,17 +1529,51 @@ void _onClick(Object? e, LegendItem item, LegendElement legend) {
   }
 }
 
-/// plugin.legend.js:661 and :707 `color: (ctx) => ctx.chart.options.color`.
+/// plugin.legend.js:661 and :707 `color: (ctx) => ctx.chart.options.color`:
+/// the `color` of the options of [chart] as a paint, or Dart `null` for a
+/// value that is no color.
+// DIVERGES(chartjs): adapt-native-plugin-options, the default in Dart.
+ChartPaint? _chartColor(IChart chart) =>
+    switch (optionOf(chart.options, OptionKey.color)) {
+      final ChartPaint paint => paint,
+      final ui.Color color => ChartPaint.solid(color),
+      _ => null,
+    };
+
+/// The options [source] of the hooks with the fallbacks of upstream
+/// (Chart.js ADR 0193), and the result of [LegendOptions.scripted] merged
+/// over them:
 ///
-/// A context gives its typed `chart` (a child context reads the chart of its
-/// parent), and a context of a spec its read by name. The chart options give
-/// their typed read of `color`.
-Object? _chartColor(Object? ctx) {
-  final chart = ctx is ContextObject
-      ? ctx.chart
-      // A context of a spec: the read by name.
-      : jsGet(ctx, 'chart');
-  return optionOf((chart! as IChart).options, OptionKey.color);
+/// - The label and title colors that [source] does not set are the `color`
+///   of the chart options, the default functions of plugin.legend.js:661 and
+///   :707.
+/// - [LegendOptions.scripted] gets the chart context and these options, once
+///   for each update, where upstream calls each scriptable option at its
+///   first read in the update. Its result merges over [source], and the
+///   colors that it does not set fall back again.
+///
+/// The fonts stay as the options give them: each reader merges them over
+/// `Chart.defaults.font` with `toFont`, as upstream.
+// DIVERGES(chartjs): adapt-legend-scripted, one function for the options.
+LegendOptions _resolvedOptions(IChart chart, LegendOptions source) {
+  LegendOptions withColors(LegendOptions options) {
+    final labels = options.labels;
+    final title = options.title;
+    if (labels?.color != null && title?.color != null) return options;
+    final color = _chartColor(chart);
+    return options.merge(
+      LegendOptions(
+        labels: labels?.color == null ? LegendLabelOptions(color: color) : null,
+        title: title?.color == null ? LegendTitleOptions(color: color) : null,
+      ),
+    );
+  }
+
+  final base = withColors(source);
+  final script = source.scripted;
+  if (script == null) return base;
+  final scripted = script(chart.getContext(), base);
+  return scripted == null ? base : withColors(source.merge(scripted));
 }
 
 /// plugin.legend.js:675 `generateLabels(chart)`: generates labels shown in
@@ -1597,12 +1596,12 @@ Object? _chartColor(Object? ctx) {
 /// datasets of the user are read by name.
 List<LegendItem> _generateLabels(IChart chart) {
   final datasets = jsGet(chart.data, 'datasets');
-  final labels = LegendOptions.of(chart.legend!.options).labels;
-  final usePointStyle = labels.usePointStyle;
+  final labels = (chart.legend!.options as LegendOptions).labelsOrEmpty;
+  final usePointStyle = labels.usePointStyle ?? false;
   final pointStyle = labels.pointStyle;
   final textAlign = labels.textAlign;
   final color = labels.color;
-  final useBorderRadius = labels.useBorderRadius;
+  final useBorderRadius = labels.useBorderRadius ?? false;
   final borderRadius = labels.borderRadius;
 
   return [
@@ -1636,7 +1635,9 @@ LegendItem _datasetItem(
 ) {
   final borderWidth = toPadding(optionOf(style, OptionKey.borderWidth));
   final stylePointStyle = optionOf(style, OptionKey.pointStyle);
-  final styleTextAlign = optionOf(style, OptionKey.textAlign);
+  // No built-in element option is `textAlign`: the read by name gives an
+  // option of a user element, else `undefined`.
+  final styleTextAlign = jsGet(style, 'textAlign');
 
   return legendItemFromOptions(
     text: jsGet(jsGetIndex(datasets, meta.index), 'label'),
@@ -1662,7 +1663,9 @@ LegendItem _datasetItem(
 }
 
 /// plugin.legend.js:601 `start(chart, _args, options)`. The box keeps the
-/// [LegendOptions] of the hook.
+/// [LegendOptions] of the hook until `beforeUpdate` of the same update gives
+/// it the options with their fallbacks: the layout reads only `display`,
+/// `fullSize`, `position` and `weight` between the two hooks.
 void _start(IChart chart, PluginHookArgs _, LegendOptions options) {
   final legend = Legend((ctx: chart.ctx, options: options, chart: chart));
   chart.legend = legend;
@@ -1697,10 +1700,15 @@ void _stop(IChart chart, PluginHookArgs _, LegendOptions _) {
 ///
 /// The hook continues the update: `true` is the `undefined` result of
 /// upstream.
+///
+/// The box gets the options with the fallbacks of upstream
+/// ([_resolvedOptions], Chart.js ADR 0193), so `scripted` runs once for each
+/// update.
 bool _beforeUpdate(IChart chart, UpdateHookArgs _, LegendOptions options) {
   final legend = chart.legend! as Legend;
-  layouts.configure(chart, legend, options);
-  legend.options = options;
+  final resolved = _resolvedOptions(chart, options);
+  layouts.configure(chart, legend, resolved);
+  legend.options = resolved;
   return true;
 }
 
@@ -1748,56 +1756,49 @@ final class LegendPlugin() extends Plugin<LegendOptions> {
   this
     : super(
         id: 'legend',
-        // The hooks get the resolved option class (Chart.js ADR 0182).
-        options: LegendOptions.of,
+        // The hooks get the merged LegendOptions (Chart.js ADR 0193).
         start: _start,
         stop: _stop,
         beforeUpdate: _beforeUpdate,
         afterUpdate: _afterUpdate,
         afterEvent: _afterEvent,
-        // plugin.legend.js:636-712. A typed scope of the kind `LegendOptions`
-        // (Chart.js ADR 0054 §3).
-        defaults: LegendOptionsScope()
-          ..display = true
-          ..position = ChartPosition.top
+        // plugin.legend.js:636-712: one LegendOptions with each default
+        // (Chart.js ADR 0193). `onHover` and `onLeave` are `null` upstream:
+        // no field. The label and title `color` are the `color` of the chart
+        // when no options set them (:661, :707): the legend gives that color
+        // ([_resolvedOptions]).
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        defaults: const LegendOptions(
+          display: true,
+          position: ChartPosition.top,
           // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
-          ..align = ChartAlign.center
-          ..fullSize = true
-          ..reverse = false
-          ..weight = 1000.0
+          align: ChartAlign.center,
+          fullSize: true,
+          reverse: false,
+          weight: 1000,
           // a callback that will handle
-          ..onClick = _onClick
-          ..onHoverCell = optNull
-          ..onLeaveCell = optNull
-          ..labels = (LegendLabelOptionsScope()
-            ..colorCell = const OptFunction(_chartColor)
-            ..boxWidth = 40.0
-            ..padding = 10.0
+          onClick: _onClick,
+          labels: LegendLabelOptions(
+            boxWidth: 40,
+            padding: 10,
             // Generates labels shown in the legend
-            ..generateLabels = _generateLabels)
-          ..title = (LegendTitleOptionsScope()
-            ..colorCell = const OptFunction(_chartColor)
-            ..display = false
-            // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
-            ..position = ChartAlign.center
-            // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
-            ..text = const ['']),
-        // plugin.legend.js:714-719. A typed scope of the kind `Descriptors`.
-        descriptors: DescriptorsScope()
-          ..descScriptable = _scriptableDescriptor
-          ..jsWrite(
-            'labels',
-            DescriptorsScope()..descScriptable = _labelsScriptableDescriptor,
+            generateLabels: _generateLabels,
           ),
+          title: LegendTitleOptions(
+            display: false,
+            // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+            position: ChartAlign.center,
+            // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
+            text: [''],
+          ),
+        ),
+        // plugin.legend.js:714-719: the descriptors make each option but the
+        // functions scriptable; the options are not resolved, and the one
+        // function `scripted` takes the place of the scriptable options (row
+        // adapt-legend-scripted).
+        // DIVERGES(chartjs): adapt-native-plugin-options, no descriptors.
         // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
         // opt-in.
         supportsDataUpdates: true,
       );
 }
-
-/// plugin.legend.js:715 the `_scriptable` descriptor of the plugin.
-bool _scriptableDescriptor(String name) => !name.startsWith('on');
-
-/// plugin.legend.js:717 the `_scriptable` descriptor of `labels`.
-bool _labelsScriptableDescriptor(String name) =>
-    !const ['generateLabels', 'filter', 'sort'].contains(name);

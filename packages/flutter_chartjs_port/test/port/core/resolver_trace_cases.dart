@@ -11,10 +11,12 @@ import '../../support/context_keys.dart';
 
 /// The kind of the second argument of a user function: `'absent'` for the
 /// [undefined] sentinel (an argument that the caller does not give),
-/// `'resolver'` for a resolver proxy, else `'value'`.
+/// `'resolver'` for a resolver proxy, else `'value'`. The [LegendOptions]
+/// that `scripted` gets stand for the sub-resolver of the scriptable legend
+/// options of upstream (row `adapt-legend-scripted`).
 String traceArgKind(Object? b) => identical(b, undefined)
     ? 'absent'
-    : b is JsProxyObject
+    : b is JsProxyObject || b is LegendOptions
     ? 'resolver'
     : 'value';
 
@@ -143,9 +145,10 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
       'gridWidth',
       (ctx, _) => jsToNumber(contextRead(ctx, 'index')) % 2 == 0 ? 2.0 : 1.0,
     ),
+    // The label color is a ChartPaint (Chart.js ADR 0193).
     'legendColor': fn(
       'legendColor',
-      (_, _) => const native_ui.Color.fromRGBO(0, 255, 0, 1),
+      (_, _) => const ChartPaint.solid(native_ui.Color.fromRGBO(0, 255, 0, 1)),
     ),
     'writeRadiusActive': fn('writeRadiusActive', (ctx, options) {
       if (jsTruthy(contextRead(ctx, 'active')) &&

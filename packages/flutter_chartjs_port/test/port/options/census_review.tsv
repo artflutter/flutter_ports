@@ -97,10 +97,6 @@ foreign	options.interaction	bool
 foreign	options.parsing.xAxisKey	double
 foreign	options.parsing.yAxisKey	double
 foreign	options.plugins	bool
-foreign	options.plugins.legend.labels	bool
-foreign	options.plugins.legend.labels.boxWidth	String
-foreign	options.plugins.legend.labels.padding	String
-foreign	options.plugins.legend.rtl	String
 foreign	options.plugins.position	String
 foreign	options.plugins.title	double
 foreign	options.plugins.title.text	double

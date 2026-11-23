@@ -77,18 +77,6 @@ final ChartConfig _config = ChartConfig(
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
-  // The legend of the annotations: a circle of radius 5 and a label of 10
-  // px for each type, in the 20 px under the axis.
-  legend: const ChartLegend(
-    position: .bottom,
-    labelColor: .solid(Gx.text),
-    labelFont: TextStyle(fontSize: 10),
-    usePointStyle: true,
-    // The radius of the circle is `boxHeight` / √2.
-    boxHeight: 7.07,
-    labelPadding: 5,
-    extra: {'maxHeight': 20},
-  ),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
@@ -100,6 +88,20 @@ final ChartConfig _config = ChartConfig(
     tapSelection(onDoubleTap: resetRange),
   ],
   pluginOptions: [
+    // The legend of the annotations: a circle of radius 5 and a label of 10
+    // px for each type, in the 20 px under the axis.
+    const LegendOptions(
+      position: ChartPosition.bottom,
+      maxHeight: 20,
+      labels: LegendLabelOptions(
+        color: .solid(Gx.text),
+        font: TextStyle(fontSize: 10),
+        usePointStyle: true,
+        // The radius of the circle is `boxHeight` / √2.
+        boxHeight: 7.07,
+        padding: 5,
+      ),
+    ),
     graphicTooltip(
       position: const CenterPositioner(),
       title: _index,

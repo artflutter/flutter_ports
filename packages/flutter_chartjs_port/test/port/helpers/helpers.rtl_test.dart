@@ -85,12 +85,22 @@ void main() {
   group('native direction options', () {
     test('typed scopes, options objects and raw options retain the native '
         'enum', () {
-      final legend = LegendOptionsScope()..textDirection = TextDirection.rtl;
-      expect(legend.textDirectionCell, isA<OptValue<TextDirection>>());
-      expect(legend.readKey(OptionKey.textDirection), TextDirection.rtl);
-      expect(LegendOptions.of(legend).textDirection, TextDirection.rtl);
-      // The tooltip options are one object (Chart.js ADR 0192): the merge of
-      // the scopes keeps the enum of the last scope that sets it.
+      // The legend and the tooltip options are one object each (Chart.js
+      // ADRs 0192 and 0193): the merge of the scopes keeps the enum of the
+      // last scope that sets it.
+      const legend = LegendOptions(textDirection: TextDirection.rtl);
+      expect(legend.textDirection, TextDirection.rtl);
+      expect(
+        legend.merge(const LegendOptions()).textDirection,
+        TextDirection.rtl,
+      );
+      expect(
+        legend
+            .merge(const LegendOptions(textDirection: TextDirection.ltr))
+            .textDirection,
+        TextDirection.ltr,
+      );
+      expect(const LegendOptions().textDirection, isNull);
       const tooltip = TooltipOptions(textDirection: TextDirection.ltr);
       expect(tooltip.textDirection, TextDirection.ltr);
       expect(
@@ -104,12 +114,9 @@ void main() {
         TextDirection.rtl,
       );
       expect(const TooltipOptions().textDirection, isNull);
-      // Maps: the subject is the raw options path of `of`.
-      expect(
-        LegendOptions.of({'textDirection': TextDirection.rtl}).textDirection,
-        TextDirection.rtl,
-      );
-      expect(LegendOptions.of({}).textDirection, isNull);
+      // Maps: the subject is the raw option value of a read.
+      expect(textDirectionOption(TextDirection.rtl), TextDirection.rtl);
+      expect(textDirectionOption(undefined), isNull);
     });
 
     test('a scriptable direction resolves at its context', () {
@@ -122,14 +129,11 @@ void main() {
               : TextDirection.ltr,
         },
       ]);
-      expect(
-        LegendOptions.of(attachContext(resolver, {'rtl': true})).textDirection,
-        TextDirection.rtl,
+      Object? direction(Map<String, Object?> context) => textDirectionOption(
+        jsGet(attachContext(resolver, context), 'textDirection'),
       );
-      expect(
-        LegendOptions.of(attachContext(resolver, {'rtl': false})).textDirection,
-        TextDirection.ltr,
-      );
+      expect(direction({'rtl': true}), TextDirection.rtl);
+      expect(direction({'rtl': false}), TextDirection.ltr);
     });
 
     test('old keywords and non-direction values stop a debug build', () {

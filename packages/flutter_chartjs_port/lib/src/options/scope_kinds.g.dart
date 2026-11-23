@@ -201,17 +201,6 @@ enum ScopeKind(
   /// the point labels of a radial scale.
   pointLabelOptions('PointLabelOptions'),
 
-  /// index.d.ts:2422 LegendOptions, the scope `plugins.legend`.
-  legendOptions('LegendOptions'),
-
-  /// Port-only name for index.d.ts:2469 LegendOptions `labels`, the labels of
-  /// the legend.
-  legendLabelOptions('LegendLabelOptions'),
-
-  /// Port-only name for index.d.ts:2552 LegendOptions `title`, the title of the
-  /// legend.
-  legendTitleOptions('LegendTitleOptions'),
-
   /// index.d.ts:2579 TitleOptions, the scopes `plugins.title` and
   /// `plugins.subtitle`.
   titleOptions('TitleOptions'),
@@ -321,12 +310,6 @@ enum ScopeKind(
         return AngleLineOptionsScope();
       case ScopeKind.pointLabelOptions:
         return PointLabelOptionsScope();
-      case ScopeKind.legendOptions:
-        return LegendOptionsScope();
-      case ScopeKind.legendLabelOptions:
-        return LegendLabelOptionsScope();
-      case ScopeKind.legendTitleOptions:
-        return LegendTitleOptionsScope();
       case ScopeKind.titleOptions:
         return TitleOptionsScope();
       case ScopeKind.tooltipDatasetOptions:
@@ -426,12 +409,6 @@ enum ScopeKind(
         return AngleLineOptionsScope;
       case ScopeKind.pointLabelOptions:
         return PointLabelOptionsScope;
-      case ScopeKind.legendOptions:
-        return LegendOptionsScope;
-      case ScopeKind.legendLabelOptions:
-        return LegendLabelOptionsScope;
-      case ScopeKind.legendTitleOptions:
-        return LegendTitleOptionsScope;
       case ScopeKind.titleOptions:
         return TitleOptionsScope;
       case ScopeKind.tooltipDatasetOptions:
@@ -1261,51 +1238,6 @@ enum ScopeKind(
           OptionKey.padding,
           OptionKey.centerPointLabels,
         ];
-      case ScopeKind.legendOptions:
-        return const [
-          OptionKey.display,
-          OptionKey.position,
-          OptionKey.align,
-          OptionKey.maxHeight,
-          OptionKey.maxWidth,
-          OptionKey.fullSize,
-          OptionKey.reverse,
-          OptionKey.onClick,
-          OptionKey.onHover,
-          OptionKey.onLeave,
-          OptionKey.labels,
-          OptionKey.rtl,
-          OptionKey.textDirection,
-          OptionKey.title,
-          OptionKey.weight,
-          OptionKey.events,
-        ];
-      case ScopeKind.legendLabelOptions:
-        return const [
-          OptionKey.boxWidth,
-          OptionKey.boxHeight,
-          OptionKey.color,
-          OptionKey.font,
-          OptionKey.padding,
-          OptionKey.pointStyleWidth,
-          OptionKey.generateLabels,
-          OptionKey.filter,
-          OptionKey.sort,
-          OptionKey.pointStyle,
-          OptionKey.textAlign,
-          OptionKey.usePointStyle,
-          OptionKey.useBorderRadius,
-          OptionKey.borderRadius,
-        ];
-      case ScopeKind.legendTitleOptions:
-        return const [
-          OptionKey.display,
-          OptionKey.color,
-          OptionKey.font,
-          OptionKey.position,
-          OptionKey.padding,
-          OptionKey.text,
-        ];
       case ScopeKind.titleOptions:
         return const [
           OptionKey.align,
@@ -1609,7 +1541,7 @@ enum ScopeKind(
           case OptionKey.filler:
             return 34;
           case OptionKey.legend:
-            return 34;
+            return 5506;
           case OptionKey.subtitle:
             return 34;
           case OptionKey.title:
@@ -2959,93 +2891,6 @@ enum ScopeKind(
           default:
             return 0;
         }
-      case ScopeKind.legendOptions:
-        switch (key) {
-          case OptionKey.display:
-            return 2;
-          case OptionKey.position:
-            return 2560;
-          case OptionKey.align:
-            return 1536;
-          case OptionKey.maxHeight:
-            return 1;
-          case OptionKey.maxWidth:
-            return 1;
-          case OptionKey.fullSize:
-            return 2;
-          case OptionKey.reverse:
-            return 2;
-          case OptionKey.onClick:
-            return 8;
-          case OptionKey.onHover:
-            return 8;
-          case OptionKey.onLeave:
-            return 8;
-          case OptionKey.labels:
-            return 32;
-          case OptionKey.rtl:
-            return 2;
-          case OptionKey.textDirection:
-            return 4608;
-          case OptionKey.title:
-            return 32;
-          case OptionKey.weight:
-            return 1;
-          case OptionKey.events:
-            return 16;
-          default:
-            return 0;
-        }
-      case ScopeKind.legendLabelOptions:
-        switch (key) {
-          case OptionKey.boxWidth:
-            return 1;
-          case OptionKey.boxHeight:
-            return 1;
-          case OptionKey.color:
-            return 4864;
-          case OptionKey.font:
-            return 4096;
-          case OptionKey.padding:
-            return 1;
-          case OptionKey.pointStyleWidth:
-            return 1;
-          case OptionKey.generateLabels:
-            return 8;
-          case OptionKey.filter:
-            return 8;
-          case OptionKey.sort:
-            return 8;
-          case OptionKey.pointStyle:
-            return 3202;
-          case OptionKey.textAlign:
-            return 2688;
-          case OptionKey.usePointStyle:
-            return 2;
-          case OptionKey.useBorderRadius:
-            return 2;
-          case OptionKey.borderRadius:
-            return 6273;
-          default:
-            return 0;
-        }
-      case ScopeKind.legendTitleOptions:
-        switch (key) {
-          case OptionKey.display:
-            return 2;
-          case OptionKey.color:
-            return 4864;
-          case OptionKey.font:
-            return 4096;
-          case OptionKey.position:
-            return 1536;
-          case OptionKey.padding:
-            return 4480;
-          case OptionKey.text:
-            return 5888;
-          default:
-            return 0;
-        }
       case ScopeKind.titleOptions:
         switch (key) {
           case OptionKey.align:
@@ -3200,8 +3045,6 @@ enum ScopeKind(
             return ScopeKind.decimationOptions;
           case OptionKey.filler:
             return ScopeKind.fillerOptions;
-          case OptionKey.legend:
-            return ScopeKind.legendOptions;
           case OptionKey.subtitle:
             return ScopeKind.titleOptions;
           case OptionKey.title:
@@ -3507,19 +3350,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.pointLabelOptions:
         return null;
-      case ScopeKind.legendOptions:
-        switch (key) {
-          case OptionKey.labels:
-            return ScopeKind.legendLabelOptions;
-          case OptionKey.title:
-            return ScopeKind.legendTitleOptions;
-          default:
-            return null;
-        }
-      case ScopeKind.legendLabelOptions:
-        return null;
-      case ScopeKind.legendTitleOptions:
-        return null;
       case ScopeKind.titleOptions:
         return null;
       case ScopeKind.tooltipDatasetOptions:
@@ -3618,12 +3448,6 @@ enum ScopeKind(
       case ScopeKind.angleLineOptions:
         return 64;
       case ScopeKind.pointLabelOptions:
-        return 64;
-      case ScopeKind.legendOptions:
-        return 64;
-      case ScopeKind.legendLabelOptions:
-        return 64;
-      case ScopeKind.legendTitleOptions:
         return 64;
       case ScopeKind.titleOptions:
         return 64;
@@ -3724,12 +3548,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.pointLabelOptions:
         return null;
-      case ScopeKind.legendOptions:
-        return null;
-      case ScopeKind.legendLabelOptions:
-        return null;
-      case ScopeKind.legendTitleOptions:
-        return null;
       case ScopeKind.titleOptions:
         return null;
       case ScopeKind.tooltipDatasetOptions:
@@ -3828,12 +3646,6 @@ enum ScopeKind(
       case ScopeKind.angleLineOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.pointLabelOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.legendOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.legendLabelOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.legendTitleOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.titleOptions:
         return classifyUnion(raw, 64);

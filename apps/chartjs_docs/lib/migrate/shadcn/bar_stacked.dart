@@ -40,12 +40,12 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   ],
   aspectRatio: 16 / 9,
   padding: const EdgeInsets.all(5),
-  // <ChartLegend content={<ChartLegendContent />} />
-  legend: shadcnLegend,
-  // <ChartTooltip content={<ChartTooltipContent hideLabel />} />, with the
-  // cursor: a muted band under the hovered month.
   pluginOptions: [
+    // <ChartTooltip content={<ChartTooltipContent hideLabel />} />, with the
+    // cursor: a muted band under the hovered month.
     shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
+    // <ChartLegend content={<ChartLegendContent />} />
+    shadcnLegend,
   ],
   interaction: shadcnInteraction(),
   animation: shadcnBarAnimation,

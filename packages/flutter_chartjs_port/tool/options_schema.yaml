@@ -206,7 +206,7 @@ kinds:
       colors: bool | scope ColorsOptions
       decimation: bool | scope DecimationOptions
       filler: bool | scope FillerOptions
-      legend: bool | scope LegendOptions
+      legend: bool | pluginOptions  # the LegendOptions of plugin_options.dart (Chart.js ADR 0193)
       subtitle: bool | scope TitleOptions
       title: bool | scope TitleOptions
       tooltip: bool | pluginOptions  # the TooltipOptions of plugin_options.dart (Chart.js ADR 0192)
@@ -989,51 +989,6 @@ kinds:
   # ---------------------------------------------------------------------------------------------
   # The plugins. `events` of each plugin is read at core.controller.js:1170.
   # ---------------------------------------------------------------------------------------------
-  LegendOptions:
-    doc: index.d.ts:2422 LegendOptions, the scope `plugins.legend`.
-    keys:
-      display: bool
-      position: layoutPosition
-      align: chartAlign
-      maxHeight: number
-      maxWidth: number
-      fullSize: bool
-      reverse: bool
-      onClick: fn
-      onHover: fn
-      onLeave: fn
-      labels: scope LegendLabelOptions
-      rtl: bool
-      textDirection: textDirection
-      title: scope LegendTitleOptions
-      weight: number  # plugin.legend.js:642 defaults, read at core.layouts.js:334
-      events: list  # read at core.controller.js:1170
-  LegendLabelOptions:
-    doc: Port-only name for index.d.ts:2469 LegendOptions `labels`, the labels of the legend.
-    keys:
-      boxWidth: number
-      boxHeight: number
-      color: chartPaint
-      font: textStyle
-      padding: number
-      pointStyleWidth: number
-      generateLabels: fn
-      filter: fn
-      sort: fn
-      pointStyle: pointStyle | bool
-      textAlign: textAlign
-      usePointStyle: bool
-      useBorderRadius: bool
-      borderRadius: number | borderRadius
-  LegendTitleOptions:
-    doc: Port-only name for index.d.ts:2552 LegendOptions `title`, the title of the legend.
-    keys:
-      display: bool
-      color: chartPaint
-      font: textStyle
-      position: chartAlign
-      padding: edgeInsets
-      text: textLines
   TitleOptions:
     doc: index.d.ts:2579 TitleOptions, the scopes `plugins.title` and `plugins.subtitle`.
     keys:

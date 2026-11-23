@@ -28,8 +28,6 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 36, 10, 0),
-  // legend: {position: 'right', offsetY: 40}
-  legend: apexJsLegend(position: .right, align: .start, square: true),
   interaction: const ChartInteraction(
     mode: NearestInteractionMode(),
     intersect: true,
@@ -42,7 +40,12 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
     apexJsBarLabels(totals: true),
     apexTooltipLook,
   ]),
-  pluginOptions: [apexJsBarTooltip(), zoom.options],
+  pluginOptions: [
+    // legend: {position: 'right', offsetY: 40}
+    apexJsLegend(position: .right, align: .start, square: true),
+    apexJsBarTooltip(),
+    zoom.options,
+  ],
   scales: [
     // chart.stacked: true: both axes stack.
     apexJsCategoryAxis().copyWith(stacked: StackMode.on),

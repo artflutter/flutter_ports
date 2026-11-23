@@ -77,13 +77,15 @@ final ChartConfig _config = ChartConfig(
     color: ChartPaint.solid(_text),
     font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
   ),
-  legend: const ChartLegend(
-    usePointStyle: true,
-    boxHeight: 7,
-    labelColor: ChartPaint.solid(_text),
-    labelFont: TextStyle(fontSize: 13),
-  ),
   pluginOptions: const [
+    LegendOptions(
+      labels: LegendLabelOptions(
+        usePointStyle: true,
+        boxHeight: 7,
+        color: ChartPaint.solid(_text),
+        font: TextStyle(fontSize: 13),
+      ),
+    ),
     TooltipOptions(
       backgroundColor: ChartPaint.solid(_tooltip),
       yAlign: .bottom,

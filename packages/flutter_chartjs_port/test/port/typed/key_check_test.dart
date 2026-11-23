@@ -33,9 +33,11 @@ import 'package:flutter_test/flutter_test.dart';
 //   (`core.datasetController.js`, `resolveDataElementOptions`).
 // A path that is the start of a defaults path is a group: the check goes on
 // in its Map. A font Map and a padding Map are values, not groups. An options
-// object of `ChartConfig.pluginOptions` (the `TooltipOptions` at
-// `options.plugins.tooltip`, Chart.js ADR 0192) is a value too: it has one
-// field for each option of its plugin, so it lowers no key of its own.
+// object of `ChartConfig.pluginOptions` (the `LegendOptions` at
+// `options.plugins.legend` and the `TooltipOptions` at
+// `options.plugins.tooltip`, Chart.js ADRs 0192 and 0193) is a value too: it
+// has one field for each option of its plugin, so it lowers no key of its
+// own.
 //
 // When the submodule third_party/Chart.js is checked out, a test reads
 // `src/types/index.d.ts` and checks that each allowlist line declares its
@@ -77,10 +79,6 @@ const Map<String, int> _allowlist = {
   'options.scales.*.title.font': 3323,
   'options.scales.*.time.tooltipFormat': 3453,
   'options.scales.*.offsetAfterAutoskip': 3503,
-  'options.plugins.legend.labels.boxHeight': 2479,
-  'options.plugins.legend.labels.font': 2489,
-  'options.plugins.legend.labels.usePointStyle': 2528,
-  'options.plugins.legend.textDirection': 2550,
   'options.animation.onProgress': 1802,
   'options.animation.onComplete': 1806,
   'options.animation.animateRotate': 298,
@@ -274,22 +272,6 @@ List<ChartConfig> _configs() {
       maintainAspectRatio: true,
       aspectRatio: 2,
       padding: _padding,
-      legend: const ChartLegend(
-        textDirection: .rtl,
-        display: true,
-        position: .top,
-        align: .center,
-        reverse: false,
-        labelColor: ChartPaint.solid(_red),
-        labelFont: _font,
-        boxWidth: 40,
-        boxHeight: 12,
-        labelPadding: 10,
-        usePointStyle: false,
-        onClick: _onLegend,
-        onHover: _onLegend,
-        onLeave: _onLegend,
-      ),
       title: const ChartTitle(
         display: true,
         text: ['T'],
@@ -311,6 +293,24 @@ List<ChartConfig> _configs() {
         fullSize: true,
       ),
       pluginOptions: [
+        const LegendOptions(
+          textDirection: .rtl,
+          display: true,
+          position: ChartPosition.top,
+          align: .center,
+          reverse: false,
+          labels: LegendLabelOptions(
+            color: ChartPaint.solid(_red),
+            font: _font,
+            boxWidth: 40,
+            boxHeight: 12,
+            padding: 10,
+            usePointStyle: false,
+          ),
+          onClick: _onLegend,
+          onHover: _onLegend,
+          onLeave: _onLegend,
+        ),
         TooltipOptions(
           textDirection: .rtl,
           enabled: true,

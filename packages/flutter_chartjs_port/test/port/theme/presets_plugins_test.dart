@@ -9,6 +9,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/font_record.dart';
+import '../../support/legend_option_fields.dart';
 import '../../support/light_theme.dart';
 import '../../support/tooltip_option_fields.dart';
 
@@ -25,9 +26,9 @@ import '../../support/tooltip_option_fields.dart';
 // The light pixel test (light_pixels_test.dart) shows that the light preset
 // paints the bytes of the unthemed chart.
 //
-// The reads use `jsGet`, and no resolver goes to `equals`. The tooltip
-// options are one TooltipOptions (Chart.js ADR 0192): the test reads the
-// typed fields of the resolved options of the tooltip, `tooltip.options`.
+// The reads use `jsGet`, and no resolver goes to `equals`. The tooltip and
+// the legend options are one object each (Chart.js ADRs 0192 and 0193): the
+// test reads the typed fields of `tooltip.options` and `legend.options`.
 //
 // flutter_test_config.dart registers the plugins with the built-in
 // components (Chart.js ADR 0041, section 1).
@@ -60,19 +61,26 @@ const List<String> _pluginKeys = [
 /// TooltipOptions of `chart.tooltip`: the descriptor has the merged object,
 /// and the tooltip gives the fonts and the box sizes their fallbacks
 /// (Chart.js ADR 0192), as the resolver of upstream does.
-Object _pluginOptions(Chart chart, String id) => id == 'tooltip'
-    ? chart.tooltip!.options! as TooltipOptions
-    : chart.plugins.cache!
-          .firstWhere((descriptor) => descriptor.plugin.id == id)
-          .options;
+/// For the legend, the LegendOptions of `chart.legend`, with the colors of
+/// the chart as their fallbacks (Chart.js ADR 0193).
+Object _pluginOptions(Chart chart, String id) => switch (id) {
+  'tooltip' => chart.tooltip!.options! as TooltipOptions,
+  'legend' => chart.legend!.options,
+  _ =>
+    chart.plugins.cache!
+        .firstWhere((descriptor) => descriptor.plugin.id == id)
+        .options,
+};
 
 /// The value of the dot path [path] in [root]: the typed field of a
-/// [TooltipOptions], else the read by name.
+/// [TooltipOptions] or of a legend option object, else the read by name.
 Object? _at(Object? root, String path) {
   var node = root;
   for (final key in path.split('.')) {
     node = node is TooltipOptions
         ? tooltipOptionFields(node)[key] ?? undefined
+        : isLegendOptionObject(node)
+        ? setLegendOptionFields(node!)[key] ?? undefined
         : jsGet(node, key);
   }
   return node;

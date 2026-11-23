@@ -57,8 +57,7 @@ ChartConfig _config(double width, double spacing) => ChartConfig(
   maintainAspectRatio: false,
   padding: sfPadding,
   title: sfTitle('Exports & Imports of US'),
-  legend: sfLegend(const SfBarIcon(), reverse: true),
-  pluginOptions: [_tooltip],
+  pluginOptions: [sfLegend(const SfBarIcon(), reverse: true), _tooltip],
   plugins: [sfTooltipLook],
   scales: [
     // NumericAxis(minimum: 2005, maximum: 2011, interval: 1) as the index

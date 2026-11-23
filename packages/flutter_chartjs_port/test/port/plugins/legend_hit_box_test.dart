@@ -177,7 +177,9 @@ void main() {
         BarDataset(label: 'two', data: .values([2])),
       ],
       animation: ChartAnimation.none,
-      legend: ChartLegend(onClick: (event, item, legend) => clicked = item),
+      pluginOptions: [
+        LegendOptions(onClick: (event, item, legend) => clicked = item),
+      ],
     );
     final chart = acquireChartRoot(ChartConfigLowering(config).lower());
     final legend = chart.legend! as Legend;

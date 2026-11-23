@@ -198,10 +198,14 @@ ChartOptionsScope? compileChartTheme({
   // The whole font token for the legend label font
   // (`plugin.legend.js:136, 288`) and the legend title font (`:446, 495`).
   // The legend has no font defaults (`plugin.legend.js:636-712`), so `toFont`
-  // fills an absent field from the global `defaults.font`.
+  // fills an absent field from the global `defaults.font`. The options of
+  // the legend are one immutable [LegendOptions] (Chart.js ADR 0193): the
+  // theme writes one object, no scope of the tree.
   if (baseFont != null) {
-    t.legendLabels.font = baseFont;
-    t.legendTitle.font = baseFont;
+    t._plugins.legend = LegendOptions(
+      labels: LegendLabelOptions(font: baseFont),
+      title: LegendTitleOptions(font: baseFont),
+    );
   }
 
   // The tooltip keys come after the legend keys (theming.md §4).
@@ -313,19 +317,6 @@ final class _ThemeTree() {
   /// `plugins.subtitle`.
   late final TitleOptionsScope subtitle = _plugins.subtitle =
       add<TitleOptionsScope>(TitleOptionsScope());
-
-  late final LegendOptionsScope _legend = _plugins.legend =
-      add<LegendOptionsScope>(LegendOptionsScope());
-
-  /// `plugins.legend.labels`.
-  late final LegendLabelOptionsScope legendLabels = _legend.labels = add(
-    LegendLabelOptionsScope(),
-  );
-
-  /// `plugins.legend.title`.
-  late final LegendTitleOptionsScope legendTitle = _legend.title = add(
-    LegendTitleOptionsScope(),
-  );
 
   /// `plugins.colors`.
   late final ColorsOptionsScope colors = _plugins.colors =

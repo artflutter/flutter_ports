@@ -1013,17 +1013,11 @@ final class OptionResolver._(
         : _VaryingColors(firstKey!, firstValues, secondKey, secondValues);
   }
 
-  /// Whether a read of a plain value through this resolver runs no user code:
-  /// `operator []` of a custom Map scope is user code, and a write or a delete
-  /// of a slot can replace the scopes. [peekKey] needs this.
-  // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
-  bool get scopesAreNative =>
-      !_slotsTouched && _scopes.every(nativeOptionScope);
-
   /// The raw value of [key] with no effect: no write to the cache, and no sub
   /// resolver for an object, whose creation can call a function `_fallback` and
   /// read a custom Map. A proof that fails on this value leaves the read for
-  /// its own point of the ordinary path. Only with [scopesAreNative].
+  /// its own point of the ordinary path. Only with native scopes and no write
+  /// of a slot (`nativeOptionScope`).
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
   Object? peekKey(OptionKey key) {
     final cached = _cache.get(key);

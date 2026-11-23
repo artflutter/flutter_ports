@@ -375,13 +375,12 @@ class _LiveChartState()
     // The room of the last time label: the x axis adds no padding for it.
     padding: const EdgeInsets.only(right: _labelRoom),
     animation: ChartAnimation.none,
-    legend: const ChartLegend(display: false),
     interaction: const ChartInteraction(
       mode: IndexInteractionMode(),
       intersect: false,
     ),
     plugins: [zoomPlugin, _pageSplits, _gaps],
-    pluginOptions: [_zoom],
+    pluginOptions: [const LegendOptions(display: false), _zoom],
     scales: const [
       TimeAxis(
         .x,

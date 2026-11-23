@@ -162,13 +162,17 @@ List<_Case> _cases() => [
     (name: 'bench ${c.name}', make: c.make, cleanup: c.cleanup),
   for (final c in _focusedCases)
     (name: 'focused ${c.name}', make: c.make, cleanup: c.cleanup),
-  for (final c in resolverTraceReference)
+  for (final (i, c) in resolverTraceReference(
+    resolverTraceFunctions(<Object?>[]),
+  ).indexed)
     (
       name: 'trace ${c.name}',
       make: () {
         // The functions record into a list that no one reads: the recorder
-        // of a trace run records the calls.
+        // of a trace run records the calls. The cases are a function of them
+        // (Chart.js ADR 0193).
         final functions = resolverTraceFunctions(<Object?>[]);
+        final c = resolverTraceReference(functions)[i];
         if (c.setup case final setup?) resolverTraceSetups[setup]!(functions);
         return (
           config: copyReference(c.config, functions)! as Map<String, Object?>,
@@ -725,6 +729,60 @@ void _wrapFunctions(Object? value, String path, List<String> trace) {
 /// The recorder of [value] when it is a function with an exact arity, else
 /// Dart `null`.
 Object? _wrapped(Object? value, String path, List<String> trace) {
+  // The legend options are one LegendOptions (Chart.js ADR 0193): trace each
+  // function field with the path of its key in the Map of the options.
+  // `scripted` stands for the scriptable options of the Map: it gets the
+  // context, as they did.
+  if (value is LegendOptions) {
+    LegendEventHandler? handler(LegendEventHandler? f, String key) => f == null
+        ? null
+        : (e, item, legend) {
+            trace.add(_traceLine('$path.$key', [e, item, legend]));
+            f(e, item, legend);
+          };
+    final scripted = value.scripted;
+    final labels = value.labels;
+    final filter = labels?.filter;
+    final sort = labels?.sort;
+    return value.merge(
+      LegendOptions(
+        scripted: scripted == null
+            ? null
+            : (context, options) {
+                trace.add(_traceLine('$path.scripted', [context]));
+                return scripted(context, options);
+              },
+        onClick: handler(value.onClick, 'onClick'),
+        onHover: handler(value.onHover, 'onHover'),
+        onLeave: handler(value.onLeave, 'onLeave'),
+        labels: labels == null
+            ? null
+            : LegendLabelOptions(
+                generateLabels: _wrapped(
+                  labels.generateLabels,
+                  '$path.labels.generateLabels',
+                  trace,
+                ) as Function?,
+                filter: filter == null
+                    ? null
+                    : (item, data) {
+                        trace.add(
+                          _traceLine('$path.labels.filter', [item, data]),
+                        );
+                        return filter(item, data);
+                      },
+                sort: sort == null
+                    ? null
+                    : (a, b, data) {
+                        trace.add(
+                          _traceLine('$path.labels.sort', [a, b, data]),
+                        );
+                        return sort(a, b, data);
+                      },
+              ),
+      ),
+    );
+  }
   // The tooltip options are one TooltipOptions (Chart.js ADR 0192): trace
   // each function field with the path of its field. `scripted` stands for
   // the scriptable options of the Map: it gets the context, as they did.
@@ -1629,14 +1687,18 @@ final List<_Case> _focusedCases = [
             ),
             callbacks: TooltipCallbacks(label: (tooltip, item) => ['item']),
           ),
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{
-              'font': (Object? ctx) => const ChartTextStyle(fontSize: 11),
-              'color': (Object? ctx) => const ChartPaint.solid(
-                native_ui.Color.fromRGBO(51, 51, 51, 1),
+          // The scriptable label font and color of the Map model are the
+          // result of `scripted` (Chart.js ADR 0193).
+          'legend': LegendOptions(
+            scripted: (context, options) => const LegendOptions(
+              labels: LegendLabelOptions(
+                font: ChartTextStyle(fontSize: 11),
+                color: ChartPaint.solid(
+                  native_ui.Color.fromRGBO(51, 51, 51, 1),
+                ),
               ),
-            },
-          },
+            ),
+          ),
         },
       },
     ),

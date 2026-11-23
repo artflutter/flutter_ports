@@ -28,7 +28,8 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'plugins': <String, Object?>{
-        'legend': <String, Object?>{'display': false},
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'legend': const LegendOptions(display: false),
       },
       'scales': <String, Object?>{
         'y': <String, Object?>{

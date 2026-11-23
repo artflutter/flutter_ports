@@ -40,6 +40,12 @@ PointStyle _styleFor(ScriptableContext context) => const RectPointStyle();
 /// A tooltip label callback.
 List<String>? _tooltipLabel(TooltipModel tooltip, TooltipItem item) => null;
 
+/// A top-level legend handler: its tear-off is equal at each build.
+void _legendClick(ChartEvent event, LegendItem item, LegendElement legend) {}
+
+/// A top-level legend filter: its tear-off is equal at each build.
+bool _legendFilter(LegendItem item, Object data) => true;
+
 /// A tooltip script that changes nothing.
 TooltipOptions? _tooltipScript(
   ScriptableTooltipContext context,
@@ -577,14 +583,14 @@ void main() {
           BarDataset(data: .values([1])),
         ],
         scales: [LinearAxis(.y, beginAtZero: true)],
-        legend: ChartLegend(display: false),
+        pluginOptions: [LegendOptions(display: false)],
       );
       const b = ChartConfig(
         datasets: [
           BarDataset(data: .values([1])),
         ],
         scales: [LinearAxis(.y, beginAtZero: true)],
-        legend: ChartLegend(display: false),
+        pluginOptions: [LegendOptions(display: false)],
       );
       expect(identical(a, b), isTrue);
     });
@@ -606,11 +612,11 @@ void main() {
           _runtime(const CategoryAxis(.x)),
           LinearAxis(.y, min: _runtime(0)),
         ],
-        legend: ChartLegend(onClick: (_, _, _) {}),
         animation: ChartAnimation(onComplete: (details) {}),
         onClick: (_, _, _) {},
         // A top-level tear-off: the options object compares it with `==`.
         pluginOptions: [
+          LegendOptions(onClick: _runtime(_legendClick)),
           TooltipOptions(
             callbacks: TooltipCallbacks(label: _runtime(_tooltipLabel)),
           ),
@@ -796,10 +802,6 @@ void main() {
         isNot(const ChartConfig(datasets: [BarDataset()])),
       );
       _expectEqual(
-        ChartLegend(onLeave: (_, _, _) {}),
-        ChartLegend(onLeave: (_, _, _) {}),
-      );
-      _expectEqual(
         ChartAnimation(onProgress: (details) {}),
         ChartAnimation(onProgress: (details) {}),
       );
@@ -807,6 +809,78 @@ void main() {
         ChartAnimation(onProgress: (details) {}),
         isNot(const ChartAnimation()),
       );
+    });
+
+    group('LegendOptions in pluginOptions', () {
+      ChartConfig config(LegendOptions legend) =>
+          ChartConfig(datasets: const [BarDataset()], pluginOptions: [legend]);
+
+      test('compare by value', () {
+        _expectEqual(
+          config(
+            LegendOptions(
+              textDirection: .rtl,
+              reverse: true,
+              maxWidth: _runtime(60),
+              labels: LegendLabelOptions(
+                boxWidth: _runtime(12),
+                textAlign: .center,
+              ),
+              title: LegendTitleOptions(text: _runtime(['T'])),
+            ),
+          ),
+          config(
+            const LegendOptions(
+              textDirection: .rtl,
+              reverse: true,
+              maxWidth: 60,
+              labels: LegendLabelOptions(boxWidth: 12, textAlign: .center),
+              title: LegendTitleOptions(text: ['T']),
+            ),
+          ),
+        );
+        for (final changed in [
+          const LegendOptions(display: false),
+          const LegendOptions(textDirection: .ltr),
+          const LegendOptions(reverse: true),
+          const LegendOptions(labels: LegendLabelOptions(padding: 8)),
+          const LegendOptions(title: LegendTitleOptions(display: true)),
+        ]) {
+          expect(config(changed), isNot(config(const LegendOptions())));
+        }
+        expect(
+          const ChartConfig(datasets: [BarDataset()]),
+          isNot(config(const LegendOptions())),
+        );
+      });
+
+      test('a new closure is a new value', () {
+        expect(
+          config(LegendOptions(onLeave: (_, _, _) {})),
+          isNot(config(LegendOptions(onLeave: (_, _, _) {}))),
+        );
+        expect(
+          config(LegendOptions(scripted: (context, options) => null)),
+          isNot(config(LegendOptions(scripted: (context, options) => null))),
+        );
+      });
+
+      test('a top-level tear-off is equal', () {
+        _expectEqual(
+          config(
+            const LegendOptions(
+              onClick: _legendClick,
+              labels: LegendLabelOptions(filter: _legendFilter),
+            ),
+          ),
+          config(
+            LegendOptions(
+              onClick: _runtime(_legendClick),
+              labels: LegendLabelOptions(filter: _runtime(_legendFilter)),
+            ),
+          ),
+        );
+      });
     });
 
     group('TooltipOptions in pluginOptions', () {
@@ -1021,16 +1095,6 @@ void main() {
           const TimeDisplayFormats(day: 'dd MMM').copyWith(hour: 'HH:mm'),
         ),
         (
-          const ChartLegend(),
-          const ChartLegend().copyWith(),
-          const ChartLegend().copyWith(reverse: true),
-        ),
-        (
-          const ChartLegend(textDirection: .rtl),
-          const ChartLegend(textDirection: .rtl).copyWith(),
-          const ChartLegend(textDirection: .rtl).copyWith(textDirection: .ltr),
-        ),
-        (
           const ChartTitle(),
           const ChartTitle().copyWith(),
           const ChartTitle().copyWith(text: ['T']),
@@ -1095,7 +1159,6 @@ void main() {
         'maintainAspectRatio',
         'aspectRatio',
         'padding',
-        'legend',
         'title',
         'subtitle',
         'filler',
@@ -1159,23 +1222,6 @@ void main() {
           'extra',
         ]);
       }
-      expect(names(const ChartLegend()), [
-        'display',
-        'position',
-        'align',
-        'reverse',
-        'labelColor',
-        'labelFont',
-        'boxWidth',
-        'boxHeight',
-        'labelPadding',
-        'usePointStyle',
-        'onClick',
-        'onHover',
-        'onLeave',
-        'textDirection',
-        'extra',
-      ]);
       expect(names(ChartAnimation.none).first, 'none');
       expect(
         ChartConfig(

@@ -299,7 +299,11 @@ class const OverflowChart({
 /// bars at the edges of the chart area, and fl_chart does not.
 ChartConfig flBars(ChartConfig config) => config.copyWith(
   maintainAspectRatio: false,
-  legend: config.legend ?? noLegend,
+  pluginOptions: [
+    if (!(config.pluginOptions?.any((o) => o is LegendOptions) ?? false))
+      noLegend,
+    ...?config.pluginOptions,
+  ],
   animation:
       config.animation ??
       const ChartAnimation(

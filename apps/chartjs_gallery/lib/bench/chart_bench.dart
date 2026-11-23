@@ -546,7 +546,7 @@ ChartBenchCase _pluginCase(
 /// 1: each plugin of `registerables` with its least work. The tooltip has
 /// no option: the chart listens to no event.
 Map<String, Object?> _leastWorkPlugins() => <String, Object?>{
-  'legend': <String, Object?>{'display': false},
+  'legend': const LegendOptions(display: false),
   'title': <String, Object?>{'display': false},
   'subtitle': <String, Object?>{'display': false},
   'colors': <String, Object?>{'enabled': false},

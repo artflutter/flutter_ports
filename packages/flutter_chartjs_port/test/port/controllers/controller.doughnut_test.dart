@@ -77,15 +77,12 @@ Object? _ringGeometry(Chart chart) => [
 ];
 
 /// `overrides.doughnut.plugins.legend`.
-Object? _legendOverrides() =>
-    jsGet(jsGet(overrides['doughnut'], 'plugins'), 'legend');
+LegendOptions _legendOverrides() =>
+    jsGet(jsGet(overrides['doughnut'], 'plugins'), 'legend')! as LegendOptions;
 
 /// `generateLabels(chart)` of `overrides.doughnut.plugins.legend.labels`.
 List<Object?> _generateLabels(Chart chart) =>
-    callDroppingExtraArgs(
-          jsGet(jsGet(_legendOverrides(), 'labels'), 'generateLabels'),
-          [chart],
-        )!
+    callDroppingExtraArgs(_legendOverrides().labels!.generateLabels, [chart])!
         as List<Object?>;
 
 /// The probe `realLegend` of the generator: the items and the hit boxes of
@@ -463,7 +460,7 @@ void main() {
       final legend = chart.legend!;
       final before = updates;
 
-      callDroppingExtraArgs(jsGet(_legendOverrides(), 'onClick'), [
+      callDroppingExtraArgs(_legendOverrides().onClick, [
         <String, Object?>{},
         LegendItem(text: ['item'], index: 1),
         legend,
@@ -494,7 +491,7 @@ void main() {
           _one(const {}, <Object?>[1.0, 2.0, 3.0]),
         );
         final legend = chart.legend!;
-        callDroppingExtraArgs(jsGet(_legendOverrides(), 'onClick'), [
+        callDroppingExtraArgs(_legendOverrides().onClick, [
           <String, Object?>{},
           LegendItem(text: ['item'], index: index),
           legend,
@@ -526,7 +523,7 @@ void main() {
             _one(const {}, <Object?>[1.0, 2.0, 3.0, 4.0]),
           );
           final legend = chart.legend!;
-          callDroppingExtraArgs(jsGet(_legendOverrides(), 'onClick'), [
+          callDroppingExtraArgs(_legendOverrides().onClick, [
             <String, Object?>{},
             LegendItem(text: ['item'], index: index),
             legend,
@@ -557,30 +554,20 @@ void main() {
 
     test('the legend functions are the same function in each read', () {
       final legend = _legendOverrides();
-      final generateLabels = jsGet(jsGet(legend, 'labels'), 'generateLabels');
-      final onClick = jsGet(legend, 'onClick');
+      final generateLabels = legend.labels!.generateLabels;
+      final onClick = legend.onClick;
       expect(generateLabels, isA<Function>());
       expect(onClick, isA<Function>());
       expect(
-        identical(
-          jsGet(jsGet(_legendOverrides(), 'labels'), 'generateLabels'),
-          generateLabels,
-        ),
+        identical(_legendOverrides().labels!.generateLabels, generateLabels),
         isTrue,
       );
-      expect(identical(jsGet(_legendOverrides(), 'onClick'), onClick), isTrue);
-      final statics = jsGet(
-        jsGet(DoughnutController.overrides, 'plugins'),
-        'legend',
-      );
-      expect(
-        identical(
-          jsGet(jsGet(statics, 'labels'), 'generateLabels'),
-          generateLabels,
-        ),
-        isTrue,
-      );
-      expect(identical(jsGet(statics, 'onClick'), onClick), isTrue);
+      expect(identical(_legendOverrides().onClick, onClick), isTrue);
+      final statics =
+          jsGet(jsGet(DoughnutController.overrides, 'plugins'), 'legend')!
+              as LegendOptions;
+      expect(identical(statics.labels!.generateLabels, generateLabels), isTrue);
+      expect(identical(statics.onClick, onClick), isTrue);
     });
   });
 }

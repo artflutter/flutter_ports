@@ -67,10 +67,10 @@ typedef ControllerDoughnutReferenceWidth = ({
 });
 
 /// The cases.
-const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
+final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   (
     name: 'default',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
@@ -89,8 +89,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -6499,7 +6499,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: "cutout '50%'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -6514,8 +6514,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -7455,7 +7455,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'cutout a number',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -7467,8 +7467,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
       },
       'options': <String, Object?>{'cutout': PixelRadius(60)},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -8042,7 +8042,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'partial rotation and circumference',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -8058,8 +8058,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
       },
       'options': <String, Object?>{'rotation': 45.0, 'circumference': 180.0},
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -9005,7 +9005,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'two datasets with weight',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -9024,8 +9024,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -10065,7 +10065,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'the step toggleDataVisibility',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -10079,8 +10079,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -13545,7 +13545,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'spacing with the default spacingMode',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -13561,8 +13561,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -14502,7 +14502,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: "spacing with spacingMode 'proportional'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -14520,8 +14520,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -15461,7 +15461,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: "spacing with spacingMode 'parallel'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -15479,8 +15479,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -16420,7 +16420,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'offset and hoverOffset with the step hover',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -16433,8 +16433,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -18046,7 +18046,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: "borderAlign 'inner'",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -18063,8 +18063,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -19025,7 +19025,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'the step reset with animateRotate',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -19046,8 +19046,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -21382,7 +21382,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'the step reset with animateScale',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -21403,8 +21403,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -23737,7 +23737,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'parsing false',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -23749,8 +23749,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -24291,7 +24291,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'labels that are arrays',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -24306,8 +24306,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -24775,7 +24775,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'parsed: object data',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -24786,14 +24786,14 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'parsed: object data with parsing false',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -24805,14 +24805,14 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: "parsed: parsing false, [1, '2', null]",
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -24824,8 +24824,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -25263,7 +25263,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'parsed: parsing false, object items',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -25278,8 +25278,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -25585,7 +25585,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'parsed: parsing false, [1, null, 2]',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -25597,8 +25597,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -26036,7 +26036,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'parsed: object items with the default key',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b'],
@@ -26050,8 +26050,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -26417,7 +26417,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'parsed: object items with a parsing key',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -26437,8 +26437,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -26879,7 +26879,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'parsed: object items with the parsing key 5',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a'],
@@ -26893,14 +26893,14 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'interfaces: two datasets with other rotation and circumference',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -26918,8 +26918,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -27881,7 +27881,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 1',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -27898,8 +27898,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -28665,7 +28665,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'interfaces: the labels of getLabelAndValue, set 2',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -28682,8 +28682,8 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         ],
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -29449,7 +29449,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'legend: items',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -29467,19 +29467,18 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{
-              'pointStyle': CirclePointStyle(),
-              'textAlign': TextAlign.left,
-              'useBorderRadius': true,
-              'borderRadius': 0.0,
-            },
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              pointStyle: CirclePointStyle(),
+              textAlign: TextAlign.left,
+              useBorderRadius: true,
+            ),
+          ),
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -30113,7 +30112,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'legend: click',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -30131,19 +30130,18 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{
-              'pointStyle': CirclePointStyle(),
-              'textAlign': TextAlign.left,
-              'useBorderRadius': true,
-              'borderRadius': 0.0,
-            },
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              pointStyle: CirclePointStyle(),
+              textAlign: TextAlign.left,
+              useBorderRadius: true,
+            ),
+          ),
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -31304,7 +31302,7 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'legend: click twice',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -31322,19 +31320,18 @@ const List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{
-              'pointStyle': CirclePointStyle(),
-              'textAlign': TextAlign.left,
-              'useBorderRadius': true,
-              'borderRadius': 0.0,
-            },
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              pointStyle: CirclePointStyle(),
+              textAlign: TextAlign.left,
+              useBorderRadius: true,
+            ),
+          ),
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{},

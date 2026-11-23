@@ -518,7 +518,7 @@ void main() {
                 ..labels = _labels())
               ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'plugins': <String, Object?>{
-                  'legend': <String, Object?>{'display': false},
+                  'legend': const LegendOptions(display: false),
                 },
               }),
           );

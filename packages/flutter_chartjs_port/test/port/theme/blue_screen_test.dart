@@ -172,13 +172,13 @@ const List<String> _pluginTexts = [
 ///
 /// The plugins: the title and the subtitle on with a text, the legend title
 /// on with a text, a tooltip `footer` callback, and
-/// `plugins.colors.enabled` from [colors]. [legendLabels] replaces the
-/// legend `labels` options. The lowered root carries the compiled [theme].
+/// `plugins.colors.enabled` from [colors]. [legendLabels] are the legend
+/// `labels` options. The lowered root carries the compiled [theme].
 Chart _chart(
   String type, {
   ChartThemeData? theme,
   bool colors = false,
-  AnyObject? legendLabels,
+  LegendLabelOptions? legendLabels,
 }) {
   final cartesian = const {'bar', 'bubble', 'line', 'scatter'}.contains(type);
   final radial = type == 'polarArea' || type == 'radar';
@@ -227,16 +227,11 @@ Chart _chart(
     datasets: [for (var d = 0; d < 2; d++) dataset(d)],
     title: const ChartTitle(display: true, text: ['Title']),
     subtitle: const ChartTitle(display: true, text: ['Subtitle']),
-    legend: ChartLegend(
-      extra: {
-        'title': const {
-          'display': true,
-          'text': ['Legend title'],
-        },
-        'labels': ?legendLabels,
-      },
-    ),
     pluginOptions: [
+      LegendOptions(
+        title: const LegendTitleOptions(display: true, text: ['Legend title']),
+        labels: legendLabels,
+      ),
       TooltipOptions(
         callbacks: TooltipCallbacks(footer: (tooltip, arg) => ['Footer']),
       ),
@@ -587,11 +582,11 @@ void main() {
           type,
           theme: _blueTheme,
           colors: true,
-          legendLabels: <String, Object?>{
-            'generateLabels': (Object? chart) => <LegendItem>[
+          legendLabels: LegendLabelOptions(
+            generateLabels: (Chart chart) => <LegendItem>[
               LegendItem(text: ['x'], datasetIndex: 0),
             ],
-          },
+          ),
         ),
       );
       final off = await _expectBlue(tester, chart, knownSingletonLeaks);

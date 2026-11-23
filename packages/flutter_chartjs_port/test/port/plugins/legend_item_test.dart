@@ -86,26 +86,26 @@ void main() {
             BarDataset(label: 'second', data: .values([2])),
           ],
           animation: ChartAnimation.none,
-          legend: ChartLegend(
-            reverse: reverse,
-            onClick: (event, item, legend) {
-              clicked = item;
-              item.hidden = true;
-            },
-            extra: {
-              'labels': {
-                'generateLabels': (Chart chart) => [a, b],
-                'filter': (LegendItem item, Object data) {
+          pluginOptions: [
+            LegendOptions(
+              reverse: reverse,
+              onClick: (event, item, legend) {
+                clicked = item;
+                item.hidden = true;
+              },
+              labels: LegendLabelOptions(
+                generateLabels: (Chart chart) => [a, b],
+                filter: (item, data) {
                   filtered.add(item);
                   return true;
                 },
-                'sort': (LegendItem x, LegendItem y, Object data) {
+                sort: (x, y, data) {
                   compared.addAll([x, y]);
                   return x.datasetIndex!.compareTo(y.datasetIndex!);
                 },
-              },
-            },
-          ),
+              ),
+            ),
+          ],
         );
         final chart = acquireChartRoot(ChartConfigLowering(config).lower());
         expect(
@@ -143,17 +143,18 @@ void main() {
         BarDataset(data: .values([1])),
       ],
       animation: ChartAnimation.none,
-      legend: ChartLegend(
-        display: false,
-        // Keep the invalid callback in extra to test runtime rejection.
-        extra: {
-          'labels': {
-            'generateLabels': (Chart chart) => [
+      pluginOptions: [
+        LegendOptions(
+          display: false,
+          // The field takes any Function: an invalid generator stops a debug
+          // build at its use.
+          labels: LegendLabelOptions(
+            generateLabels: (Chart chart) => [
               {'text': 'map'},
             ],
-          },
-        },
-      ),
+          ),
+        ),
+      ],
     );
     expect(
       () => acquireChartRoot(ChartConfigLowering(config).lower()),

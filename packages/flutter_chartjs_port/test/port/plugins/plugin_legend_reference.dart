@@ -6,9 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 34 cases, 30 widths.
 
-import 'dart:ui' show FontStyle, FontWeight, StrokeCap, StrokeJoin, TextAlign;
-
-import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the data.
@@ -53,10 +51,12 @@ typedef PluginLegendReferenceWidth = ({
 });
 
 /// The cases.
-const List<PluginLegendReferenceCase> pluginLegendReference = [
+List<PluginLegendReferenceCase> pluginLegendReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'position top (the default)',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -92,10 +92,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -1530,7 +1530,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'position bottom',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -1560,17 +1560,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': ChartPosition.bottom},
+          'legend': LegendOptions(position: ChartPosition.bottom),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 384.9970703125, 239.6],
         'scales': <String, Object?>{
@@ -3002,7 +3002,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'position left',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -3032,17 +3032,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': ChartPosition.left},
+          'legend': LegendOptions(position: ChartPosition.left),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           127.34765625,
@@ -4493,7 +4493,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'position right',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -4523,17 +4523,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': ChartPosition.right},
+          'legend': LegendOptions(position: ChartPosition.right),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 300.0, 271.59999999999997],
         'scales': <String, Object?>{
@@ -5972,7 +5972,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'position chartArea',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -6002,17 +6002,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': ChartPosition.chartArea},
+          'legend': LegendOptions(position: ChartPosition.chartArea),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -7463,7 +7463,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'align start',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -7493,17 +7493,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'align': ChartAlign.start},
+          'legend': LegendOptions(align: ChartAlign.start),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -8938,7 +8938,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'align end',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -8968,17 +8968,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'align': ChartAlign.end},
+          'legend': LegendOptions(align: ChartAlign.end),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -10413,7 +10413,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'align start at the left',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -10443,20 +10443,20 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'position': ChartPosition.left,
-            'align': ChartAlign.start,
-          },
+          'legend': LegendOptions(
+            position: ChartPosition.left,
+            align: ChartAlign.start,
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           127.34765625,
@@ -11907,7 +11907,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'align end at the right',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -11937,20 +11937,20 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'position': ChartPosition.right,
-            'align': ChartAlign.end,
-          },
+          'legend': LegendOptions(
+            position: ChartPosition.right,
+            align: ChartAlign.end,
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 300.0, 271.59999999999997],
         'scales': <String, Object?>{
@@ -13389,7 +13389,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'rtl',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -13419,17 +13419,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'rtl': true, 'align': ChartAlign.start},
+          'legend': LegendOptions(rtl: true, align: ChartAlign.start),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -14867,7 +14867,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'rtl at the left',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -14897,20 +14897,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'rtl': true,
-            'position': ChartPosition.left,
-          },
+          'legend': LegendOptions(rtl: true, position: ChartPosition.left),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           127.34765625,
@@ -16364,7 +16361,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'reverse',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -16394,17 +16391,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'reverse': true},
+          'legend': LegendOptions(reverse: true),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -17839,7 +17836,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'fullSize false',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -17869,20 +17866,20 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'position': ChartPosition.left,
-            'fullSize': false,
-          },
+          'legend': LegendOptions(
+            position: ChartPosition.left,
+            fullSize: false,
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           127.34765625,
@@ -19333,7 +19330,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'maxWidth',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -19363,20 +19360,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'position': ChartPosition.right,
-            'maxWidth': 60.0,
-          },
+          'legend': LegendOptions(position: ChartPosition.right, maxWidth: 60),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 340.0, 271.59999999999997],
         'scales': <String, Object?>{
@@ -20815,7 +20809,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'maxHeight',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -20869,17 +20863,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'maxHeight': 20.0},
+          'legend': LegendOptions(maxHeight: 20),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 20.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -24139,7 +24133,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'usePointStyle',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -24172,19 +24166,19 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{'usePointStyle': true},
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(usePointStyle: true),
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -25626,7 +25620,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'pointStyleWidth',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -25656,23 +25650,23 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{
-              'usePointStyle': true,
-              'pointStyle': RectPointStyle(),
-              'pointStyleWidth': 30.0,
-            },
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              usePointStyle: true,
+              pointStyle: RectPointStyle(),
+              pointStyleWidth: 30,
+            ),
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -27960,7 +27954,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'boxWidth and boxHeight',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -27990,19 +27984,19 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{'boxWidth': 20.0, 'boxHeight': 6.0},
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(boxWidth: 20, boxHeight: 6),
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -29438,7 +29432,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'padding',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -29468,20 +29462,20 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'position': ChartPosition.left,
-            'labels': <String, Object?>{'padding': 25.0},
-          },
+          'legend': LegendOptions(
+            position: ChartPosition.left,
+            labels: LegendLabelOptions(padding: 25),
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           127.34765625,
@@ -30934,7 +30928,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
     name: 'filter',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -30962,19 +30956,21 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{'filter': 'fn:legendFilter'},
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              filter: functions['legendFilter']! as LegendItemFilter,
+            ),
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -32367,7 +32363,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
     name: 'sort',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -32395,19 +32391,21 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{'sort': 'fn:legendSort'},
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              sort: functions['legendSort']! as LegendItemComparator,
+            ),
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -33842,7 +33840,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'textAlign',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -33872,20 +33870,20 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'position': ChartPosition.right,
-            'labels': <String, Object?>{'textAlign': TextAlign.right},
-          },
+          'legend': LegendOptions(
+            position: ChartPosition.right,
+            labels: LegendLabelOptions(textAlign: TextAlign.right),
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 300.0, 271.59999999999997],
         'scales': <String, Object?>{
@@ -35328,7 +35326,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'title with position start',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -35358,23 +35356,23 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'title': <String, Object?>{
-              'display': true,
-              'text': <String>['Legend title'],
-              'position': ChartAlign.start,
-            },
-          },
+          'legend': LegendOptions(
+            title: LegendTitleOptions(
+              display: true,
+              text: <String>['Legend title'],
+              position: ChartAlign.start,
+            ),
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -36835,7 +36833,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'title with position end at the left',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -36865,25 +36863,25 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'position': ChartPosition.left,
-            'title': <String, Object?>{
-              'display': true,
-              'text': <String>['Title'],
-              'position': ChartAlign.end,
-              'padding': EdgeInsets.all(6),
-            },
-          },
+          'legend': LegendOptions(
+            position: ChartPosition.left,
+            title: LegendTitleOptions(
+              display: true,
+              text: <String>['Title'],
+              position: ChartAlign.end,
+              padding: EdgeInsets.all(6),
+            ),
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           127.34765625,
@@ -38343,7 +38341,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'rows that wrap',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -38397,17 +38395,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{},
+          'legend': LegendOptions(),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 300.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 120.0, 284.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -41670,7 +41668,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'columns that overflow',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -41724,17 +41722,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': ChartPosition.left},
+          'legend': LegendOptions(position: ChartPosition.left),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 120.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           127.34765625,
@@ -44863,7 +44861,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'a hidden dataset',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -44899,10 +44897,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -47140,7 +47138,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
     name: 'hoverLegend with onHover and onLeave',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -47168,20 +47166,20 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'onHover': 'fn:logHover',
-            'onLeave': 'fn:logLeave',
-          },
+          'legend': LegendOptions(
+            onHover: functions['logHover']! as LegendEventHandler,
+            onLeave: functions['logLeave']! as LegendEventHandler,
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -51981,7 +51979,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'clickLegend',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -52017,10 +52015,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -55919,7 +55917,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
     name: 'clickLegend with onClick',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -55947,17 +55945,19 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'onClick': 'fn:logClick'},
+          'legend': LegendOptions(
+            onClick: functions['logClick']! as LegendEventHandler,
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{
@@ -59071,7 +59071,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'display false',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -59101,17 +59101,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'display': false},
+          'legend': LegendOptions(display: false),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -61378,7 +61378,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'useBorderRadius',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -61410,22 +61410,22 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{
-            'labels': <String, Object?>{
-              'useBorderRadius': true,
-              'borderRadius': 4.0,
-            },
-          },
+          'legend': LegendOptions(
+            labels: LegendLabelOptions(
+              useBorderRadius: true,
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+            ),
+          ),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 400.0, 271.6],
         'scales': <String, Object?>{
@@ -62839,7 +62839,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'doughnut with multiline labels',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -62860,17 +62860,17 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'colors': false,
           'decimation': false,
           'filler': false,
-          'legend': <String, Object?>{'position': ChartPosition.right},
+          'legend': LegendOptions(position: ChartPosition.right),
           'subtitle': false,
           'title': false,
           'tooltip': false,
         },
       },
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 309.3203125, 300.0],
         'scales': <String, Object?>{},
@@ -63835,7 +63835,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
   ),
   (
     name: 'full: hoverLegend with the tooltip',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['January', 'February', 'March', 'April'],
@@ -63862,10 +63862,10 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
       },
       'options': <String, Object?>{},
     },
-    options: <String, Object?>{
+    options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 384.9970703125, 271.6],
         'scales': <String, Object?>{

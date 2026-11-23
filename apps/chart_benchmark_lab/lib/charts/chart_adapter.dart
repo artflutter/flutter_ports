@@ -462,12 +462,12 @@ class const BenchmarkChart({
           ],
         },
         animation: cj.ChartAnimation.none,
-        legend: const cj.ChartLegend(display: false),
         responsive: true,
         maintainAspectRatio: false,
         // A radial scale has no radius option: the padding gives its share.
         // The tooltip and zoom plugin options (Chart.js ADR 0148).
         pluginOptions: [
+          const cj.LegendOptions(display: false),
           cj.TooltipOptions(enabled: config.tooltips),
           if (config.zooms) _chartJsZoom,
         ],

@@ -86,7 +86,6 @@ final ChartConfig _config = ChartConfig(
     color: ChartPaint.solid(_text),
     font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
   ),
-  legend: const ChartLegend(display: false),
   // ActivationMode.singleTap: the nearest point on the x axis.
   interaction: const ChartInteraction(
     mode: NearestInteractionMode(),
@@ -94,6 +93,7 @@ final ChartConfig _config = ChartConfig(
     axis: .x,
   ),
   pluginOptions: const [
+    LegendOptions(display: false),
     TooltipOptions(
       backgroundColor: ChartPaint.solid(_tooltip),
       yAlign: .bottom,

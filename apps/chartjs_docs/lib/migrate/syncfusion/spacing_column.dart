@@ -43,8 +43,7 @@ ChartConfig _config(double width, double spacing) => ChartConfig(
   maintainAspectRatio: false,
   padding: sfPadding,
   title: sfTitle('Winter olympic medals count - 2022'),
-  legend: sfLegend(const SfColumnIcon()),
-  pluginOptions: [_tooltip],
+  pluginOptions: [sfLegend(const SfColumnIcon()), _tooltip],
   plugins: [sfTooltipLook],
   scales: [sfCategoryAxis(), sfValueAxis(min: 0, max: 20, stepSize: 4)],
 );

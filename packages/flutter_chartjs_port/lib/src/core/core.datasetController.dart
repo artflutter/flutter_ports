@@ -1099,10 +1099,6 @@ class DatasetController(
   // DIVERGES(chartjs): adapt-hidden-legend-items, the built-in generator.
   Object? get nativeLegendGenerator => null;
 
-  /// The label options that [nativeLegendGenerator] reads, in its order.
-  // DIVERGES(chartjs): adapt-hidden-legend-items, the reads of the generator.
-  List<OptionKey> get nativeLegendLabelKeys => const [];
-
   /// The source of [getStyle] while a hidden legend builds its items at a read
   /// (Chart.js ADR 0099), with the count of the arcs at the mark of that build:
   /// an update can rebuild the arcs before its own mark. That build runs no

@@ -113,14 +113,13 @@ class _GraphicBarAutoUpdateState() extends State<GraphicBarAutoUpdate> {
       maintainAspectRatio: false,
       // `rebuild: false` with no transition: the bars change at once.
       animation: ChartAnimation.none,
-      legend: const ChartLegend(display: false),
       // `PointSelection(on: {GestureType.hover, GestureType.tap}, dim:
       // Dim.x)`.
       interaction: const ChartInteraction(
         mode: IndexInteractionMode(),
         intersect: false,
       ),
-      pluginOptions: [_tooltip],
+      pluginOptions: [const LegendOptions(display: false), _tooltip],
       plugins: _plugins,
       // No `mouseout`: the selection stays when the pointer leaves.
       events: const ['mousemove', 'click', 'touchstart', 'touchmove'],

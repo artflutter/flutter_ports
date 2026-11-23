@@ -36,9 +36,18 @@ import 'package:test/test.dart';
 // the test compares the value of the field. The tooltip has no
 // `defaultRoutes` and no `descriptors`: their inventory entries are the
 // named exceptions of [_tooltipExceptions] and [_tooltipRoutes].
+//
+// The legend options are one LegendOptions object (Chart.js ADR 0193), with
+// the nested LegendLabelOptions and LegendTitleOptions: each path
+// `plugins.legend.<key>` (also under the overrides of a chart type) maps to
+// the field `<key>`, and `labels.<key>` and `title.<key>` to the field of
+// the nested object. The legend has no `descriptors`, and the label and
+// title color functions are a fallback of the legend: the named exceptions
+// of [_legendExceptions].
 
 import '../../support/color_json.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/legend_option_fields.dart';
 import '../../support/scale_border.dart';
 import '../../support/tooltip_option_fields.dart';
 
@@ -135,6 +144,16 @@ Object? _field(Object? value, String key) => value is TooltipOptions
     ? (tooltipOptionFields(value).containsKey(key)
           ? tooltipOptionFields(value)[key]
           : undefined)
+    // The typed field of the legend options and of their label and title
+    // options (Chart.js ADR 0193).
+    : value is LegendOptions || value is LegendLabelOptions
+    ? (_legendFields(value)!.containsKey(key)
+          ? _legendFields(value)![key]
+          : undefined)
+    : value is LegendTitleOptions
+    ? (_legendFields(value)!.containsKey(key)
+          ? _legendFields(value)![key]
+          : undefined)
     : value is AnimationSettings
     ? _settingsFields(value)[key] ?? undefined
     : value is List<PropertyAnimation>
@@ -158,6 +177,68 @@ Object? _field(Object? value, String key) => value is TooltipOptions
         _ => undefined,
       }
     : jsGet(value, key);
+
+/// The fields of the legend options [value], of its label options or of its
+/// title options by their upstream names, or Dart `null` for another value.
+Map<String, Object?>? _legendFields(Object? value) => switch (value) {
+  final LegendOptions options => legendOptionFields(options),
+  final LegendLabelOptions labels => legendLabelOptionFields(labels),
+  final LegendTitleOptions title => legendTitleOptionFields(title),
+  _ => null,
+};
+
+/// The inventory paths of the legend that have no value in the port, each
+/// with its reason (Chart.js ADR 0193: one LegendOptions object, no
+/// `descriptors`; the color fallback is Dart code of the legend).
+const Map<String, String> _legendExceptions = {
+  'defaults plugins.legend.labels.color':
+      'the color of the chart when no options set it, a fallback of the '
+      'legend (_resolvedOptions, plugin.legend.js:661)',
+  'defaults plugins.legend.title.color':
+      'the color of the chart when no options set it, a fallback of the '
+      'legend (_resolvedOptions, plugin.legend.js:707)',
+  'descriptors plugins.legend._scriptable':
+      'no descriptors: LegendOptions.scripted stands for the scriptable '
+      'options (row adapt-legend-scripted)',
+  'descriptors plugins.legend.labels._scriptable':
+      'no descriptors: generateLabels, filter and sort are typed functions '
+      '(Chart.js ADR 0130), and LegendOptions.scripted stands for the '
+      'scriptable label options',
+};
+
+/// The problem of the inventory path [path] of the legend options under
+/// [prefix] (`plugins.legend.` of the defaults, `<type>.plugins.legend.` of
+/// the overrides), or Dart `null`: each segment is a field of its object
+/// (Chart.js ADR 0193).
+String? _legendPathProblem(String path, String prefix) {
+  final [field, ...rest] = path.substring(prefix.length).split('.');
+  final fields = legendOptionFields(const LegendOptions());
+  if (!fields.containsKey(field)) return 'no field $field of LegendOptions';
+  if (rest.isEmpty) return null;
+  final nested = switch (field) {
+    'labels' => legendLabelOptionFields(const LegendLabelOptions()),
+    'title' => legendTitleOptionFields(const LegendTitleOptions()),
+    // A field with keys of its own: a font.
+    _ => null,
+  };
+  if (nested == null) return null;
+  final key = rest.first;
+  if (!nested.containsKey(key)) return 'no field $key of $field';
+  return null;
+}
+
+/// The prefix of the legend options in the inventory path [path] of
+/// [group], or Dart `null` for a path of another object.
+String? _legendPrefix(String group, String path) {
+  if (group == 'defaults') {
+    return path.startsWith('plugins.legend.') ? 'plugins.legend.' : null;
+  }
+  if (group == 'overrides') {
+    final match = RegExp(r'^[A-Za-z]+\.plugins\.legend\.').firstMatch(path);
+    return match?[0];
+  }
+  return null;
+}
 
 /// The prefix of the inventory paths of the tooltip options.
 const String _tooltipPrefix = 'plugins.tooltip.';
@@ -511,6 +592,11 @@ Object? _read(Object? root, String path) {
 /// The keys of the object [value], or Dart `null` for another value.
 List<String>? _keysOf(Object? value) => value is TooltipOptions
     ? setTooltipOptionFields(value).keys.toList()
+    : _legendFields(value) != null
+    ? [
+        for (final MapEntry(:key, :value) in _legendFields(value)!.entries)
+          if (value != null) key,
+      ]
     : value is AnimationSettings
     ? _settingsFields(value).keys.toList()
     : value is List<PropertyAnimation>
@@ -695,6 +781,22 @@ void main() {
         final problems = <String>[];
         for (final MapEntry(key: path, :value) in paths.entries) {
           if (_tooltipExceptions.containsKey('$group $path')) continue;
+          if (_legendExceptions.containsKey('$group $path')) continue;
+          // A legend path: `plugins.legend` holds a LegendOptions, and the
+          // next segments are fields of it (Chart.js ADR 0193).
+          if (_legendPrefix(group, path) case final prefix?) {
+            final legend = _walk(
+              root,
+              prefix.substring(0, prefix.length - 1).split('.'),
+            );
+            if (legend.shape == null ||
+                legend.shape! & ShapeBits.typed != ShapeBits.pluginOptions) {
+              problems.add('$path: plugins.legend is no PluginOptions');
+            } else if (_legendPathProblem(path, prefix) case final problem?) {
+              problems.add('$path: $problem');
+            }
+            continue;
+          }
           // A tooltip path: `plugins.tooltip` holds a TooltipOptions, and
           // the next segment is a field of it (Chart.js ADR 0192).
           if (group == 'defaults' && path.startsWith(_tooltipPrefix)) {
@@ -749,6 +851,18 @@ void main() {
             'route',
           ]),
           reason: path,
+        );
+      }
+    });
+
+    test('each legend exception is an inventory path', () {
+      // No stale exception (Chart.js ADR 0193).
+      for (final entry in _legendExceptions.keys) {
+        final [group, path] = entry.split(' ');
+        expect(
+          (values[group]! as Map<String, Object?>).containsKey(path),
+          isTrue,
+          reason: entry,
         );
       }
     });
@@ -817,6 +931,7 @@ void main() {
           if (_animationType.hasMatch(path)) continue;
           if (_isInflateAuto(path, expected)) continue;
           if (_tooltipExceptions.containsKey('$name $path')) continue;
+          if (_legendExceptions.containsKey('$name $path')) continue;
           // A tooltip font: the routed value is the font of the defaults
           // merged over Chart.defaults.font (Tooltip._resolved).
           if (name == 'defaults' && _tooltipRoutes.contains(path)) {
@@ -952,9 +1067,12 @@ void main() {
             _ => null,
           };
         }
-        // The tooltip has no descriptors (Chart.js ADR 0192,
-        // [_tooltipExceptions]).
-        if (kind == 'field descriptors' && id == 'tooltip') continue;
+        // The tooltip and the legend have no descriptors (Chart.js ADRs 0192
+        // and 0193, [_tooltipExceptions] and [_legendExceptions]).
+        if (kind == 'field descriptors' &&
+            (id == 'tooltip' || id == 'legend')) {
+          continue;
+        }
         if (object == null || keys == null) continue;
         // The port has no animation option `type` (row
         // adapt-animation-option-types).
@@ -962,10 +1080,12 @@ void main() {
           for (final key in keys.cast<String>())
             if (key != 'type' || object is! AnimationOptionsScope) key,
         ];
-        // A TooltipOptions has no key order: the order of its fields is the
-        // order of its constructor, which follows the upstream defaults.
+        // A TooltipOptions and a LegendOptions have no key order: the order
+        // of their fields follows the upstream defaults.
         final actual = object is TooltipOptions
             ? tooltipOptionFields(object).keys.toList()
+            : object is LegendOptions
+            ? legendOptionFields(object).keys.toList()
             : _keysOf(object);
         if (actual == null) {
           problems.add('$file:${site['line']} not an object');
@@ -1048,6 +1168,22 @@ void main() {
         // field of it, whose Dart type takes the typed form of each recorded
         // kind (a function is `scripted`, the `false` of `animation` is
         // TooltipAnimation.off, a keyword is its enum or class).
+        // The legend options of the Map model are one LegendOptions (Chart.js
+        // ADR 0193): each key is a field of it, or of its label or title
+        // options, whose Dart type takes the typed form of each recorded kind
+        // (a function at a scriptable key is `scripted`, a number of a
+        // string is a double).
+        if (path == 'options.plugins.legend' ||
+            path.startsWith('options.plugins.legend.')) {
+          if (path != 'options.plugins.legend') {
+            final problem = _legendPathProblem(
+              path.replaceAll('[]', ''),
+              'options.plugins.legend.',
+            );
+            if (problem != null) problems.add('$path ($kind): $problem');
+          }
+          continue;
+        }
         if (_isTooltipCensusPath(path)) {
           final field = path.length == 'options.plugins.tooltip'.length
               ? null

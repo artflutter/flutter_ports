@@ -54,8 +54,10 @@ class _SfAnimationColumnState() extends State<SfAnimationColumn> {
         ],
         maintainAspectRatio: false,
         padding: sfPadding,
-        legend: const ChartLegend(display: false),
-        pluginOptions: const [TooltipOptions(enabled: false)],
+        pluginOptions: const [
+          LegendOptions(display: false),
+          TooltipOptions(enabled: false),
+        ],
         // The default animationDuration of a series.
         animation: const ChartAnimation(duration: Duration(milliseconds: 1500)),
         // The original has no tooltip.

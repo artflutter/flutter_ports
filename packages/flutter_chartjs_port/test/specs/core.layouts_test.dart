@@ -494,10 +494,11 @@ void main() {
               ])
             ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{
-                'legend': <String, Object?>{
-                  'display': true,
-                  'position': ChartPosition.left,
-                },
+                // The legend options are one object (Chart.js ADR 0193).
+                'legend': const LegendOptions(
+                  display: true,
+                  position: ChartPosition.left,
+                ),
                 'title': <String, Object?>{
                   'display': true,
                   'position': ChartPosition.bottom,

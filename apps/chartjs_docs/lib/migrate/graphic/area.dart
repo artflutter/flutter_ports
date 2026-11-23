@@ -64,12 +64,12 @@ final ChartConfig _config = ChartConfig(
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
-  legend: const ChartLegend(display: false),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
   pluginOptions: [
+    const LegendOptions(display: false),
     graphicTooltip(
       position: const FollowYPositioner(),
       title: _date,

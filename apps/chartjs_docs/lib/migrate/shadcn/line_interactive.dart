@@ -41,7 +41,6 @@ ChartConfig _config(ShadcnTip tip, int active) {
     // className="aspect-auto h-[250px] w-full"
     maintainAspectRatio: false,
     padding: const EdgeInsets.symmetric(horizontal: 12),
-    legend: shadcnNoLegend,
     // nameKey="views" and the labelFormatter of the date with the year.
     pluginOptions: [
       shadcnTooltip(
@@ -52,6 +51,7 @@ ChartConfig _config(ShadcnTip tip, int active) {
           labelFormatter: (date) => shortDate(date, year: true),
         ),
       ),
+      shadcnNoLegend,
     ],
     interaction: shadcnInteraction(),
     animation: shadcnLineAnimation,

@@ -1741,8 +1741,10 @@ void main() {
             ),
           ],
           animation: ChartAnimation.none,
-          legend: const ChartLegend(display: false),
-          pluginOptions: const [TooltipOptions(enabled: false)],
+          pluginOptions: const [
+            LegendOptions(display: false),
+            TooltipOptions(enabled: false),
+          ],
           responsive: false,
           events: const [],
         );

@@ -8,14 +8,14 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/drop_extra_args.dart';
-import '../../support/legend_item.dart';
+import '../../support/legend_option_fields.dart';
 import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
@@ -130,9 +130,23 @@ Object? _observeLegend(Chart chart) {
               <String, Object?>{'width': size.width, 'height': size.height},
           ],
     'log': [...?_logs[chart]],
-    // The own keys of the resolved label options: the box keeps the
-    // `LegendOptions` of its resolved view (Chart.js ADR 0182).
-    'labels': _withoutFunctions(plainValue(jsGet(box.options.view, 'labels'))),
+    // The label options that the options set: the box keeps one
+    // `LegendOptions` with the color of the chart (Chart.js ADR 0193). The
+    // upstream observation has the own keys of the resolved label options.
+    'labels': _withoutFunctions(
+      plainValue(<String, Object?>{
+        for (final MapEntry(:key, :value) in legendLabelOptionFields(
+          box.options.labels!,
+        ).entries)
+          if (value != null)
+            key: switch (value) {
+              Function() => '<fn>',
+              // The corners of a number of upstream: its number.
+              final BorderRadius corners => corners.topLeft.x,
+              _ => value,
+            },
+      }),
+    ),
   };
 }
 
@@ -219,7 +233,7 @@ Object? _parseItemColors(Object? legend) => switch (legend) {
 
 /// The reference cases with the axis ids of [_undefinedAxisIds].
 final List<ScaleChartCase> _reference = _mapObservations(
-  pluginLegendReference,
+  pluginLegendReference(_functions),
   _undefinedAxisIds,
 );
 
@@ -263,8 +277,9 @@ const List<String> _upstreamDefaultsKeys = [
 /// `new Legend(config)` through the class value.
 Object? _construct(List<Object?> args) => jsConstruct(Legend.jsClass, args);
 
-/// A line chart with two datasets and the legend options [legendOptions].
-// Keep the malformed legend inputs and labels that these cases exercise.
+/// A raw line chart with two datasets and the legend options
+/// [legendOptions]: a [LegendOptions], or `false`.
+// Keep the malformed labels that these cases exercise.
 ChartConfigurationScope _mapLine(Object? legendOptions) =>
     ChartConfigurationScope()
       ..type = 'line'
@@ -283,66 +298,35 @@ ChartConfigurationScope _mapLine(Object? legendOptions) =>
           ..jsWrite('legend', legendOptions)));
 
 /// The typed config of a line chart with two datasets and the legend
-/// [legend].
-ChartConfig _config([ChartLegend? legend, Map<String, Object?>? extra]) =>
+/// options [legend].
+ChartConfig _config([LegendOptions? legend, Map<String, Object?>? extra]) =>
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: const [
         LineDataset(label: 'one', data: .values([1, 2])),
         LineDataset(label: 'two', data: .values([2, 1])),
       ],
-      legend: legend,
+      pluginOptions: [?legend],
       extra: extra,
     );
 
-/// A line chart with two datasets and the legend [legend].
-Chart _line([ChartLegend? legend]) =>
+/// A line chart with two datasets and the legend options [legend].
+Chart _line([LegendOptions? legend]) =>
     acquireChartRoot(ChartConfigLowering(_config(legend)).lower());
 
-/// The resolved legend options of a box that a test builds: the values of
-/// `LegendOptions.of({})` for each option that the test does not give.
+/// The legend options of a box that a test builds: the options of `{}` for
+/// each option that the test does not give.
 LegendOptions _legendOptions({
   bool display = false,
   LayoutPosition? position,
   LegendEventHandler? onClick,
 }) => LegendOptions(
-  align: null,
   display: display,
   fullSize: false,
-  labels: LegendLabelOptions(
-    borderRadius: null,
-    boxHeight: null,
-    boxWidth: null,
-    color: null,
-    filter: null,
-    font: toFont(null),
-    generateLabels: null,
-    padding: double.nan,
-    pointStyle: null,
-    pointStyleWidth: null,
-    sort: null,
-    textAlign: null,
-    useBorderRadius: false,
-    usePointStyle: false,
-  ),
-  maxHeight: null,
-  maxWidth: null,
   onClick: onClick,
-  onHover: null,
-  onLeave: null,
   position: position,
   reverse: false,
   rtl: false,
-  textDirection: null,
-  title: LegendTitleOptions(
-    color: null,
-    display: false,
-    font: toFont(null),
-    padding: paddingOption(null),
-    position: null,
-    text: const [],
-  ),
-  weight: null,
 );
 
 /// The label font of the case 'fit leaves the label font in the context'.
@@ -363,7 +347,7 @@ void main() {
 
   test('the reference has the unit cases of Chart.js ADR 0041', () {
     expect(
-      [for (final c in pluginLegendReference) c.name],
+      [for (final c in pluginLegendReference(_functions)) c.name],
       [
         'position top (the default)',
         'position bottom',
@@ -422,7 +406,10 @@ void main() {
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
       final config =
-          copyReference(pluginLegendReference.first.config, _functions)!
+          copyReference(
+                pluginLegendReference(_functions).first.config,
+                _functions,
+              )!
               as AnyObject;
       config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
@@ -436,17 +423,17 @@ void main() {
     });
 
     test('new Legend(config) keeps the chart, the options and the ctx', () {
-      // Map options: the test pins the read of a JS config object.
+      // A Map config: the test pins the read of a JS config object. The
+      // options are one LegendOptions (Chart.js ADR 0193).
       final chart = _FakeChart();
-      final options = <String, Object?>{'display': true};
+      const options = LegendOptions(display: true);
       final constructed = _construct([
         <String, Object?>{'chart': chart, 'options': options},
       ]);
       expect(constructed, isA<Legend>());
       final value = constructed! as Legend;
       expect(value.chart, same(chart));
-      expect(value.options.display, isTrue);
-      expect(value.options.view, same(options));
+      expect(value.options, same(options));
       expect(value.ctx, isNull);
     });
 
@@ -460,13 +447,27 @@ void main() {
 
     test('the plugin has the hooks and the keys of the upstream object', () {
       // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
-      // object are its hooks, and `id`, `defaults` and `descriptors` its
-      // fields. `_element` is no field: the class is `Legend.jsClass`.
+      // object are its hooks, and `id` and `defaults` its fields. `_element`
+      // is no field: the class is `Legend.jsClass`. The defaults are one
+      // LegendOptions with a field for each key of upstream but the `null`
+      // of `onHover` and `onLeave`, and the legend has no descriptors
+      // (Chart.js ADR 0193).
       expect(pluginHookNames(legend), _upstreamHooks);
       expect(legend.id, 'legend');
-      expect(legend.descriptors, isNotNull);
+      expect(legend.descriptors, isNull);
       expect(legend.defaultRoutes, isNull);
-      expect(jsObjectKeys(legend.defaults), _upstreamDefaultsKeys);
+      expect(
+        [
+          for (final MapEntry(:key, :value) in legendOptionFields(
+            legend.defaults! as LegendOptions,
+          ).entries)
+            if (value != null) key,
+        ],
+        [
+          for (final key in _upstreamDefaultsKeys)
+            if (key != 'onHover' && key != 'onLeave') key,
+        ],
+      );
     });
   });
 
@@ -632,7 +633,9 @@ void main() {
       // no restore: the layout of the next box measures in this font, also
       // when it does not set its own (the cases of scale.time.tests.js that
       // wait for the legend).
-      final chart = _line(const ChartLegend(labelFont: _arial17));
+      final chart = _line(
+        const LegendOptions(labels: LegendLabelOptions(font: _arial17)),
+      );
       final ctx = chart.ctx!
         ..font = const TextStyle(fontFamily: 'sans-serif', fontSize: 10);
       (chart.legend! as Legend).fit();
@@ -647,9 +650,9 @@ void main() {
       // probe review-empty-array-text.mjs (review-empty-array-text.out):
       // emptyArrayLeft throws `TypeError: Reduce of empty array with no
       // initial value`.
-      final config = _mapLine(<String, Object?>{
-        'position': ChartPosition.left,
-      });
+      final config = _mapLine(
+        const LegendOptions(position: ChartPosition.left),
+      );
       ((jsGet(config['data'], 'datasets')! as List<Object?>)[0]!
               as JsObjectFace)['label'] =
           <Object?>[];
@@ -668,14 +671,12 @@ void main() {
     }) {
       final root = ChartConfigLowering(
         _config(
-          ChartLegend(
-            extra: {
-              'labels': {
-                'generateLabels': (Chart chart) => <LegendItem>[
-                  LegendItem(text: ['item'], datasetIndex: 0),
-                ],
-              },
-            },
+          LegendOptions(
+            labels: LegendLabelOptions(
+              generateLabels: (Chart chart) => <LegendItem>[
+                LegendItem(text: ['item'], datasetIndex: 0),
+              ],
+            ),
           ),
           {'color': ?color},
         ),
@@ -781,9 +782,13 @@ void main() {
       testWidgets('a generator of $name stops a debug build', (tester) async {
         expect(
           () => acquireChartRoot(
-            _mapLine(<String, Object?>{
-              'labels': <String, Object?>{'generateLabels': generator},
-            }),
+            _mapLine(
+              LegendOptions(
+                labels: LegendLabelOptions(
+                  generateLabels: generator as Function,
+                ),
+              ),
+            ),
             <String, Object?>{
               'canvas': <String, Object?>{'width': 400, 'height': 300},
             },
@@ -802,14 +807,12 @@ void main() {
       final b = LegendItem(text: ['b']);
       final c = LegendItem(text: ['c']);
       final chart = _line(
-        ChartLegend(
+        LegendOptions(
           display: false,
-          extra: {
-            'labels': {
-              'generateLabels': (Chart chart) => [a, b, c],
-              'sort': (LegendItem x, LegendItem y, Object? data) => 0,
-            },
-          },
+          labels: LegendLabelOptions(
+            generateLabels: (Chart chart) => [a, b, c],
+            sort: (x, y, data) => 0,
+          ),
         ),
       );
       expect(chart.legend!.legendItems, [same(a), same(b), same(c)]);
@@ -834,7 +837,7 @@ void main() {
       );
     });
 
-    test('an options value that is not a Map throws a TypeError', () {
+    test('an options value that is not a LegendOptions throws a TypeError', () {
       // Upstream stores the value (probe: newOptions5 gives 5).
       expect(
         () => _construct([
@@ -858,9 +861,9 @@ void main() {
   group('adapt-legend-number-options', () {
     /// The edges of the legend and its hit boxes for the label options
     /// [labels] on a canvas of 400 x 300.
-    List<Object?> layout(Map<String, Object?> labels, [String? position]) {
+    List<Object?> layout(LegendLabelOptions labels) {
       final chart = acquireChartRoot(
-        _mapLine(<String, Object?>{'position': ?position, 'labels': labels}),
+        _mapLine(LegendOptions(labels: labels)),
         <String, Object?>{
           'canvas': <String, Object?>{'width': 400, 'height': 300},
         },
@@ -869,31 +872,17 @@ void main() {
       return [
         [box.left, box.top, box.right, box.bottom, box.width, box.height],
         plainValue(box.legendHitBoxes),
+        [for (final hitBox in box.legendHitBoxes) hitBox.top],
       ];
     }
 
-    testWidgets('a string padding lays out as its number', (tester) async {
-      // Upstream (probe legend_string_options_probe.mjs, stringPadding):
-      // the `+` joins the string. The legend height is 150, the hit box tops
-      // are the string '-12101210010' and the lefts are NaN. The port gives
-      // the layout of `padding: 10` (numberPadding: the height 32, the tops
-      // 10, the lefts 129.65 and 205.67).
-      final number = layout(<String, Object?>{'padding': 10});
+    testWidgets('a padding is a number', (tester) async {
+      // Upstream (probe legend_string_options_probe.mjs, numberPadding): the
+      // height 32, the tops 10, the lefts 129.65 and 205.67. A string padding
+      // has no form: the field is a double (Chart.js ADR 0193).
+      final number = layout(const LegendLabelOptions(padding: 10));
       expect(number[0], [0, 0, 400, 32, 400, 32]);
-      expect(
-        layout(<String, Object?>{'padding': '10'}),
-        legendObservationMatcher(number),
-      );
-    });
-
-    testWidgets('a string boxWidth lays out as its number', (tester) async {
-      // Upstream (stringBoxWidth): the hit box widths are the strings
-      // '20620.021484375' and '20618.673828125'. The port adds 20.
-      final number = layout(<String, Object?>{'boxWidth': 20});
-      expect(
-        layout(<String, Object?>{'boxWidth': '20'}),
-        legendObservationMatcher(number),
-      );
+      expect(number[2], [10, 10]);
     });
   });
 
@@ -930,10 +919,10 @@ void main() {
     /// 'start'`, `labels.padding: 0`, with the callbacks of [log] (the
     /// probe `leftBox` and `leftHitBoxes`).
     Chart leftChart(List<String> log) => _line(
-      ChartLegend(
+      LegendOptions(
         position: ChartPosition.left,
         align: ChartAlign.start,
-        labelPadding: 0,
+        labels: const LegendLabelOptions(padding: 0),
         onClick: (e, item, l) => log.add('click ${jsToString(item.text)}'),
         onHover: (e, item, l) => log.add('hover ${jsToString(item.text)}'),
         onLeave: (e, item, l) => log.add('leave ${jsToString(item.text)}'),
@@ -1005,7 +994,7 @@ void main() {
       // run in the next frame, in the order of their events.
       final log = <String>[];
       final chart = _line(
-        ChartLegend(
+        LegendOptions(
           onHover: (e, item, l) =>
               log.add('hover ${e.type} ${jsToString(item.text)}'),
           onLeave: (e, item, l) =>

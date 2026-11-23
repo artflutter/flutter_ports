@@ -41,7 +41,7 @@ ChartConfig _line(List<double> data, {ChartShadow? shadow}) => ChartConfig(
   ],
   scales: _hiddenAxes,
   animation: ChartAnimation.none,
-  legend: const ChartLegend(display: false),
+  pluginOptions: const [LegendOptions(display: false)],
 );
 
 Map<String, Object?> _rawLine({required bool shadow}) => <String, Object?>{

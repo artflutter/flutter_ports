@@ -20,6 +20,12 @@ const legendStyle = ChartConfig(
       borderColor: .constant(.solid(red)),
     ),
   ],
-  legend: ChartLegend(position: .bottom, align: .start, usePointStyle: true),
+  pluginOptions: [
+    LegendOptions(
+      position: ChartPosition.bottom,
+      align: .start,
+      labels: LegendLabelOptions(usePointStyle: true),
+    ),
+  ],
 );
 // #enddocregion sample

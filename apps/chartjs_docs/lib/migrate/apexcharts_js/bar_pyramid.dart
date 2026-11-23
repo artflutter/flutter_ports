@@ -47,8 +47,10 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 0, 16, 0),
   title: apexJsTitle('Mauritius population pyramid 2011'),
-  legend: apexJsLegend(square: true),
-  pluginOptions: [apexJsBarTooltip(value: _percent, horizontal: true)],
+  pluginOptions: [
+    apexJsLegend(square: true),
+    apexJsBarTooltip(value: _percent, horizontal: true),
+  ],
   interaction: const ChartInteraction(
     mode: NearestInteractionMode(),
     intersect: true,

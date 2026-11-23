@@ -99,7 +99,6 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: apexPadding,
-  legend: const ChartLegend(display: false),
   // tooltip.x.format: 'dd MMM yyyy'.
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
@@ -107,7 +106,11 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   ),
   animation: apexAnimation,
   plugins: apexZoomPlugins([_annotationPlugin, apexHover, apexTooltipLook]),
-  pluginOptions: [apexTooltip(), zoom.options],
+  pluginOptions: [
+    const LegendOptions(display: false),
+    apexTooltip(),
+    zoom.options,
+  ],
   scales: [
     // xaxis: {type: 'datetime', min: 1 Mar 2012, tickAmount: 6}: at most 7
     // labels at the starts of the days, the months or the years.

@@ -1246,6 +1246,43 @@ function tooltipOptionsHaveFunctions(value) {
   );
 }
 
+/**
+ * The legend options of an input config (`options.plugins.legend`): the
+ * LegendOptions object of the port (Chart.js ADR 0193). A function of the
+ * generator (onClick, onHover, onLeave, generateLabels, filter, sort) comes
+ * from the `functions` table of the Dart test file. A function at a
+ * scriptable key (a label `color`) goes into the one function `scripted`
+ * (row adapt-legend-scripted).
+ */
+class NativeLegendOptions { constructor(value) { this.value = value; } }
+
+/** The function type of each function option of the legend. */
+const LEGEND_FUNCTION_TYPES = {
+  onClick: 'LegendEventHandler',
+  onHover: 'LegendEventHandler',
+  onLeave: 'LegendEventHandler',
+};
+
+/** The function type of each function option of the legend labels. */
+const LEGEND_LABEL_FUNCTION_TYPES = {
+  generateLabels: 'LegendLabelsGenerator',
+  filter: 'LegendItemFilter',
+  sort: 'LegendItemComparator',
+};
+
+/** The name of the function [x] of the generator, or null. */
+function functionName(x) {
+  if (typeof x === 'function') return x.dartName ?? null;
+  if (typeof x === 'string' && x.startsWith('fn:')) return x.slice(3);
+  return null;
+}
+
+/** Whether the legend options [value] hold a function of the generator. */
+function legendOptionsHaveFunctions(value) {
+  const has = (o) => Object.values(o ?? {}).some((x) => functionName(x) !== null);
+  return has(value) || has(value.labels) || has(value.title);
+}
+
 /** Native padding literal (row adapt-edge-insets-padding). */
 export class DartPadding {
   constructor(value) { this.value = value; }
@@ -1586,6 +1623,9 @@ const POSITIONER_CLASSES = {
 function keyedValue(k, value, owner) {
   if (k === 'tooltip' && owner === 'plugins' && value && value.constructor === Object) {
     return new NativeTooltipOptions(value);
+  }
+  if (k === 'legend' && owner === 'plugins' && value && value.constructor === Object) {
+    return new NativeLegendOptions(value);
   }
   if (k === 'callbacks' && value && value.constructor === Object &&
       Object.values(value).every(v => typeof v === 'function' || typeof v === 'string' && v.startsWith('fn:'))) {
@@ -1937,6 +1977,91 @@ function dart(v, state, owner) {
     if (tooltipOptionsHaveFunctions(v.value)) return write();
     return constLeaves ? nativeConstant(write) : write();
   }
+  if (v instanceof NativeLegendOptions) {
+    state.tooltipValues = true;
+    // The functions at scriptable keys, as `[object field, key, name]`.
+    const scripted = [];
+    const nested = (cls, owner, o, types) => {
+      const fields = [];
+      let functions = false;
+      for (const k of Object.keys(o)) {
+        const x = o[k];
+        const name = functionName(x);
+        if (name !== null && types[k]) {
+          state.tooltipCallbacks = true;
+          functions = true;
+          fields.push(`${k}: functions[${dart(name, state)}]! as ${types[k]}`);
+        } else if (name !== null) {
+          scripted.push([owner, k, name]);
+        } else if (k === 'color') {
+          fields.push(`color: ${dart(new NativeTooltipPaint(x), state)}`);
+        } else if (k === 'borderRadius') {
+          // `borderRadius || style.borderRadius` (plugin.legend.js:697): a
+          // falsy number is no field.
+          if (typeof x === 'number' && !x) continue;
+          state.borderRadii = true;
+          fields.push(`borderRadius: ${nativeConstant(() => dartBorderRadius(x))}`);
+        } else if (k === 'padding' && owner === 'title') {
+          fields.push(`padding: ${dart(new DartPadding(x), state)}`);
+        } else if (k === 'text' && owner === 'title') {
+          fields.push(`text: ${dart(keyedValue(k, x, 'title'), state, k)}`);
+        } else if (typeof x === 'number') {
+          fields.push(`${k}: ${nativeNumber(x)}`);
+        } else if (x && x.constructor === Object && k !== 'font') {
+          throw new Error(`A legend ${owner} option object with no field form: ${k}`);
+        } else {
+          fields.push(`${k}: ${dart(keyedValue(k, x, owner), state, k)}`);
+        }
+      }
+      const literal = `${cls}(${fields.join(', ')})`;
+      return !functions && constLeaves ? nativeConstant(() => literal) : literal;
+    };
+    const write = () => {
+      scripted.length = 0;
+      const fields = Object.keys(v.value).map((k) => {
+        const x = v.value[k];
+        if (k === 'labels') return `labels: ${nested('LegendLabelOptions', 'labels', x, LEGEND_LABEL_FUNCTION_TYPES)}`;
+        if (k === 'title') return `title: ${nested('LegendTitleOptions', 'title', x, {})}`;
+        const name = functionName(x);
+        if (name !== null) {
+          const fnType = LEGEND_FUNCTION_TYPES[k];
+          if (!fnType) throw new Error(`A scriptable legend option of no field form: ${k}`);
+          state.tooltipCallbacks = true;
+          return `${k}: functions[${dart(name, state)}]! as ${fnType}`;
+        }
+        if (k === 'events') return `events: <String>[${x.map((e) => dart(e, state)).join(', ')}]`;
+        if (typeof x === 'number') return `${k}: ${nativeNumber(x)}`;
+        if (x && x.constructor === Object && k !== 'position') {
+          throw new Error(`A legend option object with no field form: ${k}`);
+        }
+        return `${k}: ${dart(keyedValue(k, x, 'legend'), state, k)}`;
+      });
+      if (scripted.length) {
+        // The scriptable options of the generator as the one function
+        // `scripted`: it calls each function with the chart context and the
+        // options, as the resolver of upstream calls it with the context and
+        // the sub-resolver (row adapt-legend-scripted).
+        state.tooltipCallbacks = true;
+        const byOwner = {};
+        for (const [owner, key, name] of scripted) {
+          if (owner !== 'labels' || key !== 'color') {
+            throw new Error(`A scriptable legend option of no scripted form: ${owner}.${key}`);
+          }
+          (byOwner[owner] ??= []).push(
+            `${key}: (functions[${dart(name, state)}]! as Object? Function(Object?, Object?))(context, options)! as ChartPaint`,
+          );
+        }
+        fields.push(
+          `scripted: (context, options) => LegendOptions(${Object.entries(byOwner)
+            .map(([owner, f]) => `${owner}: LegendLabelOptions(${f.join(', ')})`)
+            .join(', ')})`,
+        );
+      }
+      return `LegendOptions(${fields.join(', ')})`;
+    };
+    if (legendOptionsHaveFunctions(v.value)) return write();
+    return constLeaves ? nativeConstant(write) : write();
+  }
   if (v instanceof NativeTooltipPaint) {
     state.tooltipValues = true;
     if (v.value == null || v.value === false) return nativeConstant(() => 'ChartPaint.unchanged()');
@@ -2123,6 +2248,7 @@ function hasNumberFormat(v, owner) {
   if (v instanceof DartFill) return v.split;
   if (v instanceof DartNumberFormat || v instanceof NativeTooltipStyle || v instanceof NativeTooltipCallbacks) return true;
   if (v instanceof NativeTooltipOptions) return tooltipOptionsHaveFunctions(v.value);
+  if (v instanceof NativeLegendOptions) return legendOptionsHaveFunctions(v.value);
   if (Array.isArray(v)) return v.some((x) => hasNumberFormat(x, owner));
   if (v === null || typeof v !== 'object' || v.constructor !== Object) return false;
   return Object.keys(v).some((k) => hasNumberFormat(keyedValue(k, v[k], owner), k));
@@ -2261,8 +2387,17 @@ ${widths}];
  * [state.undefined] becomes true when the literal has the sentinel
  * `undefined`.
  */
-export function dartLiteral(v, state = {undefined: false}) {
-  return dart(v, state);
+export function dartLiteral(v, state = {undefined: false}, leaves = false) {
+  // [leaves]: the literal goes into a list that is not const (the cases of a
+  // function of the test functions): each leaf that can be const takes
+  // const.
+  const before = constLeaves;
+  constLeaves = leaves;
+  try {
+    return dart(v, state);
+  } finally {
+    constLeaves = before;
+  }
 }
 
 /**

@@ -190,12 +190,14 @@ typedef ChartHostInputReferenceWidth = ({
 });
 
 /// The cases.
-const List<ChartHostInputReferenceCase> chartHostInputReference = [
+List<ChartHostInputReferenceCase> chartHostInputReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'a touch tap on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -210,19 +212,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -291,7 +293,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a tap outside the chart after a tap on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -306,19 +308,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -420,7 +422,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a tap on an empty point of the chart area after a tap on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -435,19 +437,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -561,7 +563,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'events mousemove only: a touch tap on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -575,21 +577,21 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
         ],
       },
       'options': <String, Object?>{
-        'events': <Object?>['mousemove'],
+        'events': const <Object?>['mousemove'],
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -651,7 +653,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a tap on legend item 1, then a tap outside',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -666,19 +668,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 219.0, 16.0],
@@ -768,7 +770,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'events with mouseup: a tap on legend item 1',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -782,7 +784,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
         ],
       },
       'options': <String, Object?>{
-        'events': <Object?>[
+        'events': const <Object?>[
           'mousemove',
           'mouseout',
           'click',
@@ -791,19 +793,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
           'mouseup',
         ],
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 219.0, 16.0],
@@ -867,7 +869,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'events with pointerup: a tap on legend item 1',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -881,7 +883,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
         ],
       },
       'options': <String, Object?>{
-        'events': <Object?>[
+        'events': const <Object?>[
           'mousemove',
           'mouseout',
           'click',
@@ -890,19 +892,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
           'pointerup',
         ],
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 219.0, 16.0],
@@ -966,7 +968,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'events with pointerout: a touch tap on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -980,7 +982,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
         ],
       },
       'options': <String, Object?>{
-        'events': <Object?>[
+        'events': const <Object?>[
           'mousemove',
           'mouseout',
           'click',
@@ -989,19 +991,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
           'pointerout',
         ],
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -1071,7 +1073,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'events touchstart and pointerout: a touch tap on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -1085,21 +1087,21 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
         ],
       },
       'options': <String, Object?>{
-        'events': <Object?>['touchstart', 'pointerout'],
+        'events': const <Object?>['touchstart', 'pointerout'],
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -1161,7 +1163,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'events with touchend: a touch tap on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -1175,7 +1177,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
         ],
       },
       'options': <String, Object?>{
-        'events': <Object?>[
+        'events': const <Object?>[
           'mousemove',
           'mouseout',
           'click',
@@ -1184,19 +1186,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
           'touchend',
         ],
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -1266,7 +1268,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'events touchstart and touchend: a touch tap on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -1280,21 +1282,21 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
         ],
       },
       'options': <String, Object?>{
-        'events': <Object?>['touchstart', 'touchend'],
+        'events': const <Object?>['touchstart', 'touchend'],
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -1360,7 +1362,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a long press on a point, then on legend item 1',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -1375,19 +1377,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -1535,7 +1537,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'events mousemove, mouseout and click: a long press on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -1549,21 +1551,21 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
         ],
       },
       'options': <String, Object?>{
-        'events': <Object?>['mousemove', 'mouseout', 'click'],
+        'events': const <Object?>['mousemove', 'mouseout', 'click'],
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -1640,7 +1642,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'mouse: a move onto legend item 1 and an exit in one frame',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -1655,19 +1657,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['mouseAdd', 700.0, 300.0],
@@ -1708,7 +1710,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'mouse: an exit and a move back onto legend item 1 in one frame',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -1723,19 +1725,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['mouseAdd', 700.0, 300.0],
@@ -1798,7 +1800,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'mouse: legend item 2, an exit and legend item 1 in one frame',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -1813,19 +1815,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['mouseAdd', 700.0, 300.0],
@@ -1873,7 +1875,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'mouse: a removal of the pointer inside legend item 1',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -1888,19 +1890,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['mouseAdd', 700.0, 300.0],
@@ -1955,7 +1957,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a tap on a point with a move of 10 px inside the slop',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -1970,19 +1972,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -2070,7 +2072,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a touch held on legend item 1 with a move to the same position',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -2085,19 +2087,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 219.0, 16.0],
@@ -2169,7 +2171,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'events with pointerup, pointerout: a drag from E to legend item 1',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -2183,7 +2185,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
         ],
       },
       'options': <String, Object?>{
-        'events': <Object?>[
+        'events': const <Object?>[
           'mousemove',
           'mouseout',
           'click',
@@ -2193,19 +2195,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
           'pointerout',
         ],
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 268.0, 258.0],
@@ -2291,7 +2293,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a stylus tap on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -2306,19 +2308,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0, 'stylus'],
@@ -2387,7 +2389,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'events mousemove only: a stylus tap on a point',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -2401,21 +2403,21 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
         ],
       },
       'options': <String, Object?>{
-        'events': <Object?>['mousemove'],
+        'events': const <Object?>['mousemove'],
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0, 'stylus'],
@@ -2477,7 +2479,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a stylus drag of 20 px from a point stays a tap',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -2492,19 +2494,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0, 'stylus'],
@@ -2588,7 +2590,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a stylus drag of 30 px from a point cancels',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -2603,19 +2605,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0, 'stylus'],
@@ -2689,7 +2691,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a tap on a point, then a stylus tap from legend item 1 to outside',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -2704,19 +2706,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -2848,7 +2850,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a tap on a point, then a stylus tap outside with a move of 10 px',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -2863,19 +2865,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -2994,7 +2996,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a long press on a point, then a drag past the slop',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -3009,19 +3011,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 183.0],
@@ -3118,7 +3120,7 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
     name: 'a touch drag on the chart with the default events',
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -3133,19 +3135,19 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'onHover': 'fn:legendHover',
-            'onLeave': 'fn:legendLeave',
-            'onClick': 'fn:legendClick',
-          },
+          'legend': LegendOptions(
+            onHover: functions['legendHover']! as LegendEventHandler,
+            onLeave: functions['legendLeave']! as LegendEventHandler,
+            onClick: functions['legendClick']! as LegendEventHandler,
+          ),
         },
       },
-      'plugins': <Object?>[
+      'plugins': const <Object?>[
         <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
       ],
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
           <Object?>['touchDown', 189.0, 223.0],

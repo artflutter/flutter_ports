@@ -36,11 +36,12 @@ Map<String, Object?> fixture() => <String, Object?>{
         'title': false,
         'tooltip': false,
         'filler': false,
-        'legend': <String, Object?>{
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'legend': const LegendOptions(
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-          'position': ChartPosition.left,
-          'maxWidth': double.infinity,
-        },
+          position: ChartPosition.left,
+          maxWidth: double.infinity,
+        ),
       },
     },
   },

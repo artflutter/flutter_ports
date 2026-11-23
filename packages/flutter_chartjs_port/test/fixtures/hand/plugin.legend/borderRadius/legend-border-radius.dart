@@ -41,20 +41,18 @@ Map<String, Object?> fixture() => <String, Object?>{
         'title': false,
         'tooltip': false,
         'filler': false,
-        'legend': <String, Object?>{
-          'labels': <String, Object?>{
-            'generateLabels': (Object? chart) {
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'legend': LegendOptions(
+          labels: LegendLabelOptions(
+            generateLabels: (Chart chart) {
               // Chart.defaults.plugins.legend.labels.generateLabels(chart)
+              final legendDefaults =
+                  jsGet(jsGet(Chart.defaults, 'plugins'), 'legend')!
+                      as LegendOptions;
               final generateLabels =
-                  jsGet(
-                        jsGet(
-                          jsGet(jsGet(Chart.defaults, 'plugins'), 'legend'),
-                          'labels',
-                        ),
-                        'generateLabels',
-                      )!
+                  legendDefaults.labels!.generateLabels!
                       as LegendLabelsGenerator;
-              final items = generateLabels(chart! as Chart);
+              final items = generateLabels(chart);
 
               for (final item in items) {
                 item.borderRadius = const BorderRadius.all(Radius.circular(5));
@@ -62,8 +60,8 @@ Map<String, Object?> fixture() => <String, Object?>{
 
               return items;
             },
-          },
-        },
+          ),
+        ),
       },
     },
   },

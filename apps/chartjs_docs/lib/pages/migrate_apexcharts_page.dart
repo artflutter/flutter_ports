@@ -93,7 +93,7 @@ DocPageContent apexChartsMigrationPage() => migrationPage(
       DocText('a tick `callback` and a tooltip `label` callback'),
     ),
     (Text('tooltip.x.format'), DocText('`tooltipFormat` of `TimeAxis`')),
-    (Text('legend'), DocText('`legend: ChartLegend(...)`')),
+    (Text('legend'), DocText('`LegendOptions(...)` in `pluginOptions`')),
     (
       Text('dataLabels, annotations'),
       DocText('an inline plugin that draws after the datasets'),

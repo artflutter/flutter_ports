@@ -22,7 +22,6 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 0, 10, 0),
   title: apexJsTitle('Stepline Chart'),
-  legend: const ChartLegend(display: false),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
@@ -30,7 +29,11 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   animation: apexAnimation,
   // chart.zoom is on by default: the zoom toolbar of the kit.
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
-  pluginOptions: [apexTooltip(), zoom.options],
+  pluginOptions: [
+    const LegendOptions(display: false),
+    apexTooltip(),
+    zoom.options,
+  ],
   scales: [
     apexJsCategoryAxis(),
     apexJsValueAxis(min: 10, max: 70, stepSize: 10),

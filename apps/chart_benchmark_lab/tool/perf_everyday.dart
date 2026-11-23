@@ -194,7 +194,9 @@ cj.ChartConfig _config({
             cj.LinearAxis(.y, stacked: cj.StackMode.on),
           ]
         : null,
-    legend: cj.ChartLegend(display: count <= 60 || xy || datasets > 1),
+    pluginOptions: [
+      cj.LegendOptions(display: count <= 60 || xy || datasets > 1),
+    ],
     animation: animated ? null : cj.ChartAnimation.none,
     responsive: true,
     maintainAspectRatio: false,

@@ -29,13 +29,13 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   ],
   aspectRatio: 16 / 9,
   padding: const EdgeInsets.all(5),
-  legend: shadcnNoLegend,
   // <ChartTooltipContent hideLabel hideIndicator />
   pluginOptions: [
     shadcnTooltip(
       tip,
       const ShadcnTooltipContent(hideLabel: true, hideIndicator: true),
     ),
+    shadcnNoLegend,
   ],
   interaction: shadcnInteraction(),
   animation: shadcnBarAnimation,

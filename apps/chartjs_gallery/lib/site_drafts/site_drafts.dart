@@ -1055,7 +1055,7 @@ class _LiveChartState() extends State<_LiveChart> {
     final chartConfig = ChartConfig(
       maintainAspectRatio: false,
       labels: const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      legend: const ChartLegend(display: false),
+      pluginOptions: const [LegendOptions(display: false)],
       datasets: [
         switch (_type) {
           1 => BarDataset(

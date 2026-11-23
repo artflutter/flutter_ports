@@ -1095,6 +1095,17 @@ scriptable form of the options is the one function `scripted`, `(context, option
 that gives tooltip options gives a typed config; the generated data and the hand fixtures hold the object in their
 raw configs, and no helper turns a Map into options.
 
+The legend options are one immutable object, `LegendOptions` (Chart.js ADR 0193, rows
+`adapt-native-plugin-options` and `adapt-legend-scripted`): a `PluginOptions` with a nullable field for each
+option, with the nested `LegendLabelOptions` (`labels`) and `LegendTitleOptions` (`title`), in
+`ChartConfig.pluginOptions` of a typed config or in `options.plugins.legend` of a raw config, where a Map stops a
+debug build (`false` turns the legend off). `ChartLegend`, `ChartConfig.legend` and the scope kinds
+`LegendOptions`, `LegendLabelOptions` and `LegendTitleOptions` are gone. The label and title `color` that no
+options set is the `color` of the chart, which the legend gives in `beforeUpdate`. The scriptable form of the
+options is the one function `scripted`, `(context, options) => LegendOptions(...)` with the chart context, once
+for each update. A data fixture with legend options has a hand port. The rules of the tooltip options for tests
+apply.
+
 A tooltip item is the native extensible class `TooltipItem` of `lib/src/types/tooltip_item.dart` (row
 `adapt-native-tooltip-item`). It is immutable: `datasetIndex` and
 `dataIndex` are `int`, `label` is the `List<String>` of the lines of the label, `formattedValue` is a `String`,

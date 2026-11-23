@@ -37,8 +37,10 @@ final ChartConfig _config = ChartConfig(
     position: .bottom,
     color: const Color(0xFF444444),
   ),
-  legend: const ChartLegend(display: false),
-  pluginOptions: [apexJsBarTooltip(value: _percent)],
+  pluginOptions: [
+    const LegendOptions(display: false),
+    apexJsBarTooltip(value: _percent),
+  ],
   interaction: const ChartInteraction(
     mode: NearestInteractionMode(),
     intersect: true,

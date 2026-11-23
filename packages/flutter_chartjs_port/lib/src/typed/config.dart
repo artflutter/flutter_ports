@@ -93,9 +93,6 @@ final class const ChartConfig({
   /// The space around the chart: `options.layout.padding`.
   final EdgeInsets? padding,
 
-  /// The legend: `options.plugins.legend`.
-  final ChartLegend? legend,
-
   /// The title: `options.plugins.title`.
   final ChartTitle? title,
 
@@ -157,14 +154,17 @@ final class const ChartConfig({
   final List<String>? events,
 
   /// The options of the plugins as objects: each goes to
-  /// `options.plugins.<pluginId>` (Chart.js ADRs 0148 and 0192), for
-  /// example the [TooltipOptions] of the tooltip and the options of an
-  /// add-on plugin. A plugin and its options come apart: a plugin that
-  /// `Chart.register` adds for all charts takes the options of each chart
-  /// here.
+  /// `options.plugins.<pluginId>` (Chart.js ADRs 0148, 0192 and 0193), for
+  /// example the [LegendOptions] of the legend, the [TooltipOptions] of the
+  /// tooltip and the options of an add-on plugin. A plugin and its options
+  /// come apart: a plugin that `Chart.register` adds for all charts takes
+  /// the options of each chart here.
   ///
   /// ```dart
-  /// pluginOptions: const [TooltipOptions(mode: IndexInteractionMode())],
+  /// pluginOptions: const [
+  ///   LegendOptions(position: ChartPosition.bottom),
+  ///   TooltipOptions(mode: IndexInteractionMode()),
+  /// ],
   /// ```
   ///
   /// `==` compares the options one by one with `==`.
@@ -223,7 +223,6 @@ final class const ChartConfig({
     bool? maintainAspectRatio,
     double? aspectRatio,
     EdgeInsets? padding,
-    ChartLegend? legend,
     ChartTitle? title,
     ChartTitle? subtitle,
     ChartFiller? filler,
@@ -248,7 +247,6 @@ final class const ChartConfig({
     maintainAspectRatio: maintainAspectRatio ?? this.maintainAspectRatio,
     aspectRatio: aspectRatio ?? this.aspectRatio,
     padding: padding ?? this.padding,
-    legend: legend ?? this.legend,
     title: title ?? this.title,
     subtitle: subtitle ?? this.subtitle,
     filler: filler ?? this.filler,
@@ -284,7 +282,6 @@ final class const ChartConfig({
     ('maintainAspectRatio', maintainAspectRatio),
     ('aspectRatio', aspectRatio),
     ('padding', padding),
-    ('legend', legend),
     ('title', title),
     ('subtitle', subtitle),
     ('filler', filler),

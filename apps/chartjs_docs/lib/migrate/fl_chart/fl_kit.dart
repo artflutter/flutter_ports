@@ -261,7 +261,7 @@ Color lerpStops(List<Color> colors, List<double> stops, double t) {
   return colors.last;
 }
 
-const noLegend = ChartLegend(display: false);
+const noLegend = LegendOptions(display: false);
 
 const List<Plugin<Object?>> noPlugins = [];
 
@@ -271,7 +271,11 @@ const List<Plugin<Object?>> noPlugins = [];
 /// pans or zooms passes `clip: true`.
 ChartConfig fills(ChartConfig config, {bool clip = false}) => config.copyWith(
   maintainAspectRatio: false,
-  legend: config.legend ?? noLegend,
+  pluginOptions: [
+    if (!(config.pluginOptions?.any((o) => o is LegendOptions) ?? false))
+      noLegend,
+    ...?config.pluginOptions,
+  ],
   elements: config.elements ?? _touchRadius,
   extra: clip
       ? config.extra

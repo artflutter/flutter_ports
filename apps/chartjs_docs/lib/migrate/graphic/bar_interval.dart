@@ -48,7 +48,7 @@ final ChartConfig _config = ChartConfig(
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
-  legend: const ChartLegend(display: false),
+  pluginOptions: const [LegendOptions(display: false)],
   // The demo has no selection.
   events: const [],
 );

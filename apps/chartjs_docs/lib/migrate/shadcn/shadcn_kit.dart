@@ -289,22 +289,30 @@ ChartInteraction shadcnInteraction({bool horizontal = false}) =>
 /// The legend of `ChartLegendContent`: under the chart, an 8 px square of
 /// 2 px corners before each name, 16 px between the items. A tap does
 /// nothing, as in shadcn/ui.
-final ChartLegend shadcnLegend = ChartLegend(
-  position: .bottom,
-  boxWidth: 8,
-  boxHeight: 8,
-  labelColor: const .solid(Shadcn.foreground),
-  labelFont: shadcnTextXs,
-  labelPadding: 16,
-  onClick: (event, item, legend) {},
-  extra: const {
-    'labels': {'useBorderRadius': true, 'borderRadius': 2},
-  },
+const LegendOptions shadcnLegend = LegendOptions(
+  position: ChartPosition.bottom,
+  onClick: _shadcnLegendClick,
+  labels: LegendLabelOptions(
+    boxWidth: 8,
+    boxHeight: 8,
+    color: .solid(Shadcn.foreground),
+    font: shadcnTextXs,
+    padding: 16,
+    useBorderRadius: true,
+    borderRadius: BorderRadius.all(Radius.circular(2)),
+  ),
 );
+
+/// A tap on a legend item of [shadcnLegend]: nothing.
+void _shadcnLegendClick(
+  ChartEvent event,
+  LegendItem item,
+  LegendElement legend,
+) {}
 
 /// The no-tooltip-of-Chart.js setting with no legend: the replicas draw the
 /// tooltip with Flutter widgets.
-const ChartLegend shadcnNoLegend = ChartLegend(display: false);
+const LegendOptions shadcnNoLegend = LegendOptions(display: false);
 
 /// The look of an indicator of `ChartTooltipContent`.
 enum ShadcnIndicator() {

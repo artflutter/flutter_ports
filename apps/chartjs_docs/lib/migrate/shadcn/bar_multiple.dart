@@ -31,10 +31,10 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   ],
   aspectRatio: 16 / 9,
   padding: const EdgeInsets.all(5),
-  legend: shadcnNoLegend,
   // <ChartTooltipContent indicator="dashed" />
   pluginOptions: [
     shadcnTooltip(tip, const ShadcnTooltipContent(indicator: .dashed)),
+    shadcnNoLegend,
   ],
   interaction: shadcnInteraction(),
   animation: shadcnBarAnimation,

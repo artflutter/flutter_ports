@@ -17,7 +17,7 @@ Chart _acquireChart(ZoomPluginOptions options) {
       datasets: [
         ScatterDataset(data: .points([DataPoint(0, 0), DataPoint(100, 100)])),
       ],
-      legend: const ChartLegend(display: false),
+      pluginOptions: const [LegendOptions(display: false)],
       scales: const [
         LinearAxis(.x, min: 0, max: 100),
         LinearAxis(.y, min: 0, max: 100),

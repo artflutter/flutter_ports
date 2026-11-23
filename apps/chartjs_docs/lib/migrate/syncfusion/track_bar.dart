@@ -25,8 +25,8 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   padding: sfPadding,
   title: sfTitle('Working hours of employees'),
-  legend: const ChartLegend(display: false),
   pluginOptions: [
+    const LegendOptions(display: false),
     sfTooltip(
       text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}',
     ),

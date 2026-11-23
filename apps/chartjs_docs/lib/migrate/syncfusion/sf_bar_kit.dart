@@ -455,15 +455,16 @@ final class const SfBarIcon() extends PathPointStyle {
 
 /// `Legend(isVisible: true)`: the series names under the title, with the
 /// icon of the series type.
-ChartLegend sfLegend(PointStyle icon, {bool reverse = false}) => ChartLegend(
-  reverse: reverse,
-  usePointStyle: true,
-  labelColor: const .solid(Sf.text),
-  labelFont: const TextStyle(fontSize: 13, letterSpacing: 0.4),
-  extra: {
-    'labels': {'pointStyle': icon},
-  },
-);
+LegendOptions sfLegend(PointStyle icon, {bool reverse = false}) =>
+    LegendOptions(
+      reverse: reverse,
+      labels: LegendLabelOptions(
+        usePointStyle: true,
+        color: const .solid(Sf.text),
+        font: const TextStyle(fontSize: 13, letterSpacing: 0.4),
+        pointStyle: icon,
+      ),
+    );
 
 /// One setting of the property panel of a demo: `CustomDirectionalButtons`
 /// from 0 to 1 in steps of 0.1.

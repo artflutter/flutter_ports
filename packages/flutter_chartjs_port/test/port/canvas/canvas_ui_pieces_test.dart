@@ -1185,9 +1185,9 @@ void main() {
               ),
               const LinearAxis(.y, min: 0, max: 100, display: ScaleDisplay.off),
             ],
-            legend: legend
-                ? const ChartLegend(position: ChartPosition.right)
-                : null,
+            pluginOptions: [
+              if (legend) const LegendOptions(position: ChartPosition.right),
+            ],
             disabledPlugins: [
               if (!legend) const PluginOff<LegendPlugin>(),
               const PluginOff<TitlePlugin>(),

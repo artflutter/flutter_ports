@@ -3645,7 +3645,7 @@ void main() {
           'animation': false,
           'maintainAspectRatio': false,
           'plugins': <String, Object?>{
-            'legend': <String, Object?>{'display': false},
+            'legend': const LegendOptions(display: false),
           },
         }));
       final chartA = Chart(a, config());

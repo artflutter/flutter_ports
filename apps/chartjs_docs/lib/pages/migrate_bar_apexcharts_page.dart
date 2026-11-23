@@ -59,7 +59,7 @@ DocPageContent apexChartsBarMigrationPage() => migrationPage(
       Text('dataLabels'),
       DocText('an inline plugin that draws after the datasets'),
     ),
-    (Text('legend'), DocText('`legend: ChartLegend(...)`')),
+    (Text('legend'), DocText('`LegendOptions(...)` in `pluginOptions`')),
     (
       Text('tooltip'),
       DocText(

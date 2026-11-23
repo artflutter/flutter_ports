@@ -446,7 +446,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
       'padding': const EdgeInsets.only(bottom: 3, left: 3, right: 13, top: 3),
     },
     'plugins': <String, Object?>{
-      'legend': <String, Object?>{'display': false},
+      'legend': const LegendOptions(display: false),
       'tooltip': const TooltipOptions(
         callbacks: TooltipCallbacks(label: _tooltipLabel, title: _tooltipTitle),
       ),

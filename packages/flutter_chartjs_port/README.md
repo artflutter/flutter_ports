@@ -320,10 +320,6 @@ ChartConfig(
   labels: labels,
   datasets: datasets,
   padding: const EdgeInsets.all(8),
-  legend: const ChartLegend(
-    position: .bottom,
-    labelFont: TextStyle(fontSize: 12),
-  ),
   title: const ChartTitle(display: true, text: ['Votes']),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
@@ -335,6 +331,10 @@ ChartConfig(
   ),
   elements: const ChartElements(bar: BarElementStyle(borderRadius: 4)),
   pluginOptions: const [
+    LegendOptions(
+      position: ChartPosition.bottom,
+      labels: LegendLabelOptions(font: TextStyle(fontSize: 12)),
+    ),
     TooltipOptions(
       backgroundColor: .solid(Colors.black87),
       cornerRadius: BorderRadius.all(Radius.circular(4)),
@@ -343,11 +343,14 @@ ChartConfig(
 )
 ```
 
-The tooltip options are one `TooltipOptions` object in `pluginOptions`, as the options of an add-on
-plugin: each Chart.js tooltip option is a field. `ChartConfig ==` compares it with `==`, so a new
-closure in it (a callback or `scripted`) gives a chart update; give a tear-off of a function or a
-method. `scripted` gives the options that depend on the tooltip context:
-`scripted: (context, options) => TooltipOptions(backgroundColor: ...)`.
+The legend and the tooltip options are one `LegendOptions` and one `TooltipOptions` object in
+`pluginOptions`, as the options of an add-on plugin: each Chart.js option is a field, and the
+legend `labels` and `title` are a `LegendLabelOptions` and a `LegendTitleOptions`.
+`ChartConfig ==` compares them with `==`, so a new closure in them (a callback or `scripted`)
+gives a chart update; give a tear-off of a function or a method. `scripted` gives the options that
+depend on the context: `scripted: (context, options) => TooltipOptions(backgroundColor: ...)` with
+the tooltip context, and `LegendOptions(scripted: ...)` with the chart context, once for each
+update.
 
 `subtitle` takes a `ChartTitle` too, `filler` sets the filler plugin, and
 `animation: ChartAnimation.none` turns the animations off. `indexAxis: const YAxis()` gives a
@@ -409,8 +412,10 @@ class _VotesPageState() extends State<VotesPage> {
           ),
         ],
         onClick: _onClick,
-        legend: ChartLegend(onClick: _onLegendClick),
-        pluginOptions: [TooltipOptions(callbacks: TooltipCallbacks(label: _label))],
+        pluginOptions: [
+          LegendOptions(onClick: _onLegendClick),
+          TooltipOptions(callbacks: TooltipCallbacks(label: _label)),
+        ],
       ),
     );
   }

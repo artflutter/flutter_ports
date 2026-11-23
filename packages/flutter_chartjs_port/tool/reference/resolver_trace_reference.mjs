@@ -879,14 +879,22 @@ const build = referenceBuild();
 if (build.measured !== 0) {
   throw new Error(`The cases measured ${build.measured} texts. Hide each text.`);
 }
-const state = {undefined: false};
-const body = cases
-  .map(
-    (c) =>
-      `  (name: ${dartLiteral(c.name, state)}, setup: ${dartLiteral(c.setup, state)}, ` +
-      `config: ${dartLiteral(c.config, state)}, expected: ${dartLiteral(c.expected, state)}),\n`,
-  )
-  .join('');
+const writeBody = (state, leaves) =>
+  cases
+    .map(
+      (c) =>
+        `  (name: ${dartLiteral(c.name, state, leaves)}, setup: ${dartLiteral(c.setup, state, leaves)}, ` +
+        `config: ${dartLiteral(c.config, state, leaves)}, expected: ${dartLiteral(c.expected, state, leaves)}),\n`,
+    )
+    .join('');
+let state = {undefined: false};
+let body = writeBody(state, false);
+// A function of the legend options reads the functions of the test: the cases
+// are a function of them, with const leaves (Chart.js ADR 0193).
+if (state.tooltipCallbacks) {
+  state = {undefined: false};
+  body = writeBody(state, true);
+}
 const generator = relative(PACKAGE_ROOT, fileURLToPath(pathToFileURL(process.argv[1])));
 const out = `// Original code, not ported from Chart.js: resolver trace reference data.
 
@@ -894,7 +902,7 @@ const out = `// Original code, not ported from Chart.js: resolver trace referenc
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // a build of Chart.js v${build.version} at the commit
 // ${build.commit}. ${cases.length} cases.
-${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.undefined || state.arcEnums || state.positions || state.borderSkips || state.steppedLines || state.cubicModes || state.pointStyles || state.radiusLengths || state.graceLengths || state.fillTargets || state.scaleEnums || state.stackModes ? '\n' : ''}${state.undefined || state.arcEnums || state.positions || state.borderSkips || state.steppedLines || state.cubicModes || state.pointStyles || state.radiusLengths || state.graceLengths || state.fillTargets || state.scaleEnums || state.stackModes ? "import 'package:flutter_chartjs_port/chartjs_core.dart';\n" : ''}
+${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.undefined || state.arcEnums || state.positions || state.borderSkips || state.steppedLines || state.cubicModes || state.pointStyles || state.radiusLengths || state.graceLengths || state.fillTargets || state.scaleEnums || state.stackModes || state.tooltipValues ? '\n' : ''}${state.undefined || state.arcEnums || state.positions || state.borderSkips || state.steppedLines || state.cubicModes || state.pointStyles || state.radiusLengths || state.graceLengths || state.fillTargets || state.scaleEnums || state.stackModes || state.tooltipValues ? "import 'package:flutter_chartjs_port/chartjs_core.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String resolverTraceReferenceNode = '${process.version}';
 
@@ -932,8 +940,8 @@ typedef ResolverTraceReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The cases.
-const List<ResolverTraceReferenceCase> resolverTraceReference = [
+/// The cases${state.tooltipCallbacks ? '. A function of the legend options of a config reads the\n/// table [functions] of the test (Chart.js ADR 0193)' : ''}.
+${state.tooltipCallbacks ? 'List<ResolverTraceReferenceCase> resolverTraceReference(\n  Map<String, Object?> functions,\n) =>' : 'const List<ResolverTraceReferenceCase> resolverTraceReference ='} [
 ${body}];
 `;
 writeFileSync(OUT, out);

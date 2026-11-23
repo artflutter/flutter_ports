@@ -14,6 +14,7 @@ import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/font_record.dart';
 import '../../support/keyword_enum_json.dart';
+import '../../support/legend_option_fields.dart';
 import '../../support/length_json.dart';
 import '../../support/light_theme.dart';
 import '../../support/mode_json.dart';
@@ -73,23 +74,31 @@ String _jsonRaw(Object? value) => switch (value) {
 /// Whether [value] is an object of a compiled theme: a Map, or a typed
 /// scope with its face (Chart.js ADR 0054 §5).
 /// The [TooltipOptions] of `plugins.tooltip` is an object too: its keys are
-/// its fields that it sets (Chart.js ADR 0192, [setTooltipOptionFields]).
+/// its fields that it sets (Chart.js ADR 0192, [setTooltipOptionFields]),
+/// and so are the [LegendOptions] of `plugins.legend` and its label and
+/// title options (Chart.js ADR 0193, [setLegendOptionFields]).
 bool _isObject(Object? value) =>
     value is Map<String, Object?> ||
     value is JsObjectFace ||
-    value is TooltipOptions;
+    value is TooltipOptions ||
+    isLegendOptionObject(value);
 
 /// The own keys of the object [value] in the `Object.keys` order: for a
-/// [TooltipOptions], the fields that it sets in the order of upstream.
+/// [TooltipOptions] or a legend option object, the fields that it sets in
+/// the order of upstream.
 List<String> _keys(Object? value) => value is TooltipOptions
     ? setTooltipOptionFields(value).keys.toList()
+    : isLegendOptionObject(value)
+    ? setLegendOptionFields(value!).keys.toList()
     : jsObjectKeys(value);
 
 /// The value of [key] in the object [value]: the typed field of a
-/// [TooltipOptions] ([undefined] for a field that it does not set), else
-/// the read by name.
+/// [TooltipOptions] or of a legend option object ([undefined] for a field
+/// that it does not set), else the read by name.
 Object? _get(Object? value, String key) => value is TooltipOptions
     ? setTooltipOptionFields(value)[key] ?? undefined
+    : isLegendOptionObject(value)
+    ? setLegendOptionFields(value!)[key] ?? undefined
     : jsGet(value, key);
 
 /// [value] as plain Dart values for a compare with a Map literal: an
@@ -1234,9 +1243,10 @@ void main() {
       final nodes = _nodes(compiled).toList();
       expect(nodes.length, greaterThan(10));
       for (final (path, node) in nodes) {
-        // The TooltipOptions of plugins.tooltip is an immutable object
-        // (Chart.js ADR 0192): it has no write to freeze.
-        if (node is TooltipOptions) continue;
+        // The TooltipOptions of plugins.tooltip and the LegendOptions of
+        // plugins.legend are immutable objects (Chart.js ADRs 0192 and 0193):
+        // they have no write to freeze.
+        if (node is TooltipOptions || isLegendOptionObject(node)) continue;
         expect(node, isA<JsFreezable>(), reason: path);
         expect((node as JsFreezable).isFrozen, isTrue, reason: path);
       }

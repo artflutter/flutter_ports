@@ -47,12 +47,15 @@ typedef ResolverTraceReferenceCase = ({
   Map<String, Object?> expected,
 });
 
-/// The cases.
-const List<ResolverTraceReferenceCase> resolverTraceReference = [
+/// The cases. A function of the legend options of a config reads the
+/// table [functions] of the test (Chart.js ADR 0193).
+List<ResolverTraceReferenceCase> resolverTraceReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'levels: a scriptable option on each scope level',
     setup: 'defBorderWidth',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -84,7 +87,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'rotation': 'fn:optionRotation',
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -1943,7 +1946,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'indexable: line arrays',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
@@ -1970,7 +1973,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -2154,7 +2157,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'indexable: bar arrays',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -2180,7 +2183,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -2272,7 +2275,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'hover: prefixes and a hover option that reads its second argument',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -2298,7 +2301,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -2577,7 +2580,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'object: bar borderWidth with a scriptable key',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -2606,7 +2609,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -2772,7 +2775,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'object: arc borderRadius with a scriptable key',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -2792,7 +2795,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'plugins': <String, Object?>{'legend': false, 'tooltip': false},
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -3030,7 +3033,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'array of objects: indexable bar borderWidth and a chart option',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -3063,7 +3066,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         ],
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -3240,7 +3243,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'fallback: a string _fallback of elements.bar',
     setup: 'fallbackString',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -3267,7 +3270,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'radiusFallback': <String, Object?>{'right': 6.0},
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -3359,7 +3362,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'fallback: _fallback true of elements.bar',
     setup: 'fallbackTrue',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -3385,7 +3388,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -3477,7 +3480,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'fallback: a counted _fallback function of elements.bar',
     setup: 'fallbackFunction',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -3504,7 +3507,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'radiusFallback': <String, Object?>{'right': 6.0},
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -3608,7 +3611,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'descriptors: user _scriptable and _indexable of elements.point',
     setup: 'userDescriptors',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -3635,7 +3638,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -5723,7 +5726,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'recursion: a scriptable option that reads itself',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -5748,7 +5751,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -5790,7 +5793,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'write: a scriptable option that writes ctx.parsed',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -5816,7 +5819,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -6703,7 +6706,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'write: a scriptable option writes radius through the sub-resolver',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
@@ -6728,7 +6731,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -7154,7 +7157,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'defaults: a new key of defaults.elements.point during an update',
     setup: 'extraKey',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -7179,7 +7182,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -7563,7 +7566,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'resolveNamed: duplicate names and slot names',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -7588,7 +7591,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -7850,7 +7853,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'animation: default',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -7875,7 +7878,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'animation': <String, Object?>{'duration': 1000.0},
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -8863,7 +8866,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'animation: scriptable delay',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -8891,7 +8894,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -10009,7 +10012,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'animation: scriptable duration',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -10034,7 +10037,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'animation': <String, Object?>{'duration': 'fn:animDuration'},
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -11152,7 +11155,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'animation: hide and show',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -11177,7 +11180,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'animation': <String, Object?>{'duration': 1000.0},
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -12199,7 +12202,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'animation: false',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -12224,7 +12227,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'animation': false,
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -12402,7 +12405,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'animation: a scriptable entry of animations',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -12430,7 +12433,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -13260,7 +13263,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'animation: a properties override',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -13292,7 +13295,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -13976,7 +13979,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'animation: a counted _fallback function of animation',
     setup: 'animationFallback',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -14001,7 +14004,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'animation': <String, Object?>{'duration': 1000.0},
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -14728,7 +14731,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
     name:
         'animation: a scriptable data option deletes defaults.animation.easing',
     setup: 'deleteEasing',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -14754,7 +14757,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'animation': <String, Object?>{'duration': 1000.0},
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -15740,7 +15743,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'plugin: an inline plugin writes the dataset colors in beforeLayout',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -15767,7 +15770,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         <String, Object?>{'id': 'writer', 'beforeLayout': 'fn:writeColors'},
       ],
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -15859,7 +15862,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'write: a scriptable option writes the Map of another dataset',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -15887,7 +15890,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -16331,7 +16334,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'options: a write of plugins.legend.position through chart.options',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -16343,7 +16346,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{'display': false},
+          'legend': LegendOptions(display: false),
           'tooltip': false,
         },
         'scales': <String, Object?>{
@@ -16358,7 +16361,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -16829,7 +16832,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'defaults: Chart.defaults.borderColor changes between two updates',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -16841,7 +16844,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{'display': false},
+          'legend': LegendOptions(display: false),
           'tooltip': false,
         },
         'scales': <String, Object?>{
@@ -16856,7 +16859,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -17162,7 +17165,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'scale: a scriptable grid lineWidth with a context for each tick',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -17187,7 +17190,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -17561,7 +17564,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
     setup: null,
     config: <String, Object?>{
       'type': 'line',
-      'data': <String, Object?>{
+      'data': const <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
         'datasets': <Object?>[
           <String, Object?>{
@@ -17571,13 +17574,24 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': <String, Object?>{
-            'display': false,
-            'labels': <String, Object?>{'color': 'fn:legendColor'},
-          },
+          'legend': LegendOptions(
+            display: false,
+            labels: const LegendLabelOptions(),
+            scripted: (context, options) => LegendOptions(
+              labels: LegendLabelOptions(
+                color:
+                    (functions['legendColor']!
+                            as Object? Function(Object?, Object?))(
+                          context,
+                          options,
+                        )!
+                        as ChartPaint,
+              ),
+            ),
+          ),
           'tooltip': false,
         },
-        'scales': <String, Object?>{
+        'scales': const <String, Object?>{
           'x': <String, Object?>{
             'display': ScaleDisplay.off,
             'ticks': <String, Object?>{'display': false},
@@ -17589,7 +17603,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -17929,7 +17943,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'hit: a string pointRadius and the mode point',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -17954,7 +17968,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -18194,7 +18208,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'write: a hover option writes radius in the active mode',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
@@ -18219,7 +18233,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -18955,7 +18969,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'scale: a user scale class as the value scale',
     setup: 'userScale',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -18980,7 +18994,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -19294,7 +19308,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'element: a user element class as the bar data element',
     setup: 'userBar',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c'],
@@ -19318,7 +19332,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],
@@ -19416,7 +19430,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
   (
     name: 'defaults: a delete of defaults.elements.point.rotation',
     setup: null,
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -19440,7 +19454,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         },
       },
     },
-    expected: <String, Object?>{
+    expected: const <String, Object?>{
       'steps': <Object?>[
         <String, Object?>{
           'do': <Object?>['init'],

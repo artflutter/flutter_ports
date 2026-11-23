@@ -135,8 +135,10 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
       LinearAxis(.y, min: 0, max: 110, grid: grid, ticks: ticks),
     ],
     animation: ChartAnimation.none,
-    legend: const ChartLegend(display: false),
-    pluginOptions: const [TooltipOptions(enabled: false)],
+    pluginOptions: const [
+      LegendOptions(display: false),
+      TooltipOptions(enabled: false),
+    ],
     responsive: false,
     maintainAspectRatio: false,
     padding: EdgeInsets.zero,

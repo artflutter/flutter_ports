@@ -120,7 +120,7 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
     ),
     (
       Text('Legend'),
-      DocText('`legend: ChartLegend(...)`, a `PointStyle` for the icon'),
+      DocText('`LegendOptions(...)`, a `PointStyle` for the icon'),
     ),
     (
       Text('TooltipBehavior'),

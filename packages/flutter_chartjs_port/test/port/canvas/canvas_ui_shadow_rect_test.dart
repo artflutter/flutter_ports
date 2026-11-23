@@ -644,7 +644,7 @@ void main() {
         LinearAxis(.y, min: 0, max: 5, display: ScaleDisplay.off),
       ],
       animation: ChartAnimation.none,
-      legend: const ChartLegend(display: false),
+      pluginOptions: const [LegendOptions(display: false)],
     );
 
     Chart chartOf(WidgetTester tester) => Chart.getChart(

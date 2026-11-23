@@ -13,6 +13,7 @@ import 'package:test/test.dart';
 // dart:io reads the manifest and the snapshot, so the web legs
 // (`dart test -p chrome`) cannot compile this file.
 import '../../support/color_json.dart';
+import '../../support/legend_option_fields.dart';
 import '../../support/light_theme.dart';
 import '../../support/scale_border.dart';
 import '../../support/tooltip_option_fields.dart';
@@ -200,6 +201,11 @@ Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
   // ADR 0192).
   if (value is TooltipOptions) {
     return _leaves(setTooltipOptionFields(value), prefix);
+  }
+  // The fields that the LegendOptions of plugins.legend sets, also of its
+  // labels and its title (Chart.js ADR 0193).
+  if (isLegendOptionObject(value)) {
+    return _leaves(setLegendOptionFields(value!), prefix);
   }
   if (!_isObject(value)) return {prefix: value};
   return {

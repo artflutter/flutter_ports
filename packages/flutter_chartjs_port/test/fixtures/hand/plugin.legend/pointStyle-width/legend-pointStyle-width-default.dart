@@ -115,10 +115,11 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'plugins': <String, Object?>{
-        'legend': <String, Object?>{
-          'display': true,
-          'labels': <String, Object?>{'usePointStyle': true},
-        },
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'legend': const LegendOptions(
+          display: true,
+          labels: LegendLabelOptions(usePointStyle: true),
+        ),
       },
       'scales': <String, Object?>{
         // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

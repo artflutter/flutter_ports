@@ -19,10 +19,9 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 30, 16, 0),
-  legend: apexJsLegend(square: true),
   // tooltip: {shared: true, intersect: false}: one row for each series of
   // the hovered year.
-  pluginOptions: [apexTooltip(horizontal: true)],
+  pluginOptions: [apexJsLegend(square: true), apexTooltip(horizontal: true)],
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,

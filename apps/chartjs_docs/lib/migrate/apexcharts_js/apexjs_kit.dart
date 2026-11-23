@@ -47,19 +47,21 @@ ChartTitle apexJsTitle(
 
 /// `legend`: 12 px names under the plot, with a circle before the name of a
 /// line and a square before the name of a bar series.
-ChartLegend apexJsLegend({
+LegendOptions apexJsLegend({
   ChartPosition position = .bottom,
   ChartAlign align = .center,
   bool square = false,
-}) => ChartLegend(
+}) => LegendOptions(
   position: position,
   align: align,
-  boxWidth: square ? 12 : 8,
-  boxHeight: square ? 12 : 8,
-  usePointStyle: !square,
-  labelColor: const .solid(Apex.text),
-  labelFont: const TextStyle(fontSize: 12),
-  labelPadding: 8,
+  labels: LegendLabelOptions(
+    boxWidth: square ? 12 : 8,
+    boxHeight: square ? 12 : 8,
+    usePointStyle: !square,
+    color: const .solid(Apex.text),
+    font: const TextStyle(fontSize: 12),
+    padding: 8,
+  ),
 );
 
 /// The category axis of ApexCharts.js. Under a line or a column chart, it

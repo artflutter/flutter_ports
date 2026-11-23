@@ -35,7 +35,6 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   padding: sfPadding,
   title: sfTitle('Population of various countries'),
-  legend: const ChartLegend(display: false),
   // TooltipBehavior(enable: true): the series name, a marker and the point.
   // The tooltip takes the front column under the pointer.
   pluginOptions: [
@@ -45,6 +44,7 @@ final ChartConfig _config = ChartConfig(
       filter: (item, index, items, data) => index == 0,
       text: (item) => '${item.label.join(' ')} : ${sfCompact(sfValue(item))}',
     ),
+    const LegendOptions(display: false),
   ],
   plugins: [sfTooltipLook],
   scales: [

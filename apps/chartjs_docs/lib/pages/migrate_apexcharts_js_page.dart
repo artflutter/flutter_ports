@@ -151,7 +151,7 @@ DocPageContent apexJsMigrationPage() => migrationPage(
     ),
     (
       Text('legend: {position, horizontalAlign}'),
-      DocText('`legend: ChartLegend(position: ..., align: ...)`'),
+      DocText('`LegendOptions(position: ..., align: ...)`'),
     ),
     (
       Text('tooltip: {shared: true}'),
@@ -193,7 +193,7 @@ DocPageContent apexJsMigrationPage() => migrationPage(
         ),
         DocText(
           'ApexCharts.js shows no legend for one series. The replica sets '
-          '`ChartLegend(display: false)`.',
+          '`LegendOptions(display: false)`.',
         ),
       ],
       replica: (_) => const ApexJsLineBasic(),
@@ -214,7 +214,7 @@ DocPageContent apexJsMigrationPage() => migrationPage(
         ),
         DocText(
           "`legend: {position: 'top', horizontalAlign: 'right'}` is "
-          '`ChartLegend(position: .top, align: .end)`. Chart.js has no '
+          '`LegendOptions(position: .top, align: .end)`. Chart.js has no '
           'floating legend: the legend takes its own row.',
         ),
       ],

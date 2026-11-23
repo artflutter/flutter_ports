@@ -88,12 +88,34 @@ final class _Logs() {
   }
 }
 
-/// The typed chart of a reference case, with the callback bodies of the
-/// generator recording into [logs]. The data and event filter come from
-/// the generated config.
-ChartConfig _config(Map<String, Object?> reference, _Logs logs) {
+/// The logs of the running case: the legend functions of [_functions] write
+/// into them.
+_Logs? _currentLogs;
+
+/// The named legend functions of the configs of the generator, with the
+/// same bodies, recording into [_currentLogs].
+final Map<String, Object?> _functions = {
+  'legendHover': (ChartEvent event, LegendItem item, LegendElement legend) =>
+      _currentLogs!.legend.add(_entry('hover', event, item)),
+  'legendLeave': (ChartEvent event, LegendItem item, LegendElement legend) =>
+      _currentLogs!.legend.add(_entry('leave', event, item)),
+  'legendClick': (ChartEvent event, LegendItem item, LegendElement legendBox) {
+    _currentLogs!.legend.add(_entry('click', event, item));
+    // `Chart.defaults.plugins.legend.onClick`: the defaults of the legend are
+    // one LegendOptions (Chart.js ADR 0193).
+    final legend =
+        jsGet(jsGet(defaults, 'plugins'), 'legend')! as LegendOptions;
+    legend.onClick!(event, item, legendBox);
+  },
+};
+
+/// The typed chart of a reference case. The data, the legend options with
+/// the callbacks of [_functions] and the event filter come from the
+/// generated config.
+ChartConfig _config(Map<String, Object?> reference) {
   final data = reference['data']! as Map<String, Object?>;
   final options = reference['options']! as Map<String, Object?>;
+  final plugins = options['plugins']! as Map<String, Object?>;
   return ChartConfig(
     labels: (data['labels']! as List<Object?>).cast<Object>(),
     datasets: [
@@ -104,27 +126,13 @@ ChartConfig _config(Map<String, Object?> reference, _Logs logs) {
           data: .values((dataset['data']! as List<Object?>).cast<num?>()),
         ),
     ],
-    legend: ChartLegend(
-      onHover: (event, item, legend) =>
-          logs.legend.add(_entry('hover', event, item)),
-      onLeave: (event, item, legend) =>
-          logs.legend.add(_entry('leave', event, item)),
-      onClick: (event, item, legendBox) {
-        logs.legend.add(_entry('click', event, item));
-        final legend = jsGet(jsGet(defaults, 'plugins'), 'legend');
-        (jsGet(legend, 'onClick')! as LegendEventHandler)(
-          event,
-          item,
-          legendBox,
-        );
-      },
-    ),
+    pluginOptions: [plugins['legend']! as LegendOptions],
     plugins: [
       ChartPlugin<Object?>(
         id: 'log',
         beforeEvent: (chart, args, options) {
           final event = args.event;
-          logs.events.add([
+          _currentLogs!.events.add([
             event.type,
             event.native!.type,
             event.x,
@@ -242,11 +250,11 @@ void main() {
 
   testReferenceWidths(chartHostInputReferenceWidths);
 
-  for (final c in chartHostInputReference) {
+  for (final c in chartHostInputReference(_functions)) {
     testWidgets(c.name, (tester) async {
-      final logs = _Logs();
+      final logs = _currentLogs = _Logs();
       final chart = acquireChartRoot(
-        ChartConfigLowering(_config(c.config, logs)).lower(),
+        ChartConfigLowering(_config(c.config)).lower(),
         copyReference(c.options)! as AnyObject,
       );
       final canvas = chart.canvas!;

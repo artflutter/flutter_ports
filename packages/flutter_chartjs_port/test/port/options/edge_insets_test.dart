@@ -55,7 +55,7 @@ void main() {
   });
 
   test('scalar label spacing and border widths retain their schema', () {
-    expect((LegendLabelOptionsScope()..padding = 3).paddingCell!.raw, 3);
+    expect(const LegendLabelOptions(padding: 3).padding, 3);
     expect((BarOptionsScope()..borderWidth = 2).borderWidthCell!.raw, 2);
   });
 }

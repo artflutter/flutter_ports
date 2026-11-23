@@ -23,14 +23,15 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'plugins': <String, Object?>{
-        'legend': <String, Object?>{
-          'labels': <String, Object?>{
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'legend': const LegendOptions(
+          labels: LegendLabelOptions(
             // DIVERGES(chartjs): adapt-point-style-objects, the style
             // class.
-            'pointStyle': const TrianglePointStyle(),
-            'usePointStyle': true,
-          },
-        },
+            pointStyle: TrianglePointStyle(),
+            usePointStyle: true,
+          ),
+        ),
       },
     },
   },

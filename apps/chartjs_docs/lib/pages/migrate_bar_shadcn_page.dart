@@ -88,7 +88,7 @@ DocPageContent shadcnBarMigrationPage() => migrationPage(
     ),
     (
       Text('<ChartLegend content={<ChartLegendContent />} />'),
-      DocText('`legend: ChartLegend(position: .bottom, ...)`'),
+      DocText('`LegendOptions(position: .bottom, ...)`'),
     ),
     (
       Text('<LabelList position="top" />'),

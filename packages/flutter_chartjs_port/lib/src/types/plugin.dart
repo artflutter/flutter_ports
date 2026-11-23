@@ -355,7 +355,7 @@ final class const PluginOff<T extends Plugin<Object?>>() {
 /// [PluginOptions] of an add-on (Chart.js ADR 0148).
 ///
 /// ```dart
-/// defaults: LegendOptionsScope()..display = true,   // a built-in plugin
+/// defaults: TitleOptionsScope()..display = false,   // a built-in plugin
 /// defaults: const ZoomPluginOptions(...),           // an add-on
 /// ```
 abstract interface class PluginDefaults();

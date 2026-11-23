@@ -34,7 +34,8 @@ const _green = ChartPaint.solid(Color(0xff00ff00));
 const _blue = ChartPaint.solid(Color(0xff0000ff));
 const _black = ChartPaint.solid(Color(0xff000000));
 
-/// The config of a hidden legend of the type [type]. [legend], [labels],
+/// The config of a hidden legend of the type [type]. [legend] and [labels]
+/// merge over the legend options `display: false` (Chart.js ADR 0193), and
 /// [dataset] and [options] add keys to the matching objects.
 ///
 /// A test uses this Map form, not [_typedConfig], where it writes into the
@@ -42,8 +43,8 @@ const _black = ChartPaint.solid(Color(0xff000000));
 /// for.
 ChartConfigurationScope _config(
   String type, {
-  Map<String, Object?> legend = const {},
-  Map<String, Object?> labels = const {},
+  LegendOptions legend = const LegendOptions(),
+  LegendLabelOptions labels = const LegendLabelOptions(),
   Map<String, Object?> dataset = const {},
   Map<String, Object?> options = const {},
   Object? labelValues,
@@ -68,11 +69,7 @@ ChartConfigurationScope _config(
   })
   ..options = _nativeOptions(<String, Object?>{
     'plugins': <String, Object?>{
-      'legend': <String, Object?>{
-        'display': false,
-        'labels': <String, Object?>{...labels},
-        ...legend,
-      },
+      'legend': LegendOptions(display: false, labels: labels).merge(legend),
     },
     ...options,
   })
@@ -106,14 +103,14 @@ bool _keepItem(Object? item, Object? data) => true;
 /// item.
 ChartConfigurationScope _eager(
   String type, {
-  Map<String, Object?> labels = const {},
-  Map<String, Object?> legend = const {},
+  LegendLabelOptions labels = const LegendLabelOptions(),
+  LegendOptions legend = const LegendOptions(),
   Map<String, Object?> dataset = const {},
   Map<String, Object?> options = const {},
   List<Plugin<Object?>>? plugins,
 }) => _config(
   type,
-  labels: {'filter': _keepItem, ...labels},
+  labels: const LegendLabelOptions(filter: _keepItem).merge(labels),
   legend: legend,
   dataset: dataset,
   options: options,
@@ -172,7 +169,7 @@ typed.Dataset _typedDataset(
 /// [_typedDataset] with [data], and the inline [plugins].
 ChartConfigurationScope _typedConfig(
   String type, {
-  typed.ChartLegend legend = const typed.ChartLegend(display: false),
+  LegendOptions legend = const LegendOptions(display: false),
   List<Object>? labelValues,
   List<num?>? data,
   List<typed.Dataset>? datasets,
@@ -189,7 +186,7 @@ ChartConfigurationScope _typedConfig(
     scales: scales,
     responsive: responsive,
     animation: animation,
-    legend: legend,
+    pluginOptions: [legend],
     plugins: plugins,
     disabledPlugins: disabledPlugins,
     extra: extra,
@@ -197,24 +194,15 @@ ChartConfigurationScope _typedConfig(
 ).lower();
 
 /// [legend] with the `filter` that keeps each item in its label options.
-typed.ChartLegend _keepingEach(typed.ChartLegend legend) {
-  final extra = legend.extra ?? const <String, Object?>{};
-  return legend.copyWith(
-    extra: {
-      ...extra,
-      'labels': <String, Object?>{
-        ...?extra['labels'] as Map<String, Object?>?,
-        'filter': _keepItem,
-      },
-    },
-  );
-}
+LegendOptions _keepingEach(LegendOptions legend) => legend.merge(
+  const LegendOptions(labels: LegendLabelOptions(filter: _keepItem)),
+);
 
 /// The twin of a config of [_typedConfig]: its legend adds the `filter` that
 /// keeps each item.
 ChartConfigurationScope _typedEager(
   String type, {
-  typed.ChartLegend legend = const typed.ChartLegend(display: false),
+  LegendOptions legend = const LegendOptions(display: false),
   List<num?>? data,
   List<typed.Dataset>? datasets,
   List<typed.ChartAxis>? scales,
@@ -255,11 +243,13 @@ List<Object?> _labelsOf(Chart chart) =>
 List<Object?> _datasetsOf(Chart chart) =>
     jsGet(chart.data, 'datasets')! as List<Object?>;
 
-/// `options.plugins.legend.labels` of the config of [chart].
-JsObjectFace _labelOptionsOf(Chart chart) =>
-    ((jsGet(chart.config.options, 'plugins')! as JsObjectFace)['legend']!
-            as JsObjectFace)['labels']!
-        as JsObjectFace;
+/// Writes [over] merged over `options.plugins.legend` of the config of
+/// [chart] into its key: the legend options are one immutable object
+/// (Chart.js ADR 0193), so a write of an option is a new object.
+void _writeLegend(Chart chart, LegendOptions over) {
+  final plugins = jsGet(chart.config.options, 'plugins')! as JsObjectFace;
+  plugins['legend'] = (plugins['legend']! as LegendOptions).merge(over);
+}
 
 /// An inline plugin [id] with the hooks of the names [hooks] (Chart.js ADR
 /// 0144): each calls [run] with its name and the chart. A cancelable hook
@@ -752,7 +742,7 @@ void main() {
       });
 
       testWidgets('$type: reverse without user code', (tester) async {
-        const legend = typed.ChartLegend(display: false, reverse: true);
+        const legend = LegendOptions(display: false, reverse: true);
         final chart = acquireChartRoot(_typedConfig(type, legend: legend));
         final twin = acquireChartRoot(_typedEager(type, legend: legend));
         expect(_legendOf(chart).legendItemsPending, isTrue);
@@ -766,17 +756,15 @@ void main() {
       testWidgets('$type: a plain label option and a theme-free chart color', (
         tester,
       ) async {
-        const legend = typed.ChartLegend(
+        const legend = LegendOptions(
           display: false,
-          labelColor: _green,
-          extra: {
-            'labels': <String, Object?>{
-              'pointStyle': StarPointStyle(),
-              'textAlign': TextAlign.right,
-              'useBorderRadius': true,
-              'borderRadius': 3,
-            },
-          },
+          labels: LegendLabelOptions(
+            color: _green,
+            pointStyle: StarPointStyle(),
+            textAlign: TextAlign.right,
+            useBorderRadius: true,
+            borderRadius: BorderRadius.all(Radius.circular(3)),
+          ),
         );
         final chart = acquireChartRoot(_typedConfig(type, legend: legend));
         final twin = acquireChartRoot(_typedEager(type, legend: legend));
@@ -833,14 +821,13 @@ void main() {
       });
 
       testWidgets('$type: a toggle of display', (tester) async {
-        // Raw: the test writes `display` into the legend Map of the config.
+        // Raw: the test writes `display` into the legend options of the
+        // config.
         final chart = acquireChartRoot(_config(type));
         final twin = acquireChartRoot(_eager(type));
-        void set(Object? display) {
+        void set(bool display) {
           for (final each in [chart, twin]) {
-            ((jsGet(each.config.options, 'plugins')! as JsObjectFace)['legend']!
-                    as JsObjectFace)['display'] =
-                display;
+            _writeLegend(each, LegendOptions(display: display));
             each.update();
           }
         }
@@ -982,15 +969,17 @@ void main() {
   group('each guard keeps the ordinary path', () {
     /// Runs one update on a chart of [type] and on its twin with a filter,
     /// and compares the calls of a counter and the items. [legend],
-    /// [backgroundColor] and [extra] go to the typed config.
+    /// [backgroundColor] and [extra] go to the typed config. The items of
+    /// the chart wait when [pending] is true.
     Future<void> expectEager({
       required int Function() calls,
       required void Function() reset,
       required String type,
-      typed.ChartLegend legend = const typed.ChartLegend(display: false),
+      LegendOptions legend = const LegendOptions(display: false),
       typed.ChartValue<ChartPaint> backgroundColor =
           const typed.ChartValue.constant(_red),
       Map<String, Object?>? extra,
+      bool pending = false,
     }) async {
       List<typed.Dataset> datasets() => [
         _typedDataset(type, backgroundColor: backgroundColor),
@@ -1000,7 +989,7 @@ void main() {
         _typedConfig(type, legend: legend, datasets: datasets(), extra: extra),
       )..update();
       final seen = calls();
-      expect(_legendOf(chart).legendItemsPending, isFalse);
+      expect(_legendOf(chart).legendItemsPending, pending);
       reset();
       final twin = acquireChartRoot(
         _typedEager(type, legend: legend, datasets: datasets(), extra: extra),
@@ -1021,18 +1010,16 @@ void main() {
         final chart = acquireChartRoot(
           _typedConfig(
             type,
-            legend: typed.ChartLegend(
+            legend: LegendOptions(
               display: false,
-              extra: {
-                'labels': <String, Object?>{
-                  'generateLabels': (Object? chart) {
-                    calls++;
-                    return <LegendItem>[
-                      LegendItem(text: ['x']),
-                    ];
-                  },
+              labels: LegendLabelOptions(
+                generateLabels: (Object? chart) {
+                  calls++;
+                  return <LegendItem>[
+                    LegendItem(text: ['x']),
+                  ];
                 },
-              },
+              ),
             ),
           ),
         );
@@ -1050,16 +1037,14 @@ void main() {
         final chart = acquireChartRoot(
           _typedConfig(
             type,
-            legend: typed.ChartLegend(
+            legend: LegendOptions(
               display: false,
-              extra: {
-                'labels': <String, Object?>{
-                  'filter': (Object? item, Object? data) {
-                    calls++;
-                    return true;
-                  },
+              labels: LegendLabelOptions(
+                filter: (item, data) {
+                  calls++;
+                  return true;
                 },
-              },
+              ),
             ),
           ),
         );
@@ -1074,16 +1059,14 @@ void main() {
         final chart = acquireChartRoot(
           _typedConfig(
             type,
-            legend: typed.ChartLegend(
+            legend: LegendOptions(
               display: false,
-              extra: {
-                'labels': <String, Object?>{
-                  'sort': (Object? a, Object? b, Object? data) {
-                    calls++;
-                    return 0;
-                  },
+              labels: LegendLabelOptions(
+                sort: (a, b, data) {
+                  calls++;
+                  return 0;
                 },
-              },
+              ),
             ),
           ),
         );
@@ -1097,107 +1080,45 @@ void main() {
 
       testWidgets('$type: display true', (tester) async {
         final chart = acquireChartRoot(
-          _typedConfig(type, legend: const typed.ChartLegend(display: true)),
+          _typedConfig(type, legend: const LegendOptions(display: true)),
         );
         expect(_legendOf(chart).legendItemsPending, isFalse);
         expect(chart.legend!.legendHitBoxes, hasLength(3));
       });
 
-      // The legend display holds a bool (row adapt-bool-options): null is
-      // the one falsy value that is not false.
-      for (final (name, value) in [('null', null)]) {
-        testWidgets('$type: a falsy display that is not false: $name', (
-          tester,
-        ) async {
-          // Raw: a typed `display: null` sets no key.
-          final chart = acquireChartRoot(
-            _config(type, legend: {'display': value}),
-          );
-          expect(_legendOf(chart).legendItemsPending, isFalse);
-          expect(_legendOf(chart).height, 0);
-        });
-      }
-
-      testWidgets('$type: a scriptable display', (tester) async {
-        var calls = 0;
-        await expectEager(
-          type: type,
-          // The typed `display` is a bool: a function goes through `extra`.
-          legend: typed.ChartLegend(
-            extra: {
-              'display': (Object? context, Object? options) {
-                calls++;
-                return false;
-              },
-            },
-          ),
-          calls: () => calls,
-          reset: () => calls = 0,
-        );
-      });
-
-      testWidgets('$type: a scriptable reverse', (tester) async {
-        var calls = 0;
-        await expectEager(
-          type: type,
-          legend: typed.ChartLegend(
-            display: false,
-            extra: {
-              'reverse': (Object? context, Object? options) {
-                calls++;
-                return true;
-              },
-            },
-          ),
-          calls: () => calls,
-          reset: () => calls = 0,
-        );
-      });
-
-      for (final key in const ['pointStyle', 'color']) {
-        testWidgets('$type: a scriptable label option: $key', (tester) async {
-          var calls = 0;
-          await expectEager(
-            type: type,
-            legend: typed.ChartLegend(
-              display: false,
-              extra: {
-                'labels': <String, Object?>{
-                  key: (Object? context, Object? options) {
-                    calls++;
-                    return key == 'color' ? _red : const StarPointStyle();
-                  },
-                },
-              },
-            ),
-            calls: () => calls,
-            reset: () => calls = 0,
-          );
-        });
-      }
-
-      testWidgets('$type: a function in a key of the generator', (
+      // The scriptable legend options are the one function `scripted`, which
+      // the legend calls in `beforeUpdate` (Chart.js ADR 0193, row
+      // adapt-legend-scripted): a build reads its values and runs no user
+      // code, so the items wait.
+      testWidgets('$type: scripted display, reverse and label options', (
         tester,
       ) async {
-        final chart = acquireChartRoot(
-          _typedConfig(
-            type,
-            legend: typed.ChartLegend(
-              display: false,
-              extra: {
-                'labels': <String, Object?>{
-                  // A polar area generator does not read it, a doughnut one
-                  // does.
-                  'textAlign': (Object? context, Object? options) =>
-                      TextAlign.left,
-                },
-              },
-            ),
+        var calls = 0;
+        await expectEager(
+          type: type,
+          legend: LegendOptions(
+            scripted: (context, options) {
+              calls++;
+              return const LegendOptions(
+                display: false,
+                reverse: true,
+                labels: LegendLabelOptions(
+                  color: _red,
+                  pointStyle: StarPointStyle(),
+                  textAlign: TextAlign.left,
+                ),
+              );
+            },
           ),
+          calls: () => calls,
+          reset: () => calls = 0,
+          pending: true,
         );
-        expect(_legendOf(chart).legendItemsPending, type == 'polarArea');
       });
 
+      // The label color of the chart color is a value of the options of the
+      // update (Chart.js ADR 0193): a function of the chart color runs in
+      // `beforeUpdate`, not in a build.
       testWidgets('$type: a scriptable color of the chart', (tester) async {
         var calls = 0;
         await expectEager(
@@ -1210,6 +1131,7 @@ void main() {
           },
           calls: () => calls,
           reset: () => calls = 0,
+          pending: true,
         );
       });
 
@@ -1288,35 +1210,36 @@ void main() {
       });
     }
 
-    for (final (key, value) in <(String, Object?)>[
-      ('textAlign', TextAlign.left),
-      ('useBorderRadius', true),
-      ('borderRadius', 2),
+    for (final (key, value) in <(String, LegendLabelOptions)>[
+      ('textAlign', const LegendLabelOptions(textAlign: TextAlign.left)),
+      ('useBorderRadius', const LegendLabelOptions(useBorderRadius: true)),
+      (
+        'borderRadius',
+        const LegendLabelOptions(
+          borderRadius: BorderRadius.all(Radius.circular(2)),
+        ),
+      ),
     ]) {
-      testWidgets('doughnut: a scriptable label option: $key', (tester) async {
+      testWidgets('doughnut: a scripted label option: $key', (tester) async {
         var calls = 0;
-        Object? script(Object? context, Object? options) {
+        LegendOptions script(ScriptableChartContext context, LegendOptions _) {
           calls++;
-          return value;
+          return LegendOptions(labels: value);
         }
 
-        final legend = typed.ChartLegend(
-          display: false,
-          extra: {
-            'labels': <String, Object?>{key: script},
-          },
-        );
+        final legend = LegendOptions(display: false, scripted: script);
         final chart = acquireChartRoot(_typedConfig('doughnut', legend: legend))
           ..update();
         final seen = calls;
-        expect(_legendOf(chart).legendItemsPending, isFalse);
+        // The build reads the values of the options of the update: the items
+        // wait (Chart.js ADR 0193).
+        expect(_legendOf(chart).legendItemsPending, isTrue);
         calls = 0;
         final twin = acquireChartRoot(_typedEager('doughnut', legend: legend))
           ..update();
         expect(seen, calls);
-        // Chart.js ADR 0182: one call for each set of resolved options, two
-        // at the start of the chart and one at the update.
-        expect(seen, 3);
+        // Chart.js ADR 0193: one call for each update, in `beforeUpdate`.
+        expect(seen, 2);
         expect(
           _items(chart.legend!),
           legendObservationMatcher(_items(twin.legend!)),
@@ -1556,11 +1479,17 @@ void main() {
           await compare(
             type: type,
             hook: hook,
-            change: (chart, count) =>
-                _labelOptionsOf(chart)['filter'] = (item, data) {
-                  count();
-                  return false;
-                },
+            change: (chart, count) => _writeLegend(
+              chart,
+              LegendOptions(
+                labels: LegendLabelOptions(
+                  filter: (item, data) {
+                    count();
+                    return false;
+                  },
+                ),
+              ),
+            ),
           );
         });
 
@@ -1568,13 +1497,19 @@ void main() {
           await compare(
             type: type,
             hook: hook,
-            change: (chart, count) =>
-                _labelOptionsOf(chart)['generateLabels'] = (chart) {
-                  count();
-                  return <LegendItem>[
-                    LegendItem(text: ['u']),
-                  ];
-                },
+            change: (chart, count) => _writeLegend(
+              chart,
+              LegendOptions(
+                labels: LegendLabelOptions(
+                  generateLabels: (Object? chart) {
+                    count();
+                    return <LegendItem>[
+                      LegendItem(text: ['u']),
+                    ];
+                  },
+                ),
+              ),
+            ),
           );
         });
 
@@ -1582,8 +1517,12 @@ void main() {
           await compare(
             type: type,
             hook: hook,
-            change: (chart, count) =>
-                _labelOptionsOf(chart)['pointStyle'] = const StarPointStyle(),
+            change: (chart, count) => _writeLegend(
+              chart,
+              const LegendOptions(
+                labels: LegendLabelOptions(pointStyle: StarPointStyle()),
+              ),
+            ),
             read: (chart) => chart.legend!.legendItems![0].pointStyle,
           );
         });
@@ -1610,8 +1549,14 @@ void main() {
           for (final each in [chart, twin]) {
             _labelsOf(each)[0] = 'x';
             each.update();
-            _labelOptionsOf(each)['sort'] = (a, b, data) =>
-                throw StateError('sort');
+            _writeLegend(
+              each,
+              LegendOptions(
+                labels: LegendLabelOptions(
+                  sort: (a, b, data) => throw StateError('sort'),
+                ),
+              ),
+            );
             expect(each.update, throwsStateError);
           }
           expect(atRead, isNull);
@@ -1672,12 +1617,19 @@ void main() {
         for (final each in [chart, twin]) {
           _labelsOf(each)[0] = 'x';
           each.update();
-          _labelOptionsOf(each)['generateLabels'] = (legendChart) {
-            seen.add(_texts(each));
-            return <LegendItem>[
-              LegendItem(text: ['u']),
-            ];
-          };
+          _writeLegend(
+            each,
+            LegendOptions(
+              labels: LegendLabelOptions(
+                generateLabels: (Object? legendChart) {
+                  seen.add(_texts(each));
+                  return <LegendItem>[
+                    LegendItem(text: ['u']),
+                  ];
+                },
+              ),
+            ),
+          );
           each.update();
           expect(_texts(each), ['u']);
         }
@@ -1720,10 +1672,17 @@ void main() {
         }
         armed = true;
         for (final each in [chart, twin]) {
-          _labelOptionsOf(each)['filter'] = (item, data) {
-            calls++;
-            return false;
-          };
+          _writeLegend(
+            each,
+            LegendOptions(
+              labels: LegendLabelOptions(
+                filter: (item, data) {
+                  calls++;
+                  return false;
+                },
+              ),
+            ),
+          );
           each.update();
         }
         expect(_texts(chart), ['x', 'b', 'c']);
@@ -1744,7 +1703,12 @@ void main() {
         });
         Plugin<Object?> writer() => _hook('beforeLayout', (chart) {
           if (armed) {
-            _labelOptionsOf(chart)['pointStyle'] = const StarPointStyle();
+            _writeLegend(
+              chart,
+              const LegendOptions(
+                labels: LegendLabelOptions(pointStyle: StarPointStyle()),
+              ),
+            );
             (chart.config.options as JsObjectFace)['color'] = _green;
           }
           return null;
@@ -1758,8 +1722,8 @@ void main() {
         );
         armed = true;
         for (final each in [chart, twin]) {
-          // Chart.js ADR 0182: the write of `beforeLayout` shows at the next
-          // update, which resolves the legend options again.
+          // Chart.js ADR 0193: the write of `beforeLayout` shows at the next
+          // update, which merges the legend options again.
           each
             ..update()
             ..update();
@@ -1779,20 +1743,29 @@ void main() {
   });
 
   group('the options of an update are fixed at its first hook', () {
-    // Chart.js ADR 0182: the plugin resolves the legend options once, at the
-    // first hook of an update. A write into the label options in a later hook
-    // of the same update shows at the next update.
-    const written = <String, Object?>{
-      'pointStyle': StarPointStyle(),
-      'textAlign': TextAlign.right,
-      'color': _green,
-      'useBorderRadius': true,
-      'borderRadius': BorderRadius.all(Radius.circular(7)),
+    // Chart.js ADR 0193: the plugin service merges the legend options once
+    // for each update. A new object of the label options in a later hook of
+    // the same update shows at the next update.
+    const written = <String, (Object, LegendLabelOptions)>{
+      'pointStyle': (
+        StarPointStyle(),
+        LegendLabelOptions(pointStyle: StarPointStyle()),
+      ),
+      'textAlign': (
+        TextAlign.right,
+        LegendLabelOptions(textAlign: TextAlign.right),
+      ),
+      'color': (_green, LegendLabelOptions(color: _green)),
+      'useBorderRadius': (true, LegendLabelOptions(useBorderRadius: true)),
+      'borderRadius': (
+        BorderRadius.all(Radius.circular(7)),
+        LegendLabelOptions(borderRadius: BorderRadius.all(Radius.circular(7))),
+      ),
     };
 
-    /// The resolved label option [key] of the legend of [chart].
+    /// The label option [key] of the legend of [chart].
     Object? labelValue(Chart chart, String key) {
-      final labels = LegendOptions.of(chart.legend!.options).labels;
+      final labels = (chart.legend!.options as LegendOptions).labels!;
       return switch (key) {
         'pointStyle' => labels.pointStyle,
         'textAlign' => labels.textAlign,
@@ -1813,11 +1786,14 @@ void main() {
             final chart = acquireChartRoot(
               _config(
                 type,
-                legend: {'display': display},
+                legend: LegendOptions(display: display),
                 plugins: [
                   _plugin('writer', ['afterLayout'], (hook, chart) {
                     if (armed) {
-                      _labelOptionsOf(chart)[key] = written[key];
+                      _writeLegend(
+                        chart,
+                        LegendOptions(labels: written[key]!.$2),
+                      );
                       armed = false;
                     }
                     return null;
@@ -1825,9 +1801,9 @@ void main() {
                 ],
               ),
             );
-            expect(labelValue(chart, key), isNot(written[key]));
+            expect(labelValue(chart, key), isNot(written[key]!.$1));
             chart.update();
-            expect(labelValue(chart, key), written[key]);
+            expect(labelValue(chart, key), written[key]!.$1);
           });
         }
       }
@@ -1921,7 +1897,9 @@ void main() {
       ('doughnutChild', 'doughnut', _doughnutChild),
       ('polarChild', 'polarArea', _polarChild),
     ]) {
-      for (final where in const ['labels', 'dataset']) {
+      // The legend options have no descriptors (Chart.js ADR 0193): a
+      // descriptor of the dataset only.
+      for (final where in const ['dataset']) {
         for (final mode in const ['default', 'none']) {
           testWidgets('$parent: $where: $mode', (tester) async {
             // A subclass of the controller keeps the ordinary path.
@@ -1934,15 +1912,8 @@ void main() {
             }
 
             // Raw: a typed dataset class names the controller of its own type.
-            ChartConfigurationScope make(String type) => _config(
-              type,
-              labels: where == 'labels'
-                  ? {'_scriptable': descriptor}
-                  : const {},
-              dataset: where == 'dataset'
-                  ? {'_scriptable': descriptor}
-                  : const {},
-            );
+            ChartConfigurationScope make(String type) =>
+                _config(type, dataset: {'_scriptable': descriptor});
             final chart = acquireChartRoot(make(parent))
               ..update(UpdateMode(mode))
               ..update(UpdateMode(mode));
@@ -2322,7 +2293,7 @@ void main() {
         },
       ],
       animation: typed.ChartAnimation.none,
-      legend: const typed.ChartLegend(display: false),
+      pluginOptions: const [LegendOptions(display: false)],
     );
 
     Widget view(typed.ChartConfig config, [typed.ChartThemeData? theme]) {
@@ -2413,8 +2384,10 @@ void main() {
                           ]
                         : null,
                     animation: typed.ChartAnimation.none,
-                    legend: const typed.ChartLegend(display: false),
-                    pluginOptions: const [typed.TooltipOptions(enabled: false)],
+                    pluginOptions: const [
+                      LegendOptions(display: false),
+                      typed.TooltipOptions(enabled: false),
+                    ],
                     responsive: true,
                     maintainAspectRatio: false,
                     events: const [],
@@ -2750,7 +2723,7 @@ void main() {
           _config(
             type,
             datasets: datasets(() => twinCalls++),
-            labels: {'filter': _keepItem},
+            labels: const LegendLabelOptions(filter: _keepItem),
           ),
         );
         chart.update(UpdateMode.none);
@@ -2854,7 +2827,7 @@ void main() {
         _config(
           'pie',
           dataset: _indexedColors,
-          labels: {'filter': _keepItem},
+          labels: const LegendLabelOptions(filter: _keepItem),
           labelValues: <Object?>['x', 'x', 'x'],
         ),
       );
@@ -3094,10 +3067,10 @@ void main() {
                 return ['title'];
               },
             },
-            'legend': <String, Object?>{
-              'display': false,
-              'labels': <String, Object?>{},
-            },
+            'legend': const LegendOptions(
+              display: false,
+              labels: LegendLabelOptions(),
+            ),
           },
         };
         final chart = acquireChartRoot(
@@ -3107,7 +3080,10 @@ void main() {
           _config(type, dataset: _indexedColors, options: options(twinLog)),
         );
         // The twin takes the filter through its own label options.
-        _labelOptionsOf(twin)['filter'] = _keepItem;
+        _writeLegend(
+          twin,
+          const LegendOptions(labels: LegendLabelOptions(filter: _keepItem)),
+        );
         for (final each in [chart, twin]) {
           (_dataset0(each)['data']! as List<Object?>)[0] = 5.0;
           each.update(UpdateMode.none);
@@ -3248,27 +3224,27 @@ void main() {
         var filters = 0;
         var sorts = 0;
         var generators = 0;
-        final labels = <Map<String, Object?>>[
-          {
-            'filter': (Object? item, Object? data) {
+        final labels = <LegendLabelOptions>[
+          LegendLabelOptions(
+            filter: (item, data) {
               filters++;
               return true;
             },
-          },
-          {
-            'sort': (Object? a, Object? b, Object? data) {
+          ),
+          LegendLabelOptions(
+            sort: (a, b, data) {
               sorts++;
               return 0;
             },
-          },
-          {
-            'generateLabels': (Object? chart) {
+          ),
+          LegendLabelOptions(
+            generateLabels: (Object? chart) {
               generators++;
               return <LegendItem>[
                 LegendItem(text: ['x']),
               ];
             },
-          },
+          ),
         ];
         for (final each in labels) {
           final chart = acquireChartRoot(
@@ -3403,7 +3379,7 @@ void main() {
                 ..._indexedColors,
               }),
             ],
-            labels: {'filter': _keepItem},
+            labels: const LegendLabelOptions(filter: _keepItem),
           ),
         )..update(UpdateMode.none);
         expect(_state(chart), _state(twin));
@@ -3411,10 +3387,10 @@ void main() {
         final options = _ObservedMap({
           'elements': <String, Object?>{},
           'plugins': <String, Object?>{
-            'legend': <String, Object?>{
-              'display': false,
-              'labels': <String, Object?>{},
-            },
+            'legend': const LegendOptions(
+              display: false,
+              labels: LegendLabelOptions(),
+            ),
           },
         });
         final other = acquireChartRoot(
@@ -3617,10 +3593,10 @@ void main() {
                         return ['title'];
                       },
                     },
-                    'legend': <String, Object?>{
-                      'display': false,
-                      'labels': <String, Object?>{},
-                    },
+                    'legend': const LegendOptions(
+                      display: false,
+                      labels: LegendLabelOptions(),
+                    ),
                   },
                 },
               ),
@@ -3714,7 +3690,6 @@ void main() {
         },
       };
       final resolver = createResolver([scope]);
-      expect(resolver.scopesAreNative, isTrue);
       expect(resolver.peekKey(OptionKey.borderRadius), same(object));
       expect(resolver.peekKey(OptionKey.borderWidth), 2.0);
       expect(resolver.peekKey(OptionKey.spacing), same(undefined));
@@ -3727,17 +3702,6 @@ void main() {
       expect(resolver.readKey(OptionKey.borderRadius), isA<OptionResolver>());
       expect(calls, 1);
       expect(resolver.peekKey(OptionKey.borderRadius), isA<OptionResolver>());
-    });
-
-    test('a Map of another class and a write of a slot are not native', () {
-      expect(
-        createResolver([_ObservedMap(<String, Object?>{})]).scopesAreNative,
-        isFalse,
-      );
-      final resolver = createResolver([<String, Object?>{}]);
-      expect(resolver.scopesAreNative, isTrue);
-      resolver['_scopes'] = <Object?>[];
-      expect(resolver.scopesAreNative, isFalse);
     });
 
     for (final type in _kinds) {
@@ -3756,7 +3720,7 @@ void main() {
             chart = _chartOf(
               _config(
                 type,
-                legend: {'display': display},
+                legend: LegendOptions(display: display),
                 dataset: {
                   'borderColor': <Object?>[_blue, _black],
                   'borderRadius': <String, Object?>{'outerStart': 1.0},
@@ -3789,7 +3753,7 @@ void main() {
             final chart = _chartOf(
               _config(
                 type,
-                legend: {'display': display},
+                legend: LegendOptions(display: display),
                 dataset: {
                   'borderColor': <Object?>[_blue, _black],
                   'borderRadius': <String, Object?>{'outerStart': 1.0},
@@ -3823,7 +3787,7 @@ void main() {
             chart = _chartOf(
               _config(
                 type,
-                legend: {'display': display},
+                legend: LegendOptions(display: display),
                 dataset: {
                   'borderColor': <Object?>[_blue, _black],
                   'borderRadius': _ObservedMap(
@@ -3850,85 +3814,8 @@ void main() {
         });
       }
 
-      testWidgets('$type: a Map of another class in the labels', (
-        tester,
-      ) async {
-        // The ordinary build reads `filter` after the contexts of a resolve.
-        List<Object?> run({required bool exact}) {
-          var armed = false;
-          final log = <Object?>[];
-          late final Chart chart;
-          chart = _chartOf(
-            _config(
-              type,
-              legend: {
-                'labels': _ObservedMap(<String, Object?>{}, (key) {
-                  if (armed && key == 'filter') {
-                    log.add(_firstArcState(chart));
-                  }
-                }),
-              },
-              dataset: _indexedColors,
-            ),
-            exact: exact,
-          );
-          _changeFirstArc(chart);
-          armed = true;
-          chart.update(UpdateMode.none);
-          armed = false;
-          return [log, _state(chart)];
-        }
-
-        final exact = run(exact: true);
-        // Chart.js ADR 0182: the plugin reads the key at the first hook of the
-        // update, before the change of the first arc.
-        expect((exact.first! as List<Object?>).first, 'active/true/raw=1');
-        expect(exact, legendObservationMatcher(run(exact: false)));
-      });
-
-      testWidgets('$type: a Map of another class in the legend', (
-        tester,
-      ) async {
-        // The ordinary build reads `reverse` after the contexts of a resolve.
-        List<Object?> run({required bool exact}) {
-          var armed = false;
-          final log = <Object?>[];
-          late final Chart chart;
-          chart = _chartOf(
-            _config(
-              type,
-              dataset: _indexedColors,
-              options: {
-                'plugins': <String, Object?>{
-                  'legend': _ObservedMap(
-                    <String, Object?>{
-                      'display': false,
-                      'labels': <String, Object?>{},
-                    },
-                    (key) {
-                      if (armed && key == 'reverse') {
-                        log.add(_firstArcState(chart));
-                      }
-                    },
-                  ),
-                },
-              },
-            ),
-            exact: exact,
-          );
-          _changeFirstArc(chart);
-          armed = true;
-          chart.update(UpdateMode.none);
-          armed = false;
-          return [log, _state(chart)];
-        }
-
-        final exact = run(exact: true);
-        // Chart.js ADR 0182: the plugin reads the key at the first hook of the
-        // update, before the change of the first arc.
-        expect((exact.first! as List<Object?>).first, 'active/true/raw=1');
-        expect(exact, legendObservationMatcher(run(exact: false)));
-      });
+      // The legend options are one object with no reader (Chart.js ADR
+      // 0193): no Map of another class stands in the legend or its labels.
 
       testWidgets('$type: a user arc at index 0 changes an option', (
         tester,
@@ -4259,15 +4146,15 @@ void main() {
                             ]
                           : null,
                       animation: typed.ChartAnimation.none,
-                      legend: typed.ChartLegend(
-                        display: false,
-                        extra: eager
-                            ? const {
-                                'labels': {'filter': _keepItem},
-                              }
-                            : null,
-                      ),
-                      pluginOptions: [typed.TooltipOptions(enabled: tooltips)],
+                      pluginOptions: [
+                        LegendOptions(
+                          display: false,
+                          labels: eager
+                              ? const LegendLabelOptions(filter: _keepItem)
+                              : null,
+                        ),
+                        typed.TooltipOptions(enabled: tooltips),
+                      ],
                       responsive: true,
                       maintainAspectRatio: false,
                       events: tooltips

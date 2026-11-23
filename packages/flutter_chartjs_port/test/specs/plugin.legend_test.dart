@@ -20,8 +20,9 @@ import '../support/legend_item.dart';
 // `Chart.registry` and `Chart.defaults`. `window.Chart.helpers.color` is
 // `color` of helpers.color.dart. `toEqual` of the legend items is
 // [_itemsEqual]: `legendItemEquals` of test/support/legend_item.dart for
-// each item. `toEqual` of the defaults reads the own keys and the cells of
-// the typed scopes, and `jasmine.any(Function)` is `isA<Function>()`.
+// each item. `toEqual` of the defaults reads the fields of the
+// `LegendOptions` of the defaults (Chart.js ADR 0193), and
+// `jasmine.any(Function)` is `isA<Function>()`.
 // `toEqualOptions` is the matcher of chartjs_test_utils.
 //
 // Each chart case is a `testWidgets` case with the harness of Chart.js ADR
@@ -30,7 +31,9 @@ import '../support/legend_item.dart';
 // `types.LegendElement` and `legendHitBoxes` through a cast to `Legend`
 // (Chart.js ADR 0038, section 6). Hit boxes expose native typed fields. A
 // write into `chart.options` is the write through `operator []=`
-// of the option resolver, the `set` trap of upstream.
+// of the option resolver, the `set` trap of upstream. The legend options are
+// one immutable `LegendOptions` (Chart.js ADR 0193): the write of a legend
+// option writes a new object with the option into `plugins.legend`.
 // `jasmine.triggerMouseEvent` is triggerMouseEvent of chartjs_test_utils
 // (Chart.js ADR 0022, section 6).
 
@@ -42,16 +45,20 @@ List<LegendHitBox> _hitBoxes(Chart chart) =>
 JsObjectFace _pluginOptions(Chart chart) =>
     jsGet(chart.options, 'plugins')! as JsObjectFace;
 
-/// `chart.options.plugins.legend`, the option resolver of the legend.
-JsObjectFace _legendOptions(Chart chart) =>
-    jsGet(_pluginOptions(chart), 'legend')! as JsObjectFace;
+/// `chart.options.plugins.legend.<key> = <value>` for the options [over]:
+/// the legend options of the chart with [over] merged over them, written
+/// into `chart.options.plugins.legend`.
+void _writeLegendOptions(Chart chart, LegendOptions over) {
+  final plugins = _pluginOptions(chart);
+  plugins['legend'] = (plugins['legend']! as LegendOptions).merge(over);
+}
 
 /// `Chart.defaults.plugins.legend`.
-LegendOptionsScope _legendDefaults() =>
+LegendOptions _legendDefaults() =>
     (Chart.defaults.pluginsCell!.raw! as PluginOptionsByTypeScope)
             .legendCell!
             .raw!
-        as LegendOptionsScope;
+        as LegendOptions;
 
 /// The chart of the typed config [config], with the harness options
 /// [options] of `acquireChart`.
@@ -231,15 +238,15 @@ ChartConfigurationScope _lineChart([Object? legendOptions]) {
   return config;
 }
 
-/// A line chart of four labels and one dataset with the legend [legend]
-/// (the callbacks cases).
-Chart _line(ChartLegend legend) => _acquire(
+/// A line chart of four labels and one dataset with the legend options
+/// [legend] (the callbacks cases).
+Chart _line(LegendOptions legend) => _acquire(
   ChartConfig(
     labels: const ['A', 'B', 'C', 'D'],
     datasets: const [
       LineDataset(data: .values([10, 20, 30, 100])),
     ],
-    legend: legend,
+    pluginOptions: [legend],
   ),
 );
 
@@ -250,65 +257,34 @@ void main() {
 
     test('should have the correct default config', () {
       final actual = _legendDefaults();
-      // `toEqual`: the own keys of each object and the value of each key.
-      expect(
-        actual.ownKeys,
-        unorderedEquals(<Object>[
-          OptionKey.display,
-          OptionKey.position,
-          OptionKey.align,
-          OptionKey.fullSize,
-          OptionKey.reverse,
-          OptionKey.weight,
-          OptionKey.onClick,
-          OptionKey.onHover,
-          OptionKey.onLeave,
-          OptionKey.labels,
-          OptionKey.title,
-        ]),
-      );
-      expect(actual.displayCell?.raw, true);
-      expect(actual.positionCell?.raw, ChartPosition.top);
-      expect(actual.alignCell?.raw, ChartAlign.center);
-      expect(actual.fullSizeCell?.raw, true);
-      expect(actual.reverseCell?.raw, false);
-      expect(actual.weightCell?.raw, 1000);
+      // `toEqual`: the value of each key. The label and title `color` of
+      // upstream is the function of the chart color: the legend gives that
+      // color when the options set none (Chart.js ADR 0193). `onHover` and
+      // `onLeave` are `null`.
+      expect(actual.display, true);
+      expect(actual.position, ChartPosition.top);
+      expect(actual.align, ChartAlign.center);
+      expect(actual.fullSize, true);
+      expect(actual.reverse, false);
+      expect(actual.weight, 1000);
 
       // a callback that will handle
       // jasmine.any(Function): each function value of the expected object.
-      expect(actual.onClickCell?.raw, isA<Function>());
-      expect(actual.onHoverCell?.raw, isNull);
-      expect(actual.onLeaveCell?.raw, isNull);
+      expect(actual.onClick, isA<Function>());
+      expect(actual.onHover, isNull);
+      expect(actual.onLeave, isNull);
 
-      final labels = actual.labelsCell!.raw! as LegendLabelOptionsScope;
-      expect(
-        labels.ownKeys,
-        unorderedEquals(<Object>[
-          OptionKey.color,
-          OptionKey.boxWidth,
-          OptionKey.padding,
-          OptionKey.generateLabels,
-        ]),
-      );
-      expect(labels.colorCell?.raw, isA<Function>());
-      expect(labels.boxWidthCell?.raw, 40);
-      expect(labels.paddingCell?.raw, 10);
-      expect(labels.generateLabelsCell?.raw, isA<Function>());
+      final labels = actual.labels!;
+      expect(labels.color, isNull);
+      expect(labels.boxWidth, 40);
+      expect(labels.padding, 10);
+      expect(labels.generateLabels, isA<Function>());
 
-      final title = actual.titleCell!.raw! as LegendTitleOptionsScope;
-      expect(
-        title.ownKeys,
-        unorderedEquals(<Object>[
-          OptionKey.color,
-          OptionKey.display,
-          OptionKey.position,
-          OptionKey.text,
-        ]),
-      );
-      expect(title.colorCell?.raw, isA<Function>());
-      expect(title.displayCell?.raw, false);
-      expect(title.positionCell?.raw, ChartAlign.center);
-      expect(title.textCell?.raw, ['']);
+      final title = actual.title!;
+      expect(title.color, isNull);
+      expect(title.display, false);
+      expect(title.position, ChartAlign.center);
+      expect(title.text, ['']);
     });
 
     testWidgets('should update bar chart correctly', (tester) async {
@@ -377,7 +353,7 @@ void main() {
         const ChartConfig(
           datasets: _lineDatasets,
           labels: [],
-          legend: ChartLegend(reverse: true),
+          pluginOptions: [LegendOptions(reverse: true)],
         ),
       );
 
@@ -392,19 +368,19 @@ void main() {
         ChartConfig(
           datasets: _barDatasets(legendHidden: true, borderRadius: 10),
           labels: const [],
-          legend: ChartLegend(
-            extra: {
-              'labels': {
-                'filter': (LegendItem legendItem, Object? data) {
+          pluginOptions: [
+            LegendOptions(
+              labels: LegendLabelOptions(
+                filter: (legendItem, data) {
                   final dataset = jsGetIndex(
                     jsGet(data, 'datasets'),
                     legendItem.datasetIndex!.toDouble(),
                   );
                   return !jsTruthy(jsGet(dataset, 'legendHidden'));
                 },
-              },
-            },
-          ),
+              ),
+            ),
+          ],
         ),
       );
 
@@ -446,14 +422,14 @@ void main() {
         ChartConfig(
           datasets: _lineDatasets,
           labels: const [],
-          legend: ChartLegend(
-            extra: {
-              'labels': {
-                'sort': (LegendItem a, LegendItem b, Object? data) =>
+          pluginOptions: [
+            LegendOptions(
+              labels: LegendLabelOptions(
+                sort: (a, b, data) =>
                     b.datasetIndex! > a.datasetIndex! ? 1 : -1,
-              },
-            },
-          ),
+              ),
+            ),
+          ],
         ),
       );
 
@@ -466,20 +442,12 @@ void main() {
     testWidgets('should not throw when the label options are missing', (
       tester,
     ) async {
-      // This case deliberately supplies the false sentinel outside the
-      // scope's dictionary type; all other foreign values stay audited.
-      final saved = foreignAudit;
-      foreignAudit = (owner, key, raw) {
-        if (owner == 'LegendOptionsScope' && key == 'labels' && raw == false) {
-          return;
-        }
-        saved?.call(owner, key, raw);
-      };
-      addTearDown(() => foreignAudit = saved);
-
+      // `labels: false` has no form: the legend options are one object with
+      // nullable fields (Chart.js ADR 0193). A box whose options have no
+      // label options reads the label options of `{}` (plugin.legend.js:105),
+      // as upstream reads them for `false`.
       void makeChart() {
-        // Preserve the deliberately invalid `labels: false` option.
-        acquireChartRoot(
+        final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'bar'
             ..data = (ChartDataScope()
@@ -500,11 +468,16 @@ void main() {
               ]
               ..labels = <Object?>[])
             ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
-              'plugins': <String, Object?>{
-                'legend': <String, Object?>{'labels': false},
-              },
+              'plugins': <String, Object?>{'legend': const LegendOptions()},
             }),
         );
+        (chart.legend! as Legend)
+          ..options = const LegendOptions(
+            display: true,
+            position: ChartPosition.top,
+          )
+          ..buildLabels()
+          ..fit();
       }
 
       expect(makeChart, returnsNormally);
@@ -520,7 +493,7 @@ void main() {
               LineDataset(label: 'dataset$n', data: const .values([])),
           ],
           labels: const [],
-          legend: const ChartLegend(position: ChartPosition.right),
+          pluginOptions: const [LegendOptions(position: ChartPosition.right)],
         ),
         <String, Object?>{
           'canvas': <String, Object?>{'width': 512, 'height': 105},
@@ -560,17 +533,19 @@ void main() {
               ]),
             ),
           ],
-          legend: ChartLegend(
-            usePointStyle: true,
-            position: ChartPosition.right,
-            align: ChartAlign.center,
-            extra: {
-              // DIVERGES(chartjs): adapt-point-style-objects, the style
-              // class.
-              'labels': {'pointStyle': RectPointStyle()},
-              'maxWidth': 860,
-            },
-          ),
+          pluginOptions: [
+            LegendOptions(
+              position: ChartPosition.right,
+              align: ChartAlign.center,
+              labels: LegendLabelOptions(
+                usePointStyle: true,
+                // DIVERGES(chartjs): adapt-point-style-objects, the style
+                // class.
+                pointStyle: RectPointStyle(),
+              ),
+              maxWidth: 860,
+            ),
+          ],
           aspectRatio: 3,
         ),
       );
@@ -589,7 +564,12 @@ void main() {
         const ChartConfig(
           datasets: [LineDataset(label: 'dataset1', data: .values([]))],
           labels: [],
-          legend: ChartLegend(position: ChartPosition.right, boxHeight: 40),
+          pluginOptions: [
+            LegendOptions(
+              position: ChartPosition.right,
+              labels: LegendLabelOptions(boxHeight: 40),
+            ),
+          ],
         ),
         <String, Object?>{
           'canvas': <String, Object?>{'width': 512, 'height': 105},
@@ -674,11 +654,9 @@ void main() {
             ),
           ],
           labels: [],
-          legend: ChartLegend(
-            extra: {
-              'labels': {'useBorderRadius': true},
-            },
-          ),
+          pluginOptions: [
+            LegendOptions(labels: LegendLabelOptions(useBorderRadius: true)),
+          ],
         ),
       );
 
@@ -769,7 +747,9 @@ void main() {
         const ChartConfig(
           datasets: _pointStyleDatasets,
           labels: [],
-          legend: ChartLegend(usePointStyle: true),
+          pluginOptions: [
+            LegendOptions(labels: LegendLabelOptions(usePointStyle: true)),
+          ],
         ),
       );
 
@@ -787,14 +767,16 @@ void main() {
           const ChartConfig(
             datasets: _pointStyleDatasets,
             labels: [],
-            legend: ChartLegend(
-              usePointStyle: true,
-              extra: {
-                // DIVERGES(chartjs): adapt-point-style-objects, the style
-                // class.
-                'labels': {'pointStyle': StarPointStyle()},
-              },
-            ),
+            pluginOptions: [
+              LegendOptions(
+                labels: LegendLabelOptions(
+                  usePointStyle: true,
+                  // DIVERGES(chartjs): adapt-point-style-objects, the style
+                  // class.
+                  pointStyle: StarPointStyle(),
+                ),
+              ),
+            ],
           ),
         );
 
@@ -847,12 +829,12 @@ void main() {
           ],
           responsive: true,
           onClick: (_, _, _) {},
-          legend: const ChartLegend(display: true),
+          pluginOptions: const [LegendOptions(display: true)],
         ),
       );
       expect(
         (chart.legend! as Legend).options.onClick,
-        same(_legendDefaults().onClickCell?.raw),
+        same(_legendDefaults().onClick),
       );
     });
 
@@ -873,7 +855,7 @@ void main() {
             ),
           ],
           responsive: true,
-          legend: ChartLegend(display: true),
+          pluginOptions: [LegendOptions(display: true)],
           // The chart option `color` has no typed field.
           extra: {
             'color': ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
@@ -881,11 +863,11 @@ void main() {
         ),
       );
       expect(
-        (chart.legend! as Legend).options.labels.color,
+        (chart.legend! as Legend).options.labels!.color,
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
       );
       expect(
-        (chart.legend! as Legend).options.title.color,
+        (chart.legend! as Legend).options.title!.color,
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
       );
     });
@@ -893,11 +875,11 @@ void main() {
     group('config update', () {
       testWidgets('should update the options', (tester) async {
         final chart = acquireChartRoot(
-          _lineChart(<String, Object?>{'display': true}),
+          _lineChart(const LegendOptions(display: true)),
         );
         expect((chart.legend! as Legend).options.display, true);
 
-        _legendOptions(chart)['display'] = false;
+        _writeLegendOptions(chart, const LegendOptions(display: false));
         chart.update();
         expect((chart.legend! as Legend).options.display, false);
       });
@@ -910,11 +892,11 @@ void main() {
             ..data = (ChartDataScope())
             ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{
-                'legend': <String, Object?>{
-                  'fullSize': true,
-                  'position': ChartPosition.top,
-                  'weight': 150,
-                },
+                'legend': const LegendOptions(
+                  fullSize: true,
+                  position: ChartPosition.top,
+                  weight: 150,
+                ),
               },
             }),
         );
@@ -926,10 +908,14 @@ void main() {
         expect(legend().position, ChartPosition.top);
         expect(legend().weight, 150);
 
-        _legendOptions(chart)
-          ..['fullSize'] = false
-          ..['position'] = ChartPosition.left
-          ..['weight'] = 42;
+        _writeLegendOptions(
+          chart,
+          const LegendOptions(
+            fullSize: false,
+            position: ChartPosition.left,
+            weight: 42,
+          ),
+        );
         chart.update();
 
         expect(legend().fullSize, false);
@@ -954,13 +940,15 @@ void main() {
           final chart = acquireChartRoot(_lineChart(false));
           expect(chart.legend, isNull);
 
-          _pluginOptions(chart)['legend'] = <String, Object?>{};
+          // `{}`: the legend options with no field (Chart.js ADR 0193).
+          _pluginOptions(chart)['legend'] = const LegendOptions();
           chart.update();
           expect(chart.legend, isNotNull);
           // `toEqualOptions` read the own keys of the defaults, and the
           // resolved colors of the scriptable label and title colors. The
-          // legend keeps the resolved `LegendOptions` (Chart.js ADR 0182).
-          final expected = LegendOptions.of(_legendDefaults());
+          // legend keeps the options with the color of the chart (Chart.js
+          // ADR 0193).
+          final expected = _legendDefaults();
           final actual = (chart.legend! as Legend).options;
           expect(actual.display, expected.display);
           expect(actual.position, expected.position);
@@ -971,8 +959,8 @@ void main() {
           expect(actual.onClick, same(expected.onClick));
           expect(actual.onHover, same(expected.onHover));
           expect(actual.onLeave, same(expected.onLeave));
-          expect(actual.labels.color, Chart.defaults.colorCell?.raw);
-          expect(actual.title.color, Chart.defaults.colorCell?.raw);
+          expect(actual.labels!.color, Chart.defaults.colorCell?.raw);
+          expect(actual.title!.color, Chart.defaults.colorCell?.raw);
         },
       );
     });
@@ -986,7 +974,7 @@ void main() {
           Object? leaveItem;
 
           final chart = _line(
-            ChartLegend(
+            LegendOptions(
               onClick: (_, item, _) {
                 clickItem = item;
               },
@@ -1024,7 +1012,7 @@ void main() {
         Object? leaveItem;
 
         final chart = _line(
-          ChartLegend(
+          LegendOptions(
             onHover: (_, item, _) {
               hoverItem = item;
             },
@@ -1056,11 +1044,13 @@ void main() {
               LineDataset(data: .values([10, 20, 30, 100]), label: 'dataset 1'),
               LineDataset(data: .values([10, 20, 30, 100]), label: 'dataset 2'),
             ],
-            legend: ChartLegend(
-              onClick: (_, item, _) {
-                clickItem = item;
-              },
-            ),
+            pluginOptions: [
+              LegendOptions(
+                onClick: (_, item, _) {
+                  clickItem = item;
+                },
+              ),
+            ],
           ),
         );
 

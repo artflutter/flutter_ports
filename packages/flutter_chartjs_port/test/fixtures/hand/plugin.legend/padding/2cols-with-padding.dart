@@ -48,7 +48,8 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'plugins': <String, Object?>{
-        'legend': <String, Object?>{'position': ChartPosition.left},
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'legend': const LegendOptions(position: ChartPosition.left),
       },
       'layout': <String, Object?>{
         'padding': const EdgeInsets.fromLTRB(30, 50, 30, 50),

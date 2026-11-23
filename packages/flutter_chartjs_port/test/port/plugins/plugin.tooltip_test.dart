@@ -482,7 +482,7 @@ ChartConfigurationScope _probeChart({
   bool tooltipOff = false,
   LineDataset? first,
   List<Dataset> more = const [],
-  ChartLegend? legend,
+  LegendOptions? legend,
   ChartAnimation? animation,
   List<Plugin<Object?>>? plugins,
 }) => ChartConfigLowering(
@@ -492,10 +492,9 @@ ChartConfigurationScope _probeChart({
       first ?? const LineDataset(label: 'one', data: .values([10, 20, 30])),
       ...more,
     ],
-    legend: legend,
     animation: animation,
     plugins: plugins,
-    pluginOptions: tooltip == null ? null : [tooltip],
+    pluginOptions: [?legend, ?tooltip],
     disabledPlugins: [
       if (legend == null) const PluginOff<LegendPlugin>(),
       if (tooltipOff) const PluginOff<TooltipPlugin>(),
@@ -1901,7 +1900,7 @@ void main() {
       (tester) async {
         final chart = acquireChartRoot(
           _probeChart(
-            legend: const ChartLegend(
+            legend: const LegendOptions(
               textDirection: native_ui.TextDirection.rtl,
             ),
           ),

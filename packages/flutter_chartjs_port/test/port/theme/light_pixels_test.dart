@@ -97,15 +97,10 @@ Chart _chart(String type, {required bool colors, ChartOptionsScope? theme}) {
     datasets: [for (var d = 0; d < 2; d++) dataset(d)],
     title: const ChartTitle(display: true, text: ['Title']),
     subtitle: const ChartTitle(display: true, text: ['Subtitle']),
-    legend: const ChartLegend(
-      extra: {
-        'title': {
-          'display': true,
-          'text': ['Legend title'],
-        },
-      },
-    ),
     pluginOptions: [
+      const LegendOptions(
+        title: LegendTitleOptions(display: true, text: ['Legend title']),
+      ),
       TooltipOptions(
         callbacks: TooltipCallbacks(footer: (tooltip, arg) => ['Footer']),
       ),

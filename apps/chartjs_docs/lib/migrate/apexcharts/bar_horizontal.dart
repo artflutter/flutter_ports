@@ -23,8 +23,10 @@ final ChartConfig _config = ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: apexPadding,
-  legend: const ChartLegend(display: false),
-  pluginOptions: [apexTooltip(horizontal: true)],
+  pluginOptions: [
+    const LegendOptions(display: false),
+    apexTooltip(horizontal: true),
+  ],
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,

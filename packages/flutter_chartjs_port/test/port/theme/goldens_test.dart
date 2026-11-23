@@ -52,14 +52,9 @@ ChartConfig _config() => const ChartConfig(
   animation: ChartAnimation.none,
   title: ChartTitle(display: true, text: ['Title']),
   subtitle: ChartTitle(display: true, text: ['Subtitle']),
-  legend: ChartLegend(
-    extra: {
-      'title': {
-        'display': true,
-        'text': ['Legend'],
-      },
-    },
-  ),
+  pluginOptions: [
+    LegendOptions(title: LegendTitleOptions(display: true, text: ['Legend'])),
+  ],
   scales: [
     CategoryAxis(.x, title: AxisTitle(display: true, text: ['Label'])),
     LinearAxis(.y, title: AxisTitle(display: true, text: ['Value'])),

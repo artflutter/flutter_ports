@@ -61,9 +61,11 @@ List<LegendItem> _generateLabels(IChart chart) {
   if (jsTruthy(_lengthOf(labels)) &&
       jsTruthy(_lengthOf(jsGet(data, 'datasets')))) {
     // `const {labels: {pointStyle, color}} = chart.legend.options;`
-    // The resolved label options of the legend (Chart.js ADR 0182).
-    // DIVERGES(chartjs): adapt-native-plugin-options, the resolved values.
-    final labelsOptions = LegendOptions.of(chart.legend!.options).labels;
+    // The label options of the legend (Chart.js ADR 0193).
+    // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+    final labelsOptions =
+        (chart.legend!.options as LegendOptions).labels ??
+        const LegendLabelOptions();
     final pointStyle = labelsOptions.pointStyle;
     final color = labelsOptions.color;
 
@@ -148,14 +150,6 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   Object? get nativeLegendGenerator =>
       supportsDataUpdates ? _generateLabels : null;
 
-  /// `const {labels: {...}} = chart.legend.options` of [_generateLabels].
-  @override
-  // DIVERGES(chartjs): adapt-hidden-legend-items, the reads of the generator.
-  List<OptionKey> get nativeLegendLabelKeys => const [
-    OptionKey.pointStyle,
-    OptionKey.color,
-  ];
-
   @override
   DataUpdateShape get dataUpdateShape => DataUpdateShape.radial;
 
@@ -190,16 +184,18 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
         ..spacingMode = ArcSpacingMode.proportional;
 
   /// controller.polarArea.js:32 `static overrides`, a typed scope of the
-  /// kind `ChartOptions` (Chart.js ADR 0054 §3).
+  /// kind `ChartOptions` (Chart.js ADR 0054 §3). The legend options are one
+  /// [LegendOptions] (Chart.js ADR 0193).
   ///
   /// The two legend functions are tear-offs of top-level functions: each
   /// read gives the same function (Chart.js ADR 0028, section 6).
   static final ChartOptionsScope overrides = ChartOptionsScope()
     ..aspectRatio = 1.0
     ..plugins = (PluginOptionsByTypeScope()
-      ..legend = (LegendOptionsScope()
-        ..labels = (LegendLabelOptionsScope()..generateLabels = _generateLabels)
-        ..onClick = _onClick))
+      ..legend = const LegendOptions(
+        labels: LegendLabelOptions(generateLabels: _generateLabels),
+        onClick: _onClick,
+      ))
     ..scales = (ScaleOptionsByIdScope()
       ..jsWrite(
         'r',

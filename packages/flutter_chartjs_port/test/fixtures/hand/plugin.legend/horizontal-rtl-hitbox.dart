@@ -31,12 +31,13 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'plugins': <String, Object?>{
         // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-        'legend': <String, Object?>{
-          'position': ChartPosition.top,
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'legend': const LegendOptions(
+          position: ChartPosition.top,
           // DIVERGES(chartjs): adapt-bool-options, the text 'true' of
           // upstream is the bool true.
-          'rtl': true,
-        },
+          rtl: true,
+        ),
       },
       'layout': <String, Object?>{
         'padding': const EdgeInsets.only(

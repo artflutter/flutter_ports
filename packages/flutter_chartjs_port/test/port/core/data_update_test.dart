@@ -627,7 +627,7 @@ void main() {
       );
       final cfg = config(type, plugins: [plugin]);
       ((cfg['options']! as JsObjectFace)['plugins']! as OptionScope)['legend'] =
-          <String, Object?>{'display': true};
+          const LegendOptions(display: true);
       return (chart(cfg), ({bool on = true}) => cancel = on);
     }
 

@@ -112,7 +112,6 @@ final ChartConfig _config = ChartConfig(
     color: .solid(_text),
     font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
   ),
-  legend: const ChartLegend(display: false),
   // TooltipBehavior(header: '', canShowMarker: false)
   pluginOptions: const [
     TooltipOptions(
@@ -121,6 +120,7 @@ final ChartConfig _config = ChartConfig(
       yAlign: .bottom,
       callbacks: TooltipCallbacks(title: _noTitle, label: _tooltipLabel),
     ),
+    LegendOptions(display: false),
   ],
   plugins: [_highLow],
   scales: [

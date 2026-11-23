@@ -14,12 +14,12 @@ import 'package:flutter_test/flutter_test.dart';
 // `ChartConfig ==`. An `==` config gives no update, also from a parent that
 // builds the config in each build. The event callbacks and the tooltip
 // callbacks of a dataset lower to trampolines that call the callback of the
-// newest config, so a new closure there gives no update. The `TooltipOptions`
-// of `pluginOptions` compare with `==`: a new closure there is a new value
-// and gives an update. A new `...For` closure is a new value and gives an
-// update. `ChartView.raw` keeps the identity test of Chart.js ADR 0049,
-// section 4. The update count is the `beforeUpdate` count of a registered
-// spy plugin, which the config does not name.
+// newest config, so a new closure there gives no update. The `LegendOptions`
+// and `TooltipOptions` of `pluginOptions` compare with `==`: a new closure
+// there is a new value and gives an update. A new `...For` closure is a new
+// value and gives an update. `ChartView.raw` keeps the identity test of
+// Chart.js ADR 0049, section 4. The update count is the `beforeUpdate` count
+// of a registered spy plugin, which the config does not name.
 
 const Color _red = Color(0xFFFF0000);
 
@@ -430,7 +430,7 @@ void main() {
     });
 
     testWidgets('a legend onClick replaces the toggle and gets the item; a '
-        'new closure gives no update', (tester) async {
+        'new closure is a new value and gives an update', (tester) async {
       final modes = _spyOnUpdates();
       final clicks = <String>[];
       ChartConfig config(String name) => ChartConfig(
@@ -439,12 +439,14 @@ void main() {
           BarDataset(label: 'A', data: .values([1, 2])),
           BarDataset(label: 'B', data: .values([3, 4])),
         ],
-        legend: ChartLegend(
-          onClick: (_, item, _) => clicks.add(
-            '$name ${item.text.join('\n')} '
-            '${item.datasetIndex}',
+        pluginOptions: [
+          LegendOptions(
+            onClick: (_, item, _) => clicks.add(
+              '$name ${item.text.join('\n')} '
+              '${item.datasetIndex}',
+            ),
           ),
-        ),
+        ],
         animation: ChartAnimation.none,
       );
       await tester.pumpWidget(_box(ChartView(config: config('first'))));
@@ -458,8 +460,13 @@ void main() {
       expect(clicks, ['first B 1']);
       expect(chart.isDatasetVisible(1), isTrue);
 
-      await tester.pumpWidget(_box(ChartView(config: config('second'))));
       expect(modes, hasLength(1));
+
+      // The LegendOptions with a new closure is a new value (Chart.js ADR
+      // 0193): one update.
+      await tester.pumpWidget(_box(ChartView(config: config('second'))));
+      await tester.pump();
+      expect(modes, hasLength(2));
       await tester.tapAt(center);
       await tester.pump();
       expect(clicks, ['first B 1', 'second B 1']);

@@ -62,7 +62,7 @@ ChartConfig _config(
   String type, {
   List<String>? log,
   Map<String, Object?> options = const {},
-  Map<String, Object?> legend = const {},
+  LegendOptions legend = const LegendOptions(),
   List<Plugin<Object?>>? plugins,
 }) {
   void entry(String name, ChartEvent event, LegendItem item) =>
@@ -84,13 +84,13 @@ ChartConfig _config(
     maintainAspectRatio: false,
     // An explicit plugins object replaces the default legend options in
     // the original config, so it must not inherit these logging callbacks.
-    legend: options.containsKey('plugins')
-        ? null
-        : ChartLegend(
-            onHover: (event, item, legend) => entry('hover', event, item),
-            onLeave: (event, item, legend) => entry('leave', event, item),
-            extra: legend,
-          ),
+    pluginOptions: [
+      if (!options.containsKey('plugins'))
+        LegendOptions(
+          onHover: (event, item, legend) => entry('hover', event, item),
+          onLeave: (event, item, legend) => entry('leave', event, item),
+        ).merge(legend),
+    ],
     extra: options,
     plugins: plugins,
   );
@@ -174,7 +174,7 @@ Future<bool> _key(WidgetTester tester, LogicalKeyboardKey key) async {
 final class _Charts(
   final String type, {
   final Map<String, Object?> options = const {},
-  final Map<String, Object?> legend = const {},
+  final LegendOptions legend = const LegendOptions(),
 }) {
   final FocusNode node = FocusNode(debugLabel: 'keys');
   final List<String> keysLog = [];
@@ -274,12 +274,11 @@ void main() {
         _view(
           _config(
             'bar',
-            legend: {
-              'onHover':
-                  (ChartEvent event, LegendItem item, LegendElement legend) {
-                    hovered = event;
-                  },
-            },
+            legend: LegendOptions(
+              onHover: (event, item, legend) {
+                hovered = event;
+              },
+            ),
           ),
           focusNode: focus,
           onChartCreated: (value) => chart = value,
@@ -392,10 +391,9 @@ void main() {
       final clicks = <(Object?, LegendElement)>[];
       final charts = _Charts(
         'bar',
-        legend: <String, Object?>{
-          'onClick': (Object? e, Object? item, LegendElement legend) =>
-              clicks.add((item, legend)),
-        },
+        legend: LegendOptions(
+          onClick: (e, item, legend) => clicks.add((item, legend)),
+        ),
       );
       await charts.pump(tester);
       await _key(tester, LogicalKeyboardKey.arrowDown);
@@ -450,9 +448,7 @@ void main() {
       var clicks = 0;
       final charts = _Charts(
         'bar',
-        legend: <String, Object?>{
-          'onClick': (Object? e, Object? item, Object? legend) => clicks++,
-        },
+        legend: LegendOptions(onClick: (e, item, legend) => clicks++),
       );
       await charts.pump(tester);
       await _key(tester, LogicalKeyboardKey.arrowDown);

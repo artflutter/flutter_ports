@@ -910,6 +910,28 @@ Future<void> runStep(
         <String, Object?>{'x': x, 'y': y},
       );
       chart.update();
+    case ['setOption', final String path, final Object? value]
+        when path.startsWith('plugins.legend.'):
+      // The legend options are one immutable object (Chart.js ADR 0193): the
+      // write of the key is a new object in the plugins of the chart options,
+      // where the set trap of upstream writes the key.
+      final plugins = jsGet(chart.options, 'plugins')!;
+      final legend = jsGet(plugins, 'legend')! as LegendOptions;
+      jsSet(
+        plugins,
+        'legend',
+        legend.merge(switch (path) {
+          'plugins.legend.position' => LegendOptions(
+            position: value! as LayoutPosition,
+          ),
+          'plugins.legend.display' => LegendOptions(display: value! as bool),
+          'plugins.legend.labels.pointStyle' => LegendOptions(
+            labels: LegendLabelOptions(pointStyle: value! as PointStyle),
+          ),
+          _ => throw ArgumentError.value(path, 'path', 'No legend field'),
+        }),
+      );
+      chart.update();
     case ['setOption', final String path, final Object? value]:
       final keys = path.split('.');
       Object? target = chart.options;

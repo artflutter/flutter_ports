@@ -107,7 +107,6 @@ final ChartConfig _config = ChartConfig(
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
-  legend: const ChartLegend(display: false),
   // `PointSelection(dim: Dim.x, variable: 'date')`: all types at the date
   // nearest to the pointer.
   interaction: const ChartInteraction(
@@ -115,6 +114,7 @@ final ChartConfig _config = ChartConfig(
     intersect: false,
   ),
   pluginOptions: [
+    const LegendOptions(display: false),
     graphicTooltip(
       position: const FollowYPositioner(),
       title: _date,

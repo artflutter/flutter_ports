@@ -11,7 +11,7 @@
 /// them with typed reads, and the typed API makes no Map of options. Each
 /// class of the typed config lowers to a new scope of its kind in its
 /// library (`lowerDataset` of `datasets.dart`, `lowerAxis` of `axes.dart`,
-/// `lowerLegend` and the other functions of `groups.dart`), with these
+/// `lowerTitle` and the other functions of `groups.dart`), with these
 /// rules:
 /// 1. The keys come in the order of the constructor parameters. A
 ///    parameter that is `null` writes no key.
@@ -31,7 +31,7 @@
 ///    format, and a trampoline for each event and text callback.
 /// 5. A trampoline reads the callback of the newest config of its
 ///    [ChartConfigLowering] at each call ([eventTrampoline],
-///    [legendTrampoline], [tooltipCallbacksTrampoline]
+///    [tooltipCallbacksTrampoline]
 ///    and [animationTrampoline]). Thus a new closure in a config that is
 ///    `==` to the last one needs no new lowering.
 /// 6. `extra` merges last ([mergeExtra]): each entry becomes a cell of the
@@ -287,9 +287,6 @@ final class ChartConfigLowering(
   ChartOptionsScope _options() {
     final config = this.config;
     final plugins = PluginOptionsByTypeScope();
-    if (config.legend case final legend?) {
-      plugins.legend = lowerLegend(legend, this);
-    }
     if (config.title case final title?) plugins.title = lowerTitle(title);
     if (config.subtitle case final subtitle?) {
       plugins.subtitle = lowerTitle(subtitle);
@@ -558,14 +555,6 @@ TooltipCallbacks tooltipCallbacksTrampoline(
 /// config with the same arguments.
 ChartEventHandler eventTrampoline(ChartEventHandler? Function() newest) =>
     (event, elements, chart) => newest()?.call(event, elements, chart);
-
-/// The trampoline of the legend handler that [newest] reads: `onClick`,
-/// `onHover` or `onLeave` of `plugins.legend`.
-///
-/// The legend calls it with the event, the legend item and the legend
-/// (`plugin.legend.js:539-550`).
-LegendEventHandler legendTrampoline(LegendEventHandler? Function() newest) =>
-    (event, item, legend) => newest()?.call(event, item, legend);
 
 /// The trampoline of the animation callback that [newest] reads:
 /// `onProgress` or `onComplete` of `options.animation`.

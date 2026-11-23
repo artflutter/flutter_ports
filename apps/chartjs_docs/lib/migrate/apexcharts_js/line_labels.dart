@@ -37,9 +37,11 @@ final ChartConfig _config = ChartConfig(
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 0, 16, 0),
   title: apexJsTitle('Average High & Low Temperature'),
-  // legend: {position: 'top', horizontalAlign: 'right', floating: true}
-  legend: apexJsLegend(position: .top, align: .end),
-  pluginOptions: [apexTooltip()],
+  pluginOptions: [
+    // legend: {position: 'top', horizontalAlign: 'right', floating: true}
+    apexJsLegend(position: .top, align: .end),
+    apexTooltip(),
+  ],
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,

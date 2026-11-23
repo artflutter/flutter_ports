@@ -22,24 +22,6 @@ void main() {
   group('the fields that `of` reads from the resolved options', () {
     test('a number of a truthy value, else null', () {
       expect(
-        LegendOptions.of(<String, Object?>{'maxWidth': 120.0}).maxWidth,
-        120,
-      );
-      expect(
-        LegendOptions.of(<String, Object?>{'maxHeight': '80'}).maxHeight,
-        80,
-      );
-      expect(
-        LegendOptions.of(<String, Object?>{'maxWidth': 0.0}).maxWidth,
-        isNull,
-      );
-      expect(LegendOptions.of(<String, Object?>{}).maxHeight, isNull);
-      expect(
-        LegendLabelOptions.of(<String, Object?>{'pointStyleWidth': 12.0})
-            .pointStyleWidth,
-        12,
-      );
-      expect(
         DecimationOptions.of(<String, Object?>{'samples': 50.0}).samples,
         50,
       );
@@ -47,21 +29,6 @@ void main() {
         DecimationOptions.of(<String, Object?>{'threshold': 0.0}).threshold,
         isNull,
       );
-    });
-
-    test('a number of a defined value, else null', () {
-      final labels = LegendLabelOptions.of(<String, Object?>{
-        'boxWidth': 30.0,
-        'boxHeight': null,
-      });
-      expect(labels.boxWidth, 30);
-      // `ToNumber(null)` is 0: only `undefined` takes the default.
-      expect(labels.boxHeight, 0);
-      expect(LegendLabelOptions.of(<String, Object?>{}).boxWidth, isNull);
-    });
-
-    test('a number', () {
-      expect(LegendLabelOptions.of(<String, Object?>{}).padding, isNaN);
     });
 
     test('the lines of a text', () {
@@ -76,12 +43,6 @@ void main() {
           'text': ['a', 'b'],
         }).text,
         ['a', 'b'],
-      );
-      expect(
-        LegendTitleOptions.of(<String, Object?>{
-          'text': ['a'],
-        }).text,
-        ['a'],
       );
       expect(
         TitleOptions.of(<String, Object?>{'text': <String>[]}).text,
@@ -100,7 +61,6 @@ void main() {
         'font': const ChartTextStyle(fontSize: 20),
       }).font;
       expect(font.fontSize, 20);
-      expect(LegendLabelOptions.of(<String, Object?>{}).textAlign, isNull);
       expect(
         FillerOptions.of(<String, Object?>{
           'drawTime': FillerDrawTime.beforeDraw,
@@ -115,13 +75,114 @@ void main() {
             .position,
         ChartPosition.left,
       );
-      expect(
-        LegendOptions.of(<String, Object?>{
-          'position': const ScaleValuePosition('x', 0.0),
-        }).position,
-        const ScaleValuePosition('x', 0.0),
-      );
       expect(TitleOptions.of(<String, Object?>{}).position, isNull);
+    });
+  });
+
+  // The legend options are one object of the app (Chart.js ADR 0193): the
+  // plugin service merges the objects of the scopes with `merge`, and
+  // `ChartView` compares two configs with `==`.
+  group('LegendOptions', () {
+    bool filter(LegendItem item, Object data) => true;
+    int sort(LegendItem a, LegendItem b, Object data) => 0;
+
+    test('merge takes each field that the other options set', () {
+      final base = LegendOptions(
+        display: true,
+        position: ChartPosition.top,
+        weight: 1000,
+        labels: LegendLabelOptions(
+          boxWidth: 40,
+          padding: 10,
+          font: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          filter: filter,
+        ),
+        title: const LegendTitleOptions(display: false, text: ['']),
+      );
+      final merged = base.merge(
+        LegendOptions(
+          position: const ScaleValuePosition('x', 0),
+          maxWidth: 120,
+          labels: LegendLabelOptions(
+            padding: 4,
+            font: const TextStyle(fontSize: 20),
+            sort: sort,
+          ),
+          title: const LegendTitleOptions(display: true, text: ['Series']),
+        ),
+      );
+      expect(merged.display, isTrue);
+      expect(merged.position, const ScaleValuePosition('x', 0));
+      expect(merged.maxWidth, 120);
+      expect(merged.weight, 1000);
+      // The label and title options merge by field, and a font merges by
+      // field as the resolver merges the keys of a font object.
+      expect(merged.labels!.boxWidth, 40);
+      expect(merged.labels!.padding, 4);
+      expect(merged.labels!.font!.fontSize, 20);
+      expect(merged.labels!.font!.fontWeight, FontWeight.bold);
+      expect(merged.labels!.filter, same(filter));
+      expect(merged.labels!.sort, same(sort));
+      expect(merged.title!.display, isTrue);
+      expect(merged.title!.text, ['Series']);
+      expect(base.merge(const LegendOptions()), base);
+      expect(const LegendOptions().merge(base), base);
+    });
+
+    test('== and hashCode compare the fields', () {
+      LegendOptions make({double boxWidth = 40}) => LegendOptions(
+        display: true,
+        position: ChartPosition.bottom,
+        labels: LegendLabelOptions(
+          boxWidth: boxWidth,
+          color: const ChartPaint.solid(Color(0xff666666)),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
+          filter: filter,
+        ),
+        title: const LegendTitleOptions(
+          display: true,
+          text: ['a', 'b'],
+          padding: EdgeInsets.all(6),
+        ),
+        events: const ['click'],
+      );
+      expect(make(), make());
+      expect(make().hashCode, make().hashCode);
+      expect(make(), isNot(make(boxWidth: 20)));
+      expect(const LegendOptions(), const LegendOptions());
+      expect(
+        const LegendOptions(title: LegendTitleOptions(text: ['a'])),
+        isNot(const LegendOptions(title: LegendTitleOptions(text: ['a', 'b']))),
+      );
+      expect(const LegendOptions(display: false), isNot(const LegendOptions()));
+      // A new closure is a new value.
+      expect(
+        LegendOptions(onClick: (e, item, legend) {}),
+        isNot(LegendOptions(onClick: (e, item, legend) {})),
+      );
+    });
+
+    test('the layout reads display, fullSize, position and weight', () {
+      const options = LegendOptions(
+        display: false,
+        fullSize: true,
+        position: ChartPosition.left,
+        weight: 5,
+        align: ChartAlign.end,
+      );
+      expect(readOption(options, OptionKey.display), isFalse);
+      expect(readOption(options, OptionKey.fullSize), isTrue);
+      expect(readOption(options, OptionKey.position), ChartPosition.left);
+      expect(readOption(options, OptionKey.weight), 5);
+      expect(readOption(options, OptionKey.align), same(undefined));
+      expect(
+        readOption(const LegendOptions(), OptionKey.display),
+        same(undefined),
+      );
+    });
+
+    test('the plugin id is legend', () {
+      expect(const LegendOptions().pluginId, 'legend');
     });
   });
 

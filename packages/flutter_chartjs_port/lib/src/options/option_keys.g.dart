@@ -203,12 +203,6 @@ enum OptionKey(
   /// The key `bounds`.
   bounds('bounds'),
 
-  /// The key `boxHeight`.
-  boxHeight('boxHeight'),
-
-  /// The key `boxWidth`.
-  boxWidth('boxWidth'),
-
   /// The key `bubble`.
   bubble('bubble'),
 
@@ -326,9 +320,6 @@ enum OptionKey(
   /// The key `filler`.
   filler('filler'),
 
-  /// The key `filter`.
-  filter('filter'),
-
   /// The key `fn`.
   fn('fn'),
 
@@ -346,9 +337,6 @@ enum OptionKey(
 
   /// The key `fullSize`.
   fullSize('fullSize'),
-
-  /// The key `generateLabels`.
-  generateLabels('generateLabels'),
 
   /// The key `grace`.
   grace('grace'),
@@ -482,17 +470,11 @@ enum OptionKey(
   /// The key `maxBarThickness`.
   maxBarThickness('maxBarThickness'),
 
-  /// The key `maxHeight`.
-  maxHeight('maxHeight'),
-
   /// The key `maxRotation`.
   maxRotation('maxRotation'),
 
   /// The key `maxTicksLimit`.
   maxTicksLimit('maxTicksLimit'),
-
-  /// The key `maxWidth`.
-  maxWidth('maxWidth'),
 
   /// The key `millisecond`.
   millisecond('millisecond'),
@@ -544,9 +526,6 @@ enum OptionKey(
 
   /// The key `onHover`.
   onHover('onHover'),
-
-  /// The key `onLeave`.
-  onLeave('onLeave'),
 
   /// The key `onProgress`.
   onProgress('onProgress'),
@@ -626,9 +605,6 @@ enum OptionKey(
   /// The key `pointStyle`.
   pointStyle('pointStyle'),
 
-  /// The key `pointStyleWidth`.
-  pointStyleWidth('pointStyleWidth'),
-
   /// The key `polarArea`.
   polarArea('polarArea'),
 
@@ -680,9 +656,6 @@ enum OptionKey(
   /// The key `round`.
   round('round'),
 
-  /// The key `rtl`.
-  rtl('rtl'),
-
   /// The key `sampleSize`.
   sampleSize('sampleSize'),
 
@@ -721,9 +694,6 @@ enum OptionKey(
 
   /// The key `skipNull`.
   skipNull('skipNull'),
-
-  /// The key `sort`.
-  sort('sort'),
 
   /// The key `source`.
   source('source'),
@@ -775,12 +745,6 @@ enum OptionKey(
 
   /// The key `text`.
   text('text'),
-
-  /// The key `textAlign`.
-  textAlign('textAlign'),
-
-  /// The key `textDirection`.
-  textDirection('textDirection'),
 
   /// The key `textStrokeColor`.
   textStrokeColor('textStrokeColor'),
@@ -835,12 +799,6 @@ enum OptionKey(
 
   /// The key `unit`.
   unit('unit'),
-
-  /// The key `useBorderRadius`.
-  useBorderRadius('useBorderRadius'),
-
-  /// The key `usePointStyle`.
-  usePointStyle('usePointStyle'),
 
   /// The key `visible`.
   visible('visible'),

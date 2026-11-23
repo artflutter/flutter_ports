@@ -901,15 +901,6 @@ ChartConfig _barTyped() => ChartConfig(
     ),
   ],
   padding: const EdgeInsets.all(8),
-  legend: const ChartLegend(
-    position: .bottom,
-    align: .start,
-    boxWidth: 20,
-    boxHeight: 10,
-    labelPadding: 12,
-    labelColor: ChartPaint.solid(_navy),
-    labelFont: TextStyle(fontSize: 11),
-  ),
   title: const ChartTitle(
     display: true,
     text: ['Sales by quarter'],
@@ -918,6 +909,17 @@ ChartConfig _barTyped() => ChartConfig(
     padding: EdgeInsets.only(top: 4, bottom: 8),
   ),
   pluginOptions: [
+    const LegendOptions(
+      position: ChartPosition.bottom,
+      align: .start,
+      labels: LegendLabelOptions(
+        boxWidth: 20,
+        boxHeight: 10,
+        padding: 12,
+        color: ChartPaint.solid(_navy),
+        font: TextStyle(fontSize: 11),
+      ),
+    ),
     TooltipOptions(
       mode: const IndexInteractionMode(),
       intersect: false,
@@ -1039,19 +1041,17 @@ Map<String, Object?> _barRaw() => <String, Object?>{
     },
     'layout': <String, Object?>{'padding': const EdgeInsets.all(8)},
     'plugins': <String, Object?>{
-      'legend': <String, Object?>{
-        'position': ChartPosition.bottom,
-        'align': ChartAlign.start,
-        'labels': <String, Object?>{
-          'color': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(27, 58, 92, 1),
-          ),
-          'font': const ChartTextStyle(fontSize: 11),
-          'boxWidth': 20,
-          'boxHeight': 10,
-          'padding': 12,
-        },
-      },
+      'legend': const LegendOptions(
+        position: ChartPosition.bottom,
+        align: ChartAlign.start,
+        labels: LegendLabelOptions(
+          color: ChartPaint.solid(native_ui.Color.fromRGBO(27, 58, 92, 1)),
+          font: ChartTextStyle(fontSize: 11),
+          boxWidth: 20,
+          boxHeight: 10,
+          padding: 12,
+        ),
+      ),
       'title': <String, Object?>{
         'display': true,
         'text': ['Sales by quarter'],
@@ -1150,7 +1150,12 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
     color: ChartPaint.solid(_navy),
     position: .bottom,
   ),
-  legend: ChartLegend(usePointStyle: true, reverse: true),
+  pluginOptions: [
+    LegendOptions(
+      labels: LegendLabelOptions(usePointStyle: true),
+      reverse: true,
+    ),
+  ],
   animation: ChartAnimation(
     duration: Duration(milliseconds: 400),
     easing: Curves.easeOutQuart,
@@ -1250,10 +1255,10 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
         ),
         'position': ChartPosition.bottom,
       },
-      'legend': <String, Object?>{
-        'reverse': true,
-        'labels': <String, Object?>{'usePointStyle': true},
-      },
+      'legend': const LegendOptions(
+        reverse: true,
+        labels: LegendLabelOptions(usePointStyle: true),
+      ),
       'filler': <String, Object?>{'propagate': true},
     },
   },
@@ -1423,7 +1428,7 @@ ChartConfig _bubbleTypeTyped() => ChartConfig(
       title: AxisTitle(display: true, text: ['Score'], align: .end),
     ),
   ],
-  legend: const ChartLegend(display: false),
+  pluginOptions: const [LegendOptions(display: false)],
 );
 
 /// The raw twin of `_bubbleTypeTyped`.
@@ -1483,9 +1488,7 @@ Map<String, Object?> _bubbleTypeRaw() => <String, Object?>{
         },
       },
     },
-    'plugins': <String, Object?>{
-      'legend': <String, Object?>{'display': false},
-    },
+    'plugins': <String, Object?>{'legend': const LegendOptions(display: false)},
   },
 };
 
@@ -1520,11 +1523,13 @@ ChartConfig _pieTypeTyped() => ChartConfig(
       circumference: 300,
     ),
   ],
-  legend: const ChartLegend(
-    position: .right,
-    labelFont: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-  ),
   pluginOptions: [
+    const LegendOptions(
+      position: ChartPosition.right,
+      labels: LegendLabelOptions(
+        font: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+      ),
+    ),
     TooltipOptions(
       bodyColor: const ChartPaint.solid(_yellow),
       bodyFont: const TextStyle(fontSize: 14),
@@ -1571,15 +1576,15 @@ Map<String, Object?> _pieTypeRaw() => <String, Object?>{
   },
   'options': <String, Object?>{
     'plugins': <String, Object?>{
-      'legend': <String, Object?>{
-        'position': ChartPosition.right,
-        'labels': <String, Object?>{
-          'font': const ChartTextStyle(
+      'legend': const LegendOptions(
+        position: ChartPosition.right,
+        labels: LegendLabelOptions(
+          font: ChartTextStyle(
             fontSize: 12,
             fontStyle: native_ui.FontStyle.italic,
           ),
-        },
-      },
+        ),
+      ),
       'tooltip': TooltipOptions(
         bodyColor: const ChartPaint.solid(
           native_ui.Color.fromRGBO(255, 205, 86, 1),
@@ -1739,7 +1744,7 @@ ChartConfig _polarAreaTypeTyped() => const ChartConfig(
       pointLabelsFont: TextStyle(fontSize: 12),
     ),
   ],
-  legend: ChartLegend(position: .left, align: .center),
+  pluginOptions: [LegendOptions(position: ChartPosition.left, align: .center)],
 );
 
 /// The raw twin of `_polarAreaTypeTyped`.
@@ -1795,10 +1800,10 @@ Map<String, Object?> _polarAreaTypeRaw() => <String, Object?>{
       },
     },
     'plugins': <String, Object?>{
-      'legend': <String, Object?>{
-        'position': ChartPosition.left,
-        'align': ChartAlign.center,
-      },
+      'legend': const LegendOptions(
+        position: ChartPosition.left,
+        align: ChartAlign.center,
+      ),
     },
   },
 };

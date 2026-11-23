@@ -28,8 +28,8 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   ],
   aspectRatio: 16 / 9,
   padding: const EdgeInsets.symmetric(horizontal: 12),
-  legend: shadcnNoLegend,
   pluginOptions: [
+    shadcnNoLegend,
     shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
   ],
   interaction: shadcnInteraction(),

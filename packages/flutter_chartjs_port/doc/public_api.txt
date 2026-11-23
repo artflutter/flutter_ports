@@ -122,7 +122,6 @@ ChartIndexed
 ChartInteraction
 ChartKeyboard
 ChartKind
-ChartLegend
 ChartMeta
 ChartOptionsScope
 ChartPaint
@@ -291,13 +290,11 @@ LegendItem
 LegendItemComparator
 LegendItemFilter
 LegendLabelOptions
-LegendLabelOptionsScope
 LegendLabelsGenerator
 LegendOptions
-LegendOptionsScope
 LegendPlugin
+LegendScript
 LegendTitleOptions
-LegendTitleOptionsScope
 LightThemeTokens
 LineController
 LineControllerDatasetOptionsScope
@@ -843,7 +840,6 @@ layoutCanvasText
 layouts
 legend
 legendItemFromOptions
-legendTrampoline
 limitValue
 lineSegmentStyleOf
 listenArrayEvents
@@ -859,7 +855,6 @@ lowerDataset
 lowerElements
 lowerFiller
 lowerInteraction
-lowerLegend
 lowerTitle
 lowerTransitions
 lttbDecimation
@@ -1186,7 +1181,6 @@ ChartIndexed
 ChartInteraction
 ChartKeyboard
 ChartKind
-ChartLegend
 ChartMeta
 ChartOptionsScope
 ChartPaint
@@ -1354,13 +1348,11 @@ LegendItem
 LegendItemComparator
 LegendItemFilter
 LegendLabelOptions
-LegendLabelOptionsScope
 LegendLabelsGenerator
 LegendOptions
-LegendOptionsScope
 LegendPlugin
+LegendScript
 LegendTitleOptions
-LegendTitleOptionsScope
 LightThemeTokens
 LineController
 LineControllerDatasetOptionsScope
@@ -1917,7 +1909,6 @@ layoutCanvasText
 layouts
 legend
 legendItemFromOptions
-legendTrampoline
 lim
 limitValue
 lineSegmentStyleOf
@@ -1934,7 +1925,6 @@ lowerDataset
 lowerElements
 lowerFiller
 lowerInteraction
-lowerLegend
 lowerTitle
 lowerTransitions
 lttbDecimation

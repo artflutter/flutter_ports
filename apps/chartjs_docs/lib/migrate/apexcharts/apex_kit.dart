@@ -110,16 +110,17 @@ AxisTitle apexAxisTitle(String text) => AxisTitle(
 
 /// The legend of apexcharts_flutter: under the chart, only with more than
 /// one series, with a 12 px square of 3 px corners before each name.
-const ChartLegend apexLegend = ChartLegend(
-  position: .bottom,
-  boxWidth: 12,
-  boxHeight: 12,
-  labelColor: .solid(Apex.text),
-  labelFont: TextStyle(fontSize: 12),
-  labelPadding: 7,
-  extra: {
-    'labels': {'useBorderRadius': true, 'borderRadius': 3},
-  },
+const LegendOptions apexLegend = LegendOptions(
+  position: ChartPosition.bottom,
+  labels: LegendLabelOptions(
+    boxWidth: 12,
+    boxHeight: 12,
+    color: .solid(Apex.text),
+    font: TextStyle(fontSize: 12),
+    padding: 7,
+    useBorderRadius: true,
+    borderRadius: BorderRadius.all(Radius.circular(3)),
+  ),
 );
 
 /// The mount animation of apexcharts_flutter: 800 ms, ease out.
