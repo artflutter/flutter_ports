@@ -44,7 +44,9 @@ Widget _listed(
         height: 300,
         child: ChartView(
           config: ChartConfig(
-            datasets: [ScatterDataset(points: _points, pointRadius: 4)],
+            datasets: [
+              ScatterDataset(points: _points, pointRadius: const .constant(4)),
+            ],
             scales: const [
               LinearAxis(.x, min: 0, max: 100),
               LinearAxis(.y, min: 0, max: 100),

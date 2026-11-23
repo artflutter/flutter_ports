@@ -51,13 +51,13 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
       clip: ChartClip.none,
       // The dot function draws the icon 24 px wide at each point, with the
       // background color inside and the line color around.
-      pointStyle: GitCommitVertical(),
-      pointRadius: 12,
+      pointStyle: .constant(GitCommitVertical()),
+      pointRadius: .constant(12),
       pointBorderWidth: 2,
       pointBackgroundColor: .constant(.solid(Shadcn.background)),
       pointBorderColor: .constant(.solid(Shadcn.chart1)),
       // The active dot of Recharts fills the circle with the line color.
-      pointHoverRadius: 12,
+      pointHoverRadius: .constant(12),
       pointHoverBackgroundColor: .constant(.solid(Shadcn.chart1)),
       pointHoverBorderColor: .constant(.solid(Shadcn.chart1)),
       extra: {'pointHoverBorderWidth': 2, 'capBezierPoints': false},

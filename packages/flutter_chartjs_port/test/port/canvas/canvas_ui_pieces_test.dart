@@ -1076,7 +1076,7 @@ void main() {
                   ChartPaint.solid(_soft),
                 ),
                 fill: FillTarget.toOrigin,
-                pointRadius: 0,
+                pointRadius: const .constant(0),
               ),
             ],
             scales: const [
@@ -1171,7 +1171,7 @@ void main() {
                     ChartPaint.solid(_soft),
                   ),
                   fill: fill,
-                  pointRadius: 0,
+                  pointRadius: const .constant(0),
                 ),
             ],
             scales: [

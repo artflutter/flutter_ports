@@ -22,7 +22,7 @@ void main() {
           LineDataset(
             data: [for (var i = 0; i < 64; i++) 1 + (i + k) % 7],
             fill: FillTarget.toStacked,
-            pointRadius: 0,
+            pointRadius: const .constant(0),
             backgroundColor: ChartValue.constant(
               ChartPaint.solid(Color.fromARGB(100, 30 + 60 * k, 80, 160)),
             ),

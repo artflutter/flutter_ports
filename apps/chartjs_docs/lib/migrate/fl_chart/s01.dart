@@ -20,9 +20,9 @@ LineDataset _line(
   borderWidth: width,
   tension: tension,
   fill: fill,
-  pointRadius: dots ? 4 : 0,
+  pointRadius: .constant(dots ? 4 : 0),
   pointBackgroundColor: .constant(.solid(color)),
-  pointHoverRadius: 8,
+  pointHoverRadius: const .constant(8),
   pointHoverBackgroundColor: .constant(.solid(color)),
   borderCapStyle: StrokeCap.round,
 );

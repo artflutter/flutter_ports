@@ -13,7 +13,7 @@ const scriptable = ChartConfig(
       label: 'Sales',
       data: sales,
       borderColor: .constant(.solid(teal)),
-      pointRadius: 7,
+      pointRadius: .constant(7),
       pointBackgroundColor: .resolver(aboveTarget),
     ),
   ],

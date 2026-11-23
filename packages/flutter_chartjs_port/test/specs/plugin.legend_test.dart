@@ -128,7 +128,7 @@ const List<Dataset> _lineDatasets = [
       ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
     ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
-    pointStyle: CrossRotPointStyle(),
+    pointStyle: .constant(CrossRotPointStyle()),
     fill: FillTarget.none,
     data: [],
   ),
@@ -1097,7 +1097,7 @@ const List<Dataset> _pointStyleDatasets = [
       ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
     ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
-    pointStyle: CrossRotPointStyle(),
+    pointStyle: .constant(CrossRotPointStyle()),
     pointBackgroundColor: ChartValue.constant(
       ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
     ),
@@ -1119,7 +1119,7 @@ const List<Dataset> _pointStyleDatasets = [
       ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
     ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
-    pointStyle: CrossRotPointStyle(),
+    pointStyle: .constant(CrossRotPointStyle()),
     data: [],
     extra: {'pointRotation': 15},
   ),

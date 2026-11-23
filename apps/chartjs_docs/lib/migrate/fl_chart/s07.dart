@@ -28,7 +28,7 @@ final ChartConfig _config = fills(
         data: const [4, 3.5, 4.5, 1, 4, 6, 6.5, 6, 4, 6, 6, 7],
         tension: 0.35,
         borderWidth: 2,
-        pointRadius: 0,
+        pointRadius: const .constant(0),
         borderColor: const .constant(.solid(Fl.green)),
         backgroundColor: .constant(.solid(Fl.red.withValues(alpha: 0.5))),
         fill: const FillTarget.toDataset(1),
@@ -36,7 +36,7 @@ final ChartConfig _config = fills(
       const LineDataset(
         data: [7, 3, 4, 2, 3, 4, 5, 3, 1, 8, 1, 3],
         borderWidth: 2,
-        pointRadius: 0,
+        pointRadius: .constant(0),
         borderColor: .constant(.solid(Fl.red)),
       ),
     ],

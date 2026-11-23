@@ -22,7 +22,7 @@ class _ClickedPointState() extends State<ClickedPoint> {
         label: 'Sales',
         data: sales,
         borderColor: .constant(.solid(teal)),
-        pointRadius: 6,
+        pointRadius: .constant(6),
       ),
     ],
     onClick: _showClicked,

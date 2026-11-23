@@ -86,7 +86,7 @@ class _ZoomPageState() extends State<ZoomPage> {
                   label: 'Signal',
                   points: _points,
                   borderWidth: 1.5,
-                  pointRadius: 0,
+                  pointRadius: const .constant(0),
                 ),
               ],
               scales: const [LinearAxis(.x), LinearAxis(.y)],

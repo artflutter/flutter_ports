@@ -39,8 +39,8 @@ ChartConfig _config(List<num> ys, {required bool average}) {
           points: [for (final (i, x) in _xs.indexed) DataPoint(x, ys[i])],
           tension: 0.35,
           borderWidth: 5,
-          pointRadius: 0,
-          pointHoverRadius: 8,
+          pointRadius: const .constant(0),
+          pointHoverRadius: const .constant(8),
           fill: .toOrigin,
           extra: {
             'borderColor': horizontalGradient(colors),

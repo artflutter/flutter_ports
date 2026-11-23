@@ -72,8 +72,8 @@ final ChartConfig _config = ChartConfig(
         borderColor: .constant(.solid(Gx.colors10[i])),
         borderWidth: 2,
         fill: FillTarget.none,
-        pointRadius: 0,
-        pointHoverRadius: 0,
+        pointRadius: const .constant(0),
+        pointHoverRadius: const .constant(0),
       ),
   ],
   scales: [

@@ -88,8 +88,8 @@ class _Sample12State() extends State<Sample12> {
         LineDataset(
           points: _points,
           borderWidth: 1,
-          pointRadius: 0,
-          pointHoverRadius: 6,
+          pointRadius: const .constant(0),
+          pointHoverRadius: const .constant(6),
           pointHoverBackgroundColor: const .constant(.solid(Fl.yellow)),
           borderColor: const .constant(.solid(Fl.yellow)),
           fill: .toStart,

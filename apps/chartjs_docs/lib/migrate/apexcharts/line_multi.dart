@@ -14,8 +14,8 @@ LineDataset _series(String name, Color color, List<num> values) => LineDataset(
   borderWidth: 3,
   borderJoinStyle: StrokeJoin.round,
   // No markers: the hover marker of `apexHover` shows the points.
-  pointRadius: 0,
-  pointHoverRadius: 0,
+  pointRadius: const .constant(0),
+  pointHoverRadius: const .constant(0),
 );
 
 ChartConfig _config(ApexZoom zoom) => ChartConfig(

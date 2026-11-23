@@ -47,8 +47,8 @@ LineDataset _band(int type) => LineDataset(
   // `BasicAreaShape(smooth: true)` is a Catmull-Rom spline with the
   // tension 0.5 of Chart.js.
   tension: 0.5,
-  pointRadius: 0,
-  pointHoverRadius: 0,
+  pointRadius: const .constant(0),
+  pointHoverRadius: const .constant(0),
 );
 
 /// `OrdinalScale(tickCount: 5)`.
@@ -82,8 +82,8 @@ final ChartConfig _config = ChartConfig(
       data: _base,
       borderWidth: 0,
       tension: 0.5,
-      pointRadius: 0,
-      pointHoverRadius: 0,
+      pointRadius: const .constant(0),
+      pointHoverRadius: const .constant(0),
     ),
   ],
   scales: [

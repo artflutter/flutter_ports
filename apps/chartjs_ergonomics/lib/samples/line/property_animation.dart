@@ -14,8 +14,8 @@ const propertyAnimation = ChartConfig(
       label: 'Hover a point',
       data: sales,
       borderColor: .constant(.solid(teal)),
-      pointRadius: 5,
-      pointHoverRadius: 12,
+      pointRadius: .constant(5),
+      pointHoverRadius: .constant(12),
     ),
   ],
   // One item for each animated property.

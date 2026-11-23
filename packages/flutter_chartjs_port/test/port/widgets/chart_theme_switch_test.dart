@@ -548,7 +548,7 @@ void main() {
           datasets: [
             LineDataset(
               label: 'd',
-              pointRadius: 0,
+              pointRadius: const .constant(0),
               // Keep the original parsed-item list for the identity check.
               extra: {'data': input},
             ),

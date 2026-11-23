@@ -26,8 +26,8 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       borderJoinStyle: StrokeJoin.round,
       // stroke: {curve: 'smooth'}
       tension: 0.4,
-      pointRadius: 0,
-      pointHoverRadius: 0,
+      pointRadius: const .constant(0),
+      pointHoverRadius: const .constant(0),
     ),
   ],
   maintainAspectRatio: false,

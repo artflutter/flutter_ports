@@ -489,9 +489,9 @@ base mixin _LineStyle on Dataset {
   SteppedLine? get stepped;
   CubicInterpolationMode? get cubicInterpolationMode;
   LineSegmentStyle? get segment;
-  double? get pointRadius;
-  double? get pointHoverRadius;
-  PointStyle? get pointStyle;
+  ChartValue<double>? get pointRadius;
+  ChartValue<double>? get pointHoverRadius;
+  ChartValue<PointStyle>? get pointStyle;
   ChartValue<ChartPaint>? get pointBackgroundColor;
   ChartValue<ChartPaint>? get pointBorderColor;
   double? get pointBorderWidth;
@@ -510,9 +510,15 @@ base mixin _LineStyle on Dataset {
     put(scope, OptionKey.stepped, stepped);
     put(scope, OptionKey.cubicInterpolationMode, cubicInterpolationMode);
     put(scope, OptionKey.segment, segment);
-    put(scope, OptionKey.pointRadius, pointRadius);
-    put(scope, OptionKey.pointHoverRadius, pointHoverRadius);
-    put(scope, OptionKey.pointStyle, pointStyle);
+    if (pointRadius case final value?) {
+      scope.store(OptionKey.pointRadius, value.toOptionCell());
+    }
+    if (pointHoverRadius case final value?) {
+      scope.store(OptionKey.pointHoverRadius, value.toOptionCell());
+    }
+    if (pointStyle case final value?) {
+      scope.store(OptionKey.pointStyle, value.toOptionCell());
+    }
     if (pointBackgroundColor case final value?) {
       scope.store(OptionKey.pointBackgroundColor, value.toOptionCell());
     }
@@ -655,20 +661,24 @@ final class const LineDataset({
 
   /// {@template flutter_chartjs_port.typed.pointRadius}
   /// The radius of the points in pixels: `pointRadius`. 0 draws no points.
+  /// A [ChartValue]: one radius (`.constant(3)`), one for each point
+  /// (`.indexed([0, 4, 0])`) or a function of the data context.
   /// {@endtemplate}
-  @override final double? pointRadius,
+  @override final ChartValue<double>? pointRadius,
 
   /// {@template flutter_chartjs_port.typed.pointHoverRadius}
   /// The radius of a point under the pointer, in pixels:
-  /// `pointHoverRadius`.
+  /// `pointHoverRadius`. A [ChartValue], as `pointRadius`.
   /// {@endtemplate}
-  @override final double? pointHoverRadius,
+  @override final ChartValue<double>? pointHoverRadius,
 
   /// {@template flutter_chartjs_port.typed.pointStyle}
-  /// The style of the points: `pointStyle`, a [PointStyle] (row
-  /// `adapt-point-style-objects`). `false`, no point, goes through `extra`.
+  /// The style of the points: `pointStyle`, a [ChartValue] of [PointStyle]
+  /// (row `adapt-point-style-objects`): one style
+  /// (`.constant(RectPointStyle())`), one for each point or a function of
+  /// the data context. `false`, no point, goes through `extra`.
   /// {@endtemplate}
-  @override final PointStyle? pointStyle,
+  @override final ChartValue<PointStyle>? pointStyle,
 
   /// {@template flutter_chartjs_port.typed.pointBackgroundColor}
   /// The fill color of the points: `pointBackgroundColor`.
@@ -732,9 +742,9 @@ final class const LineDataset({
     SteppedLine? stepped,
     CubicInterpolationMode? cubicInterpolationMode,
     LineSegmentStyle? segment,
-    double? pointRadius,
-    double? pointHoverRadius,
-    PointStyle? pointStyle,
+    ChartValue<double>? pointRadius,
+    ChartValue<double>? pointHoverRadius,
+    ChartValue<PointStyle>? pointStyle,
     ChartValue<ChartPaint>? pointBackgroundColor,
     ChartValue<ChartPaint>? pointBorderColor,
     double? pointBorderWidth,
@@ -883,13 +893,13 @@ final class const ScatterDataset({
   @override final LineSegmentStyle? segment,
 
   /// {@macro flutter_chartjs_port.typed.pointRadius}
-  @override final double? pointRadius,
+  @override final ChartValue<double>? pointRadius,
 
   /// {@macro flutter_chartjs_port.typed.pointHoverRadius}
-  @override final double? pointHoverRadius,
+  @override final ChartValue<double>? pointHoverRadius,
 
   /// {@macro flutter_chartjs_port.typed.pointStyle}
-  @override final PointStyle? pointStyle,
+  @override final ChartValue<PointStyle>? pointStyle,
 
   /// {@macro flutter_chartjs_port.typed.pointBackgroundColor}
   @override final ChartValue<ChartPaint>? pointBackgroundColor,
@@ -941,9 +951,9 @@ final class const ScatterDataset({
     SteppedLine? stepped,
     CubicInterpolationMode? cubicInterpolationMode,
     LineSegmentStyle? segment,
-    double? pointRadius,
-    double? pointHoverRadius,
-    PointStyle? pointStyle,
+    ChartValue<double>? pointRadius,
+    ChartValue<double>? pointHoverRadius,
+    ChartValue<PointStyle>? pointStyle,
     ChartValue<ChartPaint>? pointBackgroundColor,
     ChartValue<ChartPaint>? pointBorderColor,
     double? pointBorderWidth,
@@ -1619,13 +1629,13 @@ final class const RadarDataset({
   @override final LineSegmentStyle? segment,
 
   /// {@macro flutter_chartjs_port.typed.pointRadius}
-  @override final double? pointRadius,
+  @override final ChartValue<double>? pointRadius,
 
   /// {@macro flutter_chartjs_port.typed.pointHoverRadius}
-  @override final double? pointHoverRadius,
+  @override final ChartValue<double>? pointHoverRadius,
 
   /// {@macro flutter_chartjs_port.typed.pointStyle}
-  @override final PointStyle? pointStyle,
+  @override final ChartValue<PointStyle>? pointStyle,
 
   /// {@macro flutter_chartjs_port.typed.pointBackgroundColor}
   @override final ChartValue<ChartPaint>? pointBackgroundColor,
@@ -1673,9 +1683,9 @@ final class const RadarDataset({
     SteppedLine? stepped,
     CubicInterpolationMode? cubicInterpolationMode,
     LineSegmentStyle? segment,
-    double? pointRadius,
-    double? pointHoverRadius,
-    PointStyle? pointStyle,
+    ChartValue<double>? pointRadius,
+    ChartValue<double>? pointHoverRadius,
+    ChartValue<PointStyle>? pointStyle,
     ChartValue<ChartPaint>? pointBackgroundColor,
     ChartValue<ChartPaint>? pointBorderColor,
     double? pointBorderWidth,

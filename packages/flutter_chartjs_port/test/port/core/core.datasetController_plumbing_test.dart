@@ -207,7 +207,11 @@ List<Object?> _maps(List<typed.DataPoint> points) => <Object?>[
 typed.ChartConfig _typedConfig(List<typed.DataPoint> points) =>
     typed.ChartConfig(
       datasets: [
-        typed.ScatterDataset(points: points, showLine: false, pointRadius: 3),
+        typed.ScatterDataset(
+          points: points,
+          showLine: false,
+          pointRadius: const .constant(3),
+        ),
       ],
       scales: const [
         typed.LinearAxis(.x, min: 0, max: 10),

@@ -13,7 +13,7 @@ const extra = ChartConfig(
       label: 'Sales',
       data: sales,
       borderColor: .constant(.solid(teal)),
-      pointHoverRadius: 9,
+      pointHoverRadius: .constant(9),
       // Chart.js options with no parameter.
       extra: {'pointHoverBorderWidth': 6, 'pointHitRadius': 20},
     ),

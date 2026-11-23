@@ -27,10 +27,10 @@ LineDataset _group(int index, String name) {
     borderColor: .constant(.solid(color)),
     borderWidth: 0.5,
     // The `PointMark`.
-    pointRadius: 2.5,
+    pointRadius: const .constant(2.5),
     pointBorderWidth: 0,
     pointBackgroundColor: .constant(.solid(color)),
-    pointHoverRadius: 2.5,
+    pointHoverRadius: const .constant(2.5),
     pointHoverBackgroundColor: .constant(.solid(color)),
     extra: const {'pointHoverBorderWidth': 0},
   );

@@ -33,7 +33,7 @@ ChartConfig _line(List<double> data, {ChartShadow? shadow}) => ChartConfig(
     LineDataset(
       data: data,
       borderColor: const ChartValue.constant(.solid(_black)),
-      pointRadius: 0,
+      pointRadius: const .constant(0),
       shadow: shadow,
     ),
   ],

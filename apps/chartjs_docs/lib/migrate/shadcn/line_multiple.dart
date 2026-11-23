@@ -18,8 +18,8 @@ LineDataset _line(String label, List<num> data, Color color) => LineDataset(
   borderWidth: 2,
   // Recharts draws the line and the dots past the edges of the plot.
   clip: ChartClip.none,
-  pointRadius: 0,
-  pointHoverRadius: 4,
+  pointRadius: const .constant(0),
+  pointHoverRadius: const .constant(4),
   pointBackgroundColor: .constant(.solid(color)),
   pointHoverBackgroundColor: .constant(.solid(color)),
   extra: const {'pointHoverBorderWidth': 0, 'capBezierPoints': false},

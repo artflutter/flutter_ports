@@ -211,7 +211,7 @@ ChartConfig _typed(List<DataPoint> points, {ChartValue<ChartPaint>? color}) =>
         ScatterDataset(
           points: points,
           backgroundColor: color ?? const ChartValue.constant(blue),
-          pointRadius: 3,
+          pointRadius: const .constant(3),
           pointBorderWidth: 0,
         ),
       ],

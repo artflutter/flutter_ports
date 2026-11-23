@@ -24,8 +24,8 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       borderWidth: 3,
       borderJoinStyle: StrokeJoin.round,
       // markers: {size: 5}: a filled circle with a white ring.
-      pointRadius: 5,
-      pointHoverRadius: 5,
+      pointRadius: .constant(5),
+      pointHoverRadius: .constant(5),
       pointBorderWidth: 2,
       pointBackgroundColor: .constant(.solid(Apex.blue)),
       pointBorderColor: .constant(.solid(Colors.white)),

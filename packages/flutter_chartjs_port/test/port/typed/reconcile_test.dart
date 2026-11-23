@@ -601,7 +601,13 @@ void main() {
         for (var i = 0; i < 5000; i++) DataPoint(i, (i * 37) % 101),
       ];
       ChartConfig config(List<DataPoint> points, String label) => ChartConfig(
-        datasets: [LineDataset(label: label, points: points, pointRadius: 0)],
+        datasets: [
+          LineDataset(
+            label: label,
+            points: points,
+            pointRadius: const .constant(0),
+          ),
+        ],
         scales: const [LinearAxis(.x)],
         animation: ChartAnimation.none,
         extra: const {

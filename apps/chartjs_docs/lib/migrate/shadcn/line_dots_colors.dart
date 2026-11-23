@@ -29,13 +29,13 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
       clip: ChartClip.none,
       // <Dot r={5} fill={payload.fill} stroke={payload.fill} />: the color
       // of each browser, with a 1 px stroke.
-      pointRadius: 5,
+      pointRadius: .constant(5),
       pointBorderWidth: 1,
       pointBackgroundColor: .indexed(_fills),
       pointBorderColor: .indexed(_fills),
       // The active dot of Recharts (4 px, the line color) over the dot:
       // a 1.5 px ring of the browser color stays around it.
-      pointHoverRadius: 4.75,
+      pointHoverRadius: .constant(4.75),
       pointHoverBackgroundColor: .constant(.solid(Shadcn.chart2)),
       pointHoverBorderColor: .indexed(_fills),
       extra: {'pointHoverBorderWidth': 1.5, 'capBezierPoints': false},

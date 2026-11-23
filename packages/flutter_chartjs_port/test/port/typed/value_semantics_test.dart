@@ -31,6 +31,12 @@ ChartPaint _colorFor(ScriptableContext context) => const ChartPaint.solid(_red);
 ChartPaint _otherFor(ScriptableContext context) =>
     const ChartPaint.solid(_blue);
 
+/// A scriptable point radius.
+double _radiusFor(ScriptableContext context) => 3;
+
+/// A scriptable point style.
+PointStyle _styleFor(ScriptableContext context) => const RectPointStyle();
+
 /// A tick callback.
 List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
     null;
@@ -297,6 +303,74 @@ void main() {
           ),
         ),
       );
+    });
+
+    test('a point radius and a point style compare by their values', () {
+      for (final make
+          in <Dataset Function(ChartValue<double>?, ChartValue<PointStyle>?)>[
+            (r, s) =>
+                LineDataset(pointRadius: r, pointHoverRadius: r, pointStyle: s),
+            (r, s) => ScatterDataset(
+              pointRadius: r,
+              pointHoverRadius: r,
+              pointStyle: s,
+            ),
+            (r, s) => RadarDataset(
+              pointRadius: r,
+              pointHoverRadius: r,
+              pointStyle: s,
+            ),
+          ]) {
+        _expectEqual(
+          make(
+            .constant(_runtime(3)),
+            .constant(_runtime(const RectPointStyle())),
+          ),
+          make(
+            .constant(_runtime(3)),
+            .constant(_runtime(const RectPointStyle())),
+          ),
+        );
+        expect(
+          make(const .constant(3), null),
+          isNot(make(const .constant(4), null)),
+        );
+        expect(
+          make(null, const .constant(RectPointStyle())),
+          isNot(make(null, const .constant(CirclePointStyle()))),
+        );
+        _expectEqual(
+          make(
+            .indexed(_runtime([0, 4, 0])),
+            .indexed(
+              _runtime([const CirclePointStyle(), const RectPointStyle()]),
+            ),
+          ),
+          make(
+            .indexed(_runtime([0, 4, 0])),
+            .indexed(
+              _runtime([const CirclePointStyle(), const RectPointStyle()]),
+            ),
+          ),
+        );
+        expect(
+          make(.indexed(_runtime([0, 4])), null),
+          isNot(make(.indexed(_runtime([4, 0])), null)),
+        );
+        expect(
+          make(const .constant(3), null),
+          isNot(make(const .indexed([3]), null)),
+          reason: 'the variant takes part',
+        );
+        _expectEqual(
+          make(const .resolver(_radiusFor), const .resolver(_styleFor)),
+          make(const .resolver(_radiusFor), const .resolver(_styleFor)),
+        );
+        expect(
+          make(.resolver((context) => 3), null),
+          isNot(make(.resolver((context) => 3), null)),
+        );
+      }
     });
 
     test('extra compares by its entries, in key order', () {

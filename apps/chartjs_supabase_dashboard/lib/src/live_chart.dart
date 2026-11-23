@@ -786,8 +786,8 @@ class _LiveChartState()
           backgroundColor: const .constant(.solid(Color(0x263ECF8E))),
           fill: FillTarget.toStart,
           borderWidth: _lineWidth,
-          pointRadius: 0,
-          pointHoverRadius: 4,
+          pointRadius: const .constant(0),
+          pointHoverRadius: const .constant(4),
           // Smooth curves that do not overshoot the values, so the y range
           // of the values in view still holds the line.
           cubicInterpolationMode: const MonotoneCubicInterpolationMode(),

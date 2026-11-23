@@ -11,7 +11,7 @@ import 'package:material_ui/material_ui.dart';
 LineDataset _line(List<DataPoint> points, Color color) => LineDataset(
   points: points,
   borderWidth: 4,
-  pointRadius: 0,
+  pointRadius: const .constant(0),
   extra: {
     'borderColor': horizontalGradient(
       [color.withValues(alpha: 0), color],

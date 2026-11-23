@@ -39,8 +39,8 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       // stroke: {width: 5, curve: 'smooth'}
       borderWidth: 5,
       tension: 0.4,
-      pointRadius: 0,
-      pointHoverRadius: 0,
+      pointRadius: const .constant(0),
+      pointHoverRadius: const .constant(0),
       // forecastDataPoints: {count: 7}: the last 7 points have a dashed
       // line (dashArray: 4).
       segment: LineSegmentStyle(

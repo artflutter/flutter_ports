@@ -44,13 +44,14 @@ ChartConfigurationScope _config({
   String type = 'scatter',
   ChartAnimation animation = ChartAnimation.none,
   Map<String, Object?> dataset = const {},
+  ChartValue<double> pointRadius = const ChartValue.constant(3),
   Object? spanGaps,
   int n = 12,
 }) => ChartConfigLowering(
   ChartConfig(
     datasets: [
       ScatterDataset(
-        pointRadius: 3,
+        pointRadius: pointRadius,
         pointBackgroundColor: const ChartValue.constant(_red),
         pointHoverBackgroundColor: const ChartValue.constant(_blue),
         // Preserve the raw data containers and the guard-specific overrides.
@@ -236,12 +237,10 @@ void main() {
       var calls = 0;
       final counts = _twins(
         () => _config(
-          dataset: <String, Object?>{
-            'pointRadius': (ScriptableContext ctx, Object? _) {
-              calls++;
-              return 3.0 + ctx.dataIndex! % 3;
-            },
-          },
+          pointRadius: .resolver((context) {
+            calls++;
+            return 3.0 + context.dataIndex! % 3;
+          }),
         ),
         _newData,
       );

@@ -32,8 +32,8 @@ LineDataset _line(String name, Color color, List<double> values) => LineDataset(
   borderWidth: 2,
   // dashArray: [15, 3, 3, 3]
   borderDash: const [15, 3, 3, 3],
-  pointRadius: 4,
-  pointHoverRadius: 4,
+  pointRadius: const .constant(4),
+  pointHoverRadius: const .constant(4),
   pointBorderWidth: 2,
   pointBackgroundColor: const .constant(.solid(Colors.white)),
   pointBorderColor: .constant(.solid(color)),

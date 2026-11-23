@@ -52,8 +52,8 @@ final ChartConfig _config = ChartConfig(
       borderColor: const .constant(.solid(Gx.primary)),
       borderWidth: 2,
       borderDash: const [5, 2],
-      pointRadius: 0,
-      pointHoverRadius: 0,
+      pointRadius: const .constant(0),
+      pointHoverRadius: const .constant(0),
     ),
   ],
   scales: [

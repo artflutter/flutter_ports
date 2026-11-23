@@ -744,7 +744,8 @@ repository.
       `helpers.canvas.dart`. An app or a plugin gives its own style as a subclass, with no
       registration. `false` stays a boolean: the legend falls back to the dataset style on a
       falsy `labels.pointStyle`. A style name stops a debug build. The circle batch tests
-      `CirclePointStyle`. The typed API takes a `PointStyle` (`ChartPointStyle` is gone);
+      `CirclePointStyle`. The typed API takes a `PointStyle` (`ChartPointStyle` is gone), a
+      `ChartValue<PointStyle>` on the line, scatter and radar datasets;
       `pointStyle: false` goes through `extra`. A compare with upstream JSON text puts a marker
       on both sides (`withPointStyleMarkers` of `test/support/point_style_json.dart`).
     - The line option `cubicInterpolationMode` holds a `CubicInterpolationMode` (row
@@ -1010,8 +1011,9 @@ repository.
     the parsed List of `parsing: false`. Its `x` and `y` are `Object?`, the fields of `ParsedItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver
     variants. All dataset background/border, hover and point-specific paint fields
-    use `ChartValue<ChartPaint>?` (ADR 0128); lowering writes the corresponding
-    `Opt` cell directly. Scalar element/text/scale fields use `ChartPaint`; raw
+    use `ChartValue<ChartPaint>?` (ADR 0128), and `pointRadius`, `pointHoverRadius` and
+    `pointStyle` of the line, scatter and radar datasets use `ChartValue<double>?` and
+    `ChartValue<PointStyle>?`; lowering writes the corresponding `Opt` cell directly. Scalar element/text/scale fields use `ChartPaint`; raw
     configs keep value/list/function forms with paint leaves. `axes.dart` has the 6 axes,
     `AxisTicks`, `AxisGrid` and `AxisTitle`; `ChartConfig.scales` is a `List<ChartAxis>`, a cartesian
     axis takes its direction first (`LinearAxis(.y)`), the lowering gives the scale ids (`scaleIdsOf`

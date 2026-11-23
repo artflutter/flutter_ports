@@ -128,10 +128,10 @@ DocPageContent shadcnMigrationPage() => migrationPage(
     ),
     (Text('type="linear"'), DocText('no option: the `tension` is 0')),
     (Text('type="step"'), DocText('`stepped: SteppedLine.middle`')),
-    (Text('dot={false}'), DocText('`pointRadius: 0`')),
+    (Text('dot={false}'), DocText('`pointRadius: .constant(0)`')),
     (
       Text('dot={{fill}}, activeDot={{r: 6}}'),
-      DocText('`pointBackgroundColor`, `pointHoverRadius: 6`'),
+      DocText('`pointBackgroundColor`, `pointHoverRadius: .constant(6)`'),
     ),
     (
       Text('dot={(props) => <Icon />}'),
@@ -179,8 +179,9 @@ DocPageContent shadcnMigrationPage() => migrationPage(
           'control points.',
         ),
         DocText(
-          '`dot={false}` is `pointRadius: 0`. On a hover, Recharts draws an '
-          'active dot of 4 px: `pointHoverRadius: 4`.',
+          '`dot={false}` is `pointRadius: .constant(0)`. On a hover, '
+          'Recharts draws an active dot of 4 px: '
+          '`pointHoverRadius: .constant(4)`.',
         ),
       ],
       replica: (_) => const ShadcnLineDefault(),
@@ -229,9 +230,9 @@ DocPageContent shadcnMigrationPage() => migrationPage(
       notes: const [
         DocText(
           '`dot={{fill: ...}}` keeps the 2 px stroke of the line around a '
-          '3 px dot: `pointRadius: 3` with `pointBorderWidth: 2`.',
+          '3 px dot: `pointRadius: .constant(3)` with `pointBorderWidth: 2`.',
         ),
-        DocText('`activeDot={{r: 6}}` is `pointHoverRadius: 6`.'),
+        DocText('`activeDot={{r: 6}}` is `pointHoverRadius: .constant(6)`.'),
       ],
       replica: (_) => const ShadcnLineDots(),
     ),

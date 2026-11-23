@@ -51,7 +51,7 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
             points: [for (final (x, y) in _values.indexed) DataPoint(x, y)],
             borderColor: const .constant(.solid(_color)),
             borderWidth: 2,
-            pointRadius: 4,
+            pointRadius: const .constant(4),
             pointBorderWidth: 2,
             pointBackgroundColor: const .constant(.solid(Colors.white)),
             pointBorderColor: const .constant(.solid(_color)),

@@ -213,8 +213,8 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
         ),
         DocText(
           'The black series on the top and the right edges is a dataset with '
-          '`pointRadius: 0` and `clip: ChartClip.all(0)`. It gets no '
-          'tooltip.',
+          '`pointRadius: .constant(0)` and `clip: ChartClip.all(0)`. It gets '
+          'no tooltip.',
         ),
         DocText(
           "`TooltipBehavior(header: '')` is a `title` callback that returns "

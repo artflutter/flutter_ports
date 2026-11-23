@@ -22,8 +22,8 @@ LineDataset _series(String name, Color color, List<num> values) => LineDataset(
   backgroundColor: .constant(.solid(color)),
   borderWidth: 2,
   // MarkerSettings(isVisible: true): a white circle with a colored border.
-  pointRadius: 4,
-  pointHoverRadius: 4,
+  pointRadius: const .constant(4),
+  pointHoverRadius: const .constant(4),
   pointBorderWidth: 2,
   pointBackgroundColor: const .constant(.solid(Colors.white)),
   pointBorderColor: .constant(.solid(color)),

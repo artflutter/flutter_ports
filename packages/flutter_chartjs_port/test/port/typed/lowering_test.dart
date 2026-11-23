@@ -46,6 +46,13 @@ const ChartPaint _blueValue = ChartPaint.solid(
 ChartPaint _colorFor(ScriptableContext context) =>
     ChartPaint.solid(context.dataIndex == 1 ? _blue : _red);
 
+/// A scriptable point radius: 6 at the data index 1, else 0.
+double _radiusFor(ScriptableContext context) => context.dataIndex == 1 ? 6 : 0;
+
+/// A scriptable point style: a square at the data index 1, else a circle.
+PointStyle _styleFor(ScriptableContext context) =>
+    context.dataIndex == 1 ? const RectPointStyle() : const CirclePointStyle();
+
 /// The 8 dataset classes, each without a parameter, with the chart type of
 /// its controller.
 const Map<ChartKind, Dataset> _empty = {
@@ -177,9 +184,9 @@ List<Dataset> _lineStyle({
   bool? showLine,
   SteppedLine? stepped,
   LineSegmentStyle? segment,
-  double? pointRadius,
-  double? pointHoverRadius,
-  PointStyle? pointStyle,
+  ChartValue<double>? pointRadius,
+  ChartValue<double>? pointHoverRadius,
+  ChartValue<PointStyle>? pointStyle,
   ChartValue<ChartPaint>? pointBackgroundColor,
   ChartValue<ChartPaint>? pointBorderColor,
   double? pointBorderWidth,
@@ -382,17 +389,55 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
     {'stepped': SteppedLine.before},
   ),
   'segment': (_lineStyle(segment: _segment), {'segment': _segment}),
-  'pointRadius': (_lineStyle(pointRadius: 0), {'pointRadius': 0}),
+  'pointRadius': (
+    _lineStyle(pointRadius: const .constant(0)),
+    {'pointRadius': 0},
+  ),
+  'pointRadius indexed': (
+    _lineStyle(pointRadius: const .indexed([0, 8.5, 6])),
+    {
+      'pointRadius': [0, 8.5, 6],
+    },
+  ),
+  'pointRadius resolver': (
+    _lineStyle(pointRadius: const .resolver(_radiusFor)),
+    {'pointRadius': (Object? context, Object? options) => 0},
+  ),
   'pointHoverRadius': (
-    _lineStyle(pointHoverRadius: 6),
+    _lineStyle(pointHoverRadius: const .constant(6)),
     {'pointHoverRadius': 6},
+  ),
+  'pointHoverRadius indexed': (
+    _lineStyle(pointHoverRadius: const .indexed([0, 11.3])),
+    {
+      'pointHoverRadius': [0, 11.3],
+    },
+  ),
+  'pointHoverRadius resolver': (
+    _lineStyle(pointHoverRadius: const .resolver(_radiusFor)),
+    {'pointHoverRadius': (Object? context, Object? options) => 0},
   ),
   'pointStyle': (
     [
-      ..._lineStyle(pointStyle: const RectRotPointStyle()),
+      ..._lineStyle(pointStyle: const .constant(RectRotPointStyle())),
       const BubbleDataset(pointStyle: RectRotPointStyle()),
     ],
     {'pointStyle': const RectRotPointStyle()},
+  ),
+  'pointStyle indexed': (
+    _lineStyle(
+      pointStyle: const .indexed([CirclePointStyle(), RectPointStyle()]),
+    ),
+    {
+      'pointStyle': const [CirclePointStyle(), RectPointStyle()],
+    },
+  ),
+  'pointStyle resolver': (
+    _lineStyle(pointStyle: const .resolver(_styleFor)),
+    {
+      'pointStyle': (Object? context, Object? options) =>
+          const CirclePointStyle(),
+    },
   ),
 
   'pointBackgroundColor': (
@@ -1838,9 +1883,9 @@ void main() {
             spanGaps: true,
             showLine: true,
             stepped: SteppedLine.before,
-            pointRadius: 3,
-            pointHoverRadius: 6,
-            pointStyle: const StarPointStyle(),
+            pointRadius: const .constant(3),
+            pointHoverRadius: const .constant(6),
+            pointStyle: const .constant(StarPointStyle()),
             pointBackgroundColor: const .constant(.solid(_red)),
             pointBorderColor: const .constant(.solid(_blue)),
             pointBorderWidth: 1,
@@ -1891,9 +1936,9 @@ void main() {
             spanGaps: true,
             showLine: true,
             stepped: SteppedLine.before,
-            pointRadius: 3,
-            pointHoverRadius: 6,
-            pointStyle: const StarPointStyle(),
+            pointRadius: const .constant(3),
+            pointHoverRadius: const .constant(6),
+            pointStyle: const .constant(StarPointStyle()),
             pointBackgroundColor: const .constant(.solid(_red)),
             pointBorderColor: const .constant(.solid(_blue)),
             pointBorderWidth: 1,
@@ -2101,9 +2146,9 @@ void main() {
             spanGaps: true,
             showLine: true,
             stepped: SteppedLine.before,
-            pointRadius: 3,
-            pointHoverRadius: 6,
-            pointStyle: const StarPointStyle(),
+            pointRadius: const .constant(3),
+            pointHoverRadius: const .constant(6),
+            pointStyle: const .constant(StarPointStyle()),
             pointBackgroundColor: const .constant(.solid(_red)),
             pointBorderColor: const .constant(.solid(_blue)),
             pointBorderWidth: 1,

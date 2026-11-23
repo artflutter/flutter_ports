@@ -75,7 +75,7 @@ Dataset _dataset(ChartKind type, int step, {ChartValue<ChartPaint>? color}) =>
         label: 'd',
         points: _points(step),
         borderColor: color ?? const ChartValue.constant(.solid(_blue)),
-        pointRadius: 3,
+        pointRadius: const .constant(3),
         tension: .3,
         fill: FillTarget.toOrigin,
       ),
@@ -83,7 +83,7 @@ Dataset _dataset(ChartKind type, int step, {ChartValue<ChartPaint>? color}) =>
         label: 'd',
         points: _points(step),
         backgroundColor: color ?? const ChartValue.constant(.solid(_blue)),
-        pointRadius: 3,
+        pointRadius: const .constant(3),
       ),
       ChartKind.bubble => BubbleDataset(
         label: 'd',
@@ -116,7 +116,7 @@ Dataset _dataset(ChartKind type, int step, {ChartValue<ChartPaint>? color}) =>
         label: 'd',
         data: _values(step),
         borderColor: color ?? const ChartValue.constant(.solid(_blue)),
-        pointRadius: 3,
+        pointRadius: const .constant(3),
         fill: FillTarget.toStart,
       ),
     };
@@ -1061,7 +1061,7 @@ void main() {
         points: _points(step),
         backgroundColor: background,
         borderColor: border,
-        pointRadius: 3,
+        pointRadius: const .constant(3),
       ),
       ChartKind.bubble => BubbleDataset(
         key: _a,

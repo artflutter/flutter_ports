@@ -217,7 +217,7 @@ class CoreDemoState() extends State<CoreDemo> {
             .solid(_datasetStyles[d].background),
           ),
           borderColor: ChartValue.constant(.solid(_datasetStyles[d].border)),
-          pointStyle: _datasetStyles[d].style,
+          pointStyle: .constant(_datasetStyles[d].style),
         ),
     ],
     scales: _unitAxes,

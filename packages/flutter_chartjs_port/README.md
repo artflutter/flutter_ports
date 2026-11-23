@@ -153,7 +153,7 @@ ChartConfig(
       backgroundColor: .constant(.solid(Colors.blue.withValues(alpha: 0.2))),
       fill: .toOrigin,
       tension: 0.3,
-      pointStyle: const RectRotPointStyle(),
+      pointStyle: const .constant(RectRotPointStyle()),
     ),
   ],
 )
@@ -201,8 +201,10 @@ The values of the options are Dart and Flutter values:
   `const PixelRadius(80)`. A scale `grace` is a `GraceLength`: `const PercentGrace(5)` or
   `const ValueGrace(0.3)`, through `extra`.
 - Names are dot shorthands: `position: .bottom`, `fill: .toOrigin`.
-- A point style is a class: `pointStyle: const StarPointStyle()`. An app or a plugin can add its
-  own style as a subclass of `PathPointStyle`. The cubic interpolation mode of a line is a class
+- A point style is a class: `pointStyle: const .constant(StarPointStyle())`. An app or a plugin
+  can add its own style as a subclass of `PathPointStyle`. The point radius, the hover radius and
+  the point style of a line, scatter or radar dataset take a `ChartValue`, as the colors do:
+  `pointRadius: .indexed([0, 4, 0])` or `pointStyle: .resolver(styleOf)`. The cubic interpolation mode of a line is a class
   too: `cubicInterpolationMode: const MonotoneCubicInterpolationMode()`.
 - A fill is a `FillTarget`, in the typed API and in a raw config: `.none`, `.toOrigin`,
   `.toStart`, `.toEnd`, `.toStacked`, `.shape`, `.toPrevious`, `.toNext`, `.toDataset(0)`,

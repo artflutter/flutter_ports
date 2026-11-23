@@ -21,12 +21,12 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
       clip: ChartClip.none,
       // dot={{fill: "var(--color-desktop)"}}: a 3 px dot with the 2 px
       // stroke of the line.
-      pointRadius: 3,
+      pointRadius: .constant(3),
       pointBorderWidth: 2,
       pointBackgroundColor: .constant(.solid(Shadcn.chart1)),
       pointBorderColor: .constant(.solid(Shadcn.chart1)),
       // activeDot={{r: 6}}
-      pointHoverRadius: 6,
+      pointHoverRadius: .constant(6),
       pointHoverBackgroundColor: .constant(.solid(Shadcn.chart1)),
       pointHoverBorderColor: .constant(.solid(Shadcn.chart1)),
       extra: {'pointHoverBorderWidth': 0, 'capBezierPoints': false},

@@ -430,10 +430,11 @@ DocPageContent lineChartPage() => DocPageContent(
             ),
             const DocParagraph(
               DocText(
-                '`backgroundColor` and `borderColor` take a `ChartValue`: '
-                '`.constant`, `.indexed` or `.resolver`. Each other parameter '
-                'takes one fixed value. For a function or a list on another '
-                'option, use `extra` with the Chart.js name.',
+                'The colors, `pointRadius`, `pointHoverRadius` and '
+                '`pointStyle` take a `ChartValue`: `.constant`, `.indexed` or '
+                '`.resolver`. Each other parameter takes one fixed value. For '
+                'a function or a list on another option, use `extra` with the '
+                'Chart.js name.',
               ),
             ),
             LiveExample(

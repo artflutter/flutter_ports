@@ -36,7 +36,7 @@ ChartConfig _config(_Log log, int step) => ChartConfig(
   plugins: log.plugins,
   labels: const ['a', 'b', 'c'],
   datasets: [
-    LineDataset(data: [1, 2 + step * .001, 3], pointRadius: 3),
+    LineDataset(data: [1, 2 + step * .001, 3], pointRadius: const .constant(3)),
   ],
   animation: ChartAnimation.none,
   maintainAspectRatio: false,

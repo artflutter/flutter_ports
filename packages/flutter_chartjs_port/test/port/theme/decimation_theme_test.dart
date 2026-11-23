@@ -102,7 +102,7 @@ Future<(_State, _State)> _run(
     datasets: [
       LineDataset(
         label: 'd',
-        pointRadius: 0,
+        pointRadius: const .constant(0),
         // Min-max copies map fields when it replaces x with a bin average.
         // Keep the original point inputs and their List identity for this test.
         extra: {'data': input},

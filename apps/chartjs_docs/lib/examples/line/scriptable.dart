@@ -37,10 +37,8 @@ const scriptableLine = LineDataset(
   borderColor: .constant(.solid(teal)),
   // A typed function for a color.
   backgroundColor: .resolver(pointFill),
-  // A list by data index, through extra.
-  extra: {
-    'pointRadius': [4, 6, 8, 10, 8, 6, 4],
-  },
+  // A list by data index.
+  pointRadius: .indexed([4, 6, 8, 10, 8, 6, 4]),
 );
 
 ChartPaint pointFill(ScriptableContext context) {

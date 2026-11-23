@@ -339,7 +339,7 @@ void main() {
           LineDataset(
             data: [1.0, 3.0, 2.0],
             borderColor: ChartValue.constant(ChartPaint.solid(_black)),
-            pointRadius: 0,
+            pointRadius: .constant(0),
           ),
         ],
         scales: const [

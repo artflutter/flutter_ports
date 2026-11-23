@@ -1329,7 +1329,7 @@ void main() {
                   RadarDataset(
                     label: 'Values',
                     data: [for (var i = 0; i < 64; i++) (i % 100).toDouble()],
-                    pointRadius: 0,
+                    pointRadius: const .constant(0),
                   ),
                 ],
                 labels: [for (var i = 0; i < 64; i++) '$i'],

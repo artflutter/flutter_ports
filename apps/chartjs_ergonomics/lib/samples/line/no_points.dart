@@ -13,7 +13,7 @@ const noPoints = ChartConfig(
       label: 'Sales',
       data: sales,
       borderColor: .constant(.solid(teal)),
-      pointRadius: 0,
+      pointRadius: .constant(0),
     ),
   ],
 );

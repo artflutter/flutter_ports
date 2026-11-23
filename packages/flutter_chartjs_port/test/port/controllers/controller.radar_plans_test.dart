@@ -140,6 +140,7 @@ ChartConfigurationScope _config(
   int n = 24,
   List<Object>? labels,
   Map<String, Object?> Function()? datasetExtra,
+  ChartValue<double>? pointRadius,
   RadialLinearAxis axis = const RadialLinearAxis(min: 0, max: 100),
   ChartElements? elements,
   ChartAnimation? animation,
@@ -152,6 +153,7 @@ ChartConfigurationScope _config(
       datasets: [
         RadarDataset(
           data: values is List<num?> ? values : null,
+          pointRadius: pointRadius,
           // The controller of the chart type: a RadarDataset alone gives
           // the type `radar`.
           extra: {
@@ -403,16 +405,14 @@ void main() {
       _expectTwin(
         (type) => _config(
           type,
-          // A scriptable radius: no typed parameter holds it.
-          datasetExtra: () => {
-            'pointRadius': (ScriptableContext context) {
-              calls.add(
-                '${context.index} ${context.dataIndex} '
-                '${context.parsed is ParsedItem}',
-              );
-              return 2.0;
-            },
-          },
+          // A scriptable radius.
+          pointRadius: .resolver((context) {
+            calls.add(
+              '${context.index} ${context.dataIndex} '
+              '${context.parsed is ParsedItem}',
+            );
+            return 2;
+          }),
         ),
         calls: calls,
       );
@@ -427,19 +427,17 @@ void main() {
         late Chart chart;
         return _config(
           type,
-          // A scriptable radius: no typed parameter holds it.
-          datasetExtra: () => {
-            'pointRadius': (ScriptableContext context) {
-              final index = context.index.toDouble();
-              final scale = context.chart as Chart;
-              chart = scale;
-              final r = chart.scales['r']!;
-              // The next points of the loop read the new range.
-              if (index == 5) r.max = 50;
-              calls.add('$index ${r.max}');
-              return 2.0;
-            },
-          },
+          // A scriptable radius.
+          pointRadius: .resolver((context) {
+            final index = context.index.toDouble();
+            final scale = context.chart as Chart;
+            chart = scale;
+            final r = chart.scales['r']!;
+            // The next points of the loop read the new range.
+            if (index == 5) r.max = 50;
+            calls.add('$index ${r.max}');
+            return 2;
+          }),
         );
       }, calls: calls);
     });

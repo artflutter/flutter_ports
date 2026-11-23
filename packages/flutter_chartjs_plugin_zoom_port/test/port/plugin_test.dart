@@ -85,7 +85,12 @@ Widget _view(
       height: 300,
       child: ChartView(
         config: ChartConfig(
-          datasets: [ScatterDataset(points: _points(step), pointRadius: 3)],
+          datasets: [
+            ScatterDataset(
+              points: _points(step),
+              pointRadius: const .constant(3),
+            ),
+          ],
           scales: const [
             LinearAxis(.x, min: 0, max: 100),
             LinearAxis(.y, min: 0, max: 100),
@@ -136,7 +141,7 @@ ChartConfig _rangeConfig(
       points: [
         for (var i = 0; i < 24; i++) DataPoint(i * 4, 10 + (i * 37) % 80),
       ],
-      pointRadius: 3,
+      pointRadius: const .constant(3),
     ),
   ],
   animation: ChartAnimation.none,

@@ -13,7 +13,7 @@ const pointsOnly = ChartConfig(
       label: 'Sales',
       data: sales,
       showLine: false,
-      pointRadius: 6,
+      pointRadius: .constant(6),
       pointBackgroundColor: .constant(.solid(teal)),
     ),
   ],

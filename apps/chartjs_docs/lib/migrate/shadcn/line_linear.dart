@@ -19,8 +19,8 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
       borderWidth: 2,
       // Recharts draws the line and the dots past the edges of the plot.
       clip: ChartClip.none,
-      pointRadius: 0,
-      pointHoverRadius: 4,
+      pointRadius: .constant(0),
+      pointHoverRadius: .constant(4),
       pointBackgroundColor: .constant(.solid(Shadcn.chart1)),
       pointHoverBackgroundColor: .constant(.solid(Shadcn.chart1)),
       extra: {'pointHoverBorderWidth': 0},

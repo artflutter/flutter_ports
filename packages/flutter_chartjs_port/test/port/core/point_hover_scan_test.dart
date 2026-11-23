@@ -10,8 +10,6 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/context_keys.dart';
-
 /// A chart event at a position, as the spec of the interaction makes it.
 final class _Event(
   @override final IChart? chart,
@@ -335,7 +333,7 @@ Chart _scatterChart({
   required int count,
   int datasets = 1,
   ChartKind type = ChartKind.scatter,
-  double? Function(int dataset)? pointRadius,
+  ChartValue<double>? Function(int dataset)? pointRadius,
   Map<String, Object?> Function(int dataset)? datasetExtra,
   List<DataPoint> Function(int dataset)? values,
   ChartInteraction? interaction,
@@ -398,7 +396,7 @@ void main() {
         datasets: 4,
         // A point with a hit radius only, a large point with no hit
         // radius, a negative sum and the defaults.
-        pointRadius: (k) => const [0.0, 9.0, 2.0, 3.0][k],
+        pointRadius: (k) => .constant(const [0.0, 9.0, 2.0, 3.0][k]),
         datasetExtra: (k) => <String, Object?>{
           'pointHitRadius': const [6.0, 0.0, -5.0, 1.0][k],
         },
@@ -414,14 +412,13 @@ void main() {
       final chart = _scatterChart(
         count: 150,
         datasets: 2,
-        // A scriptable radius: no typed parameter holds it.
-        datasetExtra: (k) => <String, Object?>{
-          'pointRadius': (Object? ctx) =>
-              switch (contextRead(ctx, 'dataIndex')) {
-                final int i => i % 7 + k,
-                _ => 3,
-              },
-        },
+        // A scriptable radius.
+        pointRadius: (k) => .resolver(
+          (context) => switch (context.dataIndex) {
+            final int i => (i % 7 + k).toDouble(),
+            _ => 3,
+          },
+        ),
       );
       final data = chart.getDatasetMeta(0).data;
       expect(

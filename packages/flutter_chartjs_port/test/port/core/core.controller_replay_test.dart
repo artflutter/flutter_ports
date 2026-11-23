@@ -65,7 +65,11 @@ Chart _chart(
       plugins: [_counting(counts)],
       labels: const ['a', 'b', 'c'],
       datasets: const [
-        LineDataset(label: 'values', data: [1, 2, 3], pointRadius: 3),
+        LineDataset(
+          label: 'values',
+          data: [1, 2, 3],
+          pointRadius: .constant(3),
+        ),
       ],
       animation: animation,
       transitions: transitions,

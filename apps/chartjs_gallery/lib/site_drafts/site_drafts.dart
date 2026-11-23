@@ -1087,7 +1087,7 @@ class _LiveChartState() extends State<_LiveChart> {
             ),
             fill: FillTarget.toOrigin,
             tension: 0.38,
-            pointRadius: 3,
+            pointRadius: const .constant(3),
             borderWidth: 3,
           ),
         },

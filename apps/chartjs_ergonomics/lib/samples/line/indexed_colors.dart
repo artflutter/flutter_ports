@@ -13,7 +13,7 @@ const indexedColors = ChartConfig(
       label: 'Sales',
       data: sales,
       borderColor: .constant(.solid(teal)),
-      pointRadius: 7,
+      pointRadius: .constant(7),
       // Item i takes color i; a shorter list repeats.
       pointBackgroundColor: .indexed([
         .solid(red),

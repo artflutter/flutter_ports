@@ -40,7 +40,7 @@ void main() {
         LineDataset(
           data: [for (var i = 0; i < 64; i++) 0],
           fill: FillTarget.none,
-          pointRadius: 0,
+          pointRadius: const .constant(0),
         ),
         LineDataset(
           data: [
@@ -48,7 +48,7 @@ void main() {
               if (i % 12 == 5) null else i % 7 - 3,
           ],
           fill: const FillTarget.toDataset(0),
-          pointRadius: 0,
+          pointRadius: const .constant(0),
           backgroundColor: const ChartValue.constant(
             ChartPaint.solid(Color(0x88334455)),
           ),
@@ -104,7 +104,7 @@ void main() {
                       above: const ChartPaint.solid(Color(0x88334455)),
                       below: const ChartPaint.solid(Color(0x88778899)),
                     ),
-                    pointRadius: 0,
+                    pointRadius: const .constant(0),
                     tension: k == 1 ? 0.4 : null,
                     stepped: k == 2 ? SteppedLine.middle : null,
                     borderColor: const ChartValue.constant(

@@ -19,7 +19,7 @@ ChartConfig liveLine(List<DataPoint> points) => ChartConfig(
       points: points,
       borderColor: const .constant(.solid(teal)),
       borderWidth: 1.5,
-      pointRadius: 0,
+      pointRadius: const .constant(0),
     ),
   ],
   scales: const [

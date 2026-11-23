@@ -31,8 +31,8 @@ LineDataset _area(String name, List<num> values, Color color) => LineDataset(
   borderWidth: 4,
   // stroke: {curve: 'smooth'}
   tension: 0.4,
-  pointRadius: 0,
-  pointHoverRadius: 0,
+  pointRadius: const .constant(0),
+  pointHoverRadius: const .constant(0),
 );
 
 ChartConfig _config(ApexZoom zoom) => ChartConfig(
