@@ -4,12 +4,17 @@
 /// Port of `src/fixture.js`: the fixture smoke runner (Chart.js ADR 0029).
 ///
 /// The members of `src/fixture.js` go to these places:
-/// - `readFile` and `loadConfig` (fixture.js:3-34): a [FixtureLoad]. Dart
-///   runs no JavaScript. Thus [FixtureSource] reads the list of the
-///   fixtures from the manifest of tool 4 (`doc/upstream/manifest.json`)
-///   and each pure data config from `doc/upstream/fixtures.json`. An impure
-///   config is a hand port of `test/fixtures/hand/` in flutter_chartjs_port, a
-///   [HandFixture] (Chart.js ADR 0029, sections 3 to 5).
+/// - `readFile` and `loadConfig` (fixture.js:3-34): a [FixtureLoad], which
+///   gives a [FixtureConfig]. Dart runs no JavaScript. Thus [FixtureSource]
+///   reads the list of the fixtures from the manifest of tool 4
+///   (`doc/upstream/manifest.json`). An impure config is a hand port of
+///   `test/fixtures/hand/` in flutter_chartjs_port, a [HandFixture]
+///   (Chart.js ADR 0029, sections 3 to 5). A pure data config of
+///   `doc/upstream/fixtures.json` without a hand port is a [HandFixture] of
+///   the generated `test/fixtures/data_fixtures.g.dart` (Chart.js ADR
+///   0199). Each config is a typed `ChartConfig`
+///   ([FixtureConfig.typed]), lowered with `ChartConfigLowering`, except a
+///   config that a `ChartConfig` cannot hold ([FixtureConfig.map]).
 /// - [specFromFixture] (fixture.js:36): one `testWidgets` test for each
 ///   fixture, with the tag [fixturesTag]. It loads the config, applies the
 ///   defaults and the plugin rule, acquires the chart, runs the `run` hook,
@@ -79,15 +84,63 @@ const String noSubmoduleReason =
 const String fixturesRequiredVariable = 'FIXTURES_REQUIRED';
 
 /// A config loader (fixture.js:24 and :27 give a new `json` object at each
-/// load).
+/// load). It runs its body again at each call, and gives new objects.
+typedef FixtureLoad = FixtureConfig Function();
+
+/// The config of one fixture: `module.exports` of a fixture file
+/// (fixture.js:24, :27), `{config, options, description}` (Chart.js ADR
+/// 0199).
 ///
-/// A hand loader runs its body again at each call, and gives a new object.
-/// A data loader gives the decoded subtree of `fixtures.json`, which is the
-/// same object at each call in one isolate. The chart writes into it. This
-/// is correct because each subtree feeds exactly one test (Chart.js ADR
-/// 0029, section 3 item 4). Do not load a data config two times in one
-/// isolate.
-typedef FixtureLoad = Map<String, Object?> Function();
+/// [FixtureConfig.typed] holds the chart config as a typed `ChartConfig`.
+/// [FixtureConfig.map] holds the whole `json` object as a Map, for a config
+/// that a `ChartConfig` cannot hold: a config with no dataset, for example.
+/// The keys `threshold`, `tolerance` and `debug` of the image comparison
+/// have no port (Chart.js ADR 0034, section 4).
+///
+/// The constructors are not `const`: the harness writes into the Maps of a
+/// fixture (`acquireChart` writes `canvas` and `wrapper` into its options),
+/// so a loader gives new Maps at each call.
+sealed class FixtureConfig._() {
+  /// A fixture with the typed chart [config], the [options] of
+  /// `acquireChart` (`canvas`, `wrapper`, `useOffscreenCanvas`, `spriteText`
+  /// and the `run` hook) and the [description].
+  factory typed(
+    ChartConfig config, {
+    Map<String, Object?>? options,
+    String? description,
+  }) = TypedFixtureConfig;
+
+  /// A fixture whose `json` object `{config, options, description}` keeps
+  /// its Map: a config that a `ChartConfig` cannot hold. The runner gives
+  /// its CSS colors and keywords their native values
+  /// ([nativeFixtureColors]).
+  factory map(Map<String, Object?> json) = MapFixtureConfig;
+}
+
+/// [FixtureConfig.typed].
+final class TypedFixtureConfig(
+  /// `json.config`: the chart config.
+  final ChartConfig config, {
+
+  /// `json.options`: the options of `acquireChart` and the `run` hook. The
+  /// harness writes into the Map: a loader gives a new Map at each call.
+  final Map<String, Object?>? options,
+
+  /// `json.description`.
+  final String? description,
+}) extends FixtureConfig {
+  /// A fixture with the typed chart [config].
+  this : super._();
+}
+
+/// [FixtureConfig.map].
+final class MapFixtureConfig(
+  /// The `json` object `{config, options, description}`.
+  final Map<String, Object?> json,
+) extends FixtureConfig {
+  /// A fixture with the Map [json].
+  this : super._();
+}
 
 /// A hand-ported config: its loader and the first 12 hex digits of the
 /// `sha256` of the upstream file in the manifest.
@@ -114,7 +167,10 @@ final class const FixtureSource({
   /// The manifest of tool 4.
   final String manifest = 'doc/upstream/manifest.json',
 
-  /// The pure data configs of tool 4, by fixture path.
+  /// The pure data configs of tool 4, by fixture path. The runner does not
+  /// read them: the typed config of each one is a [HandFixture] of `data`
+  /// of [specsFromFixtures] (Chart.js ADR 0199). [dataConfig] reads them for
+  /// a test.
   final String data = 'doc/upstream/fixtures.json',
 
   /// The directory of the upstream fixture files at the pin.
@@ -151,8 +207,9 @@ final class const FixtureSource({
       (_decoded['items:$manifest'] ??= _readItems(manifest))
           as List<FixtureItem>;
 
-  /// The pure data config of [path]. The data file is decoded once for each
-  /// isolate, at the first call. Each subtree feeds one test.
+  /// The pure data config of [path], as tool 4 wrote it. The data file is
+  /// decoded once for each isolate, at the first call. Do not change the
+  /// result: each call gives the same object.
   Map<String, Object?> dataConfig(String path) {
     final configs =
         (_decoded[data] ??= jsonDecode(File(data).readAsStringSync()))!
@@ -185,19 +242,22 @@ final class const FixtureSource({
 ///
 /// [path] is a regular expression source, as upstream: a dot matches any
 /// character, and `scale.time` also matches `scale.timeseries`. [hand] maps
-/// a fixture path to its hand port, and [skips] maps a fixture path to its
-/// skip reason. Throws a [StateError] when a key of [hand] or [skips] is not
-/// a fixture of the manifest.
+/// a fixture path to its hand port, [data] maps a pure data fixture to its
+/// generated config (Chart.js ADR 0199), and [skips] maps a fixture path to
+/// its skip reason. A skip wins over a hand port, and a hand port over a
+/// generated config. Throws a [StateError] when a key of [hand], [data] or
+/// [skips] is not a fixture of the manifest.
 void Function() specsFromFixtures(
   String path, {
   Map<String, HandFixture> hand = const {},
+  Map<String, HandFixture> data = const {},
   Map<String, String> skips = const {},
   FixtureSource source = const FixtureSource(),
 }) {
   // DIVERGES(chartjs): harness-fixture-sources, the manifest.
   final items = source.items;
   final known = {for (final item in items) item.path};
-  for (final key in [...hand.keys, ...skips.keys]) {
+  for (final key in [...hand.keys, ...data.keys, ...skips.keys]) {
     if (!known.contains(key)) {
       throw StateError('$key is not a fixture of ${source.manifest}.');
     }
@@ -211,13 +271,20 @@ void Function() specsFromFixtures(
   return () {
     final checkedOut = source.hasUpstream;
     for (final item in inputs) {
-      _declare(item, hand[item.path], skips[item.path], source, checkedOut);
+      _declare(
+        item,
+        hand[item.path] ?? (item.data ? data[item.path] : null),
+        skips[item.path],
+        source,
+        checkedOut,
+      );
     }
   };
 }
 
 /// Declares the test of [item]: a skip, a failing test for a stale entry or
-/// a missing checkout, or [specFromFixture].
+/// a missing checkout, or [specFromFixture]. [hand] is the hand port or the
+/// generated config of [item].
 void _declare(
   FixtureItem item,
   HandFixture? hand,
@@ -266,8 +333,12 @@ void _declare(
       test(
         path,
         () => fail(
-          'the hand port of $path is stale: port the diff of the bump and '
-          'update its sha256.',
+          item.data
+              ? 'the config of $path is stale: write the typed configs again '
+                    '(dart run melos run fixtures:gen), or port the diff of '
+                    'the bump into its hand port and update its sha256.'
+              : 'the hand port of $path is stale: port the diff of the bump '
+                    'and update its sha256.',
         ),
         tags: fixturesTag,
       );
@@ -275,11 +346,6 @@ void _declare(
     }
     specFromFixture(description, path, (
       load: _checked(item, source, hand.load),
-      png: item.png,
-    ));
-  } else if (item.data) {
-    specFromFixture(description, path, (
-      load: _checked(item, source, () => source.dataConfig(path)),
       png: item.png,
     ));
   } else {
@@ -330,32 +396,17 @@ void specFromFixture(String description, String input, FixtureInputs inputs) {
     final load = inputs.load;
     if (load == null) {
       fail(
-        'hand-port $input to test/fixtures/hand/, or skip it with a reason.',
+        'hand-port $input to test/fixtures/hand/, or skip it with a reason. '
+        'A pure data fixture takes its typed config from '
+        'tool/fixture_configs_gen.dart (dart run melos run fixtures:gen).',
       );
     }
-    final json = load(); // :39
-    final descr = jsTruthy(json['description'])
-        ? json['description']
-        : (json['description'] = description); // :40
-
-    final config = json['config']! as Map<String, Object?>;
-    final options =
-        (jsTruthy(config['options'])
-                ? config['options']
-                : (config['options'] = <String, Object?>{}))!
-            as Map<String, Object?>; // :43
-
-    // plugins are disabled by default, except if the path contains 'plugin'
-    // or there are instance plugins
-    if (!input.contains('plugin') &&
-        identical(jsGet(config, 'plugins'), undefined)) {
-      options['plugins'] = jsTruthy(options['plugins'])
-          ? options['plugins']
-          : false;
-    }
-
-    final fixtureOptions = json['options'] as Map<String, Object?>?;
-    nativeFixtureColors(config);
+    final fixture = load(); // :39
+    final (:descr, :config, :fixtureOptions) = fixtureInput(
+      input,
+      description,
+      fixture,
+    );
     final chart = utils.acquireChart(config, fixtureOptions); // :50
     try {
       final run = fixtureOptions == null
@@ -379,6 +430,66 @@ void specFromFixture(String description, String input, FixtureInputs inputs) {
       utils.releaseChart(chart); // :59
     }
   }, tags: fixturesTag);
+}
+
+/// The input of `_acquireChart` of the fixture [fixture] at [input]
+/// (fixture.js:39-48): the description default (:40), the `config.options`
+/// default (:43) and the plugin rule (:45-48).
+///
+/// A typed config lowers with `ChartConfigLowering` to its root scope: the
+/// `config` of the result. Its `options` scope always exists, so :43 has no
+/// work. A [FixtureConfig.map] keeps its Map, with the native values of
+/// [nativeFixtureColors]. The observation oracle O1 of flutter_chartjs_port
+/// takes its input from this function too.
+({Object? descr, Object config, Map<String, Object?>? fixtureOptions})
+fixtureInput(String input, String description, FixtureConfig fixture) {
+  switch (fixture) {
+    case TypedFixtureConfig(
+      :final config,
+      :final options,
+      description: final d,
+    ):
+      final root = ChartConfigLowering(config).lower();
+      final chartOptions = jsGet(root, 'options')!;
+      // plugins are disabled by default, except if the path contains
+      // 'plugin' or there are instance plugins
+      if (!input.contains('plugin') &&
+          identical(jsGet(root, 'plugins'), undefined)) {
+        final plugins = jsGet(chartOptions, 'plugins');
+        jsSet(chartOptions, 'plugins', jsTruthy(plugins) ? plugins : false);
+      }
+      return (
+        descr: d != null && d.isNotEmpty ? d : description,
+        config: root,
+        fixtureOptions: options,
+      );
+    case MapFixtureConfig(:final json):
+      final descr = jsTruthy(json['description'])
+          ? json['description']
+          : (json['description'] = description); // :40
+
+      final config = json['config']! as Map<String, Object?>;
+      final options =
+          (jsTruthy(config['options'])
+                  ? config['options']
+                  : (config['options'] = <String, Object?>{}))!
+              as Map<String, Object?>; // :43
+
+      // plugins are disabled by default, except if the path contains 'plugin'
+      // or there are instance plugins
+      if (!input.contains('plugin') &&
+          identical(jsGet(config, 'plugins'), undefined)) {
+        options['plugins'] = jsTruthy(options['plugins'])
+            ? options['plugins']
+            : false;
+      }
+      nativeFixtureColors(config);
+      return (
+        descr: descr,
+        config: config,
+        fixtureOptions: json['options'] as Map<String, Object?>?,
+      );
+  }
 }
 
 /// `Promise.resolve(run(chart))` (fixture.js:65): pumps frames until

@@ -9,6 +9,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../fixtures/data_fixtures.g.dart';
 import '../../fixtures/index.dart' show fixtureSkips;
 import '../../support/fill_json.dart';
 
@@ -56,9 +57,6 @@ const List<String> _twins = [
 
 /// The skip reason of the fixtures that the twins replace.
 const String _reason = 'diverges: adapt-date-moment-format';
-
-/// The ICU pattern of each moment pattern of the twins.
-const Map<String, String> _icu = {'YYYY': 'yyyy', 'YYYY-MM': 'yyyy-MM'};
 
 /// The twins with time values of the datasets that do not parse, with the
 /// number of these values. A twin that is not a key has 0.
@@ -208,67 +206,42 @@ Set<double> _named(Object? node) {
   return named;
 }
 
-/// Loads the ICU twin of the fixture at [path] from [source], with the
-/// `run` hook [_examine].
+/// Loads the ICU twin of the fixture at [path] (`momentTwins` of
+/// `test/fixtures/data_fixtures.g.dart`, Chart.js ADR 0199), with the `run`
+/// hook [_examine]. The date strings of the upstream config of [source] give
+/// the time values of [_named].
 ///
 /// Throws a [StateError] when the fixture has a `run` hook.
-Map<String, Object?> _load(FixtureSource source, String path) {
-  final json = _toIcu(source.dataConfig(path));
-  // The fill of a twin is `false` or absent: its FillTarget (Chart.js ADR
-  // 0140).
-  nativeFixtureFalseFills(json);
-  final config = json['config']! as Map<String, Object?>;
-  final data = config['data']! as Map<String, Object?>;
-  final datasets = (data['datasets'] as List<Object?>?)?.length ?? 0;
-  final options =
-      (json['options'] ??= <String, Object?>{}) as Map<String, Object?>;
-  if (options.containsKey('run')) {
-    throw StateError('$path: the fixture has a run hook.');
-  }
-  options['run'] = _examine(path, datasets, _named(config));
-  return json;
-}
-
-/// Replaces the moment pattern at each `parser` key and each string value
-/// of a `displayFormats` Map of [config] with its ICU pattern of [_icu].
-///
-/// Returns the same Map. Throws a [StateError] for another string at these
-/// places, and when [config] has no moment pattern.
-Map<String, Object?> _toIcu(Map<String, Object?> config) {
-  var count = 0;
-  String icu(Object path, String moment) {
-    final pattern = _icu[moment];
-    if (pattern == null) {
-      throw StateError('$path: the moment pattern "$moment" has no twin.');
-    }
-    count++;
-    return pattern;
-  }
-
-  void walk(Object? node) {
-    if (node is Map<String, Object?>) {
-      for (final MapEntry(:key, :value) in node.entries.toList()) {
-        if (key == 'parser' && value is String) {
-          node[key] = icu(key, value);
-        } else if (key == 'displayFormats' && value is Map<String, Object?>) {
-          for (final MapEntry(key: unit, value: format)
-              in value.entries.toList()) {
-            if (format is String) value[unit] = icu('$key.$unit', format);
-          }
-        } else {
-          walk(value);
-        }
+FixtureConfig _load(FixtureSource source, String path) {
+  final named = _named(source.dataConfig(path)['config']);
+  final twin = momentTwins[path]!.load();
+  switch (twin) {
+    case TypedFixtureConfig(:final config, :final options, :final description):
+      final runOptions = options ?? <String, Object?>{};
+      if (runOptions.containsKey('run')) {
+        throw StateError('$path: the fixture has a run hook.');
       }
-    } else if (node is List<Object?>) {
-      node.forEach(walk);
-    }
+      runOptions['run'] = _examine(path, config.datasets.length, named);
+      return FixtureConfig.typed(
+        config,
+        options: runOptions,
+        description: description,
+      );
+    case MapFixtureConfig(:final json):
+      // A config that a ChartConfig cannot hold keeps its Map. Its fill is
+      // `false` or absent: its FillTarget (Chart.js ADR 0140).
+      nativeFixtureFalseFills(json);
+      final config = json['config']! as Map<String, Object?>;
+      final data = config['data']! as Map<String, Object?>;
+      final datasets = (data['datasets'] as List<Object?>?)?.length ?? 0;
+      final options =
+          (json['options'] ??= <String, Object?>{}) as Map<String, Object?>;
+      if (options.containsKey('run')) {
+        throw StateError('$path: the fixture has a run hook.');
+      }
+      options['run'] = _examine(path, datasets, named);
+      return twin;
   }
-
-  walk(config);
-  if (count == 0) {
-    throw StateError('the config has no moment pattern: it needs no twin.');
-  }
-  return config;
 }
 
 /// The prefix of [specsFromFixtures] that matches exactly [paths].
@@ -326,59 +299,9 @@ void main() {
       ], _twins);
     });
 
-    test('_toIcu changes each moment pattern and keeps the Map', () {
-      final config = <String, Object?>{
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'time': <String, Object?>{
-                'parser': 'YYYY-MM',
-                'displayFormats': <String, Object?>{'year': 'YYYY'},
-              },
-            },
-          },
-        },
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'parser': 'YYYY',
-              'data': <Object?>['2017'],
-            },
-          ],
-        },
-      };
-      expect(identical(_toIcu(config), config), isTrue);
-      expect(config, {
-        'options': {
-          'scales': {
-            'x': {
-              'time': {
-                'parser': 'yyyy-MM',
-                'displayFormats': {'year': 'yyyy'},
-              },
-            },
-          },
-        },
-        'data': {
-          'datasets': [
-            {
-              'parser': 'yyyy',
-              'data': ['2017'],
-            },
-          ],
-        },
-      });
-    });
-
-    test('_toIcu throws for another pattern and for no pattern', () {
-      expect(() => _toIcu({'parser': 'MMM D'}), throwsA(isA<StateError>()));
-      expect(
-        () => _toIcu({
-          'displayFormats': <String, Object?>{'day': 'HH:mm'},
-        }),
-        throwsA(isA<StateError>()),
-      );
-      expect(() => _toIcu({'type': 'line'}), throwsA(isA<StateError>()));
+    test('the generated twins are the twins of the list', () {
+      // tool/fixture_configs_gen.dart writes them (Chart.js ADR 0199).
+      expect(momentTwins.keys, unorderedEquals(_twins));
     });
   });
 }

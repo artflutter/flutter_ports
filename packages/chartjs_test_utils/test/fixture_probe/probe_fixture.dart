@@ -38,78 +38,69 @@ FixtureSource _noCheckout({bool? required}) => FixtureSource(
 );
 
 /// A bar chart of 64 x 64 pixels.
-Map<String, Object?> _config([Map<String, Object?> extra = const {}]) =>
-    <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1, 2],
-          },
-        ],
-      },
-      ...extra,
-    };
+ChartConfig _config({
+  List<PluginOptions<Object?>>? pluginOptions,
+  List<Plugin<Object?>>? plugins,
+}) => ChartConfig(
+  labels: const <Object>['a', 'b'],
+  datasets: const [
+    BarDataset(data: .values(<num?>[1, 2])),
+  ],
+  pluginOptions: pluginOptions,
+  plugins: plugins,
+);
 
-/// A hand fixture with [config] and the [run] hook.
-Map<String, Object?> _fixture(Map<String, Object?> config, [Function? run]) =>
-    <String, Object?>{
-      'config': config,
-      'options': <String, Object?>{
+/// A fixture with [config] and the [run] hook.
+FixtureConfig _fixture(ChartConfig config, [Function? run]) =>
+    FixtureConfig.typed(
+      config,
+      options: <String, Object?>{
         'canvas': <String, Object?>{'height': 64, 'width': 64},
         'run': ?run,
       },
-    };
+    );
 
-Map<String, Object?> _options(Map<String, Object?> config) =>
-    config['options']! as Map<String, Object?>;
+/// The options object of the config of [chart]: the root scope of its
+/// typed config.
+Object? _plugins(Chart chart) => jsGet(chart.config.options, 'plugins');
 
-Map<String, Object?> _ruleNone() {
-  final config = _config();
-  return _fixture(config, (Chart chart) {
-    expect(_options(config)['plugins'], isFalse);
-  });
-}
+FixtureConfig _ruleNone() => _fixture(_config(), (Chart chart) {
+  expect(_plugins(chart), isFalse);
+});
 
-Map<String, Object?> _ruleInstance() {
-  final config = _config({'plugins': <Plugin<Object?>>[]});
-  return _fixture(config, (Chart chart) {
-    // The runner did not write false. initOptions of the config wrote
-    // `{}` (core.config.js:118).
-    expect(_options(config)['plugins'], <String, Object?>{});
-  });
-}
+FixtureConfig _ruleInstance() =>
+    _fixture(_config(plugins: <Plugin<Object?>>[]), (Chart chart) {
+      // The runner did not write false. initOptions of the config wrote
+      // `{}` (core.config.js:118).
+      expect(_plugins(chart), isNot(isFalse));
+      expect(jsObjectKeys(_plugins(chart)), isEmpty);
+    });
 
-final Map<String, Object?> _pluginOptions = <String, Object?>{'legend': false};
+const LegendOptions _legend = LegendOptions(display: false);
 
-Map<String, Object?> _ruleObject() {
-  final config = _config({
-    'options': <String, Object?>{'plugins': _pluginOptions},
-  });
-  return _fixture(config, (Chart chart) {
-    expect(identical(_options(config)['plugins'], _pluginOptions), isTrue);
-  });
-}
+FixtureConfig _ruleObject() =>
+    _fixture(_config(pluginOptions: [_legend]), (Chart chart) {
+      // The object of the options stays.
+      expect(jsObjectKeys(_plugins(chart)), ['legend']);
+      expect(identical(jsGet(_plugins(chart), 'legend'), _legend), isTrue);
+    });
 
-Map<String, Object?> _pluginPath() {
-  final config = _config();
-  return _fixture(config, (Chart chart) {
-    // The runner did not write false. initOptions of the config wrote
-    // `{}` (core.config.js:118).
-    expect(_options(config)['plugins'], <String, Object?>{});
-  });
-}
+FixtureConfig _pluginPath() => _fixture(_config(), (Chart chart) {
+  // The runner did not write false. initOptions of the config wrote
+  // `{}` (core.config.js:118).
+  expect(_plugins(chart), isNot(isFalse));
+  expect(jsObjectKeys(_plugins(chart)), isEmpty);
+});
 
 Chart? _thrown;
 bool _futureSettled = false;
 
-Map<String, Object?> _runSync() => _fixture(_config(), (Chart chart) {
+FixtureConfig _runSync() => _fixture(_config(), (Chart chart) {
   expect(chart.attached, isTrue);
   expect(chart.canvas, isNotNull);
 });
 
-Map<String, Object?> _runFuture() => _fixture(_config(), (Chart chart) {
+FixtureConfig _runFuture() => _fixture(_config(), (Chart chart) {
   final completer = Completer<void>();
   setTimeout(() {
     _futureSettled = true;
@@ -118,21 +109,34 @@ Map<String, Object?> _runFuture() => _fixture(_config(), (Chart chart) {
   return completer.future;
 });
 
-Map<String, Object?> _runNever() =>
+FixtureConfig _runNever() =>
     _fixture(_config(), (Chart chart) => Completer<void>().future);
 
-Map<String, Object?> _runThrows() => _fixture(_config(), (Chart chart) {
+FixtureConfig _runThrows() => _fixture(_config(), (Chart chart) {
   _thrown = chart;
   throw StateError('probe sync error');
 });
 
-Map<String, Object?> _runAsyncThrows() =>
-    _fixture(_config(), (Chart chart) async {
-      await Future<void>.value();
-      throw StateError('probe async error');
-    });
+FixtureConfig _runAsyncThrows() => _fixture(_config(), (Chart chart) async {
+  await Future<void>.value();
+  throw StateError('probe async error');
+});
 
-Map<String, Object?> _both() => _fixture(_config());
+FixtureConfig _both() => _fixture(_config());
+
+/// A config of `fixtures.json` that a ChartConfig cannot hold: no dataset.
+FixtureConfig _noDataset() => FixtureConfig.map(<String, Object?>{
+  'config': <String, Object?>{
+    'type': 'bar',
+    'data': <String, Object?>{
+      'labels': <Object?>['a', 'b'],
+      'datasets': <Object?>[],
+    },
+  },
+  'options': <String, Object?>{
+    'canvas': <String, Object?>{'height': 64, 'width': 64},
+  },
+});
 
 /// A source whose upstream file `crlf/lines.json` has CRLF line ends, as a
 /// checkout with `core.autocrlf=true` writes it. The manifest has the
@@ -147,6 +151,23 @@ const Map<String, String> _skips = {
   'source/skip.json': 'n/a: probe',
   'source/stale-skip.json': 'blocked: plugin.probe',
   'source/blocked.json': 'blocked: plugin.absent',
+};
+
+/// The generated configs of the pure data fixtures of `fixtures.json`
+/// (Chart.js ADR 0199). The config of `source/both.json` throws: the hand
+/// entry wins over it.
+final Map<String, HandFixture> _data = {
+  'scale.timeseries/a.json': (load: _both, sha256: 'e8f1f6e960d6'),
+  'aXb/c.json': (load: _both, sha256: 'ac6400fa34ec'),
+  'edge/xy.json': (load: _noDataset, sha256: 'e002adcf97f4'),
+  'png/none.json': (load: _both, sha256: '6ea560d1be7c'),
+  'source/both.json': (
+    load: () => throw StateError('the data config of source/both.json'),
+    sha256: '2962075a1175',
+  ),
+  'upstream/changed.json': (load: _both, sha256: '000000000000'),
+  'upstream/missing.json': (load: _both, sha256: '3684e16651a1'),
+  'crlf/lines.json': (load: _both, sha256: '7bdce19a0592'),
 };
 
 final Map<String, HandFixture> _hand = {
@@ -177,9 +198,15 @@ void main() {
   ]);
 
   group('probe', () {
-    group('prefix time', specsFromFixtures('scale.time', source: _source));
-    group('prefix dot', specsFromFixtures('a.b', source: _source));
-    group('prefix rest', specsFromFixtures('edge/x', source: _source));
+    group(
+      'prefix time',
+      specsFromFixtures('scale.time', data: _data, source: _source),
+    );
+    group('prefix dot', specsFromFixtures('a.b', data: _data, source: _source));
+    group(
+      'prefix rest',
+      specsFromFixtures('edge/x', data: _data, source: _source),
+    );
     group('rule', specsFromFixtures('rule/', hand: _hand, source: _source));
     group(
       'plugin path',
@@ -194,22 +221,42 @@ void main() {
       expect(_thrown!.canvas, isNull);
       expect(Chart.instances.values, isNot(contains(_thrown)));
     }, tags: fixturesTag);
-    group('png', specsFromFixtures('png/', source: _source));
+    group('png', specsFromFixtures('png/', data: _data, source: _source));
     group(
       'sources',
-      specsFromFixtures('source/', hand: _hand, skips: _skips, source: _source),
+      specsFromFixtures(
+        'source/',
+        hand: _hand,
+        data: _data,
+        skips: _skips,
+        source: _source,
+      ),
     );
-    group('upstream', specsFromFixtures('upstream/', source: _source));
-    group('crlf', specsFromFixtures('crlf/', source: _crlf));
+    group(
+      'upstream',
+      specsFromFixtures('upstream/', data: _data, source: _source),
+    );
+    group('crlf', specsFromFixtures('crlf/', data: _data, source: _crlf));
     group(
       'no checkout',
-      specsFromFixtures('aXb', source: _noCheckout(required: false)),
+      specsFromFixtures(
+        'aXb',
+        data: _data,
+        source: _noCheckout(required: false),
+      ),
     );
     group(
       'no checkout required',
-      specsFromFixtures('aXb', source: _noCheckout(required: true)),
+      specsFromFixtures(
+        'aXb',
+        data: _data,
+        source: _noCheckout(required: true),
+      ),
     );
-    group('no checkout env', specsFromFixtures('aXb', source: _noCheckout()));
+    group(
+      'no checkout env',
+      specsFromFixtures('aXb', data: _data, source: _noCheckout()),
+    );
     test('untagged', () {});
   });
 }

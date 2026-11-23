@@ -233,9 +233,13 @@ void main() {
 
   group('the sources', () {
     test('a hand entry wins over a data config', () {
-      // The data config of source/both.json has the type "nope", which
-      // throws.
+      // The generated config of source/both.json throws.
       _expectPass('sources source/both.json');
+    });
+
+    test('a config that keeps its Map runs from the Map', () {
+      // edge/xy.json has no dataset (Chart.js ADR 0199).
+      _expectPass('prefix rest edge/xy.json');
     });
 
     test('an impure item without a hand entry fails', () {
@@ -335,7 +339,25 @@ void main() {
     expect(
       () => specsFromFixtures(
         'rule/',
-        hand: {'rule/nope.js': (load: () => <String, Object?>{}, sha256: '')},
+        hand: {
+          'rule/nope.js': (
+            load: () => FixtureConfig.map(<String, Object?>{}),
+            sha256: '',
+          ),
+        },
+        source: source,
+      ),
+      throwsStateError,
+    );
+    expect(
+      () => specsFromFixtures(
+        'rule/',
+        data: {
+          'rule/nope.json': (
+            load: () => FixtureConfig.map(<String, Object?>{}),
+            sha256: '',
+          ),
+        },
         source: source,
       ),
       throwsStateError,

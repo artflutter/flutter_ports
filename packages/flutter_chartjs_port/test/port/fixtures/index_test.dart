@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../fixtures/data_fixtures.g.dart';
 import '../../fixtures/index.dart';
 
 /// The fixture groups of the manifest specs: the upstream spec file and the
@@ -102,12 +103,32 @@ void main() {
   const source = FixtureSource();
   final items = {for (final item in source.items) item.path: item};
 
-  test('each key of handFixtures and fixtureSkips is a manifest fixture', () {
+  test('each key of handFixtures, dataFixtures and fixtureSkips is a '
+      'manifest fixture', () {
     final unknown = [
-      for (final key in [...handFixtures.keys, ...fixtureSkips.keys])
+      for (final key in [
+        ...handFixtures.keys,
+        ...dataFixtures.keys,
+        ...fixtureSkips.keys,
+      ])
         if (!items.containsKey(key)) key,
     ];
     expect(unknown, isEmpty);
+  });
+
+  test('each pure data fixture has a hand port or a generated config, not '
+      'both', () {
+    // Chart.js ADR 0199: tool/fixture_configs_gen.dart writes the typed
+    // config of each pure data fixture without a hand port.
+    final data = [
+      for (final item in items.values)
+        if (item.data) item.path,
+    ];
+    expect(
+      dataFixtures.keys,
+      unorderedEquals(data.where((path) => !handFixtures.containsKey(path))),
+    );
+    expect(dataFixtures.keys.where((key) => !items[key]!.data), isEmpty);
   });
 
   test('a hand port of a data fixture has a class value key', () {
@@ -165,10 +186,13 @@ void main() {
     );
   });
 
-  test('each sha256 of handFixtures is the first 12 hex digits of the '
-      'manifest sha256', () {
+  test('each sha256 of handFixtures and dataFixtures is the first 12 hex '
+      'digits of the manifest sha256', () {
     final wrong = [
-      for (final MapEntry(:key, :value) in handFixtures.entries)
+      for (final MapEntry(:key, :value) in {
+        ...handFixtures,
+        ...dataFixtures,
+      }.entries)
         if (!RegExp(r'^[0-9a-f]{12}$').hasMatch(value.sha256) ||
             items[key]?.sha256.substring(0, 12) != value.sha256)
           key,

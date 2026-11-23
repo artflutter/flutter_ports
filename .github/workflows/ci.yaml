@@ -203,8 +203,8 @@ jobs:
 
   port-checks:
     # Tools 1 and 2 of packages/flutter_chartjs_port/doc/porting-flow.md
-    # section 4, tool 9 (check:typed-reads) and options:gen:check (Chart.js ADR
-    # 0054).
+    # section 4, tool 9 (check:typed-reads), options:gen:check (Chart.js ADR
+    # 0054) and fixtures:gen:check (Chart.js ADR 0199).
     # Shallow submodules, so that the header check compares each header path
     # and each "files" entry of tool/port_sources.yaml with the pinned tree.
     # Tools 1 and 2 also examine the add-on ports flutter_chartjs_plugin_zoom_port
@@ -225,6 +225,7 @@ jobs:
       - run: dart run melos run check:headers
       - run: dart run melos run check:typed-reads
       - run: dart run melos run options:gen:check
+      - run: dart run melos run fixtures:gen:check
       - run: dart run melos run adr:index:check
 
   upstream-manifest:

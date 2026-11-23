@@ -15,9 +15,9 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../fixtures/data_fixtures.g.dart';
 import '../../fixtures/index.dart' show handFixtures;
 import '../../support/context_keys.dart';
-import '../../support/fill_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../core/resolver_trace_cases.dart'
     show resolverTraceFunctions, resolverTraceSetups;
@@ -34,7 +34,9 @@ import 'observation_digests.dart';
 // line names the Dart class of an options object.
 //
 // The corpus: the hand fixtures of test/fixtures/index.dart, the pure data
-// configs of doc/upstream/fixtures.json, the bench and focused configs of the
+// configs of doc/upstream/fixtures.json (their configs of
+// test/fixtures/data_fixtures.g.dart, Chart.js ADR 0199), the bench and
+// focused configs of the
 // differential test D1 and the cases of the resolver trace D2
 // (test/port/core/resolver_trace_reference.dart). Each case has two tests:
 // `(plain)` runs the config as given, and `(trace)` wraps each function value
@@ -74,8 +76,19 @@ const String _digestsPath = 'test/port/options/observation_digests.dart';
 /// The digests of the tests of this run, for [_update].
 final Map<String, String> _collected = {};
 
-/// The input of one run: the config and the options of `acquireChart`.
-typedef _Input = ({Map<String, Object?> config, Map<String, Object?>? options});
+/// The input of one run: the config and the options of `acquireChart`. The
+/// config is a Map, or a [_Fixture] that [fixtureInput] of the fixture
+/// runner turns into the input of `acquireChart`.
+typedef _Input = ({Object config, Map<String, Object?>? options});
+
+/// The config of the fixture [path] (Chart.js ADR 0199).
+final class _Fixture(
+  /// The fixture path.
+  final String path,
+
+  /// The loaded config.
+  final FixtureConfig fixture,
+);
 
 /// One config of the corpus: `make` gives a new config and the options of
 /// `acquireChart` at each call. `cleanup` undoes a change of the global
@@ -139,25 +152,18 @@ List<_Case> _cases() => [
   for (final MapEntry(key: path, value: hand) in handFixtures.entries)
     (
       name: 'fixture $path',
-      make: () => _fixtureInput(path, hand.load()),
+      make: () => (config: _Fixture(path, hand.load()), options: null),
       cleanup: null,
     ),
   // A data fixture with a hand port (Chart.js ADR 0115) runs from its hand
-  // port, above.
-  for (final path in _dataFixtures.keys)
-    if (!handFixtures.containsKey(path))
-      (
-        name: 'fixture $path',
-        make: () => _fixtureInput(
-          path,
-          // A data fixture without a hand port holds no fill but `false`
-          // (Chart.js ADR 0140).
-          _nativeFalseFills(
-            _copyJson(_dataFixtures[path])! as Map<String, Object?>,
-          ),
-        ),
-        cleanup: null,
-      ),
+  // port, above. Each other one runs from its generated config, also a
+  // fixture with a moment pattern, whose test the runner skips.
+  for (final MapEntry(key: path, value: data) in dataFixtures.entries)
+    (
+      name: 'fixture $path',
+      make: () => (config: _Fixture(path, data.load()), options: null),
+      cleanup: null,
+    ),
   for (final c in _benchCases)
     (name: 'bench ${c.name}', make: c.make, cleanup: c.cleanup),
   for (final c in _focusedCases)
@@ -182,54 +188,6 @@ List<_Case> _cases() => [
       cleanup: null,
     ),
 ];
-
-/// The pure data configs of doc/upstream/fixtures.json, by fixture path,
-/// decoded once. A run takes a deep copy ([_copyJson]): the chart writes
-/// into its config.
-final Map<String, Object?> _dataFixtures =
-    jsonDecode(File('doc/upstream/fixtures.json').readAsStringSync())!
-        as Map<String, Object?>;
-
-/// [json] after [nativeFixtureFalseFills].
-Map<String, Object?> _nativeFalseFills(Map<String, Object?> json) {
-  nativeFixtureFalseFills(json);
-  return json;
-}
-
-/// A deep copy of the decoded JSON [value].
-Object? _copyJson(Object? value) => switch (value) {
-  final Map<String, Object?> map => <String, Object?>{
-    for (final MapEntry(:key, :value) in map.entries) key: _copyJson(value),
-  },
-  // The lines of a title text keep their type (row
-  // adapt-title-text-lines).
-  final List<String> lines => List<String>.of(lines),
-  final List<Object?> list => <Object?>[
-    for (final item in list) _copyJson(item),
-  ],
-  _ => value,
-};
-
-/// The input of the fixture [path] from its loaded [json] `{config,
-/// options}`: the `options` default and the plugin rule of specFromFixture
-/// (fixture.js:43-48).
-_Input _fixtureInput(String path, Map<String, Object?> json) {
-  final config = json['config']! as Map<String, Object?>;
-  final options =
-      (jsTruthy(config['options'])
-              ? config['options']
-              : (config['options'] = <String, Object?>{}))!
-          as Map<String, Object?>;
-  // plugins are disabled by default, except if the path contains 'plugin'
-  // or there are instance plugins
-  if (!path.contains('plugin') &&
-      identical(jsGet(config, 'plugins'), undefined)) {
-    options['plugins'] = jsTruthy(options['plugins'])
-        ? options['plugins']
-        : false;
-  }
-  return (config: config, options: json['options'] as Map<String, Object?>?);
-}
 
 // ---------------------------------------------------------------------------
 // The digests.
@@ -324,14 +282,41 @@ String _run(_Case c, {required bool wrap}) {
   final out = StringBuffer();
   final trace = <String>[];
   final input = c.make();
-  nativeFixtureColors(input.config);
-  if (wrap) _wrapFunctions(input.config, 'config', trace);
+  var config = input.config;
+  var options = input.options;
+  // The paths of the dataset options of a typed ChartValue.resolver: the
+  // lowering gives the chart a bridge of two parameters
+  // (`ChartResolver.toOptionCell`), which calls the function of the config
+  // with the context only.
+  final resolvers = <String>{};
+  if (config case _Fixture(:final path, :final fixture)) {
+    if (fixture case TypedFixtureConfig(config: final typed)) {
+      for (final (i, dataset) in typed.datasets.indexed) {
+        // The typed fields of the dataset by option key.
+        // ignore: invalid_use_of_protected_member
+        for (final (key, value) in dataset.props) {
+          if (value is ChartResolver) {
+            resolvers.add('config.data.datasets[$i].$key');
+          }
+        }
+      }
+    }
+    final fixtureInputs = fixtureInput(
+      path,
+      path.substring(0, path.lastIndexOf('.')),
+      fixture,
+    );
+    config = fixtureInputs.config;
+    options = fixtureInputs.fixtureOptions;
+  }
+  if (config is Map<String, Object?>) nativeFixtureColors(config);
+  if (wrap) _wrapFunctions(config, 'config', trace, resolvers);
   try {
     withClock(Clock.fixed(_now), () {
       trace.add('== construct');
       final Chart chart;
       try {
-        chart = acquireChart(input.config, input.options);
+        chart = acquireChartRoot(config, options);
       } on Object catch (e) {
         out.writeln('construct throws ${_throwText(e)}');
         return;
@@ -703,7 +688,18 @@ int? _exactArity(Function function) {
 /// Replaces each function value under [value] with a recorder that writes
 /// one line into [trace] and calls the function. A closure with a range of
 /// argument counts stays as it is.
-void _wrapFunctions(Object? value, String path, List<String> trace) {
+///
+/// [value] is a Map config or the typed root scope of a typed config
+/// (Chart.js ADR 0199): a typed scope reads and writes its keys by name, as a
+/// Map. The bridge of a typed `ChartValue.resolver` at a path of
+/// [resolvers] records the context only, as the function of the config
+/// takes it.
+void _wrapFunctions(
+  Object? value,
+  String path,
+  List<String> trace, [
+  Set<String> resolvers = const {},
+]) {
   switch (value) {
     case final Map<String, Object?> map:
       for (final key in List.of(map.keys)) {
@@ -711,7 +707,7 @@ void _wrapFunctions(Object? value, String path, List<String> trace) {
         if (wrapped != null) {
           map[key] = wrapped;
         } else {
-          _wrapFunctions(map[key], '$path.$key', trace);
+          _wrapFunctions(map[key], '$path.$key', trace, resolvers);
         }
       }
     case final List<Object?> list:
@@ -720,10 +716,34 @@ void _wrapFunctions(Object? value, String path, List<String> trace) {
         if (wrapped != null) {
           list[i] = wrapped;
         } else {
-          _wrapFunctions(list[i], '$path[$i]', trace);
+          _wrapFunctions(list[i], '$path[$i]', trace, resolvers);
+        }
+      }
+    case final JsObjectFace object:
+      for (final key in jsObjectKeys(object)) {
+        final item = jsGet(object, key);
+        final itemPath = '$path.$key';
+        final wrapped = resolvers.contains(itemPath)
+            ? _resolverRecorder(item, itemPath, trace)
+            : _wrapped(item, itemPath, trace);
+        if (wrapped != null) {
+          jsSet(object, key, wrapped);
+        } else {
+          _wrapFunctions(item, itemPath, trace, resolvers);
         }
       }
   }
+}
+
+/// The recorder of the bridge [bridge] of a typed `ChartValue.resolver`: it
+/// writes the line of the context only, the argument of the function of the
+/// config, and calls the bridge.
+Object? _resolverRecorder(Object? bridge, String path, List<String> trace) {
+  if (bridge is! Object? Function(ScriptableContext, Object?)) return null;
+  return (ScriptableContext context, Object? options) {
+    trace.add(_traceLine(path, [context]));
+    return bridge(context, options);
+  };
 }
 
 /// The recorder of [value] when it is a function with an exact arity, else

@@ -187,6 +187,10 @@ const Set<String> reviewedForeignPairs = {
   'BarOptions\tinflateAmount\tobject',
   'BarOptions\tinflateAmount\tstring',
   'BarOptions\tinflateAmount\tundefined',
+  // The typed config of a fixture (Chart.js ADR 0199) keeps a number label of
+  // upstream in the `extra` of its dataset: the legend and the tooltip read
+  // the raw value, as they read the label of a dataset Map.
+  'BarControllerDatasetOptionsScope\tlabel\tnumber',
   // The data Map of a raw config becomes a `ChartDataScope` with the same
   // values (row `adapt-config-objects`): `Scale.getLabels` and the category
   // label source read the raw value, as upstream reads the property.
@@ -194,6 +198,11 @@ const Set<String> reviewedForeignPairs = {
   'ChartDataScope\tlabels\tstring',
   'ChartDataScope\txLabels\tnumber',
   'ChartOptionsScope\tcolor\tstring',
+  // The plugin rule of the fixture runner (fixture.js:45-48) writes
+  // `plugins: false` into the options scope of a typed fixture config
+  // (Chart.js ADR 0199): core.plugins.js:262 reads `options === false` and
+  // gives no plugin, as for the Map of a raw config.
+  'ChartOptionsScope\tplugins\tboolean',
   'DescriptorsScope\t_rootDesc\tboolean',
   'FontSpecScope\tsize\tstring',
   'GridLineOptionsScope\tcolor\tstring',
