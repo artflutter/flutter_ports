@@ -92,7 +92,7 @@ final class _Logs() {
 /// into them.
 _Logs? _currentLogs;
 
-/// The named legend functions of the configs of the generator, with the
+/// The named functions of the configs of the generator, with the
 /// same bodies, recording into [_currentLogs].
 final Map<String, Object?> _functions = {
   'legendHover': (ChartEvent event, LegendItem item, LegendElement legend) =>
@@ -107,45 +107,20 @@ final Map<String, Object?> _functions = {
         jsGet(jsGet(defaults, 'plugins'), 'legend')! as LegendOptions;
     legend.onClick!(event, item, legendBox);
   },
+  // The `beforeEvent` hook of the inline plugin `log`: the event and the
+  // replay flag of each event that reaches the chart.
+  'logEvent': (Object? chart, EventHookArgs args, Object? options) {
+    final event = args.event;
+    _currentLogs!.events.add([
+      event.type,
+      event.native!.type,
+      event.x,
+      event.y,
+      args.replay,
+    ]);
+    return true;
+  },
 };
-
-/// The typed chart of a reference case. The data, the legend options with
-/// the callbacks of [_functions] and the event filter come from the
-/// generated config.
-ChartConfig _config(Map<String, Object?> reference) {
-  final data = reference['data']! as Map<String, Object?>;
-  final options = reference['options']! as Map<String, Object?>;
-  final plugins = options['plugins']! as Map<String, Object?>;
-  return ChartConfig(
-    labels: (data['labels']! as List<Object?>).cast<Object>(),
-    datasets: [
-      for (final dataset
-          in (data['datasets']! as List<Object?>).cast<Map<String, Object?>>())
-        LineDataset(
-          label: dataset['label']! as String,
-          data: .values((dataset['data']! as List<Object?>).cast<num?>()),
-        ),
-    ],
-    pluginOptions: [plugins['legend']! as LegendOptions],
-    plugins: [
-      ChartPlugin<Object?>(
-        id: 'log',
-        beforeEvent: (chart, args, options) {
-          final event = args.event;
-          _currentLogs!.events.add([
-            event.type,
-            event.native!.type,
-            event.x,
-            event.y,
-            args.replay,
-          ]);
-          return true;
-        },
-      ),
-    ],
-    events: (options['events'] as List<Object?>?)?.cast<String>(),
-  );
-}
 
 /// `<name>:<e.type>:<item.text>`.
 String _entry(String name, ChartEvent e, LegendItem item) =>
@@ -253,9 +228,10 @@ void main() {
   for (final c in chartHostInputReference(_functions)) {
     testWidgets(c.name, (tester) async {
       final logs = _currentLogs = _Logs();
-      final chart = acquireChartRoot(
-        ChartConfigLowering(_config(c.config)).lower(),
-        copyReference(c.options)! as AnyObject,
+      final chart = acquireReferenceChart(
+        c.config,
+        c.options,
+        functions: _functions,
       );
       final canvas = chart.canvas!;
       for (final type in _domTypes) {
