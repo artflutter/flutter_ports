@@ -191,4 +191,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0195](0195-deprecate-raw-chart-view.md) Deprecate the raw ChartView config: accepted, supersedes 0052.
 - [0196](0196-filler-colors-options-objects.md) The filler and colors options are one object each: accepted, supersedes 0052, 0054, 0147, 0182, 0194.
 - [0197](0197-title-options-objects.md) The title and subtitle options are one object each: accepted, supersedes 0052, 0054, 0147, 0181, 0182.
+- [0198](0198-remove-raw-chart-view.md) Remove the raw ChartView config: proposed, supersedes 0195.
 <!-- adr-index:end -->
