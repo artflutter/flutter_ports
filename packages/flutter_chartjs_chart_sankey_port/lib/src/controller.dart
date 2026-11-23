@@ -260,44 +260,25 @@ double _getColumnPadding(
 }
 
 /// controller.ts:196 `resolveNodeGap`.
-///
-/// The gap of a node is a number or a [SankeyNodeGap]. A gap object of
-/// another class is not a gap: a debug build stops on it.
-NodeGap _resolveNodeGap(Object? option, SankeyNode node) {
-  final resolved =
-      resolveNodeOption<Object>(isNullOrUndef(option) ? 10 : option, node) ??
-      10;
-  if (resolved is num) {
-    return (after: resolved.toDouble(), before: resolved.toDouble());
-  }
-  assert(
-    resolved is SankeyNodeGap,
-    'A node gap is a number or a SankeyNodeGap, not ${resolved.runtimeType}.',
-  );
-  if (resolved is! SankeyNodeGap) return (after: 10, before: 10);
-  return (after: resolved.after ?? 10, before: resolved.before ?? 10);
+NodeGap _resolveNodeGap(
+  SankeyNodeValue<SankeyNodeGap>? option,
+  SankeyNode node,
+) {
+  final resolved = resolveNodeOption(option, node);
+  return (after: resolved?.after ?? 10, before: resolved?.before ?? 10);
 }
 
 /// controller.ts:207 `resolveNodeMinSize`.
-double _resolveNodeMinSize(Object? option, SankeyNode node) =>
-    resolveNodeOption<num>(
-      isNullOrUndef(option) ? 0 : option,
-      node,
-    )?.toDouble() ??
-    0;
-
-/// `value = fallback` of a destructuring: [fallback] for `undefined`, else
-/// the `ToNumber` of [value].
-double _numberOr(Object? value, double fallback) =>
-    value is Undefined ? fallback : jsToNumber(value);
+double _resolveNodeMinSize(SankeyNodeValue<double>? option, SankeyNode node) =>
+    resolveNodeOption(option, node) ?? 0;
 
 /// controller.ts:214 `resolveNodeLabelStyle`.
 ({
-  Object? backgroundColor,
+  ChartPaint? backgroundColor,
   double borderRadius,
-  Object? color,
+  ChartPaint color,
   bool display,
-  Object? font,
+  TextStyle? font,
   double padding,
   SankeyLabelPosition position,
 })
@@ -305,22 +286,16 @@ _resolveNodeLabelStyle(
   SankeyControllerDatasetOptions options,
   SankeyNode node,
 ) {
-  final nodeLabels = options.nodeLabels ?? const SankeyNodeLabelsOptions({});
-  final datasetColor = options.color;
+  final nodeLabels = options.nodeLabels;
   return (
-    backgroundColor: resolveNodeOption<Object>(
-      nodeLabels.backgroundColor,
-      node,
-    ),
-    borderRadius: _numberOr(nodeLabels.borderRadius, 0),
-    color:
-        resolveNodeOption<Object>(nodeLabels.color, node) ??
-        (isNullOrUndef(datasetColor) ? _black : datasetColor),
-    display: resolveNodeOption<bool>(nodeLabels.display, node) ?? true,
+    backgroundColor: resolveNodeOption(nodeLabels.backgroundColor, node),
+    borderRadius: nodeLabels.borderRadius,
+    color: resolveNodeOption(nodeLabels.color, node) ?? options.color ?? _black,
+    display: resolveNodeOption(nodeLabels.display, node) ?? true,
     font: nodeLabels.font,
-    padding: _numberOr(nodeLabels.padding, 4),
+    padding: nodeLabels.padding,
     position:
-        resolveNodeOption<SankeyLabelPosition>(nodeLabels.position, node) ??
+        resolveNodeOption(nodeLabels.position, node) ??
         SankeyLabelPosition.auto,
   );
 }
@@ -346,6 +321,10 @@ const Set<String> _hoverColorOptions = {'hoverColorFrom', 'hoverColorTo'};
 
 /// The axis of the progress animation: `ctx.dataset.orientation ===
 /// 'vertical' ? 'y' : 'x'` (controller.ts:264-270).
+///
+/// Upstream reads the dataset object of the app, not the resolved options:
+/// the read by name stays (an `orientation` of the chart options or of the
+/// defaults does not apply here).
 bool _verticalDataset(ScriptableContext ctx) =>
     jsGet(ctx.dataset, 'orientation') == SankeyOrientation.vertical;
 
@@ -514,9 +493,22 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
   );
 
   /// controller.ts:365 `declare options: SankeyControllerDatasetOptions`:
-  /// the options of the dataset through their facade.
-  SankeyControllerDatasetOptions get _options =>
-      SankeyControllerDatasetOptions(options);
+  /// the resolved options of the dataset.
+  ///
+  /// Each `configure` gives the controller a new resolver. The first read
+  /// after it reads each key of the resolver once; the other reads of the
+  /// update and the draws until the next `configure` take the same object.
+  // DIVERGES(sankey): adapt-sankey-resolved-options, one read of each key.
+  SankeyControllerDatasetOptions get _options {
+    final resolver = options;
+    final known = _resolvedOptions;
+    if (known != null && identical(resolver, _resolvedFrom)) return known;
+    _resolvedFrom = resolver;
+    return _resolvedOptions = SankeyControllerDatasetOptions.of(resolver);
+  }
+
+  SankeyControllerDatasetOptions? _resolvedOptions;
+  Object? _resolvedFrom;
 
   Map<String, SankeyNode> _nodes = <String, SankeyNode>{};
   double _maxX = 0;
@@ -547,7 +539,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
       priority: options.priority,
       column: options.column,
     );
-    final orientation = options.orientation ?? SankeyOrientation.horizontal;
+    final orientation = options.orientation;
     _nodes = nodes;
 
     final nodeGaps = <String, NodeGap>{};
@@ -567,7 +559,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
       nodeMinSize: nodeMinSizes,
       nodePadding: nodeGaps,
       nodePaddingMode: options.nodePaddingMode,
-      priority: jsTruthy(options.priority),
+      priority: options.priority != null,
     );
 
     _maxX = maxX;
@@ -666,8 +658,8 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     final sharedOptions = getSharedOptions(firstOpts);
     final options = _options;
     final borderWidth = options.borderWidth;
-    final nodeWidth = _numberOr(options.nodeWidth, 10);
-    final orientation = options.orientation ?? SankeyOrientation.horizontal;
+    final nodeWidth = options.nodeWidth;
+    final orientation = options.orientation;
     final columnPadding = _getColumnPadding(
       nodeWidth,
       orientation,
@@ -675,13 +667,15 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
       chart.width,
       chart.height,
     );
-    final borderSpace = jsTruthy(borderWidth)
-        ? jsToNumber(borderWidth) / 2 + 0.5
+    final borderSpace =
+        borderWidth != null && borderWidth != 0 && !borderWidth.isNaN
+        ? borderWidth / 2 + 0.5
         : 0.0;
 
     for (var i = start; i < start + count; i++) {
       final parsed = getParsed(i)!;
-      updateElement(elems[i]! as Element, i, <String, Object?>{
+      final element = elems[i]! as Element;
+      updateElement(element, i, <String, Object?>{
         'options': resolveDataElementOptions(i, mode),
         'progress': mode == 'reset' ? 0.0 : 1.0,
         ..._getFlowElementProperties(
@@ -695,6 +689,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
           orientation,
         ),
       }, mode);
+      if (element is Flow) element.expireFlowOptions();
     }
 
     if (sharedOptions != null) {
@@ -707,11 +702,11 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     final ctx = chart.ctx!;
     final options = _options;
     final nodes = _nodes;
-    final size = validateSizeValue(options.size);
+    final size = options.size;
     final labels = options.labels;
-    final borderWidth = _numberOr(options.borderWidth, 1);
-    final nodeWidth = _numberOr(options.nodeWidth, 10);
-    final orientation = options.orientation ?? SankeyOrientation.horizontal;
+    final borderWidth = options.borderWidth ?? 1;
+    final nodeWidth = options.nodeWidth;
+    final orientation = options.orientation;
     final columnPadding = _getColumnPadding(
       nodeWidth,
       orientation,
@@ -721,10 +716,8 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     );
     // `options.font ?? this.chart.options.font ?? Chart.defaults.font`:
     // `toFont` of the host takes `defaults.font` for a value that is no font.
-    final datasetFont = options.font;
-    final defaultFont = datasetFont is TextStyle
-        ? datasetFont
-        : jsGet(chart.options, 'font');
+    final defaultFont =
+        options.font ?? readOption(chart.options, OptionKey.font);
     final meta = cachedMeta;
     final xScale = meta.xScale as Scale?;
     final yScale = meta.yScale as Scale?;
@@ -747,13 +740,10 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
         orientation,
         minSize,
       );
-      // `labels?.[node.key]`: a Map, or its view from the resolver.
-      final mapped = isNullOrUndef(labels) ? null : jsGet(labels, node.key);
-      final label = isNullOrUndef(mapped) ? node.key : mapped;
+      final label = labels?[node.key] ?? node.key;
       final labelStyle = _resolveNodeLabelStyle(options, node);
       if (labelStyle.display) {
-        final labelFont = labelStyle.font;
-        final font = toFont(labelFont is TextStyle ? labelFont : defaultFont);
+        final font = toFont(labelStyle.font ?? defaultFont);
         drawLabel(
           ctx,
           label,
@@ -765,12 +755,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
             color: labelStyle.color,
             font: font,
             height: height,
-            lineOffset: jsToNumber(
-              valueOrDefault(
-                options.padding,
-                (font.lineHeight ?? double.nan) / 2,
-              ),
-            ),
+            lineOffset: options.padding ?? (font.lineHeight ?? double.nan) / 2,
             padding: labelStyle.padding,
             position: labelStyle.position,
             width: width,
@@ -789,9 +774,9 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     final nodes = _nodes;
     final options = _options;
     final borderColor = options.borderColor;
-    final borderWidth = _numberOr(options.borderWidth, 0);
-    final nodeWidth = _numberOr(options.nodeWidth, 10);
-    final orientation = options.orientation ?? SankeyOrientation.horizontal;
+    final borderWidth = options.borderWidth ?? 0;
+    final nodeWidth = options.nodeWidth;
+    final orientation = options.orientation;
     final columnPadding = _getColumnPadding(
       nodeWidth,
       orientation,
@@ -799,14 +784,14 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
       chart.width,
       chart.height,
     );
-    final sizeMethod = validateSizeValue(options.size);
+    final sizeMethod = options.size;
     final meta = cachedMeta;
     final xScale = meta.xScale as Scale?;
     final yScale = meta.yScale as Scale?;
     final hasBorder = borderWidth != 0 && !borderWidth.isNaN;
 
     ctx.save();
-    if (jsTruthy(borderColor) && hasBorder) {
+    if (borderColor != null && hasBorder) {
       ctx
         ..strokeStyle = borderColor
         ..lineWidth = borderWidth;
@@ -848,14 +833,17 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     // Set node colors
     final active = <Flow>[];
     for (var i = 0, ilen = data.length; i < ilen; ++i) {
-      final flow = data[i] as Flow; /* Flow at index i */
+      // An animation writes the colors of the options of one flow.
+      final flow = (data[i] as Flow /* Flow at index i */ )
+        ..expireFlowOptions();
       final from = flow.from;
       final to = flow.to;
       if (from == null || to == null) {
         continue;
       }
-      from.color = _colorOf(flow, 'colorFrom');
-      to.color = _colorOf(flow, 'colorTo');
+      final options = flow.flowOptions;
+      from.color = options.colorFrom;
+      to.color = options.colorTo;
       if (flow.active) {
         active.add(flow);
       }
@@ -868,8 +856,9 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
       if (from == null || to == null) {
         continue;
       }
-      from.color = _colorOf(flow, 'colorFrom');
-      to.color = _colorOf(flow, 'colorTo');
+      final options = flow.flowOptions;
+      from.color = options.colorFrom;
+      to.color = options.colorTo;
     }
 
     _drawNodes();
@@ -879,12 +868,5 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     }
 
     _drawLabels();
-  }
-
-  /// `flow.options[key]`: `undefined` is no color, as for `node.color ??
-  /// 'black'`.
-  static Object? _colorOf(Flow flow, String key) {
-    final color = jsGet(flow.options, key);
-    return color is Undefined ? null : color;
   }
 }

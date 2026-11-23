@@ -936,12 +936,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `adapt-sankey-node-fields`). A data item is a `SankeyDataPoint`, or a Map that the keys of
       `parsing` read (row `adapt-sankey-data-point`). A parsed item is a `ParsedItem` of the host
       with a `SankeyParsedCustom` as `custom` (row `adapt-sankey-parsed-item`).
-    - The options are objects of the host resolver, read by name through extension-type facades
-      (`SankeyControllerDatasetOptions`, `FlowOptionsFace`). A Map option (`labels`, `column`,
+    - The options are objects of the host resolver. Immutable classes with a typed field for each
+      option read them (Sankey ADR 0005, row `adapt-sankey-resolved-options`):
+      `SankeyControllerDatasetOptions`, `SankeyNodeLabelsOptions`, `SankeyParsingOptions`,
+      `FlowOptions` and `FlowLabelsOptions`. Their static `of` reads each key once by name, and no
+      other code reads these options by name. The controller reads `of` again after each
+      `configure`; `Flow.flowOptions` keeps its result while the options object is the same, and
+      the controller calls `Flow.expireFlowOptions` after each update of a flow and before each
+      draw (the options of one flow change in place). A Map option (`labels`, `column`,
       `priority`, a node-scoped option by node key) comes from the resolver as a view of the Map,
-      not as a `Map`: read it with `jsGet`, never with an `is Map` test (seam S10).
-      `resolveNodeOption<T>` of `labels.dart` reads a node-scoped option: a value, a Map by node
-      key or a `SankeyNodeCallback<T>` (row `adapt-sankey-node-option`).
+      not as a `Map` (seam S10): `of` reads each key of all its scopes into a Dart Map. A
+      node-scoped option is a `SankeyNodeValue<T>` (a value, a Map by node key or a
+      `SankeyNodeCallback<T>`), and `resolveNodeOption<T>` of `labels.dart` gives its value for a
+      node (row `adapt-sankey-node-option`).
     - The layout sorts with `jsSort`: the order of two equal nodes decides their positions.
     - `SankeyController.nodes` gives the nodes of the last parse (the upstream `_nodes`).
     - Four forms are faster than the upstream lines, with the same layout and pixels

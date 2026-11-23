@@ -25,8 +25,8 @@ final class const DrawLabelOptions({
   /// side stays clear of it.
   required final double borderWidth,
 
-  /// The fill of the text: a `ChartPaint` or a `Color`.
-  required final Object? color,
+  /// The fill of the text, or Dart `null` for no new fill.
+  required final ChartPaint? color,
 
   /// The font.
   required final ChartTextStyle font,
@@ -54,43 +54,32 @@ final class const DrawLabelOptions({
   required final double y,
 
   /// The fill of the background, or Dart `null` for no background.
-  final Object? backgroundColor,
+  final ChartPaint? backgroundColor,
 }) {
   /// The options of one label.
   this;
 }
 
-/// labels.ts:29 `resolveNodeOption`: the value of the node-scoped option
-/// [option] for [node].
+/// labels.ts:29 `resolveNodeOption`: the value of the node option [option]
+/// for [node].
 ///
-/// - A [SankeyNodeCallback] gives its result for [node].
-/// - A Map, or the view of a Map that the resolver of the host gives, gives
-///   its value at the key of [node].
-/// - Another value is the value for each node.
+/// - [SankeyNodeValue.byNode] gives the result of its function for [node].
+/// - [SankeyNodeValue.byKey] gives its value at the key of [node].
+/// - [SankeyNodeValue.all] gives its value.
 ///
 /// Dart `null` is the JavaScript `undefined`: the caller takes its default.
-/// A value that is not a [T], also the `undefined` of an absent option,
-/// gives Dart `null`. A function of another type is not a callback: a debug
-/// build stops on it, and a release build gives Dart `null`.
-// DIVERGES(sankey): adapt-sankey-node-option, a typed result.
-T? resolveNodeOption<T extends Object>(Object? option, SankeyNode node) {
-  final Object? value;
-  if (option is Function) {
-    assert(
-      option is SankeyNodeCallback<T>,
-      'A node option function is a SankeyNodeCallback<$T>, not '
-      '${option.runtimeType}.',
-    );
-    value = option is SankeyNodeCallback<T> ? option(node) : null;
-  } else if (option is Map || option is JsObjectFace) {
-    // A Map of a raw config comes from the resolver of the host as a view
-    // of the Map (a `Proxy` upstream).
-    value = jsGet(option, node.key);
-  } else {
-    value = option;
-  }
-  return value is T && value is! Undefined ? value : null;
-}
+/// The resolved options give each node option of a config as a
+/// [SankeyNodeValue] (`SankeyControllerDatasetOptions.of`).
+// DIVERGES(sankey): adapt-sankey-node-option, a typed union.
+T? resolveNodeOption<T extends Object>(
+  SankeyNodeValue<T>? option,
+  SankeyNode node,
+) => switch (option) {
+  SankeyNodeFunction<T>(:final value) => value(node),
+  SankeyNodeByKey<T>(:final values) => values[node.key],
+  SankeyNodeAll<T>(:final value) => value,
+  null => null,
+};
 
 /// labels.ts:42 `addRoundedRectPath`.
 void _addRoundedRectPath(
@@ -163,7 +152,7 @@ double _getBackgroundX(
 /// labels.ts:108 `drawBackground`.
 void _drawBackground(
   CanvasRenderingContext2D ctx,
-  Object? color,
+  ChartPaint color,
   double x,
   double y,
   double width,

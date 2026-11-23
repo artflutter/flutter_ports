@@ -32,7 +32,7 @@ double nodeSizeOf(SankeyNode node, SankeySize size) {
 }
 
 /// core.ts:18 `setSizes`.
-void _setSizes(Map<String, SankeyNode> nodes, Object? size) {
+void _setSizes(Map<String, SankeyNode> nodes, SankeySize? size) {
   final sizeMethod = validateSizeValue(size);
 
   for (final node in nodes.values) {
@@ -42,37 +42,34 @@ void _setSizes(Map<String, SankeyNode> nodes, Object? size) {
   }
 }
 
-/// `key in object` for a Map of a config, or the view of a Map that the
-/// resolver of the host gives (a `Proxy` upstream).
-bool _hasKey(Object? object, String key) => switch (object) {
-  final Map<Object?, Object?> map => map.containsKey(key),
-  final JsProxyObject proxy => proxy.hasProperty(key),
-  final JsObjectFace face => face.jsHas(key),
-  _ => false,
-};
-
-/// core.ts:29 `setPriorities`. [priority] is a Map from a node key to a
-/// number, or a falsy value.
-void _setPriorities(Map<String, SankeyNode> nodes, Object? priority) {
-  if (!jsTruthy(priority)) return;
+/// core.ts:29 `setPriorities`. [priority] is the priority of a node by its
+/// key, or Dart `null` for a falsy option (the resolved option
+/// `SankeyControllerDatasetOptions.priority`).
+void _setPriorities(
+  Map<String, SankeyNode> nodes,
+  Map<String, double>? priority,
+) {
+  if (priority == null) return;
 
   for (final node in nodes.values) {
-    if (_hasKey(priority, node.key)) {
-      node.priority = jsToNumber(jsGet(priority, node.key));
+    final value = priority[node.key];
+    if (value != null) {
+      node.priority = value;
     }
   }
 }
 
-/// core.ts:42 `setColumns`. [column] is a Map from a node key to a column,
-/// or a falsy value.
-void _setColumns(Map<String, SankeyNode> nodes, Object? column) {
-  if (!jsTruthy(column)) return;
+/// core.ts:42 `setColumns`. [column] is the column of a node by its key, or
+/// Dart `null` for a falsy option.
+void _setColumns(Map<String, SankeyNode> nodes, Map<String, double>? column) {
+  if (column == null) return;
 
   for (final node in nodes.values) {
-    if (_hasKey(column, node.key)) {
+    final value = column[node.key];
+    if (value != null) {
       node
         ..column = true
-        ..x = jsToNumber(jsGet(column, node.key));
+        ..x = value;
     }
   }
 }
@@ -80,17 +77,17 @@ void _setColumns(Map<String, SankeyNode> nodes, Object? column) {
 /// core.ts:55 `getParsedData`: the data points of the data items [data].
 ///
 /// An item is a [SankeyDataPoint], or an object that the keys of [parsing]
-/// read. A key of [parsing] defaults to `'from'`, `'to'` or `'flow'`. The
-/// node keys are strings and the flow is a number in the port: another value
-/// takes its `ToString` or its `ToNumber`.
+/// read. The node keys are strings and the flow is a number in the port:
+/// another value takes its `ToString` or its `ToNumber`. Dart `null` for
+/// [parsing] is the `null` or `undefined` option, whose destructuring throws
+/// a [TypeError].
 // DIVERGES(sankey): adapt-sankey-data-point, typed data points.
 List<SankeyDataPoint> getParsedData(
   List<Object?> data,
-  SankeyParsingOptions parsing,
+  SankeyParsingOptions? parsing,
 ) {
-  final fromKey = _keyOr(parsing.from, 'from');
-  final toKey = _keyOr(parsing.to, 'to');
-  final flowKey = _keyOr(parsing.flow, 'flow');
+  if (parsing == null) throw TypeError();
+  final SankeyParsingOptions(from: fromKey, to: toKey, flow: flowKey) = parsing;
 
   return [
     for (final item in data)
@@ -98,17 +95,12 @@ List<SankeyDataPoint> getParsedData(
         item
       else
         SankeyDataPoint(
-          from: _nodeKey(jsGet(item, fromKey)),
-          to: _nodeKey(jsGet(item, toKey)),
-          flow: jsToNumber(jsGet(item, flowKey)),
+          from: _nodeKey(jsGetKey(item, fromKey)),
+          to: _nodeKey(jsGetKey(item, toKey)),
+          flow: jsToNumber(jsGetKey(item, flowKey)),
         ),
   ];
 }
-
-/// The parsing key [value], or [fallback] for a value that is not a string
-/// (the destructuring default applies to `undefined`).
-String _keyOr(Object? value, String fallback) =>
-    value is String ? value : fallback;
 
 /// The node key of [value].
 String _nodeKey(Object? value) => value is String ? value : jsToString(value);
@@ -116,13 +108,14 @@ String _nodeKey(Object? value) => value is String ? value : jsToString(value);
 /// core.ts:66 `buildNodesFromData`: the nodes of [data] by their key, in
 /// the order of their first flow.
 ///
-/// [size], [priority] and [column] are the options of the dataset with
-/// these names.
+/// [size], [priority] and [column] are the resolved options of the
+/// dataset with these names (`SankeyControllerDatasetOptions`).
+// DIVERGES(sankey): adapt-sankey-resolved-options, the resolved options.
 Map<String, SankeyNode> buildNodesFromData(
   List<SankeyDataPoint> data, {
-  Object? size,
-  Object? priority,
-  Object? column,
+  SankeySize? size,
+  Map<String, double>? priority,
+  Map<String, double>? column,
 }) {
   final nodes = <String, SankeyNode>{};
   for (var i = 0; i < data.length; i++) {

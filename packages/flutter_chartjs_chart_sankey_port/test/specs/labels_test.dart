@@ -18,7 +18,7 @@ const ChartPaint _red = ChartPaint.solid(Color(0xFFFF0000));
 FakeContext _createContext() => FakeContext(20);
 
 DrawLabelOptions _createOptions({
-  Object? backgroundColor,
+  ChartPaint? backgroundColor,
   SankeyLabelPosition position = SankeyLabelPosition.auto,
 }) => DrawLabelOptions(
   autoPosition: SankeyLabelPosition.right,
@@ -40,22 +40,45 @@ DrawLabelOptions _createOptions({
 void main() {
   group('node labels', () {
     test('resolves static, mapped, and callback options', () {
-      final mapped = <String, Object?>{'A': SankeyLabelPosition.right};
-
       expect(
-        resolveNodeOption<SankeyLabelPosition>(SankeyLabelPosition.left, _node),
+        resolveNodeOption(const .all(SankeyLabelPosition.left), _node),
         SankeyLabelPosition.left,
       );
       expect(
-        resolveNodeOption<SankeyLabelPosition>(mapped, _node),
+        resolveNodeOption(
+          const .byKey({'A': SankeyLabelPosition.right}),
+          _node,
+        ),
         SankeyLabelPosition.right,
       );
       expect(
         resolveNodeOption<SankeyLabelPosition>(
+          .byNode(
+            (item) => item.key == 'A'
+                ? SankeyLabelPosition.top
+                : SankeyLabelPosition.bottom,
+          ),
+          _node,
+        ),
+        SankeyLabelPosition.top,
+      );
+      // The raw forms of a config: the resolved options read a value, a
+      // Map by node key and a function (row adapt-sankey-node-option).
+      SankeyLabelPosition? positionOf(Object? option) => resolveNodeOption(
+        SankeyNodeLabelsOptions.of(<String, Object?>{'position': option})
+            .position,
+        _node,
+      );
+      expect(positionOf(SankeyLabelPosition.left), SankeyLabelPosition.left);
+      expect(
+        positionOf(<String, Object?>{'A': SankeyLabelPosition.right}),
+        SankeyLabelPosition.right,
+      );
+      expect(
+        positionOf(
           (SankeyNode item) => item.key == 'A'
               ? SankeyLabelPosition.top
               : SankeyLabelPosition.bottom,
-          _node,
         ),
         SankeyLabelPosition.top,
       );
@@ -69,8 +92,11 @@ void main() {
         Color(0xFFFF0000),
         Color(0xFF008000),
       ]);
+      final options = SankeyNodeLabelsOptions.of(<String, Object?>{
+        'color': gradient,
+      });
 
-      expect(resolveNodeOption<Object>(gradient, _node), same(gradient));
+      expect(resolveNodeOption(options.color, _node), same(gradient));
     });
 
     test('uses the right side for auto-positioned nodes in the left half', () {

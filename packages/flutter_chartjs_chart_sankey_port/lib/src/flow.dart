@@ -64,7 +64,7 @@ ChartPaint _applyAlpha(Color original, double alpha) =>
     ChartPaint.solid(original.withValues(alpha: alpha));
 
 /// flow.ts:46 `getColorOption`.
-Object? _getColorOption(Object? option, double alpha) {
+ChartPaint? _getColorOption(ChartPaint? option, double alpha) {
   final color = _solidColor(option);
   return color != null ? _applyAlpha(color, alpha) : option;
 }
@@ -127,14 +127,18 @@ ChartGradient _gradient(
 ///
 /// A `flowColor` that is `undefined` gives the canvas no new style, as the
 /// write of `undefined` to `fillStyle` does.
-void _setStyle(CanvasRenderingContext2D ctx, Flow flow, bool vertical) {
-  final options = FlowOptionsFace(flow.options);
-  final alpha = jsToNumber(options.alpha);
-  Object? fill = _black;
+void _setStyle(
+  CanvasRenderingContext2D ctx,
+  Flow flow,
+  FlowOptions options,
+  bool vertical,
+) {
+  final alpha = options.alpha;
+  ChartPaint? fill = _black;
 
   final flowColor = options.flowColor;
   if (flowColor != null) {
-    fill = flowColor is Undefined ? null : flowColor;
+    fill = flowColor is UnchangedChartPaint ? null : flowColor;
   } else if (options.colorMode == SankeyColorMode.from) {
     fill = _getColorOption(options.colorFrom, alpha);
   } else if (options.colorMode == SankeyColorMode.to) {
@@ -281,6 +285,8 @@ class Flow([Map<String, Object?>? cfg])
       'padding': 4.0,
       'position': SankeyLabelPosition.center,
     },
+    // The resolver of the host gives the options of the flow as the second
+    // argument: the function reads its one key by name, as upstream.
     'hoverColorFrom': (Object? ctx, Object? options) =>
         _getHoverColorOption(jsGet(options, 'colorFrom')),
     'hoverColorTo': (Object? ctx, Object? options) =>
@@ -417,15 +423,42 @@ class Flow([Map<String, Object?>? cfg])
     }
   }
 
-  bool get _vertical =>
-      FlowOptionsFace(options).orientation == SankeyOrientation.vertical;
+  FlowOptions? _flowOptions;
+  Object? _flowOptionsFrom;
+  bool _flowOptionsFrozen = false;
+
+  /// The resolved options of [options] (types.ts:157 `FlowOptions`).
+  ///
+  /// The flow keeps the result while [options] is the same object. Options
+  /// that the host froze (the shared options of the flows of a dataset) do
+  /// not change. An update or an animation writes into the other options:
+  /// the controller calls [expireFlowOptions] after each update of the flow
+  /// and before each draw.
+  // DIVERGES(sankey): adapt-sankey-resolved-options, one read of each key.
+  FlowOptions get flowOptions {
+    final raw = options;
+    final known = _flowOptions;
+    if (known != null && identical(raw, _flowOptionsFrom)) return known;
+    _flowOptionsFrom = raw;
+    _flowOptionsFrozen = raw is JsFreezable && raw.isFrozen;
+    return _flowOptions = FlowOptions.of(raw);
+  }
+
+  /// Drops the kept [flowOptions] unless the host froze its options: the
+  /// next read reads the options again.
+  void expireFlowOptions() {
+    if (!_flowOptionsFrozen) _flowOptions = null;
+  }
+
+  bool get _vertical => flowOptions.orientation == SankeyOrientation.vertical;
 
   /// flow.ts:180 `draw(ctx)`.
   ///
   /// @param {CanvasRenderingContext2D} ctx
   @override
   void draw(CanvasRenderingContext2D ctx, [ChartArea? area]) {
-    final vertical = _vertical;
+    final options = flowOptions;
+    final vertical = options.orientation == SankeyOrientation.vertical;
     final controls = _controlPoints(x, y, x2, y2, vertical);
     final geometry = (height: height, width: width, x: x, x2: x2, y: y, y2: y2);
 
@@ -437,30 +470,27 @@ class Flow([Map<String, Object?>? cfg])
       _clipFlow(ctx, geometry, progress, vertical);
     }
 
-    _setStyle(ctx, this, vertical);
+    _setStyle(ctx, this, options, vertical);
     _drawFlowPath(ctx, geometry, controls, vertical);
 
-    final labels = FlowOptionsFace(options).flowLabels;
-    if (jsTruthy(labels.display)) {
+    final labels = options.flowLabels;
+    if (labels != null) {
       final font = toFont(labels.font);
       final labelRect = _getLabelRect(geometry, vertical);
-      final backgroundColor = labels.backgroundColor;
       drawLabel(
         ctx,
         jsToString(flow),
         DrawLabelOptions(
           autoPosition: SankeyLabelPosition.center,
-          backgroundColor: backgroundColor is Undefined
-              ? null
-              : backgroundColor,
-          borderRadius: jsToNumber(labels.borderRadius),
+          backgroundColor: labels.backgroundColor,
+          borderRadius: labels.borderRadius,
           borderWidth: 0,
           color: labels.color,
           font: font,
           height: labelRect.height,
           lineOffset: (font.lineHeight ?? double.nan) / 2,
-          padding: jsToNumber(labels.padding),
-          position: labels.position ?? SankeyLabelPosition.center,
+          padding: labels.padding,
+          position: labels.position,
           width: labelRect.width,
           x: labelRect.x,
           y: labelRect.y,

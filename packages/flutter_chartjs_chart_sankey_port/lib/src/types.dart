@@ -1,7 +1,7 @@
 // Ported from chartjs-chart-sankey v0.19.1 src/types.ts (MIT, Jukka Kurkela).
 
 /// The types of the sankey chart: the data point, the node, the option
-/// values and the option facades (Sankey ADR 0002).
+/// values and the resolved options (Sankey ADRs 0002 and 0005).
 ///
 /// - A union of string literals is an enum ([SankeyOrientation],
 ///   [SankeyLabelPosition], [SankeyColorMode], [SankeyModeX],
@@ -14,23 +14,25 @@
 ///   a reserved word of Dart (row `adapt-sankey-node-fields`).
 /// - A data item is a [SankeyDataPoint], or a Map that the keys of the
 ///   option `parsing` read.
-/// - The options of a dataset are a resolver of the host, read by name.
-///   [SankeyControllerDatasetOptions] and its nested facades are extension
-///   types over the raw value, with no cost: each getter reads one key with
-///   `jsGet` at each use, as upstream reads the resolver.
+/// - The options of a dataset and of a flow are objects of the host
+///   resolver. [SankeyControllerDatasetOptions], [SankeyNodeLabelsOptions],
+///   [SankeyParsingOptions], [FlowOptions] and [FlowLabelsOptions] are
+///   immutable classes with a typed field for each option: their static
+///   method `of` reads each key once by name, and converts its value (row
+///   `adapt-sankey-resolved-options`, Sankey ADR 0005).
 /// - `SankeyNodeOption<T>` (types.ts:27) is `T`, a `Map<String, T>` by node
-///   key or a [SankeyNodeCallback]. Dart has no such union: the option is
-///   the raw value, and `resolveNodeOption` of `labels.dart` reads it.
+///   key or a [SankeyNodeCallback]: a field of a node option is the
+///   [SankeyNodeValue] of the typed dataset, and `resolveNodeOption` of
+///   `labels.dart` gives its value for a node.
 /// - The TypeScript-only declarations have no Dart form:
 ///   `SankeyScriptableContext` (:21, the `ScriptableContext` of the host with
-///   a [SankeyDataPoint] as `raw`), the `declare module` block (:134-145) and
-///   `FlowOptions` (:157-175, the resolved options of a flow are the options
-///   object of the host, read through [FlowOptionsFace]).
+///   a [SankeyDataPoint] as `raw`) and the `declare module` block
+///   (:134-145).
 library;
 
 import 'package:flutter/painting.dart';
-import 'package:flutter_chartjs_port/helpers.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// types.ts:15 `SankeyDataPoint`: one flow of the data, from the node
 /// [from] to the node [to].
@@ -213,110 +215,324 @@ final class const SankeyNodeGap({
 /// a node with both sides.
 typedef NodeGap = ({double after, double before});
 
-/// types.ts:38 `SankeyControllerDatasetNodeLabelsOptions`: the option
-/// `nodeLabels` of a dataset, read by name.
-extension type const SankeyNodeLabelsOptions(Object? _raw) {
-  /// `backgroundColor`: a `ChartPaint`, a Map by node key or a
-  /// [SankeyNodeCallback], or `undefined`.
-  Object? get backgroundColor => jsGet(_raw, 'backgroundColor');
+// The reads of the resolved options (row `adapt-sankey-resolved-options`).
+//
+// The options of a sankey dataset and of a flow are objects of the host
+// resolver. Their sankey keys are extras of the host scopes: the host has no
+// typed read for them (seams S10 and S14 of host-seams.md). Each `of`
+// factory below reads each key once by name with `jsGet`, and converts the
+// value to the type of its field. No other code of the port reads these
+// options by name.
 
-  /// `borderRadius`.
-  Object? get borderRadius => jsGet(_raw, 'borderRadius');
+/// The paint of the color option value [value]: a `ChartPaint`, or a
+/// Flutter `Color` as its solid paint. Dart `null` for `undefined`, `null`
+/// and a value of another type. CSS text is not a color: a debug build stops
+/// on it.
+ChartPaint? _paintOf(Object? value) {
+  assert(
+    value is! String,
+    'A sankey color takes a ChartPaint or a Color, not the text "$value".',
+  );
+  return switch (value) {
+    final ChartPaint paint => paint,
+    final Color color => ChartPaint.solid(color),
+    _ => null,
+  };
+}
 
-  /// `color`: a `ChartPaint`, a Map by node key or a [SankeyNodeCallback].
-  Object? get color => jsGet(_raw, 'color');
+/// `value = fallback` of a destructuring: [fallback] for `undefined`, else
+/// the `ToNumber` of [value].
+double _numberOr(Object? value, double fallback) =>
+    value is Undefined ? fallback : jsToNumber(value);
 
-  /// `display`: a `bool`, a Map by node key or a [SankeyNodeCallback].
-  Object? get display => jsGet(_raw, 'display');
+/// The `ToNumber` of [value], or Dart `null` for `undefined`.
+double? _definedNumber(Object? value) =>
+    value is Undefined ? null : jsToNumber(value);
 
-  /// `font`: a `TextStyle`.
-  Object? get font => jsGet(_raw, 'font');
+/// Whether [value] is a record: a Map, or the view of a Map that the
+/// resolver of the host gives (a `Proxy` upstream). An `is Map` test is
+/// false for the view (seam S10).
+bool _isRecord(Object? value) => value is Map || value is JsObjectFace;
 
-  /// `padding`.
-  Object? get padding => jsGet(_raw, 'padding');
+/// The entries of the record [record] by their key, each value through
+/// [convert]. A value that [convert] maps to Dart `null` has no entry: its
+/// read by the key is `undefined`, as the read of an absent key.
+///
+/// The keys are the own keys of a Map, or the keys of all the scopes of a
+/// resolver view (its `ownKeys` trap): the keys for which `key in record` is
+/// true upstream.
+Map<String, T> _byKey<T extends Object>(
+  Object? record,
+  T? Function(Object? value) convert,
+) => <String, T>{
+  for (final key in jsOwnPropertyNames(record))
+    if (convert(jsGet(record, key)) case final T value) key: value,
+};
 
-  /// `position`: a [SankeyLabelPosition], a Map by node key or a
-  /// [SankeyNodeCallback].
-  Object? get position => jsGet(_raw, 'position');
+/// The number record [value] of the option `priority` or `column`: the
+/// `ToNumber` of each entry. Dart `null` for a falsy value (core.ts:30,
+/// :43). A truthy value that is not a record has no entry.
+Map<String, double>? _numbersByKey(Object? value) =>
+    jsTruthy(value) ? _byKey<double>(value, jsToNumber) : null;
+
+/// The node option [option] (types.ts:27 `SankeyNodeOption<T>`) as a
+/// [SankeyNodeValue], each value through [convert]: a function is a
+/// [SankeyNodeValue.byNode], a record a [SankeyNodeValue.byKey] and another
+/// value a [SankeyNodeValue.all]. Dart `null` for `undefined`, `null` and a
+/// value that [convert] maps to Dart `null`: the caller takes its default.
+///
+/// A function is a [SankeyNodeCallback] of [C]: a function of another type
+/// stops a debug build, and a release build takes the default. A gradient
+/// or a pattern is not a record (labels.ts:35 `isPatternOrGradient`): it is
+/// a `ChartPaint`, not a Map.
+// DIVERGES(sankey): adapt-sankey-node-option, a typed union.
+SankeyNodeValue<T>? _nodeValue<T extends Object, C extends Object>(
+  Object? option,
+  T? Function(Object? value) convert,
+) {
+  if (option is Function) {
+    assert(
+      option is SankeyNodeCallback<C>,
+      'A node option function is a SankeyNodeCallback<$C>, not '
+      '${option.runtimeType}.',
+    );
+    if (option is! SankeyNodeCallback<C>) return null;
+    return SankeyNodeValue<T>.byNode((node) => convert(option(node)));
+  }
+  if (_isRecord(option)) {
+    return SankeyNodeValue<T>.byKey(_byKey(option, convert));
+  }
+  final value = convert(option);
+  return value == null ? null : SankeyNodeValue<T>.all(value);
+}
+
+/// The gap of the `nodePadding` value [value]: a number is the gap on both
+/// sides. Dart `null` for `undefined` and `null`. A value of another type is
+/// not a gap: a debug build stops on it (controller.ts:196-205).
+SankeyNodeGap? _gapOf(Object? value) {
+  if (value is num) {
+    return SankeyNodeGap(after: value.toDouble(), before: value.toDouble());
+  }
+  if (value == null || value is Undefined) return null;
+  assert(
+    value is SankeyNodeGap,
+    'A node gap is a number or a SankeyNodeGap, not ${value.runtimeType}.',
+  );
+  return value is SankeyNodeGap ? value : null;
+}
+
+/// types.ts:38 `SankeyControllerDatasetNodeLabelsOptions`: the resolved
+/// option `nodeLabels` of a dataset.
+///
+/// A node option is a [SankeyNodeValue]: `resolveNodeOption` of
+/// `labels.dart` gives its value for a node. A field of a number holds the
+/// default of controller.ts:214-233 for `undefined`.
+// DIVERGES(sankey): adapt-sankey-resolved-options, one read of each key.
+final class const SankeyNodeLabelsOptions({
+  /// `backgroundColor`: the fill behind a label, or Dart `null` for none.
+  final SankeyNodeValue<ChartPaint>? backgroundColor,
+
+  /// `borderRadius`: 0 for `undefined`.
+  final double borderRadius = 0,
+
+  /// `color`: the color of the text, or Dart `null` for the dataset color.
+  final SankeyNodeValue<ChartPaint>? color,
+
+  /// `display`, or Dart `null` for true.
+  final SankeyNodeValue<bool>? display,
+
+  /// `font`, or Dart `null` for the font of the dataset.
+  final TextStyle? font,
+
+  /// `padding`: 4 for `undefined`.
+  final double padding = 4,
+
+  /// `position`, or Dart `null` for [SankeyLabelPosition.auto].
+  final SankeyNodeValue<SankeyLabelPosition>? position,
+}) {
+  /// The resolved node label options with the given values.
+  this;
+
+  /// The node label options of the resolved option value [options]: one
+  /// read of each key. `undefined` and `null` give the defaults.
+  // A static method, as the resolved options of the host: a factory makes
+  // the lint ask for const literals.
+  // ignore: prefer_constructors_over_static_methods
+  static SankeyNodeLabelsOptions of(Object? options) {
+    if (isNullOrUndef(options)) return const SankeyNodeLabelsOptions();
+    final font = jsGet(options, 'font');
+    return SankeyNodeLabelsOptions(
+      backgroundColor: _nodeValue<ChartPaint, Object>(
+        jsGet(options, 'backgroundColor'),
+        _paintOf,
+      ),
+      borderRadius: _numberOr(jsGet(options, 'borderRadius'), 0),
+      color: _nodeValue<ChartPaint, Object>(jsGet(options, 'color'), _paintOf),
+      display: _nodeValue<bool, bool>(
+        jsGet(options, 'display'),
+        (value) => value is bool ? value : null,
+      ),
+      font: font is TextStyle ? font : null,
+      padding: _numberOr(jsGet(options, 'padding'), 4),
+      position: _nodeValue<SankeyLabelPosition, SankeyLabelPosition>(
+        jsGet(options, 'position'),
+        (value) => value is SankeyLabelPosition ? value : null,
+      ),
+    );
+  }
 }
 
 /// types.ts:58 `SankeyParsingOptions`: the keys of a data item that is a
 /// Map.
-extension type const SankeyParsingOptions(Object? _raw) {
-  /// `from`: the key of the source node key. The default is `'from'`.
-  Object? get from => jsGet(_raw, 'from');
+// DIVERGES(sankey): adapt-sankey-resolved-options, one read of each key.
+final class const SankeyParsingOptions({
+  /// `from`: the key of the source node key.
+  final String from = 'from',
 
-  /// `to`: the key of the target node key. The default is `'to'`.
-  Object? get to => jsGet(_raw, 'to');
+  /// `to`: the key of the target node key.
+  final String to = 'to',
 
-  /// `flow`: the key of the flow size. The default is `'flow'`.
-  Object? get flow => jsGet(_raw, 'flow');
+  /// `flow`: the key of the flow size.
+  final String flow = 'flow',
+}) {
+  /// The parsing keys with the given values.
+  this;
+
+  /// The parsing keys of the resolved option value [options]: one read of
+  /// each key. A key that is not a string takes its default (the default of
+  /// the destructuring of core.ts:56 applies to `undefined`).
+  // ignore: prefer_constructors_over_static_methods
+  static SankeyParsingOptions of(Object? options) {
+    String keyOr(String name) => switch (jsGet(options, name)) {
+      final String key => key,
+      _ => name,
+    };
+    return SankeyParsingOptions(
+      flow: keyOr('flow'),
+      from: keyOr('from'),
+      to: keyOr('to'),
+    );
+  }
 }
 
-/// types.ts:64 `SankeyControllerDatasetOptions`: the options of a sankey
-/// dataset, read by name from the resolver of the controller.
+/// types.ts:64 `SankeyControllerDatasetOptions`: the resolved options of a
+/// sankey dataset.
 ///
-/// A getter gives the raw value, and `undefined` for an absent key. The
-/// typed getters ([orientation], [modeX], [nodePaddingMode]) give Dart
-/// `null` for a value of another type.
-extension type const SankeyControllerDatasetOptions(Object? _raw) {
-  /// `borderColor`: the stroke of a node.
-  Object? get borderColor => jsGet(_raw, 'borderColor');
+/// [SankeyControllerDatasetOptions.of] reads each key of the resolver of the
+/// controller once. The controller reads them again after each `configure`,
+/// which makes a new resolver: upstream reads the same resolver at each use,
+/// and the resolver caches each value at its first read. A field of a
+/// number holds the default of its use for `undefined`, or Dart `null` where
+/// the uses have other defaults.
+// DIVERGES(sankey): adapt-sankey-resolved-options, one read of each key.
+final class const SankeyControllerDatasetOptions({
+  /// `borderColor`: the stroke of a node, or Dart `null` for a falsy value.
+  final ChartPaint? borderColor,
 
-  /// `borderWidth`: the stroke width of a node.
-  Object? get borderWidth => jsGet(_raw, 'borderWidth');
+  /// `borderWidth`: the stroke width of a node, or Dart `null` for
+  /// `undefined`.
+  final double? borderWidth,
 
-  /// `color`: the color of the node labels.
-  Object? get color => jsGet(_raw, 'color');
+  /// `color`: the color of the node labels, or Dart `null` for `null` and
+  /// `undefined`.
+  final ChartPaint? color,
 
-  /// `column`: a Map from a node key to the column of the node.
-  Object? get column => jsGet(_raw, 'column');
+  /// `column`: the column of a node by its key, or Dart `null` for a falsy
+  /// value.
+  final Map<String, double>? column,
 
-  /// `font`: the font of the node labels.
-  Object? get font => jsGet(_raw, 'font');
+  /// `font`: the font of the node labels, or Dart `null` for the font of
+  /// the chart.
+  final TextStyle? font,
 
-  /// `labels`: a Map from a node key to the label of the node.
-  Object? get labels => jsGet(_raw, 'labels');
+  /// `labels`: the label of a node by its key, or Dart `null` for `null` and
+  /// `undefined`. A label is a string, a number or a List of them.
+  final Map<String, Object>? labels,
 
-  /// `modeX`.
-  SankeyModeX? get modeX => SankeyModeX.of(jsGet(_raw, 'modeX'));
+  /// `modeX`, or Dart `null` for [SankeyModeX.edge].
+  final SankeyModeX? modeX,
 
   /// `nodeLabels`.
-  SankeyNodeLabelsOptions? get nodeLabels {
-    final value = jsGet(_raw, 'nodeLabels');
-    return isNullOrUndef(value) ? null : SankeyNodeLabelsOptions(value);
+  final SankeyNodeLabelsOptions nodeLabels = const SankeyNodeLabelsOptions(),
+
+  /// `nodeMinSize`, or Dart `null` for 0.
+  final SankeyNodeValue<double>? nodeMinSize,
+
+  /// `nodePadding`: the gap of a node, or Dart `null` for 10. A number is
+  /// the gap on both sides.
+  final SankeyNodeValue<SankeyNodeGap>? nodePadding,
+
+  /// `nodePaddingMode`, or Dart `null` for [SankeyNodePaddingMode.auto].
+  final SankeyNodePaddingMode? nodePaddingMode,
+
+  /// `nodeWidth`: 10 for `undefined`.
+  final double nodeWidth = 10,
+
+  /// `orientation`: [SankeyOrientation.horizontal] for a value that is not
+  /// a [SankeyOrientation].
+  final SankeyOrientation orientation = SankeyOrientation.horizontal,
+
+  /// `padding`: the offset of the first line of a label of several lines,
+  /// or Dart `null` for `undefined`.
+  final double? padding,
+
+  /// `parsing`, or Dart `null` for `null` and `undefined`: the destructuring
+  /// of core.ts:56 throws a `TypeError` for them.
+  final SankeyParsingOptions? parsing = const SankeyParsingOptions(),
+
+  /// `priority`: the priority of a node by its key, or Dart `null` for a
+  /// falsy value.
+  final Map<String, double>? priority,
+
+  /// `size` (helpers.ts:25 `validateSizeValue`).
+  final SankeySize size = SankeySize.max,
+}) {
+  /// The resolved dataset options with the given values.
+  this;
+
+  /// The dataset options of the resolver [options]: one read of each key,
+  /// in the key order of types.ts:64.
+  // ignore: prefer_constructors_over_static_methods
+  static SankeyControllerDatasetOptions of(Object? options) {
+    final borderColor = jsGet(options, 'borderColor');
+    final font = jsGet(options, 'font');
+    final labels = jsGet(options, 'labels');
+    final parsing = jsGet(options, 'parsing');
+    return SankeyControllerDatasetOptions(
+      borderColor: jsTruthy(borderColor) ? _paintOf(borderColor) : null,
+      borderWidth: _definedNumber(jsGet(options, 'borderWidth')),
+      color: _paintOf(jsGet(options, 'color')),
+      column: _numbersByKey(jsGet(options, 'column')),
+      font: font is TextStyle ? font : null,
+      labels: isNullOrUndef(labels)
+          ? null
+          : _byKey<Object>(
+              labels,
+              (value) => isNullOrUndef(value) ? null : value,
+            ),
+      modeX: SankeyModeX.of(jsGet(options, 'modeX')),
+      nodeLabels: SankeyNodeLabelsOptions.of(jsGet(options, 'nodeLabels')),
+      nodeMinSize: _nodeValue<double, num>(
+        jsGet(options, 'nodeMinSize'),
+        (value) => value is num ? value.toDouble() : null,
+      ),
+      nodePadding: _nodeValue<SankeyNodeGap, Object>(
+        jsGet(options, 'nodePadding'),
+        _gapOf,
+      ),
+      nodePaddingMode: SankeyNodePaddingMode.of(
+        jsGet(options, 'nodePaddingMode'),
+      ),
+      nodeWidth: _numberOr(jsGet(options, 'nodeWidth'), 10),
+      orientation:
+          SankeyOrientation.of(jsGet(options, 'orientation')) ??
+          SankeyOrientation.horizontal,
+      padding: _definedNumber(jsGet(options, 'padding')),
+      parsing: isNullOrUndef(parsing) ? null : SankeyParsingOptions.of(parsing),
+      priority: _numbersByKey(jsGet(options, 'priority')),
+      size: validateSizeValue(jsGet(options, 'size')),
+    );
   }
-
-  /// `nodeMinSize`: a number, a Map by node key or a [SankeyNodeCallback].
-  Object? get nodeMinSize => jsGet(_raw, 'nodeMinSize');
-
-  /// `nodePadding`: a number, a [SankeyNodeGap], a Map by node key or a
-  /// [SankeyNodeCallback].
-  Object? get nodePadding => jsGet(_raw, 'nodePadding');
-
-  /// `nodePaddingMode`.
-  SankeyNodePaddingMode? get nodePaddingMode =>
-      SankeyNodePaddingMode.of(jsGet(_raw, 'nodePaddingMode'));
-
-  /// `nodeWidth`.
-  Object? get nodeWidth => jsGet(_raw, 'nodeWidth');
-
-  /// `orientation`.
-  SankeyOrientation? get orientation =>
-      SankeyOrientation.of(jsGet(_raw, 'orientation'));
-
-  /// `padding`: the offset of the first line of a label of several lines.
-  Object? get padding => jsGet(_raw, 'padding');
-
-  /// `parsing`.
-  SankeyParsingOptions get parsing =>
-      SankeyParsingOptions(jsGet(_raw, 'parsing'));
-
-  /// `priority`: a Map from a node key to the priority of the node.
-  Object? get priority => jsGet(_raw, 'priority');
-
-  /// `size`.
-  Object? get size => jsGet(_raw, 'size');
 }
 
 /// types.ts:98 `FromToElement`: one flow of a node, in the list
@@ -380,9 +596,8 @@ final class SankeyNode(
   /// The column, or Dart `null` before the layout.
   double? x;
 
-  /// The fill of the node: a `ChartPaint` or a `Color`, or Dart `null` for
-  /// black.
-  Object? color;
+  /// The fill of the node, or Dart `null` for black.
+  ChartPaint? color;
 
   @override
   String toString() => 'SankeyNode($key)';
@@ -414,58 +629,110 @@ final class const SankeyParsedCustom({
   this;
 }
 
-/// The resolved options of a flow (types.ts:157 `FlowOptions`), read by
-/// name from the options object of the element.
-extension type const FlowOptionsFace(Object? _raw) {
-  /// `alpha`: the opacity of the flow fill.
-  Object? get alpha => jsGet(_raw, 'alpha');
+/// types.ts:157 `FlowOptions`: the resolved options of a flow element.
+///
+/// [FlowOptions.of] reads each key of the options object of the element
+/// once. `Flow.flowOptions` keeps the result for options that the host
+/// froze: they do not change. Other options (the options of one flow, which
+/// an update or an animation writes) give a new read at each use.
+// DIVERGES(sankey): adapt-sankey-resolved-options, one read of each key.
+final class const FlowOptions({
+  /// `alpha`: the opacity of the flow fill, the `ToNumber` of the value.
+  required final double alpha,
 
-  /// `colorMode`.
-  SankeyColorMode? get colorMode =>
-      SankeyColorMode.of(jsGet(_raw, 'colorMode'));
+  /// `colorFrom`: the color of the source node, or Dart `null` for
+  /// `undefined`.
+  final ChartPaint? colorFrom,
 
-  /// `colorFrom`: the color of the source node.
-  Object? get colorFrom => jsGet(_raw, 'colorFrom');
+  /// `colorMode`, or Dart `null` for [SankeyColorMode.gradient].
+  final SankeyColorMode? colorMode,
 
-  /// `colorTo`: the color of the target node.
-  Object? get colorTo => jsGet(_raw, 'colorTo');
+  /// `colorTo`: the color of the target node, or Dart `null` for
+  /// `undefined`.
+  final ChartPaint? colorTo,
 
-  /// `flowColor`: the fill of the flow, or JS `null` for the color mode.
-  Object? get flowColor => jsGet(_raw, 'flowColor');
+  /// `flowColor`: the fill of the flow. Dart `null` is the JavaScript
+  /// `null` of the default: the color mode gives the fill. An `undefined`
+  /// value is [UnchangedChartPaint]: the flow sets no new fill (flow.ts:56).
+  final ChartPaint? flowColor,
 
-  /// `orientation`.
-  SankeyOrientation? get orientation =>
-      SankeyOrientation.of(jsGet(_raw, 'orientation'));
+  /// `flowLabels`, or Dart `null` when its `display` is falsy: upstream
+  /// reads no other key of a hidden label (flow.ts:197).
+  final FlowLabelsOptions? flowLabels,
 
-  /// `flowLabels`.
-  FlowLabelsOptions get flowLabels =>
-      FlowLabelsOptions(jsGet(_raw, 'flowLabels'));
+  /// `orientation`: [SankeyOrientation.horizontal] for a value that is not
+  /// a [SankeyOrientation].
+  final SankeyOrientation orientation = SankeyOrientation.horizontal,
+}) {
+  /// The resolved flow options with the given values.
+  this;
+
+  /// The flow options of the options object [options]: one read of each
+  /// key. The keys `hoverColorFrom` and `hoverColorTo` have no field: no
+  /// code reads them by these names (row `adapt-sankey-hover-color-keys`).
+  // ignore: prefer_constructors_over_static_methods
+  static FlowOptions of(Object? options) {
+    final flowColor = jsGet(options, 'flowColor');
+    return FlowOptions(
+      alpha: jsToNumber(jsGet(options, 'alpha')),
+      colorFrom: _paintOf(jsGet(options, 'colorFrom')),
+      colorMode: SankeyColorMode.of(jsGet(options, 'colorMode')),
+      colorTo: _paintOf(jsGet(options, 'colorTo')),
+      flowColor: switch (flowColor) {
+        null => null,
+        Undefined() => const ChartPaint.unchanged(),
+        _ => _paintOf(flowColor),
+      },
+      flowLabels: FlowLabelsOptions.of(jsGet(options, 'flowLabels')),
+      orientation:
+          SankeyOrientation.of(jsGet(options, 'orientation')) ??
+          SankeyOrientation.horizontal,
+    );
+  }
 }
 
-/// The resolved `flowLabels` of types.ts:166.
-extension type const FlowLabelsOptions(Object? _raw) {
-  /// `backgroundColor`.
-  Object? get backgroundColor => jsGet(_raw, 'backgroundColor');
+/// types.ts:166 the resolved `flowLabels` of a flow that shows its label.
+// DIVERGES(sankey): adapt-sankey-resolved-options, one read of each key.
+final class const FlowLabelsOptions({
+  /// `backgroundColor`: the fill behind the label, or Dart `null` for none.
+  final ChartPaint? backgroundColor,
 
-  /// `borderRadius`.
-  Object? get borderRadius => jsGet(_raw, 'borderRadius');
+  /// `borderRadius`: the `ToNumber` of the value (NaN for `undefined`, no
+  /// rounded corner).
+  final double borderRadius = 0,
 
-  /// `color`.
-  Object? get color => jsGet(_raw, 'color');
+  /// `color`: the fill of the text, or Dart `null` for `undefined` (no new
+  /// fill).
+  final ChartPaint? color,
 
-  /// `display`.
-  Object? get display => jsGet(_raw, 'display');
+  /// `font`, or Dart `null` for the default font.
+  final TextStyle? font,
 
-  /// `font`.
-  TextStyle? get font => switch (jsGet(_raw, 'font')) {
-    final TextStyle font => font,
-    _ => null,
-  };
+  /// `padding`: the `ToNumber` of the value.
+  final double padding = 4,
 
-  /// `padding`.
-  Object? get padding => jsGet(_raw, 'padding');
+  /// `position`: [SankeyLabelPosition.center] for a value that is not a
+  /// [SankeyLabelPosition].
+  final SankeyLabelPosition position = SankeyLabelPosition.center,
+}) {
+  /// The resolved flow label options with the given values.
+  this;
 
-  /// `position`.
-  SankeyLabelPosition? get position =>
-      SankeyLabelPosition.of(jsGet(_raw, 'position'));
+  /// The flow label options of the resolved option value [options], or
+  /// Dart `null` when its `display` is falsy. Upstream reads the other keys
+  /// only for a label that shows.
+  static FlowLabelsOptions? of(Object? options) {
+    if (!jsTruthy(jsGet(options, 'display'))) return null;
+    final font = jsGet(options, 'font');
+    return FlowLabelsOptions(
+      backgroundColor: _paintOf(jsGet(options, 'backgroundColor')),
+      borderRadius: jsToNumber(jsGet(options, 'borderRadius')),
+      color: _paintOf(jsGet(options, 'color')),
+      font: font is TextStyle ? font : null,
+      padding: jsToNumber(jsGet(options, 'padding')),
+      position:
+          SankeyLabelPosition.of(jsGet(options, 'position')) ??
+          SankeyLabelPosition.center,
+    );
+  }
 }
