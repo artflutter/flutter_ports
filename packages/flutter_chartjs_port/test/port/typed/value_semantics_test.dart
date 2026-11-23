@@ -778,6 +778,19 @@ void main() {
           const ChartTooltip(textDirection: .rtl).copyWith(textDirection: .ltr),
         ),
         (
+          const ChartTooltip(caretSize: 0, caretPadding: 16),
+          const ChartTooltip(caretSize: 0, caretPadding: 16).copyWith(),
+          const ChartTooltip(
+            caretSize: 0,
+            caretPadding: 16,
+          ).copyWith(caretPadding: 8),
+        ),
+        (
+          const ChartTooltip(bodyAlign: .center),
+          const ChartTooltip(bodyAlign: .center).copyWith(),
+          const ChartTooltip(bodyAlign: .center).copyWith(bodyAlign: .right),
+        ),
+        (
           const ChartTitle(),
           const ChartTitle().copyWith(),
           const ChartTitle().copyWith(text: ['T']),
@@ -929,6 +942,16 @@ void main() {
         'textDirection',
         'extra',
       ]);
+      expect(
+        names(const ChartTooltip()),
+        containsAllInOrder([
+          'textDirection',
+          'caretSize',
+          'caretPadding',
+          'bodyAlign',
+          'extra',
+        ]),
+      );
       expect(names(ChartAnimation.none).first, 'none');
       expect(
         ChartConfig(

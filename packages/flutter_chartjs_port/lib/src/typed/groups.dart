@@ -11,7 +11,7 @@
 /// chart.
 library;
 
-import 'dart:ui' show TextDirection;
+import 'dart:ui';
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
@@ -392,8 +392,20 @@ final class const ChartTooltip({
   /// The text direction during drawing. Null keeps the canvas direction.
   final TextDirection? textDirection,
 
+  /// The size of the caret, the arrow of the tooltip box, in pixels:
+  /// `caretSize`. The default is 5.
+  final double? caretSize,
+
+  /// The extra distance from the tip of the caret to the point of the
+  /// tooltip, in pixels: `caretPadding`. The default is 2.
+  final double? caretPadding,
+
+  /// The horizontal align of the label lines: `bodyAlign`. The default is
+  /// `TextAlign.left`.
+  final TextAlign? bodyAlign,
+
   /// The Chart.js tooltip options that have no parameter, for example
-  /// `{'caretSize': 8}`. The rules of [ChartLegend.extra] apply.
+  /// `{'footerMarginTop': 8}`. The rules of [ChartLegend.extra] apply.
   final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The tooltip options.
@@ -424,6 +436,9 @@ final class const ChartTooltip({
     TooltipItemComparator? itemSort,
     TooltipExternal? external,
     TextDirection? textDirection,
+    double? caretSize,
+    double? caretPadding,
+    TextAlign? bodyAlign,
     Map<String, Object?>? extra,
   }) => ChartTooltip(
     enabled: enabled ?? this.enabled,
@@ -448,6 +463,9 @@ final class const ChartTooltip({
     itemSort: itemSort ?? this.itemSort,
     external: external ?? this.external,
     textDirection: textDirection ?? this.textDirection,
+    caretSize: caretSize ?? this.caretSize,
+    caretPadding: caretPadding ?? this.caretPadding,
+    bodyAlign: bodyAlign ?? this.bodyAlign,
     extra: extra ?? this.extra,
   );
 
@@ -474,6 +492,9 @@ final class const ChartTooltip({
     ('itemSort', itemSort != null),
     ('external', external != null),
     ('textDirection', textDirection),
+    ('caretSize', caretSize),
+    ('caretPadding', caretPadding),
+    ('bodyAlign', bodyAlign),
     ('extra', byEntries(extra)),
   ];
 
@@ -543,6 +564,9 @@ TooltipOptionsScope lowerTooltip(
     scope.external = external;
   }
   put(scope, OptionKey.textDirection, tooltip.textDirection);
+  put(scope, OptionKey.caretSize, tooltip.caretSize);
+  put(scope, OptionKey.caretPadding, tooltip.caretPadding);
+  put(scope, OptionKey.bodyAlign, tooltip.bodyAlign);
   return mergeExtra(scope, tooltip.extra);
 }
 

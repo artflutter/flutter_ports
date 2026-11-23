@@ -167,13 +167,10 @@ class _BarSample1State() extends State<BarSample1> {
               _values[item.dataIndex].toStringAsFixed(1),
             ],
           ),
-          extra: const {
-            'caretSize': 0,
-            'caretPadding': -10,
-            'titleMarginBottom': 4,
-            'titleAlign': TextAlign.center,
-            'bodyAlign': TextAlign.center,
-          },
+          caretSize: 0,
+          caretPadding: -10,
+          bodyAlign: .center,
+          extra: const {'titleMarginBottom': 4, 'titleAlign': TextAlign.center},
         ),
         plugins: [_backRods, _touch],
         scales: [

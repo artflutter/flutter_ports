@@ -180,9 +180,9 @@ ChartTooltip sfTooltip({
   displayColors: header,
   position: const SfTipPositioner(),
   yAlign: .bottom,
+  caretSize: 6,
+  caretPadding: 0,
   extra: const {
-    'caretSize': 6,
-    'caretPadding': 0,
     'titleAlign': TextAlign.center,
     'titleMarginBottom': 11,
     'usePointStyle': true,

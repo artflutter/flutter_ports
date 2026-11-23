@@ -144,9 +144,9 @@ ChartTooltip graphicTooltip({
   displayColors: false,
   position: position,
   filter: filter,
+  caretSize: 0,
+  caretPadding: 0,
   extra: {
-    'caretSize': 0,
-    'caretPadding': 0,
     'titleMarginBottom': 0,
     'titleSpacing': 0,
     'bodySpacing': 0,

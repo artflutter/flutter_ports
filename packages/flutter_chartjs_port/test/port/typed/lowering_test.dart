@@ -1227,7 +1227,13 @@ final Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
     const ChartTooltip(position: NearestTooltipPositioner()),
     {'position': const NearestTooltipPositioner()},
   ),
-  'extra': (const ChartTooltip(extra: {'caretSize': 8}), {'caretSize': 8}),
+  'caretSize': (const ChartTooltip(caretSize: 0), {'caretSize': 0}),
+  'caretPadding': (const ChartTooltip(caretPadding: 16), {'caretPadding': 16}),
+  'bodyAlign': (
+    const ChartTooltip(bodyAlign: native_ui.TextAlign.center),
+    {'bodyAlign': native_ui.TextAlign.center},
+  ),
+  'extra': (const ChartTooltip(extra: {'unknownKey': 1}), {'unknownKey': 1}),
 };
 
 /// The cases of the parameters of [ChartInteraction] and the twin Map.

@@ -216,11 +216,9 @@ class _BarSample5State() extends State<BarSample5> {
               _items[item.dataIndex].reduce((a, b) => a + b).toString(),
             ],
           ),
-          extra: const {
-            'caretSize': 0,
-            'caretPadding': 16,
-            'bodyAlign': TextAlign.center,
-          },
+          caretSize: 0,
+          caretPadding: 16,
+          bodyAlign: .center,
         ),
         plugins: [_letters, _touch],
         scales: [

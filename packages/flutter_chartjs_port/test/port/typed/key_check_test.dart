@@ -323,6 +323,9 @@ List<ChartConfig> _configs() {
         padding: _padding,
         cornerRadius: 6,
         displayColors: true,
+        caretSize: 0,
+        caretPadding: 16,
+        bodyAlign: .center,
         callbacks: TooltipCallbacks(
           title: (tooltip, arg) {
             final text = _text(arg);

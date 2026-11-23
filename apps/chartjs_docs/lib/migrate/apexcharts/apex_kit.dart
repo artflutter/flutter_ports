@@ -148,9 +148,9 @@ ChartTooltip apexTooltip({
   bodyFont: const TextStyle(fontSize: 13),
   padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
   cornerRadius: 5,
+  caretSize: 0,
+  caretPadding: 8,
   extra: const {
-    'caretSize': 0,
-    'caretPadding': 8,
     'titleMarginBottom': 13,
     'bodySpacing': 4,
     'boxWidth': 10,
