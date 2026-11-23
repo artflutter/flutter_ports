@@ -186,5 +186,6 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0190](0190-chart-type-from-first-dataset.md) The chart type comes from the first dataset: accepted, supersedes 0052.
 - [0191](0191-typed-axes.md) Typed axes with no ids: accepted, supersedes 0052.
 - [0192](0192-tooltip-options-object.md) The tooltip options are one object: accepted, supersedes 0052, 0054, 0124, 0125, 0148, 0182.
+- [0193](0193-legend-options-object.md) The legend options are one object: proposed, supersedes 0052, 0054, 0092, 0099, 0124, 0130, 0182.
 - [0195](0195-deprecate-raw-chart-view.md) Deprecate the raw ChartView config: accepted, supersedes 0052.
 <!-- adr-index:end -->
