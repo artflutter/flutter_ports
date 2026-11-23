@@ -139,6 +139,105 @@ ChartConfig? _typedReference(String name) => switch (name) {
     ],
     scales: [LinearAxis(.y, max: 150)],
   ),
+  'equal user min and max' => const ChartConfig(
+    labels: ['a', 'b', 'c'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [0, 500, 1000]),
+    ],
+    scales: [
+      LinearAxis(.y, min: 5, max: 5, ticks: AxisTicks(callback: _indexLabel)),
+    ],
+  ),
+  'grace' => const ChartConfig(
+    labels: ['a', 'b', 'c'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [20, 30, 40]),
+    ],
+    scales: [
+      LinearAxis(.y, extra: {'grace': PercentGrace(10)}),
+    ],
+  ),
+  'grace with beginAtZero' => const ChartConfig(
+    labels: ['a', 'b', 'c'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [0, 30, 40]),
+    ],
+    scales: [
+      LinearAxis(.y, beginAtZero: true, extra: {'grace': ValueGrace(5)}),
+    ],
+  ),
+  'min, max and stepSize' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, -5, 78, -100]),
+    ],
+    scales: [LinearAxis(.y, min: 1, max: 11, ticks: AxisTicks(stepSize: 2))],
+  ),
+  'a max with a stepSize that does not fit' => const ChartConfig(
+    labels: ['a', 'b', 'c'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [0.5, 2.5, 1.7]),
+    ],
+    scales: [LinearAxis(.y, max: 2.6, ticks: AxisTicks(stepSize: 0.4))],
+  ),
+  'count and includeBounds false' => ChartConfig(
+    datasets: [
+      TestDataset(
+        const ChartKind('linearTest'),
+        points: [
+          DataPoint(10, 100),
+          DataPoint(-10, 0),
+          DataPoint(0, 0),
+          DataPoint(99, 7),
+        ],
+      ),
+    ],
+    scales: const [
+      LinearAxis(
+        .x,
+        min: -11,
+        max: 103.5,
+        ticks: AxisTicks(extra: {'includeBounds': false}),
+      ),
+      LinearAxis(.y, ticks: AxisTicks(extra: {'count': 6})),
+    ],
+  ),
+  'the decimal places of the default format' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd', 'e'],
+    datasets: [
+      TestDataset(
+        ChartKind('scaleTest'),
+        data: [0.06, 0.005, 0, 0.025, 0.0078],
+      ),
+    ],
+  ),
+  'maxTicksLimit 21' => const ChartConfig(
+    labels: ['a', 'b'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [0.5, 2.5]),
+    ],
+    scales: [
+      LinearAxis(
+        .y,
+        beginAtZero: false,
+        ticks: AxisTicks(extra: {'maxTicksLimit': 21}),
+      ),
+    ],
+  ),
+  'bounds data' => const ChartConfig(
+    labels: ['a', 'b'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [1, 99]),
+    ],
+    scales: [LinearAxis(.y, bounds: ScaleBounds.data)],
+  ),
+  'reverse' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, -5, 78, -100]),
+    ],
+    scales: [LinearAxis(.y, reverse: true)],
+  ),
   _ => null,
 };
 
@@ -244,11 +343,17 @@ final Map<String, void Function(Chart chart)> _actions = {
   },
 };
 
+/// The shared tick callback of the typed and generated reference configs.
+List<String> _indexLabel(
+  Scale scale,
+  double value,
+  int index,
+  List<Tick> ticks,
+) => ['$index'];
+
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
-  'indexLabel': (Object? scale, double value, int index, Object? ticks) => [
-    '$index',
-  ],
+  'indexLabel': _indexLabel,
   'withUnit': (Object? scale, double value, int index, Object? ticks) => [
     '${jsToString(value)} kg',
   ],
