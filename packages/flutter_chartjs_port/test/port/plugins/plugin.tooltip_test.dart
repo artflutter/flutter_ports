@@ -879,15 +879,15 @@ void main() {
       final snapshot = jsonDecode(
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
-      final config =
-          copyReference(
-                pluginTooltipReference(_functions).first.config,
-                _functions,
-              )!
-              as AnyObject;
-      config[themeConfigKey] = compileLightTheme();
-      nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
+      expectNoStaleScaleKeys(
+        acquireReferenceChart(
+          pluginTooltipReference(_functions).first.config,
+          const {},
+          functions: _functions,
+          theme: compileLightTheme(),
+        ),
+        snapshot,
+      );
     });
   });
 

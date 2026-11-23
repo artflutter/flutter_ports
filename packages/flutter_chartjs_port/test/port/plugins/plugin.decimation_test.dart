@@ -8,6 +8,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/object_keys.dart';
 import '../../support/parsed_items.dart';
 import '../controllers/controller_chart_harness.dart' show plainValue;
 import '../scales/scale_chart_harness.dart';
@@ -50,11 +51,11 @@ import 'plugin_decimation_reference.dart';
 /// whether `_data` is an own key, whether `data` is the `_decimated` array,
 /// and the plain `data`.
 Object? _observeDecimation(Chart chart) => [
-  for (final ds in _datasets(chart).cast<AnyObject>())
+  for (final ds in _datasets(chart).cast<Object>())
     <String, Object?>{
       'keys': jsObjectKeys(ds),
-      'decimated': ds.containsKey('_decimated'),
-      'ownData': ds.containsKey('_data'),
+      'decimated': hasOwnKey(ds, '_decimated'),
+      'ownData': hasOwnKey(ds, '_data'),
       'dataIsDecimated': identical(jsGet(ds, 'data'), jsGet(ds, '_decimated')),
       'data': plainValue(jsGet(ds, 'data')),
     },
@@ -85,7 +86,7 @@ Map<String, Object?> _itemKeys(Object? item) {
 void _writeData(IChart chart, Object? args, Object? options) {
   if (jsTruthy(jsGet(options, 'write'))) {
     final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
-    (datasets[0]! as AnyObject)['data'] = _series(80, (i) => (i * 11) % 19);
+    jsSet(datasets[0], 'data', _series(80, (i) => (i * 11) % 19));
   }
 }
 
@@ -209,14 +210,14 @@ void main() {
   testReferenceWidths(pluginDecimationReferenceWidths);
 
   testPluginChartCases(
-    pluginDecimationReference,
+    pluginDecimationReference(_functions),
     observers: {'decimation': _observeDecimation},
     functions: _functions,
   );
 
   group('theming.md §8 test 3: the light preset', () {
     testPluginChartCases(
-      pluginDecimationReference,
+      pluginDecimationReference(_functions),
       observers: {'decimation': _observeDecimation},
       functions: _functions,
       theme: compileLightTheme(),

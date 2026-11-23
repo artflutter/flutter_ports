@@ -208,11 +208,14 @@ void main() {
       final snapshot = jsonDecode(
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
-      final config =
-          copyReference(pluginSubtitleReference.first.config)! as AnyObject;
-      config[themeConfigKey] = compileLightTheme();
-      nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChart(config), snapshot);
+      expectNoStaleScaleKeys(
+        acquireReferenceChart(
+          pluginSubtitleReference.first.config,
+          const {},
+          theme: compileLightTheme(),
+        ),
+        snapshot,
+      );
     });
   });
 

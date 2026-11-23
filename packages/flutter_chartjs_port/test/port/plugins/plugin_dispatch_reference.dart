@@ -11,9 +11,13 @@
 // ids of the registry) and `steps` (`do`, `calls` and `notifies` of each
 // step). See the header of tool/reference/plugin_dispatch_reference.mjs.
 
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'dart:ui' show FontStyle, FontWeight;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String pluginDispatchReferenceNode = 'v24.22.1';
@@ -34,15 +38,17 @@ const String pluginDispatchReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginDispatchReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -57,40 +63,35 @@ typedef PluginDispatchReferenceWidth = ({
 });
 
 /// The cases.
-const List<PluginDispatchReferenceCase> pluginDispatchReference = [
+final List<PluginDispatchReferenceCase> pluginDispatchReference = [
   (
     name: 'three datasets, a title and a fill',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': FillTarget.toOrigin,
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[2.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': FillTarget.none,
-          },
-          <String, Object?>{
-            'label': 'd2',
-            'data': <Object?>[3.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': FillTarget.none,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'title': TitleOptions(display: true, text: <String>['T']),
-          'colors': ColorsPluginOptions(enabled: false),
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          label: 'd0',
+          data: DatasetData.values([1.0, 3.0, 2.0, 5.0, 4.0]),
+          fill: FillTarget.toOrigin,
+        ),
+        LineDataset(
+          label: 'd1',
+          data: DatasetData.values([2.0, 3.0, 2.0, 5.0, 4.0]),
+          fill: FillTarget.none,
+        ),
+        LineDataset(
+          label: 'd2',
+          data: DatasetData.values([3.0, 3.0, 2.0, 5.0, 4.0]),
+          fill: FillTarget.none,
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(display: true, text: <String>['T']),
+        ColorsPluginOptions(enabled: false),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'plugins': <Object?>[
         <String, Object?>{
           'id': 'colors',
@@ -522,32 +523,29 @@ const List<PluginDispatchReferenceCase> pluginDispatchReference = [
   ),
   (
     name: 'plugins false',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': FillTarget.toOrigin,
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[2.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': FillTarget.none,
-          },
-          <String, Object?>{
-            'label': 'd2',
-            'data': <Object?>[3.0, 3.0, 2.0, 5.0, 4.0],
-            'fill': FillTarget.none,
-          },
-        ],
-      },
-      'options': <String, Object?>{'plugins': false},
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        LineDataset(
+          label: 'd0',
+          data: DatasetData.values([1.0, 3.0, 2.0, 5.0, 4.0]),
+          fill: FillTarget.toOrigin,
+        ),
+        LineDataset(
+          label: 'd1',
+          data: DatasetData.values([2.0, 3.0, 2.0, 5.0, 4.0]),
+          fill: FillTarget.none,
+        ),
+        LineDataset(
+          label: 'd2',
+          data: DatasetData.values([3.0, 3.0, 2.0, 5.0, 4.0]),
+          fill: FillTarget.none,
+        ),
+      ],
+      extra: const <String, Object?>{'plugins': false},
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'plugins': <Object?>[
         <String, Object?>{
           'id': 'colors',

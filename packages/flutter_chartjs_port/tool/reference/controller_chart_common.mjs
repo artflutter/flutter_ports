@@ -658,7 +658,7 @@ export function runControllerCase(
  * 75 characters gives a comment line of more than 80, and writeReference
  * stops: write the probe with shorter lines.
  */
-export function writeControllerReference(outPath, name, cases, {title = name} = {}) {
+export function writeControllerReference(outPath, name, cases, {title = name, keyOrder = false} = {}) {
   const notes = [];
   const sources = new Map();
   for (const c of cases) {
@@ -673,5 +673,5 @@ export function writeControllerReference(outPath, name, cases, {title = name} = 
   for (const [probe, source] of sources) {
     notes.push(`The probe ${probe}:`, ...source.split('\n').map((line) => `  ${line}`));
   }
-  writeReference(outPath, name, cases, {title, notes});
+  writeReference(outPath, name, cases, {title, notes, keyOrder});
 }

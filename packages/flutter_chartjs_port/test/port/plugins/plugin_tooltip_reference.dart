@@ -12,6 +12,10 @@
 //     chart.canvas.style.getPropertyPriority('direction'),
 //   ]
 
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'dart:ui'
     show
         Color,
@@ -44,15 +48,17 @@ const String pluginTooltipReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginTooltipReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -72,45 +78,45 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
 ) => [
   (
     name: 'mode index with intersect false',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: IndexInteractionMode(),
-            intersect: false,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(mode: IndexInteractionMode(), intersect: false),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -2417,45 +2423,45 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'mode nearest with intersect true',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: NearestInteractionMode(),
-            intersect: true,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(mode: NearestInteractionMode(), intersect: true),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -4690,45 +4696,45 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'mode point',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: PointInteractionMode(),
-            intersect: true,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(mode: PointInteractionMode(), intersect: true),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -6963,45 +6969,45 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'mode dataset',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: DatasetInteractionMode(),
-            intersect: true,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(mode: DatasetInteractionMode(), intersect: true),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -9344,42 +9350,45 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'mode x with intersect false',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(mode: XInteractionMode(), intersect: false),
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(mode: XInteractionMode(), intersect: false),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -11686,42 +11695,45 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'mode y with intersect false',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(mode: YInteractionMode(), intersect: false),
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(mode: YInteractionMode(), intersect: false),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -13956,46 +13968,49 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'position nearest',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: IndexInteractionMode(),
-            intersect: false,
-            position: NearestTooltipPositioner(),
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(
+          mode: IndexInteractionMode(),
+          intersect: false,
+          position: NearestTooltipPositioner(),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -16302,46 +16317,49 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'a custom positioner',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: const IndexInteractionMode(),
-            intersect: false,
-            position: functions['positioner:custom']! as TooltipPositioner,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        TooltipOptions(
+          mode: const IndexInteractionMode(),
+          intersect: false,
+          position: functions['positioner:custom']! as TooltipPositioner,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -18648,65 +18666,66 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'the callbacks of each text part',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: const IndexInteractionMode(),
-            intersect: false,
-            callbacks: TooltipCallbacks(
-              title: functions['cbTitle']! as TooltipItemsCallback,
-              afterTitle: functions['cbAfterTitle']! as TooltipItemsCallback,
-              beforeBody: functions['cbBeforeBody']! as TooltipItemsCallback,
-              beforeLabel:
-                  functions['cbBeforeLabel']!
-                      as TooltipItemCallback<List<String>>,
-              label: functions['cbLabel']! as TooltipItemCallback<List<String>>,
-              afterLabel:
-                  functions['cbAfterLabel']!
-                      as TooltipItemCallback<List<String>>,
-              afterBody: functions['cbAfterBody']! as TooltipItemsCallback,
-              beforeFooter:
-                  functions['cbBeforeFooter']! as TooltipItemsCallback,
-              footer: functions['cbFooter']! as TooltipItemsCallback,
-              afterFooter: functions['cbAfterFooter']! as TooltipItemsCallback,
-              labelTextColor:
-                  functions['cbLabelTextColor']!
-                      as TooltipItemCallback<ChartPaint>,
-            ),
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        TooltipOptions(
+          mode: const IndexInteractionMode(),
+          intersect: false,
+          callbacks: TooltipCallbacks(
+            title: functions['cbTitle']! as TooltipItemsCallback,
+            afterTitle: functions['cbAfterTitle']! as TooltipItemsCallback,
+            beforeBody: functions['cbBeforeBody']! as TooltipItemsCallback,
+            beforeLabel:
+                functions['cbBeforeLabel']!
+                    as TooltipItemCallback<List<String>>,
+            label: functions['cbLabel']! as TooltipItemCallback<List<String>>,
+            afterLabel:
+                functions['cbAfterLabel']! as TooltipItemCallback<List<String>>,
+            afterBody: functions['cbAfterBody']! as TooltipItemsCallback,
+            beforeFooter: functions['cbBeforeFooter']! as TooltipItemsCallback,
+            footer: functions['cbFooter']! as TooltipItemsCallback,
+            afterFooter: functions['cbAfterFooter']! as TooltipItemsCallback,
+            labelTextColor:
+                functions['cbLabelTextColor']!
+                    as TooltipItemCallback<ChartPaint>,
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -21034,47 +21053,50 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'the options xAlign and yAlign',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: NearestInteractionMode(),
-            intersect: true,
-            xAlign: TooltipXAlign.right,
-            yAlign: TooltipYAlign.bottom,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(
+          mode: NearestInteractionMode(),
+          intersect: true,
+          xAlign: TooltipXAlign.right,
+          yAlign: TooltipYAlign.bottom,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -23309,45 +23331,45 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'a caret near the left edge',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: IndexInteractionMode(),
-            intersect: false,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(mode: IndexInteractionMode(), intersect: false),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -25654,45 +25676,45 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'a caret near the right edge',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: IndexInteractionMode(),
-            intersect: false,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(mode: IndexInteractionMode(), intersect: false),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -27999,46 +28021,46 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'a caret near the top edge',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: NearestInteractionMode(),
-            intersect: true,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(mode: NearestInteractionMode(), intersect: true),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -30209,49 +30231,52 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'a caret near the bottom edge',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: const NearestInteractionMode(),
-            intersect: true,
-            callbacks: TooltipCallbacks(
-              footer: functions['cbFooter']! as TooltipItemsCallback,
-            ),
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        TooltipOptions(
+          mode: const NearestInteractionMode(),
+          intersect: true,
+          callbacks: TooltipCallbacks(
+            footer: functions['cbFooter']! as TooltipItemsCallback,
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -32427,46 +32452,49 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'rtl',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: IndexInteractionMode(),
-            intersect: false,
-            rtl: true,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(
+          mode: IndexInteractionMode(),
+          intersect: false,
+          rtl: true,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -34776,47 +34804,50 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'textDirection rtl',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: IndexInteractionMode(),
-            intersect: false,
-            rtl: true,
-            textDirection: TextDirection.rtl,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(
+          mode: IndexInteractionMode(),
+          intersect: false,
+          rtl: true,
+          textDirection: TextDirection.rtl,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -37123,46 +37154,49 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'displayColors false',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: IndexInteractionMode(),
-            intersect: false,
-            displayColors: false,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(
+          mode: IndexInteractionMode(),
+          intersect: false,
+          displayColors: false,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -39439,51 +39473,54 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'usePointStyle',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-            'pointRotation': 30.0,
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-            'pointRotation': 30.0,
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-            'pointRotation': 30.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: IndexInteractionMode(),
-            intersect: false,
-            usePointStyle: true,
-            boxWidth: 10,
-            boxHeight: 8,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+          extra: const <String, Object?>{'pointRotation': 30.0},
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+          extra: const <String, Object?>{'pointRotation': 30.0},
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+          extra: const <String, Object?>{'pointRotation': 30.0},
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(
+          mode: IndexInteractionMode(),
+          intersect: false,
+          usePointStyle: true,
+          boxWidth: 10,
+          boxHeight: 8,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -41815,47 +41852,50 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'boxPadding and padding',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: IndexInteractionMode(),
-            intersect: false,
-            boxPadding: 4,
-            padding: EdgeInsets.fromLTRB(10, 4, 8, 6),
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(
+          mode: IndexInteractionMode(),
+          intersect: false,
+          boxPadding: 4,
+          padding: EdgeInsets.fromLTRB(10, 4, 8, 6),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -44162,46 +44202,49 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'filter',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: const IndexInteractionMode(),
-            intersect: false,
-            filter: functions['tooltipFilter']! as TooltipItemFilter,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        TooltipOptions(
+          mode: const IndexInteractionMode(),
+          intersect: false,
+          filter: functions['tooltipFilter']! as TooltipItemFilter,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -46473,46 +46516,49 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'itemSort',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: const IndexInteractionMode(),
-            intersect: false,
-            itemSort: functions['tooltipSort']! as TooltipItemComparator,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        TooltipOptions(
+          mode: const IndexInteractionMode(),
+          intersect: false,
+          itemSort: functions['tooltipSort']! as TooltipItemComparator,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -48819,51 +48865,54 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'footer and the text aligns',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: const IndexInteractionMode(),
-            intersect: false,
-            titleAlign: TextAlign.center,
-            bodyAlign: TextAlign.right,
-            footerAlign: TextAlign.center,
-            callbacks: TooltipCallbacks(
-              footer: functions['cbFooter']! as TooltipItemsCallback,
-            ),
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        TooltipOptions(
+          mode: const IndexInteractionMode(),
+          intersect: false,
+          titleAlign: TextAlign.center,
+          bodyAlign: TextAlign.right,
+          footerAlign: TextAlign.center,
+          callbacks: TooltipCallbacks(
+            footer: functions['cbFooter']! as TooltipItemsCallback,
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -51175,46 +51224,49 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'external',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: const IndexInteractionMode(),
-            intersect: false,
-            external: functions['tooltipExternal']! as TooltipExternal,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        TooltipOptions(
+          mode: const IndexInteractionMode(),
+          intersect: false,
+          external: functions['tooltipExternal']! as TooltipExternal,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -55181,46 +55233,49 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'enabled false',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: IndexInteractionMode(),
-            intersect: false,
-            enabled: false,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(
+          mode: IndexInteractionMode(),
+          intersect: false,
+          enabled: false,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -57383,45 +57438,45 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'hover then mouseout',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: NearestInteractionMode(),
-            intersect: true,
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(mode: NearestInteractionMode(), intersect: true),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -60423,41 +60478,44 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'setTooltip on a bar chart',
-    config: const <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        BarDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        BarDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          extra: const <String, Object?>{'pointStyle': RectRotPointStyle()},
+        ),
+        BarDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          extra: const <String, Object?>{
             'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-        },
-      },
-    },
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -62496,46 +62554,49 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
   ),
   (
     name: 'click with events click',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': TooltipOptions(
-            mode: NearestInteractionMode(),
-            intersect: true,
-            events: <String>['click'],
+    config: () => ChartConfig(
+      labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(TrianglePointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        TooltipOptions(
+          mode: NearestInteractionMode(),
+          intersect: true,
+          events: <String>['click'],
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },

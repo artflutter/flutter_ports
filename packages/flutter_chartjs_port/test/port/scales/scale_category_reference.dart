@@ -19584,19 +19584,23 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
   ),
   (
     name: 'object data as a Map with options.labels',
-    config: () => ChartConfig(
-      datasets: const [
-        TestDataset(
-          ChartKind('categoryTest'),
-          extra: <String, Object?>{
+    config: const <String, Object?>{
+      'type': 'categoryTest',
+      'data': <String, Object?>{
+        'datasets': <Object?>[
+          <String, Object?>{
             'data': <String, Object?>{'a': 1.0, 'b': 3.0, 'c': -1.0, 'd': 10.0},
           },
-        ),
-      ],
-      scales: [
-        CategoryAxis(.x, labels: ['a']),
-      ],
-    ),
+        ],
+      },
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'labels': <Object?>['a'],
+          },
+        },
+      },
+    },
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
@@ -27654,18 +27658,22 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
   ),
   (
     name: 'bounds data, then bounds ticks',
-    config: () => ChartConfig(
-      labels: ['a', 'b', 'c', 'd'],
-      datasets: const [
-        TestDataset(
-          ChartKind('categoryTest'),
-          extra: <String, Object?>{
+    config: const <String, Object?>{
+      'type': 'categoryTest',
+      'data': <String, Object?>{
+        'labels': <Object?>['a', 'b', 'c', 'd'],
+        'datasets': <Object?>[
+          <String, Object?>{
             'data': <String, Object?>{'b': 1.0, 'c': 99.0},
           },
-        ),
-      ],
-      scales: const [CategoryAxis(.x, bounds: ScaleBounds.data)],
-    ),
+        ],
+      },
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'x': <String, Object?>{'bounds': ScaleBounds.data},
+        },
+      },
+    },
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],

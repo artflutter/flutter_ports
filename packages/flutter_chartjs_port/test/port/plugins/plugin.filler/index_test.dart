@@ -140,7 +140,7 @@ void main() {
 
   test('the reference has the cases of filler spec section 4.2', () {
     expect(
-      [for (final c in pluginFillerReference) c.name],
+      [for (final c in pluginFillerReference(_functions)) c.name],
       [
         'fill origin',
         'fill start',
@@ -198,7 +198,7 @@ void main() {
   });
 
   testPluginChartCases(
-    pluginFillerReference,
+    pluginFillerReference(_functions),
     observers: {'filler': _observeFiller},
     functions: _functions,
     extras: {'targets': _targets},
@@ -206,7 +206,7 @@ void main() {
 
   group('theming.md §8 test 3: the light preset', () {
     testPluginChartCases(
-      pluginFillerReference,
+      pluginFillerReference(_functions),
       observers: {'filler': _observeFiller},
       functions: _functions,
       extras: {'targets': _targets},

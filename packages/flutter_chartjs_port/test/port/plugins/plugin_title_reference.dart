@@ -6,10 +6,14 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 17 cases, 14 widths.
 
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'dart:ui' show Color, FontStyle, FontWeight, StrokeCap, StrokeJoin;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String pluginTitleReferenceNode = 'v24.22.1';
@@ -30,15 +34,17 @@ const String pluginTitleReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginTitleReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -58,34 +64,33 @@ List<PluginTitleReferenceCase> pluginTitleReference(
 ) => [
   (
     name: 'display false (the default)',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -2267,35 +2272,36 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'display true',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(display: true, text: <String>['Chart title']),
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(display: true, text: <String>['Chart title']),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -5018,39 +5024,40 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'position bottom',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Bottom title'],
-            position: ChartPosition.bottom,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Bottom title'],
+          position: ChartPosition.bottom,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -6079,40 +6086,41 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'position left with align start',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Left title'],
-            position: ChartPosition.left,
-            align: ChartAlign.start,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Left title'],
+          position: ChartPosition.left,
+          align: ChartAlign.start,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -7159,40 +7167,41 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'position left with align end',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Left title'],
-            position: ChartPosition.left,
-            align: ChartAlign.center,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Left title'],
+          position: ChartPosition.left,
+          align: ChartAlign.center,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -8810,40 +8819,41 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'position right with align start',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Right title'],
-            position: ChartPosition.right,
-            align: ChartAlign.start,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Right title'],
+          position: ChartPosition.right,
+          align: ChartAlign.start,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -9881,40 +9891,41 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'position right with align end',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Right title'],
-            position: ChartPosition.right,
-            align: ChartAlign.end,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Right title'],
+          position: ChartPosition.right,
+          align: ChartAlign.end,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -10952,39 +10963,40 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'align start and end',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Aligned'],
-            align: ChartAlign.start,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Aligned'],
+          align: ChartAlign.start,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -12588,39 +12600,40 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'align end and start',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Aligned'],
-            align: ChartAlign.end,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Aligned'],
+          align: ChartAlign.end,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -14224,39 +14237,40 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'fullSize false',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Not full size'],
-            fullSize: false,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Not full size'],
+          fullSize: false,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -15868,39 +15882,40 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'padding as a number',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Padded'],
-            padding: EdgeInsets.all(25),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Padded'],
+          padding: EdgeInsets.all(25),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -16924,39 +16939,40 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'padding as an object',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Padded'],
-            padding: EdgeInsets.fromLTRB(30, 4, 0, 16),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Padded'],
+          padding: EdgeInsets.fromLTRB(30, 4, 0, 16),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -18568,39 +18584,40 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'a text array',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Line one', 'Line two', 'Line three'],
-            font: ChartTextStyle(height: 1.5),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Line one', 'Line two', 'Line three'],
+          font: ChartTextStyle(height: 1.5),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -20194,46 +20211,47 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'font and color',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            text: <String>['Styled'],
-            color: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
-            font: ChartTextStyle(
-              fontFamily: 'Arial',
-              fontFamilyFallback: [],
-              fontSize: 18,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.normal,
-            ),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(
+          display: true,
+          text: <String>['Styled'],
+          color: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          font: ChartTextStyle(
+            fontFamily: 'Arial',
+            fontFamilyFallback: [],
+            fontSize: 18,
+            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -21271,46 +21289,46 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'a scriptable text',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(
-            display: true,
-            scripted: (context, options) => TitleOptions(
-              text:
-                  (functions['titleText']!
-                          as Object? Function(Object?, Object?))(
-                        context,
-                        options,
-                      )!
-                      as List<String>,
-            ),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: [
+        TitleOptions(
+          display: true,
+          scripted: (context, options) => TitleOptions(
+            text:
+                (functions['titleText']! as Object? Function(Object?, Object?))(
+                      context,
+                      options,
+                    )!
+                    as List<String>,
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -22347,35 +22365,36 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'a number text',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': TitleOptions(display: true, text: <String>['0']),
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(display: true, text: <String>['0']),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -23412,29 +23431,28 @@ List<PluginTitleReferenceCase> pluginTitleReference(
   ),
   (
     name: 'full: title with the default legend',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'one',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-          },
-          <String, Object?>{
-            'label': 'two',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'title': TitleOptions(display: true, text: <String>['Chart title']),
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'one',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'two',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+        ),
+      ],
+      pluginOptions: const [
+        TitleOptions(display: true, text: <String>['Chart title']),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{

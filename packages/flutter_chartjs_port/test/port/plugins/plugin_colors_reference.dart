@@ -6,9 +6,13 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 14 cases, 44 widths.
 
-import 'dart:ui' show FontStyle, StrokeCap, StrokeJoin;
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'dart:ui' show Color, FontStyle, StrokeCap, StrokeJoin;
+
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String pluginColorsReferenceNode = 'v24.22.1';
@@ -29,15 +33,17 @@ const String pluginColorsReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginColorsReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -52,62 +58,33 @@ typedef PluginColorsReferenceWidth = ({
 });
 
 /// The cases.
-const List<PluginColorsReferenceCase> pluginColorsReference = [
+final List<PluginColorsReferenceCase> pluginColorsReference = [
   (
     name: 'bar: 8 datasets wrap the 7 colors',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['l0', 'l1', 'l2'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 4.0, 7.0],
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[8.0, 11.0, 3.0],
-          },
-          <String, Object?>{
-            'label': 'd2',
-            'data': <Object?>[4.0, 7.0, 10.0],
-          },
-          <String, Object?>{
-            'label': 'd3',
-            'data': <Object?>[11.0, 3.0, 6.0],
-          },
-          <String, Object?>{
-            'label': 'd4',
-            'data': <Object?>[7.0, 10.0, 2.0],
-          },
-          <String, Object?>{
-            'label': 'd5',
-            'data': <Object?>[3.0, 6.0, 9.0],
-          },
-          <String, Object?>{
-            'label': 'd6',
-            'data': <Object?>[10.0, 2.0, 5.0],
-          },
-          <String, Object?>{
-            'label': 'd7',
-            'data': <Object?>[6.0, 9.0, 1.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['l0', 'l1', 'l2'],
+      datasets: [
+        BarDataset(label: 'd0', data: DatasetData.values([1.0, 4.0, 7.0])),
+        BarDataset(label: 'd1', data: DatasetData.values([8.0, 11.0, 3.0])),
+        BarDataset(label: 'd2', data: DatasetData.values([4.0, 7.0, 10.0])),
+        BarDataset(label: 'd3', data: DatasetData.values([11.0, 3.0, 6.0])),
+        BarDataset(label: 'd4', data: DatasetData.values([7.0, 10.0, 2.0])),
+        BarDataset(label: 'd5', data: DatasetData.values([3.0, 6.0, 9.0])),
+        BarDataset(label: 'd6', data: DatasetData.values([10.0, 2.0, 5.0])),
+        BarDataset(label: 'd7', data: DatasetData.values([6.0, 9.0, 1.0])),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+      disabledPlugins: const [
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 512.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -1919,35 +1896,30 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'line',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['l0', 'l1', 'l2', 'l3'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 4.0, 7.0, 10.0],
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[8.0, 11.0, 3.0, 6.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['l0', 'l1', 'l2', 'l3'],
+      datasets: [
+        LineDataset(
+          label: 'd0',
+          data: DatasetData.values([1.0, 4.0, 7.0, 10.0]),
+        ),
+        LineDataset(
+          label: 'd1',
+          data: DatasetData.values([8.0, 11.0, 3.0, 6.0]),
+        ),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+      disabledPlugins: const [
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -3048,35 +3020,24 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'doughnut: one color for each item',
-    config: <String, Object?>{
-      'type': 'doughnut',
-      'data': <String, Object?>{
-        'labels': <Object?>['l0', 'l1', 'l2'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 4.0, 7.0],
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[8.0, 11.0, 3.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['l0', 'l1', 'l2'],
+      datasets: [
+        DoughnutDataset(label: 'd0', data: [1.0, 4.0, 7.0]),
+        DoughnutDataset(label: 'd1', data: [8.0, 11.0, 3.0]),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+      disabledPlugins: const [
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -3667,41 +3628,26 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'pie: 9 items wrap the 7 colors',
-    config: <String, Object?>{
-      'type': 'pie',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'l0',
-          'l1',
-          'l2',
-          'l3',
-          'l4',
-          'l5',
-          'l6',
-          'l7',
-          'l8',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['l0', 'l1', 'l2', 'l3', 'l4', 'l5', 'l6', 'l7', 'l8'],
+      datasets: [
+        PieDataset(
+          label: 'd0',
+          data: [1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0],
+        ),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+      disabledPlugins: const [
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{},
@@ -4489,35 +4435,24 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'polarArea: the background palette',
-    config: <String, Object?>{
-      'type': 'polarArea',
-      'data': <String, Object?>{
-        'labels': <Object?>['l0', 'l1', 'l2', 'l3'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 4.0, 7.0, 10.0],
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[8.0, 11.0, 3.0, 6.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['l0', 'l1', 'l2', 'l3'],
+      datasets: [
+        PolarAreaDataset(label: 'd0', data: [1.0, 4.0, 7.0, 10.0]),
+        PolarAreaDataset(label: 'd1', data: [8.0, 11.0, 3.0, 6.0]),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+      disabledPlugins: const [
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -5449,35 +5384,24 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'radar',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['l0', 'l1', 'l2', 'l3', 'l4'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 4.0, 7.0, 10.0, 2.0],
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[8.0, 11.0, 3.0, 6.0, 9.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['l0', 'l1', 'l2', 'l3', 'l4'],
+      datasets: [
+        RadarDataset(label: 'd0', data: [1.0, 4.0, 7.0, 10.0, 2.0]),
+        RadarDataset(label: 'd1', data: [8.0, 11.0, 3.0, 6.0, 9.0]),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+      disabledPlugins: const [
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
         'scales': <String, Object?>{
@@ -6472,39 +6396,29 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'bubble',
-    config: <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0},
-              <String, Object?>{'x': 2.0, 'y': 4.0, 'r': 5.0},
-            ],
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[
-              <String, Object?>{'x': 3.0, 'y': 1.0, 'r': 4.0},
-            ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      datasets: [
+        BubbleDataset(
+          label: 'd0',
+          data: [
+            DataPoint.bubble(1.0, 2.0, 3.0),
+            DataPoint.bubble(2.0, 4.0, 5.0),
+          ],
+        ),
+        BubbleDataset(label: 'd1', data: [DataPoint.bubble(3.0, 1.0, 4.0)]),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+      disabledPlugins: const [
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           30.681640625,
@@ -7403,36 +7317,30 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'dataset colors given, then forceOverride',
-    config: <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['l0', 'l1', 'l2'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 4.0, 7.0],
-            'borderColor': 'rgb(1, 2, 3)',
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[8.0, 11.0, 3.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['l0', 'l1', 'l2'],
+      datasets: [
+        BarDataset(
+          label: 'd0',
+          data: DatasetData.values([1.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(1, 2, 3, 1)),
+          ),
+        ),
+        BarDataset(label: 'd1', data: DatasetData.values([8.0, 11.0, 3.0])),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+      disabledPlugins: const [
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 512.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -8629,36 +8537,27 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'chart colors given',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['l0', 'l1', 'l2'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 4.0, 7.0],
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[8.0, 11.0, 3.0],
-          },
-        ],
+    config: () => ChartConfig(
+      labels: ['l0', 'l1', 'l2'],
+      datasets: [
+        LineDataset(label: 'd0', data: DatasetData.values([1.0, 4.0, 7.0])),
+        LineDataset(label: 'd1', data: DatasetData.values([8.0, 11.0, 3.0])),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+      disabledPlugins: const [
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+      extra: const <String, Object?>{
+        'backgroundColor': ChartPaint.solid(Color.fromRGBO(9, 8, 7, 1)),
       },
-      'options': <String, Object?>{
-        'backgroundColor': 'rgb(9, 8, 7)',
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -9636,38 +9535,29 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'elements colors given',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['l0', 'l1', 'l2'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 4.0, 7.0],
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[8.0, 11.0, 3.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'elements': <String, Object?>{
-          'line': <String, Object?>{'borderColor': 'rgb(9, 8, 7)'},
-        },
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-          'decimation': false,
-          'filler': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['l0', 'l1', 'l2'],
+      datasets: [
+        LineDataset(label: 'd0', data: DatasetData.values([1.0, 4.0, 7.0])),
+        LineDataset(label: 'd1', data: DatasetData.values([8.0, 11.0, 3.0])),
+      ],
+      elements: const ChartElements(
+        line: LineElementStyle(
+          borderColor: ChartPaint.solid(Color.fromRGBO(9, 8, 7, 1)),
+        ),
+      ),
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+      disabledPlugins: const [
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
           27.34765625,
@@ -10645,7 +10535,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'string data: doughnut throws',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'doughnut',
       'data': <String, Object?>{
         'labels': <Object?>['l0', 'l1', 'l2'],
@@ -10665,14 +10555,14 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
   ),
   (
     name: 'string data: bar colorizes',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'type': 'bar',
       'data': <String, Object?>{
         'labels': <Object?>['l0', 'l1', 'l2'],
@@ -10692,8 +10582,8 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 10.2, 512.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -11312,7 +11202,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'mixed types: one counter over the three colorizers',
-    config: <String, Object?>{
+    config: const <String, Object?>{
       'data': <String, Object?>{
         'labels': <Object?>[0.0, 1.0, 2.0, 3.0],
         'datasets': <Object?>[
@@ -11346,8 +11236,8 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
         },
       },
     },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 507.0, 483.59999999999997],
         'scales': <String, Object?>{
@@ -13271,29 +13161,16 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'full: radar',
-    config: <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['l0', 'l1', 'l2', 'l3', 'l4'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'd0',
-            'data': <Object?>[1.0, 4.0, 7.0, 10.0, 2.0],
-          },
-          <String, Object?>{
-            'label': 'd1',
-            'data': <Object?>[8.0, 11.0, 3.0, 6.0, 9.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-        },
-      },
-    },
-    options: <String, Object?>{},
-    expected: <String, Object?>{
+    config: () => ChartConfig(
+      labels: ['l0', 'l1', 'l2', 'l3', 'l4'],
+      datasets: [
+        RadarDataset(label: 'd0', data: [1.0, 4.0, 7.0, 10.0, 2.0]),
+        RadarDataset(label: 'd1', data: [8.0, 11.0, 3.0, 6.0, 9.0]),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+    ),
+    options: const <String, Object?>{},
+    expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
         'scales': <String, Object?>{

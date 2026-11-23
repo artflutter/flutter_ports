@@ -261,4 +261,6 @@ cases.push(
   }),
 );
 
-writeControllerReference(OUT, 'pluginDecimation', cases, {title: 'decimation plugin'});
+// The observer compares the keys of each dataset in their order: the typed
+// configs keep the key order of the Maps.
+writeControllerReference(OUT, 'pluginDecimation', cases, {title: 'decimation plugin', keyOrder: true});

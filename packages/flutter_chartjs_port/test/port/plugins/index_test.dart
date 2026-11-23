@@ -492,8 +492,8 @@ void main() {
             <O>(plugin) => _recordHooks(plugin, calls, upstream[plugin.id]),
           );
         }
-        final input = copyReference(c.config)! as AnyObject;
-        if (jsGet(input['options'], 'plugins') == false) {
+        final typed = (c.config as ChartConfig Function())();
+        if (typed.extra?['plugins'] == false) {
           // This reference case deliberately disables the entire plugin set.
           final savedAudit = foreignAudit;
           foreignAudit = (owner, key, raw) {
@@ -505,20 +505,7 @@ void main() {
           };
           addTearDown(() => foreignAudit = savedAudit);
         }
-        final data = input['data']! as AnyObject;
-        final config = ChartConfigurationScope()
-          ..type = input['type']! as String
-          ..data = (ChartDataScope()
-            ..labels = data['labels']!
-            ..datasets = <Object?>[
-              for (final dataset
-                  in (data['datasets']! as List<Object?>).cast<AnyObject>())
-                mergeExtra(LineControllerDatasetOptionsScope(), dataset),
-            ])
-          ..options = mergeExtra(
-            ChartOptionsScope(),
-            input['options']! as AnyObject,
-          )
+        final config = ChartConfigLowering(typed).lower()
           ..plugins = [_recorder(notifies)];
         final options = copyReference(c.options)! as AnyObject;
         Chart? chart;

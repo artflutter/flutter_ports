@@ -2406,8 +2406,9 @@ function canvasFont(css, state) {
  * lines_longer_than_80_chars fails `analyze --fatal-infos` on it, and a
  * data file must not change by hand.
  */
-export function writeReference(outPath, name, cases, {title = name, notes = [], typed = true} = {}) {
+export function writeReference(outPath, name, cases, {title = name, notes = [], typed = true, keyOrder = false} = {}) {
   loaded();
+  keyOrderMode = keyOrder;
   for (const line of notes) {
     const comment = `// ${line}`.trimEnd();
     if (comment.length > 80) {
@@ -3064,8 +3065,8 @@ function datasetSpec(kind, state, axes, paths) {
           label: common.label,
           hidden: boolNode,
           order: common.order,
-          borderColor: paint,
           backgroundColor: paint,
+          borderColor: paint,
           borderWidth: number,
         },
       };
@@ -3129,6 +3130,13 @@ function dataNode(form, data, changed) {
   return undefined;
 }
 
+/**
+ * Whether the typed writer keeps the key order of each dataset Map
+ * (writeReference option `keyOrder`): for a test that compares the keys of
+ * the dataset object in their order.
+ */
+let keyOrderMode = false;
+
 /** The node of one dataset of a chart of the type [chartType]. */
 function datasetNode(ds, i, chartType, state, axes, changed, chartParsing) {
   const kind = ds.type ?? chartType;
@@ -3143,20 +3151,40 @@ function datasetNode(ds, i, chartType, state, axes, changed, chartParsing) {
   if (spec.cls === 'TestDataset') state.testDatasets = true;
   const args = spec.cls === 'TestDataset' ? [[null, node(`ChartKind(${dart(kind, state)})`, true, true)]] : [];
   const rest = {};
-  let data;
-  if ('data' in ds) data = dataNode(spec.data, ds.data, changed);
+  if ('data' in ds && !Array.isArray(ds.data)) {
+    keepMap(`the dataset data ${JSON.stringify(ds.data)} is no array: a typed scope holds it as a foreign value`);
+  }
+  // The typed node of each key, in the key order of the dataset.
+  const typed = [];
   for (const k of Object.keys(ds)) {
     if (k === 'type') continue;
     if (k === 'data') {
-      if (data) args.push(data);
-      else rest.data = ds.data;
+      typed.push([k, dataNode(spec.data, ds.data, changed)]);
       continue;
     }
     const field = spec.fields[k];
     const n = field ? field(ds[k]) : undefined;
-    if (n === undefined) rest[k] = ds[k];
-    else if (Array.isArray(n)) args.push(n);
-    else args.push([k, n]);
+    typed.push([k, n === undefined ? undefined : Array.isArray(n) ? n : [k, n]]);
+  }
+  // With keyOrder, the typed keys are the longest start of the keys that the
+  // lowering writes in the same order: the lowering writes its keys in the
+  // order of the class (label, data, then the fields of the spec) and the
+  // `extra` keys after them, so the dataset keeps the key order of the Map.
+  let typedKeys = new Set(typed.filter(([, n]) => n !== undefined).map(([k]) => k));
+  if (keyOrderMode) {
+    const rank = ['label', 'data', ...Object.keys(spec.fields).filter((k) => k !== 'label')];
+    typedKeys = new Set();
+    let last = -1;
+    for (const [k, n] of typed) {
+      const r = rank.indexOf(k);
+      if (n === undefined || r <= last) break;
+      typedKeys.add(k);
+      last = r;
+    }
+  }
+  for (const [k, n] of typed) {
+    if (typedKeys.has(k)) args.push(n);
+    else rest[k] = ds[k];
   }
   // The data of `extra` go to the chart by reference: a new List for each
   // config, as the Map form.

@@ -24709,16 +24709,17 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'parsed: object data',
-    config: () => ChartConfig(
-      labels: ['a', 'b'],
-      datasets: const [
-        DoughnutDataset(
-          extra: <String, Object?>{
+    config: const <String, Object?>{
+      'type': 'doughnut',
+      'data': <String, Object?>{
+        'labels': <Object?>['a', 'b'],
+        'datasets': <Object?>[
+          <String, Object?>{
             'data': <String, Object?>{'a': 1.0, 'b': 2.0},
           },
-        ),
-      ],
-    ),
+        ],
+      },
+    },
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},

@@ -6,8 +6,12 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 34 cases, 30 widths.
 
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'package:flutter/painting.dart';
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String pluginLegendReferenceNode = 'v24.22.1';
@@ -28,15 +32,17 @@ const String pluginLegendReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginLegendReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -56,42 +62,43 @@ List<PluginLegendReferenceCase> pluginLegendReference(
 ) => [
   (
     name: 'position top (the default)',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -1530,43 +1537,44 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'position bottom',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(position: ChartPosition.bottom),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(position: ChartPosition.bottom)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -3002,43 +3010,44 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'position left',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(position: ChartPosition.left),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(position: ChartPosition.left)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -4493,43 +4502,44 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'position right',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(position: ChartPosition.right),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(position: ChartPosition.right)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -5972,43 +5982,44 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'position chartArea',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(position: ChartPosition.chartArea),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(position: ChartPosition.chartArea)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -7463,43 +7474,44 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'align start',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(align: ChartAlign.start),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(align: ChartAlign.start)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -8938,43 +8950,44 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'align end',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(align: ChartAlign.end),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(align: ChartAlign.end)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -10413,46 +10426,46 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'align start at the left',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            position: ChartPosition.left,
-            align: ChartAlign.start,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(position: ChartPosition.left, align: ChartAlign.start),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -11907,46 +11920,46 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'align end at the right',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            position: ChartPosition.right,
-            align: ChartAlign.end,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(position: ChartPosition.right, align: ChartAlign.end),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -13389,43 +13402,44 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'rtl',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(rtl: true, align: ChartAlign.start),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(rtl: true, align: ChartAlign.start)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -14867,43 +14881,46 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'rtl at the left',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(rtl: true, position: ChartPosition.left),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(rtl: true, position: ChartPosition.left),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -16361,43 +16378,44 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'reverse',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(reverse: true),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(reverse: true)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -17836,46 +17854,46 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'fullSize false',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            position: ChartPosition.left,
-            fullSize: false,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(position: ChartPosition.left, fullSize: false),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -19330,43 +19348,46 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'maxWidth',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(position: ChartPosition.right, maxWidth: 60),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(position: ChartPosition.right, maxWidth: 60),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -20809,67 +20830,68 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'maxHeight',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 4',
-            'data': <Object?>[3.0, 6.0, 6.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 5',
-            'data': <Object?>[4.0, 8.0, 7.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 6',
-            'data': <Object?>[5.0, 10.0, 8.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 7',
-            'data': <Object?>[6.0, 12.0, 9.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 8',
-            'data': <Object?>[7.0, 14.0, 10.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 9',
-            'data': <Object?>[8.0, 16.0, 11.0, 1.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(maxHeight: 20),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 4',
+          data: DatasetData.values([3.0, 6.0, 6.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 5',
+          data: DatasetData.values([4.0, 8.0, 7.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 6',
+          data: DatasetData.values([5.0, 10.0, 8.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 7',
+          data: DatasetData.values([6.0, 12.0, 9.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 8',
+          data: DatasetData.values([7.0, 14.0, 10.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 9',
+          data: DatasetData.values([8.0, 16.0, 11.0, 1.0]),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(maxHeight: 20)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -24133,48 +24155,49 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'usePointStyle',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-            'pointRotation': 30.0,
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-            'pointRotation': 30.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-            'pointRotation': 30.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            labels: LegendLabelOptions(usePointStyle: true),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+          extra: const <String, Object?>{'pointRotation': 30.0},
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+          extra: const <String, Object?>{'pointRotation': 30.0},
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+          extra: const <String, Object?>{'pointRotation': 30.0},
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(labels: LegendLabelOptions(usePointStyle: true)),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -25620,49 +25643,52 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'pointStyleWidth',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            labels: LegendLabelOptions(
-              usePointStyle: true,
-              pointStyle: RectPointStyle(),
-              pointStyleWidth: 30,
-            ),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(
+          labels: LegendLabelOptions(
+            usePointStyle: true,
+            pointStyle: RectPointStyle(),
+            pointStyleWidth: 30,
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -27954,45 +27980,46 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'boxWidth and boxHeight',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            labels: LegendLabelOptions(boxWidth: 20, boxHeight: 6),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(labels: LegendLabelOptions(boxWidth: 20, boxHeight: 6)),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -29432,46 +29459,49 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'padding',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            position: ChartPosition.left,
-            labels: LegendLabelOptions(padding: 25),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(
+          position: ChartPosition.left,
+          labels: LegendLabelOptions(padding: 25),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -30926,47 +30956,50 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'filter',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            labels: LegendLabelOptions(
-              filter: functions['legendFilter']! as LegendItemFilter,
-            ),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        LegendOptions(
+          labels: LegendLabelOptions(
+            filter: functions['legendFilter']! as LegendItemFilter,
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -32361,47 +32394,50 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'sort',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            labels: LegendLabelOptions(
-              sort: functions['legendSort']! as LegendItemComparator,
-            ),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        LegendOptions(
+          labels: LegendLabelOptions(
+            sort: functions['legendSort']! as LegendItemComparator,
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -33840,46 +33876,49 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'textAlign',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            position: ChartPosition.right,
-            labels: LegendLabelOptions(textAlign: TextAlign.right),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(
+          position: ChartPosition.right,
+          labels: LegendLabelOptions(textAlign: TextAlign.right),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -35326,49 +35365,52 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'title with position start',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            title: LegendTitleOptions(
-              display: true,
-              text: <String>['Legend title'],
-              position: ChartAlign.start,
-            ),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(
+          title: LegendTitleOptions(
+            display: true,
+            text: <String>['Legend title'],
+            position: ChartAlign.start,
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -36833,51 +36875,54 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'title with position end at the left',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            position: ChartPosition.left,
-            title: LegendTitleOptions(
-              display: true,
-              text: <String>['Title'],
-              position: ChartAlign.end,
-              padding: EdgeInsets.all(6),
-            ),
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(
+          position: ChartPosition.left,
+          title: LegendTitleOptions(
+            display: true,
+            text: <String>['Title'],
+            position: ChartAlign.end,
+            padding: EdgeInsets.all(6),
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -38341,67 +38386,68 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'rows that wrap',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 4',
-            'data': <Object?>[3.0, 6.0, 6.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 5',
-            'data': <Object?>[4.0, 8.0, 7.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 6',
-            'data': <Object?>[5.0, 10.0, 8.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 7',
-            'data': <Object?>[6.0, 12.0, 9.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 8',
-            'data': <Object?>[7.0, 14.0, 10.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 9',
-            'data': <Object?>[8.0, 16.0, 11.0, 1.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 4',
+          data: DatasetData.values([3.0, 6.0, 6.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 5',
+          data: DatasetData.values([4.0, 8.0, 7.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 6',
+          data: DatasetData.values([5.0, 10.0, 8.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 7',
+          data: DatasetData.values([6.0, 12.0, 9.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 8',
+          data: DatasetData.values([7.0, 14.0, 10.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 9',
+          data: DatasetData.values([8.0, 16.0, 11.0, 1.0]),
+        ),
+      ],
+      pluginOptions: const [LegendOptions()],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 300.0, 'height': 300.0},
     },
@@ -41668,67 +41714,68 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'columns that overflow',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-          <String, Object?>{
-            'label': 'Dataset 4',
-            'data': <Object?>[3.0, 6.0, 6.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 5',
-            'data': <Object?>[4.0, 8.0, 7.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 6',
-            'data': <Object?>[5.0, 10.0, 8.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 7',
-            'data': <Object?>[6.0, 12.0, 9.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 8',
-            'data': <Object?>[7.0, 14.0, 10.0, 1.0],
-          },
-          <String, Object?>{
-            'label': 'Dataset 9',
-            'data': <Object?>[8.0, 16.0, 11.0, 1.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(position: ChartPosition.left),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+        LineDataset(
+          label: 'Dataset 4',
+          data: DatasetData.values([3.0, 6.0, 6.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 5',
+          data: DatasetData.values([4.0, 8.0, 7.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 6',
+          data: DatasetData.values([5.0, 10.0, 8.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 7',
+          data: DatasetData.values([6.0, 12.0, 9.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 8',
+          data: DatasetData.values([7.0, 14.0, 10.0, 1.0]),
+        ),
+        LineDataset(
+          label: 'Dataset 9',
+          data: DatasetData.values([8.0, 16.0, 11.0, 1.0]),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(position: ChartPosition.left)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 120.0},
     },
@@ -44861,42 +44908,43 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'a hidden dataset',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -47136,46 +47184,49 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'hoverLegend with onHover and onLeave',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            onHover: functions['logHover']! as LegendEventHandler,
-            onLeave: functions['logLeave']! as LegendEventHandler,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        LegendOptions(
+          onHover: functions['logHover']! as LegendEventHandler,
+          onLeave: functions['logLeave']! as LegendEventHandler,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -51979,42 +52030,43 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'clickLegend',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -55915,45 +55967,46 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'clickLegend with onClick',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': const <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            onClick: functions['logClick']! as LegendEventHandler,
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: [
+        LegendOptions(onClick: functions['logClick']! as LegendEventHandler),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -59071,43 +59124,44 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'display false',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(display: false),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(display: false)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -61378,50 +61432,55 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'useBorderRadius',
-    config: const <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-            'borderWidth': 2.0,
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 2.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        BarDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+          borderWidth: 2,
+        ),
+        BarDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 2,
+        ),
+        BarDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderWidth: 2,
+          extra: const <String, Object?>{
             'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
-            'borderWidth': 2.0,
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(
-            labels: LegendLabelOptions(
-              useBorderRadius: true,
-              borderRadius: BorderRadius.all(Radius.circular(4)),
-            ),
+        ),
+      ],
+      pluginOptions: const [
+        LegendOptions(
+          labels: LegendLabelOptions(
+            useBorderRadius: true,
+            borderRadius: BorderRadius.all(Radius.circular(4)),
           ),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -62839,34 +62898,34 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'doughnut with multiline labels',
-    config: const <String, Object?>{
-      'type': 'doughnut',
-      'data': <String, Object?>{
-        'labels': <Object?>[
-          'One',
-          <Object?>['Two', 'lines'],
-          <Object?>['Three', 'more', 'lines'],
-          'Four',
-        ],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[4.0, 3.0, 2.0, 1.0],
-            'backgroundColor': <Object?>['red', 'green', 'blue', 'gray'],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': false,
-          'legend': LegendOptions(position: ChartPosition.right),
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: [
+        'One',
+        const <Object?>['Two', 'lines'],
+        const <Object?>['Three', 'more', 'lines'],
+        'Four',
+      ],
+      datasets: [
+        DoughnutDataset(
+          data: [4.0, 3.0, 2.0, 1.0],
+          backgroundColor: const ChartValue.indexed([
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+            ChartPaint.solid(Color.fromRGBO(128, 128, 128, 1)),
+          ]),
+        ),
+      ],
+      pluginOptions: const [LegendOptions(position: ChartPosition.right)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },
@@ -63835,33 +63894,35 @@ List<PluginLegendReferenceCase> pluginLegendReference(
   ),
   (
     name: 'full: hoverLegend with the tooltip',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['January', 'February', 'March', 'April'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'Dataset 1',
-            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
-            'borderColor': 'blue',
-            'backgroundColor': 'red',
-          },
-          <String, Object?>{
-            'label': 'Dataset 2',
-            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
-            'borderColor': 'green',
-            'borderWidth': 6.0,
-          },
-          <String, Object?>{
-            'label': 'A longer dataset 3',
-            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
-          },
-        ],
-      },
-      'options': <String, Object?>{},
-    },
+    config: () => ChartConfig(
+      labels: ['January', 'February', 'March', 'April'],
+      datasets: [
+        LineDataset(
+          label: 'Dataset 1',
+          data: DatasetData.values([10.0, 30.0, 20.0, 40.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+          ),
+        ),
+        LineDataset(
+          label: 'Dataset 2',
+          data: DatasetData.values([25.0, 5.0, 35.0, 15.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
+          ),
+          borderWidth: 6,
+        ),
+        LineDataset(
+          label: 'A longer dataset 3',
+          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          borderDash: const [4, 2],
+          pointStyle: const ChartValue.constant(RectRotPointStyle()),
+        ),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
     },

@@ -13,10 +13,16 @@
 //       return source ? describeTarget(_getTarget(source)) : null;
 //     })
 
-import 'dart:ui' show FontStyle, StrokeCap, StrokeJoin;
+// The typed configs make new data Lists at each call, as the Map form.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
+import 'dart:ui' show Color, FontStyle, StrokeCap, StrokeJoin;
 
 import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+
+import '../../../support/native_plugin.dart';
 
 /// The Node.js version that generated the data.
 const String pluginFillerReferenceNode = 'v24.22.1';
@@ -37,15 +43,17 @@ const String pluginFillerReferenceCommit =
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///
-/// - `config`: the chart config, before the harness defaults.
-///   `'fn:<name>'` is a named function of the Dart test.
+/// - `config`: the chart config, before the harness defaults: a
+///   function that gives a new typed `ChartConfig` at each call, or the
+///   Map of a config with no typed form. `'fn:<name>'` is a named
+///   function of the Dart test.
 /// - `options`: the options of acquireChart (the canvas size).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginFillerReferenceCase = ({
   String name,
-  Map<String, Object?> config,
+  Object config,
   Map<String, Object?> options,
   Map<String, Object?> expected,
 });
@@ -60,33 +68,34 @@ typedef PluginFillerReferenceWidth = ({
 });
 
 /// The cases.
-final List<PluginFillerReferenceCase> pluginFillerReference = [
+List<PluginFillerReferenceCase> pluginFillerReference(
+  Map<String, Object?> functions,
+) => [
   (
     name: 'fill origin',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -998,30 +1007,29 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill start',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toStart,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toStart,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -2054,30 +2062,29 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill end',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toEnd,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toEnd,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -3110,30 +3117,29 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill value',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toValue(4),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: const FillTarget.toValue(4),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -4166,30 +4172,29 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill true',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -5101,30 +5106,29 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill false',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.none,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.none,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -6130,35 +6134,38 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill -1',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toPrevious,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: FillTarget.toPrevious,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -7431,35 +7438,38 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill +1',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toNext,
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toNext,
+        ),
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -8732,40 +8742,47 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill as a dataset index',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toDataset(2),
-          },
-          <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 128, 0, 0.3)',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: const FillTarget.toDataset(2),
+        ),
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+        ),
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 0.3)),
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -10539,45 +10556,50 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill stack',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toStacked,
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 128, 0, 0.3)',
-            'fill': FillTarget.toStacked,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: FillTarget.toStacked,
+        ),
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 0.3)),
+          ),
+          fill: FillTarget.toStacked,
+        ),
+      ],
+      scales: const [LinearAxis(.y, stacked: StackMode.on)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -12471,30 +12493,29 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'fill shape',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.shape,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.shape,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -13388,30 +13409,29 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'a gap without spanGaps',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, null, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, null, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -14390,31 +14410,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'a gap with spanGaps',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, null, 6.0, null, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-            'spanGaps': true,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, null, 6.0, null, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+          spanGaps: true,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -15367,31 +15386,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'stepped',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-            'stepped': true,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+          extra: const <String, Object?>{'stepped': true},
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -16307,37 +16325,40 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'a tension with fill -1',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'tension': 0.4,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toPrevious,
-            'tension': 0.4,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          tension: 0.4,
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: FillTarget.toPrevious,
+          tension: 0.4,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -17609,31 +17630,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'monotone',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-            'cubicInterpolationMode': MonotoneCubicInterpolationMode(),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+          cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -18544,31 +18564,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'indexAxis y with fill origin',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      indexAxis: const YAxis(),
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -19494,36 +19513,39 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'indexAxis y with fill -1',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toPrevious,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': YAxis(),
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: FillTarget.toPrevious,
+        ),
+      ],
+      indexAxis: const YAxis(),
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -20820,33 +20842,32 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'above and below on x',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': const <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin.split(
-              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
-              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
-            ),
-          },
-        ],
-      },
-      'options': const <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin.split(
+            above: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+            below: ChartPaint.solid(Color.fromRGBO(0, 128, 0, 0.3)),
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: <String, Object?>{
       'initial': <String, Object?>{
@@ -21804,34 +21825,33 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'above and below on y',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': const <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin.split(
-              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
-              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
-            ),
-          },
-        ],
-      },
-      'options': const <String, Object?>{
-        'indexAxis': YAxis(),
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin.split(
+            above: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+            below: ChartPaint.solid(Color.fromRGBO(0, 128, 0, 0.3)),
+          ),
+        ),
+      ],
+      indexAxis: const YAxis(),
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: <String, Object?>{
       'initial': <String, Object?>{
@@ -22804,38 +22824,41 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'above and below between two lines',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          const <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-          },
-          <String, Object?>{
-            'data': const <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toPrevious.split(
-              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
-              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
-            ),
-          },
-        ],
-      },
-      'options': const <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+        ),
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toPrevious.split(
+            above: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+            below: ChartPaint.solid(Color.fromRGBO(0, 128, 0, 0.3)),
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: <String, Object?>{
       'initial': <String, Object?>{
@@ -24215,31 +24238,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'clip false',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-            'clip': ChartClip.none,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+          clip: ChartClip.none,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -25146,37 +25168,40 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'drawTime beforeDraw',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toDataset(0),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': FillerOptions(drawTime: FillerDrawTime.beforeDraw),
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: const FillTarget.toDataset(0),
+        ),
+      ],
+      pluginOptions: const [FillerOptions(drawTime: FillerDrawTime.beforeDraw)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -26445,37 +26470,42 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'drawTime beforeDatasetsDraw',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toDataset(0),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': FillerOptions(drawTime: FillerDrawTime.beforeDatasetsDraw),
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: const FillTarget.toDataset(0),
+        ),
+      ],
+      pluginOptions: const [
+        FillerOptions(drawTime: FillerDrawTime.beforeDatasetsDraw),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -27775,44 +27805,51 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'propagate false with a hidden target',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 128, 0, 0.3)',
-            'fill': FillTarget.toPrevious,
-            'hidden': true,
-          },
-          <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toPrevious,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': FillerOptions(propagate: false),
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 0.3)),
+          ),
+          fill: FillTarget.toPrevious,
+          hidden: true,
+        ),
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: FillTarget.toPrevious,
+        ),
+      ],
+      pluginOptions: const [FillerOptions(propagate: false)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -30649,44 +30686,51 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'propagate true with a hidden target',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 128, 0, 0.3)',
-            'fill': FillTarget.toPrevious,
-            'hidden': true,
-          },
-          <String, Object?>{
-            'data': <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toPrevious,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'filler': FillerOptions(propagate: true),
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 1.0, 3.0, 2.0, 4.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 128, 0, 0.3)),
+          ),
+          fill: FillTarget.toPrevious,
+          hidden: true,
+        ),
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: FillTarget.toPrevious,
+        ),
+      ],
+      pluginOptions: const [FillerOptions(propagate: true)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -33523,37 +33567,44 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'stack above a line with segment styles',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.none,
-            'segment': <String, Object?>{'borderColor': 'fn:segStyle'},
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 4.0, 5.0, 4.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toStacked,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 3.0, 2.0, 1.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.none,
+          segment: LineSegmentStyle(
+            borderColor:
+                functions['segStyle']!
+                    as ChartPaint? Function(ScriptableLineSegmentContext),
+          ),
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 4.0, 5.0, 4.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: FillTarget.toStacked,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -34798,47 +34849,48 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'stack above a line whose x goes back',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 2.0, 'y': 3.0},
-              <String, Object?>{'x': 6.0, 'y': 1.0},
-            ],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.none,
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 3.0},
-              <String, Object?>{'x': 3.0, 'y': 4.0},
-              <String, Object?>{'x': 6.0, 'y': 5.0},
-            ],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toStacked,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear'},
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 1.0),
+            DataPoint(4.0, 2.0),
+            DataPoint(2.0, 3.0),
+            DataPoint(6.0, 1.0),
+          ]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.none,
+        ),
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 3.0),
+            DataPoint(3.0, 4.0),
+            DataPoint(6.0, 5.0),
+          ]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: FillTarget.toStacked,
+        ),
+      ],
+      scales: const [LinearAxis(.x)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -35977,36 +36029,39 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'stack above a line without segment styles',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.none,
-          },
-          <String, Object?>{
-            'data': <Object?>[3.0, 4.0, 5.0, 4.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toStacked,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 3.0, 2.0, 1.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.none,
+        ),
+        LineDataset(
+          data: DatasetData.values([3.0, 4.0, 5.0, 4.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: FillTarget.toStacked,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -37252,34 +37307,33 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'stack on a scatter chart',
-    config: const <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 1.0},
-              <String, Object?>{'x': 2.0, 'y': 3.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-            ],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toStacked,
-            'showLine': true,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        ScatterDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 1.0),
+            DataPoint(2.0, 3.0),
+            DataPoint(4.0, 2.0),
+          ]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toStacked,
+          showLine: true,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -38283,38 +38337,41 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'an empty target on x',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': const <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': const FillTarget.toDataset(1).split(
-              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
-              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
-            ),
-          },
-          const <String, Object?>{
-            'data': <Object?>[],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-          },
-        ],
-      },
-      'options': const <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 3.0, 2.0, 1.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toDataset(1).split(
+            above: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+            below: ChartPaint.solid(Color.fromRGBO(0, 128, 0, 0.3)),
+          ),
+        ),
+        LineDataset(
+          data: DatasetData.values([]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: <String, Object?>{
       'initial': <String, Object?>{
@@ -39365,39 +39422,42 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'an empty target on y',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': const <Object?>[1.0, 2.0, 3.0, 2.0, 1.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': const FillTarget.toDataset(1).split(
-              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
-              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
-            ),
-          },
-          const <String, Object?>{
-            'data': <Object?>[],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-          },
-        ],
-      },
-      'options': const <String, Object?>{
-        'indexAxis': YAxis(),
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([1.0, 2.0, 3.0, 2.0, 1.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toDataset(1).split(
+            above: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+            below: ChartPaint.solid(Color.fromRGBO(0, 128, 0, 0.3)),
+          ),
+        ),
+        LineDataset(
+          data: DatasetData.values([]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+        ),
+      ],
+      indexAxis: const YAxis(),
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: <String, Object?>{
       'initial': <String, Object?>{
@@ -40458,33 +40518,37 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'offset with min and max on a category scale',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0, 7.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'offset': true, 'min': 'b', 'max': 'e'},
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([3.0, 5.0, 2.0, 6.0, 4.0, 7.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      scales: const [
+        CategoryAxis(
+          .x,
+          min: 'b',
+          max: 'e',
+          extra: <String, Object?>{'offset': true},
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -41396,155 +41460,152 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: '120 points without parsing',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 1.0, 'y': 14.0},
-              <String, Object?>{'x': 2.0, 'y': 5.0},
-              <String, Object?>{'x': 3.0, 'y': 19.0},
-              <String, Object?>{'x': 4.0, 'y': 10.0},
-              <String, Object?>{'x': 5.0, 'y': 1.0},
-              <String, Object?>{'x': 6.0, 'y': 15.0},
-              <String, Object?>{'x': 7.0, 'y': 6.0},
-              <String, Object?>{'x': 8.0, 'y': 20.0},
-              <String, Object?>{'x': 9.0, 'y': 11.0},
-              <String, Object?>{'x': 10.0, 'y': 2.0},
-              <String, Object?>{'x': 11.0, 'y': 16.0},
-              <String, Object?>{'x': 12.0, 'y': 7.0},
-              <String, Object?>{'x': 13.0, 'y': 21.0},
-              <String, Object?>{'x': 14.0, 'y': 12.0},
-              <String, Object?>{'x': 15.0, 'y': 3.0},
-              <String, Object?>{'x': 16.0, 'y': 17.0},
-              <String, Object?>{'x': 17.0, 'y': 8.0},
-              <String, Object?>{'x': 18.0, 'y': 22.0},
-              <String, Object?>{'x': 19.0, 'y': 13.0},
-              <String, Object?>{'x': 20.0, 'y': 4.0},
-              <String, Object?>{'x': 21.0, 'y': 18.0},
-              <String, Object?>{'x': 22.0, 'y': 9.0},
-              <String, Object?>{'x': 23.0, 'y': 0.0},
-              <String, Object?>{'x': 24.0, 'y': 14.0},
-              <String, Object?>{'x': 25.0, 'y': 5.0},
-              <String, Object?>{'x': 26.0, 'y': 19.0},
-              <String, Object?>{'x': 27.0, 'y': 10.0},
-              <String, Object?>{'x': 28.0, 'y': 1.0},
-              <String, Object?>{'x': 29.0, 'y': 15.0},
-              <String, Object?>{'x': 30.0, 'y': 6.0},
-              <String, Object?>{'x': 31.0, 'y': 20.0},
-              <String, Object?>{'x': 32.0, 'y': 11.0},
-              <String, Object?>{'x': 33.0, 'y': 2.0},
-              <String, Object?>{'x': 34.0, 'y': 16.0},
-              <String, Object?>{'x': 35.0, 'y': 7.0},
-              <String, Object?>{'x': 36.0, 'y': 21.0},
-              <String, Object?>{'x': 37.0, 'y': 12.0},
-              <String, Object?>{'x': 38.0, 'y': 3.0},
-              <String, Object?>{'x': 39.0, 'y': 17.0},
-              <String, Object?>{'x': 40.0, 'y': 8.0},
-              <String, Object?>{'x': 41.0, 'y': 22.0},
-              <String, Object?>{'x': 42.0, 'y': 13.0},
-              <String, Object?>{'x': 43.0, 'y': 4.0},
-              <String, Object?>{'x': 44.0, 'y': 18.0},
-              <String, Object?>{'x': 45.0, 'y': 9.0},
-              <String, Object?>{'x': 46.0, 'y': 0.0},
-              <String, Object?>{'x': 47.0, 'y': 14.0},
-              <String, Object?>{'x': 48.0, 'y': 5.0},
-              <String, Object?>{'x': 49.0, 'y': 19.0},
-              <String, Object?>{'x': 50.0, 'y': 10.0},
-              <String, Object?>{'x': 51.0, 'y': 1.0},
-              <String, Object?>{'x': 52.0, 'y': 15.0},
-              <String, Object?>{'x': 53.0, 'y': 6.0},
-              <String, Object?>{'x': 54.0, 'y': 20.0},
-              <String, Object?>{'x': 55.0, 'y': 11.0},
-              <String, Object?>{'x': 56.0, 'y': 2.0},
-              <String, Object?>{'x': 57.0, 'y': 16.0},
-              <String, Object?>{'x': 58.0, 'y': 7.0},
-              <String, Object?>{'x': 59.0, 'y': 21.0},
-              <String, Object?>{'x': 60.0, 'y': 12.0},
-              <String, Object?>{'x': 61.0, 'y': 3.0},
-              <String, Object?>{'x': 62.0, 'y': 17.0},
-              <String, Object?>{'x': 63.0, 'y': 8.0},
-              <String, Object?>{'x': 64.0, 'y': 22.0},
-              <String, Object?>{'x': 65.0, 'y': 13.0},
-              <String, Object?>{'x': 66.0, 'y': 4.0},
-              <String, Object?>{'x': 67.0, 'y': 18.0},
-              <String, Object?>{'x': 68.0, 'y': 9.0},
-              <String, Object?>{'x': 69.0, 'y': 0.0},
-              <String, Object?>{'x': 70.0, 'y': 14.0},
-              <String, Object?>{'x': 71.0, 'y': 5.0},
-              <String, Object?>{'x': 72.0, 'y': 19.0},
-              <String, Object?>{'x': 73.0, 'y': 10.0},
-              <String, Object?>{'x': 74.0, 'y': 1.0},
-              <String, Object?>{'x': 75.0, 'y': 15.0},
-              <String, Object?>{'x': 76.0, 'y': 6.0},
-              <String, Object?>{'x': 77.0, 'y': 20.0},
-              <String, Object?>{'x': 78.0, 'y': 11.0},
-              <String, Object?>{'x': 79.0, 'y': 2.0},
-              <String, Object?>{'x': 80.0, 'y': 16.0},
-              <String, Object?>{'x': 81.0, 'y': 7.0},
-              <String, Object?>{'x': 82.0, 'y': 21.0},
-              <String, Object?>{'x': 83.0, 'y': 12.0},
-              <String, Object?>{'x': 84.0, 'y': 3.0},
-              <String, Object?>{'x': 85.0, 'y': 17.0},
-              <String, Object?>{'x': 86.0, 'y': 8.0},
-              <String, Object?>{'x': 87.0, 'y': 22.0},
-              <String, Object?>{'x': 88.0, 'y': 13.0},
-              <String, Object?>{'x': 89.0, 'y': 4.0},
-              <String, Object?>{'x': 90.0, 'y': 18.0},
-              <String, Object?>{'x': 91.0, 'y': 9.0},
-              <String, Object?>{'x': 92.0, 'y': 0.0},
-              <String, Object?>{'x': 93.0, 'y': 14.0},
-              <String, Object?>{'x': 94.0, 'y': 5.0},
-              <String, Object?>{'x': 95.0, 'y': 19.0},
-              <String, Object?>{'x': 96.0, 'y': 10.0},
-              <String, Object?>{'x': 97.0, 'y': 1.0},
-              <String, Object?>{'x': 98.0, 'y': 15.0},
-              <String, Object?>{'x': 99.0, 'y': 6.0},
-              <String, Object?>{'x': 100.0, 'y': 20.0},
-              <String, Object?>{'x': 101.0, 'y': 11.0},
-              <String, Object?>{'x': 102.0, 'y': 2.0},
-              <String, Object?>{'x': 103.0, 'y': 16.0},
-              <String, Object?>{'x': 104.0, 'y': 7.0},
-              <String, Object?>{'x': 105.0, 'y': 21.0},
-              <String, Object?>{'x': 106.0, 'y': 12.0},
-              <String, Object?>{'x': 107.0, 'y': 3.0},
-              <String, Object?>{'x': 108.0, 'y': 17.0},
-              <String, Object?>{'x': 109.0, 'y': 8.0},
-              <String, Object?>{'x': 110.0, 'y': 22.0},
-              <String, Object?>{'x': 111.0, 'y': 13.0},
-              <String, Object?>{'x': 112.0, 'y': 4.0},
-              <String, Object?>{'x': 113.0, 'y': 18.0},
-              <String, Object?>{'x': 114.0, 'y': 9.0},
-              <String, Object?>{'x': 115.0, 'y': 0.0},
-              <String, Object?>{'x': 116.0, 'y': 14.0},
-              <String, Object?>{'x': 117.0, 'y': 5.0},
-              <String, Object?>{'x': 118.0, 'y': 19.0},
-              <String, Object?>{'x': 119.0, 'y': 10.0},
-            ],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-            'pointRadius': 0.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'parsing': false,
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear'},
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 0.0),
+            DataPoint(1.0, 14.0),
+            DataPoint(2.0, 5.0),
+            DataPoint(3.0, 19.0),
+            DataPoint(4.0, 10.0),
+            DataPoint(5.0, 1.0),
+            DataPoint(6.0, 15.0),
+            DataPoint(7.0, 6.0),
+            DataPoint(8.0, 20.0),
+            DataPoint(9.0, 11.0),
+            DataPoint(10.0, 2.0),
+            DataPoint(11.0, 16.0),
+            DataPoint(12.0, 7.0),
+            DataPoint(13.0, 21.0),
+            DataPoint(14.0, 12.0),
+            DataPoint(15.0, 3.0),
+            DataPoint(16.0, 17.0),
+            DataPoint(17.0, 8.0),
+            DataPoint(18.0, 22.0),
+            DataPoint(19.0, 13.0),
+            DataPoint(20.0, 4.0),
+            DataPoint(21.0, 18.0),
+            DataPoint(22.0, 9.0),
+            DataPoint(23.0, 0.0),
+            DataPoint(24.0, 14.0),
+            DataPoint(25.0, 5.0),
+            DataPoint(26.0, 19.0),
+            DataPoint(27.0, 10.0),
+            DataPoint(28.0, 1.0),
+            DataPoint(29.0, 15.0),
+            DataPoint(30.0, 6.0),
+            DataPoint(31.0, 20.0),
+            DataPoint(32.0, 11.0),
+            DataPoint(33.0, 2.0),
+            DataPoint(34.0, 16.0),
+            DataPoint(35.0, 7.0),
+            DataPoint(36.0, 21.0),
+            DataPoint(37.0, 12.0),
+            DataPoint(38.0, 3.0),
+            DataPoint(39.0, 17.0),
+            DataPoint(40.0, 8.0),
+            DataPoint(41.0, 22.0),
+            DataPoint(42.0, 13.0),
+            DataPoint(43.0, 4.0),
+            DataPoint(44.0, 18.0),
+            DataPoint(45.0, 9.0),
+            DataPoint(46.0, 0.0),
+            DataPoint(47.0, 14.0),
+            DataPoint(48.0, 5.0),
+            DataPoint(49.0, 19.0),
+            DataPoint(50.0, 10.0),
+            DataPoint(51.0, 1.0),
+            DataPoint(52.0, 15.0),
+            DataPoint(53.0, 6.0),
+            DataPoint(54.0, 20.0),
+            DataPoint(55.0, 11.0),
+            DataPoint(56.0, 2.0),
+            DataPoint(57.0, 16.0),
+            DataPoint(58.0, 7.0),
+            DataPoint(59.0, 21.0),
+            DataPoint(60.0, 12.0),
+            DataPoint(61.0, 3.0),
+            DataPoint(62.0, 17.0),
+            DataPoint(63.0, 8.0),
+            DataPoint(64.0, 22.0),
+            DataPoint(65.0, 13.0),
+            DataPoint(66.0, 4.0),
+            DataPoint(67.0, 18.0),
+            DataPoint(68.0, 9.0),
+            DataPoint(69.0, 0.0),
+            DataPoint(70.0, 14.0),
+            DataPoint(71.0, 5.0),
+            DataPoint(72.0, 19.0),
+            DataPoint(73.0, 10.0),
+            DataPoint(74.0, 1.0),
+            DataPoint(75.0, 15.0),
+            DataPoint(76.0, 6.0),
+            DataPoint(77.0, 20.0),
+            DataPoint(78.0, 11.0),
+            DataPoint(79.0, 2.0),
+            DataPoint(80.0, 16.0),
+            DataPoint(81.0, 7.0),
+            DataPoint(82.0, 21.0),
+            DataPoint(83.0, 12.0),
+            DataPoint(84.0, 3.0),
+            DataPoint(85.0, 17.0),
+            DataPoint(86.0, 8.0),
+            DataPoint(87.0, 22.0),
+            DataPoint(88.0, 13.0),
+            DataPoint(89.0, 4.0),
+            DataPoint(90.0, 18.0),
+            DataPoint(91.0, 9.0),
+            DataPoint(92.0, 0.0),
+            DataPoint(93.0, 14.0),
+            DataPoint(94.0, 5.0),
+            DataPoint(95.0, 19.0),
+            DataPoint(96.0, 10.0),
+            DataPoint(97.0, 1.0),
+            DataPoint(98.0, 15.0),
+            DataPoint(99.0, 6.0),
+            DataPoint(100.0, 20.0),
+            DataPoint(101.0, 11.0),
+            DataPoint(102.0, 2.0),
+            DataPoint(103.0, 16.0),
+            DataPoint(104.0, 7.0),
+            DataPoint(105.0, 21.0),
+            DataPoint(106.0, 12.0),
+            DataPoint(107.0, 3.0),
+            DataPoint(108.0, 17.0),
+            DataPoint(109.0, 8.0),
+            DataPoint(110.0, 22.0),
+            DataPoint(111.0, 13.0),
+            DataPoint(112.0, 4.0),
+            DataPoint(113.0, 18.0),
+            DataPoint(114.0, 9.0),
+            DataPoint(115.0, 0.0),
+            DataPoint(116.0, 14.0),
+            DataPoint(117.0, 5.0),
+            DataPoint(118.0, 19.0),
+            DataPoint(119.0, 10.0),
+          ]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+          pointRadius: const ChartValue.constant(0),
+        ),
+      ],
+      scales: const [LinearAxis(.x)],
+      parsing: false,
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -46848,33 +46909,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar origin',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'min': -1.0},
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      scales: const [RadialLinearAxis(min: -1)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -47674,31 +47732,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar start',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toStart,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{'r': <String, Object?>{}},
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toStart,
+        ),
+      ],
+      scales: const [RadialLinearAxis()],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -48511,31 +48568,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar end',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toEnd,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{'r': <String, Object?>{}},
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toEnd,
+        ),
+      ],
+      scales: const [RadialLinearAxis()],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -49364,31 +49420,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar value',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toValue(2),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{'r': <String, Object?>{}},
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: const FillTarget.toValue(2),
+        ),
+      ],
+      scales: const [RadialLinearAxis()],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -50217,33 +50272,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar with a gap',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, null, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'beginAtZero': true},
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [1.0, 2.0, null, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      scales: const [RadialLinearAxis(beginAtZero: true)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -51051,38 +51103,39 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar fill 1',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 4.0, 5.0, 4.0, 3.0, 4.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toDataset(1),
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'beginAtZero': true},
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [3.0, 4.0, 5.0, 4.0, 3.0, 4.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: const FillTarget.toDataset(1),
+        ),
+        RadarDataset(
+          data: [1.0, 2.0, 1.0, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+        ),
+      ],
+      scales: const [RadialLinearAxis(beginAtZero: true)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -52295,33 +52348,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar reverse',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toStart,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'reverse': true},
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toStart,
+        ),
+      ],
+      scales: const [RadialLinearAxis(reverse: true)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -53143,31 +53193,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar with a negative minimum',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-3.0, 2.0, -1.0, 4.0, 1.0, -2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{'r': <String, Object?>{}},
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [-3.0, 2.0, -1.0, 4.0, 1.0, -2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      scales: const [RadialLinearAxis()],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -53945,33 +53994,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar with r min and max',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[-4.0, -2.0, -3.0, -2.0, -4.0, -3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'min': -5.0, 'max': -1.0},
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [-4.0, -2.0, -3.0, -2.0, -4.0, -3.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      scales: const [RadialLinearAxis(min: -5, max: -1)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -54775,33 +54821,30 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar with a positive r min',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{'min': 1.0, 'max': 4.0},
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      scales: const [RadialLinearAxis(min: 1, max: 4)],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -55507,36 +55550,35 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar circular',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'grid': <String, Object?>{'circular': true},
-            'beginAtZero': true,
-          },
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          grid: AxisGrid(extra: <String, Object?>{'circular': true}),
+          beginAtZero: true,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -56204,36 +56246,35 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'radar circular with a gap',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, null, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'grid': <String, Object?>{'circular': true},
-            'beginAtZero': true,
-          },
-        },
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [1.0, 2.0, null, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      scales: const [
+        RadialLinearAxis(
+          grid: AxisGrid(extra: <String, Object?>{'circular': true}),
+          beginAtZero: true,
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -56979,33 +57020,32 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'throws: shape with two colors',
-    config: <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': const <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': const <Object?>[-2.0, 1.0, -3.0, 2.0, -1.0, 3.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.shape.split(
-              above: nativeFixturePaint('rgba(255, 0, 0, 0.3)'),
-              below: nativeFixturePaint('rgba(0, 128, 0, 0.3)'),
-            ),
-          },
-        ],
-      },
-      'options': const <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        LineDataset(
+          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.shape.split(
+            above: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+            below: ChartPaint.solid(Color.fromRGBO(0, 128, 0, 0.3)),
+          ),
+        ),
+      ],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
@@ -57013,34 +57053,36 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'throws: radar without a layout',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{'r': <String, Object?>{}},
-        'plugins': <String, Object?>{
-          'colors': false,
-          'decimation': false,
-          'legend': false,
-          'subtitle': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-      'plugins': <Object?>[
-        <String, Object?>{'id': 'noLayout', 'beforeLayout': 'fn:noLayout'},
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+      datasets: [
+        RadarDataset(
+          data: [1.0, 2.0, 3.0, 2.0, 1.0, 2.0],
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+        ),
       ],
-    },
+      scales: const [RadialLinearAxis()],
+      disabledPlugins: const [
+        PluginOff<ColorsPlugin>(),
+        PluginOff<DecimationPlugin>(),
+        PluginOff<LegendPlugin>(),
+        PluginOff<SubtitlePlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+      plugins: [
+        nativePlugin(<String, Object?>{
+          'id': 'noLayout',
+          'beforeLayout': functions['noLayout'],
+        }),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
@@ -57048,25 +57090,14 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'full: radar with colors on',
-    config: const <String, Object?>{
-      'type': 'radar',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[3.0, 5.0, 2.0, 6.0, 4.0],
-          },
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 1.0, 3.0, 2.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': ColorsPluginOptions(enabled: true),
-        },
-      },
-    },
+    config: () => ChartConfig(
+      labels: ['a', 'b', 'c', 'd', 'e'],
+      datasets: [
+        RadarDataset(data: [3.0, 5.0, 2.0, 6.0, 4.0]),
+        RadarDataset(data: [1.0, 2.0, 1.0, 3.0, 2.0]),
+      ],
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -58233,95 +58264,92 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'full: lttb with fill origin',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': -8.0},
-              <String, Object?>{'x': 1.0, 'y': 6.0},
-              <String, Object?>{'x': 2.0, 'y': -3.0},
-              <String, Object?>{'x': 3.0, 'y': 11.0},
-              <String, Object?>{'x': 4.0, 'y': 2.0},
-              <String, Object?>{'x': 5.0, 'y': -7.0},
-              <String, Object?>{'x': 6.0, 'y': 7.0},
-              <String, Object?>{'x': 7.0, 'y': -2.0},
-              <String, Object?>{'x': 8.0, 'y': 12.0},
-              <String, Object?>{'x': 9.0, 'y': 3.0},
-              <String, Object?>{'x': 10.0, 'y': -6.0},
-              <String, Object?>{'x': 11.0, 'y': 8.0},
-              <String, Object?>{'x': 12.0, 'y': -1.0},
-              <String, Object?>{'x': 13.0, 'y': 13.0},
-              <String, Object?>{'x': 14.0, 'y': 4.0},
-              <String, Object?>{'x': 15.0, 'y': -5.0},
-              <String, Object?>{'x': 16.0, 'y': 9.0},
-              <String, Object?>{'x': 17.0, 'y': 0.0},
-              <String, Object?>{'x': 18.0, 'y': 14.0},
-              <String, Object?>{'x': 19.0, 'y': 5.0},
-              <String, Object?>{'x': 20.0, 'y': -4.0},
-              <String, Object?>{'x': 21.0, 'y': 10.0},
-              <String, Object?>{'x': 22.0, 'y': 1.0},
-              <String, Object?>{'x': 23.0, 'y': -8.0},
-              <String, Object?>{'x': 24.0, 'y': 6.0},
-              <String, Object?>{'x': 25.0, 'y': -3.0},
-              <String, Object?>{'x': 26.0, 'y': 11.0},
-              <String, Object?>{'x': 27.0, 'y': 2.0},
-              <String, Object?>{'x': 28.0, 'y': -7.0},
-              <String, Object?>{'x': 29.0, 'y': 7.0},
-              <String, Object?>{'x': 30.0, 'y': -2.0},
-              <String, Object?>{'x': 31.0, 'y': 12.0},
-              <String, Object?>{'x': 32.0, 'y': 3.0},
-              <String, Object?>{'x': 33.0, 'y': -6.0},
-              <String, Object?>{'x': 34.0, 'y': 8.0},
-              <String, Object?>{'x': 35.0, 'y': -1.0},
-              <String, Object?>{'x': 36.0, 'y': 13.0},
-              <String, Object?>{'x': 37.0, 'y': 4.0},
-              <String, Object?>{'x': 38.0, 'y': -5.0},
-              <String, Object?>{'x': 39.0, 'y': 9.0},
-              <String, Object?>{'x': 40.0, 'y': 0.0},
-              <String, Object?>{'x': 41.0, 'y': 14.0},
-              <String, Object?>{'x': 42.0, 'y': 5.0},
-              <String, Object?>{'x': 43.0, 'y': -4.0},
-              <String, Object?>{'x': 44.0, 'y': 10.0},
-              <String, Object?>{'x': 45.0, 'y': 1.0},
-              <String, Object?>{'x': 46.0, 'y': -8.0},
-              <String, Object?>{'x': 47.0, 'y': 6.0},
-              <String, Object?>{'x': 48.0, 'y': -3.0},
-              <String, Object?>{'x': 49.0, 'y': 11.0},
-              <String, Object?>{'x': 50.0, 'y': 2.0},
-              <String, Object?>{'x': 51.0, 'y': -7.0},
-              <String, Object?>{'x': 52.0, 'y': 7.0},
-              <String, Object?>{'x': 53.0, 'y': -2.0},
-              <String, Object?>{'x': 54.0, 'y': 12.0},
-              <String, Object?>{'x': 55.0, 'y': 3.0},
-              <String, Object?>{'x': 56.0, 'y': -6.0},
-              <String, Object?>{'x': 57.0, 'y': 8.0},
-              <String, Object?>{'x': 58.0, 'y': -1.0},
-              <String, Object?>{'x': 59.0, 'y': 13.0},
-            ],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'fill': FillTarget.toOrigin,
-            'pointRadius': 0.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'parsing': false,
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear'},
-        },
-        'plugins': <String, Object?>{
-          'decimation': DecimationOptions(
-            enabled: true,
-            threshold: 20,
-            algorithm: LttbDecimationAlgorithm(),
-            samples: 12,
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, -8.0),
+            DataPoint(1.0, 6.0),
+            DataPoint(2.0, -3.0),
+            DataPoint(3.0, 11.0),
+            DataPoint(4.0, 2.0),
+            DataPoint(5.0, -7.0),
+            DataPoint(6.0, 7.0),
+            DataPoint(7.0, -2.0),
+            DataPoint(8.0, 12.0),
+            DataPoint(9.0, 3.0),
+            DataPoint(10.0, -6.0),
+            DataPoint(11.0, 8.0),
+            DataPoint(12.0, -1.0),
+            DataPoint(13.0, 13.0),
+            DataPoint(14.0, 4.0),
+            DataPoint(15.0, -5.0),
+            DataPoint(16.0, 9.0),
+            DataPoint(17.0, 0.0),
+            DataPoint(18.0, 14.0),
+            DataPoint(19.0, 5.0),
+            DataPoint(20.0, -4.0),
+            DataPoint(21.0, 10.0),
+            DataPoint(22.0, 1.0),
+            DataPoint(23.0, -8.0),
+            DataPoint(24.0, 6.0),
+            DataPoint(25.0, -3.0),
+            DataPoint(26.0, 11.0),
+            DataPoint(27.0, 2.0),
+            DataPoint(28.0, -7.0),
+            DataPoint(29.0, 7.0),
+            DataPoint(30.0, -2.0),
+            DataPoint(31.0, 12.0),
+            DataPoint(32.0, 3.0),
+            DataPoint(33.0, -6.0),
+            DataPoint(34.0, 8.0),
+            DataPoint(35.0, -1.0),
+            DataPoint(36.0, 13.0),
+            DataPoint(37.0, 4.0),
+            DataPoint(38.0, -5.0),
+            DataPoint(39.0, 9.0),
+            DataPoint(40.0, 0.0),
+            DataPoint(41.0, 14.0),
+            DataPoint(42.0, 5.0),
+            DataPoint(43.0, -4.0),
+            DataPoint(44.0, 10.0),
+            DataPoint(45.0, 1.0),
+            DataPoint(46.0, -8.0),
+            DataPoint(47.0, 6.0),
+            DataPoint(48.0, -3.0),
+            DataPoint(49.0, 11.0),
+            DataPoint(50.0, 2.0),
+            DataPoint(51.0, -7.0),
+            DataPoint(52.0, 7.0),
+            DataPoint(53.0, -2.0),
+            DataPoint(54.0, 12.0),
+            DataPoint(55.0, 3.0),
+            DataPoint(56.0, -6.0),
+            DataPoint(57.0, 8.0),
+            DataPoint(58.0, -1.0),
+            DataPoint(59.0, 13.0),
+          ]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          fill: FillTarget.toOrigin,
+          pointRadius: const ChartValue.constant(0),
+        ),
+      ],
+      scales: const [LinearAxis(.x)],
+      parsing: false,
+      pluginOptions: const [
+        DecimationOptions(
+          enabled: true,
+          threshold: 20,
+          algorithm: LttbDecimationAlgorithm(),
+          samples: 12,
+        ),
+      ],
+    ),
     options: const <String, Object?>{},
     expected: const <String, Object?>{
       'initial': <String, Object?>{
@@ -59480,169 +59508,170 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
   ),
   (
     name: 'full: min-max with fill stack',
-    config: const <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': -5.0},
-              <String, Object?>{'x': 0.25, 'y': 9.0},
-              <String, Object?>{'x': 0.5, 'y': 0.0},
-              <String, Object?>{'x': 0.75, 'y': 14.0},
-              <String, Object?>{'x': 10.0, 'y': 5.0},
-              <String, Object?>{'x': 10.25, 'y': -4.0},
-              <String, Object?>{'x': 10.5, 'y': 10.0},
-              <String, Object?>{'x': 10.75, 'y': 1.0},
-              <String, Object?>{'x': 20.0, 'y': 15.0},
-              <String, Object?>{'x': 20.25, 'y': 6.0},
-              <String, Object?>{'x': 20.5, 'y': -3.0},
-              <String, Object?>{'x': 20.75, 'y': 11.0},
-              <String, Object?>{'x': 30.0, 'y': 2.0},
-              <String, Object?>{'x': 30.25, 'y': 16.0},
-              <String, Object?>{'x': 30.5, 'y': 7.0},
-              <String, Object?>{'x': 30.75, 'y': -2.0},
-              <String, Object?>{'x': 40.0, 'y': 12.0},
-              <String, Object?>{'x': 40.25, 'y': 3.0},
-              <String, Object?>{'x': 40.5, 'y': 17.0},
-              <String, Object?>{'x': 40.75, 'y': 8.0},
-              <String, Object?>{'x': 50.0, 'y': -1.0},
-              <String, Object?>{'x': 50.25, 'y': 13.0},
-              <String, Object?>{'x': 50.5, 'y': 4.0},
-              <String, Object?>{'x': 50.75, 'y': -5.0},
-              <String, Object?>{'x': 60.0, 'y': 9.0},
-              <String, Object?>{'x': 60.25, 'y': 0.0},
-              <String, Object?>{'x': 60.5, 'y': 14.0},
-              <String, Object?>{'x': 60.75, 'y': 5.0},
-              <String, Object?>{'x': 70.0, 'y': -4.0},
-              <String, Object?>{'x': 70.25, 'y': 10.0},
-              <String, Object?>{'x': 70.5, 'y': 1.0},
-              <String, Object?>{'x': 70.75, 'y': 15.0},
-              <String, Object?>{'x': 80.0, 'y': 6.0},
-              <String, Object?>{'x': 80.25, 'y': -3.0},
-              <String, Object?>{'x': 80.5, 'y': 11.0},
-              <String, Object?>{'x': 80.75, 'y': 2.0},
-              <String, Object?>{'x': 90.0, 'y': 16.0},
-              <String, Object?>{'x': 90.25, 'y': 7.0},
-              <String, Object?>{'x': 90.5, 'y': -2.0},
-              <String, Object?>{'x': 90.75, 'y': 12.0},
-              <String, Object?>{'x': 100.0, 'y': 3.0},
-              <String, Object?>{'x': 100.25, 'y': 17.0},
-              <String, Object?>{'x': 100.5, 'y': 8.0},
-              <String, Object?>{'x': 100.75, 'y': -1.0},
-              <String, Object?>{'x': 110.0, 'y': 13.0},
-              <String, Object?>{'x': 110.25, 'y': 4.0},
-              <String, Object?>{'x': 110.5, 'y': -5.0},
-              <String, Object?>{'x': 110.75, 'y': 9.0},
-              <String, Object?>{'x': 120.0, 'y': 0.0},
-              <String, Object?>{'x': 120.25, 'y': 14.0},
-              <String, Object?>{'x': 120.5, 'y': 5.0},
-              <String, Object?>{'x': 120.75, 'y': -4.0},
-              <String, Object?>{'x': 130.0, 'y': 10.0},
-              <String, Object?>{'x': 130.25, 'y': 1.0},
-              <String, Object?>{'x': 130.5, 'y': 15.0},
-              <String, Object?>{'x': 130.75, 'y': 6.0},
-              <String, Object?>{'x': 140.0, 'y': -3.0},
-              <String, Object?>{'x': 140.25, 'y': 11.0},
-              <String, Object?>{'x': 140.5, 'y': 2.0},
-              <String, Object?>{'x': 140.75, 'y': 16.0},
-              <String, Object?>{'x': 150.0, 'y': 7.0},
-              <String, Object?>{'x': 150.25, 'y': -2.0},
-              <String, Object?>{'x': 150.5, 'y': 12.0},
-              <String, Object?>{'x': 150.75, 'y': 3.0},
-            ],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
-            'pointRadius': 0.0,
-          },
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0.0, 'y': 0.0},
-              <String, Object?>{'x': 0.25, 'y': 14.0},
-              <String, Object?>{'x': 0.5, 'y': 5.0},
-              <String, Object?>{'x': 0.75, 'y': 19.0},
-              <String, Object?>{'x': 10.0, 'y': 10.0},
-              <String, Object?>{'x': 10.25, 'y': 1.0},
-              <String, Object?>{'x': 10.5, 'y': 15.0},
-              <String, Object?>{'x': 10.75, 'y': 6.0},
-              <String, Object?>{'x': 20.0, 'y': 20.0},
-              <String, Object?>{'x': 20.25, 'y': 11.0},
-              <String, Object?>{'x': 20.5, 'y': 2.0},
-              <String, Object?>{'x': 20.75, 'y': 16.0},
-              <String, Object?>{'x': 30.0, 'y': 7.0},
-              <String, Object?>{'x': 30.25, 'y': 21.0},
-              <String, Object?>{'x': 30.5, 'y': 12.0},
-              <String, Object?>{'x': 30.75, 'y': 3.0},
-              <String, Object?>{'x': 40.0, 'y': 17.0},
-              <String, Object?>{'x': 40.25, 'y': 8.0},
-              <String, Object?>{'x': 40.5, 'y': 22.0},
-              <String, Object?>{'x': 40.75, 'y': 13.0},
-              <String, Object?>{'x': 50.0, 'y': 4.0},
-              <String, Object?>{'x': 50.25, 'y': 18.0},
-              <String, Object?>{'x': 50.5, 'y': 9.0},
-              <String, Object?>{'x': 50.75, 'y': 0.0},
-              <String, Object?>{'x': 60.0, 'y': 14.0},
-              <String, Object?>{'x': 60.25, 'y': 5.0},
-              <String, Object?>{'x': 60.5, 'y': 19.0},
-              <String, Object?>{'x': 60.75, 'y': 10.0},
-              <String, Object?>{'x': 70.0, 'y': 1.0},
-              <String, Object?>{'x': 70.25, 'y': 15.0},
-              <String, Object?>{'x': 70.5, 'y': 6.0},
-              <String, Object?>{'x': 70.75, 'y': 20.0},
-              <String, Object?>{'x': 80.0, 'y': 11.0},
-              <String, Object?>{'x': 80.25, 'y': 2.0},
-              <String, Object?>{'x': 80.5, 'y': 16.0},
-              <String, Object?>{'x': 80.75, 'y': 7.0},
-              <String, Object?>{'x': 90.0, 'y': 21.0},
-              <String, Object?>{'x': 90.25, 'y': 12.0},
-              <String, Object?>{'x': 90.5, 'y': 3.0},
-              <String, Object?>{'x': 90.75, 'y': 17.0},
-              <String, Object?>{'x': 100.0, 'y': 8.0},
-              <String, Object?>{'x': 100.25, 'y': 22.0},
-              <String, Object?>{'x': 100.5, 'y': 13.0},
-              <String, Object?>{'x': 100.75, 'y': 4.0},
-              <String, Object?>{'x': 110.0, 'y': 18.0},
-              <String, Object?>{'x': 110.25, 'y': 9.0},
-              <String, Object?>{'x': 110.5, 'y': 0.0},
-              <String, Object?>{'x': 110.75, 'y': 14.0},
-              <String, Object?>{'x': 120.0, 'y': 5.0},
-              <String, Object?>{'x': 120.25, 'y': 19.0},
-              <String, Object?>{'x': 120.5, 'y': 10.0},
-              <String, Object?>{'x': 120.75, 'y': 1.0},
-              <String, Object?>{'x': 130.0, 'y': 15.0},
-              <String, Object?>{'x': 130.25, 'y': 6.0},
-              <String, Object?>{'x': 130.5, 'y': 20.0},
-              <String, Object?>{'x': 130.75, 'y': 11.0},
-              <String, Object?>{'x': 140.0, 'y': 2.0},
-              <String, Object?>{'x': 140.25, 'y': 16.0},
-              <String, Object?>{'x': 140.5, 'y': 7.0},
-              <String, Object?>{'x': 140.75, 'y': 21.0},
-              <String, Object?>{'x': 150.0, 'y': 12.0},
-              <String, Object?>{'x': 150.25, 'y': 3.0},
-              <String, Object?>{'x': 150.5, 'y': 17.0},
-              <String, Object?>{'x': 150.75, 'y': 8.0},
-            ],
-            'borderColor': 'black',
-            'backgroundColor': 'rgba(255, 0, 0, 0.3)',
-            'fill': FillTarget.toStacked,
-            'pointRadius': 0.0,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'parsing': false,
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear'},
-        },
-        'plugins': <String, Object?>{
-          'decimation': DecimationOptions(
-            enabled: true,
-            threshold: 20,
-            algorithm: MinMaxDecimationAlgorithm(),
+    config: () => ChartConfig(
+      datasets: [
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, -5.0),
+            DataPoint(0.25, 9.0),
+            DataPoint(0.5, 0.0),
+            DataPoint(0.75, 14.0),
+            DataPoint(10.0, 5.0),
+            DataPoint(10.25, -4.0),
+            DataPoint(10.5, 10.0),
+            DataPoint(10.75, 1.0),
+            DataPoint(20.0, 15.0),
+            DataPoint(20.25, 6.0),
+            DataPoint(20.5, -3.0),
+            DataPoint(20.75, 11.0),
+            DataPoint(30.0, 2.0),
+            DataPoint(30.25, 16.0),
+            DataPoint(30.5, 7.0),
+            DataPoint(30.75, -2.0),
+            DataPoint(40.0, 12.0),
+            DataPoint(40.25, 3.0),
+            DataPoint(40.5, 17.0),
+            DataPoint(40.75, 8.0),
+            DataPoint(50.0, -1.0),
+            DataPoint(50.25, 13.0),
+            DataPoint(50.5, 4.0),
+            DataPoint(50.75, -5.0),
+            DataPoint(60.0, 9.0),
+            DataPoint(60.25, 0.0),
+            DataPoint(60.5, 14.0),
+            DataPoint(60.75, 5.0),
+            DataPoint(70.0, -4.0),
+            DataPoint(70.25, 10.0),
+            DataPoint(70.5, 1.0),
+            DataPoint(70.75, 15.0),
+            DataPoint(80.0, 6.0),
+            DataPoint(80.25, -3.0),
+            DataPoint(80.5, 11.0),
+            DataPoint(80.75, 2.0),
+            DataPoint(90.0, 16.0),
+            DataPoint(90.25, 7.0),
+            DataPoint(90.5, -2.0),
+            DataPoint(90.75, 12.0),
+            DataPoint(100.0, 3.0),
+            DataPoint(100.25, 17.0),
+            DataPoint(100.5, 8.0),
+            DataPoint(100.75, -1.0),
+            DataPoint(110.0, 13.0),
+            DataPoint(110.25, 4.0),
+            DataPoint(110.5, -5.0),
+            DataPoint(110.75, 9.0),
+            DataPoint(120.0, 0.0),
+            DataPoint(120.25, 14.0),
+            DataPoint(120.5, 5.0),
+            DataPoint(120.75, -4.0),
+            DataPoint(130.0, 10.0),
+            DataPoint(130.25, 1.0),
+            DataPoint(130.5, 15.0),
+            DataPoint(130.75, 6.0),
+            DataPoint(140.0, -3.0),
+            DataPoint(140.25, 11.0),
+            DataPoint(140.5, 2.0),
+            DataPoint(140.75, 16.0),
+            DataPoint(150.0, 7.0),
+            DataPoint(150.25, -2.0),
+            DataPoint(150.5, 12.0),
+            DataPoint(150.75, 3.0),
+          ]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
           ),
-        },
-      },
-    },
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+          ),
+          pointRadius: const ChartValue.constant(0),
+        ),
+        LineDataset(
+          data: DatasetData.points([
+            DataPoint(0.0, 0.0),
+            DataPoint(0.25, 14.0),
+            DataPoint(0.5, 5.0),
+            DataPoint(0.75, 19.0),
+            DataPoint(10.0, 10.0),
+            DataPoint(10.25, 1.0),
+            DataPoint(10.5, 15.0),
+            DataPoint(10.75, 6.0),
+            DataPoint(20.0, 20.0),
+            DataPoint(20.25, 11.0),
+            DataPoint(20.5, 2.0),
+            DataPoint(20.75, 16.0),
+            DataPoint(30.0, 7.0),
+            DataPoint(30.25, 21.0),
+            DataPoint(30.5, 12.0),
+            DataPoint(30.75, 3.0),
+            DataPoint(40.0, 17.0),
+            DataPoint(40.25, 8.0),
+            DataPoint(40.5, 22.0),
+            DataPoint(40.75, 13.0),
+            DataPoint(50.0, 4.0),
+            DataPoint(50.25, 18.0),
+            DataPoint(50.5, 9.0),
+            DataPoint(50.75, 0.0),
+            DataPoint(60.0, 14.0),
+            DataPoint(60.25, 5.0),
+            DataPoint(60.5, 19.0),
+            DataPoint(60.75, 10.0),
+            DataPoint(70.0, 1.0),
+            DataPoint(70.25, 15.0),
+            DataPoint(70.5, 6.0),
+            DataPoint(70.75, 20.0),
+            DataPoint(80.0, 11.0),
+            DataPoint(80.25, 2.0),
+            DataPoint(80.5, 16.0),
+            DataPoint(80.75, 7.0),
+            DataPoint(90.0, 21.0),
+            DataPoint(90.25, 12.0),
+            DataPoint(90.5, 3.0),
+            DataPoint(90.75, 17.0),
+            DataPoint(100.0, 8.0),
+            DataPoint(100.25, 22.0),
+            DataPoint(100.5, 13.0),
+            DataPoint(100.75, 4.0),
+            DataPoint(110.0, 18.0),
+            DataPoint(110.25, 9.0),
+            DataPoint(110.5, 0.0),
+            DataPoint(110.75, 14.0),
+            DataPoint(120.0, 5.0),
+            DataPoint(120.25, 19.0),
+            DataPoint(120.5, 10.0),
+            DataPoint(120.75, 1.0),
+            DataPoint(130.0, 15.0),
+            DataPoint(130.25, 6.0),
+            DataPoint(130.5, 20.0),
+            DataPoint(130.75, 11.0),
+            DataPoint(140.0, 2.0),
+            DataPoint(140.25, 16.0),
+            DataPoint(140.5, 7.0),
+            DataPoint(140.75, 21.0),
+            DataPoint(150.0, 12.0),
+            DataPoint(150.25, 3.0),
+            DataPoint(150.5, 17.0),
+            DataPoint(150.75, 8.0),
+          ]),
+          borderColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+          ),
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.3)),
+          ),
+          fill: FillTarget.toStacked,
+          pointRadius: const ChartValue.constant(0),
+        ),
+      ],
+      scales: const [LinearAxis(.x)],
+      parsing: false,
+      pluginOptions: const [
+        DecimationOptions(
+          enabled: true,
+          threshold: 20,
+          algorithm: MinMaxDecimationAlgorithm(),
+        ),
+      ],
+    ),
     options: const <String, Object?>{
       'canvas': <String, Object?>{'width': 100.0, 'height': 100.0},
     },

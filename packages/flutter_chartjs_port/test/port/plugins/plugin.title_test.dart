@@ -190,15 +190,15 @@ void main() {
       final snapshot = jsonDecode(
         File('test/port/theme/light_snapshot.json').readAsStringSync(),
       ) as Map<String, Object?>;
-      final config =
-          copyReference(
-                pluginTitleReference(_functions).first.config,
-                _functions,
-              )!
-              as AnyObject;
-      config[themeConfigKey] = compileLightTheme();
-      nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChart(config), snapshot);
+      expectNoStaleScaleKeys(
+        acquireReferenceChart(
+          pluginTitleReference(_functions).first.config,
+          const {},
+          functions: _functions,
+          theme: compileLightTheme(),
+        ),
+        snapshot,
+      );
     });
   });
 
