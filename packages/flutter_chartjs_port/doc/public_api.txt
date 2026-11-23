@@ -515,6 +515,7 @@ TickOptions
 TickOptionsScope
 TickSource
 TimeAxis
+TimeDisplayFormats
 TimeParser
 TimeScale
 TimeScaleOptions
@@ -1570,6 +1571,7 @@ TickOptions
 TickOptionsScope
 TickSource
 TimeAxis
+TimeDisplayFormats
 TimeParser
 TimeScale
 TimeScaleOptions

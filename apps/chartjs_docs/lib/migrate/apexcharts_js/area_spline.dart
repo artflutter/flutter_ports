@@ -61,6 +61,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       .x,
       unit: .hour,
       tooltipFormat: 'dd/MM/yy HH:mm',
+      displayFormats: TimeDisplayFormats(hour: 'HH:mm'),
       grid: AxisGrid(
         color: .solid(apexJsGrid),
         drawOnChartArea: false,
@@ -73,11 +74,6 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
         maxRotation: 0,
       ),
       border: AxisBorder(color: .solid(apexJsGrid)),
-      extra: {
-        'time': {
-          'displayFormats': {'hour': 'HH:mm'},
-        },
-      },
     ),
     apexJsValueAxis(min: 0, max: 120, stepSize: 20),
   ],

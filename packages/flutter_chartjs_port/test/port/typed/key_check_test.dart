@@ -251,6 +251,7 @@ List<ChartConfig> _configs() {
           max: DateTime.utc(2021),
           unit: .month,
           tooltipFormat: 'yyyy',
+          displayFormats: const TimeDisplayFormats(month: 'MMM yyyy'),
         ),
         TimeSeriesAxis(
           .x,
@@ -258,6 +259,7 @@ List<ChartConfig> _configs() {
           max: DateTime.utc(2021),
           unit: .month,
           tooltipFormat: 'yyyy',
+          displayFormats: const TimeDisplayFormats(month: 'MMM yyyy'),
         ),
       ],
       indexAxis: const XAxis(),

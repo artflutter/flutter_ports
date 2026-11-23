@@ -661,6 +661,26 @@ void main() {
         radial.copyWith(border: const RadialAxisBorder(dashOffset: 1)).border,
         const RadialAxisBorder(dashOffset: 1),
       );
+      // The display formats of a time axis, compared with ==.
+      const time = TimeAxis(
+        .x,
+        displayFormats: TimeDisplayFormats(day: 'dd MMM'),
+      );
+      _expectEqual(time.copyWith(), time);
+      _expectEqual(
+        time,
+        const TimeAxis(.x, displayFormats: TimeDisplayFormats(day: 'dd MMM')),
+      );
+      expect(
+        time
+            .copyWith(displayFormats: const TimeDisplayFormats(day: 'd'))
+            .displayFormats,
+        const TimeDisplayFormats(day: 'd'),
+      );
+      expect(
+        time,
+        isNot(const TimeAxis(.x, displayFormats: TimeDisplayFormats(day: 'd'))),
+      );
       const config = ChartConfig(datasets: [BarDataset()]);
       _expectEqual(config.copyWith(), config);
       expect(config.type, ChartKind.bar);
@@ -683,6 +703,11 @@ void main() {
           const AxisTitle(),
           const AxisTitle().copyWith(),
           const AxisTitle().copyWith(text: ['T']),
+        ),
+        (
+          const TimeDisplayFormats(day: 'dd MMM'),
+          const TimeDisplayFormats(day: 'dd MMM').copyWith(),
+          const TimeDisplayFormats(day: 'dd MMM').copyWith(hour: 'HH:mm'),
         ),
         (
           const ChartLegend(),

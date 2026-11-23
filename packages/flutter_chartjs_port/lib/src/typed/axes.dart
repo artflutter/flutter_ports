@@ -2,7 +2,8 @@
 
 /// The axes of the typed API (Chart.js ADR 0052, sections 1 and 7):
 /// [ChartAxis], one axis class for each scale type of Chart.js, and the
-/// axis parts [AxisTicks], [AxisGrid] and [AxisTitle].
+/// axis parts [AxisTicks], [AxisGrid], [AxisTitle] and
+/// [TimeDisplayFormats].
 ///
 /// An axis is an item of the `scales` List of `ChartConfig`. The axis class
 /// gives the scale type (`docs/axes/index.md`), and a cartesian axis takes its
@@ -478,11 +479,15 @@ base mixin _TimeOptions on ChartAxis {
   DateTime? get max;
   TimeUnit? get unit;
   String? get tooltipFormat;
+  TimeDisplayFormats? get displayFormats;
 
   void _lowerTime(ScaleOptionsScope scope) {
     final time = TimeScaleTimeOptionsScope();
     put(time, OptionKey.unit, unit);
     put(time, OptionKey.tooltipFormat, tooltipFormat);
+    if (_lowerDisplayFormats(displayFormats) case final formats?) {
+      time.displayFormats = formats;
+    }
     put(scope, OptionKey.min, min);
     put(scope, OptionKey.max, max);
     if (time.ownKeyCount != 0) scope.time = time;
@@ -493,6 +498,7 @@ base mixin _TimeOptions on ChartAxis {
     ('max', max),
     ('unit', unit),
     ('tooltipFormat', tooltipFormat),
+    ('displayFormats', displayFormats),
   ];
 }
 
@@ -531,6 +537,13 @@ final class const TimeAxis(
   /// {@endtemplate}
   @override final String? tooltipFormat,
 
+  /// {@template flutter_chartjs_port.typed.displayFormats}
+  /// The date format of the tick labels of each time unit:
+  /// `time.displayFormats`, for example `TimeDisplayFormats(day: 'dd MMM')`.
+  /// A unit with no format takes the format of the date adapter.
+  /// {@endtemplate}
+  @override final TimeDisplayFormats? displayFormats,
+
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
   super.ticks,
@@ -557,6 +570,7 @@ final class const TimeAxis(
     DateTime? max,
     TimeUnit? unit,
     String? tooltipFormat,
+    TimeDisplayFormats? displayFormats,
     ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
@@ -573,6 +587,7 @@ final class const TimeAxis(
     max: max ?? this.max,
     unit: unit ?? this.unit,
     tooltipFormat: tooltipFormat ?? this.tooltipFormat,
+    displayFormats: displayFormats ?? this.displayFormats,
     bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
@@ -624,6 +639,9 @@ final class const TimeSeriesAxis(
   /// {@macro flutter_chartjs_port.typed.tooltipFormat}
   @override final String? tooltipFormat,
 
+  /// {@macro flutter_chartjs_port.typed.displayFormats}
+  @override final TimeDisplayFormats? displayFormats,
+
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
   super.ticks,
@@ -650,6 +668,7 @@ final class const TimeSeriesAxis(
     DateTime? max,
     TimeUnit? unit,
     String? tooltipFormat,
+    TimeDisplayFormats? displayFormats,
     ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
@@ -666,6 +685,7 @@ final class const TimeSeriesAxis(
     max: max ?? this.max,
     unit: unit ?? this.unit,
     tooltipFormat: tooltipFormat ?? this.tooltipFormat,
+    displayFormats: displayFormats ?? this.displayFormats,
     bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
@@ -690,6 +710,129 @@ final class const TimeSeriesAxis(
     ('bounds', bounds),
     ..._tailProps,
   ];
+}
+
+/// The date formats of the tick labels of a time axis, one for each time
+/// unit: `time.displayFormats` (`docs/axes/cartesian/time.md`, "Display
+/// Formats").
+///
+/// Each format is an ICU pattern of the default date adapter. A null field
+/// is not set: the chart takes the format of the adapter for that unit.
+@immutable
+final class const TimeDisplayFormats({
+  /// The format of a full date and time: `datetime`. The default of the
+  /// date adapter is `'MMM d, yyyy, h:mm:ss a'`.
+  final String? datetime,
+
+  /// The format of the unit [TimeUnit.millisecond]: `millisecond`. The
+  /// default of the date adapter is `'h:mm:ss.SSS a'`.
+  final String? millisecond,
+
+  /// The format of the unit [TimeUnit.second]: `second`. The default of
+  /// the date adapter is `'h:mm:ss a'`.
+  final String? second,
+
+  /// The format of the unit [TimeUnit.minute]: `minute`. The default of
+  /// the date adapter is `'h:mm a'`.
+  final String? minute,
+
+  /// The format of the unit [TimeUnit.hour]: `hour`, for example `'HH:mm'`.
+  /// The default of the date adapter is `'ha'`.
+  final String? hour,
+
+  /// The format of the unit [TimeUnit.day]: `day`, for example `'dd MMM'`.
+  /// The default of the date adapter is `'MMM d'`.
+  final String? day,
+
+  /// The format of the unit [TimeUnit.week]: `week`. The default of the
+  /// date adapter is `'MMM d, yyyy'`.
+  final String? week,
+
+  /// The format of the unit [TimeUnit.month]: `month`. The default of the
+  /// date adapter is `'MMM yyyy'`.
+  final String? month,
+
+  /// The format of the unit [TimeUnit.quarter]: `quarter`. The default of
+  /// the date adapter is `"'Q'Q - yyyy"`.
+  final String? quarter,
+
+  /// The format of the unit [TimeUnit.year]: `year`. The default of the
+  /// date adapter is `'yyyy'`.
+  final String? year,
+}) with Diagnosticable {
+  /// The date formats of a time axis.
+  this;
+
+  /// A copy of these formats with the given parameters. A parameter that is
+  /// `null` keeps its value.
+  TimeDisplayFormats copyWith({
+    String? datetime,
+    String? millisecond,
+    String? second,
+    String? minute,
+    String? hour,
+    String? day,
+    String? week,
+    String? month,
+    String? quarter,
+    String? year,
+  }) => TimeDisplayFormats(
+    datetime: datetime ?? this.datetime,
+    millisecond: millisecond ?? this.millisecond,
+    second: second ?? this.second,
+    minute: minute ?? this.minute,
+    hour: hour ?? this.hour,
+    day: day ?? this.day,
+    week: week ?? this.week,
+    month: month ?? this.month,
+    quarter: quarter ?? this.quarter,
+    year: year ?? this.year,
+  );
+
+  List<TypedProperty> get _props => [
+    ('datetime', datetime),
+    ('millisecond', millisecond),
+    ('second', second),
+    ('minute', minute),
+    ('hour', hour),
+    ('day', day),
+    ('week', week),
+    ('month', month),
+    ('quarter', quarter),
+    ('year', year),
+  ];
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TimeDisplayFormats && propsEqual(_props, other._props);
+
+  @override
+  int get hashCode => propsHash(_props);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    addProps(properties, _props);
+  }
+}
+
+/// The `displayFormats` scope of [formats], or Dart `null`: each format
+/// that is set, with the typed setter of its key.
+DisplayFormatsScope? _lowerDisplayFormats(TimeDisplayFormats? formats) {
+  if (formats == null) return null;
+  final scope = DisplayFormatsScope();
+  if (formats.datetime case final value?) scope.datetime = value;
+  if (formats.millisecond case final value?) scope.millisecond = value;
+  if (formats.second case final value?) scope.second = value;
+  if (formats.minute case final value?) scope.minute = value;
+  if (formats.hour case final value?) scope.hour = value;
+  if (formats.day case final value?) scope.day = value;
+  if (formats.week case final value?) scope.week = value;
+  if (formats.month case final value?) scope.month = value;
+  if (formats.quarter case final value?) scope.quarter = value;
+  if (formats.year case final value?) scope.year = value;
+  return scope;
 }
 
 /// A radial linear axis: the scale type `radialLinear` (`docs/axes/radial/

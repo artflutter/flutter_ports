@@ -50,6 +50,7 @@ const List<String> _typedNames = [
   // Axes.
   'ChartAxis', 'CategoryAxis', 'LinearAxis', 'LogarithmicAxis', 'TimeAxis',
   'TimeSeriesAxis', 'RadialLinearAxis', 'AxisTicks', 'AxisGrid', 'AxisTitle',
+  'TimeDisplayFormats',
   // Groups.
   'ChartLegend', 'ChartTitle', 'ChartTooltip', 'ChartFiller',
   'ChartInteraction', 'ChartAnimation',
@@ -145,8 +146,8 @@ void main() {
 
   tearDownAll(() => _collection.dispose());
 
-  test('the list has 70 distinct names', () {
-    expect(_typedNames.toSet(), hasLength(70));
+  test('the list has 71 distinct names', () {
+    expect(_typedNames.toSet(), hasLength(71));
   });
 
   test(

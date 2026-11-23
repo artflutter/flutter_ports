@@ -625,6 +625,55 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
           'time': {'tooltipFormat': 'yyyy'},
         },
       ),
+      'displayFormats': (
+        const [
+          (
+            TimeAxis(
+              .x,
+              displayFormats: TimeDisplayFormats(day: 'dd MMM', hour: 'HH:mm'),
+            ),
+            'time',
+          ),
+          (
+            TimeSeriesAxis(
+              .x,
+              displayFormats: TimeDisplayFormats(day: 'dd MMM', hour: 'HH:mm'),
+            ),
+            'timeseries',
+          ),
+        ],
+        {
+          'time': {
+            'displayFormats': {'hour': 'HH:mm', 'day': 'dd MMM'},
+          },
+        },
+      ),
+      'unit and displayFormats': (
+        const [
+          (
+            TimeAxis(
+              .x,
+              unit: .day,
+              displayFormats: TimeDisplayFormats(day: 'dd MMM'),
+            ),
+            'time',
+          ),
+          (
+            TimeSeriesAxis(
+              .x,
+              unit: .day,
+              displayFormats: TimeDisplayFormats(day: 'dd MMM'),
+            ),
+            'timeseries',
+          ),
+        ],
+        {
+          'time': {
+            'unit': TimeUnit.day,
+            'displayFormats': {'day': 'dd MMM'},
+          },
+        },
+      ),
       'startAngle': (
         const [(RadialLinearAxis(startAngle: 45), 'radialLinear')],
         {'startAngle': 45},
@@ -2238,6 +2287,7 @@ void main() {
               max: _end,
               unit: .month,
               tooltipFormat: 'yyyy-MM',
+              displayFormats: const TimeDisplayFormats(month: 'MMM yy'),
               ticks: ticks,
               grid: grid,
               title: title,
@@ -2256,6 +2306,7 @@ void main() {
               max: _end,
               unit: .month,
               tooltipFormat: 'yyyy-MM',
+              displayFormats: const TimeDisplayFormats(month: 'MMM yy'),
               ticks: ticks,
               grid: grid,
               title: title,
@@ -2271,7 +2322,11 @@ void main() {
               ...head,
               'min': _start,
               'max': _end,
-              'time': {'unit': TimeUnit.month, 'tooltipFormat': 'yyyy-MM'},
+              'time': {
+                'unit': TimeUnit.month,
+                'tooltipFormat': 'yyyy-MM',
+                'displayFormats': {'month': 'MMM yy'},
+              },
               ...tail,
             },
           ),

@@ -116,6 +116,11 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       .x,
       min: _date('2012-03-01'),
       tooltipFormat: 'dd MMM yyyy',
+      displayFormats: const TimeDisplayFormats(
+        day: 'dd MMM',
+        month: "MMM ''yy",
+        year: 'yyyy',
+      ),
       grid: const AxisGrid(display: false, drawTicks: false),
       ticks: const AxisTicks(
         color: .solid(Apex.label),
@@ -126,14 +131,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       ),
       border: const AxisBorder(display: false),
       extra: const {
-        'time': {
-          'minUnit': TimeUnit.day,
-          'displayFormats': {
-            'day': 'dd MMM',
-            'month': "MMM ''yy",
-            'year': 'yyyy',
-          },
-        },
+        'time': {'minUnit': TimeUnit.day},
       },
     ),
     // zoom.autoScaleYaxis: Chart.js fits the y axis to the points in the

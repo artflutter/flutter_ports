@@ -622,14 +622,7 @@ void main() {
       final x = _x(
         _chart(
           _xy([_t0, _t0 + _day]),
-          const TimeAxis(
-            .x,
-            extra: {
-              'time': {
-                'displayFormats': {'day': 'MMM'},
-              },
-            },
-          ),
+          const TimeAxis(.x, displayFormats: TimeDisplayFormats(day: 'MMM')),
         ),
       );
       final formats = x.options.time.displayFormats;
@@ -703,14 +696,10 @@ void main() {
             scales: [
               TimeAxis(
                 .x,
-                unit: TimeUnit.day,
                 position: ChartPosition.bottom,
+                unit: TimeUnit.day,
+                displayFormats: TimeDisplayFormats(day: 'yyyy-MM-dd'),
                 ticks: AxisTicks(source: TickSource.labels, autoSkip: false),
-                extra: {
-                  'time': {
-                    'displayFormats': {'day': 'yyyy-MM-dd'},
-                  },
-                },
               ),
             ],
           ),
@@ -1594,15 +1583,11 @@ void main() {
                 scales: [
                   TimeAxis(
                     .x,
-                    extra: {
-                      'time': {
-                        'displayFormats': {
-                          'millisecond': 'foo',
-                          'hour': 'bar',
-                          'month': 'bla',
-                        },
-                      },
-                    },
+                    displayFormats: TimeDisplayFormats(
+                      millisecond: 'foo',
+                      hour: 'bar',
+                      month: 'bla',
+                    ),
                   ),
                 ],
               ),

@@ -47,6 +47,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       .x,
       unit: .day,
       tooltipFormat: 'd MMM',
+      displayFormats: TimeDisplayFormats(day: 'dd MMM'),
       grid: AxisGrid(display: false, drawTicks: false),
       ticks: AxisTicks(
         color: .solid(Apex.label),
@@ -55,11 +56,6 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
         maxRotation: 0,
       ),
       border: AxisBorder(display: false),
-      extra: {
-        'time': {
-          'displayFormats': {'day': 'dd MMM'},
-        },
-      },
     ),
     apexValueAxis(min: 40, max: 120, stepSize: 20),
   ],

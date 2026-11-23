@@ -48,6 +48,7 @@ export 'package:flutter_chartjs_port/src/typed/axes.dart'
         LogarithmicAxis,
         RadialLinearAxis,
         TimeAxis,
+        TimeDisplayFormats,
         TimeSeriesAxis;
 export 'package:flutter_chartjs_port/src/typed/callbacks.dart' show ChartScript;
 export 'package:flutter_chartjs_port/src/typed/chart_value.dart'
