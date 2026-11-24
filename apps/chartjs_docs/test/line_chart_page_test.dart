@@ -187,7 +187,7 @@ void main() {
     );
   });
 
-  test('each row without extra is a parameter of LineDataset', () {
+  test('each row is a parameter of LineDataset', () {
     // The compiler checks each name of this call.
     const dataset = LineDataset(
       backgroundColor: .constant(.solid(teal)),
@@ -223,6 +223,15 @@ void main() {
       tension: 0,
       xAxis: LinearAxis(.x),
       yAxis: LinearAxis(.y),
+      borderDashOffset: 0,
+      drawActiveElementsOnTop: true,
+      hoverBorderCapStyle: StrokeCap.butt,
+      hoverBorderDash: [1],
+      hoverBorderDashOffset: 0,
+      hoverBorderJoinStyle: StrokeJoin.miter,
+      pointHitRadius: .constant(1),
+      pointHoverBorderWidth: .constant(1),
+      pointRotation: .constant(0),
     );
     expect(dataset.label, '');
     final named = {
@@ -230,14 +239,20 @@ void main() {
       'borderCapStyle',
       'borderColor',
       'borderDash',
+      'borderDashOffset',
       'borderJoinStyle',
       'borderWidth',
       'clip',
       'cubicInterpolationMode',
       'data',
+      'drawActiveElementsOnTop',
       'fill',
       'hoverBackgroundColor',
+      'hoverBorderCapStyle',
       'hoverBorderColor',
+      'hoverBorderDash',
+      'hoverBorderDashOffset',
+      'hoverBorderJoinStyle',
       'hoverBorderWidth',
       'indexAxis',
       'label',
@@ -245,10 +260,13 @@ void main() {
       'pointBackgroundColor',
       'pointBorderColor',
       'pointBorderWidth',
+      'pointHitRadius',
       'pointHoverBackgroundColor',
       'pointHoverBorderColor',
+      'pointHoverBorderWidth',
       'pointHoverRadius',
       'pointRadius',
+      'pointRotation',
       'pointStyle',
       'segment',
       'shadow',
@@ -260,10 +278,7 @@ void main() {
       'xAxis',
       'yAxis',
     };
-    expect(
-      lineProperties.where((row) => !row.extra).map((row) => row.name).toSet(),
-      named,
-    );
+    expect(lineProperties.map((row) => row.name).toSet(), named);
   });
 
   test('the sample of the default options sets a default', () {

@@ -3050,6 +3050,10 @@ function datasetSpec(kind, state, axes, paths) {
     pointHitRadius: numberValueNode,
     pointHoverBorderWidth: numberValueNode,
     pointRotation: numberValueNode,
+    hoverBorderCapStyle: (v) => (['butt', 'round', 'square'].includes(v) ? strokeNode('StrokeCap', v, state) : undefined),
+    hoverBorderDash: dashNode,
+    hoverBorderDashOffset: number,
+    hoverBorderJoinStyle: (v) => (['miter', 'round', 'bevel'].includes(v) ? strokeNode('StrokeJoin', v, state) : undefined),
   };
   const arc = {
     offset: number,

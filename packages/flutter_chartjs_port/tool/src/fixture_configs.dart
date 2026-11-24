@@ -1316,6 +1316,10 @@ Map<String, _Convert> _datasetFields(String kind) {
     'pointHitRadius': _doubleValue,
     'pointHoverBorderWidth': _doubleValue,
     'pointRotation': _doubleValue,
+    'hoverBorderCapStyle': _strokeCap,
+    'hoverBorderDash': _doubles,
+    'hoverBorderDashOffset': _double,
+    'hoverBorderJoinStyle': _strokeJoin,
   };
   const arc = <String, _Convert>{
     'offset': _double,

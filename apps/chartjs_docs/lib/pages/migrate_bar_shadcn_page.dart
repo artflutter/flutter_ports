@@ -59,7 +59,7 @@ DocPageContent shadcnBarMigrationPage() => migrationPage(
     ),
     (
       Text('radius={[0, 0, 4, 4]}'),
-      DocText("`extra: {'borderRadius': {'bottomLeft': 4, ...}}`"),
+      DocText('`borderRadiusCorners: BorderRadius.vertical(...)`'),
     ),
     (
       Text('barCategoryGap="10%"'),
@@ -147,8 +147,8 @@ DocPageContent shadcnBarMigrationPage() => migrationPage(
       notes: const [
         DocText(
           '`stackId="a"` is `stacked: true` on both axes. '
-          '`radius={[0, 0, 4, 4]}` is the Chart.js object '
-          "`{'bottomLeft': 4, 'bottomRight': 4}` in `extra`.",
+          '`radius={[0, 0, 4, 4]}` is `borderRadiusCorners`, a '
+          '`BorderRadius` with the two bottom corners.',
         ),
         DocText(
           '`ChartLegendContent` is the legend of Chart.js under the chart, '

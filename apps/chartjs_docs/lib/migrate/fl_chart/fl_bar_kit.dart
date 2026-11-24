@@ -121,7 +121,7 @@ LinearAxis valueAxis({
   position: position,
   reverse: reverse,
   stacked: stacked ? StackMode.on : StackMode.off,
-  grid: (grid ?? const AxisGrid()).copyWith(offset: false),
+  grid: grid.copyWith(offset: false),
   border: border,
   ticks: ticks,
   // The bar chart gives offset to each axis of the index direction.

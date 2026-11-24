@@ -614,6 +614,11 @@ base mixin _LineStyle on Dataset {
   ChartValue<double>? get pointHitRadius;
   ChartValue<double>? get pointHoverBorderWidth;
   ChartValue<double>? get pointRotation;
+  StrokeCap? get hoverBorderCapStyle;
+  List<double>? get hoverBorderDash;
+  double? get hoverBorderDashOffset;
+  StrokeJoin? get hoverBorderJoinStyle;
+  double? get spanGapsDistance;
 
   /// Writes the keys of the line style into [scope].
   void _lowerLine(OptionScope scope) {
@@ -622,7 +627,11 @@ base mixin _LineStyle on Dataset {
     put(scope, OptionKey.borderDash, numberList(borderDash));
     put(scope, OptionKey.borderCapStyle, borderCapStyle);
     put(scope, OptionKey.borderJoinStyle, borderJoinStyle);
-    put(scope, OptionKey.spanGaps, spanGaps);
+    assert(
+      spanGaps == null || spanGapsDistance == null,
+      'Give spanGaps or spanGapsDistance, not both.',
+    );
+    put(scope, OptionKey.spanGaps, spanGaps ?? spanGapsDistance);
     put(scope, OptionKey.showLine, showLine);
     put(scope, OptionKey.stepped, stepped);
     put(scope, OptionKey.cubicInterpolationMode, cubicInterpolationMode);
@@ -661,6 +670,10 @@ base mixin _LineStyle on Dataset {
     if (pointRotation case final value?) {
       scope.store(OptionKey.pointRotation, value.toOptionCell());
     }
+    put(scope, OptionKey.hoverBorderCapStyle, hoverBorderCapStyle);
+    put(scope, OptionKey.hoverBorderDash, numberList(hoverBorderDash));
+    put(scope, OptionKey.hoverBorderDashOffset, hoverBorderDashOffset);
+    put(scope, OptionKey.hoverBorderJoinStyle, hoverBorderJoinStyle);
   }
 
   /// The properties of the line style, in parameter order.
@@ -689,6 +702,11 @@ base mixin _LineStyle on Dataset {
     ('pointHitRadius', pointHitRadius),
     ('pointHoverBorderWidth', pointHoverBorderWidth),
     ('pointRotation', pointRotation),
+    ('hoverBorderCapStyle', hoverBorderCapStyle),
+    ('hoverBorderDash', byItems(hoverBorderDash)),
+    ('hoverBorderDashOffset', hoverBorderDashOffset),
+    ('hoverBorderJoinStyle', hoverBorderJoinStyle),
+    ('spanGapsDistance', spanGapsDistance),
   ];
 }
 
@@ -877,6 +895,23 @@ final class const LineDataset({
   /// `ChartConfig.animation`.
   final ChartAnimation? animation,
 
+  /// The cap of the line under the pointer: `hoverBorderCapStyle`.
+  @override final StrokeCap? hoverBorderCapStyle,
+
+  /// The dash pattern of the line under the pointer: `hoverBorderDash`.
+  @override final List<double>? hoverBorderDash,
+
+  /// The offset of the dash pattern of the line under the pointer:
+  /// `hoverBorderDashOffset`.
+  @override final double? hoverBorderDashOffset,
+
+  /// The join of the line under the pointer: `hoverBorderJoinStyle`.
+  @override final StrokeJoin? hoverBorderJoinStyle,
+
+  /// The largest gap that the line spans, in the unit of the index scale: the
+  /// number form of `spanGaps`. Give this or `spanGaps`.
+  @override final double? spanGapsDistance,
+
   super.extra,
 }) extends Dataset with _LineStyle {
   /// A line dataset.
@@ -930,6 +965,11 @@ final class const LineDataset({
     bool? parsing,
     bool? normalized,
     ChartAnimation? animation,
+    StrokeCap? hoverBorderCapStyle,
+    List<double>? hoverBorderDash,
+    double? hoverBorderDashOffset,
+    StrokeJoin? hoverBorderJoinStyle,
+    double? spanGapsDistance,
     Map<String, Object?>? extra,
   }) => LineDataset(
     key: key ?? this.key,
@@ -980,6 +1020,11 @@ final class const LineDataset({
     parsing: parsing ?? this.parsing,
     normalized: normalized ?? this.normalized,
     animation: animation ?? this.animation,
+    hoverBorderCapStyle: hoverBorderCapStyle ?? this.hoverBorderCapStyle,
+    hoverBorderDash: hoverBorderDash ?? this.hoverBorderDash,
+    hoverBorderDashOffset: hoverBorderDashOffset ?? this.hoverBorderDashOffset,
+    hoverBorderJoinStyle: hoverBorderJoinStyle ?? this.hoverBorderJoinStyle,
+    spanGapsDistance: spanGapsDistance ?? this.spanGapsDistance,
     extra: extra ?? this.extra,
   );
 
@@ -1156,6 +1201,23 @@ final class const ScatterDataset({
   /// `ChartConfig.animation`.
   final ChartAnimation? animation,
 
+  /// The cap of the line under the pointer: `hoverBorderCapStyle`.
+  @override final StrokeCap? hoverBorderCapStyle,
+
+  /// The dash pattern of the line under the pointer: `hoverBorderDash`.
+  @override final List<double>? hoverBorderDash,
+
+  /// The offset of the dash pattern of the line under the pointer:
+  /// `hoverBorderDashOffset`.
+  @override final double? hoverBorderDashOffset,
+
+  /// The join of the line under the pointer: `hoverBorderJoinStyle`.
+  @override final StrokeJoin? hoverBorderJoinStyle,
+
+  /// The largest gap that the line spans, in the unit of the index scale: the
+  /// number form of `spanGaps`. Give this or `spanGaps`.
+  @override final double? spanGapsDistance,
+
   super.extra,
 }) extends Dataset with _LineStyle {
   /// A scatter dataset.
@@ -1208,6 +1270,11 @@ final class const ScatterDataset({
     bool? parsing,
     bool? normalized,
     ChartAnimation? animation,
+    StrokeCap? hoverBorderCapStyle,
+    List<double>? hoverBorderDash,
+    double? hoverBorderDashOffset,
+    StrokeJoin? hoverBorderJoinStyle,
+    double? spanGapsDistance,
     Map<String, Object?>? extra,
   }) => ScatterDataset(
     key: key ?? this.key,
@@ -1257,6 +1324,11 @@ final class const ScatterDataset({
     parsing: parsing ?? this.parsing,
     normalized: normalized ?? this.normalized,
     animation: animation ?? this.animation,
+    hoverBorderCapStyle: hoverBorderCapStyle ?? this.hoverBorderCapStyle,
+    hoverBorderDash: hoverBorderDash ?? this.hoverBorderDash,
+    hoverBorderDashOffset: hoverBorderDashOffset ?? this.hoverBorderDashOffset,
+    hoverBorderJoinStyle: hoverBorderJoinStyle ?? this.hoverBorderJoinStyle,
+    spanGapsDistance: spanGapsDistance ?? this.spanGapsDistance,
     extra: extra ?? this.extra,
   );
 
@@ -2072,6 +2144,23 @@ final class const RadarDataset({
   /// [ChartValue], as `pointRadius`.
   @override final ChartValue<double>? pointRotation,
 
+  /// The cap of the line under the pointer: `hoverBorderCapStyle`.
+  @override final StrokeCap? hoverBorderCapStyle,
+
+  /// The dash pattern of the line under the pointer: `hoverBorderDash`.
+  @override final List<double>? hoverBorderDash,
+
+  /// The offset of the dash pattern of the line under the pointer:
+  /// `hoverBorderDashOffset`.
+  @override final double? hoverBorderDashOffset,
+
+  /// The join of the line under the pointer: `hoverBorderJoinStyle`.
+  @override final StrokeJoin? hoverBorderJoinStyle,
+
+  /// The largest gap that the line spans, in the unit of the index scale: the
+  /// number form of `spanGaps`. Give this or `spanGaps`.
+  @override final double? spanGapsDistance,
+
   super.extra,
 }) extends Dataset with _LineStyle {
   /// A radar dataset.
@@ -2118,6 +2207,11 @@ final class const RadarDataset({
     ChartValue<double>? pointHitRadius,
     ChartValue<double>? pointHoverBorderWidth,
     ChartValue<double>? pointRotation,
+    StrokeCap? hoverBorderCapStyle,
+    List<double>? hoverBorderDash,
+    double? hoverBorderDashOffset,
+    StrokeJoin? hoverBorderJoinStyle,
+    double? spanGapsDistance,
     Map<String, Object?>? extra,
   }) => RadarDataset(
     key: key ?? this.key,
@@ -2161,6 +2255,11 @@ final class const RadarDataset({
     pointHitRadius: pointHitRadius ?? this.pointHitRadius,
     pointHoverBorderWidth: pointHoverBorderWidth ?? this.pointHoverBorderWidth,
     pointRotation: pointRotation ?? this.pointRotation,
+    hoverBorderCapStyle: hoverBorderCapStyle ?? this.hoverBorderCapStyle,
+    hoverBorderDash: hoverBorderDash ?? this.hoverBorderDash,
+    hoverBorderDashOffset: hoverBorderDashOffset ?? this.hoverBorderDashOffset,
+    hoverBorderJoinStyle: hoverBorderJoinStyle ?? this.hoverBorderJoinStyle,
+    spanGapsDistance: spanGapsDistance ?? this.spanGapsDistance,
     extra: extra ?? this.extra,
   );
 

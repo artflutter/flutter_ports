@@ -23,7 +23,6 @@ const List<DocProperty> barProperties = [
     'base',
     section: 'general',
     type: 'double',
-    extra: true,
     scriptable: true,
     indexable: true,
     fallback: 'undefined',
@@ -119,7 +118,6 @@ const List<DocProperty> barProperties = [
     'hoverBorderRadius',
     section: 'interactions',
     type: 'double',
-    extra: true,
     scriptable: true,
     indexable: true,
     fallback: 'undefined',
@@ -134,7 +132,6 @@ const List<DocProperty> barProperties = [
     'inflateAmount',
     section: 'inflateamount',
     type: 'double?',
-    extra: true,
     scriptable: true,
     indexable: true,
     fallback: 'undefined',
@@ -157,7 +154,6 @@ const List<DocProperty> barProperties = [
     'pointStyle',
     section: 'styling',
     type: 'PointStyle',
-    extra: true,
     scriptable: true,
     fallback: 'undefined',
   ),
@@ -171,7 +167,6 @@ const List<DocProperty> barProperties = [
     'skipNull',
     section: 'general',
     type: 'bool',
-    extra: true,
     fallback: 'undefined',
   ),
   DocProperty('stack', section: 'general', type: 'String', fallback: "'bar'"),
@@ -240,8 +235,11 @@ DocPageContent barChartPage() => DocPageContent(
             DocText('The options of this dataset only.'),
           ),
           (
-            Text("extra: {'datasets': {'bar': ...}}"),
-            DocText('The options of all bar datasets, in `ChartConfig.extra`.'),
+            Text('datasetDefaults: [BarDataset(...)]'),
+            DocText(
+              'The options of all bar datasets, in '
+              '`ChartConfig.datasetDefaults`.',
+            ),
           ),
           (
             Text('ChartElements(bar: ...)'),
@@ -275,10 +273,8 @@ DocPageContent barChartPage() => DocPageContent(
         ),
         const DocParagraph(
           DocText(
-            'The column **Set with** gives the place of the option in Dart. '
-            'A **Parameter** is a named parameter of `BarDataset`. An option '
-            'with no parameter goes in the `extra` Map of the dataset, under '
-            'its Chart.js name.',
+            'Each option is a named parameter of `BarDataset`, with the name '
+            'of Chart.js.',
           ),
         ),
         const DocPropertyTable(barProperties),
@@ -293,9 +289,8 @@ DocPageContent barChartPage() => DocPageContent(
             'A scriptable option takes a function, and an indexable option '
             'takes a list. `backgroundColor`, `borderColor`, '
             '`hoverBackgroundColor` and `hoverBorderColor` take a '
-            '`ChartValue`: `.constant`, `.indexed` or `.resolver`. For a '
-            'function or a list on another option, use `extra` with the '
-            'Chart.js name.',
+            '`ChartValue`: `.constant`, `.indexed` or `.resolver`, and so '
+            'does `borderWidths`, the other form of `borderWidth`.',
           ),
         ),
       ],
@@ -595,9 +590,8 @@ DocPageContent barChartPage() => DocPageContent(
               DocText(
                 'A number applies to the four sides of the bar, except the '
                 '[borderSkipped](#borderskipped) side. The object form sets '
-                'each side: the keys `left`, `top`, `right` and `bottom`. The '
-                'object form goes through `extra`. The chart skips an omitted '
-                'side and the `borderSkipped` side.',
+                'each side: `borderWidthSides`, an `EdgeInsets`. The chart '
+                'skips a side of 0 and the `borderSkipped` side.',
               ),
             ),
             LiveExample(
@@ -635,11 +629,11 @@ DocPageContent barChartPage() => DocPageContent(
                 'A number applies to the four corners of the bar, except the '
                 'corners at the [borderSkipped](#borderskipped) edge. The '
                 'object form sets each corner: the keys `topLeft`, `topRight`, '
-                '`bottomLeft` and `bottomRight`. The object form goes through '
-                '`extra`. The chart skips an omitted corner and the corners at '
-                'the `borderSkipped` edge. For example, if the chart skips the '
-                '`top` border, it also skips the corners `topLeft` and '
-                '`topRight`.',
+                '`bottomLeft` and `bottomRight`: `borderRadiusCorners`, a '
+                '`BorderRadius`. The chart skips an omitted corner and the '
+                'corners at the `borderSkipped` edge. For example, if the '
+                'chart skips the `top` border, it also skips the corners '
+                '`topLeft` and `topRight`.',
               ),
             ),
             const DocTip(
@@ -705,7 +699,7 @@ DocPageContent barChartPage() => DocPageContent(
                 '[categoryPercentage](#categorypercentage) is 1. With no '
                 'value, the bars grow by 0.33 pixels when that product is 1, '
                 'else by 0, and this is correct for most charts. A number '
-                "goes through `extra: {'inflateAmount': 0.5}`.",
+                'is `inflateAmount: 0.5`.',
               ),
             ),
           ],
@@ -887,7 +881,7 @@ DocPageContent barChartPage() => DocPageContent(
             DocText(
               'Default `true`. If `true`, the chart adds space at the two '
               'edges, and the axis fits in the chart area. A '
-              "`CategoryAxis` takes it through `extra: {'offset': false}`.",
+              '`CategoryAxis` takes it as `offset: false`.',
             ),
           ),
           (
@@ -1043,9 +1037,8 @@ DocPageContent barChartPage() => DocPageContent(
         ),
         const DocParagraph(
           DocText(
-            'A floating bar takes a pair `[start, end]` for each label. For '
-            'this form and for the other Chart.js data forms, give the data '
-            "in `extra` of the dataset: `extra: {'data': [[1, 5], [2, 6]]}`.",
+            'A floating bar takes a pair `[start, end]` for each label: '
+            '`data: .ranges([(1, 5), (2, 6)])`.',
           ),
         ),
       ],

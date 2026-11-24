@@ -235,8 +235,7 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
       notes: const [
         DocText(
           "`Varset('min') + Varset('max')` makes a floating bar: the pair "
-          '`[min, max]` of each item. The typed `data` takes numbers, so '
-          'the pairs go through `extra`.',
+          '`[min, max]` of each item: `data: .ranges(...)`.',
         ),
         DocText(
           '`RectShape(borderRadius: BorderRadius.circular(2))` is '

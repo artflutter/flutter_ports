@@ -157,7 +157,7 @@ void main() {
     );
   });
 
-  test('each row without extra is a parameter of BarDataset', () {
+  test('each row is a parameter of BarDataset', () {
     // The compiler checks each name of this call.
     const dataset = BarDataset(
       backgroundColor: .constant(.solid(teal)),
@@ -183,12 +183,18 @@ void main() {
       stack: '',
       xAxis: LinearAxis(.x),
       yAxis: LinearAxis(.y),
+      base: 0,
+      hoverBorderRadius: 0,
+      inflateAmount: 0,
+      skipNull: false,
+      pointStyle: CirclePointStyle(),
     );
     expect(dataset.label, '');
     final named = {
       'backgroundColor',
       'barPercentage',
       'barThickness',
+      'base',
       'borderColor',
       'borderRadius',
       'borderSkipped',
@@ -199,21 +205,22 @@ void main() {
       'grouped',
       'hoverBackgroundColor',
       'hoverBorderColor',
+      'hoverBorderRadius',
       'hoverBorderWidth',
       'indexAxis',
+      'inflateAmount',
       'label',
       'maxBarThickness',
       'minBarLength',
       'order',
+      'pointStyle',
       'shadow',
+      'skipNull',
       'stack',
       'xAxis',
       'yAxis',
     };
-    expect(
-      barProperties.where((row) => !row.extra).map((row) => row.name).toSet(),
-      named,
-    );
+    expect(barProperties.map((row) => row.name).toSet(), named);
   });
 
   test('the sample of the default options sets a default', () {

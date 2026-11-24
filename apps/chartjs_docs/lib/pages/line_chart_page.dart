@@ -46,7 +46,6 @@ const List<DocProperty> lineProperties = [
     'borderDashOffset',
     section: 'line-styling',
     type: 'double',
-    extra: true,
     scriptable: true,
     fallback: '0',
   ),
@@ -86,7 +85,6 @@ const List<DocProperty> lineProperties = [
     'drawActiveElementsOnTop',
     section: 'general',
     type: 'bool',
-    extra: true,
     scriptable: true,
     indexable: true,
     fallback: 'true',
@@ -109,7 +107,6 @@ const List<DocProperty> lineProperties = [
     'hoverBorderCapStyle',
     section: 'line-styling',
     type: 'String',
-    extra: true,
     scriptable: true,
     fallback: 'undefined',
   ),
@@ -124,7 +121,6 @@ const List<DocProperty> lineProperties = [
     'hoverBorderDash',
     section: 'line-styling',
     type: 'List<double>',
-    extra: true,
     scriptable: true,
     fallback: 'undefined',
   ),
@@ -132,7 +128,6 @@ const List<DocProperty> lineProperties = [
     'hoverBorderDashOffset',
     section: 'line-styling',
     type: 'double',
-    extra: true,
     scriptable: true,
     fallback: 'undefined',
   ),
@@ -140,7 +135,6 @@ const List<DocProperty> lineProperties = [
     'hoverBorderJoinStyle',
     section: 'line-styling',
     type: 'String',
-    extra: true,
     scriptable: true,
     fallback: 'undefined',
   ),
@@ -187,7 +181,6 @@ const List<DocProperty> lineProperties = [
     'pointHitRadius',
     section: 'point-styling',
     type: 'double',
-    extra: true,
     scriptable: true,
     indexable: true,
     fallback: '1',
@@ -212,7 +205,6 @@ const List<DocProperty> lineProperties = [
     'pointHoverBorderWidth',
     section: 'interactions',
     type: 'double',
-    extra: true,
     scriptable: true,
     indexable: true,
     fallback: '1',
@@ -237,7 +229,6 @@ const List<DocProperty> lineProperties = [
     'pointRotation',
     section: 'point-styling',
     type: 'double',
-    extra: true,
     scriptable: true,
     indexable: true,
     fallback: '0',
@@ -353,9 +344,10 @@ DocPageContent lineChartPage() => DocPageContent(
             DocText('The options of this dataset only.'),
           ),
           (
-            Text("extra: {'datasets': {'line': ...}}"),
+            Text('datasetDefaults: [LineDataset(...)]'),
             DocText(
-              'The options of all line datasets, in `ChartConfig.extra`.',
+              'The options of all line datasets, in '
+              '`ChartConfig.datasetDefaults`.',
             ),
           ),
           (
@@ -396,10 +388,8 @@ DocPageContent lineChartPage() => DocPageContent(
         ),
         const DocParagraph(
           DocText(
-            'The column **Set with** gives the place of the option in Dart. '
-            'A **Parameter** is a named parameter of `LineDataset`. An option '
-            'with no parameter goes in the `extra` Map of the dataset, under '
-            'its Chart.js name.',
+            'Each option is a named parameter of `LineDataset`, with the name '
+            'of Chart.js.',
           ),
         ),
         const DocPropertyTable(lineProperties),
@@ -426,9 +416,9 @@ DocPageContent lineChartPage() => DocPageContent(
               DocText(
                 'The colors, `pointRadius`, `pointHoverRadius` and '
                 '`pointStyle` take a `ChartValue`: `.constant`, `.indexed` or '
-                '`.resolver`. Each other parameter takes one fixed value. For '
-                'a function or a list on another option, use `extra` with the '
-                'Chart.js name.',
+                '`.resolver`, and so do `pointHitRadius`, '
+                '`pointHoverBorderWidth` and `pointRotation`. Each other '
+                'parameter takes one fixed value.',
               ),
             ),
             LiveExample(
@@ -657,7 +647,7 @@ DocPageContent lineChartPage() => DocPageContent(
                   'If `true`, the chart draws the line across `null` values. '
                   'If `false`, a `null` value breaks the line. A number '
                   'gives the maximum gap to span, in the unit of the '
-                  "scale. A number goes through `extra: {'spanGaps': 2}`.",
+                  'scale: `spanGapsDistance: 2`.',
                 ),
               ),
             ]),
@@ -909,8 +899,8 @@ DocPageContent lineChartPage() => DocPageContent(
             DocParagraph(
               DocText(
                 'The parameter `stepped` takes a `SteppedLine`. The value '
-                '`true` goes through `extra`. If `stepped` is not `false`, the '
-                'chart ignores `tension`.',
+                '`true` of Chart.js draws as `SteppedLine.before`. If '
+                '`stepped` is set, the chart ignores `tension`.',
               ),
             ),
             LiveExample(
@@ -1038,10 +1028,7 @@ DocPageContent lineChartPage() => DocPageContent(
           ],
         ),
         const DocParagraph(
-          DocText(
-            'For the other Chart.js data forms, give the data in `extra` of '
-            "the dataset: `extra: {'data': [...]}`.",
-          ),
+          DocText('The typed API takes these two data forms of Chart.js.'),
         ),
       ],
     ),

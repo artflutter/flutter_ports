@@ -70,7 +70,7 @@ DocPageContent flChartBarMigrationPage() => migrationPage(
         '`data: .points([DataPoint(i, y)])`',
       ),
     ),
-    (Text('fromY'), DocText('a floating bar: a pair `[from, to]` in `extra`')),
+    (Text('fromY'), DocText('a floating bar: a pair of `data: .ranges(...)`')),
     (
       Text('color, gradient'),
       DocText(
@@ -240,8 +240,8 @@ const List<(List<Widget>, Widget)> _samples = [
   (
     [
       DocText(
-        'A rod from `fromY` to `toY` is a floating bar: a pair `[from, to]` in '
-        '`extra`, because `BarDataset.data` takes numbers.',
+        'A rod from `fromY` to `toY` is a floating bar: a pair `(from, to)` '
+        'of `data: .ranges(...)`.',
       ),
       DocText(
         'Without `offset`, the category axis places the groups as '

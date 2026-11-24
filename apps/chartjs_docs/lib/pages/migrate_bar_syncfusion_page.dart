@@ -102,10 +102,7 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       Text('color, pointColorMapper'),
       DocText('`backgroundColor`: `.constant` or `.indexed`'),
     ),
-    (
-      Text('crossesAt of the x axis'),
-      DocText('`base` in `extra` of the dataset'),
-    ),
+    (Text('crossesAt of the x axis'), DocText('`base` of the dataset')),
     (
       Text('isTrackVisible, trackColor'),
       DocText('an inline plugin that draws before the datasets'),
@@ -188,7 +185,7 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       notes: const [
         DocText(
           '`crossesAt` of the x axis sets where the columns start. In the '
-          'port, this is `base` in `extra` of the dataset. The x axis stays at '
+          'port, this is `base` of the dataset. The x axis stays at '
           'the bottom, as with `placeLabelsNearAxisLine: false`.',
         ),
         DocText(

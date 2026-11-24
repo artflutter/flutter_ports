@@ -150,8 +150,8 @@ const List<(List<Widget>, Widget)> _samples = [
   (
     [
       DocText(
-        'One area fill with two colors: `fill` with a `target` value and the '
-        'colors `above` and `below`, in `extra`.',
+        'One area fill with two colors: `fill` with a target split into the '
+        'colors `above` and `below` (`FillTarget.split`).',
       ),
       DocText('A tick `callback` writes the labels of the y axis.'),
     ],

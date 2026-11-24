@@ -835,9 +835,6 @@ class const DocProperty(
   /// The id of the section that describes the option.
   final String? section,
 
-  /// Whether the option goes through `extra`, because it has no parameter.
-  final bool extra = false,
-
   /// Whether a function can give the value.
   final bool scriptable = false,
 
@@ -857,10 +854,9 @@ class const DocPropertyTable(
   /// Creates the table of [rows].
   this;
 
-  static const _flex = [24, 9, 18, 9, 9, 17];
+  static const _flex = [24, 18, 9, 9, 17];
   static const _headers = [
     'Name',
-    'Set with',
     'Dart type',
     'Scriptable',
     'Indexable',
@@ -914,7 +910,6 @@ class const _WidePropertyTable(final List<DocProperty> rows)
         TableRow(
           children: [
             _Pad(_PropertyName(row)),
-            _Pad(DocText(row.extra ? '`extra`' : 'Parameter', style: _small)),
             _Pad(DocText('`${row.type}`', style: _small)),
             _Pad(Text(row.scriptable ? 'Yes' : '–', style: _small)),
             _Pad(Text(row.indexable ? 'Yes' : '–', style: _small)),
@@ -946,8 +941,7 @@ class const _NarrowPropertyTable(final List<DocProperty> rows)
               _PropertyName(row),
               const SizedBox(height: 4),
               DocText(
-                '`${row.type}` · ${row.extra ? 'through `extra`' : 'parameter'}'
-                ' · default `${row.fallback}`'
+                '`${row.type}` · default `${row.fallback}`'
                 '${row.scriptable ? ' · scriptable' : ''}'
                 '${row.indexable ? ' · indexable' : ''}',
                 style: _small,

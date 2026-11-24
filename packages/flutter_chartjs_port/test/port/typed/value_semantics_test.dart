@@ -97,6 +97,11 @@ const List<String> _lineStyle = [
   'pointHitRadius',
   'pointHoverBorderWidth',
   'pointRotation',
+  'hoverBorderCapStyle',
+  'hoverBorderDash',
+  'hoverBorderDashOffset',
+  'hoverBorderJoinStyle',
+  'spanGapsDistance',
 ];
 
 /// The parameter names of the pie and the doughnut arcs.
