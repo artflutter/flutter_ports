@@ -596,9 +596,8 @@ final Expando<Map<ChartAxis, String>> _canvasScaleIds = Expando(
 );
 
 /// Records [ids], the scale ids of the typed config of the chart on
-/// [canvas]. `ChartView` calls it at each lowering, and with Dart `null`
-/// for a raw config.
-void recordScaleIds(Object canvas, Map<ChartAxis, String>? ids) {
+/// [canvas]. `ChartView` calls it at each lowering.
+void recordScaleIds(Object canvas, Map<ChartAxis, String> ids) {
   _canvasScaleIds[canvas] = ids;
 }
 

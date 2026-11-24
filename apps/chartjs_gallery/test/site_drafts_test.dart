@@ -117,14 +117,14 @@ void main() {
     await tester.tap(find.text('Bar'));
     await tester.pumpAndSettle();
     ChartView chart() => tester.widget<ChartView>(find.byType(ChartView));
-    expect(chart().config!.type, ChartKind.bar);
-    final before = (chart().config!.datasets.first as BarDataset).data;
+    expect(chart().config.type, ChartKind.bar);
+    final before = (chart().config.datasets.first as BarDataset).data;
     await tester.tap(find.byTooltip('Change sample data'));
     await tester.pumpAndSettle();
-    expect((chart().config!.datasets.first as BarDataset).data, isNot(before));
+    expect((chart().config.datasets.first as BarDataset).data, isNot(before));
     await tester.tap(find.text('Doughnut'));
     await tester.pumpAndSettle();
-    expect(chart().config!.type, ChartKind.doughnut);
+    expect(chart().config.type, ChartKind.doughnut);
     await tester.tap(find.text('2  Workbench'));
     await tester.pumpAndSettle();
     expect(find.text('Same curiosity.\nNew canvas.'), findsOneWidget);

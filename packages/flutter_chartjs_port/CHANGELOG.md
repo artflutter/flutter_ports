@@ -7,6 +7,9 @@
   `retinaScale` writes the display size as doubles, the chart host reads `touchAction` at the start of a touch
   sequence, and `initCanvas` writes no `display` and no `box-sizing`. `getStyle` of `helpers.dart` is gone, and
   `readUsedSize` takes an `Axis` (`readUsedSize(canvas, Axis.horizontal)`).
+- BREAKING: `ChartView.raw` and the raw Map config of `ChartView` are gone (Chart.js ADR 0198). `ChartView` takes
+  only `ChartConfig`, and `ChartView.rawConfig` is gone: write `ChartView(config: ChartConfig(...))`, with
+  `extra` for a Chart.js option that has no parameter. `new Chart(canvas, config)` still takes a Map config.
 - BREAKING: the title and the subtitle options are one immutable object each, `TitleOptions` and
   `SubtitleOptions` (Chart.js ADR 0197). `ChartTitle` and the parameters `title` and `subtitle` of `ChartConfig`
   are gone: give `pluginOptions: [TitleOptions(display: true, text: ['Sales']), SubtitleOptions(...)]`, with each

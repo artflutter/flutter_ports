@@ -38,7 +38,7 @@ chart.zoom(const .all(1.5));
 chart.resetZoom();
 ```
 
-A raw config of `ChartView.raw` holds the same object in `options.plugins.zoom`.
+A Map config of `new Chart(canvas, config)` holds the same object in `options.plugins.zoom`.
 
 ## Stable axes during zoom and pan
 

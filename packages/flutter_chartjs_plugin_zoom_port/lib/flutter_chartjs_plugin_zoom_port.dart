@@ -12,7 +12,7 @@
 ///
 /// The options of a chart are one immutable `ZoomPluginOptions`: in
 /// `ChartConfig.pluginOptions` of a typed config, or in
-/// `options.plugins.zoom` of the config of `ChartView.raw`:
+/// `options.plugins.zoom` of a Map config of `new Chart(canvas, config)`:
 ///
 /// ```dart
 /// ChartView(

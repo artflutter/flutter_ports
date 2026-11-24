@@ -534,11 +534,6 @@ class Config([Object? config]) implements ChartConfiguration {
     return data is ChartDataScope ? data : throw TypeError();
   }
 
-  /// The data object of the raw [data] of a config, as `initData` makes
-  /// it: `ChartView.raw` gives the data Map of a new config through it.
-  @internal
-  static ChartDataScope dataScopeOf(Object? data) => _initData(data);
-
   /// core.config.js:181 `set data(data)`.
   set data(ChartDataScope data) {
     jsSet(_config, 'data', _initData(data));

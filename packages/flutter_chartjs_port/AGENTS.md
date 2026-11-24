@@ -10,7 +10,7 @@ repository.
   `doc/`, `test/`, `tool/`, `dart_test.yaml` and `build/` out of the published archive (Chart.js
   ADR 0047). The harness and the gallery name it as a path dependency. `README.md` is the README
   of pub.dev. It names a file outside the archive by an absolute GitHub URL (Chart.js ADR 0047).
-  It shows the typed API first and `ChartView.raw` after it (Chart.js ADR 0052 §13). Each Dart
+  It shows the typed API only (Chart.js ADRs 0052 §13 and 0198). Each Dart
   snippet of it compiles and runs: a change of a snippet checks it in a temporary test.
   `example/main.dart` (port-only, no pubspec, Chart.js ADR 0047 §5) is the example of the archive:
   one typed `ChartView` with a new data List in `setState` and an `onClick` tear-off with `int`
@@ -1092,8 +1092,8 @@ repository.
   - `lib/src/widgets/` (Chart.js ADRs 0049-0051, port-only, not pure layers). No file of it
     imports a component or an index of the components, and no file writes
     `defaults` or `overrides`.
-    - `chart_view.dart` has `ChartView`, with the typed entry `ChartView(config: ChartConfig)` and
-      the raw entry `ChartView.raw(config: Map)` (Chart.js ADR 0052 §9). A typed config lowers
+    - `chart_view.dart` has `ChartView`, with the one entry `ChartView(config: ChartConfig)`
+      (Chart.js ADRs 0052 §9 and 0198; no Map config). The config lowers
       through one `ChartConfigLowering` of `lib/src/typed/lower.dart` for the life of the state. A
       new typed config that is `==` to the last one gives no update. `==` compares the data Lists
       by identity and the event and text callbacks by presence: these callbacks are trampolines
@@ -1110,8 +1110,8 @@ repository.
       `MediaQuery.maybeDisableAnimationsOf`. A chart under `TickerMode(enabled: false)` is muted.
       `dispose` destroys the chart and disposes the context. A `Focus` and a `Semantics` node
       (`container`, `image`, `semanticLabel`) wrap the host (Chart.js ADR 0051 §1 and §8).
-      [Chart.js ADR 0098](doc/adr/0098-chart-view-data-only-updates.md): `ChartView.dataOnlyUpdates` (typed only,
-      default false) calls `chart.updateData` when `ChartConfigLowering.apply` reports `lastApplyDataOnly`: equal
+      [Chart.js ADR 0098](doc/adr/0098-chart-view-data-only-updates.md): `ChartView.dataOnlyUpdates` (default
+      false) calls `chart.updateData` when `ChartConfigLowering.apply` reports `lastApplyDataOnly`: equal
       type, options and plugins, the same labels List, kept dataset scopes, and each patch changed only `data` or
       stored a style List with equal items. It needs mode `'none'` and `animation: false`, else
       `chart.update(mode)`. A theme or reduced-motion update stays full. All checks of
@@ -1122,7 +1122,7 @@ repository.
       the entry `$theme`, the in-place restore of the user `scales` and of the palette keys, and
       one update with `'theme'`, `'themeFrame'` or `'default'`.
     - `chart_view_plugin.dart` has the inline plugin `$chartView`, last in the `plugins` List of
-      the root Map: the palette records of the switch and the focus ring.
+      the root scope: the palette records of the switch and the focus ring.
       `plugins.$chartView: false` turns it off.
     - `chart_keyboard.dart` has `ChartKeyboard` (Chart.js ADR 0051): the keys move a virtual mouse
       over the legend hit boxes (through `types.LegendElement`) and the data elements, and send
@@ -1133,8 +1133,8 @@ repository.
       keys, the diagnostics, the update, the size, the callbacks and reduced motion),
       `chart_view_unregistered_test.dart` (it calls `removeBuiltins()` first in `main()`),
       `chart_theme_switch_test.dart` (theming.md §8 test 8), `chart_keyboard_test.dart` and
-      `chart_view_semantics_test.dart` (Chart.js ADR 0051). Each test pumps a typed `ChartView`;
-      no test uses `ChartView.raw` (Chart.js ADR 0195). The tests of the typed path are
+      `chart_view_semantics_test.dart` (Chart.js ADR 0051). Each test pumps a typed `ChartView`
+      (Chart.js ADR 0198). The tests of the typed path are
       `test/port/typed/reconcile_test.dart` and `change_test.dart`.
   - `test/flutter_test_config.dart`: the port of `test/index.js`. `flutter test` runs it around
     each test file of the package ([Tests](#tests)).

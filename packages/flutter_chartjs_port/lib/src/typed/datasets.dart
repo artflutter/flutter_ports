@@ -114,8 +114,7 @@ abstract base class const Dataset({
   /// is not a Chart.js option.
   ///
   /// The shadow falls under the lines, the points, the bars and the arcs of
-  /// the dataset. The area fill of a line has no shadow. A `ChartView.raw`
-  /// dataset sets the same [ChartShadow] in its key `shadow`.
+  /// the dataset. The area fill of a line has no shadow.
   final ChartShadow? shadow,
 
   /// Native per-item tooltip callback overrides for this dataset.

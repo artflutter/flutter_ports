@@ -40,7 +40,7 @@ Color nodeColor(String node) =>
 
 An option that is a keyword in JavaScript is an enum here, for example
 `orientation: .vertical`. A color is a `SankeyColor`: one `ChartPaint`, a color for each node key or
-a paint for each flow. `ChartView.raw` with a Map config also works.
+a paint for each flow.
 
 ## Upstream
 

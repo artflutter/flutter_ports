@@ -51,8 +51,8 @@ The zoom port uses it with its option `rangeOnlyUpdates`
 - A typed Dart API: `ChartConfig`, one dataset class for each chart type, typed axes and option
   groups, Flutter values (`Color`, `TextStyle`, `Duration`, `EdgeInsets`) and callbacks with
   `int` indexes.
-- The raw Chart.js structure as a Dart `Map` (`ChartView.raw`), with native `ChartPaint` values, for a copy of the Chart.js
-  docs or `jsonDecode` output: the same keys, the same defaults and the same results.
+- `extra` for each Chart.js option with no parameter: the same keys, the same defaults and the
+  same results.
 - Animations, hover, tooltips and legend clicks with a mouse, a touch screen or the keyboard.
 - A theme API with light and dark presets, a semantics node for screen readers, and reduced
   motion.
@@ -190,13 +190,13 @@ The values of the options are Dart and Flutter values:
   calculated from each item's context. Scalar paint fields take `ChartPaint`.
   Use `.solid(color)`, `ChartGradient.linear(...)` or `ChartPattern(image)`.
   Shadow colors, theme tokens, palette entries and gradient stops remain `Color`.
-- Fonts are `TextStyle` values, also in a raw config: the chart lays out each text with the
-  whole style, and the line height is `fontSize * height`. A raw config and a font function can
+- Fonts are `TextStyle` values, also in `extra`: the chart lays out each text with the
+  whole style, and the line height is `fontSize * height`. `extra` and a font function can
   give a `ChartTextStyle`, a `TextStyle` with the field `lineHeight`. The chart does not read the
   color of a `TextStyle`: each font parameter has a color parameter next to it, for example
   `labelFont` and `labelColor`.
-- The legend and tooltip `textDirection` options take `TextDirection` values, also in raw
-  configs. Each override is restored after drawing; omitting it keeps the current canvas direction.
+- The legend and tooltip `textDirection` options take `TextDirection` values, also in
+  `extra`. Each override is restored after drawing; omitting it keeps the current canvas direction.
 - Durations are `Duration` values, and paddings are `EdgeInsets` values.
 - A pie or doughnut `cutout` or `radius` is a `RadiusLength`: `const PercentRadius(50)` or
   `const PixelRadius(80)`. A scale `grace` is a `GraceLength`: `const PercentGrace(5)` or
@@ -207,7 +207,7 @@ The values of the options are Dart and Flutter values:
   the point style of a line, scatter or radar dataset take a `ChartValue`, as the colors do:
   `pointRadius: .indexed([0, 4, 0])` or `pointStyle: .resolver(styleOf)`. The cubic interpolation mode of a line is a class
   too: `cubicInterpolationMode: const MonotoneCubicInterpolationMode()`.
-- A fill is a `FillTarget`, in the typed API and in a raw config: `.none`, `.toOrigin`,
+- A fill is a `FillTarget`, in the typed API and in `extra`: `.none`, `.toOrigin`,
   `.toStart`, `.toEnd`, `.toStacked`, `.shape`, `.toPrevious`, `.toNext`, `.toDataset(0)`,
   `.toRelative(-2)` and `.toValue(10)`. `FillTarget.toOrigin.split(above: green, below: red)`
   gives the fill its own colors above and below the target.
@@ -232,7 +232,7 @@ and `copyWith(borderColor: ...)` independently switch between the three forms;
 a `null` copy argument retains the current form. Indexed style lists are copied
 when lowered, and callbacks should use a stable tear-off when possible.
 Hover and point-specific dataset colors use the same variants. Element-style
-colors take `ChartPaint` directly. Raw Maps keep value/list/function forms with
+colors take `ChartPaint` directly. Options in `extra` keep value/list/function forms with
 `ChartPaint` leaves.
 
 Each dataset class takes a `shadow`. The lines, the points, the bars and the arcs of the dataset
@@ -250,8 +250,7 @@ LineDataset(
 )
 ```
 
-A shadow is not a Chart.js option. `ChartView` draws it. In a `ChartView.raw` dataset, set the
-key `shadow` to the same `ChartShadow`.
+A shadow is not a Chart.js option. `ChartView` draws it.
 
 ### Axes
 
@@ -287,7 +286,7 @@ List<String>? formatVotes(
 ```
 
 The result is the lines of the label. A `null` result removes the tick, and an empty list keeps
-the tick with no label. The same `TickCallback` is the value of `ticks.callback` in a raw config. The axes are `CategoryAxis`, `LinearAxis`, `LogarithmicAxis`,
+the tick with no label. The same `TickCallback` is the value of `ticks.callback` in `extra`. The axes are `CategoryAxis`, `LinearAxis`, `LogarithmicAxis`,
 `TimeAxis`, `TimeSeriesAxis` and `RadialLinearAxis` (the axis `r` of a radar or polar area chart).
 A `TimeAxis` takes `DateTime` limits and a `unit`, for example `TimeAxis(.x, unit: .day)`.
 
@@ -359,7 +358,7 @@ horizontal bar chart: the index axis takes `XAxis` or `YAxis` only. `responsive`
 
 ### Callbacks
 
-The callbacks are typed functions, with `int` indexes. A raw config takes the same types:
+The callbacks are typed functions, with `int` indexes. `extra` takes the same types:
 
 ```dart
 class const VotesPage({super.key}) extends StatefulWidget {
@@ -439,20 +438,20 @@ class _VotesPageState() extends State<VotesPage> {
   `legend.legendHitBoxes` exposes native `LegendHitBox` objects with mutable geometry, integer
   row/column membership, and overridable `contains`, `center`, `copyWith` and `merge`.
   The `equalsTo` extension compares hit-box fields explicitly; `==` retains identity equality.
-- `TooltipOptions.callbacks` takes a `TooltipCallbacks` object, also in a raw config. Its text
+- `TooltipOptions.callbacks` takes a `TooltipCallbacks` object, also in `extra`. Its text
   hooks return a list of lines: `null` requests the built-in default and `[]` emits no text.
   Each callback receives the tooltip model and its item or item list. Dataset `tooltipCallbacks`
   override the six per-item hooks. Callback objects merge field by field with `merge`.
 - `AxisTicks.callback` is a `TickCallback`: it gets the scale, the value, the index and all ticks,
   and gives the lines of the tick label. `ChartAnimation.onProgress` and `onComplete` are an
   `AnimationEventHandler`: they get the `AnimationEvent` of the animator.
-- In a raw config, the scale hooks (`beforeUpdate` to `afterFit`) are a `ScaleHook`, which gets the
+- In `extra`, the scale hooks (`beforeUpdate` to `afterFit`) are a `ScaleHook`, which gets the
   scale; the animation `fn` is an `Interpolator`; a time `parser` function is a `TimeParser`; and
   the radial `pointLabels.callback` is a `PointLabelCallback`, which gets the label and its `int`
   index. A function of another type stops a debug build.
 - A dataset's `backgroundColor: ChartValue.resolver(...)` and `borderColor: .resolver(...)` get a
   `ScriptableContext` (`dataIndex`, `datasetIndex`, `raw`, `parsed`, `active`, `mode`, `chart`)
-  for each element. A scriptable option of a raw config takes the context class of its option:
+  for each element. A scriptable option in `extra` takes the context class of its option:
   `ScriptableContext` for a dataset, `ScriptableScaleContext` for a scale or a tick, and
   `ScriptableChartContext`, `ScriptableScalePointLabelContext` or `ScriptableTooltipContext`. A
   context has typed members only: an absent member is `null`.
@@ -555,8 +554,7 @@ ChartConfig(
 
 `ChartConfig.extra` goes into `options`. A key of `extra` wins over a parameter with the same
 key, and a Map value merges into the Map of the key. Thus `extra` also takes a native `ChartPaint`,
-a gradient function or the JavaScript `null` (Dart `null` in a parameter means "not set"). For a
-config that the typed API does not fit, use [`ChartView.raw`](#raw-chartjs-configs).
+a gradient function or the JavaScript `null` (Dart `null` in a parameter means "not set").
 
 ### Registration
 
@@ -672,7 +670,7 @@ first render then runs in the start of the chart, where it must not call `setSta
 ([Callbacks and `setState`](#callbacks-and-setstate)). For motion under the setting, wrap the
 chart in a `MediaQuery` with `disableAnimations: false`.
 
-## Raw Chart.js configs
+## Canvas drawing and paints
 
 Custom canvas drawing uses `CanvasCompositeOperation` for
 `chart.ctx.globalCompositeOperation`, for example
@@ -680,118 +678,11 @@ Custom canvas drawing uses `CanvasCompositeOperation` for
 The enum is available from both public chart libraries and needs no `dart:ui`
 import. A null assignment leaves the native canvas operation unchanged.
 
-Paint options use `ChartPaint` in both APIs. CSS color strings such as
+Paint options use `ChartPaint` in the typed API and in `extra`. CSS color strings such as
 `'red'`, `'#36A2EB'` and `'rgba(54, 162, 235, 0.5)'`, and bare Flutter colors,
 are rejected. Use `const ChartPaint.solid(Color(0xFF36A2EB))` instead.
 Lists contain paints and scriptable callbacks return paints. Gradient stops,
 shadow colors and theme tokens remain Flutter `Color` values.
-
-`ChartView.raw` takes a Chart.js configuration as a Dart `Map`: `type`, `data`, `options`,
-`plugins` (inline plugins) and `platform`, with every option of Chart.js. Use it for a copy of the
-[Chart.js docs](https://www.chartjs.org/docs/4.6.1/) or for the output of `jsonDecode`:
-
-```dart
-class const VotesChart({super.key}) extends StatefulWidget {
-  @override
-  State<VotesChart> createState() => _VotesChartState();
-}
-
-class _VotesChartState() extends State<VotesChart> {
-  // The configuration of `new Chart(canvas, config)`. Keep it in the State:
-  // the same Map in the next build gives no update.
-  final Map<String, Object?> _config = {
-    'type': 'bar',
-    'data': <String, Object?>{
-      'labels': ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      'datasets': [
-        <String, Object?>{
-          'label': '# of Votes',
-          'data': [12, 19, 3, 5, 2, 3],
-          'borderWidth': 1,
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'scales': <String, Object?>{
-        'y': <String, Object?>{'beginAtZero': true},
-      },
-    },
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    return ChartView.raw(
-      config: _config,
-      semanticLabel: 'Bar chart of the votes for six colors',
-    );
-  }
-}
-```
-
-A JSON configuration works as it is:
-
-```dart
-final config = jsonDecode(json) as Map<String, Object?>;
-// ...
-ChartView.raw(config: config)
-```
-
-Write the options as in the Chart.js docs, with these rules of Dart:
-
-- **A raw configuration is never `const`.** Chart.js writes into the `data` and `options` Maps of
-  the configuration when it starts the chart (`initConfig` of `core.config.js`). A `const` Map
-  cannot change, so the chart fails to start with `Unsupported operation: Cannot modify
-  unmodifiable map`. If your lint set enables `prefer_const_literals_to_create_immutables` (for
-  example `very_good_analysis`), the lint asks for `const` when you write the Map literal straight
-  into `ChartView.raw(config: {...})`. Build the Map in a variable, a field of the `State` or a
-  function instead.
-- **A nested Map has the type `Map<String, Object?>`.** Chart.js also writes into the dataset
-  Maps: the `colors` plugin writes `borderColor` and `backgroundColor`, and the `decimation`
-  plugin writes `data`. A Map literal with a narrower inferred type, for example
-  `{'data': [1, 2, 3]}` (a `Map<String, List<int>>`), throws a `TypeError` at that write. Write
-  `<String, Object?>{...}` for each nested Map.
-- **A label List is growable and takes a `String`.** Chart.js adds a string label to it when a
-  data value or a `min` or `max` option names a new category. A growable list of strings works.
-  For labels that are not strings, for example numbers or multi-line labels, write
-  `<Object?>[...]`: a `List<int>` or a `List<List<String>>` throws a `TypeError` at the add, and a
-  `const`, unmodifiable or fixed-length List throws an `UnsupportedError`.
-- **Callbacks are Dart functions.** Give `onClick`, `onHover`, `onResize`, the animation
-  callbacks, the tick callbacks and the scriptable options as functions in the options. A
-  function can declare fewer parameters than Chart.js passes, as in JavaScript:
-
-  ```dart
-  'onClick': (ChartEvent event, List<ActiveElement> elements, Chart chart) {
-    // A Chart.js index is a JavaScript number: a double.
-    final index = elements.isEmpty ? null : elements.first.index.toInt();
-  },
-  ```
-- **`undefined` is a value.** Chart.js tells an absent key, `undefined` and `null` apart. Dart
-  `null` is the JavaScript `null`. The library exports `undefined` for the third state.
-- **The objects of a chart are not Maps.** The context of a scriptable option, the arguments of
-  a plugin hook, `chart.options` and the other objects that the chart makes are typed objects.
-  Read them by name through `JsObjectFace`; a missing key reads `undefined`:
-
-  ```dart
-  'backgroundColor': (JsObjectFace context) =>
-      context['dataIndex'] == 0
-          ? const ChartPaint.solid(Color(0xFFFF6384))
-          : const ChartPaint.solid(Color(0xFF36A2EB)),
-  ```
-
-The updates of a raw configuration:
-
-- A new `config` Map updates the chart after the frame. The same Map gives no update. The update
-  sets `type`, `data` and `options` when they are new objects, and the inline plugins when
-  `plugins` is a new List. The chart keeps its hidden datasets and its animations. Only a new
-  `platform` makes a new chart. `updateMode` sets the mode of that update.
-- Keep the dataset Maps to keep the dataset state. New dataset Maps give new datasets, as in
-  Chart.js.
-- After a change in place, call `chart.update()` from an event handler or a post-frame callback,
-  never from `build`, with `notifyArrayListeners` for a change of the length of a data List
-  ([Updates](#updates)).
-- A change of `chart.options` in place lasts until the next new `options` object.
-- A parent that rebuilds in each frame keeps its configuration in its `State`, or sets
-  `updateMode: 'none'`. An `onHover` that calls `setState` compares the value first.
 
 ## Libraries
 
@@ -823,10 +714,6 @@ app reads. These differences are visible to an app:
   and in WebAssembly builds.
 - **Numbers.** Tick labels and tooltips format numbers with `NumberFormat` of package:intl. A few
   strings differ from `Intl.NumberFormat` of a browser, for example in compact notation.
-- **Dart collections.** In a raw configuration, a dataset Map has the type
-  `Map<String, Object?>`, a label List is growable and takes a `String` (`<Object?>[...]` for
-  labels that are not strings), and the configuration is never `const`
-  ([Raw Chart.js configs](#raw-chartjs-configs)). The typed config makes its own typed objects.
 - **Data changes.** A `push`, `pop`, `shift`, `splice` or `unshift` on a data List needs
   `notifyArrayListeners` ([Updates](#updates)).
 - **No DOM and no CSS.** The CSS of the canvas and of its container (margins, paddings, borders,

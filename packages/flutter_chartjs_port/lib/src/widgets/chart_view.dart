@@ -11,11 +11,10 @@
 /// scopes through one `ChartConfigLowering` for the life of the state
 /// (`lower.dart`): the start lowers the config, and a new config that is
 /// not `==` to the last one reconciles with the live scopes in the same
-/// post-frame callback. A raw config gives its top-level values to the root
-/// as they are: its `data` and `options` stay the Maps of the app. The
-/// theme of Chart.js ADR 0147 builds on the root and on that callback: the
-/// widget writes the compiled theme under `$theme` of the root, and it
-/// switches the theme in the same callback
+/// post-frame callback (Chart.js ADR 0200: the widget takes only a typed
+/// config). The theme of Chart.js ADR 0147 builds on the root and on that
+/// callback: the widget writes the compiled theme under `$theme` of the
+/// root, and it switches the theme in the same callback
 /// (`chart_theme_switch.dart`) with its inline plugin `$chartView`
 /// (`chart_view_plugin.dart`). The keyboard of Chart.js ADR 0051
 /// (`chart_keyboard.dart`) builds on them too: one `Focus` around the host
@@ -44,13 +43,9 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// Shows one Chart.js chart: `new Chart(canvas, config)` on a canvas that the
 /// widget owns. Register the components first: `Chart.register(registerables)`.
 ///
-/// Two constructors give the config (Chart.js ADR 0052, section 9):
-///
-/// * `ChartView(config: ChartConfig(...))`, the typed config: the chart
-///   type, the datasets, the data and the options as Dart classes.
-/// * `ChartView.raw(config: {...})`, the raw Chart.js config: a Map in the
-///   form of the Chart.js docs, also `jsonDecode` output, with every option
-///   of Chart.js.
+/// The config is a typed `ChartConfig` (Chart.js ADRs 0052 and 0198): the
+/// datasets, the data and the options as Dart classes. `extra` gives an
+/// option that the classes do not have.
 ///
 /// ```dart
 /// ChartView(
@@ -155,91 +150,25 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// running animation ends at its target. When it turns off, the next update
 /// animates. For motion under the preference, wrap the chart in a
 /// `MediaQuery` with `disableAnimations: false`.
-class ChartView extends StatefulWidget {
-  /// Creates a widget that shows the chart of the typed [config].
-  const new({
-    required ChartConfig this.config,
-    this.updateMode,
-    this.dataOnlyUpdates = false,
-    this.onChartCreated,
-    this.theme,
-    this.focusNode,
-    this.autofocus = false,
-    this.semanticLabel,
-    this.excludeFromSemantics = false,
-    this.trackpadGestures = true,
-    super.key,
-  }) : rawConfig = null;
-
-  /// Creates a widget that shows the chart of the raw Chart.js [config]
-  /// `{type, data, options, plugins, platform}`: the escape hatch for a
-  /// copy of the Chart.js docs, `jsonDecode` output and the options that
-  /// [ChartConfig] does not have. The widget keeps it in [rawConfig].
-  // The 0.1.0 release removes it; the beta keeps it for one release.
-  // ignore: remove_deprecations_in_breaking_versions
-  @Deprecated(
-    'Use ChartView(config: ChartConfig(...)). ChartView.raw and the raw Map '
-    'config will be removed before 0.1.0 (Chart.js ADR 0195).',
-  )
-  const new raw({
-    required Map<String, Object?> config,
-    this.updateMode,
-    this.onChartCreated,
-    this.theme,
-    this.focusNode,
-    this.autofocus = false,
-    this.semanticLabel,
-    this.excludeFromSemantics = false,
-    this.trackpadGestures = true,
-    super.key,
-  }) : rawConfig = config,
-       config = null,
-       dataOnlyUpdates = false;
-
-  /// The typed config of the chart, or Dart `null` for a widget of
-  /// `ChartView.raw`.
+class const ChartView({
+  /// The typed config of the chart.
   ///
-  /// The widget lowers it to the Maps of a raw config: a new Map for each
-  /// class, and the Lists of the app (`data`, `points`, `labels`,
-  /// `plugins`) by reference. Thus a `const` config works. A new config that
-  /// is `==` to the last one gives no update. Another one updates the chart
-  /// after the frame. A dataset keeps its dataset Map, its meta and its
-  /// hidden state when the new dataset has the same key and class, or no
-  /// key and the same class at the same index. The update writes only the
-  /// keys of the config: the keys that a plugin wrote into a dataset Map
-  /// stay. The `options` Map stays when only the datasets, the labels or
-  /// the plugins changed: an imperative `chart.options` edit then lasts.
-  final ChartConfig? config;
+  /// The widget lowers it to the typed option scopes of the chart, with the
+  /// Lists of the app (`data`, `points`, `labels`, `plugins`) by reference.
+  /// Thus a `const` config works. A new config that is `==` to the last one
+  /// gives no update. Another one updates the chart after the frame. A
+  /// dataset keeps its dataset scope, its meta and its hidden state when the
+  /// new dataset has the same key and class, or no key and the same class at
+  /// the same index. The update writes only the keys of the config: the keys
+  /// that a plugin wrote into a dataset scope stay. The options scope stays
+  /// when only the datasets, the labels or the plugins changed: an
+  /// imperative `chart.options` edit then lasts.
+  required final ChartConfig config,
 
-  /// The raw configuration `{type, data, options, plugins, platform}` of
-  /// `ChartView.raw` (`jsonDecode` output works), or Dart `null` for a
-  /// typed widget. The chart writes into its `data` and `options` Maps, as
-  /// `initConfig` does. A nested Map literal needs the type
-  /// `<String, Object?>`, and the config is never `const`: a `const`
-  /// config fails the start. Build it in a variable, a field or a function.
-  ///
-  /// A new Map updates the chart after the frame; the same Map gives no
-  /// update. The update sets `type`, `data` and `options` when they are new
-  /// objects, as the upstream setters do, and the inline plugins when
-  /// `plugins` is a new List: the chart, its hidden datasets and its
-  /// animations stay. A new `platform` makes a new chart. Keep the dataset
-  /// Maps to keep the dataset metas.
-  ///
-  /// After a change in place, call `chart.update()` from an event handler or
-  /// a post-frame callback, never from `build`. A change of a data List in
-  /// place also calls `notifyArrayListeners` for `push`, `pop`, `shift`,
-  /// `splice` and `unshift`. An imperative `chart.options` edit lasts until
-  /// the next new `options` object. A theme switch keeps it, except an edit
-  /// inside `chart.options.scales`.
-  ///
-  /// The key `$theme` belongs to the widget: in debug mode, a config with
-  /// it fails an assert. A `plugins` value is a `List<Plugin<Object?>>`.
-  final Map<String, Object?>? rawConfig;
-
-  /// The mode of the `chart.update` call for a new [config] or
-  /// [rawConfig]. Null is the default mode. When the same frame also
-  /// switches the theme, the one update takes the mode of the theme switch.
-  final UpdateMode? updateMode;
+  /// The mode of the `chart.update` call for a new [config]. Null is the
+  /// default mode. When the same frame also switches the theme, the one
+  /// update takes the mode of the theme switch.
+  final UpdateMode? updateMode,
 
   /// Whether a new [config] that differs from the last one only in its
   /// dataset data Lists calls `chart.updateData()` in place of `chart.update`
@@ -260,9 +189,9 @@ class ChartView extends StatefulWidget {
   ///
   /// The parameter needs the [updateMode] `'none'` and
   /// `animation: ChartAnimation.none` in the config. Without them, it has no
-  /// effect. A raw config does not have it. A new theme, a reduced-motion
-  /// preference that turned on, a new `labels` List, another option, another
-  /// plugin List, and a new dataset key or dataset field stay a full update.
+  /// effect. A new theme, a reduced-motion preference that turned on, a new
+  /// `labels` List, another option, another plugin List, and a new dataset
+  /// key or dataset field stay a full update.
   ///
   /// `chart.updateData()` also goes to `chart.update('none')` by itself when
   /// the chart does not qualify: for the first new config after the start,
@@ -273,33 +202,33 @@ class ChartView extends StatefulWidget {
   /// `supportsDataUpdates`, with a data List of another length and with a
   /// queued animation. An equal `ChartValue.indexed` style stays on this path,
   /// and one with other values is a full update (Chart.js ADR 0100).
-  final bool dataOnlyUpdates;
+  final bool dataOnlyUpdates = false,
 
   /// Called after the frame in which the widget starts a chart, and again
   /// after a new `platform` replaces the chart.
-  final ValueChanged<Chart>? onChartCreated;
+  final ValueChanged<Chart>? onChartCreated,
 
   /// The theme of this chart. Null reads [ChartTheme.maybeOf].
   /// `const ChartThemeData()` turns theming off for this chart.
-  final ChartThemeData? theme;
+  final ChartThemeData? theme,
 
   /// The focus node of the chart. Null: the widget owns one. The chart is one
   /// focus stop: the arrow keys move a virtual mouse over the legend items and
   /// the data elements, Enter and Space click there, Escape clears the hover.
   /// Wrap the chart in ExcludeFocus to remove the stop.
-  final FocusNode? focusNode;
+  final FocusNode? focusNode,
 
   /// Whether the chart takes the focus at its first build.
-  final bool autofocus;
+  final bool autofocus = false,
 
   /// The text alternative of the chart, as the aria-label of a Chart.js
   /// canvas with role="img" (docs/general/accessibility.md). Give one for
   /// each chart.
-  final String? semanticLabel;
+  final String? semanticLabel,
 
   /// Whether the chart has no semantics node. [semanticLabel] then has no
   /// effect.
-  final bool excludeFromSemantics;
+  final bool excludeFromSemantics = false,
 
   /// Whether a trackpad scroll and a trackpad pinch give the chart `wheel`
   /// events, as in Chrome (Chart.js ADR 0137). A scroll gives its deltas,
@@ -307,7 +236,11 @@ class ChartView extends StatefulWidget {
   /// example the zoom plugin, also acts on a trackpad of macOS, Windows and
   /// Linux. A listener that prevents the default takes the gesture from a
   /// scrollable ancestor.
-  final bool trackpadGestures;
+  final bool trackpadGestures = true,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates a widget that shows the chart of the typed [config].
+  this;
 
   @override
   State<ChartView> createState() => _ChartViewState();
@@ -315,25 +248,9 @@ class ChartView extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    final Object? type;
-    final int? datasets;
-    if (config case final typed?) {
-      type = typed.type.name;
-      datasets = typed.datasets.length;
-    } else {
-      // The raw boundary (Chart.js ADR 0054 §5): the Maps of the app.
-      final raw = RawScope(rawConfig!);
-      final data = raw.jsRead(OptionKey.data.jsName);
-      final list = data is Map<String, Object?>
-          ? RawScope(data).jsRead(OptionKey.datasets.jsName)
-          : null;
-      final rawType = raw.jsRead(OptionKey.type.jsName);
-      type = identical(rawType, undefined) ? null : rawType;
-      datasets = list is List ? list.length : null;
-    }
     properties
-      ..add(DiagnosticsProperty<Object?>('type', type))
-      ..add(IntProperty('datasets', datasets, defaultValue: null))
+      ..add(DiagnosticsProperty<Object?>('type', config.type.name))
+      ..add(IntProperty('datasets', config.datasets.length))
       ..add(
         DiagnosticsProperty<ChartThemeData>('theme', theme, defaultValue: null),
       )
@@ -391,24 +308,16 @@ class _ChartViewState() extends State<ChartView> {
   /// app objects.
   ChartConfigurationScope? _root;
 
-  /// The app config whose values the chart has, as a root scope: the config
-  /// of the start or of the last update. For a typed config, the root scope
-  /// of its lowering. For a raw config, a scope with the top-level values of
-  /// the raw Map ([_rootOf]).
+  /// The app config whose values the chart has, as a root scope: the root
+  /// scope of the lowering of the config of the start or of the last update.
   ChartConfigurationScope _applied = ChartConfigurationScope();
 
-  /// The raw config of [_applied], or Dart `null` when [_applied] is the
-  /// lowering of a typed config: the identity of the change test of a raw
-  /// config (Chart.js ADR 0049, section 4).
-  Map<String, Object?>? _appliedRaw;
+  /// The lowering of the typed config, for the life of the state (Chart.js
+  /// ADR 0052, section 9). Its `config` is the config of the last build:
+  /// the trampolines of the callbacks read it.
+  late final ChartConfigLowering _lowering = ChartConfigLowering(widget.config);
 
-  /// The lowering of the typed config, from the first typed config of the
-  /// state (Chart.js ADR 0052, section 9). Its `config` is the config of
-  /// the last build: the trampolines of the callbacks read it.
-  ChartConfigLowering? _lowering;
-
-  /// The typed config of [_applied], or Dart `null` when [_applied] is a raw
-  /// config.
+  /// The typed config of [_applied], or Dart `null` before the start.
   ChartConfig? _appliedTyped;
 
   /// The `enabled` value of the `TickerMode` of the host.
@@ -449,29 +358,15 @@ class _ChartViewState() extends State<ChartView> {
   /// (Chart.js ADR 0049, section 4, step 6).
   bool _motionUpdate = false;
 
-  @override
-  void initState() {
-    super.initState();
-    if (widget.config case final config?) {
-      _lowering = ChartConfigLowering(config);
-    }
-  }
-
-  /// The change test (Chart.js ADR 0052, section 9): `==` for two typed
-  /// configs, identity for two raw configs (Chart.js ADR 0049, section 4),
-  /// and a change of the form. The trampolines read the new typed config at
-  /// once, also when it gives no update.
+  /// The change test (Chart.js ADR 0052, section 9): `==` of the two typed
+  /// configs. The trampolines read the new config at once, also when it
+  /// gives no update.
   @override
   void didUpdateWidget(ChartView oldWidget) {
     super.didUpdateWidget(oldWidget);
     final config = widget.config;
-    if (config != null) {
-      (_lowering ??= ChartConfigLowering(config)).config = config;
-      if (oldWidget.config != config) _scheduleUpdate();
-    } else if (oldWidget.config != null ||
-        !identical(oldWidget.rawConfig, widget.rawConfig)) {
-      _scheduleUpdate();
-    }
+    _lowering.config = config;
+    if (oldWidget.config != config) _scheduleUpdate();
   }
 
   @override
@@ -498,11 +393,11 @@ class _ChartViewState() extends State<ChartView> {
     _start(notify: false);
   }
 
-  /// Builds the root Map of the current config and starts the chart. With
+  /// Builds the root scope of the current config and starts the chart. With
   /// [notify], it calls `onChartCreated` at once (in a post-frame callback),
   /// else after the frame.
   ///
-  /// An exception of the lowering of a typed config goes to
+  /// An exception of the lowering of the config goes to
   /// `FlutterError.reportError`, and the state then has no chart: the next
   /// new config starts it.
   void _start({required bool notify}) {
@@ -521,44 +416,22 @@ class _ChartViewState() extends State<ChartView> {
     _create(notify: notify);
   }
 
-  /// The app config of the current config as a root scope: the top-level
-  /// values of the raw config ([_rootOf]), or the lowering of the typed
-  /// config (Chart.js ADR 0052, section 9). With [fresh], or after a raw
-  /// config, a typed config lowers to new scopes. Else it reconciles with
-  /// the live scopes of the last typed config.
+  /// The app config of the current config as a root scope: the lowering of
+  /// the typed config (Chart.js ADR 0052, section 9). With [fresh], or
+  /// before the start, the config lowers to new scopes. Else it reconciles
+  /// with the live scopes of the last config.
   ChartConfigurationScope _appConfig({required bool fresh}) {
     final typed = widget.config;
-    final ChartConfigurationScope config;
-    if (typed == null) {
-      final raw = widget.rawConfig!;
-      config = _rootOf(raw);
-      _appliedRaw = raw;
-    } else if (fresh || _appliedTyped == null) {
-      config = (_lowering!..config = typed).lower();
-      _appliedRaw = null;
-    } else {
-      config = _lowering!.apply(typed);
-      _appliedRaw = null;
-    }
+    final config = fresh || _appliedTyped == null
+        ? (_lowering..config = typed).lower()
+        : _lowering.apply(typed);
     _appliedTyped = typed;
-    recordScaleIds(_canvas, typed == null ? null : _lowering!.scaleIds);
+    recordScaleIds(_canvas, _lowering.scaleIds);
     // The animations of the chart read the items of the app as they are.
     _chart
-      ?..propertyAnimations = typed?.animations
-      ..chartTransitions = typed?.transitions;
+      ?..propertyAnimations = typed.animations
+      ..chartTransitions = typed.transitions;
     return config;
-  }
-
-  /// The root scope of the raw config [raw]: each top-level entry of the
-  /// Map of the app in its order, with its value as it is (the raw boundary
-  /// of Chart.js ADR 0054 §5). `data` and `options` stay the Maps of the
-  /// app: `initConfig` writes into them, as upstream.
-  static ChartConfigurationScope _rootOf(Map<String, Object?> raw) {
-    final root = ChartConfigurationScope();
-    for (final MapEntry(:key, :value) in raw.entries) {
-      root.jsWrite(key, value);
-    }
-    return root;
   }
 
   /// A new root scope with each own key of [config] in its order and the
@@ -618,7 +491,7 @@ class _ChartViewState() extends State<ChartView> {
     try {
       _debugCheckConfig(_applied);
       final typed = widget.config;
-      chart = Chart(_canvas, _root, typed?.animations, typed?.transitions);
+      chart = Chart(_canvas, _root, typed.animations, typed.transitions);
     } on Object catch (error, stack) {
       _reportError(error, stack, 'while the ChartView started its chart');
       SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -647,7 +520,7 @@ class _ChartViewState() extends State<ChartView> {
     if (partial != null && !identical(partial, _chart)) partial.destroy();
   }
 
-  /// The `plugins` of the root Map for the app value [app]: a new List with
+  /// The `plugins` of the root scope for the app value [app]: a new List with
   /// the inline plugins of the app (a List, else none) and the inline plugin
   /// of the widget (Chart.js ADRs 0147 and 0051).
   List<Plugin<Object?>> _rootPlugins(Object? app) => [
@@ -705,8 +578,8 @@ class _ChartViewState() extends State<ChartView> {
   /// the update, also the replay of the last event
   /// (core.controller.js:529-532), runs outside the build.
   ///
-  /// A typed config first reconciles with the live Maps (Chart.js ADR 0052,
-  /// section 9): the reconcile patches the dataset Maps and gives the app
+  /// A new config first reconciles with the live scopes (Chart.js ADR 0052,
+  /// section 9): the reconcile patches the dataset scopes and gives the app
   /// config of the steps, so the theme switch runs after it.
   ///
   /// [ChartView.dataOnlyUpdates] replaces the one `chart.update` of a new
@@ -727,9 +600,7 @@ class _ChartViewState() extends State<ChartView> {
     }
     final applied = _applied;
     final typed = widget.config;
-    final configChanged = typed == null
-        ? !identical(widget.rawConfig, _appliedRaw)
-        : typed != _appliedTyped;
+    final configChanged = typed != _appliedTyped;
     if (!configChanged && !motionUpdate && _theme == _themeSwitch.applied) {
       return;
     }
@@ -782,7 +653,7 @@ class _ChartViewState() extends State<ChartView> {
   }
 
   /// Whether the last reconcile may take `chart.updateData` under the rule of
-  /// [ChartView.dataOnlyUpdates]. A raw config has no such update.
+  /// [ChartView.dataOnlyUpdates].
   ///
   /// `updateData` always updates in the mode `'none'`: another mode, also the
   /// default mode of a null [mode], keeps its value in the hooks and in the
@@ -791,7 +662,6 @@ class _ChartViewState() extends State<ChartView> {
     final lowering = _lowering;
     return widget.dataOnlyUpdates &&
         mode == UpdateMode.none &&
-        lowering != null &&
         lowering.lastApplyDataOnly &&
         lowering.animationOff;
   }
@@ -815,9 +685,9 @@ class _ChartViewState() extends State<ChartView> {
     }
     final data = _valueOf(config.dataCell);
     if (!identical(data, _valueOf(applied.dataCell))) {
-      // core.controller.js:217 `set data(data)`: the data Map of a raw
-      // config becomes a scope at the boundary (row `adapt-config-objects`).
-      chart.data = Config.dataScopeOf(data);
+      // core.controller.js:217 `set data(data)`: the data scope of the
+      // lowering (row `adapt-config-objects`).
+      chart.data = data! as ChartDataScope;
     }
     final options = _valueOf(config.optionsCell);
     if (!identical(options, _valueOf(applied.optionsCell))) {

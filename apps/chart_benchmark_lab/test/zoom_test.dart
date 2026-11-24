@@ -243,7 +243,7 @@ void main() {
               );
               // A typed config gives the zoom options in `pluginOptions`
               // (Chart.js ADR 0148), also the sankey chart (Chart.js ADR 0189).
-              final options = view.config!.pluginOptions
+              final options = view.config.pluginOptions
                   ?.whereType<zp.ZoomPluginOptions>()
                   .firstOrNull;
               expect(options is zp.ZoomPluginOptions, zoom, reason: reason);

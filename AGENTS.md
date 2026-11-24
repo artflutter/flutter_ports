@@ -384,15 +384,6 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     work out: the frame rate shows it. Build it with `flutter build apk --profile -t
     lib/main_input_probe.dart --android-skip-build-dependency-validation` and read
     `adb logcat -s flutter:I`. `test/input_probe_test.dart` pins the counts.
-  - `lib/main_sankey_bench.dart` is the sankey benchmark entry (`performance.md` of the sankey
-    port). It times a sankey chart with no host on a bitmap of 800 x 480: the data functions and
-    the layout alone, `chart.update('none')` with new flow sizes (with the parts parse, element
-    update and draw of a timed controller subclass), the draw alone, the hit test and a hover.
-    Its frame cases show a `ChartView.raw` with new data in each frame and read the `FrameTiming`
-    build and raster times. It prints one line `SANKEY {json}` for each case. With
-    `--dart-define=SERVE=true` it runs nothing at its start: the service extension
-    `ext.sankey.run` runs one case for each call, also with the prototype variants of its header,
-    and gives the timed windows for a CPU profile of the VM service. No test pins it.
   - The layout rule (Chart.js ADR 0031 §10) applies to the nine type pages and to the
     Core and Axes tabs: each parameter is a full-width `SegmentChoice` or
     `SegmentToggles` line of `lib/demo/demo_controls.dart`, with short text or icons. A
@@ -1595,9 +1586,9 @@ sankey ADRs are proposed. The doc paths are relative to
   without observations.
 - The tests of the typed API are in `test/port/typed/` (Chart.js ADR 0052 §11). They have
   `@TestOn('vm')`: the typed files import `dart:ui`. The lowering twins (`lowering_test.dart`,
-  `expectTwin` of `twin.dart`) compare the Map of each typed field with its raw twin. No test
-  pumps a `ChartView.raw` (Chart.js ADR 0195): a widget test gives a typed `ChartConfig`, and a
-  test of a change pumps a `ChartView` with the next config.
+  `expectTwin` of `twin.dart`) compare the Map of each typed field with its raw twin. `ChartView`
+  takes only a typed `ChartConfig` (Chart.js ADR 0198): a test of a change pumps a `ChartView`
+  with the next config.
 - The plugin reference tests in `test/port/plugins/` run the cases of their generator through
   `testPluginChartCases` of `plugin_chart_harness.dart`: the controller harness with `hits: false`,
   the key `boxes` (`observeBoxes`) and a key `plugins.<id>` for each observer of the file. A unit

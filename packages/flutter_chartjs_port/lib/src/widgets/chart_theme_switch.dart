@@ -131,7 +131,7 @@ final class ChartThemeSwitch() {
     _scales = _isObject(options) ? _read(options!, OptionKey.scales) : _absent;
   }
 
-  /// Steps 1 to 4 of the switch to [theme] on [chart], whose raw config is
+  /// Steps 1 to 4 of the switch to [theme] on [chart], whose root config is
   /// [root]. Gives the update mode of step 5, or Dart `null` when the theme
   /// needs no update.
   ///
