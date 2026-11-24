@@ -126,7 +126,13 @@ final Map<String, HandFixture> handFixtures = {
 /// The hand port [load] of [path], with its `run` hook wrapped: the
 /// observations of the run, and their compare with [fixturesReference].
 // DIVERGES(zoom): harness-fixture-observations, the observed run hook.
-HandFixture _observed(String path, FixtureLoad load, String sha256) => (
+// The hand ports keep their Map configs: FixtureConfig.map (Chart.js ADR
+// 0199 of flutter_chartjs_port).
+HandFixture _observed(
+  String path,
+  Map<String, Object?> Function() load,
+  String sha256,
+) => (
   load: () {
     final json = load();
     final options = json['options']! as Map<String, Object?>;
@@ -146,7 +152,7 @@ HandFixture _observed(String path, FixtureLoad load, String sha256) => (
     }
 
     options['run'] = observedRun;
-    return json;
+    return FixtureConfig.map(json);
   },
   sha256: sha256,
 );

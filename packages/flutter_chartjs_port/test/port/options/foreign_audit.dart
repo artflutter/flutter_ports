@@ -173,6 +173,10 @@ const Set<String> reviewedForeignPairs = {
   'ArcOptions\tspacingMode\tobject',
   'ArcOptions\tspacingMode\tstring',
   'ArcOptions\tspacingMode\tundefined',
+  // The typed config of a fixture (Chart.js ADR 0199) keeps a number label of
+  // upstream in the `extra` of its dataset: the legend and the tooltip read
+  // the raw value, as they read the label of a dataset Map.
+  'BarControllerDatasetOptionsScope\tlabel\tnumber',
   'BarOptions\tbackgroundColor\tnull',
   'BarOptions\tbackgroundColor\tobject',
   'BarOptions\tbackgroundColor\tstring',
@@ -187,10 +191,6 @@ const Set<String> reviewedForeignPairs = {
   'BarOptions\tinflateAmount\tobject',
   'BarOptions\tinflateAmount\tstring',
   'BarOptions\tinflateAmount\tundefined',
-  // The typed config of a fixture (Chart.js ADR 0199) keeps a number label of
-  // upstream in the `extra` of its dataset: the legend and the tooltip read
-  // the raw value, as they read the label of a dataset Map.
-  'BarControllerDatasetOptionsScope\tlabel\tnumber',
   // The data Map of a raw config becomes a `ChartDataScope` with the same
   // values (row `adapt-config-objects`): `Scale.getLabels` and the category
   // label source read the raw value, as upstream reads the property.
