@@ -52,9 +52,9 @@ import '../support/tick_label.dart';
 //   `Chart.defaults.scales.time`, is a chain of `jsGet`.
 // - `Chart.helpers.clone` and `Chart.helpers.mergeIf` are `clone` and
 //   `mergeIf` of helpers.core.dart.
-// - `Chart._adapters._date` is the class value of `DateAdapterBase`
-//   (`adapters['_date']` of core.adapters.dart). Its static `override` is
-//   `DateAdapterBase.override`.
+// - `Chart._adapters._date` is `adapters.date` of core.adapters.dart, the
+//   constructor of the adapter. `_date.override(members)` is a subclass of
+//   `DefaultDateAdapter` in `adapters.date` (row adapt-date-adapter-class).
 // - `typeof Constructor === 'function'` is `isA<JsClass>()`.
 //   `not.toBe(undefined)` is `isNot(same(undefined))`.
 // - A `beforeEach` of a `describe` that writes no chart is a `setUp`.
@@ -109,25 +109,23 @@ List<Object?> _getLabels(Scale scale) => [
 ];
 
 /// The default date adapter, the `moment` of the spec (Chart.js ADR 0024).
-final DateAdapterBase _adapter = DateAdapterBase();
+final DateAdapterBase _adapter = DefaultDateAdapter();
 
 /// `moment(value).valueOf()` and `+moment(value, format)`: the parse of the
 /// default adapter. A [format] is an ICU pattern in place of the moment
 /// format (Chart.js ADR 0024).
 double _moment(Object? value, [String? format]) =>
-    jsToNumber(_adapter.parse(value, format ?? undefined));
+    jsToNumber(_adapter.parse(value, format));
 
 /// `moment(time).startOf(unit)` of the default adapter, as a number.
-double _startOf(Object? time, TimeUnit unit) =>
-    jsToNumber(_adapter.startOf(time, unit));
+double _startOf(double time, TimeUnit unit) => _adapter.startOf(time, unit);
 
 /// `moment(time).endOf(unit)` of the default adapter, as a number.
-double _endOf(Object? time, TimeUnit unit) =>
-    jsToNumber(_adapter.endOf(time, unit));
+double _endOf(double time, TimeUnit unit) => _adapter.endOf(time, unit);
 
 /// `moment(time).add(amount, unit)` of the default adapter, as a number.
-double _add(Object? time, num amount, TimeUnit unit) =>
-    jsToNumber(_adapter.add(time, amount, unit));
+double _add(double time, double amount, TimeUnit unit) =>
+    _adapter.add(time, amount, unit);
 
 /// `+new Date(value)`: the time value of the JS Date of [value].
 double _dateValue(String value) =>
@@ -181,11 +179,10 @@ void main() {
     // The upstream test environment loads moment.js and
     // chartjs-adapter-moment, the date library of the time scale
     // (karma.conf.cjs). The port has no moment.js: its date library is the
-    // default adapter of Chart.js ADR 0024, which DateAdapterBase.prototype
-    // holds from the start. Thus the case asserts that the default adapter
-    // is loaded.
+    // default adapter of Chart.js ADR 0024, which adapters.date makes from
+    // the start. Thus the case asserts that the default adapter is loaded.
     test('should load moment.js as a dependency', () {
-      expect(jsGet(DateAdapterBase.prototype, 'parse'), isNot(undefined));
+      expect(adapters.date(null), isA<DefaultDateAdapter>());
     });
 
     test('should register the constructor with the registry', () {
@@ -1372,15 +1369,15 @@ void main() {
     testWidgets('should pass chart options to date adapter', (tester) async {
       Object? chartOptions;
 
-      DateAdapterBase.override(<String, Object?>{
-        'init': (Object? options) {
-          chartOptions = options;
-        },
+      // DIVERGES(chartjs): adapt-date-adapter-class, a subclass in place of
+      // `_adapters._date.override({init})`.
+      final factory = adapters.date;
+      adapters.date = (o) => _InitAdapter(o, (options) {
+        chartOptions = options;
       });
       // Upstream keeps the member. The defaults restore does not cover
-      // `DateAdapterBase.prototype`, and the default members have no
-      // `init`. Thus the test removes the member at its end.
-      addTearDown(() => DateAdapterBase.prototype.remove('init'));
+      // `adapters.date`. Thus the test restores it at its end.
+      addTearDown(() => adapters.date = factory);
 
       final chart = acquireChartRoot(
         ChartConfigurationScope()
@@ -1443,4 +1440,14 @@ void main() {
       expect(callbackValue, isA<num>());
     });
   });
+}
+
+/// An adapter of a test that gives the chart options of each `init` to
+/// [_onInit].
+final class _InitAdapter(
+  super.options,
+  final void Function(Object? chartOptions) _onInit,
+) extends DefaultDateAdapter {
+  @override
+  void init(Object? chartOptions) => _onInit(chartOptions);
 }

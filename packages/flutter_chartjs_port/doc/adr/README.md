@@ -26,7 +26,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0021](0021-typed-options-in-the-resolver.md) Typed options in the resolver: accepted, superseded by 0054.
 - [0022](0022-chart-test-harness.md) Chart test harness on Flutter: accepted, superseded in part by 0108, 0200.
 - [0023](0023-underscore-member-collisions.md) Underscore members with a colliding name: accepted.
-- [0024](0024-dates.md) Dates: accepted, superseded in part by 0110, 0145, 0173.
+- [0024](0024-dates.md) Dates: accepted, superseded in part by 0110, 0145, 0173, 0203.
 - [0025](0025-scale-value-parameters.md) Scale value parameters: accepted, superseded in part by 0033, 0186.
 - [0026](0026-number-formatting-on-package-intl.md) Number formatting on package:intl: accepted, supersedes 0008, superseded by 0119.
 - [0027](0027-parsed-data.md) Parsed data in the controllers: accepted, superseded by 0036.
@@ -167,7 +167,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0170](0170-typed-gallery-type-pages.md) Typed gallery type pages: accepted, supersedes 0052.
 - [0171](0171-color-methods-on-flutter-color.md) Color methods on the Flutter Color: accepted, supersedes 0019.
 - [0172](0172-animation-frame-jobs.md) Animation frame jobs in place of promise jobs: accepted, supersedes 0019.
-- [0173](0173-option-function-types.md) Fixed Dart types for the option functions: accepted, supersedes 0020, 0024.
+- [0173](0173-option-function-types.md) Fixed Dart types for the option functions: accepted, supersedes 0020, 0024, superseded in part by 0203.
 - [0174](0174-canvas-option-values.md) Canvas values of option values without WebIDL conversions: accepted, supersedes 0017.
 - [0175](0175-typed-list-and-key-helpers.md) Typed Dart forms in place of six JS helpers: accepted.
 - [0176](0176-number-text-and-string-ids.md) The number text and the string ids: accepted, supersedes 0146, superseded in part by 0177, 0178.
@@ -196,4 +196,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0200](0200-native-canvas-style-members.md) Native canvas style members and typed harness options: accepted, supersedes 0022, 0037, 0055, 0108, 0124.
 - [0201](0201-remove-extra.md) No extra Map in the typed API: accepted, supersedes 0052.
 - [0202](0202-no-string-data.md) No string data: accepted, supersedes 0036.
+- [0203](0203-typed-date-adapter.md) A typed date adapter: accepted, supersedes 0024, 0173.
 <!-- adr-index:end -->

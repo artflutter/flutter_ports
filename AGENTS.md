@@ -1552,7 +1552,7 @@ sankey ADRs are proposed. The doc paths are relative to
   and restores it with `addTearDown`, as `test/port/options/foreign_audit_test.dart` does.
 - `flutter_test_config.dart` sets the default date zone to UTC (`setDefaultDateZone('Etc/UTC')`,
   the port of `test/index.js:23`). `setUpSpecs()` does the same. A test that changes the zone or
-  calls `DateAdapterBase.override` restores the old state with `addTearDown`.
+  writes `adapters.date` restores the old state with `addTearDown`.
 - `flutter_test_config.dart` registers the built-in components before `main()` of each test file and
   before the snapshot of the restore (`setUpBuiltins()`, the row `harness-register-builtins`,
   Chart.js ADR 0022 §8). After the registration, it sets `defaults.plugins.colors.enabled = false`

@@ -3,20 +3,20 @@
 /// Port of `src/scales/scale.time.js`.
 ///
 /// [TimeScale] maps dates to the axis. It reads each date through the date
-/// adapter of `core.adapters.dart`: `new adapters._date(...)` gives a
-/// [DateAdapterBase], whose prototype starts with the default members of
-/// `date_adapter.dart` (Chart.js ADR 0024). A time is a number of
+/// adapter of `core.adapters.dart`: `new adapters._date(...)` is a call of
+/// [ChartAdapters.date], which starts with the constructor of
+/// [DefaultDateAdapter] (Chart.js ADRs 0024 and 0203). A time is a number of
 /// milliseconds since the epoch.
 ///
 /// - Options are the typed resolver views of `helpers.config` (Chart.js ADR
 ///   0054 §4), through the facade [TimeScaleOptions]. The scale reads an
 ///   option with a getter of the facade (`options.time.unit`), tests it
 ///   with [jsTruthy], and applies [jsToNumber] before arithmetic. The
-///   adapter gets the raw option values, as upstream gives them. A display
+///   adapter gets a `double` timestamp and a `String` format. A display
 ///   format of a unit that the scale computes reads with
 ///   [DisplayFormats.formatOf].
-/// - Numbers are `double` (Chart.js ADR 0146). `+value` of an adapter
-///   result is [jsToNumber]. `Date.now()` is `clock.now()`.
+/// - Numbers are `double` (Chart.js ADR 0146). An adapter result is a
+///   `double`. `Date.now()` is `clock.now()`.
 /// - The value methods take a `double` (row `adapt-native-scale-values`).
 ///   A JS `null` timestamp is [TimeScale.nullValue] there.
 /// - The `_` members that other modules read drop the underscore and carry
@@ -125,26 +125,45 @@ double? _parse(TimeScale scale, Object? input) {
   }
 
   // Only parse if it's not a timestamp already
-  if (!isFinite(value)) {
-    value = parser is String
-        ? adapter.parse(value, parser)
-        : adapter.parse(value);
-  }
+  // DIVERGES(chartjs): adapt-date-adapter-class, a typed timestamp.
+  final time = isFinite(value)
+      ? (value! as num).toDouble()
+      : parser is String
+      ? adapter.parse(value, parser)
+      : adapter.parse(value);
 
-  if (value == null) {
+  if (time == null) {
     return null;
   }
 
   if (round != null) {
     // DIVERGES(chartjs): adapt-time-unit-enum, the ISO week is its own member.
-    value =
-        round == TimeUnit.week && (isNumber(isoWeekday) || isoWeekday == true)
-        ? adapter.startOfIsoWeek(value, isoWeekday)
-        : adapter.startOf(value, round);
+    return round == TimeUnit.week &&
+            (isNumber(isoWeekday) || isoWeekday == true)
+        ? adapter.startOfIsoWeek(time, _isoWeekdayOf(isoWeekday))
+        : adapter.startOf(time, round);
   }
 
-  return jsToNumber(value);
+  return time;
 }
+
+/// The ISO weekday of the option `time.isoWeekday` for
+/// [DateAdapter.startOfIsoWeek]: 1 for `true`, else the whole part of the
+/// number, as `Math.trunc` of chartjs-adapter-moment
+/// (`chartjs-adapter-moment.esm.js:54`).
+// DIVERGES(chartjs): adapt-date-adapter-class, an int weekday.
+int _isoWeekdayOf(Object? isoWeekday) =>
+    isoWeekday == true ? 1 : (isoWeekday! as num).toInt();
+
+/// The format of a display format option for [DateAdapter.format]: a
+/// `String`, or Dart `null` for a falsy value. Another value throws a
+/// [TypeError], as moment does when it calls `format.match`.
+// DIVERGES(chartjs): adapt-date-adapter-class, a String format.
+String? _formatText(Object? format) => switch (format) {
+  final String text => text,
+  _ when !jsTruthy(format) => null,
+  _ => throw TypeError(),
+};
 
 /// scale.time.js:87 `determineUnitForAutoTicks(minUnit, min, max,
 /// capacity)`.
@@ -194,7 +213,7 @@ TimeUnit _determineUnitForFormatting(
   for (var i = _units.length - 1; i >= _indexOfUnit(minUnit); i--) {
     final unit = _unitAt(i);
     if (_intervalOf(unit).common &&
-        jsToNumber(scale.adapter.diff(max, min, unit!)) >= numTicks - 1) {
+        scale.adapter.diff(max, min, unit!) >= numTicks - 1) {
       return unit;
     }
   }
@@ -261,16 +280,12 @@ List<Tick> _setMajorTicks(
   TimeUnit majorUnit,
 ) {
   final adapter = scale.adapter;
-  final first = jsToNumber(adapter.startOf(_tickValue(ticks[0]), majorUnit));
+  final first = adapter.startOf(_tickValue(ticks[0]) ?? double.nan, majorUnit);
   final last = jsToNumber(_tickValue(ticks[ticks.length - 1]));
   double major;
   int? index;
 
-  for (
-    major = first;
-    major <= last;
-    major = jsToNumber(adapter.add(major, 1.0, majorUnit))
-  ) {
+  for (major = first; major <= last; major = adapter.add(major, 1, majorUnit)) {
     index = map[major];
     if (index != null && index >= 0) {
       ticks[index].major = true;
@@ -498,11 +513,13 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
           // The set trap of the view: a write into the options, as upstream.
           : (options['time'] = <String, Object?>{}),
     );
-    // scale.time.js:271 `adapter.init(opts)` is the cascade. `adapters` is a
-    // raw value (helpers.config.ts:215): its `date` reads by name.
-    final adapter = this.adapter = (jsConstruct(adapters['_date'], [
+    // scale.time.js:271 `adapter.init(opts)` is the cascade. The option
+    // `adapters` is a raw value (helpers.config.ts:215): its `date` reads by
+    // name.
+    // DIVERGES(chartjs): adapt-date-adapter-class, the adapter constructor.
+    final adapter = this.adapter = adapters.date(
       jsGet(scaleOpts.adapters, 'date'),
-    ]) as DateAdapter)..init(chartOptions);
+    )..init(chartOptions);
 
     // Backward compatibility: before introducing adapter, `displayFormats`
     // was supposed to contain *all* unit/string pairs but this can't be
@@ -585,20 +602,10 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
 
     min = isFinite(min) && !jsIsNaN(min)
         ? min
-        : jsToNumber(
-            adapter.startOf(
-              clock.now().millisecondsSinceEpoch.toDouble(),
-              unit,
-            ),
-          );
+        : adapter.startOf(clock.now().millisecondsSinceEpoch.toDouble(), unit);
     max = isFinite(max) && !jsIsNaN(max)
         ? max
-        : jsToNumber(
-                adapter.endOf(
-                  clock.now().millisecondsSinceEpoch.toDouble(),
-                  unit,
-                ),
-              ) +
+        : adapter.endOf(clock.now().millisecondsSinceEpoch.toDouble(), unit) +
               1;
 
     // Make sure that max is strictly higher than min (required by the
@@ -793,18 +800,15 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
     if (hasWeekday) {
       // DIVERGES(chartjs): adapt-time-unit-enum, the ISO week is its own
       // member.
-      first = jsToNumber(adapter.startOfIsoWeek(first, weekday));
+      first = adapter.startOfIsoWeek(first, _isoWeekdayOf(weekday));
     }
 
     // Align first ticks on unit
-    first = jsToNumber(
-      adapter.startOf(first, hasWeekday ? TimeUnit.day : minor),
-    );
+    first = adapter.startOf(first, hasWeekday ? TimeUnit.day : minor);
 
     // Prevent browser from freezing in case user options request millions
     // of milliseconds
-    if (jsToNumber(adapter.diff(max, min, minor)) >
-        100000 * jsToNumber(stepSize)) {
+    if (adapter.diff(max, min, minor) > 100000 * stepSize) {
       throw StateError(
         '$min and $max are too far '
         'apart with stepSize of ${jsToString(stepSize)} ${minor.name}',
@@ -817,7 +821,7 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
         : null;
     for (time = first; time < max; count++) {
       _addTick(ticks, time, timestamps);
-      final next = jsToNumber(adapter.add(time, stepSize, minor));
+      final next = adapter.add(time, stepSize, minor);
       // DIVERGES(chartjs): adapt-time-generate-no-advance, a stuck step.
       if (next <= time) {
         throw StateError(
@@ -851,20 +855,23 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
 
     // DIVERGES(chartjs): adapt-native-scale-values, the text of the label.
     if (tooltipFormat?.isNotEmpty ?? false) {
-      return jsToString(adapter.format(value, tooltipFormat));
+      return adapter.format(value, tooltipFormat);
     }
-    return jsToString(adapter.format(value, timeOpts.displayFormats.datetime));
+    return adapter.format(value, _formatText(timeOpts.displayFormats.datetime));
   }
 
   /// scale.time.js:510 `format(value, format)`.
   ///
   /// The text of [value] in [format], or in the display format of [unit].
   /// Dart `null` for [format] stands for JS `undefined`.
-  Object? format(Object? value, [Object? format]) {
+  // DIVERGES(chartjs): adapt-date-adapter-class, a typed timestamp and format.
+  String format(double value, [String? format]) {
     final options = this.options;
     final formats = options.time.displayFormats;
     final unit = this.unit;
-    final fmt = jsTruthy(format) ? format : formats.formatOf(unit);
+    final fmt = format != null && format.isNotEmpty
+        ? format
+        : _formatText(formats.formatOf(unit));
     return adapter.format(value, fmt);
   }
 
@@ -905,8 +912,10 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
 
     return labelLinesOf(
       adapter.format(
-        time,
-        jsTruthy(format) ? format : (major ? majorFormat : minorFormat),
+        time ?? double.nan,
+        _formatText(
+          jsTruthy(format) ? format : (major ? majorFormat : minorFormat),
+        ),
       ),
     );
   }

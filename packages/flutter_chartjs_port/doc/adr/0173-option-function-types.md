@@ -1,6 +1,7 @@
 # Chart.js ADR 0173: Fixed Dart types for the option functions
 
 - Status: accepted (2026-11-18): its code and the tests of section Tests pass.
+- Superseded in part by: [Chart.js ADR 0203](0203-typed-date-adapter.md) (2026-11-25)
 - Date: 2026-11-18
 - Supersedes: of [Chart.js ADR 0024](0024-dates.md) §1, the item "Dispatch"; of
   [Chart.js ADR 0020](0020-registry-and-component-classes.md) §2, the item on `jsIsFunction` and the call of a class

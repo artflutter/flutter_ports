@@ -1,8 +1,0 @@
-# Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
-# - stringIndex 9: each method of DateAdapterBase reads its member of
-#   `DateAdapterBase.prototype` by name (core.adapters.ts:100-128, row
-#   `adapt-date-adapter-prototype`), also `startOfIsoWeek` (row
-#   `adapt-time-unit-enum`): the prototype is the JS object that
-#   `override` (an adapter package, user code) writes by name
-#   (core.adapters.ts:88).
-stringIndex 9

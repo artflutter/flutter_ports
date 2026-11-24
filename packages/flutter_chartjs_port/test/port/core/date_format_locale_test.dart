@@ -42,7 +42,7 @@ void main() {
     Intl.defaultLocale = previousLocale;
   });
 
-  final adapter = DateAdapterBase();
+  final adapter = DefaultDateAdapter();
   // 2015-01-01 is a Thursday.
   final t = _at(2015, 1, 1, 20);
 

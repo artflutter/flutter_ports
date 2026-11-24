@@ -3,9 +3,7 @@
 #   raw value (helpers.config.ts:215), and `date` is not a key of the schema.
 # - stringIndex 1: `scaleOpts.time = {}` (scale.time.js:267), the set trap of
 #   the view: a write into the options, as upstream.
-# - stringIndex 1: `adapters._date` (scale.time.js:269): `adapters` is the
-#   mutable object of core.adapters.ts:131 that user code can change.
 # `this._cache.data` and `.labels` are the typed fields of ScaleCache (the
 # close step).
 jsGet 1
-stringIndex 2
+stringIndex 1

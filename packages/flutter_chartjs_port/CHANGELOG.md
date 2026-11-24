@@ -1,5 +1,9 @@
 ## Unreleased
 
+- BREAKING: the date adapter has typed members (Chart.js ADR 0203): a timestamp is a `double`, a format a
+  `String?` and an ISO weekday an `int`. `DateAdapterBase.override`, `DateAdapterBase.prototype` and
+  `dateAdapterMembers` are gone. An app gives its adapter as a subclass of `DefaultDateAdapter` and writes its
+  constructor into `adapters.date`: `adapters.date = MyDateAdapter.new`.
 - BREAKING: no class of the typed API has `extra` (Chart.js ADR 0201). Each option is a typed parameter:
   write `LinearAxis(.y, stack: '1', offset: true)` in place of `extra: {'stack': '1', 'offset': true}`.
   New parameters: the axis parts (`precision`, `count`, `maxTicksLimit`, `circular`, `tickColor` and more),

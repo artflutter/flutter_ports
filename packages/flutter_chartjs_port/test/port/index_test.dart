@@ -248,7 +248,7 @@ void main() {
     expect(animator, isNotNull);
     expect(layouts.addBox, isNotNull);
     expect(Interaction.evaluateInteractionItems, isNotNull);
-    expect(adapters, contains('_date'));
+    expect(adapters.date, same(DefaultDateAdapter.new));
     expect(ticks, contains('formatters'));
     expect(DatasetController.jsClass.name, 'DatasetController');
     expect(Element.jsClass.name, 'Element');

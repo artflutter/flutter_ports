@@ -25,7 +25,7 @@ import 'package:intl/intl.dart';
 /// number, as moment `[Q]Q`. The default `formats` member returns this Map
 /// at each call, as the moment member returns `FORMATS`.
 // DIVERGES(chartjs): adapt-date-moment-format, ICU patterns.
-final AnyObject dateFormats = <String, Object?>{
+final Map<String, String> dateFormats = <String, String>{
   'datetime': 'MMM d, yyyy, h:mm:ss a',
   'millisecond': 'h:mm:ss.SSS a',
   'second': 'h:mm:ss a',

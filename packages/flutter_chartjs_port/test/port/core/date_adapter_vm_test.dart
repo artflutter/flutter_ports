@@ -69,7 +69,7 @@ void main() {
   });
   tearDown(() => setDefaultDateZone(previousZone));
 
-  final adapter = DateAdapterBase();
+  final adapter = DefaultDateAdapter();
   final now = DateTime.utc(2026, 10, 20, 9, 41, 7, 123);
 
   group('current-date fill', () {
@@ -215,7 +215,7 @@ void main() {
           ('h:mm:ss a', t - 7),
           ('h:mm a', t - 6007),
         ]) {
-          final text = adapter.format(t, pattern)! as String;
+          final text = adapter.format(t, pattern);
           expect(text, endsWith(' pm'));
           expect(adapter.parse(text, pattern), time, reason: text);
         }
@@ -248,10 +248,14 @@ void main() {
       withClock(Clock.fixed(now), () {
         expect(adapter.parse(undefined), now.millisecondsSinceEpoch);
         expect(
-          adapter.format(undefined, 'yyyy-MM-dd HH:mm'),
+          formatDate(
+            dateInput(undefined, null),
+            'yyyy-MM-dd HH:mm',
+            null,
+            'en_US',
+          ),
           '2026-10-20 09:41',
         );
-        expect(adapter.startOf(undefined, TimeUnit.day), _at(2026, 10, 20));
       });
     });
   });
@@ -300,6 +304,8 @@ void main() {
           final endOf = (corpus['endOf']! as List)[u] as List;
           for (var i = 0; i < times.length; i++) {
             final t = times[i];
+            // The time scale gives a double timestamp.
+            if (t is! double) continue;
             check(
               'startOf($t, ${units[u]})',
               startOf[i],
@@ -315,21 +321,26 @@ void main() {
         final weekdays = (corpus['W']! as List).map(_decode).toList();
         for (var w = 0; w < weekdays.length; w++) {
           final results = (corpus['isoWeek']! as List)[w] as List;
+          // The time scale gives an int weekday.
+          final weekday = switch (weekdays[w]) {
+            true => 1,
+            final num n when n.isFinite => n.toInt(),
+            _ => null,
+          };
+          if (weekday == null) continue;
           for (var i = 0; i < times.length; i++) {
             final t = times[i];
+            if (t is! double) continue;
             check(
               'isoWeek($t, ${weekdays[w]})',
               results[i],
-              () => adapter.startOfIsoWeek(t, weekdays[w]),
+              () => adapter.startOfIsoWeek(t, weekday),
             );
           }
         }
         final addTimes = (corpus['TA']! as List).map(_decode).toList();
         final amounts = (corpus['A']! as List).map(_decode).toList();
         final addUnits = (corpus['UA']! as List).map(_decode).toList();
-        // moment reads these strings as durations (row
-        // adapt-date-parse-fallback).
-        const durations = {'P1D', 'PT1H', '1.02:03:04'};
         for (var u = 0; u < addUnits.length; u++) {
           final byAmount = (corpus['add']! as List)[u] as List;
           final unit = _timeUnits[addUnits[u]];
@@ -337,9 +348,11 @@ void main() {
           for (var a = 0; a < amounts.length; a++) {
             final amount = amounts[a];
             final results = byAmount[a] as List;
-            if (durations.contains(amount)) continue;
+            // The time scale gives a double amount.
+            if (amount is! double) continue;
             for (var i = 0; i < addTimes.length; i++) {
               final t = addTimes[i];
+              if (t is! double) continue;
               check(
                 'add($t, $amount, $unit)',
                 results[i],
@@ -357,6 +370,7 @@ void main() {
           for (var p = 0; p < pairs.length; p++) {
             final a = _decode(pairs[p][0]);
             final b = _decode(pairs[p][1]);
+            if (a is! double || b is! double) continue;
             check(
               'diff($a, $b, ${diffUnits[u]})',
               results[p],
@@ -378,14 +392,16 @@ void main() {
         final formats = corpus['formats']! as Map<String, Object?>;
         final texts = corpus['format']! as Map<String, Object?>;
         final formatTimes = (corpus['F']! as List).map(_decode).toList();
-        final icu = adapter.formats()! as Map<String, Object?>;
+        final icu = adapter.formats();
         for (final key in formats.keys) {
           final expected = texts[key]! as List;
           for (var i = 0; i < formatTimes.length; i++) {
+            final t = formatTimes[i];
+            if (t is! double) continue;
             check(
-              'format(${formatTimes[i]}, $key)',
+              'format($t, $key)',
               expected[i],
-              () => adapter.format(formatTimes[i], icu[key]),
+              () => adapter.format(t, icu[key]),
             );
           }
         }

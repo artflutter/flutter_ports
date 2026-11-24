@@ -100,6 +100,7 @@ CategoryLabelSource
 CategoryScale
 CategoryScaleOptions
 Chart
+ChartAdapters
 ChartAlign
 ChartAnimation
 ChartAnimationItems
@@ -179,12 +180,14 @@ DatasetUpdateHookArgs
 DatasetValues
 DateAdapter
 DateAdapterBase
+DateAdapterFactory
 DateZone
 Debounced
 DecimationAlgorithm
 DecimationOptions
 DecimationPlugin
 DefaultCubicInterpolationMode
+DefaultDateAdapter
 Defaults
 DenseCurveCanvas
 Descriptor
@@ -700,7 +703,6 @@ dataLabelLinesOf
 dataUpdateField
 dataUpdateValues
 datasetIndexAxis
-dateAdapterMembers
 dateFormats
 dateInput
 dateLocale
@@ -1156,6 +1158,7 @@ CategoryLabelSource
 CategoryScale
 CategoryScaleOptions
 Chart
+ChartAdapters
 ChartAlign
 ChartAnimation
 ChartAnimationItems
@@ -1235,12 +1238,14 @@ DatasetUpdateHookArgs
 DatasetValues
 DateAdapter
 DateAdapterBase
+DateAdapterFactory
 DateZone
 Debounced
 DecimationAlgorithm
 DecimationOptions
 DecimationPlugin
 DefaultCubicInterpolationMode
+DefaultDateAdapter
 Defaults
 DenseCurveCanvas
 Descriptor
@@ -1756,7 +1761,6 @@ dataLabelLinesOf
 dataUpdateField
 dataUpdateValues
 datasetIndexAxis
-dateAdapterMembers
 dateFormats
 dateInput
 dateLocale

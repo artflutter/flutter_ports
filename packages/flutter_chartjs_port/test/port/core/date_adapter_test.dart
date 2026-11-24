@@ -76,6 +76,24 @@ String _wallText(int wall) {
       '${two(date.day)}T${two(date.hour)}:${two(date.minute)}';
 }
 
+/// The weekday that the time scale gives for the option value [w]: 1 for
+/// `true`, the whole part of a finite number, else Dart `null` (the scale
+/// calls no `startOfIsoWeek`).
+int? _weekdayOf(Object? w) => switch (w) {
+  true => 1,
+  final num n when n.isFinite => n.toInt(),
+  _ => null,
+};
+
+/// Whether the time scale throws the [TypeError] of the format [format]
+/// before it calls the adapter: a value that is neither a `String` nor
+/// falsy.
+bool _formatThrows(Object? format) => format is! String && jsTruthy(format);
+
+/// The format that the time scale gives the adapter for the option value
+/// [format]: a `String`, or Dart `null` for a falsy value.
+String? _formatArg(Object? format) => format is String ? format : null;
+
 void main() {
   String? previousZone;
   setUp(() {
@@ -95,7 +113,7 @@ void main() {
   });
 
   group('reference UTC', () {
-    final adapter = DateAdapterBase();
+    final adapter = DefaultDateAdapter();
 
     test('startOf and endOf', () {
       final mismatches = _Mismatches();
@@ -129,7 +147,9 @@ void main() {
       for (var i = 0; i < dateReferenceTimes.length; i++) {
         final t = dateReferenceTimes[i];
         for (var j = 0; j < weekdays.length; j++) {
-          final w = weekdays[j];
+          // The time scale gives an int weekday (_isoWeekdayOf).
+          final w = _weekdayOf(weekdays[j]);
+          if (w == null) continue;
           _time(
             mismatches,
             'startOfIsoWeek($t, $w)',
@@ -151,9 +171,8 @@ void main() {
         for (final n in amounts) {
           for (final u in units) {
             final expected = dateReferenceAdd[index++];
-            // moment reads 'P1D' as a duration (row
-            // adapt-date-parse-fallback).
-            if (n == 'P1D') continue;
+            // The time scale gives a double amount.
+            if (n is! double) continue;
             _time(
               mismatches,
               'add($t, $n, $u)',
@@ -194,7 +213,10 @@ void main() {
       for (var i = 0; i < pairs.length; i += 2) {
         for (final u in units) {
           final expected = dateReferenceDiffPairResults[index++];
-          final got = adapter.diff(pairs[i], pairs[i + 1], u);
+          final (a, b) = (pairs[i], pairs[i + 1]);
+          // The time scale gives double timestamps.
+          if (a is! double || b is! double) continue;
+          final got = adapter.diff(a, b, u);
           if (!_same(got, expected)) {
             mismatches.add(
               'diff(${pairs[i]}, ${pairs[i + 1]}, $u): $got, expected '
@@ -219,7 +241,7 @@ void main() {
     test('format with the ICU patterns of formats()', () {
       final mismatches = _Mismatches();
       const keys = dateReferenceFormatKeys;
-      final formats = adapter.formats()! as Map<String, Object?>;
+      final formats = adapter.formats();
       expect(formats.keys, keys);
       var index = 0;
       for (final t in dateReferenceFormatTimes) {
@@ -240,15 +262,18 @@ void main() {
         // A moment format string is not an ICU pattern. The cases with such
         // a string have an invalid time.
         final label = 'format($time, $format)';
+        // The time scale gives a double timestamp.
+        if (time is! double) continue;
+        // The time scale throws the TypeError of a format that is neither a
+        // string nor falsy before it calls the adapter. moment gives
+        // 'Invalid date' for such a format and an invalid time.
+        if (_formatThrows(format)) continue;
+        final text = _formatArg(format);
         if (expected == dateReferenceTypeError) {
-          try {
-            mismatches.add('$label: ${adapter.format(time, format)}');
-          } on Object catch (error) {
-            if (error is! TypeError) mismatches.add('$label: threw $error');
-          }
-        } else if (adapter.format(time, format) != expected) {
+          mismatches.add('$label: ${adapter.format(time, text)}');
+        } else if (adapter.format(time, text) != expected) {
           mismatches.add(
-            '$label: ${adapter.format(time, format)}, expected $expected',
+            '$label: ${adapter.format(time, text)}, expected $expected',
           );
         }
       }
@@ -300,40 +325,12 @@ void main() {
   });
 
   group('adapt-date-default-adapter', () {
-    tearDown(
-      () => DateAdapterBase.prototype
-        ..clear()
-        ..addAll(dateAdapterMembers),
-    );
-
-    test('the prototype starts with the default members', () {
-      expect(dateAdapterMembers.keys, [
-        'formats',
-        'parse',
-        'format',
-        'add',
-        'diff',
-        'startOf',
-        'startOfIsoWeek',
-        'endOf',
-      ]);
-      expect(DateAdapterBase.prototype.keys, dateAdapterMembers.keys);
-      for (final key in dateAdapterMembers.keys) {
-        expect(
-          DateAdapterBase.prototype[key],
-          same(dateAdapterMembers[key]),
-          reason: key,
-        );
-      }
-      expect(() => dateAdapterMembers['init'] = null, throwsUnsupportedError);
-    });
-
-    test('_date stays the class value of DateAdapterBase', () {
-      expect(adapters['_date'], same(DateAdapterBase.jsClass));
+    test('adapters.date makes a DefaultDateAdapter', () {
+      expect(adapters.date(null), isA<DefaultDateAdapter>());
     });
 
     test('a new adapter gives the default results', () {
-      final adapter = DateAdapterBase();
+      final adapter = DefaultDateAdapter();
       final t = DateTime.utc(2015, 1, 1, 20).millisecondsSinceEpoch.toDouble();
       expect(adapter.parse('2015-01-01T20:00:00Z'), t);
       expect(adapter.startOf(t, TimeUnit.day), t - 20 * 3600000);
@@ -345,46 +342,28 @@ void main() {
       adapter.init(<String, Object?>{});
     });
 
-    test('an int time is a JS number', () {
-      final adapter = DateAdapterBase();
+    test('an int data value is a JS number', () {
       const t = 1420142400000;
-      expect(adapter.parse(t), t.toDouble());
-      expect(adapter.startOf(t, TimeUnit.day), t - 20 * 3600000);
-      expect(adapter.format(t, 'yyyy-MM-dd HH'), '2015-01-01 20');
+      expect(DefaultDateAdapter().parse(t), t.toDouble());
     });
 
-    test('an override replaces only its own members', () {
-      DateAdapterBase.override({
-        'parse': (Object? value, Object? format) => 42.0,
-      });
-      final adapter = DateAdapterBase();
+    test('a subclass replaces only its own members', () {
+      final adapter = _ParseAdapter();
       expect(adapter.parse('2015'), 42.0);
-      expect(adapter.add(0.0, 1, TimeUnit.second), 1000);
+      expect(adapter.add(0, 1, TimeUnit.second), 1000);
       expect(adapter.formats(), same(dateFormats));
     });
 
-    test('an override of init keeps the default members', () {
-      Object? received;
-      DateAdapterBase.override({
-        'init': (Object? options) {
-          received = options;
-        },
-      });
+    test('a falsy options value gives a new Map', () {
+      expect(DefaultDateAdapter().options, <String, Object?>{});
+      expect(DefaultDateAdapter(false).options, <String, Object?>{});
       final options = <String, Object?>{'locale': 'es'};
-      DateAdapterBase().init(options);
-      expect(received, same(options));
-      expect(DateAdapterBase().startOf(1.5, TimeUnit.second), 0);
-    });
-
-    test('a cleared prototype gives the abstract error', () {
-      DateAdapterBase.prototype.clear();
-      expect(DateAdapterBase().formats, throwsStateError);
-      expect(() => DateAdapterBase().parse('2015'), throwsStateError);
+      expect(DefaultDateAdapter(options).options, same(options));
     });
   });
 
   group('adapt-date-moment-format', () {
-    final adapter = DateAdapterBase();
+    final adapter = DefaultDateAdapter();
     double at(int y, [int m = 1, int d = 1, int h = 0, int mi = 0]) =>
         DateTime.utc(y, m, d, h, mi).millisecondsSinceEpoch.toDouble();
 
@@ -490,19 +469,16 @@ void main() {
     test('the text of a lower-case pattern parses back', () {
       final t = at(2015, 1, 1, 20, 5) + 6000;
       const pattern = 'MMM d, yyyy, h:mm:ss a';
-      final text = adapter.format(t, pattern)! as String;
+      final text = adapter.format(t, pattern);
       expect(text, 'Jan 1, 2015, 8:05:06 pm');
       expect(adapter.parse(text, pattern), t);
     });
 
-    test(
-      'an empty format and a format that is not a string use the input rule',
-      () {
-        expect(adapter.parse('2015-03-04', ''), at(2015, 3, 4));
-        expect(adapter.parse('2015-03-04', 5.0), at(2015, 3, 4));
-        expect(adapter.parse(5.0, 'yyyy'), 5);
-      },
-    );
+    test('an empty format and a value that is not a string use the input '
+        'rule', () {
+      expect(adapter.parse('2015-03-04', ''), at(2015, 3, 4));
+      expect(adapter.parse(5.0, 'yyyy'), 5);
+    });
 
     test('a parse with a pattern reads the wall time in the zone', () {
       final zone = TableZone(-5 * 3600000, const [], const []);
@@ -514,7 +490,7 @@ void main() {
   });
 
   group('adapt-date-parse-fallback', () {
-    final adapter = DateAdapterBase();
+    final adapter = DefaultDateAdapter();
 
     test('strings of the new Date(string) fallback are invalid', () {
       for (final s in ['Jan 1, 2015', '1/2/2015', '2015-1-2', 'abc', 'true']) {
@@ -535,34 +511,25 @@ void main() {
         false,
       ]) {
         expect(adapter.parse(value), isNull, reason: '$value');
-        expect(adapter.startOf(value, TimeUnit.day), isNaN, reason: '$value');
       }
-    });
-
-    test('a duration string or object adds nothing', () {
-      const t = 1420142400000.0;
-      expect(adapter.add(t, 'P1D', TimeUnit.day), t);
-      expect(adapter.add(t, '1.02:03:04', TimeUnit.day), t);
-      expect(adapter.add(t, <String, Object?>{'days': 2.0}, TimeUnit.day), t);
-      // A numeric string is an amount.
-      expect(adapter.add(t, '2', TimeUnit.day), t + 2 * 86400000);
     });
   });
 
   group('format edges', () {
-    final adapter = DateAdapterBase();
+    final adapter = DefaultDateAdapter();
     const t = 1420142400000.0;
 
     test("'Invalid date' for an invalid time", () {
-      expect(adapter.format(null, 'yyyy'), 'Invalid date');
       expect(adapter.format(double.nan, 'yyyy'), 'Invalid date');
-      expect(adapter.format(double.nan, 5.0), 'Invalid date');
-      expect(adapter.format('abc', undefined), 'Invalid date');
+      expect(adapter.format(double.nan, null), 'Invalid date');
     });
 
     test('the ISO default text in UTC and in a zone', () {
-      for (final format in [undefined, null, '', false, 0.0, double.nan]) {
+      for (final format in [null, '']) {
         expect(adapter.format(t, format), '2015-01-01T20:00:00Z');
+      }
+      for (final format in [undefined, false, 0.0, double.nan]) {
+        expect(formatDate(t, format, null, 'en_US'), '2015-01-01T20:00:00Z');
       }
       final zone = TableZone(-5 * 3600000, const [], const []);
       expect(formatDate(t, null, zone, 'en_US'), '2015-01-01T15:00:00-05:00');
@@ -586,7 +553,7 @@ void main() {
         true,
       ]) {
         expect(
-          () => adapter.format(t, format),
+          () => formatDate(t, format, null, 'en_US'),
           throwsA(isA<TypeError>()),
           reason: '$format',
         );
@@ -595,13 +562,12 @@ void main() {
 
     test('a DateTime time', () {
       final date = DateTime.utc(2015, 1, 1, 20);
-      expect(adapter.format(date, 'yyyy-MM-dd HH'), '2015-01-01 20');
       expect(adapter.parse(date), t);
     });
   });
 
   group('isoWeek', () {
-    final adapter = DateAdapterBase();
+    final adapter = DefaultDateAdapter();
     final thursday = DateTime.utc(2015, 1, 1, 20).millisecondsSinceEpoch;
     final sunday = DateTime.utc(2015, 1, 4, 13).millisecondsSinceEpoch;
     const day = 86400000;
@@ -611,7 +577,7 @@ void main() {
         final t = (thursday + i * day).toDouble();
         for (final weekday in [undefined, double.nan, 'abc']) {
           expect(
-            () => adapter.startOfIsoWeek(t, weekday),
+            () => startOfIsoWeekday(t, weekday, null),
             throwsA(isA<TypeError>()),
             reason: '$t $weekday',
           );
@@ -622,7 +588,7 @@ void main() {
     test('a NaN weekday on a Sunday gives the Sunday one week before', () {
       final start = sunday - 13 * 3600000;
       expect(
-        adapter.startOfIsoWeek(sunday.toDouble(), undefined),
+        startOfIsoWeekday(sunday.toDouble(), undefined, null),
         start - 7 * day,
       );
     });
@@ -630,11 +596,10 @@ void main() {
     test('the weekday stays in the ISO week of the time', () {
       final monday = thursday - 20 * 3600000 - 3 * day;
       final time = thursday.toDouble();
-      expect(adapter.startOfIsoWeek(time, 1.0), monday);
-      expect(adapter.startOfIsoWeek(time, 6.0), monday + 5 * day);
-      expect(adapter.startOfIsoWeek(time, 0.0), monday - day);
-      expect(adapter.startOfIsoWeek(time, true), monday);
-      expect(adapter.startOfIsoWeek(time, 9.0), monday + 5 * day);
+      expect(adapter.startOfIsoWeek(time, 1), monday);
+      expect(adapter.startOfIsoWeek(time, 6), monday + 5 * day);
+      expect(adapter.startOfIsoWeek(time, 0), monday - day);
+      expect(adapter.startOfIsoWeek(time, 9), monday + 5 * day);
     });
   });
 
@@ -644,7 +609,7 @@ void main() {
         ..offsetAt(0)
         ..offsetAt(100 * 86400000);
       expect(zone.cachedIntervals, isNotEmpty);
-      DateAdapterBase().formats();
+      DefaultDateAdapter().formats();
       expect(zone.cachedIntervals, isEmpty);
       zone.offsetAt(0);
       setDefaultDateZone('UTC');
@@ -658,7 +623,7 @@ void main() {
       expect(defaultDateZone, isNull);
       setDefaultDateZone('UTC');
       expect(defaultDateZone, 'UTC');
-      expect(DateAdapterBase().parse('2015-01-01T00:00'), 1420070400000);
+      expect(DefaultDateAdapter().parse('2015-01-01T00:00'), 1420070400000);
       setDefaultDateZone('Etc/UTC');
       expect(defaultDateZone, 'Etc/UTC');
     });
@@ -672,7 +637,7 @@ void main() {
       setDefaultDateZone(null);
       final local = DateTime(2015, 6, 1, 10, 30);
       expect(
-        DateAdapterBase().parse('2015-06-01T10:30'),
+        DefaultDateAdapter().parse('2015-06-01T10:30'),
         local.millisecondsSinceEpoch,
       );
     });
@@ -811,4 +776,10 @@ void _referenceLocal(
       mismatches.check();
     });
   });
+}
+
+/// An adapter of a test that replaces only `parse`.
+final class _ParseAdapter() extends DefaultDateAdapter {
+  @override
+  double? parse(Object? value, [String? format]) => 42;
 }

@@ -428,9 +428,9 @@ decision, its evidence and the items that stay open. In short:
 ### 2.10 Chart.js ADR 0024: Dates (gate 6)
 
 [Chart.js ADR 0024](adr/0024-dates.md) holds the decision and its evidence. In short:
-- `DateAdapterBase.prototype` starts with the default members of the port-only
-  `date_adapter.dart`. `_date` stays the base class `DateAdapterBase`. A member of the exact Dart
-  type of its method gets a typed direct call. Five port-only pure files
+- `adapters.date` starts with the constructor of `DefaultDateAdapter` of the port-only
+  `date_adapter.dart`, a subclass of `DateAdapterBase` with typed members
+  ([Chart.js ADR 0203](adr/0203-typed-date-adapter.md)). Five port-only pure files
   `lib/src/core/date_*.dart` hold the adapter. The time scale keeps its adapter in the
   `@internal` field `adapter` (`_adapter`, Chart.js ADR 0025 §6).
 - The members follow chartjs-adapter-moment 1.0.1 on moment 2.29.4: the `isoWeekday` clamp and

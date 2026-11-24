@@ -277,15 +277,18 @@ repository.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0147 §2) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
-      `core.adapters.dart` has `DateAdapter` and `DateAdapterBase`. `DateAdapterBase.jsClass` is the
-      `_date` of `adapters`. Both files are pure layers. A time unit is the enum `TimeUnit` of
+      `core.adapters.dart` has `DateAdapter`, `DateAdapterBase` and `adapters`, a `ChartAdapters`
+      (Chart.js ADR 0203, row `adapt-date-adapter-class`). Each member of `DateAdapter` has a Dart
+      type: a `double` timestamp, a `String?` format, an `int` ISO weekday. `adapters.date` holds the
+      constructor of the adapter, the upstream `_date`. An app writes the constructor of its subclass
+      into it. Both files are pure layers. A time unit is the enum `TimeUnit` of
       `core.adapters.dart` (row `adapt-time-unit-enum`): the options `time.unit`, `time.minUnit`
       and `time.round`, `TimeScale.unit` and the unit of `add`, `diff`, `startOf` and `endOf`.
       The ISO week of upstream `startOf(time, 'isoWeek', weekday)` is the member
       `startOfIsoWeek(time, weekday)`. The default adapter reads no unit name.
     - `date_adapter.dart`, `date_calendar.dart`, `date_zone.dart`, `date_parse.dart` and
       `date_format.dart` are the port-only default date adapter (Chart.js ADR 0024), pure layers.
-      `DateAdapterBase.prototype` starts with `dateAdapterMembers`, the rules of
+      `adapters.date` starts with the constructor of `DefaultDateAdapter`, the rules of
       chartjs-adapter-moment 1.0.1 on moment 2.29.4 with ICU patterns. `setDefaultDateZone`
       selects local time (the default) or UTC. [Chart.js ADR 0110](doc/adr/0110-local-zone-offset-cache.md):
       `LocalZone` of `date_zone.dart` keeps up to 64 offset intervals, and `formats()` clears them once for each
@@ -879,7 +882,7 @@ repository.
     NaN for the `undefined` of upstream. The `_` members that another file or a spec
     reads drop the underscore: `startValue`, `endValue`, `valueRange`, `offsets`, `generate`,
     `unit`, `adapter`, `pointLabels`, `pointLabelItems`. The time scales read each date through
-    `adapters._date` (Chart.js ADR 0024). A category `parse` of a value that is not a String skips
+    `adapters.date` (Chart.js ADRs 0024 and 0203). A category `parse` of a value that is not a String skips
     the label scan for a native `List<String>` (row `adapt-category-string-labels`).
   - `lib/src/canvas/`: the port-only canvas layer (Chart.js ADRs 0055 and 0015). `canvas.dart` is
     the Canvas 2D interface, a pure layer. `canvas_ui.dart` and its five parts

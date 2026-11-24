@@ -118,11 +118,9 @@ Map<String, String> _zoneSkips() {
 /// the case name. The test restores the adapter at its end.
 final Map<String, void Function()> _setUps = {
   'an adapter add that gives NaN': () {
-    final add = DateAdapterBase.prototype['add'];
-    DateAdapterBase.override({
-      'add': (Object? time, Object? amount, Object? unit) => double.nan,
-    });
-    addTearDown(() => DateAdapterBase.prototype['add'] = add);
+    final factory = adapters.date;
+    adapters.date = _NaNAddAdapter.new;
+    addTearDown(() => adapters.date = factory);
   },
 };
 
@@ -162,7 +160,7 @@ Matcher _same(double value) => value.isNaN ? isNaN : equals(value);
 /// scale.time.tests.js: the parse of the default adapter, with an ICU
 /// pattern in place of the moment format.
 double _ms(String value, [String? format]) =>
-    jsToNumber(DateAdapterBase().parse(value, format ?? undefined));
+    jsToNumber(DefaultDateAdapter().parse(value, format));
 
 /// scale.time.tests.js:27-29 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
@@ -598,8 +596,9 @@ void main() {
     testWidgets('init gives the chart options to the adapter, and the '
         'scale gets a new adapter in each update', (tester) async {
       final options = <Object?>[];
-      DateAdapterBase.override({'init': options.add});
-      addTearDown(() => DateAdapterBase.prototype.remove('init'));
+      final factory = adapters.date;
+      adapters.date = (o) => _InitAdapter(o, options.add);
+      addTearDown(() => adapters.date = factory);
       final chart = _chart(_xy([_t0, _t0 + _day]));
       final first = _x(chart).adapter;
       expect(options, isNotEmpty);
@@ -709,12 +708,12 @@ void main() {
       for (final lbl in labels) {
         final dd = xScale.adapter.parse(lbl);
         final parsed = (lbl! as String).split('T');
-        expect(xScale.format(dd), parsed[0]);
+        expect(xScale.format(dd!), parsed[0]);
       }
       for (final lbl in labels) {
         final mm = xScale.adapter.parse(lbl);
         final yearMonth = (lbl! as String).substring(0, 7);
-        expect(xScale.format(mm, 'yyyy-MM'), yearMonth);
+        expect(xScale.format(mm!, 'yyyy-MM'), yearMonth);
       }
     });
 
@@ -1609,4 +1608,20 @@ void main() {
   group('Liberation Sans widths of the generator', () {
     testReferenceWidths(scaleTimeReferenceWidths);
   });
+}
+
+/// An adapter of a test whose `add` gives NaN.
+final class _NaNAddAdapter([super.options]) extends DefaultDateAdapter {
+  @override
+  double add(double timestamp, double amount, TimeUnit unit) => double.nan;
+}
+
+/// An adapter of a test that gives the chart options of each `init` to
+/// [_onInit].
+final class _InitAdapter(
+  super.options,
+  final void Function(Object? chartOptions) _onInit,
+) extends DefaultDateAdapter {
+  @override
+  void init(Object? chartOptions) => _onInit(chartOptions);
 }
