@@ -853,9 +853,7 @@ void main() {
           responsive: true,
           pluginOptions: [LegendOptions(display: true)],
           // The chart option `color` has no typed field.
-          extra: {
-            'color': ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
-          },
+          color: ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
         ),
       );
       expect(

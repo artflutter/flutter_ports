@@ -3507,7 +3507,11 @@ function optionsArgs(config, o, state, axes) {
       case 'parsing':
       case 'responsive':
       case 'maintainAspectRatio':
+      case 'normalized':
         n = boolNode(v);
+        break;
+      case 'color':
+        n = paintNode(v, state);
         break;
       case 'aspectRatio':
       case 'devicePixelRatio':

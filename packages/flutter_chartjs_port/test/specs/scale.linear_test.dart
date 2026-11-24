@@ -420,7 +420,7 @@ void main() {
               LinearAxis(.y),
             ],
             // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
-            extra: const {'locale': native_ui.Locale('de', 'DE')},
+            locale: const native_ui.Locale('de', 'DE'),
           ),
         )..update();
 

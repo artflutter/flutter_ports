@@ -8649,6 +8649,7 @@ FixtureConfig _scale_timeseries_normalize() => FixtureConfig.typed(
         fill: FillTarget.none,
       ),
     ],
+    normalized: true,
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
@@ -8659,7 +8660,6 @@ FixtureConfig _scale_timeseries_normalize() => FixtureConfig.typed(
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
-    extra: <String, Object?>{'normalized': true},
   ),
 );
 
@@ -8678,6 +8678,7 @@ FixtureConfig _scale_timeseries_normalize_icu() => FixtureConfig.typed(
         fill: FillTarget.none,
       ),
     ],
+    normalized: true,
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
@@ -8688,7 +8689,6 @@ FixtureConfig _scale_timeseries_normalize_icu() => FixtureConfig.typed(
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
-    extra: <String, Object?>{'normalized': true},
   ),
 );
 

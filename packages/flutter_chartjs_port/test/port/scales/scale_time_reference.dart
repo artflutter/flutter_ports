@@ -45785,7 +45785,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      extra: const <String, Object?>{'normalized': true},
+      normalized: true,
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -47053,7 +47053,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
         TestDataset(const ChartKind('timeTest'), data: [1.0, 2.0, 3.0, 4.0]),
       ],
       scales: const [TimeAxis(.x, ticks: AxisTicks(source: TickSource.labels))],
-      extra: const <String, Object?>{'normalized': true},
+      normalized: true,
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{

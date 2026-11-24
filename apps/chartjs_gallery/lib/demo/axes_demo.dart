@@ -415,7 +415,7 @@ class AxesDemoState() extends State<AxesDemo> {
       point: PointElementStyle(radius: 4, hoverRadius: 7, borderWidth: 1),
     ),
     plugins: _plugins,
-    extra: {'locale': _locale},
+    locale: _locale,
   );
 
   void _onChart(Chart chart) {

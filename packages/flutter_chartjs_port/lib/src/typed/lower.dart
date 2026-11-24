@@ -326,6 +326,9 @@ final class ChartConfigLowering(
     put(options, OptionKey.maintainAspectRatio, config.maintainAspectRatio);
     put(options, OptionKey.aspectRatio, config.aspectRatio);
     put(options, OptionKey.devicePixelRatio, config.devicePixelRatio);
+    put(options, OptionKey.locale, config.locale);
+    put(options, OptionKey.normalized, config.normalized);
+    put(options, OptionKey.color, config.color);
     if (config.padding case final padding?) {
       options.layout = LayoutOptionsScope()..padding = padding;
     }

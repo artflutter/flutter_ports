@@ -746,11 +746,18 @@ final class FixtureEmitter(
             FixtureCode(:final source) => source,
             _ => null,
           };
-        case 'parsing' || 'responsive' || 'maintainAspectRatio'
+        case 'parsing' || 'responsive' || 'maintainAspectRatio' || 'normalized'
             when value is FixtureBool:
           typed = literalOf(value);
         case 'aspectRatio' || 'devicePixelRatio' when value is FixtureNumber:
           typed = literalOf(value);
+        case 'color':
+          typed = _paint(this, value, key, 'options');
+        case 'locale'
+            when value is FixtureCode &&
+                value.source.startsWith('Locale(') &&
+                !value.isFunction:
+          typed = value.source;
         case 'layout':
           if (value is FixtureMap &&
               value.keys.length == 1 &&

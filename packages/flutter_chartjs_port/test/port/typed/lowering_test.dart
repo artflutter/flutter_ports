@@ -1420,6 +1420,18 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     ChartConfig(datasets: [BarDataset()], devicePixelRatio: 1.25),
     {'devicePixelRatio': 1.25},
   ),
+  'locale': (
+    ChartConfig(datasets: [BarDataset()], locale: native_ui.Locale('de', 'DE')),
+    {'locale': native_ui.Locale('de', 'DE')},
+  ),
+  'normalized': (
+    ChartConfig(datasets: [BarDataset()], normalized: true),
+    {'normalized': true},
+  ),
+  'color': (
+    ChartConfig(datasets: [BarDataset()], color: ChartPaint.solid(_red)),
+    {'color': _redValue},
+  ),
   'padding': (
     ChartConfig(datasets: [BarDataset()], padding: EdgeInsets.all(20)),
     {

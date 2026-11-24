@@ -18751,7 +18751,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
           ],
         ),
       ],
-      extra: const <String, Object?>{'normalized': true},
+      normalized: true,
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -26092,7 +26092,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
       scales: const [
         TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
       ],
-      extra: const <String, Object?>{'normalized': true},
+      normalized: true,
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{

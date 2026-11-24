@@ -115,6 +115,7 @@ const Map<String, int> _allowlist = {
   'options.elements.point.drawActiveElementsOnTop': 2080,
   'data.datasets.*.base': 2152,
   'data.datasets.*.skipNull': 153,
+  'options.normalized': 63,
   'options.animation.onProgress': 1802,
   'options.animation.onComplete': 1806,
   'options.animation.animateRotate': 298,
@@ -344,6 +345,8 @@ List<ChartConfig> _configs() {
       indexAxis: const XAxis(),
       responsive: true,
       maintainAspectRatio: true,
+      normalized: false,
+      color: const ChartPaint.solid(_red),
       aspectRatio: 2,
       padding: _padding,
       pluginOptions: [

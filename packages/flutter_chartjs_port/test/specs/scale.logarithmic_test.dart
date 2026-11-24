@@ -895,7 +895,7 @@ void main() {
           labels: [],
           scales: [LogarithmicAxis(.y), _y1],
           // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
-          extra: {'locale': Locale('de', 'DE')},
+          locale: Locale('de', 'DE'),
         ),
       );
 

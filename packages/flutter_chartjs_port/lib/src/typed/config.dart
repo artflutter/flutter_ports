@@ -5,6 +5,8 @@
 /// [CartesianAxis] of the core (row `adapt-axis-objects`).
 library;
 
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets;
@@ -99,6 +101,20 @@ final class const ChartConfig({
   /// The pixel ratio of the canvas: `options.devicePixelRatio`. The default
   /// is the device pixel ratio of the view.
   final double? devicePixelRatio,
+
+  /// The locale of the number format of the ticks and the tooltip:
+  /// `options.locale` (row `adapt-intl-number-format`), for example
+  /// `Locale('de', 'DE')`. The default is the platform locale.
+  final Locale? locale,
+
+  /// Whether the data of each dataset is sorted by its index value and
+  /// unique: `options.normalized`. Then the chart skips the sort and the
+  /// search for the unique values (`docs/general/performance.md`).
+  final bool? normalized,
+
+  /// The default text color of the legend, the title and the ticks:
+  /// `options.color`. The default is `#666`.
+  final ChartPaint? color,
 
   /// The space around the chart: `options.layout.padding`.
   final EdgeInsets? padding,
@@ -228,6 +244,9 @@ final class const ChartConfig({
     bool? maintainAspectRatio,
     double? aspectRatio,
     double? devicePixelRatio,
+    Locale? locale,
+    bool? normalized,
+    ChartPaint? color,
     EdgeInsets? padding,
     ChartInteraction? interaction,
     ChartAnimation? animation,
@@ -251,6 +270,9 @@ final class const ChartConfig({
     maintainAspectRatio: maintainAspectRatio ?? this.maintainAspectRatio,
     aspectRatio: aspectRatio ?? this.aspectRatio,
     devicePixelRatio: devicePixelRatio ?? this.devicePixelRatio,
+    locale: locale ?? this.locale,
+    normalized: normalized ?? this.normalized,
+    color: color ?? this.color,
     padding: padding ?? this.padding,
     interaction: interaction ?? this.interaction,
     animation: animation ?? this.animation,
@@ -285,6 +307,9 @@ final class const ChartConfig({
     ('maintainAspectRatio', maintainAspectRatio),
     ('aspectRatio', aspectRatio),
     ('devicePixelRatio', devicePixelRatio),
+    ('locale', locale),
+    ('normalized', normalized),
+    ('color', color),
     ('padding', padding),
     ('interaction', interaction),
     ('animation', animation),

@@ -956,7 +956,7 @@ void main() {
                   ),
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
-                extra: {'normalized': normalized},
+                normalized: normalized,
               ),
             ).lower(),
           );
