@@ -834,163 +834,135 @@ void Function() specs(String path) => specsFromFixtures(
 /// `sha256` of the upstream file in `doc/upstream/manifest.json`.
 final Map<String, HandFixture> handFixtures = {
   'controller.bar/aligned-pixels.js': (
-    load: () => FixtureConfig.map(controller_bar_aligned_pixels.fixture()),
+    load: controller_bar_aligned_pixels.fixture,
     sha256: 'ead0a91b2318',
   ),
   'controller.bar/backgroundColor/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_backgroundcolor_scriptable.fixture()),
+    load: controller_bar_backgroundcolor_scriptable.fixture,
     sha256: '1d5df66bfb6c',
   ),
   'controller.bar/bar-animation-hide-show.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_bar_animation_hide_show.fixture()),
+    load: controller_bar_bar_animation_hide_show.fixture,
     sha256: '54bc5f98f241',
   ),
   'controller.bar/baseLine/bottom.js': (
-    load: () => FixtureConfig.map(controller_bar_baseline_bottom.fixture()),
+    load: controller_bar_baseline_bottom.fixture,
     sha256: 'bf7389a85982',
   ),
   'controller.bar/baseLine/left.js': (
-    load: () => FixtureConfig.map(controller_bar_baseline_left.fixture()),
+    load: controller_bar_baseline_left.fixture,
     sha256: 'a7584d49ea77',
   ),
   'controller.bar/baseLine/mid-x.js': (
-    load: () => FixtureConfig.map(controller_bar_baseline_mid_x.fixture()),
+    load: controller_bar_baseline_mid_x.fixture,
     sha256: 'eed3533edbc8',
   ),
   'controller.bar/baseLine/mid-y.js': (
-    load: () => FixtureConfig.map(controller_bar_baseline_mid_y.fixture()),
+    load: controller_bar_baseline_mid_y.fixture,
     sha256: 'cfff83a39b23',
   ),
   'controller.bar/baseLine/right.js': (
-    load: () => FixtureConfig.map(controller_bar_baseline_right.fixture()),
+    load: controller_bar_baseline_right.fixture,
     sha256: '2127b4082736',
   ),
   'controller.bar/baseLine/top.js': (
-    load: () => FixtureConfig.map(controller_bar_baseline_top.fixture()),
+    load: controller_bar_baseline_top.fixture,
     sha256: '12562cbfc513',
   ),
   'controller.bar/baseLine/value-x.js': (
-    load: () => FixtureConfig.map(controller_bar_baseline_value_x.fixture()),
+    load: controller_bar_baseline_value_x.fixture,
     sha256: '6fad8533fb80',
   ),
   'controller.bar/baseLine/value-y.js': (
-    load: () => FixtureConfig.map(controller_bar_baseline_value_y.fixture()),
+    load: controller_bar_baseline_value_y.fixture,
     sha256: 'fdb01c90f0ee',
   ),
   'controller.bar/borderColor/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_bordercolor_scriptable.fixture()),
+    load: controller_bar_bordercolor_scriptable.fixture,
     sha256: '2a4ef42ba321',
   ),
   'controller.bar/borderRadius/border-radius.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_borderradius_border_radius.fixture()),
+    load: controller_bar_borderradius_border_radius.fixture,
     sha256: '91fac525cd94',
   ),
   'controller.bar/borderSkipped/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_borderskipped_scriptable.fixture()),
+    load: controller_bar_borderskipped_scriptable.fixture,
     sha256: '6b4cf1ab9ea3',
   ),
   'controller.bar/borderWidth/scriptable-object.js': (
-    load: () => FixtureConfig.map(
-      controller_bar_borderwidth_scriptable_object.fixture(),
-    ),
+    load: controller_bar_borderwidth_scriptable_object.fixture,
     sha256: 'f73270fb85f3',
   ),
   'controller.bar/borderWidth/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_borderwidth_scriptable.fixture()),
+    load: controller_bar_borderwidth_scriptable.fixture,
     sha256: '7e6144b33e6b',
   ),
   'controller.bar/chart-area-clip.js': (
-    load: () => FixtureConfig.map(controller_bar_chart_area_clip.fixture()),
+    load: controller_bar_chart_area_clip.fixture,
     sha256: '2f9db5b62975',
   ),
   'controller.bar/data/object-index-axis-y.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_data_object_index_axis_y.fixture()),
+    load: controller_bar_data_object_index_axis_y.fixture,
     sha256: 'b335b7fe6d0e',
   ),
   'controller.bar/floatBar/data-as-objects-horizontal.js': (
-    load: () => FixtureConfig.map(
-      controller_bar_floatbar_data_as_objects_horizontal.fixture(),
-    ),
+    load: controller_bar_floatbar_data_as_objects_horizontal.fixture,
     sha256: '1ef1ac1789cd',
   ),
   'controller.bar/floatBar/float-bar-horizontal.json': (
-    load: () => FixtureConfig.map(
-      controller_bar_floatbar_float_bar_horizontal.fixture(),
-    ),
+    load: controller_bar_floatbar_float_bar_horizontal.fixture,
     sha256: '4da91e5ed576',
   ),
   'controller.bar/floatBar/float-bar-stacked-horizontal.json': (
-    load: () => FixtureConfig.map(
-      controller_bar_floatbar_float_bar_stacked_horizontal.fixture(),
-    ),
+    load: controller_bar_floatbar_float_bar_stacked_horizontal.fixture,
     sha256: '478af8960681',
   ),
   'controller.bar/horizontal-borders.js': (
-    load: () => FixtureConfig.map(controller_bar_horizontal_borders.fixture()),
+    load: controller_bar_horizontal_borders.fixture,
     sha256: '7fdf894e038c',
   ),
   'controller.bar/minBarLength/horizontal-neg.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_minbarlength_horizontal_neg.fixture()),
+    load: controller_bar_minbarlength_horizontal_neg.fixture,
     sha256: '6388b7924f94',
   ),
   'controller.bar/minBarLength/horizontal-pos.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_minbarlength_horizontal_pos.fixture()),
+    load: controller_bar_minbarlength_horizontal_pos.fixture,
     sha256: '3ba3f75361f6',
   ),
   'controller.bar/minBarLength/horizontal-stacked-no-overlap.js': (
-    load: () => FixtureConfig.map(
-      controller_bar_minbarlength_horizontal_stacked_no_overlap.fixture(),
-    ),
+    load: controller_bar_minbarlength_horizontal_stacked_no_overlap.fixture,
     sha256: '61ba97083fbe',
   ),
   'controller.bar/minBarLength/horizontal-stacked.js': (
-    load: () => FixtureConfig.map(
-      controller_bar_minbarlength_horizontal_stacked.fixture(),
-    ),
+    load: controller_bar_minbarlength_horizontal_stacked.fixture,
     sha256: 'b4fbc2aadbcd',
   ),
   'controller.bar/minBarLength/horizontal.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_minbarlength_horizontal.fixture()),
+    load: controller_bar_minbarlength_horizontal.fixture,
     sha256: '4b3baef268b0',
   ),
   'controller.bar/minBarLength/vertical.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_minbarlength_vertical.fixture()),
+    load: controller_bar_minbarlength_vertical.fixture,
     sha256: '455703d2c031',
   ),
   'controller.bar/skipNull/bar-skip-null-object-data.js': (
-    load: () => FixtureConfig.map(
-      controller_bar_skipnull_bar_skip_null_object_data.fixture(),
-    ),
+    load: controller_bar_skipnull_bar_skip_null_object_data.fixture,
     sha256: '06288be84fdb',
   ),
   'controller.bar/skipNull/bar-skip-null.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_skipnull_bar_skip_null.fixture()),
+    load: controller_bar_skipnull_bar_skip_null.fixture,
     sha256: '4d1425937c7c',
   ),
   'controller.bar/stacking/issue-9105.js': (
-    load: () => FixtureConfig.map(controller_bar_stacking_issue_9105.fixture()),
+    load: controller_bar_stacking_issue_9105.fixture,
     sha256: 'ce7347a8102d',
   ),
   'controller.bar/stacking/remove-dataset.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_stacking_remove_dataset.fixture()),
+    load: controller_bar_stacking_remove_dataset.fixture,
     sha256: '5a6f34ec96c3',
   ),
   'controller.bar/stacking/replace-data.js': (
-    load: () =>
-        FixtureConfig.map(controller_bar_stacking_replace_data.fixture()),
+    load: controller_bar_stacking_replace_data.fixture,
     sha256: '7baadef1b563',
   ),
   'controller.bubble/clip.js': (

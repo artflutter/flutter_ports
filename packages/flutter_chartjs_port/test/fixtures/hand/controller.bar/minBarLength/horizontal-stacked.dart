@@ -1,33 +1,37 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.bar/minBarLength/horizontal-stacked.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4), the
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
-Map<String, Object?> fixture() => <String, Object?>{
-  'config': <String, Object?>{
-    'type': 'bar',
-    'data': <String, Object?>{
-      'labels': <Object?>[0, 1, 2, 3, 4],
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[0, 0.01, 30],
-          'backgroundColor': '#00ff00',
-          'borderColor': '#000',
-          'borderWidth': 4,
-          'minBarLength': 20,
-          'xAxisID': 'x2',
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      // DIVERGES(chartjs): adapt-axis-objects, the axis
-      // class.
-      'indexAxis': const YAxis(),
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      BarDataset(
+        data: .values(<num?>[0, 0.01, 30]),
+        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+        borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
+        borderWidth: 4,
+        minBarLength: 20,
+        extra: <String, Object?>{'xAxisID': 'x2'},
+      ),
+    ],
+    labels: <Object>[0, 1, 2, 3, 4],
+    // DIVERGES(chartjs): adapt-axis-objects, the axis
+    // class.
+    indexAxis: const YAxis(),
+    extra: <String, Object?>{
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'stack': 'demo',
@@ -35,7 +39,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
         'x2': <String, Object?>{
           'type': 'linear',
-          'position': 'bottom',
+          'position': ChartPosition.bottom,
           'stack': 'demo',
           'stackWeight': 1,
           'ticks': <String, Object?>{'display': false},
@@ -44,8 +48,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         'y': <String, Object?>{'display': ScaleDisplay.off},
       },
     },
-  },
-  'options': <String, Object?>{
+  ),
+  options: <String, Object?>{
     'canvas': <String, Object?>{'height': 512, 'width': 512},
   },
-};
+);

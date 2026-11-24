@@ -626,7 +626,8 @@ final class FixtureEmitter(
     final optionsMap = options is FixtureMap ? options : FixtureMap([]);
     final indexAxis = switch (optionsMap['indexAxis']) {
       FixtureString(value: final s) => s,
-      FixtureCode(source: final s) when s.contains('y') => 'y',
+      FixtureCode(source: final s) when RegExp(r'YAxis|\.y\b').hasMatch(s) =>
+        'y',
       _ => 'x',
     };
     final args = <String>[];
@@ -940,9 +941,7 @@ final class FixtureEmitter(
   String? _data(String kind, FixtureValue value) {
     if (value is! FixtureList) return null;
     final items = value.items;
-    final numbers = items.every(
-      (i) => (i is FixtureNumber || i is FixtureNull) && i.comments.isEmpty,
-    );
+    final numbers = items.every((i) => i is FixtureNumber || i is FixtureNull);
     final list = '[${_items(items.map(literalOf))}]';
     switch (kind) {
       case 'pie' || 'doughnut' || 'polarArea' || 'radar':
@@ -970,7 +969,15 @@ final class FixtureEmitter(
   /// The `DataPoint` of the data item [item] `{x, y}` or `{x, y, r}`, or
   /// Dart `null`.
   String? _point(FixtureValue item, {required bool bubble}) {
-    if (item is! FixtureMap || item.comments.isNotEmpty) return null;
+    final point = _pointOf(item, bubble: bubble);
+    return point == null ? null : '${_commentLines(item.comments)}$point';
+  }
+
+  String? _pointOf(FixtureValue item, {required bool bubble}) {
+    if (item is! FixtureMap ||
+        item.entries.any((entry) => entry.comments.isNotEmpty)) {
+      return null;
+    }
     final keys = item.keys.toSet();
     final x = item['x'];
     final y = item['y'];
@@ -1350,24 +1357,35 @@ final class _Scales(
   final Map<String, String> _axes = {};
 
   void _read(FixtureMap scales) {
+    final extras = emitter.extras.length;
+    if (!_readTyped(scales)) {
+      // The axes go to `extra`: drop the extra entries of the typed try.
+      emitter.extras.removeRange(extras, emitter.extras.length);
+      _axes.clear();
+    }
+  }
+
+  /// Reads [scales] as typed axes. Returns `false` when they go to `extra`.
+  bool _readTyped(FixtureMap scales) {
     final counts = <String, int>{};
     final sources = <String>[];
     for (final entry in scales.entries) {
       final id = entry.key;
       final conf = entry.value;
-      if (conf is! FixtureMap) return;
+      if (conf is! FixtureMap) return false;
       final letter = _letterOf(id, conf);
-      if (letter == null) return;
+      if (letter == null) return false;
       final n = counts[letter] ?? 0;
       counts[letter] = n + 1;
       final typedId = n == 0 ? letter : '$letter$n';
-      if (typedId != id) return;
+      if (typedId != id) return false;
       final source = _axis(letter, conf);
-      if (source == null) return;
+      if (source == null) return false;
       _axes[id] = source;
       sources.add('${_commentLines(entry.comments)}$source');
     }
     typedSource = '[${sources.map(_comma).join()}]';
+    return true;
   }
 
   /// The variable of the typed axis [id] for an axis field of a dataset, or
@@ -1681,7 +1699,7 @@ String jsonOf(Object? value) => const JsonEncoder().convert(value);
 /// items of a literal.
 String _items(Iterable<String> items) => items.map(_comma).join();
 
-String _comma(String item) => '$item,';
+String _comma(String item) => '$item,\n';
 
 /// The entry [entry] of an object literal with the value source [value].
 String _entryOf(FixtureEntry entry, String value) =>

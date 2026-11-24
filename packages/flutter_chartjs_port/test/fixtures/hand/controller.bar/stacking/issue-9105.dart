@@ -1,64 +1,61 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.bar/stacking/issue-9105.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() => <String, Object?>{
-  'description': 'https://github.com/chartjs/Chart.js/issues/9105',
-  'config': <String, Object?>{
-    'type': 'bar',
-    'data': <String, Object?>{
-      'labels': <Object?>[
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
+FixtureConfig fixture() {
+  final yAxis = LinearAxis(CartesianAxis.y, display: ScaleDisplay.off);
+  return FixtureConfig.typed(
+    ChartConfig(
+      datasets: [
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xCCFF6384))),
+          label: 'Dataset 1',
+          data: .values(<num?>[12, 19, 3, 5, 2, 3]),
+          stack: '0',
+          yAxis: yAxis,
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xCC36A2EB))),
+          label: 'Dataset 2',
+          data: .values(<num?>[13, 19, 3, 5, 8, 3]),
+          stack: '0',
+          yAxis: yAxis,
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xCC4BC0C0))),
+          label: 'Dataset 3',
+          data: .values(<num?>[13, 19, 3, 5, 8, 3]),
+          stack: '0',
+          yAxis: yAxis,
+        ),
       ],
-      'datasets': <Object?>[
-        <String, Object?>{
-          'backgroundColor': 'rgba(255,99,132,0.8)',
-          'label': 'Dataset 1',
-          'data': <Object?>[12, 19, 3, 5, 2, 3],
-          'stack': '0',
-          'yAxisID': 'y',
-        },
-        <String, Object?>{
-          'backgroundColor': 'rgba(54,162,235,0.8)',
-          'label': 'Dataset 2',
-          'data': <Object?>[13, 19, 3, 5, 8, 3],
-          'stack': '0',
-          'yAxisID': 'y',
-        },
-        <String, Object?>{
-          'backgroundColor': 'rgba(75,192,192,0.8)',
-          'label': 'Dataset 3',
-          'data': <Object?>[13, 19, 3, 5, 8, 3],
-          'stack': '0',
-          'yAxisID': 'y',
-        },
+      labels: <Object>['January', 'February', 'March', 'April', 'May', 'June'],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        yAxis,
       ],
-    },
-    'options': <String, Object?>{
-      'plugins': false,
-      'scales': <String, Object?>{
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'x': <String, Object?>{'display': ScaleDisplay.off},
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'y': <String, Object?>{'display': ScaleDisplay.off},
+      extra: <String, Object?>{'plugins': false},
+    ),
+    description: 'https://github.com/chartjs/Chart.js/issues/9105',
+    options: <String, Object?>{
+      'run': (Chart chart) {
+        // The dataset is a typed scope of the lowering: a write by name.
+        jsSet(jsGet(jsGet(chart.data, 'datasets'), 1), 'stack', '1');
+        chart.update();
       },
     },
-  },
-  'options': <String, Object?>{
-    'run': (Chart chart) {
-      (jsGet(jsGet(chart.data, 'datasets'), 1)!
-              as Map<String, Object?>)['stack'] =
-          '1';
-      chart.update();
-    },
-  },
-};
+  );
+}
