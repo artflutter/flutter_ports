@@ -2,6 +2,7 @@
 @TestOn('vm')
 library;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -47,7 +48,7 @@ void main() {
   for (final (name, value, truthy) in cases) {
     test('alignToPixels $name gives its pixels', () {
       final canvas = UiCanvasElement(width: 641, height: 401);
-      final chart = Chart(canvas, ChartConfigLowering(_config(value)).lower());
+      final chart = Chart(canvas, lowerForTest(_config(value)));
       addTearDown(chart.destroy);
       expect(chart.currentDevicePixelRatio, 2.0);
       for (final scaleId in ['x', 'y']) {

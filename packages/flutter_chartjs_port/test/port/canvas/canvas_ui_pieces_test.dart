@@ -1063,7 +1063,7 @@ void main() {
 
     testWidgets('a line chart with a fill', (tester) async {
       Chart chartOf(int count) => acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             labels: [for (var i = 0; i < count; i++) '$i'],
             datasets: [
@@ -1088,7 +1088,7 @@ void main() {
               PluginOff<TitlePlugin>(),
             ],
           ),
-        ).lower(),
+        ),
       );
       int pieceDraws(Chart chart) =>
           (chart.ctx! as UiCanvasContext).debugPieceDraws;
@@ -1147,7 +1147,7 @@ void main() {
         int datasets = 1,
         int zeros = 0,
       }) => acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             datasets: [
               for (var d = 0; d < datasets; d++)
@@ -1194,7 +1194,7 @@ void main() {
             ],
             parsing: false,
           ),
-        ).lower(),
+        ),
       );
       int pieceDraws(Chart chart) =>
           (chart.ctx! as UiCanvasContext).debugPieceDraws;

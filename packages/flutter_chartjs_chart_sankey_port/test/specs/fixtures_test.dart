@@ -45,7 +45,7 @@ void main() {
       tester,
     ) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           const ChartConfig(
             datasets: [
               SankeyDataset(
@@ -59,7 +59,7 @@ void main() {
             ],
             animation: ChartAnimation.none,
           ),
-        ).lower(),
+        ),
       );
 
       final flow = chart.getDatasetMeta(0).data[0] as Flow;
@@ -71,7 +71,7 @@ void main() {
 
     testWidgets('should reserve space for custom node widths', (tester) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           const ChartConfig(
             datasets: [
               SankeyDataset(
@@ -84,7 +84,7 @@ void main() {
             ],
             animation: ChartAnimation.none,
           ),
-        ).lower(),
+        ),
       );
       // Vitest's spyOn calls through by default, unlike Jasmine's.
       //

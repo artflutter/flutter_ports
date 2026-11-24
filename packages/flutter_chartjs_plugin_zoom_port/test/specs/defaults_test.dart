@@ -59,9 +59,9 @@ void main() {
       addTearDown(() => plugin.beforeUpdate = previous);
 
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           const ChartConfig(datasets: [LineDataset(data: .values([]))]),
-        ).lower(),
+        ),
       );
 
       final calls = spyCalls.where(

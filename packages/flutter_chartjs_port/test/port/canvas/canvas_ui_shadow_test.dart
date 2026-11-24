@@ -368,7 +368,7 @@ void main() {
             ),
         ],
       );
-      final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+      final chart = acquireChartRoot(lowerForTest(config));
       final source = (chart.canvas! as UiCanvasElement).toImageSource();
       final data = await tester.runAsync(source.image.toByteData);
       source.image.dispose();

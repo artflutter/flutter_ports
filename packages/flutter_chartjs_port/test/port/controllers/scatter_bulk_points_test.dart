@@ -4,6 +4,7 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -79,7 +80,7 @@ ChartConfigurationScope _config({
   String form = 'parsed',
   Map<String, Object?> x = const {},
   Map<String, Object?> y = const {},
-}) => ChartConfigLowering(
+}) => lowerForTest(
   ChartConfig(
     datasets: [
       ScatterDataset(
@@ -108,7 +109,7 @@ ChartConfigurationScope _config({
     ],
     extra: {if (form != 'parsed') 'parsing': false},
   ),
-).lower();
+);
 
 JsObjectFace _dataset(ChartConfigurationScope cfg) =>
     (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]! as JsObjectFace;

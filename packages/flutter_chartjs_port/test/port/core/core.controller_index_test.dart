@@ -13,7 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// A bar chart with two datasets of three values.
 Chart _chart() => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     const ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
@@ -22,7 +22,7 @@ Chart _chart() => acquireChartRoot(
       ],
       animation: ChartAnimation.none,
     ),
-  ).lower(),
+  ),
 );
 
 void main() {

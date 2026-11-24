@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/widgets.dart'
     show Align, Alignment, Directionality, SizedBox, TextDirection;
@@ -1417,7 +1418,7 @@ void main() {
             disabledPlugins: const [PluginOff<LegendPlugin>()],
           );
           final canvas = UiCanvasElement(width: 640, height: 400);
-          final chart = Chart(canvas, ChartConfigLowering(config).lower());
+          final chart = Chart(canvas, lowerForTest(config));
           addTearDown(chart.destroy);
           final meta = chart.getDatasetMeta(0);
           final probes = <_ProbeArc>[];

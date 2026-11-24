@@ -801,7 +801,7 @@ Chart acquireReferenceChart(
   void Function(AnyObject config)? prepareMap,
 }) {
   if (config case final ChartConfig Function() make) {
-    final root = ChartConfigLowering(make()).lower();
+    final root = lowerForTest(make());
     if (theme != null) root.dollarTheme = theme;
     return acquireChartRoot(root, options);
   }

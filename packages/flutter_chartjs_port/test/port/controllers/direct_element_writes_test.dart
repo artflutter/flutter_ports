@@ -6,6 +6,7 @@ import 'dart:collection';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -1170,7 +1171,7 @@ void main() {
       );
       final chart = Chart(
         UiCanvasElement(width: 480, height: 320),
-        ChartConfigLowering(config).lower(),
+        lowerForTest(config),
       );
       addTearDown(chart.destroy);
       final meta = chart.getDatasetMeta(0);

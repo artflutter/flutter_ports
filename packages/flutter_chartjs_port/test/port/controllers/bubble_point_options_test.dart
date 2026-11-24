@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/widgets.dart'
@@ -1366,23 +1367,23 @@ void main() {
       ];
       final parsed = Chart(
         UiCanvasElement(width: 640, height: 400),
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             datasets: [BubbleDataset(data: points())],
             animation: ChartAnimation.none,
           ),
-        ).lower(),
+        ),
       );
       addTearDown(parsed.destroy);
       final raw = Chart(
         UiCanvasElement(width: 640, height: 400),
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             datasets: [BubbleDataset(data: points())],
             animation: ChartAnimation.none,
             parsing: false,
           ),
-        ).lower(),
+        ),
       );
       addTearDown(raw.destroy);
       final first = parsed.getDatasetMeta(0);

@@ -65,7 +65,7 @@ import '../support/tick_label.dart';
 
 /// The chart of the typed [config] (Chart.js ADR 0052).
 Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
-    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+    acquireChartRoot(lowerForTest(config), options);
 
 /// The typed config of a scatter chart with the two datasets of the
 /// overrides specs and the scales [scales] by id in `extra`: the specs of

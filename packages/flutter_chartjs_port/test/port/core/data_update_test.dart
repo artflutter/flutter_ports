@@ -6,6 +6,7 @@ import 'dart:collection';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -929,7 +930,7 @@ void main() {
     expect(a.updateData(), isFalse);
     // A typed config with the decimation on (Chart.js ADR 0194).
     final b = chart(
-      typed.ChartConfigLowering(
+      lowerForTest(
         typed.ChartConfig(
           datasets: [
             typed.LineDataset(
@@ -952,7 +953,7 @@ void main() {
             ),
           ],
         ),
-      ).lower(),
+      ),
     );
     expect(b.updateData(), isFalse);
   });
@@ -1961,8 +1962,8 @@ void main() {
             PluginOff<ColorsPlugin>(),
           ],
         );
-        expect(chart(ChartConfigLowering(make()).lower()).updateData(), isTrue);
-        final root = ChartConfigLowering(make()).lower();
+        expect(chart(lowerForTest(make())).updateData(), isTrue);
+        final root = lowerForTest(make());
         final a = chart(root);
         root.addRoute(
           'type',

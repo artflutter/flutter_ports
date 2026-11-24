@@ -48,7 +48,7 @@ void main() {
       tester,
     ) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(config()).lower(),
+        lowerForTest(config()),
         const AcquireOptions(canvas: HarnessCanvas(width: 800, height: 300)),
       );
       final area = chart.chartArea!;
@@ -63,7 +63,7 @@ void main() {
       tester,
     ) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(config()).lower(),
+        lowerForTest(config()),
         const AcquireOptions(canvas: HarnessCanvas(width: 1600, height: 300)),
       );
       final area = chart.chartArea!;
@@ -99,7 +99,7 @@ void main() {
           ),
         ],
       );
-      final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+      final chart = acquireChartRoot(lowerForTest(config));
       final arcs = chart.getDatasetMeta(0).data.cast<Element>();
       expect(arcs[0]['startAngle'], closeTo(-1.5707963267948966, 1e-12));
       expect(arcs[0]['endAngle'], 0);

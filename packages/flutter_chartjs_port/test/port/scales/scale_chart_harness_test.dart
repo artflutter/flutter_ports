@@ -108,11 +108,11 @@ List<List<Object?>> _upstreamBar({
 
 /// A chart of the custom harness controller and its default scales.
 Chart _chart(List<DataPoint> points) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       datasets: [TestDataset(const ChartKind('harnessTest'), points: points)],
     ),
-  ).lower(),
+  ),
 );
 
 void main() {

@@ -48,7 +48,7 @@ _Config _scatter({
   int datasets = 1,
   String type = 'scatter',
 }) =>
-    (log, {required twin}) => ChartConfigLowering(
+    (log, {required twin}) => lowerForTest(
       ChartConfig(
         datasets: [
           for (var d = 0; d < datasets; d++)
@@ -72,7 +72,7 @@ _Config _scatter({
           LinearAxis(.y, min: 0, max: 100),
         ],
       ),
-    ).lower();
+    );
 
 List<PointElement> _points(Chart chart) => [
   for (

@@ -144,12 +144,12 @@ const _timeTest = ChartKind('timeTest');
 /// A chart of the test controller with the data [data] and the options of
 /// the scale x [x].
 Chart _chart(List<DataPoint> data, [TimeAxis? x]) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       datasets: [TestDataset(_timeTest, points: data)],
       scales: [?x],
     ),
-  ).lower(),
+  ),
 );
 
 /// The time scale `x` of [chart].
@@ -480,7 +480,7 @@ void main() {
     /// The chart of the labels A, garbage and B with the options of the
     /// scale x [x].
     Chart labelsChart(TimeAxis x) => acquireChartRoot(
-      ChartConfigLowering(
+      lowerForTest(
         ChartConfig(
           datasets: const [
             TestDataset(_timeTest, data: [1.0, 2.0, 3.0]),
@@ -488,7 +488,7 @@ void main() {
           labels: const ['2021-01-04', 'garbage', '2021-01-20'],
           scales: [x],
         ),
-      ).lower(),
+      ),
     );
 
     testWidgets('the label timestamps keep null and sort it as 0', (
@@ -680,7 +680,7 @@ void main() {
   group('adapt-date-moment-format', () {
     _lineTwin('should get the correct label for a data value by format', () {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           const ChartConfig(
             datasets: [
               LineDataset(data: .values([null, 10, 3])),
@@ -704,7 +704,7 @@ void main() {
               ),
             ],
           ),
-        ).lower(),
+        ),
       );
 
       final xScale = _x(chart);
@@ -727,7 +727,7 @@ void main() {
     // of upstream.
     _lineTwin('should round to isoWeekday', () {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             datasets: [
               LineDataset(
@@ -747,7 +747,7 @@ void main() {
               ),
             ],
           ),
-        ).lower(),
+        ),
       );
 
       expect(
@@ -760,7 +760,7 @@ void main() {
       group('is "labels"', () {
         /// scale.time.tests.js:584-601 `beforeEach`.
         Chart labelsChart() => acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
@@ -774,7 +774,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
         );
 
         _lineTwin('should generate ticks from "data.labels"', () {
@@ -824,7 +824,7 @@ void main() {
       group('is "data"', () {
         /// scale.time.tests.js:668-694 `beforeEach`.
         Chart dataChart() => acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 const LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
@@ -845,7 +845,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
         );
 
         _lineTwin('should generate ticks from "datasets.data"', () {
@@ -935,7 +935,7 @@ void main() {
         group('is "timeseries"', () {
           /// scale.time.tests.js:765-790 `beforeEach`.
           Chart seriesChart() => acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               ChartConfig(
                 datasets: const [
                   LineDataset(data: .values([0, 1, 2, 3, 4])),
@@ -951,7 +951,7 @@ void main() {
                 ],
                 normalized: normalized,
               ),
-            ).lower(),
+            ),
           );
 
           _lineTwin(
@@ -1059,7 +1059,7 @@ void main() {
         group('is "time"', () {
           /// scale.time.tests.js:842-866 `beforeEach`.
           Chart timeChart() => acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               const ChartConfig(
                 datasets: [
                   LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
@@ -1074,7 +1074,7 @@ void main() {
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
               ),
-            ).lower(),
+            ),
           );
 
           _lineTwin(
@@ -1152,7 +1152,7 @@ void main() {
       group('is "data"', () {
         _lineTwin('should preserve the data range', () {
           final chart = acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               const ChartConfig(
                 datasets: [
                   LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
@@ -1173,7 +1173,7 @@ void main() {
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
               ),
-            ).lower(),
+            ),
           );
 
           final scale = chart.scales['x']!;
@@ -1195,7 +1195,7 @@ void main() {
       group('is "labels"', () {
         _lineTwin('should preserve the label range', () {
           final chart = acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               const ChartConfig(
                 datasets: [
                   LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
@@ -1216,7 +1216,7 @@ void main() {
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
               ),
-            ).lower(),
+            ),
           );
 
           final scale = chart.scales['x']!;
@@ -1251,7 +1251,7 @@ void main() {
             () {
               /// scale.time.tests.js:983-1008 `beforeEach`.
               Chart rangeChart() => acquireChartRoot(
-                ChartConfigLowering(
+                lowerForTest(
                   ChartConfig(
                     datasets: const [
                       LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
@@ -1273,7 +1273,7 @@ void main() {
                       const LinearAxis(.y, display: ScaleDisplay.off),
                     ],
                   ),
-                ).lower(),
+                ),
               );
 
               _lineTwin('should expand scale to the min/max range', () {
@@ -1346,7 +1346,7 @@ void main() {
           () {
             /// scale.time.tests.js:1062-1084 `beforeEach`.
             Chart offsetChart() => acquireChartRoot(
-              ChartConfigLowering(
+              lowerForTest(
                 ChartConfig(
                   datasets: const [
                     LineDataset(data: .values([0, 1, 2, 3, 4])),
@@ -1369,7 +1369,7 @@ void main() {
                       ),
                   ],
                 ),
-              ).lower(),
+              ),
             );
 
             _lineTwin('should not add offset from the edges', () {
@@ -1445,7 +1445,7 @@ void main() {
           () {
             /// scale.time.tests.js:1164-1188 `beforeEach`.
             Chart offsetChart() => acquireChartRoot(
-              ChartConfigLowering(
+              lowerForTest(
                 ChartConfig(
                   datasets: const [
                     LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
@@ -1468,7 +1468,7 @@ void main() {
                       ),
                   ],
                 ),
-              ).lower(),
+              ),
             );
 
             _lineTwin(
@@ -1513,12 +1513,12 @@ void main() {
           tester,
         ) async {
           final chart = acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               const ChartConfig(
                 datasets: [LineDataset()],
                 scales: [TimeAxis(.x)],
               ),
-            ).lower(),
+            ),
           );
 
           // NOTE: the test suite is configured to use moment
@@ -1555,7 +1555,7 @@ void main() {
           tester,
         ) async {
           final chart = acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               const ChartConfig(
                 datasets: [LineDataset()],
                 scales: [
@@ -1569,7 +1569,7 @@ void main() {
                   ),
                 ],
               ),
-            ).lower(),
+            ),
           );
 
           // NOTE: the test suite is configured to use moment

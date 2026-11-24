@@ -665,7 +665,7 @@ void main() {
     /// A line chart with the dataset [dataset] and the decimation on when
     /// [enabled] is true.
     Chart narrowChart(Object dataset, {bool enabled = true}) {
-      final root = ChartConfigLowering(
+      final root = lowerForTest(
         ChartConfig(
           datasets: const [LineDataset()],
           scales: const [LinearAxis(.x)],
@@ -679,7 +679,7 @@ void main() {
             ),
           ],
         ),
-      ).lower();
+      );
       // Preserve the dataset's Map type and mutability for the write guards.
       (root.dataCell!.raw! as ChartDataScope).datasets = <Object?>[dataset];
       return acquireChartRoot(root);
@@ -747,7 +747,7 @@ void main() {
         for (var i = 0; i < 60; i++) DataPoint(t0 + i * 3600000, (i * 37) % 23),
       ];
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             datasets: [LineDataset(label: 'd0', data: .points(input))],
             scales: [
@@ -774,7 +774,7 @@ void main() {
               ),
             ],
           ),
-        ).lower(),
+        ),
         _canvas(30, 100),
       );
       return (

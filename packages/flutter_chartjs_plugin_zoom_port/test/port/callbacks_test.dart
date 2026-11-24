@@ -32,7 +32,7 @@ void _wheel(Chart chart) {
 
 /// Acquires a chart through the typed config boundary.
 Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
-    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+    acquireChartRoot(lowerForTest(config), options);
 
 void main() {
   group('native zoom callbacks (Zoom ADR 0004)', () {

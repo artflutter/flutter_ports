@@ -109,7 +109,7 @@ const List<String> _upstreamHooks = ['start', 'stop', 'beforeUpdate'];
 
 /// A line chart whose subtitle plugin is disabled when [subtitle] is null.
 Chart _lineWithSubtitle([SubtitleOptions? subtitle]) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: const [
@@ -120,12 +120,12 @@ Chart _lineWithSubtitle([SubtitleOptions? subtitle]) => acquireChartRoot(
           ? const [PluginOff<SubtitlePlugin>()]
           : null,
     ),
-  ).lower(),
+  ),
 );
 
 /// A line chart with a subtitle of the one line [text].
 Chart _line(String text) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: const [
@@ -135,7 +135,7 @@ Chart _line(String text) => acquireChartRoot(
         SubtitleOptions(display: true, text: [text]),
       ],
     ),
-  ).lower(),
+  ),
 );
 
 /// The options of a direct `start` call: the box reads `display`, `text`,

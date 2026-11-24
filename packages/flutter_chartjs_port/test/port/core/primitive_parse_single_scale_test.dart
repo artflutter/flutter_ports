@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:typed_data';
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -68,7 +69,7 @@ ChartConfig _config(List<Object?> data, String? scaleType) => ChartConfig(
 Chart _chart(List<Object?> data, String? scaleType) {
   final chart = Chart(
     UiCanvasElement(width: 200, height: 200),
-    ChartConfigLowering(_config(data, scaleType)).lower(),
+    lowerForTest(_config(data, scaleType)),
   );
   addTearDown(chart.destroy);
   return chart;

@@ -505,8 +505,7 @@ void main() {
           };
           addTearDown(() => foreignAudit = savedAudit);
         }
-        final config = ChartConfigLowering(typed).lower()
-          ..plugins = [_recorder(notifies)];
+        final config = lowerForTest(typed)..plugins = [_recorder(notifies)];
         final options = c.options;
         Chart? chart;
         final steps = c.expected['steps']! as List<Object?>;

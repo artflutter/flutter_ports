@@ -98,7 +98,7 @@ TimeSeriesScale _x(List<double> times, [TimeSeriesAxis? x]) {
     ],
     scales: [?x],
   );
-  final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+  final chart = acquireChartRoot(lowerForTest(config));
   return chart.scales['x']! as TimeSeriesScale;
 }
 
@@ -185,7 +185,7 @@ void main() {
           TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
         ],
       );
-      final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+      final chart = acquireChartRoot(lowerForTest(config));
       final x = chart.scales['x']! as TimeSeriesScale;
       // Upstream gives the tick the value null, and getDecimalForValue of
       // the timeseries scale reads null as 0 (scale.timeseries.js:162-163).

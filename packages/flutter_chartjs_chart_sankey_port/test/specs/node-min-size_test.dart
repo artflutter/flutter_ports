@@ -21,7 +21,7 @@ List<SankeyDataPoint> _data() => [
 const double _nodeWidth = 10;
 
 Chart _buildSankeyWithMinSize(Object? nodeMinSize) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       datasets: [
         SankeyDataset(
@@ -33,7 +33,7 @@ Chart _buildSankeyWithMinSize(Object? nodeMinSize) => acquireChartRoot(
       animation: ChartAnimation.none,
       maintainAspectRatio: false,
     ),
-  ).lower(),
+  ),
   const AcquireOptions(canvas: HarnessCanvas(width: 800, height: 400)),
 );
 

@@ -911,7 +911,7 @@ void main() {
     testWidgets("an update(const UpdateMode('themeFrame')) ends in one frame", (
       tester,
     ) async {
-      final config = ChartConfigLowering(_typedConfig(animated: true)).lower();
+      final config = lowerForTest(_typedConfig(animated: true));
       config[themeConfigKey] = compileThemeData(_themeA);
       final chart = acquireChartRoot(config);
       await tester.pump(const Duration(seconds: 2));

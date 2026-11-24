@@ -29,8 +29,7 @@ void main() {
       'should automatically choose the BasicPlatform for offscreen canvas',
       (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(const ChartConfig(datasets: [LineDataset()]))
-              .lower(),
+          lowerForTest(const ChartConfig(datasets: [LineDataset()])),
           const AcquireOptions(useOffscreenCanvas: true),
         );
 
@@ -42,12 +41,12 @@ void main() {
 
     testWidgets('should disable animations', (tester) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           const ChartConfig(
             datasets: [LineDataset()],
             animation: ChartAnimation(),
           ),
-        ).lower(),
+        ),
         const AcquireOptions(useOffscreenCanvas: true),
       );
 
@@ -65,14 +64,14 @@ void main() {
     group('with offscreenCanvas', () {
       testWidgets('supports laying out a simple chart', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 BarDataset(data: .values([10, 5, 0, 25, 78, -10])),
               ],
               labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5', 'tick6'],
             ),
-          ).lower(),
+          ),
           const AcquireOptions(
             canvas: HarnessCanvas(width: 250, height: 150),
             useOffscreenCanvas: true,
@@ -89,14 +88,14 @@ void main() {
 
       testWidgets('supports resizing a chart', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 BarDataset(data: .values([10, 5, 0, 25, 78, -10])),
               ],
               labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5', 'tick6'],
             ),
-          ).lower(),
+          ),
           const AcquireOptions(
             canvas: HarnessCanvas(width: 250, height: 150),
             useOffscreenCanvas: true,

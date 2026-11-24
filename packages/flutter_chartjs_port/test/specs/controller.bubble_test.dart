@@ -83,9 +83,7 @@ void main() {
 
     testWidgets('should be constructed', (tester) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
-          const ChartConfig(datasets: [BubbleDataset(data: [])]),
-        ).lower(),
+        lowerForTest(const ChartConfig(datasets: [BubbleDataset(data: [])])),
       );
 
       final meta = chart.getDatasetMeta(0);
@@ -103,9 +101,7 @@ void main() {
       'should use the first scale IDs if the dataset does not specify them',
       (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
-            const ChartConfig(datasets: [BubbleDataset(data: [])]),
-          ).lower(),
+          lowerForTest(const ChartConfig(datasets: [BubbleDataset(data: [])])),
         );
 
         final meta = chart.getDatasetMeta(0);
@@ -119,7 +115,7 @@ void main() {
       'should create point elements for each data item during initialization',
       (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 BubbleDataset(
@@ -129,7 +125,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
         );
 
         final meta = chart.getDatasetMeta(0);
@@ -144,7 +140,7 @@ void main() {
 
     testWidgets('should draw all elements', (tester) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           const ChartConfig(
             datasets: [
               BubbleDataset(
@@ -156,7 +152,7 @@ void main() {
             animation: ChartAnimation.none,
             extra: {'showLine': true},
           ),
-        ).lower(),
+        ),
       );
 
       final meta = chart.getDatasetMeta(0);
@@ -176,7 +172,7 @@ void main() {
 
     testWidgets('should update elements when modifying style', (tester) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             datasets: [
               BubbleDataset(
@@ -198,7 +194,7 @@ void main() {
               PluginOff<TitlePlugin>(),
             ],
           ),
-        ).lower(),
+        ),
       );
 
       final meta = chart.getDatasetMeta(0);
@@ -271,7 +267,7 @@ void main() {
       tester,
     ) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             datasets: [
               BubbleDataset(
@@ -285,7 +281,7 @@ void main() {
             ],
             labels: const ['label1', 'label2', 'label3', 'label4'],
           ),
-        ).lower(),
+        ),
       );
 
       final meta = chart.getDatasetMeta(0);
@@ -327,7 +323,7 @@ void main() {
       // :255 beforeEach: acquires a chart.
       void beforeEach() {
         chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 BubbleDataset(
@@ -355,7 +351,7 @@ void main() {
                 },
               },
             ),
-          ).lower(),
+          ),
         );
       }
 
@@ -485,7 +481,7 @@ void main() {
       tester,
     ) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             datasets: [
               BubbleDataset(
@@ -504,7 +500,7 @@ void main() {
             responsive: true,
             maintainAspectRatio: true,
           ),
-        ).lower(),
+        ),
       );
       final tooltip = chart.tooltip!;
       final point = chart.getDatasetMeta(0).data[0];

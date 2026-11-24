@@ -42,7 +42,7 @@ void main() {
         PluginOff<TooltipPlugin>(),
       ],
     );
-    final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+    final chart = acquireChartRoot(lowerForTest(config));
     final source = chart.getDatasetMeta(2).dataset! as LineElement;
     final target = chart.getDatasetMeta(1).dataset! as LineElement;
     final search = StackPointSearch.create(

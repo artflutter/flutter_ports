@@ -457,7 +457,8 @@ void specFromFixture(String description, String input, FixtureInputs inputs) {
   final descr = d != null && d.isNotEmpty ? d : description; // :40
   switch (fixture) {
     case TypedFixtureConfig(:final config):
-      final root = ChartConfigLowering(config).lower();
+      // The raw options of the config merge last (raw_options.dart).
+      final root = lowerForTest(config);
       final chartOptions = jsGet(root, 'options')!;
       // plugins are disabled by default, except if the path contains
       // 'plugin' or there are instance plugins

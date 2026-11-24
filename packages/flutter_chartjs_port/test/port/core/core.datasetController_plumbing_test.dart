@@ -10,6 +10,7 @@ library;
 
 import 'dart:collection';
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
 import 'package:flutter_test/flutter_test.dart';
@@ -292,7 +293,7 @@ void main() {
 
     test('a context reads the live data of its dataset in both forms', () {
       final points = _points();
-      final a = _chart(ChartConfigLowering(_typedConfig(points)).lower());
+      final a = _chart(lowerForTest(_typedConfig(points)));
       final maps = _maps(points);
       final b = _chart(_rawConfig(maps));
       final items = [points, maps];
@@ -317,7 +318,7 @@ void main() {
     });
 
     test('an absent datasets key throws the same error in both forms', () {
-      final a = _chart(ChartConfigLowering(_typedConfig(_points())).lower());
+      final a = _chart(lowerForTest(_typedConfig(_points())));
       final b = _chart(_rawConfig(_maps(_points())));
       for (final chart in [a, b]) {
         final data = JsObjectLike(chart.data);

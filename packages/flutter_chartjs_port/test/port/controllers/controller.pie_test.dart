@@ -39,8 +39,7 @@ ChartConfig _one(List<num?> data) => ChartConfig(
   ],
 );
 
-Chart _chart(ChartConfig config) =>
-    acquireChartRoot(ChartConfigLowering(config).lower());
+Chart _chart(ChartConfig config) => acquireChartRoot(lowerForTest(config));
 
 void main() {
   group('interfaces', () {

@@ -32,7 +32,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// dataset of [data].
 Chart _chart(ChartKind type, List<String> labels, List<num?> data) =>
     acquireChartRoot(
-      ChartConfigLowering(
+      lowerForTest(
         ChartConfig(
           labels: labels,
           datasets: [
@@ -43,7 +43,7 @@ Chart _chart(ChartKind type, List<String> labels, List<num?> data) =>
             },
           ],
         ),
-      ).lower(),
+      ),
     );
 
 /// Whether the option objects [a] and [b] have the same keys in the same

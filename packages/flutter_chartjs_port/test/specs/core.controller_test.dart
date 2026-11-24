@@ -297,14 +297,14 @@ void main() {
     testWidgets('should throw an error if the canvas is already in use', (
       tester,
     ) async {
-      final config = ChartConfigLowering(
+      final config = lowerForTest(
         const ChartConfig(
           datasets: [
             LineDataset(data: .values([1, 2, 3, 4])),
           ],
           labels: ['A', 'B', 'C', 'D'],
         ),
-      ).lower();
+      );
       final chart = acquireChartRoot(config);
       final canvas = chart.canvas;
 
@@ -520,8 +520,7 @@ void main() {
         final pieDefaults = jsGet(defaults['datasets'], 'pie');
 
         final chart = acquireChartRoot(
-          ChartConfigLowering(const ChartConfig(datasets: [PieDataset()]))
-              .lower(),
+          lowerForTest(const ChartConfig(datasets: [PieDataset()])),
         );
 
         final options = chart.options;
@@ -532,7 +531,7 @@ void main() {
         tester,
       ) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [LineDataset()],
               scales: [
@@ -540,7 +539,7 @@ void main() {
                 LinearAxis(.y, position: ChartPosition.bottom),
               ],
             ),
-          ).lower(),
+          ),
         );
 
         final scaleOptions = chart.options['scales'];
@@ -655,14 +654,14 @@ void main() {
 
       testWidgets('should activate element on hover', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               labels: ['A', 'B', 'C', 'D'],
               datasets: [
                 LineDataset(data: .values([10, 20, 30, 100])),
               ],
             ),
-          ).lower(),
+          ),
         );
 
         final point = chart.getDatasetMeta(0).data[1];
@@ -725,7 +724,7 @@ void main() {
         'chart area',
         (tester) async {
           final chart = acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               const ChartConfig(
                 labels: ['A', 'B', 'C', 'D'],
                 datasets: [
@@ -739,7 +738,7 @@ void main() {
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
               ),
-            ).lower(),
+            ),
           );
 
           final point = chart.getDatasetMeta(0).data[0];
@@ -788,7 +787,7 @@ void main() {
         'for mouseout',
         (tester) async {
           final chart = acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               const ChartConfig(
                 labels: ['A', 'B', 'C', 'D'],
                 datasets: [
@@ -803,7 +802,7 @@ void main() {
                 ],
                 padding: EdgeInsets.all(5),
               ),
-            ).lower(),
+            ),
           );
 
           final point = chart.getDatasetMeta(0).data[0];
@@ -1337,13 +1336,13 @@ void main() {
         (tester) async {
           await waitForDone((done) {
             final chart = acquireChartRoot(
-              ChartConfigLowering(
+              lowerForTest(
                 const ChartConfig(
                   datasets: [LineDataset()],
                   responsive: true,
                   maintainAspectRatio: false,
                 ),
-              ).lower(),
+              ),
               const AcquireOptions(
                 canvas: HarnessCanvas(),
                 wrapper: HarnessBox(
@@ -1520,13 +1519,13 @@ void main() {
             final body = document.body;
             final chart = Chart(
               canvas,
-              ChartConfigLowering(
+              lowerForTest(
                 const ChartConfig(
                   datasets: [LineDataset()],
                   responsive: true,
                   maintainAspectRatio: false,
                 ),
-              ).lower(),
+              ),
             );
 
             expect(
@@ -1565,13 +1564,13 @@ void main() {
             final body = document.body;
             final chart = Chart(
               canvas,
-              ChartConfigLowering(
+              lowerForTest(
                 const ChartConfig(
                   datasets: [LineDataset()],
                   responsive: true,
                   maintainAspectRatio: false,
                 ),
-              ).lower(),
+              ),
             );
 
             expect(
@@ -1842,13 +1841,13 @@ void main() {
 
             final chart = Chart(
               canvas,
-              ChartConfigLowering(
+              lowerForTest(
                 const ChartConfig(
                   datasets: [LineDataset()],
                   responsive: true,
                   maintainAspectRatio: false,
                 ),
-              ).lower(),
+              ),
             );
 
             expect(
@@ -2124,7 +2123,7 @@ void main() {
       // :1515 The y values include the legend box at the top of the chart.
       testWidgets('should reset the chart elements', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               labels: ['A', 'B', 'C', 'D'],
               datasets: [
@@ -2132,7 +2131,7 @@ void main() {
               ],
               responsive: true,
             ),
-          ).lower(),
+          ),
         );
 
         final meta = chart.getDatasetMeta(0);
@@ -2283,7 +2282,7 @@ void main() {
 
       testWidgets('should update tooltip options', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               labels: ['A', 'B', 'C', 'D'],
               datasets: [
@@ -2291,7 +2290,7 @@ void main() {
               ],
               responsive: true,
             ),
-          ).lower(),
+          ),
         );
 
         // The tooltip options are one TooltipOptions (Chart.js ADR 0192).
@@ -2313,7 +2312,7 @@ void main() {
         // The key `tooltip` of the options, not of `options.plugins`, has no
         // typed parameter: it goes through `extra`.
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               labels: ['A', 'B', 'C', 'D'],
               datasets: [
@@ -2324,7 +2323,7 @@ void main() {
                 'tooltip': {'mode': NearestInteractionMode()},
               },
             ),
-          ).lower(),
+          ),
         );
 
         // Trigger an event over top of a point to
@@ -2433,13 +2432,13 @@ void main() {
           final plugin = _sequencePlugin('sequence', sequence.add);
 
           final chart = acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               ChartConfig(
                 datasets: const [LineDataset()],
                 plugins: [plugin],
                 responsive: true,
               ),
-            ).lower(),
+            ),
             const AcquireOptions(wrapper: HarnessBox(width: 300)),
           );
 
@@ -2533,7 +2532,7 @@ void main() {
           );
 
           acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               ChartConfig(
                 datasets: const [
                   LineDataset(),
@@ -2542,7 +2541,7 @@ void main() {
                 ],
                 plugins: [plugin],
               ),
-            ).lower(),
+            ),
           );
 
           expect(
@@ -2566,12 +2565,12 @@ void main() {
         'should not crash when accessing options of a blank inline plugin',
         (tester) async {
           final chart = acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               ChartConfig(
                 datasets: const [LineDataset()],
                 plugins: [Plugin<Object?>(id: 'blank')],
               ),
-            ).lower(),
+            ),
           );
 
           void iterateOptions() {
@@ -2754,7 +2753,7 @@ void main() {
       // calls first (Chart.js ADR 0022, section 2).
       void beforeEach() {
         chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 LineDataset(label: '1', order: 2),
@@ -2763,7 +2762,7 @@ void main() {
                 LineDataset(label: '4', order: 3),
               ],
             ),
-          ).lower(),
+          ),
         );
       }
 
@@ -2781,14 +2780,14 @@ void main() {
     group('data visibility', () {
       testWidgets('should hide a dataset', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 LineDataset(data: .values([0, 1, 2])),
               ],
               labels: ['a', 'b', 'c'],
             ),
-          ).lower(),
+          ),
         )..setDatasetVisibility(0, false);
 
         final meta = chart.getDatasetMeta(0);
@@ -2797,13 +2796,13 @@ void main() {
 
       testWidgets('should toggle data visibility by index', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 PieDataset(data: [1, 2, 3]),
               ],
             ),
-          ).lower(),
+          ),
         );
 
         expect(chart.getDataVisibility(1), true);
@@ -2823,7 +2822,7 @@ void main() {
         final data0 = <num?>[0, 1, 2, 3];
         final data1 = <num?>[0, 1, 2, 3];
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               labels: labels,
               datasets: [
@@ -2831,7 +2830,7 @@ void main() {
                 PieDataset(data: data1),
               ],
             ),
-          ).lower(),
+          ),
         )..toggleDataVisibility(3);
 
         _splice(_labels(chart), 1, 1);
@@ -2895,7 +2894,7 @@ void main() {
           final data0 = <num?>[0, 1, 2, 3];
           final data1 = <num?>[0, 1, 2, 3];
           final chart = acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               ChartConfig(
                 labels: labels,
                 datasets: [
@@ -2903,7 +2902,7 @@ void main() {
                   PieDataset(data: data1),
                 ],
               ),
-            ).lower(),
+            ),
           )..toggleDataVisibility(0);
 
           _push(_labels(chart), <Object?>['a']);
@@ -2924,14 +2923,14 @@ void main() {
         tester,
       ) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 LineDataset(data: .values([0, 1, 2])),
               ],
               labels: ['a', 'b', 'c'],
             ),
-          ).lower(),
+          ),
         );
 
         expect(chart.isDatasetVisible(1), false);
@@ -2949,13 +2948,13 @@ void main() {
         tester,
       ) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 PieDataset(data: [1, 2, 3]),
               ],
             ),
-          ).lower(),
+          ),
         );
         expect(Chart.getChart(chart.canvas), same(chart));
       });
@@ -2964,13 +2963,13 @@ void main() {
         tester,
       ) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 PieDataset(data: [1, 2, 3]),
               ],
             ),
-          ).lower(),
+          ),
         );
         expect(Chart.getChart(chart.ctx), same(chart));
       });
@@ -2984,7 +2983,7 @@ void main() {
     group('active elements', () {
       testWidgets('should set the active elements', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 PieDataset(
@@ -2998,7 +2997,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
         );
 
         final meta = chart.getDatasetMeta(0);
@@ -3033,7 +3032,7 @@ void main() {
       'should not replace the user set active elements by event replay',
       (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               labels: [1, 2, 3],
               datasets: [
@@ -3048,7 +3047,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
         );
 
         final meta = chart.getDatasetMeta(0);

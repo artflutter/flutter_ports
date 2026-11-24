@@ -171,14 +171,14 @@ Chart _chart(
   Map<String, Object?> dataset = const {},
   ChartAnimation? animation,
 }) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       datasets: [
         TestDataset(ChartKind(type), points: _points(), extra: dataset),
       ],
       animation: animation,
     ),
-  ).lower(),
+  ),
 );
 
 /// The test controller of the dataset 0 of [chart].
@@ -458,7 +458,7 @@ void main() {
     /// A chart of `stacksPoint` with the data [data], `parsing: false` and
     /// a stacked y scale.
     Chart stackedChart(List<Object?> data) => acquireChartRoot(
-      ChartConfigLowering(
+      lowerForTest(
         ChartConfig(
           datasets: [
             // Keep the original data List.
@@ -473,7 +473,7 @@ void main() {
           ],
           parsing: false,
         ),
-      ).lower(),
+      ),
     );
 
     testWidgets('DataPoint data items take the stacks', (tester) async {

@@ -293,5 +293,4 @@ ChartConfig _config(List<ChartAxis> scales) => ChartConfig(
   scales: scales,
 );
 
-Chart _chart(ChartConfig config) =>
-    acquireChartRoot(ChartConfigLowering(config).lower());
+Chart _chart(ChartConfig config) => acquireChartRoot(lowerForTest(config));

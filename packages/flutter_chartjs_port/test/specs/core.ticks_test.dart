@@ -27,7 +27,7 @@ import '../support/tick_label.dart';
 
 /// The chart of the typed [config] (Chart.js ADR 0052).
 Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
-    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+    acquireChartRoot(lowerForTest(config), options);
 
 /// core.ticks.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [

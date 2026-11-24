@@ -32,7 +32,7 @@ List<SankeyDataPoint> _nodePaddingModeData() => [
 // `this.options.nodePaddingMode` / `.nodePadding` come from `chart.options`.
 Chart _buildChart(Map<String, Object?> chartOptionOverrides) =>
     acquireChartRoot(
-      ChartConfigLowering(
+      lowerForTest(
         ChartConfig(
           datasets: [SankeyDataset(data: _nodePaddingModeData())],
           extra: <String, Object?>{
@@ -42,7 +42,7 @@ Chart _buildChart(Map<String, Object?> chartOptionOverrides) =>
             ...chartOptionOverrides,
           },
         ),
-      ).lower(),
+      ),
       const AcquireOptions(canvas: HarnessCanvas(width: 700, height: 400)),
     );
 

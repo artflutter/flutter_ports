@@ -53,7 +53,7 @@ NativeEvent _mouse(
 
 /// Acquires a chart through the typed config boundary.
 Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
-    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+    acquireChartRoot(lowerForTest(config), options);
 
 void main() {
   testWidgets('computeDragRect clamps the drag to the enabled directions', (

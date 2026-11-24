@@ -2,6 +2,7 @@
 @TestOn('vm')
 library;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -72,7 +73,7 @@ Chart _chart(
       PluginOff<TooltipPlugin>(),
     ],
   );
-  final chart = Chart(canvas, ChartConfigLowering(config).lower());
+  final chart = Chart(canvas, lowerForTest(config));
   addTearDown(chart.destroy);
   return chart;
 }

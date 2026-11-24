@@ -178,7 +178,7 @@ ChartConfigurationScope _typedConfig(
   Map<String, Object?>? extra,
   List<Plugin<Object?>>? plugins,
   List<typed.PluginOff<Plugin<Object?>>>? disabledPlugins,
-}) => ChartConfigLowering(
+}) => lowerForTest(
   typed.ChartConfig(
     labels: labelValues ?? <Object>['a', 'b', 'c'],
     datasets: datasets ?? [_typedDataset(type, data: data)],
@@ -190,7 +190,7 @@ ChartConfigurationScope _typedConfig(
     disabledPlugins: disabledPlugins,
     extra: extra,
   ),
-).lower();
+);
 
 /// [legend] with the `filter` that keeps each item in its label options.
 LegendOptions _keepingEach(LegendOptions legend) => legend.merge(

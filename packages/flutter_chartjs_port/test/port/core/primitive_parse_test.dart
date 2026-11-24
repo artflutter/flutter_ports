@@ -4,6 +4,7 @@ library;
 
 import 'dart:collection';
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -96,7 +97,7 @@ ChartConfigurationScope _config({
     stacked: mode,
     extra: {'type': linear},
   );
-  final root = ChartConfigLowering(
+  final root = lowerForTest(
     ChartConfig(
       datasets: [
         dataset(values ?? <Object?>[1, -0.0, -2.0, 4]),
@@ -111,7 +112,7 @@ ChartConfigurationScope _config({
         PluginOff<TooltipPlugin>(),
       ],
     ),
-  ).lower();
+  );
   // Preserve nullable labels and effectful List subclasses for the guards.
   (root.dataCell!.raw! as ChartDataScope).labels =
       labels ?? <String>['a', 'a', 'c', 'd'];

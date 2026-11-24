@@ -484,7 +484,7 @@ ChartConfigurationScope _probeChart({
   LegendOptions? legend,
   ChartAnimation? animation,
   List<Plugin<Object?>>? plugins,
-}) => ChartConfigLowering(
+}) => lowerForTest(
   ChartConfig(
     labels: const ['A', 'B', 'C'],
     datasets: [
@@ -499,7 +499,7 @@ ChartConfigurationScope _probeChart({
       if (tooltipOff) const PluginOff<TooltipPlugin>(),
     ],
   ),
-).lower();
+);
 
 /// The tooltip of [chart], as the class of the plugin.
 Tooltip _tooltipOf(Chart chart) => chart.tooltip! as Tooltip;
@@ -1453,7 +1453,7 @@ void main() {
     ) async {
       // The probe output `datasetMode`: title [d], body [['1: 10'],
       // ['undefined: 20']].
-      final config = ChartConfigLowering(
+      final config = lowerForTest(
         const ChartConfig(
           datasets: [
             LineDataset(label: 'd', data: .values([10, 20])),
@@ -1461,7 +1461,7 @@ void main() {
           pluginOptions: [TooltipOptions(mode: DatasetInteractionMode())],
           disabledPlugins: [PluginOff<LegendPlugin>()],
         ),
-      ).lower();
+      );
       // The typed labels have no null label: the labels of the probe go
       // into the lowered data.
       (jsGet(config, 'data')! as ChartDataScope).labels = <Object?>[1, null];

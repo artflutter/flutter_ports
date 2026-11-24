@@ -57,18 +57,18 @@ _Config _bar({
   Map<String, Object?>? animation,
   Map<String, Object?>? dataset,
 }) =>
-    (log, {required twin}) => ChartConfigLowering(
+    (log, {required twin}) => lowerForTest(
       ChartConfig(
         labels: [for (var i = 0; i < _count; i++) 'l$i'],
         datasets: [BarDataset(data: .values(_data(1)), extra: dataset)],
         animation: _animation(log, animation, twin: twin),
         scales: const [LinearAxis(.y, min: 0, max: 100)],
       ),
-    ).lower();
+    );
 
 /// A horizontal stack with the same default animations.
 ChartConfigurationScope _stacked(List<String> log, {required bool twin}) =>
-    ChartConfigLowering(
+    lowerForTest(
       ChartConfig(
         labels: [for (var i = 0; i < _count; i++) 'l$i'],
         datasets: [
@@ -82,7 +82,7 @@ ChartConfigurationScope _stacked(List<String> log, {required bool twin}) =>
           CategoryAxis(.y, stacked: StackMode.on),
         ],
       ),
-    ).lower();
+    );
 
 List<BarElement> _bars(Chart chart) => [
   for (

@@ -115,8 +115,7 @@ const ChartPaint _cyan = ChartPaint.solid(
 );
 
 /// The chart of the typed config [config].
-Chart _acquire(ChartConfig config) =>
-    acquireChartRoot(ChartConfigLowering(config).lower());
+Chart _acquire(ChartConfig config) => acquireChartRoot(lowerForTest(config));
 
 /// The labels `['Point 1', 'Point 2', 'Point 3']` of most cases, a new List.
 List<Object> _pointLabels() => <Object>['Point 1', 'Point 2', 'Point 3'];

@@ -38,7 +38,7 @@ void main() {
       await waitForDone((done) {
         late final Chart chart;
         chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: const [
                 LineDataset(data: .values([0, -1, 0]), label: 'dataset1'),
@@ -55,7 +55,7 @@ void main() {
                 },
               ),
             ),
-          ).lower(),
+          ),
         );
       });
     });

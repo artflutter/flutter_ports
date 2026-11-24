@@ -167,14 +167,14 @@ final Map<String, Object?> _functions = {
 /// and the axes [scales].
 Chart _linearChart(List<DataPoint> points, [List<ChartAxis>? scales]) =>
     acquireChartRoot(
-      ChartConfigLowering(
+      lowerForTest(
         ChartConfig(
           datasets: [
             TestDataset(const ChartKind('linearTest'), points: points),
           ],
           scales: scales,
         ),
-      ).lower(),
+      ),
     );
 
 /// The points of the case 'objects on two linear axes' of the generator.

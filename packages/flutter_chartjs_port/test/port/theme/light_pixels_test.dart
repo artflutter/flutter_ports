@@ -132,7 +132,7 @@ Chart _chart(String type, {required bool colors, ChartOptionsScope? theme}) {
           ]
         : null,
   );
-  final root = ChartConfigLowering(config).lower();
+  final root = lowerForTest(config);
   if (theme != null) root.dollarTheme = theme;
   return acquireChartRoot(root);
 }

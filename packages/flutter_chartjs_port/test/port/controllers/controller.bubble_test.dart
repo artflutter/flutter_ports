@@ -66,12 +66,11 @@ ChartConfig _one(AnyObject extra, List<Object?> data) => ChartConfig(
   ],
 );
 
-Chart _chart(ChartConfig config) =>
-    acquireChartRoot(ChartConfigLowering(config).lower());
+Chart _chart(ChartConfig config) => acquireChartRoot(lowerForTest(config));
 
 /// Preserve the original label container, including null and undefined entries.
 Chart _labelsChart(List<Object?> labels) {
-  final root = ChartConfigLowering(
+  final root = lowerForTest(
     ChartConfig(
       datasets: [
         BubbleDataset(
@@ -79,7 +78,7 @@ Chart _labelsChart(List<Object?> labels) {
         ),
       ],
     ),
-  ).lower();
+  );
   (root.dataCell!.raw! as ChartDataScope).labels = labels;
   return acquireChartRoot(root);
 }

@@ -4,6 +4,7 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -63,7 +64,7 @@ class _CustomScale(super.cfg) extends LinearScale {
 ChartConfigurationScope _config({
   bool line = false,
   int datasets = 1,
-}) => ChartConfigLowering(
+}) => lowerForTest(
   ChartConfig(
     datasets: [
       for (var d = 0; d < datasets; d++)
@@ -95,7 +96,7 @@ ChartConfigurationScope _config({
     ],
     extra: const {'parsing': false},
   ),
-).lower();
+);
 
 JsObjectFace _dataset(ChartConfigurationScope cfg, [int index = 0]) =>
     (jsGet(cfg['data'], 'datasets')! as List<Object?>)[index]! as JsObjectFace;

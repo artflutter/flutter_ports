@@ -10,6 +10,7 @@ library;
 
 import 'dart:collection';
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -85,9 +86,9 @@ DatasetController _controllerOf(Chart chart) =>
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   // The first lowering registers the List classes of the typed points.
-  ChartConfigLowering(
+  lowerForTest(
     typed.ChartConfig(datasets: [typed.LineDataset(data: .points(_points()))]),
-  ).lower();
+  );
 
   // A change of the index runs `clearStacks` (core.datasetController.js:292).
   group('no item holds stacks', () {

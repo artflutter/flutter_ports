@@ -264,7 +264,7 @@ Chart _chart(
           ]
         : null,
   );
-  final root = ChartConfigLowering(config).lower();
+  final root = lowerForTest(config);
   final compiled = theme == null ? null : compileThemeData(theme);
   if (compiled != null) root.dollarTheme = compiled;
   return acquireChartRoot(root);

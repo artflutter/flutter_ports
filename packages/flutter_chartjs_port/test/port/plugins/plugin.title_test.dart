@@ -97,7 +97,7 @@ Object? _construct(List<Object?> args) => jsConstruct(Title.jsClass, args);
 
 /// A line chart with `plugins.title: false`: no title block.
 Chart _lineWithoutTitle() => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     const ChartConfig(
       labels: ['a', 'b'],
       datasets: [
@@ -106,12 +106,12 @@ Chart _lineWithoutTitle() => acquireChartRoot(
       // Disable the plugin itself, rather than only hiding its title.
       disabledPlugins: [PluginOff<TitlePlugin>()],
     ),
-  ).lower(),
+  ),
 );
 
 /// A line chart with the title [title].
 Chart _line(TitleOptions title) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: const [
@@ -119,7 +119,7 @@ Chart _line(TitleOptions title) => acquireChartRoot(
       ],
       pluginOptions: [title],
     ),
-  ).lower(),
+  ),
 );
 
 /// The title options of a box that a test builds: the fields that the test

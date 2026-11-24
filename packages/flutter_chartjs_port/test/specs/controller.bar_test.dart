@@ -95,8 +95,7 @@ Matcher _bodyItem(List<String> lines) => isA<TooltipBodyItem>()
 
 /// A chart of the typed [config]: its root scope through
 /// `ChartConfigLowering` (Chart.js ADR 0054 §7).
-Chart _acquire(ChartConfig config) =>
-    acquireChartRoot(ChartConfigLowering(config).lower());
+Chart _acquire(ChartConfig config) => acquireChartRoot(lowerForTest(config));
 
 void main() {
   group('Chart.controllers.bar', () {

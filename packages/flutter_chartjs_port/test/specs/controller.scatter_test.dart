@@ -53,7 +53,7 @@ void main() {
       'should only show a single point in the tooltip on multiple datasets',
       (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 ScatterDataset(
@@ -66,7 +66,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
         );
         final point = chart.getDatasetMeta(0).data[1];
 
@@ -77,7 +77,7 @@ void main() {
 
     testWidgets('should not create line element by default', (tester) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             datasets: [
               ScatterDataset(
@@ -90,7 +90,7 @@ void main() {
               ),
             ],
           ),
-        ).lower(),
+        ),
       );
 
       final meta = chart.getDatasetMeta(0);
@@ -101,7 +101,7 @@ void main() {
       'should create line element if showline is true at datasets options',
       (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 ScatterDataset(
@@ -115,7 +115,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
         );
 
         final meta = chart.getDatasetMeta(0);
@@ -127,7 +127,7 @@ void main() {
       'should create line element if showline is true at root options',
       (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 ScatterDataset(
@@ -141,7 +141,7 @@ void main() {
               ],
               datasetDefaults: const [ScatterDataset(showLine: true)],
             ),
-          ).lower(),
+          ),
         );
 
         final meta = chart.getDatasetMeta(0);
@@ -154,7 +154,7 @@ void main() {
       tester,
     ) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
           ChartConfig(
             datasets: [
               ScatterDataset(
@@ -170,7 +170,7 @@ void main() {
             responsive: true,
             maintainAspectRatio: true,
           ),
-        ).lower(),
+        ),
       );
       final tooltip = chart.tooltip!;
       final point = chart.getDatasetMeta(0).data[0];

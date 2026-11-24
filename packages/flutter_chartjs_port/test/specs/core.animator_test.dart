@@ -35,7 +35,7 @@ void main() {
         }
 
         acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: const [
                 BarDataset(data: .values([10, 5, 0, 25, 78, -10])),
@@ -65,7 +65,7 @@ void main() {
                 },
               ),
             ),
-          ).lower(),
+          ),
           const AcquireOptions(canvas: HarnessCanvas(width: 250, height: 150)),
         );
       });

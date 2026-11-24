@@ -307,7 +307,7 @@ final Map<String, Object?> _functions = {
 /// A chart of the test controller with the labels A, B and C, and the
 /// axes [scales].
 Chart _abcChart([List<ChartAxis>? scales]) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       // Category parsing adds labels to this list in several cases.
       labels: List<Object>.of(const ['A', 'B', 'C']),
@@ -316,12 +316,12 @@ Chart _abcChart([List<ChartAxis>? scales]) => acquireChartRoot(
       ],
       scales: scales,
     ),
-  ).lower(),
+  ),
 );
 
 /// Retains the concrete label container for the narrow-list guard tests.
 Chart _labelsChart(List<Object?> labels, Object? x) {
-  final root = ChartConfigLowering(
+  final root = lowerForTest(
     ChartConfig(
       datasets: [
         TestDataset(
@@ -334,7 +334,7 @@ Chart _labelsChart(List<Object?> labels, Object? x) {
         ),
       ],
     ),
-  ).lower();
+  );
   (root.dataCell!.raw! as ChartDataScope).labels = labels;
   return acquireChartRoot(root);
 }

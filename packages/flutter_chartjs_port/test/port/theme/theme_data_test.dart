@@ -280,7 +280,7 @@ final class _Event(
 /// The scatter chart of the probe F-P1b of Chart.js ADR 0050: 3 points,
 /// with [theme] on the lowered root.
 Chart _scatter(Object? theme) {
-  final root = ChartConfigLowering(
+  final root = lowerForTest(
     ChartConfig(
       datasets: [
         ScatterDataset(
@@ -288,7 +288,7 @@ Chart _scatter(Object? theme) {
         ),
       ],
     ),
-  ).lower();
+  );
   if (theme != null) root.dollarTheme = theme;
   return acquireChartRoot(root);
 }

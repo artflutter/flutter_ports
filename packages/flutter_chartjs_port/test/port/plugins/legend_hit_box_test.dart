@@ -181,7 +181,7 @@ void main() {
         LegendOptions(onClick: (event, item, legend) => clicked = item),
       ],
     );
-    final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+    final chart = acquireChartRoot(lowerForTest(config));
     final legend = chart.legend! as Legend;
     final first = _CustomHit(legend.legendHitBoxes.first, accepts: false);
     final second = _CustomHit(legend.legendHitBoxes[1], accepts: true);

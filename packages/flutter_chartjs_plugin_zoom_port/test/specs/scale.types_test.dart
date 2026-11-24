@@ -92,7 +92,7 @@ Matcher _sameNumber(double expected) => expected.isNaN
 
 /// Acquires a chart through the typed config boundary.
 Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
-    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+    acquireChartRoot(lowerForTest(config), options);
 
 void main() {
   group('utils', () {

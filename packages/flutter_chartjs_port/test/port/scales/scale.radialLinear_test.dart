@@ -263,7 +263,7 @@ Chart _chart(
   List<Object?> data, [
   RadialLinearAxis r = const RadialLinearAxis(),
 ]) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       labels: labels,
       datasets: [
@@ -272,7 +272,7 @@ Chart _chart(
       ],
       scales: [r],
     ),
-  ).lower(),
+  ),
 );
 
 /// The scale r of [chart].

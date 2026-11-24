@@ -61,7 +61,7 @@ void main() {
         PluginOff<TooltipPlugin>(),
       ],
     );
-    final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+    final chart = acquireChartRoot(lowerForTest(config));
     final meta = chart.getDatasetMeta(0);
     final target = _ObservedLine(meta.dataset! as LineElement);
     meta.dataset = target;
@@ -128,7 +128,7 @@ void main() {
                 PluginOff<TooltipPlugin>(),
               ],
             );
-            final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+            final chart = acquireChartRoot(lowerForTest(config));
             final source = fillerSourceOf(chart.getDatasetMeta(0))!;
             final target = getTarget(source)! as ILineElement;
             final search = BoundaryPointSearch.create(target, axis);

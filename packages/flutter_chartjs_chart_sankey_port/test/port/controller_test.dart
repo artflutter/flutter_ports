@@ -14,7 +14,7 @@ const ChartPaint _green = ChartPaint.solid(Color(0xFF008000));
 const ChartPaint _orange = ChartPaint.solid(Color(0xFFFFA500));
 
 Chart _chart(Map<String, Object?> dataset) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       datasets: [
         SankeyDataset(
@@ -29,7 +29,7 @@ Chart _chart(Map<String, Object?> dataset) => acquireChartRoot(
       ],
       animation: ChartAnimation.none,
     ),
-  ).lower(),
+  ),
 );
 
 Color _colorOf(Object? paint) => (paint! as SolidChartPaint).color;

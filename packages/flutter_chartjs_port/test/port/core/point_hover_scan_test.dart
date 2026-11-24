@@ -341,7 +341,7 @@ Chart _scatterChart({
   Map<String, Object?>? extra,
   ChartAnimation animation = ChartAnimation.none,
 }) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       datasets: [
         for (var k = 0; k < datasets; k++)
@@ -365,7 +365,7 @@ Chart _scatterChart({
       animation: animation,
       extra: extra,
     ),
-  ).lower(),
+  ),
 );
 
 /// The dataset scope of the dataset [index] of [chart].

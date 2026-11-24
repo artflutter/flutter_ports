@@ -4,6 +4,7 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/widgets.dart' show TextStyle, ValueKey;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -81,7 +82,7 @@ void main() {
     test('a typed config takes the index, scales shown $shown', () {
       final chart = Chart(
         UiCanvasElement(width: 800, height: 480),
-        ChartConfigLowering(_config(200, shown: shown)).lower(),
+        lowerForTest(_config(200, shown: shown)),
       );
       addTearDown(chart.destroy);
       for (var d = 0; d < 3; d++) {

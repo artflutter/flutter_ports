@@ -5,6 +5,7 @@ library;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -98,7 +99,7 @@ Future<(List<String>, List<Object?>, int, Render)> _draw(
   UiCanvasContext.debugKeepRunColors = keep;
   final calls = <String>[];
   final canvas = UiCanvasElement(width: 320, height: 200);
-  final chart = Chart(canvas, ChartConfigLowering(config).lower());
+  final chart = Chart(canvas, lowerForTest(config));
   try {
     if (active.isNotEmpty) chart.setActiveElements(active);
     UiCanvasContext.debugRecordingCanvas = (recorder) =>

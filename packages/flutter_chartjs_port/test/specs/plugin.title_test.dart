@@ -303,7 +303,7 @@ void main() {
       testWidgets('should update the options', (tester) async {
         // The lowered scopes remain mutable for the option updates below.
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 LineDataset(data: .values([10, 20, 30, 100])),
@@ -311,7 +311,7 @@ void main() {
               labels: ['A', 'B', 'C', 'D'],
               pluginOptions: [TitleOptions(display: true)],
             ),
-          ).lower(),
+          ),
         );
         expect((chart.titleBlock! as Title).options!.display, true);
 
@@ -323,7 +323,7 @@ void main() {
       testWidgets('should update the associated layout item', (tester) async {
         // The lowered scopes remain mutable for the option updates below.
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [LineDataset()],
               pluginOptions: [
@@ -334,7 +334,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
         );
 
         expect(chart.titleBlock!.fullSize, true);
@@ -361,14 +361,14 @@ void main() {
       ) async {
         // The lowered scopes remain mutable for the option updates below.
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 LineDataset(data: .values([10, 20, 30, 100])),
               ],
               labels: ['A', 'B', 'C', 'D'],
             ),
-          ).lower(),
+          ),
         );
         expect(chart.titleBlock, isNotNull);
 
@@ -383,7 +383,7 @@ void main() {
           // A disabled plugin goes through extra; its live options
           // stay mutable.
           final chart = acquireChartRoot(
-            ChartConfigLowering(
+            lowerForTest(
               const ChartConfig(
                 datasets: [
                   LineDataset(data: .values([10, 20, 30, 100])),
@@ -391,7 +391,7 @@ void main() {
                 labels: ['A', 'B', 'C', 'D'],
                 disabledPlugins: [PluginOff<TitlePlugin>()],
               ),
-            ).lower(),
+            ),
           );
           expect(chart.titleBlock, isNull);
 

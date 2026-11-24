@@ -215,12 +215,12 @@ final Map<String, void Function(Chart chart)> _actions = {
 
 /// A chart of `logValueTest` with the labels a, b and c and the data [data].
 Chart _chart(List<num?> data) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       labels: const ['a', 'b', 'c'],
       datasets: [TestDataset(const ChartKind('logValueTest'), data: data)],
     ),
-  ).lower(),
+  ),
 );
 
 /// The logarithmic scale `y` of [chart].

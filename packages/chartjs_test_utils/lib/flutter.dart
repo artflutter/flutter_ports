@@ -41,5 +41,6 @@ export 'package:chartjs_test_utils/src/fonts.dart';
 export 'package:chartjs_test_utils/src/index.dart';
 export 'package:chartjs_test_utils/src/native_colors.dart';
 export 'package:chartjs_test_utils/src/native_easing.dart';
+export 'package:chartjs_test_utils/src/raw_options.dart';
 export 'package:chartjs_test_utils/src/utils.dart'
     hide acquireChart, releaseChart;

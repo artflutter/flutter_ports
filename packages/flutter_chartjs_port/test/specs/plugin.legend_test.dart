@@ -64,7 +64,7 @@ LegendOptions _legendDefaults() =>
 /// The chart of the typed config [config], with the harness options
 /// [options] of `acquireChart`.
 Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
-    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+    acquireChartRoot(lowerForTest(config), options);
 
 /// The point `{x, y}` at the center of the hit box [hb] (:1094-1097,
 /// :1136-1139, :1176-1179).

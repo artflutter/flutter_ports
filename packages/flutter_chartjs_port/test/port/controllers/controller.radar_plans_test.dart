@@ -148,7 +148,7 @@ ChartConfigurationScope _config(
 }) {
   final values =
       data ?? <num?>[for (var i = 0; i < n; i++) ((i * 13) % 50) * 2.0];
-  return ChartConfigLowering(
+  return lowerForTest(
     ChartConfig(
       datasets: [
         RadarDataset(
@@ -171,7 +171,7 @@ ChartConfigurationScope _config(
       events: const [],
       extra: extra,
     ),
-  ).lower();
+  );
 }
 
 /// Compares the points of the exact controller and of the subclass, after the

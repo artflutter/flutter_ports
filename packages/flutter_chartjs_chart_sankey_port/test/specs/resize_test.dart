@@ -47,7 +47,7 @@ void main() {
       // size: this is the animation the fix must leave untouched.
       await waitForDone((done) {
         chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 SankeyDataset(
@@ -65,7 +65,7 @@ void main() {
               maintainAspectRatio: false,
               responsive: true,
             ),
-          ).lower(),
+          ),
           const AcquireOptions(wrapper: HarnessBox(width: 800, height: 400)),
         );
         early.add(_ink(chart));

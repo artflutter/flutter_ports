@@ -135,13 +135,13 @@ ChartConfigurationScope _config(
     'polarArea' => const PolarAreaDataset(data: [1, 2, 3]),
     _ => throw ArgumentError.value(type, 'type'),
   };
-  final root = ChartConfigLowering(
+  final root = lowerForTest(
     ChartConfig(
       labels: const ['a', 'b', 'c'],
       datasets: [for (var d = 0; d < datasets; d++) dataset()],
       pluginOptions: const [ColorsPluginOptions(enabled: true)],
     ),
-  ).lower();
+  );
   if (theme != null) root.dollarTheme = theme;
   return root;
 }
@@ -167,7 +167,7 @@ ChartConfigurationScope _datasetConfig(
   Object? dataset, {
   bool enabled = true,
 }) {
-  final root = ChartConfigLowering(
+  final root = lowerForTest(
     ChartConfig(
       labels: const ['a', 'b', 'c'],
       // The dataset of the lowering gives the chart type. The raw dataset
@@ -182,7 +182,7 @@ ChartConfigurationScope _datasetConfig(
       ],
       pluginOptions: [ColorsPluginOptions(enabled: enabled)],
     ),
-  ).lower();
+  );
   // The narrow and unmodifiable Map cases must keep the caller's dataset.
   (root.dataCell!.raw! as ChartDataScope).datasets = <Object?>[dataset];
   return root;
@@ -359,7 +359,7 @@ void main() {
       // The palette is a field of the merged ColorsPluginOptions (Chart.js
       // ADR 0196): the options of the chart come over the theme.
       final chart = acquireChartRoot(
-        ChartConfigLowering(
+        lowerForTest(
             const ChartConfig(
               labels: ['a', 'b', 'c'],
               datasets: [
@@ -372,7 +372,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower()
+          )
           ..dollarTheme = _paletteTheme(
             [const native_ui.Color(0xff000001)],
             [const native_ui.Color(0xff000003)],

@@ -293,8 +293,7 @@ void main() {
       tester,
     ) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(const ChartConfig(datasets: [LineDataset()]))
-            .lower(),
+        lowerForTest(const ChartConfig(datasets: [LineDataset()])),
       );
       final elements = jsGet(chart.options, 'elements');
       expect(jsGet(jsGet(elements, 'point'), 'radius'), 3);

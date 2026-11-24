@@ -64,7 +64,7 @@ void main() {
       testWidgets('should draw all element if sample is greater than data '
           'based on canvas width', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 LineDataset(data: .points(_originalData()), label: 'dataset1'),
@@ -78,7 +78,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
           _canvas(1, 1),
         );
 
@@ -88,7 +88,7 @@ void main() {
       testWidgets('should draw the specified number of elements based on '
           'canvas width', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 LineDataset(data: .points(_originalData()), label: 'dataset1'),
@@ -103,7 +103,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
           _canvas(1, 1),
         );
 
@@ -113,7 +113,7 @@ void main() {
       testWidgets('should draw the specified number of elements based on '
           'threshold', (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 LineDataset(data: .points(_originalData()), label: 'dataset1'),
@@ -129,7 +129,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
           _canvas(100, 100),
         );
 
@@ -139,7 +139,7 @@ void main() {
       testWidgets('should draw all element only in range', (tester) async {
         final originalData = _originalData();
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 LineDataset(data: .points(originalData), label: 'dataset1'),
@@ -154,7 +154,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
           _canvas(1, 1),
         );
 
@@ -176,7 +176,7 @@ void main() {
         }
 
         Chart createChart() => acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [LineDataset(data: .points(data))],
               scales: const [LinearAxis(.x)],
@@ -189,7 +189,7 @@ void main() {
                 ),
               ],
             ),
-          ).lower(),
+          ),
           _canvasOnly(511, 511),
         );
         expect(createChart, returnsNormally);

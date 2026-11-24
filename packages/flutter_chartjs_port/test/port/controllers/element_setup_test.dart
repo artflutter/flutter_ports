@@ -4,6 +4,7 @@ library;
 
 import 'dart:ui' show Color;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -106,7 +107,7 @@ void main() {
   test(
     'custom Config keeps native virtual dispatch and fresh prefix lists',
     () {
-      final cfg = _ObservedConfig(ChartConfigLowering(config()).lower());
+      final cfg = _ObservedConfig(lowerForTest(config()));
       final chart = _ConfigChart(UiCanvasElement(width: 400, height: 300), cfg);
       addTearDown(chart.destroy);
       chart.update(UpdateMode.none);
@@ -118,7 +119,7 @@ void main() {
   test('custom default-key producer still enumerates for each resolution', () {
     final chart = Chart(
       UiCanvasElement(width: 400, height: 300),
-      ChartConfigLowering(config()).lower(),
+      lowerForTest(config()),
     );
     addTearDown(chart.destroy);
     final elements =
@@ -155,7 +156,7 @@ void main() {
         return const ChartPaint.solid(Color(0xff0000ff));
       }
 
-      final cfg = ChartConfigLowering(config(color: color)).lower();
+      final cfg = lowerForTest(config(color: color));
       final canvas = UiCanvasElement(width: 400, height: 300);
       final chart = ordinary
           ? _ConfigChart(canvas, _ObservedConfig(cfg))

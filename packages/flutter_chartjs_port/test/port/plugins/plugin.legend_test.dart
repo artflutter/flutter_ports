@@ -312,7 +312,7 @@ ChartConfig _config([LegendOptions? legend, Map<String, Object?>? extra]) =>
 
 /// A line chart with two datasets and the legend options [legend].
 Chart _line([LegendOptions? legend]) =>
-    acquireChartRoot(ChartConfigLowering(_config(legend)).lower());
+    acquireChartRoot(lowerForTest(_config(legend)));
 
 /// The legend options of a box that a test builds: the options of `{}` for
 /// each option that the test does not give.
@@ -669,7 +669,7 @@ void main() {
       Object? color,
       ChartThemeData? theme,
     }) {
-      final root = ChartConfigLowering(
+      final root = lowerForTest(
         _config(
           LegendOptions(
             labels: LegendLabelOptions(
@@ -680,7 +680,7 @@ void main() {
           ),
           {'color': ?color},
         ),
-      ).lower();
+      );
       if (theme != null) root.dollarTheme = compileThemeData(theme)!;
       final chart = acquireChartRoot(
         root,

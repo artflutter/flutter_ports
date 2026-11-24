@@ -23,7 +23,7 @@ const Color _defaultBorderColor = Color.fromRGBO(0, 0, 0, 0.1);
 
 /// A line chart with the x scale [x] and the theme [theme].
 Chart _cartesian(CategoryAxis x, {ChartOptionsScope? theme}) {
-  final root = ChartConfigLowering(
+  final root = lowerForTest(
     ChartConfig(
       labels: const ['a', 'b', 'c', 'd'],
       datasets: const [
@@ -31,7 +31,7 @@ Chart _cartesian(CategoryAxis x, {ChartOptionsScope? theme}) {
       ],
       scales: [x],
     ),
-  ).lower();
+  );
   if (theme != null) root.dollarTheme = theme;
   return acquireChartRoot(root);
 }
@@ -172,7 +172,7 @@ void main() {
 
   group('the radial linear scale', () {
     Chart radar(RadialLinearAxis r, {ChartOptionsScope? theme}) {
-      final root = ChartConfigLowering(
+      final root = lowerForTest(
         ChartConfig(
           labels: const ['a', 'b', 'c'],
           datasets: const [
@@ -180,7 +180,7 @@ void main() {
           ],
           scales: [r],
         ),
-      ).lower();
+      );
       if (theme != null) root.dollarTheme = theme;
       return acquireChartRoot(root);
     }

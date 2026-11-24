@@ -107,7 +107,7 @@ void main() {
             ),
           ],
         );
-        final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+        final chart = acquireChartRoot(lowerForTest(config));
         expect(
           chart.legend!.legendItems,
           reverse ? [same(b), same(a)] : [same(a), same(b)],
@@ -157,7 +157,7 @@ void main() {
       ],
     );
     expect(
-      () => acquireChartRoot(ChartConfigLowering(config).lower()),
+      () => acquireChartRoot(lowerForTest(config)),
       // Chart.js ADR 0130: a generator of Map items is not a
       // LegendLabelsGenerator.
       throwsA(isA<AssertionError>()),

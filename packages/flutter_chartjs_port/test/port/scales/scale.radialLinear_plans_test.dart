@@ -320,7 +320,7 @@ ChartConfigurationScope _config({
     'callback': ?rawCallback,
     ...?pointLabels?.call(),
   };
-  return ChartConfigLowering(
+  return lowerForTest(
     ChartConfig(
       datasets: [
         if (type == ChartKind.polarArea)
@@ -354,7 +354,7 @@ ChartConfigurationScope _config({
       events: const [],
       disabledPlugins: const [PluginOff<LegendPlugin>()],
     ),
-  ).lower();
+  );
 }
 
 /// What the plan must do in a case: `true` for a plan, on the recording

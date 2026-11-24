@@ -53,7 +53,7 @@ void main() {
         beforeAll();
         addTearDown(afterAll);
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             const ChartConfig(
               datasets: [
                 BarDataset(data: .values([1, 10]), label: 'dataset1'),
@@ -61,7 +61,7 @@ void main() {
               labels: ['label1', 'label2'],
               pluginOptions: [ColorsPluginOptions(enabled: true)],
             ),
-          ).lower(),
+          ),
         );
 
         final meta = chart.getDatasetMeta(0);

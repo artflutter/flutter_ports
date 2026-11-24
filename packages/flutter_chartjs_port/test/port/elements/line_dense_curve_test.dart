@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/foundation.dart' show ValueKey;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -190,10 +191,7 @@ Future<_Shot> _shot(
   denseCurveMergeEnabled = on;
   denseCurvesMerged = 0;
   final canvas = UiCanvasElement(width: width, height: height);
-  final chart = Chart(
-    canvas,
-    ChartConfigLowering(_config(count, variant, ratio, t)).lower(),
-  );
+  final chart = Chart(canvas, lowerForTest(_config(count, variant, ratio, t)));
   final bytes = await _read(tester, canvas);
   final shot = (
     bytes: bytes,
@@ -317,10 +315,7 @@ void main() {
     Future<List<PathCommand>> commands(int count, {required bool on}) async {
       denseCurveMergeEnabled = on;
       final canvas = UiCanvasElement(width: width, height: height);
-      final chart = Chart(
-        canvas,
-        ChartConfigLowering(_config(count, 'base', ratio)).lower(),
-      );
+      final chart = Chart(canvas, lowerForTest(_config(count, 'base', ratio)));
       final line = chart.getDatasetMeta(0).dataset! as LineElement;
       final list = List.of((line['_path']! as Path2D).commands);
       chart.destroy();
@@ -491,10 +486,7 @@ void main() {
   testWidgets('each guard of the context and of the line', (tester) async {
     final (_, width, height, ratio) = _mac;
     final canvas = UiCanvasElement(width: width, height: height);
-    final chart = Chart(
-      canvas,
-      ChartConfigLowering(_config(20000, 'base', ratio)).lower(),
-    );
+    final chart = Chart(canvas, lowerForTest(_config(20000, 'base', ratio)));
     final line = chart.getDatasetMeta(0).dataset! as LineElement;
     final other = UiCanvasElement(width: canvas.width, height: canvas.height);
 

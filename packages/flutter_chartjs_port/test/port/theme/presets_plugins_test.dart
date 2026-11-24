@@ -118,14 +118,14 @@ Map<String, Object?> _resolve(Chart chart) => {
 
 /// A bar chart with the compiled theme [theme].
 Chart _chart(ChartOptionsScope? theme) {
-  final root = ChartConfigLowering(
+  final root = lowerForTest(
     const ChartConfig(
       labels: ['a', 'b'],
       datasets: [
         BarDataset(label: 'd', data: .values([1.0, 2.0])),
       ],
     ),
-  ).lower();
+  );
   if (theme != null) root.dollarTheme = theme;
   return acquireChartRoot(root);
 }

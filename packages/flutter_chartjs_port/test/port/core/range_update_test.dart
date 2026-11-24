@@ -585,7 +585,7 @@ ChartConfigurationScope _twoAxes(_Log log, {required bool animated}) => _config(
 /// ADR 0194) with the recorder and the animation of the run, and no
 /// scriptable title, padding, ticks or grid (the typed API has none).
 ChartConfigurationScope _decimation(_Log log, {required bool animated}) =>
-    ChartConfigLowering(
+    lowerForTest(
       ChartConfig(
         datasets: [
           LineDataset(
@@ -610,7 +610,7 @@ ChartConfigurationScope _decimation(_Log log, {required bool animated}) =>
           ),
         ],
       ),
-    ).lower();
+    );
 
 /// The line chart under the light theme.
 ChartConfigurationScope _themed(_Log log, {required bool animated}) =>

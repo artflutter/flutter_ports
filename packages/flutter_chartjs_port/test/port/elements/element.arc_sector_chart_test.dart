@@ -74,7 +74,7 @@ Future<Uint8List> _pixels(
 }) async {
   if (ordinary) ui.Picture.onCreate = (_) {};
   addTearDown(() => ui.Picture.onCreate = null);
-  final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+  final chart = acquireChartRoot(lowerForTest(config));
   await tester.pump();
   final canvas = chart.canvas! as UiCanvasElement;
   final (w, h) = (canvas.width, canvas.height);
@@ -113,7 +113,7 @@ void main() {
           PluginOff<TooltipPlugin>(),
         ],
       );
-      final chart = acquireChartRoot(ChartConfigLowering(config).lower());
+      final chart = acquireChartRoot(lowerForTest(config));
       await tester.pump();
       chart.draw();
       final context = (chart.canvas! as UiCanvasElement).getContext2d();
@@ -135,7 +135,7 @@ void main() {
   ]) {
     testWidgets('$type with no border takes the fused route', (tester) async {
       final chart = acquireChartRoot(
-        ChartConfigLowering(_config(type, borderWidth: 0)).lower(),
+        lowerForTest(_config(type, borderWidth: 0)),
       );
       await tester.pump();
       chart.draw();

@@ -43,7 +43,7 @@ const _scaleTest = ChartKind('scaleTest');
 ChartConfigurationScope _config({ChartAnimation? animation}) {
   final first = <num?>[1, 5, 3, 4];
   final second = <num?>[2, 1, 6, 2];
-  return ChartConfigLowering(
+  return lowerForTest(
     ChartConfig(
       datasets: [
         TestDataset(_scaleTest, data: first),
@@ -52,7 +52,7 @@ ChartConfigurationScope _config({ChartAnimation? animation}) {
       labels: const ['a', 'b', 'c', 'd'],
       animation: animation,
     ),
-  ).lower();
+  );
 }
 
 /// [_config] as a Map: the steps `push` and `splice` add the `List<Object?>`
@@ -73,7 +73,7 @@ Map<String, Object?> _mapConfig() => <String, Object?>{
 };
 
 /// The config of a line chart with a title: two datasets of four points.
-ChartConfigurationScope _lineConfig() => ChartConfigLowering(
+ChartConfigurationScope _lineConfig() => lowerForTest(
   const ChartConfig(
     datasets: [
       LineDataset(label: 'one', data: .values([1, 5, 3, 4])),
@@ -84,7 +84,7 @@ ChartConfigurationScope _lineConfig() => ChartConfigLowering(
       TitleOptions(display: true, text: ['T']),
     ],
   ),
-).lower();
+);
 
 /// The `observeExtra` of the plugin cases: `plugins.title.display`.
 Map<String, Object?> _titleExtra(Chart chart) => <String, Object?>{

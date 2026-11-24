@@ -60,7 +60,7 @@ Chart _chart(
   List<ChartTransition>? transitions,
   TooltipOptions? tooltip,
 }) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       plugins: [_counting(counts)],
       labels: const ['a', 'b', 'c'],
@@ -77,7 +77,7 @@ Chart _chart(
       onHover: (event, active, chart) => counts.hit('onHover'),
       scales: const [LinearAxis(.y, min: 0, max: 4)],
     ),
-  ).lower(),
+  ),
 );
 
 /// Moves the mouse onto the second point. Each later update replays this

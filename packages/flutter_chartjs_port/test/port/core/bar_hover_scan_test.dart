@@ -360,7 +360,7 @@ Chart _barChart({
   List<Object?> Function(int dataset)? values,
   ChartAnimation animation = ChartAnimation.none,
 }) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       labels: [for (var i = 0; i < count; i++) 'c$i'],
       datasets: [
@@ -374,7 +374,7 @@ Chart _barChart({
       animation: animation,
       extra: options,
     ),
-  ).lower(),
+  ),
 );
 
 void _setData(Chart chart, int count, int seed) {

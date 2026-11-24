@@ -52,7 +52,7 @@ import '../support/tick_label.dart';
 
 /// The chart of the typed [config] (Chart.js ADR 0052).
 Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
-    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+    acquireChartRoot(lowerForTest(config), options);
 
 /// `toEqual(expected)` of a number: the value and the sign of a zero.
 Matcher _equalsNumber(num expected) => allOf(

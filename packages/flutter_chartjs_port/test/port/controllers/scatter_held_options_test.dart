@@ -4,6 +4,7 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -47,7 +48,7 @@ ChartConfigurationScope _config({
   ChartValue<double> pointRadius = const ChartValue.constant(3),
   Object? spanGaps,
   int n = 12,
-}) => ChartConfigLowering(
+}) => lowerForTest(
   ChartConfig(
     datasets: [
       ScatterDataset(
@@ -76,7 +77,7 @@ ChartConfigurationScope _config({
     ],
     parsing: false,
   ),
-).lower();
+);
 
 /// Each option key and value of [options], as text.
 List<String> _options(Object? options) {

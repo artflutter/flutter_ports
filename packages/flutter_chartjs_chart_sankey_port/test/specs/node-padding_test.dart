@@ -23,7 +23,7 @@ List<SankeyDataPoint> _data() => [
 ];
 
 Chart _buildSankey(double devicePixelRatio) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       datasets: [
         SankeyDataset(data: _data(), extra: const {'nodePadding': 10}),
@@ -32,12 +32,12 @@ Chart _buildSankey(double devicePixelRatio) => acquireChartRoot(
       maintainAspectRatio: false,
       extra: <String, Object?>{'devicePixelRatio': devicePixelRatio},
     ),
-  ).lower(),
+  ),
   const AcquireOptions(canvas: HarnessCanvas(width: 800, height: 400)),
 );
 
 Chart _buildSankeyWithPadding(Object? nodePadding) => acquireChartRoot(
-  ChartConfigLowering(
+  lowerForTest(
     ChartConfig(
       datasets: [
         SankeyDataset(data: _data(), extra: {'nodePadding': nodePadding}),
@@ -45,7 +45,7 @@ Chart _buildSankeyWithPadding(Object? nodePadding) => acquireChartRoot(
       animation: ChartAnimation.none,
       maintainAspectRatio: false,
     ),
-  ).lower(),
+  ),
   const AcquireOptions(canvas: HarnessCanvas(width: 800, height: 400)),
 );
 
@@ -119,7 +119,7 @@ void main() {
       // increase in C's parsed y.
       List<double> fromYs(Object? nodePadding) {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
+          lowerForTest(
             ChartConfig(
               datasets: [
                 SankeyDataset(
@@ -129,7 +129,7 @@ void main() {
               ],
               animation: ChartAnimation.none,
             ),
-          ).lower(),
+          ),
           const AcquireOptions(canvas: HarnessCanvas(width: 300, height: 300)),
         );
         final controller = chart.getDatasetMeta(0).controller!;
