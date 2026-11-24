@@ -203,6 +203,10 @@ const Set<String> reviewedForeignPairs = {
   // (Chart.js ADR 0199): core.plugins.js:262 reads `options === false` and
   // gives no plugin, as for the Map of a raw config.
   'ChartOptionsScope\tplugins\tboolean',
+  // An upstream chart option with no typed parameter stays in the `extra` of
+  // a typed fixture config (Chart.js ADR 0199): the resolver reads the raw
+  // value as the fallback of the element option, as for the options Map.
+  'ChartOptionsScope\tradius\tnumber',
   'DescriptorsScope\t_rootDesc\tboolean',
   'FontSpecScope\tsize\tstring',
   'GridLineOptionsScope\tcolor\tstring',

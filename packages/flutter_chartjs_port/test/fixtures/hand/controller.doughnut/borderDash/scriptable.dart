@@ -1,37 +1,41 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.doughnut/borderDash/scriptable.js (MIT, Chart.js Contributors).
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() => <String, Object?>{
-  'config': <String, Object?>{
-    'type': 'doughnut',
-    'data': <String, Object?>{
-      'labels': <Object?>[0, 1, 2, 3, 4, 5],
-      'datasets': <Object?>[
-        <String, Object?>{
-          // option in element (fallback)
-          'data': <Object?>[5, 2, 4, 7, 6, 8],
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'elements': <String, Object?>{
-        'arc': <String, Object?>{
-          'backgroundColor': 'transparent',
-          'borderColor': 'black',
-          'borderWidth': 1,
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      DoughnutDataset(
+        // option in element (fallback)
+        data: <num?>[5, 2, 4, 7, 6, 8],
+      ),
+    ],
+    labels: <Object>[0, 1, 2, 3, 4, 5],
+    elements: ChartElements(
+      arc: ArcElementStyle(
+        backgroundColor: ChartPaint.solid(Color(0x00000000)),
+        borderColor: ChartPaint.solid(Color(0xFF000000)),
+        borderWidth: 1,
+        extra: <String, Object?>{
           'borderDash': (ScriptableContext ctx) {
             final value = jsOrZero(ctx.dataIndex ?? undefined).remainder(2);
             return value == 0 ? <Object?>[3, 3] : <Object?>[];
           },
         },
-      },
-    },
-  },
-  'options': <String, Object?>{
+      ),
+    ),
+  ),
+  options: <String, Object?>{
     'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
-};
+);

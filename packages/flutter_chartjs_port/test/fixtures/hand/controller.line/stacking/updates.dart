@@ -1,54 +1,62 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.line/stacking/updates.js (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-direct-colors, native colors in fixture updates.
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../../../support/list_splice.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() => <String, Object?>{
-  'description': 'https://github.com/chartjs/Chart.js/issues/9424',
-  'config': <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'labels': <Object?>[0, 1, 2],
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[1, 1, 1],
-          'stack': 's1',
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      LineDataset(
+        data: .values(<num?>[1, 1, 1]),
+        stack: 's1',
+        extra: <String, Object?>{
           'borderColor': const ChartPaint.solid(ui.Color(0xFFFF0000)),
         },
-        <String, Object?>{
-          'data': <Object?>[2, 2, 2],
-          'stack': 's1',
+      ),
+      LineDataset(
+        data: .values(<num?>[2, 2, 2]),
+        stack: 's1',
+        extra: <String, Object?>{
           'borderColor': const ChartPaint.solid(ui.Color(0xFF00FF00)),
         },
-        <String, Object?>{
-          'data': <Object?>[3, 3, 3],
-          'stack': 's1',
+      ),
+      LineDataset(
+        data: .values(<num?>[3, 3, 3]),
+        stack: 's1',
+        extra: <String, Object?>{
           'borderColor': const ChartPaint.solid(ui.Color(0xFF0000FF)),
         },
-      ],
-    },
-    'options': <String, Object?>{
-      'borderWidth': 5,
-      'scales': <String, Object?>{
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'x': <String, Object?>{'display': ScaleDisplay.off},
-        // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'y': <String, Object?>{
-          'display': ScaleDisplay.on,
-          'stacked': StackMode.on,
-        },
-      },
-    },
-  },
-  'options': <String, Object?>{
+      ),
+    ],
+    labels: <Object>[0, 1, 2],
+    scales: [
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+      // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      LinearAxis(
+        CartesianAxis.y,
+        display: ScaleDisplay.on,
+        stacked: StackMode.on,
+      ),
+    ],
+    extra: <String, Object?>{'borderWidth': 5},
+  ),
+  description: 'https://github.com/chartjs/Chart.js/issues/9424',
+  options: <String, Object?>{
     'spriteText': true,
     'run': (Chart chart) {
       // Upstream: chart.data.datasets.splice(1, 0, {...}). The splice, then
@@ -65,4 +73,4 @@ Map<String, Object?> fixture() => <String, Object?>{
       chart.update();
     },
   },
-};
+);

@@ -1,59 +1,61 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.radar/pointBackgroundColor/indexable.js (MIT, Chart.js Contributors).
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4), the
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
-Map<String, Object?> fixture() => <String, Object?>{
-  'config': <String, Object?>{
-    'type': 'radar',
-    'data': <String, Object?>{
-      'labels': <Object?>[0, 1, 2, 3, 4, 5],
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[0, 5, 10, null, -10, -5],
-          'pointBackgroundColor': <Object?>[
-            '#ff0000',
-            '#00ff00',
-            '#0000ff',
-            '#ffff00',
-            '#ff00ff',
-            '#000000',
-          ],
-        },
-        <String, Object?>{
-          'data': <Object?>[4, -5, -10, null, 10, 5],
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'elements': <String, Object?>{
-        'line': <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': FillTarget.none,
-        },
-        'point': <String, Object?>{
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      RadarDataset(
+        data: <num?>[0, 5, 10, null, -10, -5],
+        pointBackgroundColor: .indexed(<ChartPaint>[
+          ChartPaint.solid(Color(0xFFFF0000)),
+          ChartPaint.solid(Color(0xFF00FF00)),
+          ChartPaint.solid(Color(0xFF0000FF)),
+          ChartPaint.solid(Color(0xFFFFFF00)),
+          ChartPaint.solid(Color(0xFFFF00FF)),
+          ChartPaint.solid(Color(0xFF000000)),
+        ]),
+      ),
+      RadarDataset(data: <num?>[4, -5, -10, null, 10, 5]),
+    ],
+    labels: <Object>[0, 1, 2, 3, 4, 5],
+    elements: ChartElements(
+      line: LineElementStyle(
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: FillTarget.none,
+      ),
+      point: PointElementStyle(
+        radius: 10,
+        extra: <String, Object?>{
           'backgroundColor': <Object?>[
-            '#ff88ff',
-            '#888888',
-            '#ff8800',
-            '#00ff88',
-            '#8800ff',
-            '#ffff88',
+            ChartPaint.solid(Color(0xFFFF88FF)),
+            ChartPaint.solid(Color(0xFF888888)),
+            ChartPaint.solid(Color(0xFFFF8800)),
+            ChartPaint.solid(Color(0xFF00FF88)),
+            ChartPaint.solid(Color(0xFF8800FF)),
+            ChartPaint.solid(Color(0xFFFFFF88)),
           ],
-          'radius': 10,
         },
-      },
-      'scales': <String, Object?>{
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'r': <String, Object?>{'display': ScaleDisplay.off, 'min': -15},
-      },
-    },
-  },
-  'options': <String, Object?>{
+      ),
+    ),
+    scales: [
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      RadialLinearAxis(display: ScaleDisplay.off, min: -15),
+    ],
+  ),
+  options: <String, Object?>{
     'canvas': <String, Object?>{'height': 512, 'width': 512},
   },
-};
+);

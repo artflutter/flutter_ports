@@ -1,14 +1,19 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.line/segments/gradient.js (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-native-line-segment-style, a LineSegmentStyle.
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'dart:ui' show Offset;
-
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() {
+FixtureConfig fixture() {
   ChartPaint getGradient(ScriptableLineSegmentContext context) {
     // Upstream: const {chart, p0, p1} = context;
     final p0 = context.p0 as Element;
@@ -27,45 +32,40 @@ Map<String, Object?> fixture() {
     );
   }
 
-  return <String, Object?>{
-    'config': <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 0, 'y': 0},
-              <String, Object?>{'x': 1, 'y': 1},
-              <String, Object?>{'x': 2, 'y': 2},
-              <String, Object?>{'x': 3, 'y': 3},
-              <String, Object?>{'x': 4, 'y': 4},
-              <String, Object?>{'x': 5, 'y': 5},
-              <String, Object?>{'x': 6, 'y': 6},
-            ],
-            'pointBackgroundColor': <Object?>[
-              'red',
-              'yellow',
-              'green',
-              'green',
-              'blue',
-              'pink',
-              'blue',
-            ],
-            'pointBorderWidth': 0,
-            'pointRadius': 10,
-            'borderWidth': 5,
-            'segment': LineSegmentStyle(borderColor: getGradient),
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'x': <String, Object?>{'type': 'linear', 'display': ScaleDisplay.off},
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'y': <String, Object?>{'display': ScaleDisplay.off},
-        },
-      },
-    },
-  };
+  return FixtureConfig.typed(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          data: .points([
+            DataPoint(0, 0),
+            DataPoint(1, 1),
+            DataPoint(2, 2),
+            DataPoint(3, 3),
+            DataPoint(4, 4),
+            DataPoint(5, 5),
+            DataPoint(6, 6),
+          ]),
+          pointBackgroundColor: .indexed(<ChartPaint>[
+            ChartPaint.solid(Color(0xFFFF0000)),
+            ChartPaint.solid(Color(0xFFFFFF00)),
+            ChartPaint.solid(Color(0xFF008000)),
+            ChartPaint.solid(Color(0xFF008000)),
+            ChartPaint.solid(Color(0xFF0000FF)),
+            ChartPaint.solid(Color(0xFFFFC0CB)),
+            ChartPaint.solid(Color(0xFF0000FF)),
+          ]),
+          pointBorderWidth: 0,
+          pointRadius: .constant(10),
+          borderWidth: 5,
+          segment: LineSegmentStyle(borderColor: getGradient),
+        ),
+      ],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+    ),
+  );
 }

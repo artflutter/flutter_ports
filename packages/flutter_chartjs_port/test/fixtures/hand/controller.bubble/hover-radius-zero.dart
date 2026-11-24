@@ -1,19 +1,23 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.bubble/hover-radius-zero.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() => <String, Object?>{
-  'config': <String, Object?>{
-    'type': 'bubble',
-    'data': <String, Object?>{
-      'labels': <Object?>[2, 2, 2, 2],
-      'datasets': <Object?>[
-        <String, Object?>{
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      BubbleDataset(
+        extra: <String, Object?>{
           'data': <Object?>[
             <Object?>[1, 1],
             <Object?>[1, 2],
@@ -21,10 +25,14 @@ Map<String, Object?> fixture() => <String, Object?>{
             <Object?>[1, 4, 20],
           ],
         },
-        <String, Object?>{
+      ),
+      BubbleDataset(
+        extra: <String, Object?>{
           'data': <Object?>[1, 2, 3, 4],
         },
-        <String, Object?>{
+      ),
+      BubbleDataset(
+        extra: <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': 3, 'y': 1},
             <String, Object?>{'x': 3, 'y': 2},
@@ -32,27 +40,29 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'x': 3, 'y': 4, 'r': 15},
           ],
         },
-      ],
-    },
-    'options': <String, Object?>{
-      'events': <Object?>[],
+      ),
+    ],
+    labels: <Object>[2, 2, 2, 2],
+    events: <String>[],
+    scales: [
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      LinearAxis(
+        CartesianAxis.x,
+        display: ScaleDisplay.off,
+        bounds: ScaleBounds.data,
+      ),
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+    ],
+    padding: const EdgeInsets.all(24),
+    extra: <String, Object?>{
       'radius': 10,
       'hoverRadius': 0,
-      'backgroundColor': 'blue',
-      'hoverBackgroundColor': 'red',
-      'scales': <String, Object?>{
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'x': <String, Object?>{
-          'display': ScaleDisplay.off,
-          'bounds': ScaleBounds.data,
-        },
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'y': <String, Object?>{'display': ScaleDisplay.off},
-      },
-      'layout': <String, Object?>{'padding': const EdgeInsets.all(24)},
+      'backgroundColor': ChartPaint.solid(Color(0xFF0000FF)),
+      'hoverBackgroundColor': ChartPaint.solid(Color(0xFFFF0000)),
     },
-  },
-  'options': <String, Object?>{
+  ),
+  options: <String, Object?>{
     'canvas': <String, Object?>{'height': 256, 'width': 256},
     'run': (Chart chart) {
       chart
@@ -67,4 +77,4 @@ Map<String, Object?> fixture() => <String, Object?>{
         ..update();
     },
   },
-};
+);

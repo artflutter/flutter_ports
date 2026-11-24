@@ -966,753 +966,612 @@ final Map<String, HandFixture> handFixtures = {
     sha256: '7baadef1b563',
   ),
   'controller.bubble/clip.js': (
-    load: () => FixtureConfig.map(controller_bubble_clip.fixture()),
+    load: controller_bubble_clip.fixture,
     sha256: 'c41c15bc92c3',
   ),
   'controller.bubble/hover-radius-zero.js': (
-    load: () =>
-        FixtureConfig.map(controller_bubble_hover_radius_zero.fixture()),
+    load: controller_bubble_hover_radius_zero.fixture,
     sha256: 'a04b0de742c5',
   ),
   'controller.bubble/padding-update.js': (
-    load: () => FixtureConfig.map(controller_bubble_padding_update.fixture()),
+    load: controller_bubble_padding_update.fixture,
     sha256: '56bb5560a369',
   ),
   'controller.bubble/point-style.json': (
-    load: () => FixtureConfig.map(controller_bubble_point_style.fixture()),
+    load: controller_bubble_point_style.fixture,
     sha256: 'e4839b6d9045',
   ),
   'controller.bubble/radius-data.js': (
-    load: () => FixtureConfig.map(controller_bubble_radius_data.fixture()),
+    load: controller_bubble_radius_data.fixture,
     sha256: 'd743535961d3',
   ),
   'controller.bubble/radius-scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_bubble_radius_scriptable.fixture()),
+    load: controller_bubble_radius_scriptable.fixture,
     sha256: 'c48d604ae872',
   ),
   'controller.doughnut/backgroundColor/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_doughnut_backgroundcolor_scriptable.fixture(),
-    ),
+    load: controller_doughnut_backgroundcolor_scriptable.fixture,
     sha256: 'f07e553df211',
   ),
   'controller.doughnut/borderAlign/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_doughnut_borderalign_scriptable.fixture()),
+    load: controller_doughnut_borderalign_scriptable.fixture,
     sha256: 'f059fbf7636b',
   ),
   'controller.doughnut/borderColor/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_doughnut_bordercolor_scriptable.fixture()),
+    load: controller_doughnut_bordercolor_scriptable.fixture,
     sha256: 'a4f74bc4715a',
   ),
   'controller.doughnut/borderDash/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_doughnut_borderdash_scriptable.fixture()),
+    load: controller_doughnut_borderdash_scriptable.fixture,
     sha256: '2ca3c9d61802',
   ),
   'controller.doughnut/borderRadius/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_doughnut_borderradius_scriptable.fixture(),
-    ),
+    load: controller_doughnut_borderradius_scriptable.fixture,
     sha256: '47db7edb7d90',
   ),
   'controller.doughnut/borderWidth/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_doughnut_borderwidth_scriptable.fixture()),
+    load: controller_doughnut_borderwidth_scriptable.fixture,
     sha256: 'a83ed1209e43',
   ),
   'controller.doughnut/doughnut-NaN.js': (
-    load: () => FixtureConfig.map(controller_doughnut_doughnut_nan.fixture()),
+    load: controller_doughnut_doughnut_nan.fixture,
     sha256: '95af81606f6a',
   ),
   'controller.doughnut/doughnut-animation-hide-last.js': (
-    load: () => FixtureConfig.map(
-      controller_doughnut_doughnut_animation_hide_last.fixture(),
-    ),
+    load: controller_doughnut_doughnut_animation_hide_last.fixture,
     sha256: 'c761e7d40fcd',
   ),
   'controller.doughnut/doughnut-animation.js': (
-    load: () =>
-        FixtureConfig.map(controller_doughnut_doughnut_animation.fixture()),
+    load: controller_doughnut_doughnut_animation.fixture,
     sha256: '9596716f3ae5',
   ),
   'controller.doughnut/doughnut-full-to-semi.js': (
-    load: () =>
-        FixtureConfig.map(controller_doughnut_doughnut_full_to_semi.fixture()),
+    load: controller_doughnut_doughnut_full_to_semi.fixture,
     sha256: '14a4452ad83c',
   ),
   'controller.doughnut/doughnut-hidden-single.js': (
-    load: () =>
-        FixtureConfig.map(controller_doughnut_doughnut_hidden_single.fixture()),
+    load: controller_doughnut_doughnut_hidden_single.fixture,
     sha256: '5e8d8f50d3e1',
   ),
   'controller.doughnut/doughnut-hidden.js': (
-    load: () =>
-        FixtureConfig.map(controller_doughnut_doughnut_hidden.fixture()),
+    load: controller_doughnut_doughnut_hidden.fixture,
     sha256: '9bf0028a556b',
   ),
   'controller.doughnut/doughnut-offset.js': (
-    load: () =>
-        FixtureConfig.map(controller_doughnut_doughnut_offset.fixture()),
+    load: controller_doughnut_doughnut_offset.fixture,
     sha256: '57720a497a90',
   ),
   'controller.doughnut/doughnut-outer-radius-percent.js': (
-    load: () => FixtureConfig.map(
-      controller_doughnut_doughnut_outer_radius_percent.fixture(),
-    ),
+    load: controller_doughnut_doughnut_outer_radius_percent.fixture,
     sha256: '73d3f8802949',
   ),
   'controller.doughnut/doughnut-outer-radius-pixels.js': (
-    load: () => FixtureConfig.map(
-      controller_doughnut_doughnut_outer_radius_pixels.fixture(),
-    ),
+    load: controller_doughnut_doughnut_outer_radius_pixels.fixture,
     sha256: 'fb490602a898',
   ),
   'controller.doughnut/doughnut-rotation-circumference-8x8.js': (
-    load: () => FixtureConfig.map(
-      controller_doughnut_doughnut_rotation_circumference_8x8.fixture(),
-    ),
+    load: controller_doughnut_doughnut_rotation_circumference_8x8.fixture,
     sha256: '7e73c0795fe1',
   ),
   'controller.doughnut/doughnut-set-active-elements.js': (
-    load: () => FixtureConfig.map(
-      controller_doughnut_doughnut_set_active_elements.fixture(),
-    ),
+    load: controller_doughnut_doughnut_set_active_elements.fixture,
     sha256: 'e1cc4cca158c',
   ),
   'controller.doughnut/event-replay.js': (
-    load: () => FixtureConfig.map(controller_doughnut_event_replay.fixture()),
+    load: controller_doughnut_event_replay.fixture,
     sha256: 'b60b32f584d9',
   ),
   'controller.doughnut/pie-offset.js': (
-    load: () => FixtureConfig.map(controller_doughnut_pie_offset.fixture()),
+    load: controller_doughnut_pie_offset.fixture,
     sha256: '7068af66954b',
   ),
   'controller.line/backgroundColor/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_backgroundcolor_scriptable.fixture()),
+    load: controller_line_backgroundcolor_scriptable.fixture,
     sha256: '6b335045acd5',
   ),
   'controller.line/backgroundColor/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_backgroundcolor_value.fixture()),
+    load: controller_line_backgroundcolor_value.fixture,
     sha256: 'ef8a36037f5c',
   ),
   'controller.line/borderCapStyle/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_bordercapstyle_scriptable.fixture()),
+    load: controller_line_bordercapstyle_scriptable.fixture,
     sha256: '30478ff89367',
   ),
   'controller.line/borderCapStyle/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_bordercapstyle_value.fixture()),
+    load: controller_line_bordercapstyle_value.fixture,
     sha256: '6d92a06c46c9',
   ),
   'controller.line/borderColor/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_bordercolor_scriptable.fixture()),
+    load: controller_line_bordercolor_scriptable.fixture,
     sha256: '9a669efd152f',
   ),
   'controller.line/borderColor/value.js': (
-    load: () => FixtureConfig.map(controller_line_bordercolor_value.fixture()),
+    load: controller_line_bordercolor_value.fixture,
     sha256: '164e97fb2070',
   ),
   'controller.line/borderDash/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_borderdash_scriptable.fixture()),
+    load: controller_line_borderdash_scriptable.fixture,
     sha256: 'c4d800f85779',
   ),
   'controller.line/borderDash/value.js': (
-    load: () => FixtureConfig.map(controller_line_borderdash_value.fixture()),
+    load: controller_line_borderdash_value.fixture,
     sha256: '1a34431b0f91',
   ),
   'controller.line/borderDashOffset/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_line_borderdashoffset_scriptable.fixture(),
-    ),
+    load: controller_line_borderdashoffset_scriptable.fixture,
     sha256: '4d56a82aa879',
   ),
   'controller.line/borderDashOffset/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_borderdashoffset_value.fixture()),
+    load: controller_line_borderdashoffset_value.fixture,
     sha256: 'd1ed7ceb00c9',
   ),
   'controller.line/borderJoinStyle/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_borderjoinstyle_scriptable.fixture()),
+    load: controller_line_borderjoinstyle_scriptable.fixture,
     sha256: 'df4607aa4d1a',
   ),
   'controller.line/borderJoinStyle/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_borderjoinstyle_value.fixture()),
+    load: controller_line_borderjoinstyle_value.fixture,
     sha256: '72a31c1febf4',
   ),
   'controller.line/borderWidth/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_borderwidth_scriptable.fixture()),
+    load: controller_line_borderwidth_scriptable.fixture,
     sha256: 'd3b61f6f0aa2',
   ),
   'controller.line/borderWidth/value.js': (
-    load: () => FixtureConfig.map(controller_line_borderwidth_value.fixture()),
+    load: controller_line_borderwidth_value.fixture,
     sha256: 'd68efe1a3394',
   ),
   'controller.line/borderWidth/zero.js': (
-    load: () => FixtureConfig.map(controller_line_borderwidth_zero.fixture()),
+    load: controller_line_borderwidth_zero.fixture,
     sha256: 'b4e97a0f35c7',
   ),
   'controller.line/clip/default-x-max.json': (
-    load: () => FixtureConfig.map(controller_line_clip_default_x_max.fixture()),
+    load: controller_line_clip_default_x_max.fixture,
     sha256: '73cc805e9739',
   ),
   'controller.line/clip/default-x-min.json': (
-    load: () => FixtureConfig.map(controller_line_clip_default_x_min.fixture()),
+    load: controller_line_clip_default_x_min.fixture,
     sha256: '7807f219cc9b',
   ),
   'controller.line/clip/default-x.json': (
-    load: () => FixtureConfig.map(controller_line_clip_default_x.fixture()),
+    load: controller_line_clip_default_x.fixture,
     sha256: '7e49d010b700',
   ),
   'controller.line/clip/default-y-max.json': (
-    load: () => FixtureConfig.map(controller_line_clip_default_y_max.fixture()),
+    load: controller_line_clip_default_y_max.fixture,
     sha256: '473da4a46f1f',
   ),
   'controller.line/clip/default-y-min.json': (
-    load: () => FixtureConfig.map(controller_line_clip_default_y_min.fixture()),
+    load: controller_line_clip_default_y_min.fixture,
     sha256: 'fd1f2d662266',
   ),
   'controller.line/clip/default-y.json': (
-    load: () => FixtureConfig.map(controller_line_clip_default_y.fixture()),
+    load: controller_line_clip_default_y.fixture,
     sha256: 'ffe6d9f64bef',
   ),
   'controller.line/clip/false.js': (
-    load: () => FixtureConfig.map(controller_line_clip_false.fixture()),
+    load: controller_line_clip_false.fixture,
     sha256: 'f7987ae35e19',
   ),
   'controller.line/clip/specified.json': (
-    load: () => FixtureConfig.map(controller_line_clip_specified.fixture()),
+    load: controller_line_clip_specified.fixture,
     sha256: '343d3d39e643',
   ),
   'controller.line/cubicInterpolationMode/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_line_cubicinterpolationmode_scriptable.fixture(),
-    ),
+    load: controller_line_cubicinterpolationmode_scriptable.fixture,
     sha256: 'ce42a5d3d739',
   ),
   'controller.line/cubicInterpolationMode/value.js': (
-    load: () => FixtureConfig.map(
-      controller_line_cubicinterpolationmode_value.fixture(),
-    ),
+    load: controller_line_cubicinterpolationmode_value.fixture,
     sha256: 'fb7f666ae6f0',
   ),
   'controller.line/fill/no-border.js': (
-    load: () => FixtureConfig.map(controller_line_fill_no_border.fixture()),
+    load: controller_line_fill_no_border.fixture,
     sha256: '2c4c06669722',
   ),
   'controller.line/fill/order-default.js': (
-    load: () => FixtureConfig.map(controller_line_fill_order_default.fixture()),
+    load: controller_line_fill_order_default.fixture,
     sha256: '80f197d5f920',
   ),
   'controller.line/fill/order.js': (
-    load: () => FixtureConfig.map(controller_line_fill_order.fixture()),
+    load: controller_line_fill_order.fixture,
     sha256: '0e9b577b1cdd',
   ),
   'controller.line/fill/scriptable.js': (
-    load: () => FixtureConfig.map(controller_line_fill_scriptable.fixture()),
+    load: controller_line_fill_scriptable.fixture,
     sha256: '6a79addf5883',
   ),
   'controller.line/fill/value.js': (
-    load: () => FixtureConfig.map(controller_line_fill_value.fixture()),
+    load: controller_line_fill_value.fixture,
     sha256: 'd7169e78d375',
   ),
   'controller.line/issue-8902.js': (
-    load: () => FixtureConfig.map(controller_line_issue_8902.fixture()),
+    load: controller_line_issue_8902.fixture,
     sha256: '748de10df6e0',
   ),
   'controller.line/non-numeric-y.json': (
-    load: () => FixtureConfig.map(controller_line_non_numeric_y.fixture()),
+    load: controller_line_non_numeric_y.fixture,
     sha256: '98d3079a8f72',
   ),
   'controller.line/point-style-offscreen-canvas.json': (
-    load: () => FixtureConfig.map(
-      controller_line_point_style_offscreen_canvas.fixture(),
-    ),
+    load: controller_line_point_style_offscreen_canvas.fixture,
     sha256: '1c583297f8d9',
   ),
   'controller.line/point-style.json': (
-    load: () => FixtureConfig.map(controller_line_point_style.fixture()),
+    load: controller_line_point_style.fixture,
     sha256: 'b660424602f0',
   ),
   'controller.line/pointBackgroundColor/indexable.js': (
-    load: () => FixtureConfig.map(
-      controller_line_pointbackgroundcolor_indexable.fixture(),
-    ),
+    load: controller_line_pointbackgroundcolor_indexable.fixture,
     sha256: '4e6165c671f4',
   ),
   'controller.line/pointBackgroundColor/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_line_pointbackgroundcolor_scriptable.fixture(),
-    ),
+    load: controller_line_pointbackgroundcolor_scriptable.fixture,
     sha256: 'a1d05086a20c',
   ),
   'controller.line/pointBackgroundColor/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_pointbackgroundcolor_value.fixture()),
+    load: controller_line_pointbackgroundcolor_value.fixture,
     sha256: '172cce47e400',
   ),
   'controller.line/pointBorderColor/indexable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_pointbordercolor_indexable.fixture()),
+    load: controller_line_pointbordercolor_indexable.fixture,
     sha256: 'e035eaae8d79',
   ),
   'controller.line/pointBorderColor/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_line_pointbordercolor_scriptable.fixture(),
-    ),
+    load: controller_line_pointbordercolor_scriptable.fixture,
     sha256: '470ee8700c7c',
   ),
   'controller.line/pointBorderColor/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_pointbordercolor_value.fixture()),
+    load: controller_line_pointbordercolor_value.fixture,
     sha256: '0b6c7b638f62',
   ),
   'controller.line/pointBorderWidth/indexable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_pointborderwidth_indexable.fixture()),
+    load: controller_line_pointborderwidth_indexable.fixture,
     sha256: 'db079757f7cf',
   ),
   'controller.line/pointBorderWidth/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_line_pointborderwidth_scriptable.fixture(),
-    ),
+    load: controller_line_pointborderwidth_scriptable.fixture,
     sha256: '43f2ab05206b',
   ),
   'controller.line/pointBorderWidth/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_pointborderwidth_value.fixture()),
+    load: controller_line_pointborderwidth_value.fixture,
     sha256: '0d634475c832',
   ),
   'controller.line/pointStyle/indexable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_pointstyle_indexable.fixture()),
+    load: controller_line_pointstyle_indexable.fixture,
     sha256: '2af01af5af33',
   ),
   'controller.line/pointStyle/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_pointstyle_scriptable.fixture()),
+    load: controller_line_pointstyle_scriptable.fixture,
     sha256: '9bcfac10655f',
   ),
   'controller.line/pointStyle/value.js': (
-    load: () => FixtureConfig.map(controller_line_pointstyle_value.fixture()),
+    load: controller_line_pointstyle_value.fixture,
     sha256: '61ce6f0b6cd8',
   ),
   'controller.line/radius/indexable.js': (
-    load: () => FixtureConfig.map(controller_line_radius_indexable.fixture()),
+    load: controller_line_radius_indexable.fixture,
     sha256: 'a99264fb9ba2',
   ),
   'controller.line/radius/scriptable-to-value.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_radius_scriptable_to_value.fixture()),
+    load: controller_line_radius_scriptable_to_value.fixture,
     sha256: 'f645b7cc3706',
   ),
   'controller.line/radius/scriptable.js': (
-    load: () => FixtureConfig.map(controller_line_radius_scriptable.fixture()),
+    load: controller_line_radius_scriptable.fixture,
     sha256: '0defd6fe8d7a',
   ),
   'controller.line/radius/value.js': (
-    load: () => FixtureConfig.map(controller_line_radius_value.fixture()),
+    load: controller_line_radius_value.fixture,
     sha256: '3c6a12ca99e0',
   ),
   'controller.line/rotation/indexable.js': (
-    load: () => FixtureConfig.map(controller_line_rotation_indexable.fixture()),
+    load: controller_line_rotation_indexable.fixture,
     sha256: '526ed66a10e5',
   ),
   'controller.line/rotation/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_rotation_scriptable.fixture()),
+    load: controller_line_rotation_scriptable.fixture,
     sha256: '41944f013e0a',
   ),
   'controller.line/rotation/value.js': (
-    load: () => FixtureConfig.map(controller_line_rotation_value.fixture()),
+    load: controller_line_rotation_value.fixture,
     sha256: 'be2f073637a3',
   ),
   'controller.line/segments/gap.js': (
-    load: () => FixtureConfig.map(controller_line_segments_gap.fixture()),
+    load: controller_line_segments_gap.fixture,
     sha256: 'be95768577c4',
   ),
   'controller.line/segments/gradient.js': (
-    load: () => FixtureConfig.map(controller_line_segments_gradient.fixture()),
+    load: controller_line_segments_gradient.fixture,
     sha256: 'e64f9d57138b',
   ),
   'controller.line/segments/range.js': (
-    load: () => FixtureConfig.map(controller_line_segments_range.fixture()),
+    load: controller_line_segments_range.fixture,
     sha256: 'fc55b22345c7',
   ),
   'controller.line/segments/single.js': (
-    load: () => FixtureConfig.map(controller_line_segments_single.fixture()),
+    load: controller_line_segments_single.fixture,
     sha256: 'c5600276f007',
   ),
   'controller.line/segments/slope.js': (
-    load: () => FixtureConfig.map(controller_line_segments_slope.fixture()),
+    load: controller_line_segments_slope.fixture,
     sha256: '0d16c2a0c10c',
   ),
   'controller.line/segments/spanGaps.js': (
-    load: () => FixtureConfig.map(controller_line_segments_spangaps.fixture()),
+    load: controller_line_segments_spangaps.fixture,
     sha256: '84de0635c353',
   ),
   'controller.line/showLine/dataset.js': (
-    load: () => FixtureConfig.map(controller_line_showline_dataset.fixture()),
+    load: controller_line_showline_dataset.fixture,
     sha256: 'c862fa5f1bed',
   ),
   'controller.line/showLine/false.js': (
-    load: () => FixtureConfig.map(controller_line_showline_false.fixture()),
+    load: controller_line_showline_false.fixture,
     sha256: 'cb7b1512cfcc',
   ),
   'controller.line/stacking/order-default.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_stacking_order_default.fixture()),
+    load: controller_line_stacking_order_default.fixture,
     sha256: 'c244c7024756',
   ),
   'controller.line/stacking/order-specified.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_stacking_order_specified.fixture()),
+    load: controller_line_stacking_order_specified.fixture,
     sha256: '024ef20c876d',
   ),
   'controller.line/stacking/single.js': (
-    load: () => FixtureConfig.map(controller_line_stacking_single.fixture()),
+    load: controller_line_stacking_single.fixture,
     sha256: '08e1bf476162',
   ),
   'controller.line/stacking/stack-cache.js': (
-    load: () =>
-        FixtureConfig.map(controller_line_stacking_stack_cache.fixture()),
+    load: controller_line_stacking_stack_cache.fixture,
     sha256: 'e4bff4bd0de9',
   ),
   'controller.line/stacking/updates.js': (
-    load: () => FixtureConfig.map(controller_line_stacking_updates.fixture()),
+    load: controller_line_stacking_updates.fixture,
     sha256: '056f6b383174',
   ),
   'controller.polarArea/backgroundColor/scriptable-dataset.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_backgroundcolor_scriptable_dataset.fixture(),
-    ),
+    load: controller_polararea_backgroundcolor_scriptable_dataset.fixture,
     sha256: 'e3a6e10b0445',
   ),
   'controller.polarArea/backgroundColor/scriptable-element-options.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_backgroundcolor_scriptable_element_options.fixture(),
-    ),
+    load:
+        controller_polararea_backgroundcolor_scriptable_element_options.fixture,
     sha256: '6f4f635ed74f',
   ),
   'controller.polarArea/borderAlign/scriptable-dataset.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_borderalign_scriptable_dataset.fixture(),
-    ),
+    load: controller_polararea_borderalign_scriptable_dataset.fixture,
     sha256: 'c0b710a0a565',
   ),
   'controller.polarArea/borderAlign/scriptable-element-options.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_borderalign_scriptable_element_options.fixture(),
-    ),
+    load: controller_polararea_borderalign_scriptable_element_options.fixture,
     sha256: 'f234f2f7af62',
   ),
   'controller.polarArea/borderColor/scriptable-dataset.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_bordercolor_scriptable_dataset.fixture(),
-    ),
+    load: controller_polararea_bordercolor_scriptable_dataset.fixture,
     sha256: 'ded56fe689f2',
   ),
   'controller.polarArea/borderColor/scriptable-element-options.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_bordercolor_scriptable_element_options.fixture(),
-    ),
+    load: controller_polararea_bordercolor_scriptable_element_options.fixture,
     sha256: '201e8c5aec6f',
   ),
   'controller.polarArea/borderDash/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_polararea_borderdash_scriptable.fixture()),
+    load: controller_polararea_borderdash_scriptable.fixture,
     sha256: 'ac0ff1f43b89',
   ),
   'controller.polarArea/borderWidth/scriptable-dataset.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_borderwidth_scriptable_dataset.fixture(),
-    ),
+    load: controller_polararea_borderwidth_scriptable_dataset.fixture,
     sha256: '1f2a1caa8279',
   ),
   'controller.polarArea/borderWidth/scriptable-element-options.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_borderwidth_scriptable_element_options.fixture(),
-    ),
+    load: controller_polararea_borderwidth_scriptable_element_options.fixture,
     sha256: 'e031e4be7d98',
   ),
   'controller.polarArea/last-slice-animate.js': (
-    load: () =>
-        FixtureConfig.map(controller_polararea_last_slice_animate.fixture()),
+    load: controller_polararea_last_slice_animate.fixture,
     sha256: '3a5f99ab5bd0',
   ),
   'controller.polarArea/pointLabels/overlapping.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_overlapping.fixture(),
-    ),
+    load: controller_polararea_pointlabels_overlapping.fixture,
     sha256: 'd36ed140bae4',
   ),
   'controller.polarArea/pointLabels/withTitle/bottom-centered-45.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_withtitle_bottom_centered_45.fixture(),
-    ),
+    load: controller_polararea_pointlabels_withtitle_bottom_centered_45.fixture,
     sha256: 'ffb8e9030dc8',
   ),
   'controller.polarArea/pointLabels/withTitle/bottom-centered.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_withtitle_bottom_centered.fixture(),
-    ),
+    load: controller_polararea_pointlabels_withtitle_bottom_centered.fixture,
     sha256: '2d56f9c199fe',
   ),
   'controller.polarArea/pointLabels/withTitle/left-centered-45.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_withtitle_left_centered_45.fixture(),
-    ),
+    load: controller_polararea_pointlabels_withtitle_left_centered_45.fixture,
     sha256: '9cddd9c0a59c',
   ),
   'controller.polarArea/pointLabels/withTitle/left-centered.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_withtitle_left_centered.fixture(),
-    ),
+    load: controller_polararea_pointlabels_withtitle_left_centered.fixture,
     sha256: 'e0c966a5dc9a',
   ),
   'controller.polarArea/pointLabels/withTitle/right-centered-45.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_withtitle_right_centered_45.fixture(),
-    ),
+    load: controller_polararea_pointlabels_withtitle_right_centered_45.fixture,
     sha256: 'bd96ed252d6b',
   ),
   'controller.polarArea/pointLabels/withTitle/right-centered.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_withtitle_right_centered.fixture(),
-    ),
+    load: controller_polararea_pointlabels_withtitle_right_centered.fixture,
     sha256: 'a1397cd075e3',
   ),
   'controller.polarArea/pointLabels/withTitle/top-centered-45.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_withtitle_top_centered_45.fixture(),
-    ),
+    load: controller_polararea_pointlabels_withtitle_top_centered_45.fixture,
     sha256: '59ffe1d24c49',
   ),
   'controller.polarArea/pointLabels/withTitle/top-centered.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_withtitle_top_centered.fixture(),
-    ),
+    load: controller_polararea_pointlabels_withtitle_top_centered.fixture,
     sha256: 'aa2aa45504c5',
   ),
   'controller.polarArea/pointLabels/withTitle/top-default-45.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_withtitle_top_default_45.fixture(),
-    ),
+    load: controller_polararea_pointlabels_withtitle_top_default_45.fixture,
     sha256: '1987c504c20f',
   ),
   'controller.polarArea/pointLabels/withTitle/top-default.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_pointlabels_withtitle_top_default.fixture(),
-    ),
+    load: controller_polararea_pointlabels_withtitle_top_default.fixture,
     sha256: 'dd7dcd1341e7',
   ),
   'controller.polarArea/polar-area-animation-rotate.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_polar_area_animation_rotate.fixture(),
-    ),
+    load: controller_polararea_polar_area_animation_rotate.fixture,
     sha256: '118993e3038a',
   ),
   'controller.polarArea/polar-area-animation-scale.js': (
-    load: () => FixtureConfig.map(
-      controller_polararea_polar_area_animation_scale.fixture(),
-    ),
+    load: controller_polararea_polar_area_animation_scale.fixture,
     sha256: '5dc2b7a377f5',
   ),
   'controller.radar/backgroundColor/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_radar_backgroundcolor_scriptable.fixture(),
-    ),
+    load: controller_radar_backgroundcolor_scriptable.fixture,
     sha256: 'f22197417af4',
   ),
   'controller.radar/backgroundColor/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_backgroundcolor_value.fixture()),
+    load: controller_radar_backgroundcolor_value.fixture,
     sha256: 'a811a3838ef7',
   ),
   'controller.radar/borderCapStyle/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_bordercapstyle_scriptable.fixture()),
+    load: controller_radar_bordercapstyle_scriptable.fixture,
     sha256: '5a54608b60d1',
   ),
   'controller.radar/borderCapStyle/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_bordercapstyle_value.fixture()),
+    load: controller_radar_bordercapstyle_value.fixture,
     sha256: '681c1ef30ff1',
   ),
   'controller.radar/borderColor/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_bordercolor_scriptable.fixture()),
+    load: controller_radar_bordercolor_scriptable.fixture,
     sha256: '4c83d879eb43',
   ),
   'controller.radar/borderColor/value.js': (
-    load: () => FixtureConfig.map(controller_radar_bordercolor_value.fixture()),
+    load: controller_radar_bordercolor_value.fixture,
     sha256: '3a09140dbed0',
   ),
   'controller.radar/borderDash/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_borderdash_scriptable.fixture()),
+    load: controller_radar_borderdash_scriptable.fixture,
     sha256: '5d91acf7da68',
   ),
   'controller.radar/borderDash/value.js': (
-    load: () => FixtureConfig.map(controller_radar_borderdash_value.fixture()),
+    load: controller_radar_borderdash_value.fixture,
     sha256: '0508684d06e9',
   ),
   'controller.radar/borderDashOffset/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_radar_borderdashoffset_scriptable.fixture(),
-    ),
+    load: controller_radar_borderdashoffset_scriptable.fixture,
     sha256: '258285ab5d6a',
   ),
   'controller.radar/borderDashOffset/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_borderdashoffset_value.fixture()),
+    load: controller_radar_borderdashoffset_value.fixture,
     sha256: '96d39068cbc3',
   ),
   'controller.radar/borderJoinStyle/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_radar_borderjoinstyle_scriptable.fixture(),
-    ),
+    load: controller_radar_borderjoinstyle_scriptable.fixture,
     sha256: '7bf9703db017',
   ),
   'controller.radar/borderJoinStyle/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_borderjoinstyle_value.fixture()),
+    load: controller_radar_borderjoinstyle_value.fixture,
     sha256: '89e13072caed',
   ),
   'controller.radar/borderWidth/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_borderwidth_scriptable.fixture()),
+    load: controller_radar_borderwidth_scriptable.fixture,
     sha256: '0e135ebaad8c',
   ),
   'controller.radar/borderWidth/value.js': (
-    load: () => FixtureConfig.map(controller_radar_borderwidth_value.fixture()),
+    load: controller_radar_borderwidth_value.fixture,
     sha256: 'fbbcd39a64ed',
   ),
   'controller.radar/borderWidth/zero.js': (
-    load: () => FixtureConfig.map(controller_radar_borderwidth_zero.fixture()),
+    load: controller_radar_borderwidth_zero.fixture,
     sha256: '5e733e2d4e66',
   ),
   'controller.radar/fill/scriptable.js': (
-    load: () => FixtureConfig.map(controller_radar_fill_scriptable.fixture()),
+    load: controller_radar_fill_scriptable.fixture,
     sha256: '2e41806f6eec',
   ),
   'controller.radar/fill/value.js': (
-    load: () => FixtureConfig.map(controller_radar_fill_value.fixture()),
+    load: controller_radar_fill_value.fixture,
     sha256: 'abe43fe26e56',
   ),
   'controller.radar/point-style.json': (
-    load: () => FixtureConfig.map(controller_radar_point_style.fixture()),
+    load: controller_radar_point_style.fixture,
     sha256: '783139172038',
   ),
   'controller.radar/pointBackgroundColor/indexable.js': (
-    load: () => FixtureConfig.map(
-      controller_radar_pointbackgroundcolor_indexable.fixture(),
-    ),
+    load: controller_radar_pointbackgroundcolor_indexable.fixture,
     sha256: 'ab9b4df9fe3c',
   ),
   'controller.radar/pointBackgroundColor/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_radar_pointbackgroundcolor_scriptable.fixture(),
-    ),
+    load: controller_radar_pointbackgroundcolor_scriptable.fixture,
     sha256: '8397c25979c5',
   ),
   'controller.radar/pointBackgroundColor/value.js': (
-    load: () => FixtureConfig.map(
-      controller_radar_pointbackgroundcolor_value.fixture(),
-    ),
+    load: controller_radar_pointbackgroundcolor_value.fixture,
     sha256: 'a31e04268653',
   ),
   'controller.radar/pointBorderColor/indexable.js': (
-    load: () => FixtureConfig.map(
-      controller_radar_pointbordercolor_indexable.fixture(),
-    ),
+    load: controller_radar_pointbordercolor_indexable.fixture,
     sha256: 'c3d832027132',
   ),
   'controller.radar/pointBorderColor/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_radar_pointbordercolor_scriptable.fixture(),
-    ),
+    load: controller_radar_pointbordercolor_scriptable.fixture,
     sha256: 'a013479b11e7',
   ),
   'controller.radar/pointBorderColor/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_pointbordercolor_value.fixture()),
+    load: controller_radar_pointbordercolor_value.fixture,
     sha256: 'e43b2e05b356',
   ),
   'controller.radar/pointBorderWidth/indexable.js': (
-    load: () => FixtureConfig.map(
-      controller_radar_pointborderwidth_indexable.fixture(),
-    ),
+    load: controller_radar_pointborderwidth_indexable.fixture,
     sha256: '475d60b260a4',
   ),
   'controller.radar/pointBorderWidth/scriptable.js': (
-    load: () => FixtureConfig.map(
-      controller_radar_pointborderwidth_scriptable.fixture(),
-    ),
+    load: controller_radar_pointborderwidth_scriptable.fixture,
     sha256: '3a4626248004',
   ),
   'controller.radar/pointBorderWidth/value.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_pointborderwidth_value.fixture()),
+    load: controller_radar_pointborderwidth_value.fixture,
     sha256: 'b7b6ebbc3e28',
   ),
   'controller.radar/pointStyle/indexable.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_pointstyle_indexable.fixture()),
+    load: controller_radar_pointstyle_indexable.fixture,
     sha256: 'bcd7f3eeb78b',
   ),
   'controller.radar/pointStyle/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_pointstyle_scriptable.fixture()),
+    load: controller_radar_pointstyle_scriptable.fixture,
     sha256: '5c91c66e1bc9',
   ),
   'controller.radar/pointStyle/value.js': (
-    load: () => FixtureConfig.map(controller_radar_pointstyle_value.fixture()),
+    load: controller_radar_pointstyle_value.fixture,
     sha256: 'bf236ef43caa',
   ),
   'controller.radar/radius/indexable.js': (
-    load: () => FixtureConfig.map(controller_radar_radius_indexable.fixture()),
+    load: controller_radar_radius_indexable.fixture,
     sha256: 'ab44e9e099c8',
   ),
   'controller.radar/radius/scriptable.js': (
-    load: () => FixtureConfig.map(controller_radar_radius_scriptable.fixture()),
+    load: controller_radar_radius_scriptable.fixture,
     sha256: '15fbd64fc078',
   ),
   'controller.radar/radius/value.js': (
-    load: () => FixtureConfig.map(controller_radar_radius_value.fixture()),
+    load: controller_radar_radius_value.fixture,
     sha256: 'b4068839907a',
   ),
   'controller.radar/rotation/indexable.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_rotation_indexable.fixture()),
+    load: controller_radar_rotation_indexable.fixture,
     sha256: 'c986426a9a3e',
   ),
   'controller.radar/rotation/scriptable.js': (
-    load: () =>
-        FixtureConfig.map(controller_radar_rotation_scriptable.fixture()),
+    load: controller_radar_rotation_scriptable.fixture,
     sha256: '1ab97bf9b6b1',
   ),
   'controller.radar/rotation/value.js': (
-    load: () => FixtureConfig.map(controller_radar_rotation_value.fixture()),
+    load: controller_radar_rotation_value.fixture,
     sha256: '708f548ebe96',
   ),
   'controller.radar/showLine/value.js': (
-    load: () => FixtureConfig.map(controller_radar_showline_value.fixture()),
+    load: controller_radar_showline_value.fixture,
     sha256: '9cb757de6148',
   ),
   'controller.scatter/showLine/changed.js': (
-    load: () =>
-        FixtureConfig.map(controller_scatter_showline_changed.fixture()),
+    load: controller_scatter_showline_changed.fixture,
     sha256: '4f29b0a4faa8',
   ),
   'core.interaction/drawActiveElementsOnTop-false.js': (

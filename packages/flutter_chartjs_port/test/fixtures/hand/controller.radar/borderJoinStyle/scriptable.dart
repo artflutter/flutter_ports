@@ -1,23 +1,25 @@
 // Ported from Chart.js v4.6.1 test/fixtures/controller.radar/borderJoinStyle/scriptable.js (MIT, Chart.js Contributors).
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'dart:ui' show StrokeJoin;
-
-import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() => <String, Object?>{
-  'config': <String, Object?>{
-    'type': 'radar',
-    'data': <String, Object?>{
-      'labels': <Object?>[0, 1, 2, 3],
-      'datasets': <Object?>[
-        <String, Object?>{
-          // option in dataset
-          'data': <Object?>[3, 3, null, 3],
-          'borderColor': '#ff0000',
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      RadarDataset(
+        // option in dataset
+        data: <num?>[3, 3, null, 3],
+        borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        extra: <String, Object?>{
           // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enum.
           'borderJoinStyle': (ScriptableContext ctx) {
             final index = jsToNumber(ctx.datasetIndex ?? undefined)
@@ -29,21 +31,26 @@ Map<String, Object?> fixture() => <String, Object?>{
                 : StrokeJoin.bevel;
           },
         },
-        <String, Object?>{
-          // option in element (fallback)
-          'data': <Object?>[2, 2, null, 2],
-          'borderColor': '#0000ff',
-        },
-        <String, Object?>{
-          // option in element (fallback)
-          'data': <Object?>[1, 1, null, 1],
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'elements': <String, Object?>{
-        'line': <String, Object?>{
-          'borderColor': '#00ff00',
+      ),
+      RadarDataset(
+        // option in element (fallback)
+        data: <num?>[2, 2, null, 2],
+        borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+      ),
+      RadarDataset(
+        // option in element (fallback)
+        data: <num?>[1, 1, null, 1],
+      ),
+    ],
+    labels: <Object>[0, 1, 2, 3],
+    elements: ChartElements(
+      line: LineElementStyle(
+        borderColor: ChartPaint.solid(Color(0xFF00FF00)),
+        borderWidth: 25,
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: FillTarget.none,
+        tension: 0,
+        extra: <String, Object?>{
           'borderJoinStyle': (ScriptableContext ctx) {
             final index = jsToNumber(ctx.datasetIndex ?? undefined)
                 .remainder(3);
@@ -53,23 +60,16 @@ Map<String, Object?> fixture() => <String, Object?>{
                 ? StrokeJoin.miter
                 : StrokeJoin.bevel;
           },
-          'borderWidth': 25,
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': FillTarget.none,
-          'tension': 0,
         },
-      },
-      'layout': <String, Object?>{'padding': const EdgeInsets.all(32)},
-      'scales': <String, Object?>{
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'r': <String, Object?>{
-          'display': ScaleDisplay.off,
-          'beginAtZero': true,
-        },
-      },
-    },
-  },
-  'options': <String, Object?>{
+      ),
+    ),
+    padding: const EdgeInsets.all(32),
+    scales: [
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      RadialLinearAxis(display: ScaleDisplay.off, beginAtZero: true),
+    ],
+  ),
+  options: <String, Object?>{
     'canvas': <String, Object?>{'height': 512, 'width': 512},
   },
-};
+);
