@@ -1,6 +1,7 @@
 # Chart.js ADR 0195: Deprecate the raw ChartView config
 
 - Status: accepted (2026-11-23): the deprecation is on `ChartView.raw`, and analyze and the port checks pass.
+- Superseded by: [Chart.js ADR 0198](0198-remove-raw-chart-view.md) (2026-11-24)
 - Date: 2026-11-23
 - Supersedes: [Chart.js ADR 0052](0052-typed-public-api.md) §9, the item that makes `ChartView.raw` the escape
   hatch that stays

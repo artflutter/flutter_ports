@@ -1,6 +1,6 @@
 # Chart.js ADR 0200: Native canvas style members and typed harness options
 
-- Status: proposed
+- Status: accepted (2026-11-24): its code is on main, and the gates of AGENTS.md pass.
 - Date: 2026-11-24
 - Supersedes: of [Chart.js ADR 0022](0022-chart-test-harness.md), §3 for the CSS subset of the DOM stand-in
   and `CssProperties`, §4 for the `style` reflection and the attribute Maps of `acquireChart`, §9 for the display

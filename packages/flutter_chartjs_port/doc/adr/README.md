@@ -24,14 +24,14 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0019](0019-animation.md) Animation: accepted, superseded in part by 0145, 0171, 0172.
 - [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted, superseded in part by 0173, 0181.
 - [0021](0021-typed-options-in-the-resolver.md) Typed options in the resolver: accepted, superseded by 0054.
-- [0022](0022-chart-test-harness.md) Chart test harness on Flutter: accepted, superseded in part by 0108.
+- [0022](0022-chart-test-harness.md) Chart test harness on Flutter: accepted, superseded in part by 0108, 0200.
 - [0023](0023-underscore-member-collisions.md) Underscore members with a colliding name: accepted.
 - [0024](0024-dates.md) Dates: accepted, superseded in part by 0110, 0145, 0173.
 - [0025](0025-scale-value-parameters.md) Scale value parameters: accepted, superseded in part by 0033, 0186.
 - [0026](0026-number-formatting-on-package-intl.md) Number formatting on package:intl: accepted, supersedes 0008, superseded by 0119.
 - [0027](0027-parsed-data.md) Parsed data in the controllers: accepted, superseded by 0036.
 - [0028](0028-controller-interfaces.md) Controller interfaces and values: accepted, superseded in part by 0145.
-- [0029](0029-fixture-smoke-runner.md) Fixture smoke runner: accepted, superseded in part by 0115, 0178, 0179.
+- [0029](0029-fixture-smoke-runner.md) Fixture smoke runner: accepted, superseded in part by 0115, 0178, 0179, 0199.
 - [0030](0030-controller-test-strategy.md) Controller test strategy: accepted, superseded in part by 0180.
 - [0031](0031-gallery-chart-types.md) Gallery chart types and the stress controller: accepted, superseded in part by 0075.
 - [0032](0032-js-numeric-semantics.md) JS numeric semantics: accepted, supersedes 0010, superseded by 0045.
@@ -39,7 +39,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0034](0034-no-display-only-js-exactness.md) No display-only JS exactness: accepted, supersedes 0009, superseded in part by 0178.
 - [0035](0035-third-party-sources.md) Third-party sources: accepted, supersedes 0011, superseded in part by 0122, 0146, 0178.
 - [0036](0036-parsed-data.md) Parsed data in the controllers: accepted, supersedes 0027, superseded in part by 0054, 0109.
-- [0037](0037-legend-and-tooltip-input-path.md) Legend and tooltip input path: accepted, supersedes 0014, superseded in part by 0108.
+- [0037](0037-legend-and-tooltip-input-path.md) Legend and tooltip input path: accepted, supersedes 0014, superseded in part by 0108, 0200.
 - [0038](0038-plugin-modules-class-values-and-interfaces.md) Plugin modules, class values and interfaces: accepted, superseded in part by 0054, 0145.
 - [0039](0039-tooltip-model-and-animation.md) Tooltip model and animation: accepted, superseded in part by 0145.
 - [0040](0040-filler-targets-and-plain-points.md) Filler targets and plain points: accepted, superseded in part by 0140, 0178.
@@ -57,7 +57,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144, 0145, 0170, 0189, 0190, 0191, 0192, 0193, 0194, 0195, 0196, 0197.
 - [0053](0053-resolver-fast-paths.md) The resolver fast paths: rejected.
 - [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147, 0165, 0183, 0192, 0193, 0194, 0196, 0197.
-- [0055](0055-native-draw-path.md) The native draw path of the canvas layer: accepted, supersedes 0013, superseded in part by 0106.
+- [0055](0055-native-draw-path.md) The native draw path of the canvas layer: accepted, supersedes 0013, superseded in part by 0106, 0200.
 - [0056](0056-color-performance.md) Profile-guided color implementation: proposed.
 - [0057](0057-direct-typed-colors.md) Color-only inputs: implemented, supersedes 0050, 0052, 0054, superseded in part by 0061, 0128, 0147.
 - [0058](0058-stack-exact-point-search.md) Exact-point search for stacked fills: implemented.
@@ -110,7 +110,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0105](0105-web-long-paths-in-pieces.md) Long paths in pieces on the web: accepted, superseded by 0113.
 - [0106](0106-canvas-shadows.md) Canvas shadows: accepted, supersedes 0055, superseded in part by 0107.
 - [0107](0107-dataset-shadow.md) The dataset shadow: accepted, supersedes 0106, superseded in part by 0139.
-- [0108](0108-input-surface-and-exports-for-add-on-plugins.md) The input surface and exports for add-on plugins: accepted, supersedes 0022, 0037, 0048, 0051, 0054, superseded in part by 0132, 0135, 0144, 0146.
+- [0108](0108-input-surface-and-exports-for-add-on-plugins.md) The input surface and exports for add-on plugins: accepted, supersedes 0022, 0037, 0048, 0051, 0054, superseded in part by 0132, 0135, 0144, 0146, 0200.
 - [0109](0109-previous-x-of-the-gap-test.md) The previous x of the gap test in the line and scatter loops: accepted, supersedes 0036, superseded in part by 0165.
 - [0110](0110-local-zone-offset-cache.md) The local-zone offset cache: accepted, supersedes 0024.
 - [0111](0111-range-updates.md) An opt-in range update for scale range changes: accepted.
@@ -126,7 +126,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0121](0121-bool-options.md) An on/off option holds a bool: accepted, supersedes 0054.
 - [0122](0122-dart-math-without-fdlibm.md) `dart:math` without the fdlibm ports: accepted, supersedes 0035, 0045, superseded by 0146.
 - [0123](0123-edge-insets-padding.md) Padding holds an EdgeInsets: accepted, supersedes 0052, 0054, superseded in part by 0187.
-- [0124](0124-native-text-direction.md) Native text direction and scoped restoration: accepted, superseded in part by 0192, 0193.
+- [0124](0124-native-text-direction.md) Native text direction and scoped restoration: accepted, superseded in part by 0192, 0193, 0200.
 - [0125](0125-native-tooltip-callbacks.md) Native TooltipCallbacks: accepted, superseded in part by 0128, 0145, 0192.
 - [0126](0126-native-plugin-contract.md) A native plugin contract: superseded, superseded by 0144.
 - [0127](0127-native-legend-labels.md) Native legend label generation: superseded, superseded by 0145.
@@ -188,10 +188,10 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0192](0192-tooltip-options-object.md) The tooltip options are one object: accepted, supersedes 0052, 0054, 0124, 0125, 0148, 0182.
 - [0193](0193-legend-options-object.md) The legend options are one object: accepted, supersedes 0052, 0054, 0092, 0099, 0124, 0130, 0182.
 - [0194](0194-decimation-options-object.md) The decimation options are one object: accepted, supersedes 0052, 0054, 0182, superseded in part by 0196.
-- [0195](0195-deprecate-raw-chart-view.md) Deprecate the raw ChartView config: accepted, supersedes 0052.
+- [0195](0195-deprecate-raw-chart-view.md) Deprecate the raw ChartView config: accepted, supersedes 0052, superseded by 0198.
 - [0196](0196-filler-colors-options-objects.md) The filler and colors options are one object each: accepted, supersedes 0052, 0054, 0147, 0182, 0194.
 - [0197](0197-title-options-objects.md) The title and subtitle options are one object each: accepted, supersedes 0052, 0054, 0147, 0181, 0182.
-- [0198](0198-remove-raw-chart-view.md) Remove the raw ChartView config: proposed, supersedes 0195.
-- [0199](0199-typed-fixture-configs.md) Typed fixture configs: proposed, supersedes 0029.
-- [0200](0200-native-canvas-style-members.md) Native canvas style members and typed harness options: proposed, supersedes 0022, 0037, 0055, 0108, 0124.
+- [0198](0198-remove-raw-chart-view.md) Remove the raw ChartView config: accepted, supersedes 0195.
+- [0199](0199-typed-fixture-configs.md) Typed fixture configs: accepted, supersedes 0029.
+- [0200](0200-native-canvas-style-members.md) Native canvas style members and typed harness options: accepted, supersedes 0022, 0037, 0055, 0108, 0124.
 <!-- adr-index:end -->

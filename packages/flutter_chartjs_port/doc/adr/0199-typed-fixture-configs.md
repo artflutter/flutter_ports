@@ -1,6 +1,6 @@
 # Chart.js ADR 0199: Typed fixture configs
 
-- Status: proposed
+- Status: accepted (2026-11-24): its code is on main, and the gates of AGENTS.md pass.
 - Date: 2026-11-24
 - Supersedes: [Chart.js ADR 0029](0029-fixture-smoke-runner.md) §3 items 2 and 4 (the runner reads the pure data
   configs of `fixtures.json`) and §4 items 3 and 4 (a hand port returns a Map literal)

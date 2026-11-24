@@ -1,6 +1,6 @@
 # Chart.js ADR 0198: Remove the raw ChartView config
 
-- Status: proposed
+- Status: accepted (2026-11-24): its code is on main, and the gates of AGENTS.md pass.
 - Date: 2026-11-24
 - Supersedes: [Chart.js ADR 0195](0195-deprecate-raw-chart-view.md)
 - Related: [Chart.js ADR 0052](0052-typed-public-api.md), [Chart.js ADR 0049](0049-chart-view-widget.md)
