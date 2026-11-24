@@ -48,11 +48,12 @@ AxisTicks graphicTicks({
   TickCallback? callback,
   double? stepSize,
   TickSource? source,
-  Map<String, Object?> extra = const {},
+  double padding = 7.5,
+  double? maxTicksLimit,
 }) => AxisTicks(
   color: const .constant(ChartPaint.solid(Gx.text)),
   font: const .constant(TextStyle(fontSize: 10)),
-  padding: 7.5,
+  padding: padding,
   maxRotation: 0,
   autoSkip: false,
   stepSize: stepSize,
@@ -60,7 +61,8 @@ AxisTicks graphicTicks({
   callback: callback,
   // The ticks at the ends of the range are not round numbers: Graphic
   // shows only the round ones.
-  extra: {'includeBounds': false, ...extra},
+  includeBounds: false,
+  maxTicksLimit: maxTicksLimit,
 );
 
 /// The labels of a linear scale of Graphic: the Dart text of a double.
@@ -72,13 +74,13 @@ List<String>? numberLabel(
 ) => [value.toString()];
 
 /// The horizontal axis of Graphic: a line, no grid, 20 px below the region.
-const Map<String, Object?> bottomAxis = {'afterFit': _fitBottom};
+const ScaleHook bottomAxis = _fitBottom;
 
 /// The axis line of the horizontal axis of Graphic.
 const AxisBorder bottomBorder = AxisBorder(color: ChartPaint.solid(Gx.stroke));
 
 /// The vertical axis of Graphic: a grid, no line, 40 px left of the region.
-const Map<String, Object?> leftAxis = {'afterFit': _fitLeft};
+const ScaleHook leftAxis = _fitLeft;
 
 /// The vertical axis of Graphic has no axis line.
 const AxisBorder leftBorder = AxisBorder(display: false);

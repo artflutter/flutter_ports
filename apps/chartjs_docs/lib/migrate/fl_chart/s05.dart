@@ -78,12 +78,12 @@ class _Sample5State() extends State<Sample5> {
           borderWidth: 4,
           pointRadius: const .constant(0),
           fill: .toOrigin,
-          extra: {
-            'borderColor': horizontalGradient(_colors, _stops),
-            'backgroundColor': horizontalGradient([
+          borderColor: .resolver(horizontalGradient(_colors, _stops)),
+          backgroundColor: .resolver(
+            horizontalGradient([
               for (final c in _colors) c.withValues(alpha: 0.4),
             ]),
-          },
+          ),
         ),
       ],
       padding: const EdgeInsets.only(top: 12),

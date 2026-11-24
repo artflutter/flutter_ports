@@ -39,12 +39,8 @@ const scopedLine = ChartConfig(
     line: LineElementStyle(tension: 0.3, borderWidth: 4),
     point: PointElementStyle(radius: 6),
   ),
-  // For all line datasets. This scope has no parameter.
-  extra: {
-    'datasets': {
-      'line': {'pointHoverRadius': 10},
-    },
-  },
+  // For all line datasets: `options.datasets.line`.
+  datasetDefaults: [LineDataset(pointHoverRadius: .constant(10))],
 );
 // #enddocregion scopes
 

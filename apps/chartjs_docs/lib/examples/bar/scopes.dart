@@ -42,12 +42,8 @@ const scopedBar = ChartConfig(
   elements: ChartElements(
     bar: BarElementStyle(borderWidth: 2, borderRadius: 6),
   ),
-  // For all bar datasets. This scope has no parameter.
-  extra: {
-    'datasets': {
-      'bar': {'barPercentage': 0.6},
-    },
-  },
+  // For all bar datasets: `options.datasets.bar`.
+  datasetDefaults: [BarDataset(barPercentage: 0.6)],
 );
 // #enddocregion bar-scopes
 

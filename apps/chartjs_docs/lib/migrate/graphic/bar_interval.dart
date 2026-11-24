@@ -17,13 +17,9 @@ final ChartConfig _config = ChartConfig(
       // corners, so no edge is skipped.
       borderRadius: 2,
       borderSkipped: BorderSkip.none,
-      extra: {
-        // `Varset('min') + Varset('max')`: a floating bar takes the pair
-        // `[start, end]`.
-        'data': [
-          for (final row in intervalData) [row.min, row.max],
-        ],
-      },
+      // `Varset('min') + Varset('max')`: a floating bar takes the pair
+      // `[start, end]`.
+      data: .ranges([for (final row in intervalData) (row.min, row.max)]),
     ),
   ],
   scales: [
@@ -32,7 +28,7 @@ final ChartConfig _config = ChartConfig(
       grid: noGrid,
       ticks: graphicTicks(),
       border: bottomBorder,
-      extra: bottomAxis,
+      afterFit: bottomAxis,
     ),
     // `LinearScale(min: 0, max: 160)` of both variables.
     LinearAxis(
@@ -42,7 +38,7 @@ final ChartConfig _config = ChartConfig(
       grid: lineGrid,
       ticks: graphicTicks(callback: numberLabel, stepSize: 40),
       border: leftBorder,
-      extra: leftAxis,
+      afterFit: leftAxis,
     ),
   ],
   padding: regionPadding,

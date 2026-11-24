@@ -9,10 +9,9 @@
 /// [DataPoint].
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
-
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, Key, immutable, protected;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// A dataset of a chart: an item of `data.datasets` of a Chart.js config.
@@ -375,6 +374,12 @@ final class const BarDataset({
   /// `LegendLabelOptions.usePointStyle`.
   final PointStyle? pointStyle,
 
+  /// The corner radii of a bar, one for each corner: the object form of
+  /// `borderRadius` (Chart.js ADR 0187). Chart.js keeps these corners also at a
+  /// skipped border (`borderSkipped`), where the number form [borderRadius]
+  /// gives them no radius. Give this or [borderRadius].
+  final BorderRadius? borderRadiusCorners,
+
   super.extra,
 }) extends Dataset {
   /// A bar dataset.
@@ -414,6 +419,7 @@ final class const BarDataset({
     bool? skipNull,
     double? hoverBorderRadius,
     PointStyle? pointStyle,
+    BorderRadius? borderRadiusCorners,
     Map<String, Object?>? extra,
   }) => BarDataset(
     key: key ?? this.key,
@@ -447,6 +453,7 @@ final class const BarDataset({
     skipNull: skipNull ?? this.skipNull,
     hoverBorderRadius: hoverBorderRadius ?? this.hoverBorderRadius,
     pointStyle: pointStyle ?? this.pointStyle,
+    borderRadiusCorners: borderRadiusCorners ?? this.borderRadiusCorners,
     extra: extra ?? this.extra,
   );
 
@@ -457,6 +464,7 @@ final class const BarDataset({
   List<Object?>? get chartData => switch (data) {
     DatasetValues(:final values) => values,
     DatasetPoints(:final points) => points,
+    final DatasetRanges ranges => ranges.chartData,
     null => null,
   };
 
@@ -466,7 +474,11 @@ final class const BarDataset({
     put(scope, OptionKey.yAxisID, scaleIdOfAxis(yAxis));
     put(scope, OptionKey.stack, stack);
     put(scope, OptionKey.indexAxis, indexAxis);
-    put(scope, OptionKey.borderRadius, borderRadius);
+    assert(
+      borderRadius == null || borderRadiusCorners == null,
+      'Give borderRadius or borderRadiusCorners, not both.',
+    );
+    put(scope, OptionKey.borderRadius, borderRadius ?? borderRadiusCorners);
     put(scope, OptionKey.barPercentage, barPercentage);
     put(scope, OptionKey.categoryPercentage, categoryPercentage);
     put(scope, OptionKey.barThickness, barThickness);
@@ -504,6 +516,7 @@ final class const BarDataset({
     ('skipNull', skipNull),
     ('hoverBorderRadius', hoverBorderRadius),
     ('pointStyle', pointStyle),
+    ('borderRadiusCorners', borderRadiusCorners),
     ('extra', byEntries(extra)),
   ];
 }
@@ -892,6 +905,7 @@ final class const LineDataset({
   List<Object?>? get chartData => switch (data) {
     DatasetValues(:final values) => values,
     DatasetPoints(:final points) => points,
+    final DatasetRanges ranges => ranges.chartData,
     null => null,
   };
 
@@ -1136,6 +1150,7 @@ final class const ScatterDataset({
   List<Object?>? get chartData => switch (data) {
     DatasetValues(:final values) => values,
     DatasetPoints(:final points) => points,
+    final DatasetRanges ranges => ranges.chartData,
     null => null,
   };
 

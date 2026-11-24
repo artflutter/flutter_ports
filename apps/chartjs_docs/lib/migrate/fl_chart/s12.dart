@@ -106,15 +106,15 @@ class _Sample12State() extends State<Sample12> {
           pointHoverBackgroundColor: const .constant(.solid(Fl.yellow)),
           borderColor: const .constant(.solid(Fl.yellow)),
           fill: .toStart,
-          extra: {
-            'backgroundColor': verticalGradient(
+          backgroundColor: .resolver(
+            verticalGradient(
               [
                 Fl.yellow.withValues(alpha: 0.2),
                 Fl.yellow.withValues(alpha: 0),
               ],
               const [0.5, 1],
             ),
-          },
+          ),
         ),
       ],
       animation: ChartAnimation.none,

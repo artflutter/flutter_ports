@@ -201,7 +201,7 @@ class _BarSample5State() extends State<BarSample5> {
     font: const .constant(_white),
     crossAlign: rotation == 0 ? null : TickCrossAlign.center,
     callback: _label,
-    extra: rotation == 0 ? null : {'minRotation': -rotation},
+    minRotation: rotation == 0 ? null : -rotation,
   );
 
   ChartConfig _config() {

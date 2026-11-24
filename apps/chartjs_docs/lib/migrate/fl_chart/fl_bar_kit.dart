@@ -121,7 +121,7 @@ LinearAxis valueAxis({
   position: position,
   reverse: reverse,
   stacked: stacked ? StackMode.on : StackMode.off,
-  grid: grid,
+  grid: (grid ?? const AxisGrid()).copyWith(offset: false),
   border: border,
   ticks: ticks,
   // The bar chart gives offset to each axis of the index direction.
@@ -134,9 +134,6 @@ LinearAxis valueAxis({
     ];
   },
   afterFit: reserve(reservedSize),
-  extra: const {
-    'grid': {'offset': false},
-  },
 );
 
 /// The values of the titles of fl_chart: [min], the multiples of [step]
@@ -308,11 +305,9 @@ ChartConfig flBars(ChartConfig config) => config.copyWith(
         duration: Duration(milliseconds: 150),
         easing: Curves.linear,
       ),
-  extra: {
-    ...?config.extra,
-    'datasets': {
-      'bar': {'clip': ChartClip.none},
-    },
-  },
+  datasetDefaults: [
+    ...?config.datasetDefaults,
+    const BarDataset(clip: ChartClip.none),
+  ],
 );
 // #enddocregion fl_chart-bar-kit

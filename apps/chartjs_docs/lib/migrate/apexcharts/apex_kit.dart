@@ -74,7 +74,7 @@ LinearAxis apexValueAxis({
   ),
   border: const AxisBorder(display: false),
   title: title == null ? null : apexAxisTitle(title),
-  extra: {if (!horizontal) 'afterFit': _leftGutter},
+  afterFit: horizontal ? null : _leftGutter,
 );
 
 void _leftGutter(Scale scale) {
@@ -96,7 +96,7 @@ CategoryAxis apexCategoryAxis({String? title, bool horizontal = false}) =>
       ),
       border: const AxisBorder(display: false),
       title: title == null ? null : apexAxisTitle(title),
-      extra: {if (horizontal) 'afterFit': _leftGutter},
+      afterFit: horizontal ? _leftGutter : null,
     );
 
 /// `xaxis.title` and `yaxis.title`: 12 px, semibold.

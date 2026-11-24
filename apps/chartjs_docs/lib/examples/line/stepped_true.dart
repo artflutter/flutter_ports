@@ -28,7 +28,8 @@ const stepTrue = LineDataset(
   label: 'stepped: true',
   data: .values(stepValues),
   borderColor: .constant(.solid(blue)),
-  extra: {'stepped': true},
+  // `stepped: true` of Chart.js draws as `before`.
+  stepped: SteppedLine.before,
 );
 // #enddocregion stepped-true
 

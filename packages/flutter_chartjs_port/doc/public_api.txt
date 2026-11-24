@@ -173,6 +173,7 @@ DatasetInteractionMode
 DatasetMetaSource
 DatasetOptionsByTypeScope
 DatasetPoints
+DatasetRanges
 DatasetStack
 DatasetUpdateHookArgs
 DatasetValues
@@ -1228,6 +1229,7 @@ DatasetInteractionMode
 DatasetMetaSource
 DatasetOptionsByTypeScope
 DatasetPoints
+DatasetRanges
 DatasetStack
 DatasetUpdateHookArgs
 DatasetValues

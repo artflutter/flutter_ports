@@ -49,12 +49,12 @@ ChartConfig _config(List<num> ys, {required bool average}) {
           pointHoverRadius: const .constant(8),
           fill: .toOrigin,
           borderCapStyle: StrokeCap.round,
-          extra: {
-            'borderColor': horizontalGradient(colors),
-            'backgroundColor': horizontalGradient([
+          borderColor: .resolver(horizontalGradient(colors)),
+          backgroundColor: .resolver(
+            horizontalGradient([
               for (final c in colors) c.withValues(alpha: average ? 0.1 : 0.3),
             ]),
-          },
+          ),
         ),
       ],
       interaction: const ChartInteraction(mode: flX, intersect: false),

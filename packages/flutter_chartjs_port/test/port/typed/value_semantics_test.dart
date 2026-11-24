@@ -143,6 +143,7 @@ const List<(Dataset, List<String>)> _datasets = [
       'skipNull',
       'hoverBorderRadius',
       'pointStyle',
+      'borderRadiusCorners',
       'extra',
     ],
   ),

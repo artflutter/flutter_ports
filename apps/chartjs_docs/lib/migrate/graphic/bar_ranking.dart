@@ -100,12 +100,10 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
           grid: noGrid,
           ticks: graphicTicks(callback: _genreAt),
           border: bottomBorder,
-          extra: {
-            ...bottomAxis,
-            'offset': false,
-            // One tick for each rank.
-            'afterBuildTicks': tickValues(const [0, 1, 2, 3, 4]),
-          },
+          afterFit: bottomAxis,
+          offset: false,
+          // One tick for each rank.
+          afterBuildTicks: tickValues(const [0, 1, 2, 3, 4]),
         ),
         // `LinearScale(min: 0)`: 10% of the range of the data above it.
         LinearAxis(
@@ -113,12 +111,9 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
           min: 0,
           max: high + (high - low) * 0.1,
           grid: lineGrid,
-          ticks: graphicTicks(
-            callback: numberLabel,
-            extra: const {'maxTicksLimit': 5},
-          ),
+          ticks: graphicTicks(callback: numberLabel, maxTicksLimit: 5),
           border: leftBorder,
-          extra: leftAxis,
+          afterFit: leftAxis,
         ),
       ],
       padding: regionPadding,

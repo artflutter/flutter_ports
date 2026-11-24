@@ -66,7 +66,7 @@ final ChartConfig _config = ChartConfig(
       grid: lineGrid,
       ticks: graphicTicks(callback: numberLabel, stepSize: 80),
       border: const AxisBorder(display: false),
-      extra: bottomAxis,
+      afterFit: bottomAxis,
     ),
     // Graphic puts the first genre at the bottom.
     CategoryAxis(
@@ -75,7 +75,7 @@ final ChartConfig _config = ChartConfig(
       grid: noGrid,
       ticks: graphicTicks(),
       border: const AxisBorder(color: .solid(Gx.stroke)),
-      extra: leftAxis,
+      afterFit: leftAxis,
     ),
   ],
   padding: regionPadding,

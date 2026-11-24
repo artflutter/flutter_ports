@@ -330,6 +330,14 @@ final class const CategoryAxis(
   /// The last label that the axis shows: `max`.
   final String? max,
 
+  /// The index of the first label that the axis shows: the number form of
+  /// `min`. Give this or [min].
+  final double? minIndex,
+
+  /// The index of the last label that the axis shows: the number form of
+  /// `max`. Give this or [max].
+  final double? maxIndex,
+
   /// {@template flutter_chartjs_port.typed.bounds}
   /// What the range of the axis keeps: `bounds`. [ScaleBounds.ticks] grows
   /// the range to the outer ticks, and [ScaleBounds.data] keeps the data.
@@ -389,6 +397,8 @@ final class const CategoryAxis(
     List<Object>? labels,
     String? min,
     String? max,
+    double? minIndex,
+    double? maxIndex,
     ScaleBounds? bounds,
     bool? offset,
     String? stack,
@@ -425,6 +435,8 @@ final class const CategoryAxis(
     labels: labels ?? this.labels,
     min: min ?? this.min,
     max: max ?? this.max,
+    minIndex: minIndex ?? this.minIndex,
+    maxIndex: maxIndex ?? this.maxIndex,
     bounds: bounds ?? this.bounds,
     offset: offset ?? this.offset,
     stack: stack ?? this.stack,
@@ -464,8 +476,12 @@ final class const CategoryAxis(
   @override
   void _lowerOwn(ScaleOptionsScope scope) {
     put(scope, OptionKey.labels, labels);
-    put(scope, OptionKey.min, min);
-    put(scope, OptionKey.max, max);
+    assert(
+      (min == null || minIndex == null) && (max == null || maxIndex == null),
+      'Give min or minIndex, and max or maxIndex, not both.',
+    );
+    put(scope, OptionKey.min, min ?? minIndex);
+    put(scope, OptionKey.max, max ?? maxIndex);
     put(scope, OptionKey.bounds, bounds);
     put(scope, OptionKey.offset, offset);
     put(scope, OptionKey.stack, stack);
@@ -478,6 +494,8 @@ final class const CategoryAxis(
     ('labels', labels),
     ('min', min),
     ('max', max),
+    ('minIndex', minIndex),
+    ('maxIndex', maxIndex),
     ('bounds', bounds),
     ('offset', offset),
     ('stack', stack),
@@ -713,6 +731,9 @@ final class const LogarithmicAxis(
   /// {@macro flutter_chartjs_port.typed.suggestedMax}
   final double? suggestedMax,
 
+  /// {@macro flutter_chartjs_port.typed.beginAtZero}
+  final bool? beginAtZero,
+
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
 
@@ -770,6 +791,7 @@ final class const LogarithmicAxis(
     double? max,
     double? suggestedMin,
     double? suggestedMax,
+    bool? beginAtZero,
     ScaleBounds? bounds,
     bool? offset,
     String? stack,
@@ -807,6 +829,7 @@ final class const LogarithmicAxis(
     max: max ?? this.max,
     suggestedMin: suggestedMin ?? this.suggestedMin,
     suggestedMax: suggestedMax ?? this.suggestedMax,
+    beginAtZero: beginAtZero ?? this.beginAtZero,
     bounds: bounds ?? this.bounds,
     offset: offset ?? this.offset,
     stack: stack ?? this.stack,
@@ -849,6 +872,7 @@ final class const LogarithmicAxis(
     put(scope, OptionKey.max, max);
     put(scope, OptionKey.suggestedMin, suggestedMin);
     put(scope, OptionKey.suggestedMax, suggestedMax);
+    put(scope, OptionKey.beginAtZero, beginAtZero);
     put(scope, OptionKey.bounds, bounds);
     put(scope, OptionKey.offset, offset);
     put(scope, OptionKey.stack, stack);
@@ -862,6 +886,7 @@ final class const LogarithmicAxis(
     ('max', max),
     ('suggestedMin', suggestedMin),
     ('suggestedMax', suggestedMax),
+    ('beginAtZero', beginAtZero),
     ('bounds', bounds),
     ('offset', offset),
     ('stack', stack),

@@ -55,9 +55,9 @@ final ChartConfig _config = ChartConfig(
         tickLength: 5,
       ),
       // The labels stay 7.5 px under the axis line.
-      ticks: graphicTicks(extra: const {'padding': 2.5}),
+      ticks: graphicTicks(padding: 2.5),
       border: bottomBorder,
-      extra: bottomAxis,
+      afterFit: bottomAxis,
     ),
     LinearAxis(
       .y,
@@ -66,7 +66,7 @@ final ChartConfig _config = ChartConfig(
       grid: lineGrid,
       ticks: graphicTicks(callback: numberLabel, stepSize: 100),
       border: leftBorder,
-      extra: leftAxis,
+      afterFit: leftAxis,
     ),
   ],
   // `padding: (_) => const EdgeInsets.fromLTRB(40, 5, 10, 40)`: 20 px more

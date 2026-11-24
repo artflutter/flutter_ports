@@ -328,10 +328,8 @@ class AxesDemoState() extends State<AxesDemo> {
       maxRotation: _maxRotation,
       align: _align,
       font: .constant(ChartTextStyle(fontSize: _fontSize)),
-      extra: {
-        'minRotation': _minRotation,
-        if (_maxTicksLimit > 0) 'maxTicksLimit': _maxTicksLimit,
-      },
+      minRotation: _minRotation,
+      maxTicksLimit: _maxTicksLimit > 0 ? _maxTicksLimit : null,
     );
     final grid = AxisGrid(display: _gridDisplay, offset: _gridOffset);
     final border = AxisBorder(display: _borderDisplay);
@@ -349,7 +347,7 @@ class AxesDemoState() extends State<AxesDemo> {
         grid: grid,
         border: border,
         title: title,
-        extra: {'beginAtZero': _beginAtZero},
+        beginAtZero: _beginAtZero,
       ),
       'category' => CategoryAxis(
         axis,

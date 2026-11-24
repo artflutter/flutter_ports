@@ -54,7 +54,7 @@ final ChartConfig _config = ChartConfig(
       grid: noGrid,
       ticks: graphicTicks(),
       border: bottomBorder,
-      extra: bottomAxis,
+      afterFit: bottomAxis,
     ),
     LinearAxis(
       .y,
@@ -64,10 +64,8 @@ final ChartConfig _config = ChartConfig(
       grid: lineGrid,
       ticks: graphicTicks(callback: numberLabel),
       border: leftBorder,
-      extra: {
-        ...leftAxis,
-        'afterBuildTicks': tickValues(const [0, 500, 1000, 1500]),
-      },
+      afterFit: leftAxis,
+      afterBuildTicks: tickValues(const [0, 500, 1000, 1500]),
     ),
   ],
   padding: regionPadding,

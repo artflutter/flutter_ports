@@ -35,32 +35,36 @@ const InteractionMode flX = XInteractionMode();
 Chart chartOf(Object? context) => (context! as ContextObject).chart as Chart;
 
 /// A gradient over the chart area, from left to right.
-Scriptable horizontalGradient(List<Color> colors, [List<double>? stops]) =>
-    (context) {
-      final chart = chartOf(context);
-      final area = chart.chartArea;
-      if (area == null) return ChartPaint.solid(colors.last);
-      return ChartGradient.linear(
-        Offset(area.left, 0),
-        Offset(area.right, 0),
-        colors,
-        stops: stops,
-      );
-    };
+ChartScript<ChartPaint> horizontalGradient(
+  List<Color> colors, [
+  List<double>? stops,
+]) => (context) {
+  final chart = chartOf(context);
+  final area = chart.chartArea;
+  if (area == null) return ChartPaint.solid(colors.last);
+  return ChartGradient.linear(
+    Offset(area.left, 0),
+    Offset(area.right, 0),
+    colors,
+    stops: stops,
+  );
+};
 
 /// A gradient over the chart area, from top to bottom.
-Scriptable verticalGradient(List<Color> colors, List<double> stops) =>
-    (context) {
-      final chart = chartOf(context);
-      final area = chart.chartArea;
-      if (area == null) return ChartPaint.solid(colors.last);
-      return ChartGradient.linear(
-        Offset(0, area.top),
-        Offset(0, area.bottom),
-        colors,
-        stops: stops,
-      );
-    };
+ChartScript<ChartPaint> verticalGradient(
+  List<Color> colors,
+  List<double> stops,
+) => (context) {
+  final chart = chartOf(context);
+  final area = chart.chartArea;
+  if (area == null) return ChartPaint.solid(colors.last);
+  return ChartGradient.linear(
+    Offset(0, area.top),
+    Offset(0, area.bottom),
+    colors,
+    stops: stops,
+  );
+};
 
 /// The value of the tick of a scale context. The context of the axis line
 /// has no tick.
@@ -277,20 +281,11 @@ ChartConfig fills(ChartConfig config, {bool clip = false}) => config.copyWith(
     ...?config.pluginOptions,
   ],
   elements: config.elements ?? _touchRadius,
-  extra: clip
-      ? config.extra
-      : {
-          ...?config.extra,
-          'datasets': {
-            'line': {'clip': ChartClip.none},
-          },
-        },
+  datasetDefaults: clip
+      ? config.datasetDefaults
+      : [...?config.datasetDefaults, const LineDataset(clip: ChartClip.none)],
 );
 
 /// fl_chart reacts within 10 pixels of a spot.
-const _touchRadius = ChartElements(
-  extra: {
-    'point': {'hitRadius': 10},
-  },
-);
+const _touchRadius = ChartElements(point: PointElementStyle(hitRadius: 10));
 // #enddocregion fl_chart-kit

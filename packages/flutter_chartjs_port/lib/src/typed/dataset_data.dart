@@ -31,6 +31,14 @@ sealed class const DatasetData._() {
   /// The data items in the object form `{x, y}`: `data` with objects
   /// (`docs/general/data-structures.md`).
   const factory points(List<DataPoint> points) = DatasetPoints;
+
+  /// One range for each label of the chart, the floating bars of a
+  /// [BarDataset]: `data: [[1, 5], [2, 6]]` (`docs/charts/bar.md`, "Floating
+  /// Bars"). A `null` range is a gap.
+  ///
+  /// The lowering makes a new List of `[start, end]` items from [ranges]:
+  /// for new ranges, give a new List in a new config.
+  const factory ranges(List<(num, num)?> ranges) = DatasetRanges;
 }
 
 /// The [DatasetData] of one value for each label of the chart.
@@ -69,4 +77,30 @@ final class const DatasetPoints(
 
   @override
   String toString() => 'DatasetData.points($points)';
+}
+
+/// The [DatasetData] of one range for each label of the chart.
+final class const DatasetRanges(
+  /// The ranges `(start, end)`, one for each label of the chart. A `null`
+  /// range is a gap.
+  final List<(num, num)?> ranges,
+) extends DatasetData {
+  /// The ranges of a dataset.
+  this : super._();
+
+  /// The `data` of Chart.js: a new List of `[start, end]` items.
+  List<List<double>?> get chartData => [
+    for (final range in ranges)
+      if (range == null) null else [range.$1.toDouble(), range.$2.toDouble()],
+  ];
+
+  @override
+  bool operator ==(Object other) =>
+      other is DatasetRanges && identical(ranges, other.ranges);
+
+  @override
+  int get hashCode => Object.hash(DatasetRanges, identityHashCode(ranges));
+
+  @override
+  String toString() => 'DatasetData.ranges($ranges)';
 }

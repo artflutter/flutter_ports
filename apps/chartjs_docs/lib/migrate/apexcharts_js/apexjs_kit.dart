@@ -87,20 +87,19 @@ CategoryAxis apexJsCategoryAxis({
           tickLength: 6,
         ),
   ticks: AxisTicks(
-    color: .constant(labelColor),
+    // xaxis.labels.style.colors: one color for each label.
+    color: labelColors == null
+        ? .constant(labelColor)
+        : .resolver(
+            (c) => ChartPaint.solid(
+              labelColors[(c.index ?? 0) % labelColors.length],
+            ),
+          ),
     font: .constant(TextStyle(fontSize: horizontal ? 11 : 12)),
     padding: horizontal ? 10 : 4,
     maxRotation: maxRotation,
     autoSkip: false,
     callback: callback,
-    // xaxis.labels.style.colors: one color for each label.
-    extra: {
-      if (labelColors != null)
-        'color': (Object? c) => ChartPaint.solid(
-          labelColors[((c! as ScriptableScaleContext).index ?? 0) %
-              labelColors.length],
-        ),
-    },
   ),
   border: AxisBorder(display: !horizontal, color: const .solid(apexJsGrid)),
   title: title == null ? null : apexJsAxisTitle(title),

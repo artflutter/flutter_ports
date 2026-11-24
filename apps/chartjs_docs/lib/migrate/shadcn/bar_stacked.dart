@@ -10,12 +10,12 @@ const _desktop = <num>[186, 305, 237, 73, 209, 214];
 const _mobile = <num>[80, 200, 120, 190, 130, 140];
 
 // <Bar dataKey={key} stackId="a" fill={color} radius={corners} />: the
-// corners are an object of Chart.js.
+// corners are the per-corner form of Chart.js, a BorderRadius.
 BarDataset _bars(
   String label,
   List<num> data,
   Color color,
-  Map<String, double> corners,
+  BorderRadius corners,
 ) => BarDataset(
   label: label,
   data: .values(data),
@@ -24,19 +24,26 @@ BarDataset _bars(
   categoryPercentage: 0.8,
   barPercentage: 1,
   borderSkipped: BorderSkip.none,
-  extra: {'borderRadius': corners},
+  borderRadiusCorners: corners,
 );
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(
   labels: _months,
   datasets: [
     // radius={[0, 0, 4, 4]}: the bottom corners of the lower bar.
-    _bars('Desktop', _desktop, Shadcn.chart1, {
-      'bottomLeft': 4,
-      'bottomRight': 4,
-    }),
+    _bars(
+      'Desktop',
+      _desktop,
+      Shadcn.chart1,
+      const BorderRadius.vertical(bottom: Radius.circular(4)),
+    ),
     // radius={[4, 4, 0, 0]}: the top corners of the upper bar.
-    _bars('Mobile', _mobile, Shadcn.chart2, {'topLeft': 4, 'topRight': 4}),
+    _bars(
+      'Mobile',
+      _mobile,
+      Shadcn.chart2,
+      const BorderRadius.vertical(top: Radius.circular(4)),
+    ),
   ],
   aspectRatio: 16 / 9,
   padding: const EdgeInsets.all(5),

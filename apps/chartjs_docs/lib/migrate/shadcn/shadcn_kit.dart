@@ -242,7 +242,7 @@ CategoryAxis shadcnCategoryAxis({
     autoSkipPadding: autoSkipPadding,
   ),
   border: const AxisBorder(display: false),
-  extra: display ? const {'afterFit': _height30} : null,
+  afterFit: display ? _height30 : null,
 );
 
 void _height30(Scale scale) => scale.height = 30;
@@ -267,7 +267,7 @@ CategoryAxis shadcnCategoryYAxis({
     callback: callback,
   ),
   border: const AxisBorder(display: false),
-  extra: display ? {'afterFit': (Scale scale) => scale.width = width} : null,
+  afterFit: display ? (scale) => scale.width = width : null,
 );
 
 /// `tickFormatter={(value) => value.slice(0, 3)}`.

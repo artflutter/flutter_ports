@@ -12,12 +12,9 @@ LineDataset _line(List<DataPoint> points, Color color) => LineDataset(
   data: .points(points),
   borderWidth: 4,
   pointRadius: const .constant(0),
-  extra: {
-    'borderColor': horizontalGradient(
-      [color.withValues(alpha: 0), color],
-      const [0.1, 1],
-    ),
-  },
+  borderColor: .resolver(
+    horizontalGradient([color.withValues(alpha: 0), color], const [0.1, 1]),
+  ),
 );
 
 class const _Label(final String text, final Color color)

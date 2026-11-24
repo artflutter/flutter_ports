@@ -77,7 +77,7 @@ final ChartConfig _config = ChartConfig(
       grid: noGrid,
       ticks: graphicTicks(callback: _dateLabel),
       border: bottomBorder,
-      extra: bottomAxis,
+      afterFit: bottomAxis,
     ),
     LinearAxis(
       .y,
@@ -86,7 +86,7 @@ final ChartConfig _config = ChartConfig(
       grid: lineGrid,
       ticks: graphicTicks(callback: numberLabel, stepSize: 25),
       border: leftBorder,
-      extra: leftAxis,
+      afterFit: leftAxis,
     ),
   ],
   padding: regionPadding,

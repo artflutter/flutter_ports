@@ -49,7 +49,8 @@ final ChartConfig _config = ChartConfig(
       ticks: graphicTicks(callback: _dateLabel),
       // An ordinal scale of Graphic puts each value in the middle of a band.
       border: bottomBorder,
-      extra: const {...bottomAxis, 'offset': true},
+      afterFit: bottomAxis,
+      offset: true,
     ),
     LinearAxis(
       .y,
@@ -58,7 +59,7 @@ final ChartConfig _config = ChartConfig(
       grid: lineGrid,
       ticks: graphicTicks(callback: numberLabel, stepSize: 10),
       border: leftBorder,
-      extra: leftAxis,
+      afterFit: leftAxis,
     ),
   ],
   padding: regionPadding,

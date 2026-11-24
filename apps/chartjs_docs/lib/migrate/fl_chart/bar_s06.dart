@@ -41,15 +41,15 @@ const _names = ['Pilates', 'Quick workouts', 'Cycling'];
 const List<Color> _colors = [Fl.purple, Fl.blue, Fl.cyan];
 
 /// A rod from `fromY` to `toY` is a floating bar: a pair `[from, to]`.
-List<List<double>> _rods(int activity) => [
+List<(double, double)> _rods(int activity) => [
   for (final (pilates, quick, cycling) in _activity)
     switch (activity) {
-      0 => [0, pilates],
-      1 => [pilates + _space, pilates + _space + quick],
-      _ => [
+      0 => (0, pilates),
+      1 => (pilates + _space, pilates + _space + quick),
+      _ => (
         pilates + quick + 2 * _space,
         pilates + quick + 2 * _space + cycling,
-      ],
+      ),
     },
 ];
 
@@ -93,7 +93,7 @@ final ChartConfig _config = flBars(
           // The rods of a group stand on each other at one place.
           grouped: false,
           borderSkipped: BorderSkip.none,
-          extra: {'data': _rods(activity)},
+          data: .ranges(_rods(activity)),
         ),
     ],
     pluginOptions: const [TooltipOptions(enabled: false)],

@@ -150,7 +150,8 @@ ZoomDocsSample zoomWheelCategorySample(ZoomDocsLog log) {
       .x,
       grid: grid,
       title: zoomAxisTitle(.x),
-      extra: const {'min': 5.0, 'max': 11.0},
+      minIndex: 5,
+      maxIndex: 11,
     ),
     LinearAxis(.y, grid: grid, title: zoomAxisTitle(.y)),
   ];
