@@ -4,12 +4,13 @@
 // ignore_for_file: file_names
 library;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The upstream config, with native padding values.
 // DIVERGES(chartjs): adapt-edge-insets-padding, the native padding value.
-Map<String, Object?> fixture() => <String, Object?>{
+FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
   'tolerance': 0.0016,
   'config': <String, Object?>{
     'type': 'line',
@@ -78,4 +79,4 @@ Map<String, Object?> fixture() => <String, Object?>{
     'canvas': <String, Object?>{'height': 256.0, 'width': 256.0},
     'spriteText': true,
   },
-};
+});

@@ -3,17 +3,18 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() {
+FixtureConfig fixture() {
   DateTime newDateFromRef(int days) {
     // moment('01/01/2015 12:00', 'DD/MM/YYYY HH:mm').add(days, 'd').toDate()
     // DIVERGES(chartjs): harness-fixture-sources, a moment value.
     return DateTime.utc(2015, 1, 1 + days, 12);
   }
 
-  return <String, Object?>{
+  return FixtureConfig.map(<String, Object?>{
     'threshold': 0.1,
     'tolerance': 0.002,
     'config': <String, Object?>{
@@ -43,5 +44,5 @@ Map<String, Object?> fixture() {
       'spriteText': true,
       'canvas': <String, Object?>{'width': 1000, 'height': 200},
     },
-  };
+  });
 }

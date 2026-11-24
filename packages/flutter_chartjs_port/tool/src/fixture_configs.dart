@@ -22,7 +22,8 @@
 ///    `Color` ([cssColorExpression]), a keyword of an option with an enum is
 ///    the enum value, and `fill: false` is `FillTarget.none`.
 /// 3. The axes are typed only when the typed ids of Chart.js ADR 0191 are the
-///    upstream ids. Else all axes go to `extra['scales']`.
+///    upstream ids and no two axes are equal. Else all axes go to
+///    `extra['scales']`.
 /// 4. A config that a `ChartConfig` cannot hold keeps its Map
 ///    (`FixtureConfig.map`): no dataset, a first dataset of another type than
 ///    the chart, a chart type with no dataset class, a label that is no
@@ -720,7 +721,8 @@ final class FixtureEmitter(
         case 'layout':
           if (value is FixtureMap &&
               value.keys.length == 1 &&
-              value['padding'] is FixtureCode) {
+              value['padding'] is FixtureCode &&
+              !(value['padding']! as FixtureCode).isFunction) {
             args.add('${c}padding: ${literalOf(value['padding']!)}');
             continue;
           }
@@ -1380,7 +1382,8 @@ final class _Scales(
       final typedId = n == 0 ? letter : '$letter$n';
       if (typedId != id) return false;
       final source = _axis(letter, conf);
-      if (source == null) return false;
+      // The typed axes are distinct by `==` (Chart.js ADR 0191).
+      if (source == null || _axes.containsValue(source)) return false;
       _axes[id] = source;
       sources.add('${_commentLines(entry.comments)}$source');
     }
@@ -1405,8 +1408,8 @@ final class _Scales(
   /// The axis letter of the scale [id] (`determineAxis` of core.config.js).
   String? _letterOf(String id, FixtureMap conf) {
     if (id == 'x' || id == 'y' || id == 'r') return id;
-    final axis = conf['axis'];
-    if (axis is FixtureString) return axis.value;
+    final axis = _axisLetter(conf['axis']);
+    if (axis != null) return axis;
     final position = conf['position'];
     if (position is FixtureString) {
       switch (position.value) {
@@ -1499,9 +1502,7 @@ final class _Scales(
       final key = entry.key;
       final c = _commentLines(entry.comments);
       if (key == 'type') continue;
-      if (key == 'axis' && (conf['axis'] as FixtureString?)?.value == letter) {
-        continue;
-      }
+      if (key == 'axis' && _axisLetter(conf['axis']) == letter) continue;
       final typed = fields[key]?.call(emitter, entry.value, key, 'scales');
       if (typed != null) {
         if (typed.startsWith('\u0000')) {
@@ -1704,3 +1705,12 @@ String _comma(String item) => '$item,\n';
 /// The entry [entry] of an object literal with the value source [value].
 String _entryOf(FixtureEntry entry, String value) =>
     '${_commentLines(entry.comments)}${dartString(entry.key)}: $value';
+
+/// The letter of the scale option `axis`: a text or an axis object of the
+/// port (`const XAxis()`), or Dart `null`.
+String? _axisLetter(FixtureValue? axis) => switch (axis) {
+  FixtureString(value: final s) => s,
+  FixtureCode(:final source) when source.contains('XAxis') => 'x',
+  FixtureCode(:final source) when source.contains('YAxis') => 'y',
+  _ => null,
+};

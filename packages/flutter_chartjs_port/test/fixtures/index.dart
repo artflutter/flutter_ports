@@ -1575,350 +1575,298 @@ final Map<String, HandFixture> handFixtures = {
     sha256: '4f29b0a4faa8',
   ),
   'core.interaction/drawActiveElementsOnTop-false.js': (
-    load: () => FixtureConfig.map(
-      core_interaction_drawactiveelementsontop_false.fixture(),
-    ),
+    load: core_interaction_drawactiveelementsontop_false.fixture,
     sha256: '40e58cf68224',
   ),
   'core.interaction/nearest-partial-bar.js': (
-    load: () =>
-        FixtureConfig.map(core_interaction_nearest_partial_bar.fixture()),
+    load: core_interaction_nearest_partial_bar.fixture,
     sha256: '7e8dcdf76bde',
   ),
   'core.interaction/nearest-point-behind-scale.js': (
-    load: () => FixtureConfig.map(
-      core_interaction_nearest_point_behind_scale.fixture(),
-    ),
+    load: core_interaction_nearest_point_behind_scale.fixture,
     sha256: '438f249bbf9c',
   ),
   'core.layouts/hidden-vertical-boxes.js': (
-    load: () => FixtureConfig.map(core_layouts_hidden_vertical_boxes.fixture()),
+    load: core_layouts_hidden_vertical_boxes.fixture,
     sha256: 'a17c3b74bfd2',
   ),
   'core.layouts/no-boxes-all-padding.js': (
-    load: () => FixtureConfig.map(core_layouts_no_boxes_all_padding.fixture()),
+    load: core_layouts_no_boxes_all_padding.fixture,
     sha256: 'a96320f7bf65',
   ),
   'core.layouts/refit-vertical-boxes.js': (
-    load: () => FixtureConfig.map(core_layouts_refit_vertical_boxes.fixture()),
+    load: core_layouts_refit_vertical_boxes.fixture,
     sha256: '830bb6d854a7',
   ),
   'core.layouts/scriptable.js': (
-    load: () => FixtureConfig.map(core_layouts_scriptable.fixture()),
+    load: core_layouts_scriptable.fixture,
     sha256: '9fea029461b5',
   ),
   'core.layouts/stacked-boxes-max-index-without-clip.js': (
-    load: () => FixtureConfig.map(
-      core_layouts_stacked_boxes_max_index_without_clip.fixture(),
-    ),
+    load: core_layouts_stacked_boxes_max_index_without_clip.fixture,
     sha256: '5fd3d94af843',
   ),
   'core.layouts/stacked-boxes-max-index.js': (
-    load: () =>
-        FixtureConfig.map(core_layouts_stacked_boxes_max_index.fixture()),
+    load: core_layouts_stacked_boxes_max_index.fixture,
     sha256: '11ec7a29bd91',
   ),
   'core.layouts/stacked-boxes-max-without-clip.js': (
-    load: () => FixtureConfig.map(
-      core_layouts_stacked_boxes_max_without_clip.fixture(),
-    ),
+    load: core_layouts_stacked_boxes_max_without_clip.fixture,
     sha256: 'c60139535633',
   ),
   'core.layouts/stacked-boxes-max.js': (
-    load: () => FixtureConfig.map(core_layouts_stacked_boxes_max.fixture()),
+    load: core_layouts_stacked_boxes_max.fixture,
     sha256: '49fe800eca9e',
   ),
   'core.layouts/stacked-boxes-with-weight.js': (
-    load: () =>
-        FixtureConfig.map(core_layouts_stacked_boxes_with_weight.fixture()),
+    load: core_layouts_stacked_boxes_with_weight.fixture,
     sha256: '18b738bc7f49',
   ),
   'core.layouts/stacked-boxes.js': (
-    load: () => FixtureConfig.map(core_layouts_stacked_boxes.fixture()),
+    load: core_layouts_stacked_boxes.fixture,
     sha256: '29d14ae0cdd4',
   ),
   'core.scale/border-behind-elements.js': (
-    load: () => FixtureConfig.map(core_scale_border_behind_elements.fixture()),
+    load: core_scale_border_behind_elements.fixture,
     sha256: 'c7bb57a9a680',
   ),
   'core.scale/cartesian-axis-border-settings.json': (
-    load: () =>
-        FixtureConfig.map(core_scale_cartesian_axis_border_settings.fixture()),
+    load: core_scale_cartesian_axis_border_settings.fixture,
     sha256: 'e777d91ba7f2',
   ),
   'core.scale/crossAlignment/cross-align-left-center.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_cross_align_left_center.fixture(),
-    ),
+    load: core_scale_crossalignment_cross_align_left_center.fixture,
     sha256: '011594b9014e',
   ),
   'core.scale/crossAlignment/cross-align-left-far-clipped.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_cross_align_left_far_clipped.fixture(),
-    ),
+    load: core_scale_crossalignment_cross_align_left_far_clipped.fixture,
     sha256: '8a1237e7e9bd',
   ),
   'core.scale/crossAlignment/cross-align-left-far.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_cross_align_left_far.fixture(),
-    ),
+    load: core_scale_crossalignment_cross_align_left_far.fixture,
     sha256: '14ba9d5f1027',
   ),
   'core.scale/crossAlignment/cross-align-left-near.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_cross_align_left_near.fixture(),
-    ),
+    load: core_scale_crossalignment_cross_align_left_near.fixture,
     sha256: '4ea6d0827174',
   ),
   'core.scale/crossAlignment/cross-align-right-center.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_cross_align_right_center.fixture(),
-    ),
+    load: core_scale_crossalignment_cross_align_right_center.fixture,
     sha256: '4867a1f3c717',
   ),
   'core.scale/crossAlignment/cross-align-right-far-clipped.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_cross_align_right_far_clipped.fixture(),
-    ),
+    load: core_scale_crossalignment_cross_align_right_far_clipped.fixture,
     sha256: '862e2f9a8fa2',
   ),
   'core.scale/crossAlignment/cross-align-right-far.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_cross_align_right_far.fixture(),
-    ),
+    load: core_scale_crossalignment_cross_align_right_far.fixture,
     sha256: 'b15a3433ac9f',
   ),
   'core.scale/crossAlignment/cross-align-right-near.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_cross_align_right_near.fixture(),
-    ),
+    load: core_scale_crossalignment_cross_align_right_near.fixture,
     sha256: 'fc4eb1c5e51d',
   ),
   'core.scale/crossAlignment/mirror-cross-align-left-center.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_mirror_cross_align_left_center.fixture(),
-    ),
+    load: core_scale_crossalignment_mirror_cross_align_left_center.fixture,
     sha256: 'b54e8fad0bd7',
   ),
   'core.scale/crossAlignment/mirror-cross-align-left-far.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_mirror_cross_align_left_far.fixture(),
-    ),
+    load: core_scale_crossalignment_mirror_cross_align_left_far.fixture,
     sha256: '4b0329cd813e',
   ),
   'core.scale/crossAlignment/mirror-cross-align-left-near.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_mirror_cross_align_left_near.fixture(),
-    ),
+    load: core_scale_crossalignment_mirror_cross_align_left_near.fixture,
     sha256: '7871be73004a',
   ),
   'core.scale/crossAlignment/mirror-cross-align-right-center.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_mirror_cross_align_right_center.fixture(),
-    ),
+    load: core_scale_crossalignment_mirror_cross_align_right_center.fixture,
     sha256: 'b3c3e846b673',
   ),
   'core.scale/crossAlignment/mirror-cross-align-right-far.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_mirror_cross_align_right_far.fixture(),
-    ),
+    load: core_scale_crossalignment_mirror_cross_align_right_far.fixture,
     sha256: '45273c43d3ab',
   ),
   'core.scale/crossAlignment/mirror-cross-align-right-near.js': (
-    load: () => FixtureConfig.map(
-      core_scale_crossalignment_mirror_cross_align_right_near.fixture(),
-    ),
+    load: core_scale_crossalignment_mirror_cross_align_right_near.fixture,
     sha256: 'd231166d04c1',
   ),
   'core.scale/grid/border-over-grid.js': (
-    load: () => FixtureConfig.map(core_scale_grid_border_over_grid.fixture()),
+    load: core_scale_grid_border_over_grid.fixture,
     sha256: 'ce9325e1ccf6',
   ),
   'core.scale/grid/colors.js': (
-    load: () => FixtureConfig.map(core_scale_grid_colors.fixture()),
+    load: core_scale_grid_colors.fixture,
     sha256: '49074bd4571b',
   ),
   'core.scale/grid/scriptable-borderDash.js': (
-    load: () =>
-        FixtureConfig.map(core_scale_grid_scriptable_borderdash.fixture()),
+    load: core_scale_grid_scriptable_borderdash.fixture,
     sha256: 'bfa50f9c0576',
   ),
   'core.scale/label-offset-vertical-axes.json': (
-    load: () =>
-        FixtureConfig.map(core_scale_label_offset_vertical_axes.fixture()),
+    load: core_scale_label_offset_vertical_axes.fixture,
     sha256: 'de6c83a1cd77',
   ),
   'core.scale/tick-backdrop-rotation.js': (
-    load: () => FixtureConfig.map(core_scale_tick_backdrop_rotation.fixture()),
+    load: core_scale_tick_backdrop_rotation.fixture,
     sha256: '2244f2079be2',
   ),
   'core.scale/tick-backdrop.js': (
-    load: () => FixtureConfig.map(core_scale_tick_backdrop.fixture()),
+    load: core_scale_tick_backdrop.fixture,
     sha256: '89d425983ffd',
   ),
   'core.scale/tick-drawing.json': (
-    load: () => FixtureConfig.map(core_scale_tick_drawing.fixture()),
+    load: core_scale_tick_drawing.fixture,
     sha256: '856a490fea99',
   ),
   'core.scale/tick-override-styles.json': (
-    load: () => FixtureConfig.map(core_scale_tick_override_styles.fixture()),
+    load: core_scale_tick_override_styles.fixture,
     sha256: '8111155a5266',
   ),
   'core.scale/ticks/rotated-long.js': (
-    load: () => FixtureConfig.map(core_scale_ticks_rotated_long.fixture()),
+    load: core_scale_ticks_rotated_long.fixture,
     sha256: '6033b9c29fa8',
   ),
   'core.scale/ticks/rotated-multi-line.js': (
-    load: () =>
-        FixtureConfig.map(core_scale_ticks_rotated_multi_line.fixture()),
+    load: core_scale_ticks_rotated_multi_line.fixture,
     sha256: '1fe87c10efa3',
   ),
   'core.scale/ticks/skip-by-callback.js': (
-    load: () => FixtureConfig.map(core_scale_ticks_skip_by_callback.fixture()),
+    load: core_scale_ticks_skip_by_callback.fixture,
     sha256: 'dd604eb26882',
   ),
   'core.scale/x-axis-position-center.json': (
-    load: () => FixtureConfig.map(core_scale_x_axis_position_center.fixture()),
+    load: core_scale_x_axis_position_center.fixture,
     sha256: '2efc414f0f0c',
   ),
   'core.scale/x-axis-position-dynamic.json': (
-    load: () => FixtureConfig.map(core_scale_x_axis_position_dynamic.fixture()),
+    load: core_scale_x_axis_position_dynamic.fixture,
     sha256: 'dfcccd0f2cbf',
   ),
   'core.scale/y-axis-position-center.json': (
-    load: () => FixtureConfig.map(core_scale_y_axis_position_center.fixture()),
+    load: core_scale_y_axis_position_center.fixture,
     sha256: 'afa1befaf57d',
   ),
   'core.scale/y-axis-position-dynamic.json': (
-    load: () => FixtureConfig.map(core_scale_y_axis_position_dynamic.fixture()),
+    load: core_scale_y_axis_position_dynamic.fixture,
     sha256: 'cc576da0a24b',
   ),
   'element.line/cubicInterpolationMode/monotone-horizontal.js': (
-    load: () => FixtureConfig.map(
-      element_line_cubicinterpolationmode_monotone_horizontal.fixture(),
-    ),
+    load: element_line_cubicinterpolationmode_monotone_horizontal.fixture,
     sha256: 'e157fe78a7f9',
   ),
   'element.line/cubicInterpolationMode/monotone-vertical.js': (
-    load: () => FixtureConfig.map(
-      element_line_cubicinterpolationmode_monotone_vertical.fixture(),
-    ),
+    load: element_line_cubicinterpolationmode_monotone_vertical.fixture,
     sha256: 'cd7f69c2deb6',
   ),
   'element.line/skip/all.js': (
-    load: () => FixtureConfig.map(element_line_skip_all.fixture()),
+    load: element_line_skip_all.fixture,
     sha256: 'db37d1922a70',
   ),
   'element.line/skip/first-span.js': (
-    load: () => FixtureConfig.map(element_line_skip_first_span.fixture()),
+    load: element_line_skip_first_span.fixture,
     sha256: 'cbf221a845db',
   ),
   'element.line/skip/first.js': (
-    load: () => FixtureConfig.map(element_line_skip_first.fixture()),
+    load: element_line_skip_first.fixture,
     sha256: 'e45abb146b75',
   ),
   'element.line/skip/last-span.js': (
-    load: () => FixtureConfig.map(element_line_skip_last_span.fixture()),
+    load: element_line_skip_last_span.fixture,
     sha256: '6f0121002736',
   ),
   'element.line/skip/last.js': (
-    load: () => FixtureConfig.map(element_line_skip_last.fixture()),
+    load: element_line_skip_last.fixture,
     sha256: '95674218f4f7',
   ),
   'element.line/skip/middle-span.js': (
-    load: () => FixtureConfig.map(element_line_skip_middle_span.fixture()),
+    load: element_line_skip_middle_span.fixture,
     sha256: '286b611bb77a',
   ),
   'element.line/skip/middle.js': (
-    load: () => FixtureConfig.map(element_line_skip_middle.fixture()),
+    load: element_line_skip_middle.fixture,
     sha256: 'b018d834ca72',
   ),
   'element.line/stepped/after.js': (
-    load: () => FixtureConfig.map(element_line_stepped_after.fixture()),
+    load: element_line_stepped_after.fixture,
     sha256: '4814c2dd8861',
   ),
   'element.line/stepped/before.js': (
-    load: () => FixtureConfig.map(element_line_stepped_before.fixture()),
+    load: element_line_stepped_before.fixture,
     sha256: '53f54cd7cead',
   ),
   'element.line/stepped/default.js': (
-    load: () => FixtureConfig.map(element_line_stepped_default.fixture()),
+    load: element_line_stepped_default.fixture,
     sha256: '19c155a10d08',
   ),
   'element.line/stepped/middle.js': (
-    load: () => FixtureConfig.map(element_line_stepped_middle.fixture()),
+    load: element_line_stepped_middle.fixture,
     sha256: '6278d250c29b',
   ),
   'element.line/tension/default.js': (
-    load: () => FixtureConfig.map(element_line_tension_default.fixture()),
+    load: element_line_tension_default.fixture,
     sha256: '3c43071e0eb7',
   ),
   'element.line/tension/one.js': (
-    load: () => FixtureConfig.map(element_line_tension_one.fixture()),
+    load: element_line_tension_one.fixture,
     sha256: '9299be5059f9',
   ),
   'element.line/tension/zero.js': (
-    load: () => FixtureConfig.map(element_line_tension_zero.fixture()),
+    load: element_line_tension_zero.fixture,
     sha256: '42c2b3b64ad4',
   ),
   'element.point/point-style-circle.json': (
-    load: () => FixtureConfig.map(element_point_point_style_circle.fixture()),
+    load: element_point_point_style_circle.fixture,
     sha256: '7c3e0d406856',
   ),
   'element.point/point-style-cross-rot.json': (
-    load: () =>
-        FixtureConfig.map(element_point_point_style_cross_rot.fixture()),
+    load: element_point_point_style_cross_rot.fixture,
     sha256: '620578a81b7e',
   ),
   'element.point/point-style-cross.json': (
-    load: () => FixtureConfig.map(element_point_point_style_cross.fixture()),
+    load: element_point_point_style_cross.fixture,
     sha256: '22c5a0c2491d',
   ),
   'element.point/point-style-dash.json': (
-    load: () => FixtureConfig.map(element_point_point_style_dash.fixture()),
+    load: element_point_point_style_dash.fixture,
     sha256: 'd8137f51627b',
   ),
   'element.point/point-style-image.js': (
-    load: () => FixtureConfig.map(element_point_point_style_image.fixture()),
+    load: element_point_point_style_image.fixture,
     sha256: '637c90745876',
   ),
   'element.point/point-style-line.json': (
-    load: () => FixtureConfig.map(element_point_point_style_line.fixture()),
+    load: element_point_point_style_line.fixture,
     sha256: '342b39396bf7',
   ),
   'element.point/point-style-rect-rot.json': (
-    load: () => FixtureConfig.map(element_point_point_style_rect_rot.fixture()),
+    load: element_point_point_style_rect_rot.fixture,
     sha256: '5178013bb8de',
   ),
   'element.point/point-style-rect-rounded.json': (
-    load: () =>
-        FixtureConfig.map(element_point_point_style_rect_rounded.fixture()),
+    load: element_point_point_style_rect_rounded.fixture,
     sha256: '1039b03d8bf5',
   ),
   'element.point/point-style-rect.json': (
-    load: () => FixtureConfig.map(element_point_point_style_rect.fixture()),
+    load: element_point_point_style_rect.fixture,
     sha256: '88b8616e4ae3',
   ),
   'element.point/point-style-star.json': (
-    load: () => FixtureConfig.map(element_point_point_style_star.fixture()),
+    load: element_point_point_style_star.fixture,
     sha256: '1dbb903ff31c',
   ),
   'element.point/point-style-triangle.json': (
-    load: () => FixtureConfig.map(element_point_point_style_triangle.fixture()),
+    load: element_point_point_style_triangle.fixture,
     sha256: 'effb579d156b',
   ),
   'element.point/rotation.js': (
-    load: () => FixtureConfig.map(element_point_rotation.fixture()),
+    load: element_point_rotation.fixture,
     sha256: 'ba75d266affa',
   ),
   'mixed/bar+line-stacked.js': (
-    load: () => FixtureConfig.map(mixed_bar_line_stacked.fixture()),
+    load: mixed_bar_line_stacked.fixture,
     sha256: '9bc9ec2e5a3e',
   ),
-  'mixed/bar+line.js': (
-    load: () => FixtureConfig.map(mixed_bar_line.fixture()),
-    sha256: 'f125d76e617a',
-  ),
+  'mixed/bar+line.js': (load: mixed_bar_line.fixture, sha256: 'f125d76e617a'),
   'plugin.colors/bar.js': (
     load: () => FixtureConfig.map(plugin_colors_bar.fixture()),
     sha256: '5b7d6e37a317',
@@ -2603,165 +2551,151 @@ final Map<String, HandFixture> handFixtures = {
     sha256: '9644a47dcf84',
   ),
   'scale.category/invalid-data.js': (
-    load: () => FixtureConfig.map(scale_category_invalid_data.fixture()),
+    load: scale_category_invalid_data.fixture,
     sha256: 'ecf9428ec7ed',
   ),
   'scale.category/max-ticks-limit-a.js': (
-    load: () => FixtureConfig.map(scale_category_max_ticks_limit_a.fixture()),
+    load: scale_category_max_ticks_limit_a.fixture,
     sha256: '09cf84f34777',
   ),
   'scale.category/max-ticks-limit-b.js': (
-    load: () => FixtureConfig.map(scale_category_max_ticks_limit_b.fixture()),
+    load: scale_category_max_ticks_limit_b.fixture,
     sha256: '37b4891b511e',
   ),
   'scale.category/max-ticks-limit-norotation.js': (
-    load: () =>
-        FixtureConfig.map(scale_category_max_ticks_limit_norotation.fixture()),
+    load: scale_category_max_ticks_limit_norotation.fixture,
     sha256: '3878d06f86cf',
   ),
   'scale.category/ticks-from-data.js': (
-    load: () => FixtureConfig.map(scale_category_ticks_from_data.fixture()),
+    load: scale_category_ticks_from_data.fixture,
     sha256: 'fdce887c4022',
   ),
   'scale.linear/grace/grace-10%.js': (
-    load: () => FixtureConfig.map(scale_linear_grace_grace_10_.fixture()),
+    load: scale_linear_grace_grace_10_.fixture,
     sha256: '0dc72726ef0f',
   ),
   'scale.linear/grace/grace-beginAtZero.js': (
-    load: () =>
-        FixtureConfig.map(scale_linear_grace_grace_beginatzero.fixture()),
+    load: scale_linear_grace_grace_beginatzero.fixture,
     sha256: '5b2a4a7e4b8d',
   ),
   'scale.linear/grace/grace-neg.js': (
-    load: () => FixtureConfig.map(scale_linear_grace_grace_neg.fixture()),
+    load: scale_linear_grace_grace_neg.fixture,
     sha256: '627ac78c9874',
   ),
   'scale.linear/grace/grace-pos.js': (
-    load: () => FixtureConfig.map(scale_linear_grace_grace_pos.fixture()),
+    load: scale_linear_grace_grace_pos.fixture,
     sha256: '4df42ffe516b',
   ),
   'scale.linear/grace/grace.js': (
-    load: () => FixtureConfig.map(scale_linear_grace_grace.fixture()),
+    load: scale_linear_grace_grace.fixture,
     sha256: 'ec3dadb2725a',
   ),
   'scale.linear/grace/issue-8912.js': (
-    load: () => FixtureConfig.map(scale_linear_grace_issue_8912.fixture()),
+    load: scale_linear_grace_issue_8912.fixture,
     sha256: '187500e243fa',
   ),
   'scale.linear/tick-count-data-limits.js': (
-    load: () =>
-        FixtureConfig.map(scale_linear_tick_count_data_limits.fixture()),
+    load: scale_linear_tick_count_data_limits.fixture,
     sha256: 'd9342d4c09c8',
   ),
   'scale.logarithmic/large-range.js': (
-    load: () => FixtureConfig.map(scale_logarithmic_large_range.fixture()),
+    load: scale_logarithmic_large_range.fixture,
     sha256: '81c7e3f9081c',
   ),
   'scale.logarithmic/large-values-small-range.js': (
-    load: () =>
-        FixtureConfig.map(scale_logarithmic_large_values_small_range.fixture()),
+    load: scale_logarithmic_large_values_small_range.fixture,
     sha256: '04df6ffa055d',
   ),
   'scale.logarithmic/med-range.js': (
-    load: () => FixtureConfig.map(scale_logarithmic_med_range.fixture()),
+    load: scale_logarithmic_med_range.fixture,
     sha256: '5bd687bac1bc',
   ),
   'scale.logarithmic/min-max.js': (
-    load: () => FixtureConfig.map(scale_logarithmic_min_max.fixture()),
+    load: scale_logarithmic_min_max.fixture,
     sha256: 'fe9a17c75851',
   ),
   'scale.logarithmic/null-values.js': (
-    load: () => FixtureConfig.map(scale_logarithmic_null_values.fixture()),
+    load: scale_logarithmic_null_values.fixture,
     sha256: '2005172acbb5',
   ),
   'scale.logarithmic/small-range.js': (
-    load: () => FixtureConfig.map(scale_logarithmic_small_range.fixture()),
+    load: scale_logarithmic_small_range.fixture,
     sha256: '3aae77bb8618',
   ),
   'scale.radialLinear/anglelines-scriptable.js': (
-    load: () =>
-        FixtureConfig.map(scale_radiallinear_anglelines_scriptable.fixture()),
+    load: scale_radiallinear_anglelines_scriptable.fixture,
     sha256: '08e36231a454',
   ),
   'scale.radialLinear/border-dash.json': (
-    load: () => FixtureConfig.map(scale_radiallinear_border_dash.fixture()),
+    load: scale_radiallinear_border_dash.fixture,
     sha256: '9ff3945a6d4f',
   ),
   'scale.radialLinear/circular-border-dash.json': (
-    load: () =>
-        FixtureConfig.map(scale_radiallinear_circular_border_dash.fixture()),
+    load: scale_radiallinear_circular_border_dash.fixture,
     sha256: '17246932f778',
   ),
   'scale.radialLinear/gridlines-scriptable.js': (
-    load: () =>
-        FixtureConfig.map(scale_radiallinear_gridlines_scriptable.fixture()),
+    load: scale_radiallinear_gridlines_scriptable.fixture,
     sha256: '13a35dcc04b0',
   ),
   'scale.radialLinear/pointLabels/background.js': (
-    load: () =>
-        FixtureConfig.map(scale_radiallinear_pointlabels_background.fixture()),
+    load: scale_radiallinear_pointlabels_background.fixture,
     sha256: '1a660eaebfd1',
   ),
   'scale.radialLinear/pointLabels/border-radius.js': (
-    load: () => FixtureConfig.map(
-      scale_radiallinear_pointlabels_border_radius.fixture(),
-    ),
+    load: scale_radiallinear_pointlabels_border_radius.fixture,
     sha256: 'b05b82ebab93',
   ),
   'scale.radialLinear/pointLabels/scriptable-color-small.js': (
-    load: () => FixtureConfig.map(
-      scale_radiallinear_pointlabels_scriptable_color_small.fixture(),
-    ),
+    load: scale_radiallinear_pointlabels_scriptable_color_small.fixture,
     sha256: '00b299f9172d',
   ),
   'scale.radialLinear/ticks-below-zero.js': (
-    load: () =>
-        FixtureConfig.map(scale_radiallinear_ticks_below_zero.fixture()),
+    load: scale_radiallinear_ticks_below_zero.fixture,
     sha256: 'c255b6ba2824',
   ),
   'scale.time/autoskip-major.js': (
-    load: () => FixtureConfig.map(scale_time_autoskip_major.fixture()),
+    load: scale_time_autoskip_major.fixture,
     sha256: 'b0621b5b41ca',
   ),
   'scale.time/bar-large-gap-between-data.js': (
-    load: () =>
-        FixtureConfig.map(scale_time_bar_large_gap_between_data.fixture()),
+    load: scale_time_bar_large_gap_between_data.fixture,
     sha256: '64deb58590c8',
   ),
   'scale.time/custom-parser.js': (
-    load: () => FixtureConfig.map(scale_time_custom_parser.fixture()),
+    load: scale_time_custom_parser.fixture,
     sha256: '890aed904f37',
   ),
   'scale.time/data-ty.js': (
-    load: () => FixtureConfig.map(scale_time_data_ty.fixture()),
+    load: scale_time_data_ty.fixture,
     sha256: 'cae64c65a083',
   ),
   'scale.time/data-xy.js': (
-    load: () => FixtureConfig.map(scale_time_data_xy.fixture()),
+    load: scale_time_data_xy.fixture,
     sha256: 'f14f7eb1956c',
   ),
   'scale.time/labels-date.js': (
-    load: () => FixtureConfig.map(scale_time_labels_date.fixture()),
+    load: scale_time_labels_date.fixture,
     sha256: '7c9efdf5f808',
   ),
   'scale.time/negative-times.js': (
-    load: () => FixtureConfig.map(scale_time_negative_times.fixture()),
+    load: scale_time_negative_times.fixture,
     sha256: '86c7641fd3d9',
   ),
   'scale.time/offset-auto-skip-ticks.js': (
-    load: () => FixtureConfig.map(scale_time_offset_auto_skip_ticks.fixture()),
+    load: scale_time_offset_auto_skip_ticks.fixture,
     sha256: 'f82acaad46f8',
   ),
   'scale.time/offset-with-no-ticks.js': (
-    load: () => FixtureConfig.map(scale_time_offset_with_no_ticks.fixture()),
+    load: scale_time_offset_with_no_ticks.fixture,
     sha256: '8b06d8cab19e',
   ),
   'scale.timeseries/data-timestamps.js': (
-    load: () => FixtureConfig.map(scale_timeseries_data_timestamps.fixture()),
+    load: scale_timeseries_data_timestamps.fixture,
     sha256: '6f5160d4e038',
   ),
   'scale.timeseries/financial-daily.js': (
-    load: () => FixtureConfig.map(scale_timeseries_financial_daily.fixture()),
+    load: scale_timeseries_financial_daily.fixture,
     sha256: 'cd96e74c519b',
   ),
 };

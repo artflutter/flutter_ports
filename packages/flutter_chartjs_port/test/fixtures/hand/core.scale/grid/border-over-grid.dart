@@ -6,11 +6,13 @@ library;
 
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
-Map<String, Object?> fixture() => <String, Object?>{
+FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
   'config': <String, Object?>{
     'type': 'scatter',
     'options': <String, Object?>{
@@ -38,4 +40,4 @@ Map<String, Object?> fixture() => <String, Object?>{
       },
     },
   },
-};
+});

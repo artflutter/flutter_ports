@@ -1,24 +1,25 @@
 // Ported from Chart.js v4.6.1 test/fixtures/core.layouts/hidden-vertical-boxes.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() => <String, Object?>{
-  'config': <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[10, 5, 0, 25, 78, -10],
-        },
-      ],
-      'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5', ''],
-    },
-    'options': <String, Object?>{
-      'plugins': <String, Object?>{'legend': false},
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      LineDataset(data: .values(<num?>[10, 5, 0, 25, 78, -10])),
+    ],
+    labels: <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5', ''],
+    disabledPlugins: [PluginOff<LegendPlugin>()],
+    extra: <String, Object?>{
       'scales': <String, Object?>{
         // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
         'x': <String, Object?>{'display': ScaleDisplay.off},
@@ -71,9 +72,9 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
     },
-  },
-  'options': <String, Object?>{
+  ),
+  options: <String, Object?>{
     'spriteText': true,
     'canvas': <String, Object?>{'height': 256, 'width': 256},
   },
-};
+);

@@ -1,32 +1,37 @@
 // Ported from Chart.js v4.6.1 test/fixtures/scale.time/custom-parser.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() => <String, Object?>{
-  'threshold': 0.01,
-  'tolerance': 0.0025,
-  'config': <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'labels': <Object?>['foo', 'bar'],
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[0, 1],
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': FillTarget.none,
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'time',
-          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-          'position': ChartPosition.bottom,
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      LineDataset(
+        data: .values(<num?>[0, 1]),
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: FillTarget.none,
+      ),
+    ],
+    labels: <Object>['foo', 'bar'],
+    scales: [
+      TimeAxis(
+        CartesianAxis.x,
+        // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+        position: ChartPosition.bottom,
+        ticks: AxisTicks(
+          // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+          source: TickSource.labels,
+        ),
+        extra: <String, Object?>{
           'time': <String, Object?>{
             // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
             'unit': TimeUnit.day,
@@ -40,18 +45,14 @@ Map<String, Object?> fixture() => <String, Object?>{
                   : DateTime.utc(2016, 5, 8);
             },
           },
-          'ticks': <String, Object?>{
-            // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
-            'source': TickSource.labels,
-          },
         },
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'y': <String, Object?>{'display': ScaleDisplay.off},
-      },
-    },
-  },
-  'options': <String, Object?>{
+      ),
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+    ],
+  ),
+  options: <String, Object?>{
     'spriteText': true,
     'canvas': <String, Object?>{'width': 256, 'height': 128},
   },
-};
+);

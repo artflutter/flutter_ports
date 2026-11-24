@@ -3,10 +3,11 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() => <String, Object?>{
+FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
   'config': <String, Object?>{
     'type': 'radar',
     'data': <String, Object?>{
@@ -53,4 +54,4 @@ Map<String, Object?> fixture() => <String, Object?>{
       },
     },
   },
-};
+});

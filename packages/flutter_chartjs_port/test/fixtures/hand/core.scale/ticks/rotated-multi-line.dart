@@ -1,59 +1,40 @@
 // Ported from Chart.js v4.6.1 test/fixtures/core.scale/ticks/rotated-multi-line.js (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-direct-colors, native paint inputs.
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
 import 'dart:ui' as native_ui;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() => <String, Object?>{
-  'config': <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'labels': <Object?>[
-        <Object?>['Red', 'Red', 'Red', 'Red'],
-        <Object?>['Blue', 'Blue', 'Blue', 'Blue'],
-        <Object?>['Black', 'Black', 'Black', 'Black'],
-        <Object?>['Green', 'Green', 'Green', 'Green'],
-        <Object?>['Purple', 'Purple', 'Purple', 'Purple'],
-        <Object?>[
-          'Orange Orange',
-          'Orange',
-          'Orange',
-          'Orange',
-          'Orange Orange',
-        ],
-      ],
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[12, 19, 3, 5, 2, 3],
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'plugins': <String, Object?>{
-        'legend': false,
-        'tooltip': false,
-        'filler': false,
-        'title': false,
-      },
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'category',
-          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-          'position': ChartPosition.bottom,
-        },
-        'x2': <String, Object?>{
-          'type': 'category',
-          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-          'position': ChartPosition.top,
-        },
-      },
-    },
-    'plugins': <Plugin<Object?>>[
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      LineDataset(data: .values(<num?>[12, 19, 3, 5, 2, 3])),
+    ],
+    labels: <Object>[
+      <Object?>['Red', 'Red', 'Red', 'Red'],
+      <Object?>['Blue', 'Blue', 'Blue', 'Blue'],
+      <Object?>['Black', 'Black', 'Black', 'Black'],
+      <Object?>['Green', 'Green', 'Green', 'Green'],
+      <Object?>['Purple', 'Purple', 'Purple', 'Purple'],
+      <Object?>['Orange Orange', 'Orange', 'Orange', 'Orange', 'Orange Orange'],
+    ],
+    disabledPlugins: [
+      PluginOff<LegendPlugin>(),
+      PluginOff<TooltipPlugin>(),
+      PluginOff<FillerPlugin>(),
+      PluginOff<TitlePlugin>(),
+    ],
+    plugins: [
       // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
       Plugin<Object?>(
         id: 'inline',
@@ -67,9 +48,23 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       ),
     ],
-  },
-  'options': <String, Object?>{
+    extra: <String, Object?>{
+      'scales': <String, Object?>{
+        'x': <String, Object?>{
+          'type': 'category',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.bottom,
+        },
+        'x2': <String, Object?>{
+          'type': 'category',
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          'position': ChartPosition.top,
+        },
+      },
+    },
+  ),
+  options: <String, Object?>{
     'spriteText': true,
     'canvas': <String, Object?>{'width': 610, 'height': 512},
   },
-};
+);

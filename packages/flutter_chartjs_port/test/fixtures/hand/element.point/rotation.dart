@@ -5,11 +5,13 @@ library;
 
 import 'dart:ui' as native_ui;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() {
+FixtureConfig fixture() {
   ChartGradient? gradient;
 
   // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
@@ -42,7 +44,7 @@ Map<String, Object?> fixture() {
     return -180 + i * 22.5;
   });
 
-  return <String, Object?>{
+  return FixtureConfig.map(<String, Object?>{
     'config': <String, Object?>{
       'type': 'bubble',
       'data': <String, Object?>{'datasets': datasets},
@@ -74,5 +76,5 @@ Map<String, Object?> fixture() {
     'options': <String, Object?>{
       'canvas': <String, Object?>{'height': 256, 'width': 512},
     },
-  };
+  });
 }

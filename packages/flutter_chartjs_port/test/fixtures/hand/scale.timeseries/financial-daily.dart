@@ -5,10 +5,11 @@ library;
 
 import 'dart:ui' show FontWeight;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() {
+FixtureConfig fixture() {
   final data = <Object?>[
     <String, Object?>{'x': 631180800000, 'y': 31.80},
     <String, Object?>{'x': 631267200000, 'y': 30.20},
@@ -612,7 +613,7 @@ Map<String, Object?> fixture() {
     <String, Object?>{'x': 703494000000, 'y': 19.83},
   ];
 
-  return <String, Object?>{
+  return FixtureConfig.map(<String, Object?>{
     'threshold': 0.01,
     'tolerance': 0.0015,
     'config': <String, Object?>{
@@ -670,5 +671,5 @@ Map<String, Object?> fixture() {
       },
     },
     'options': <String, Object?>{'spriteText': true},
-  };
+  });
 }

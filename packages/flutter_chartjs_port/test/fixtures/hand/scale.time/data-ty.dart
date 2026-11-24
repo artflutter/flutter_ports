@@ -1,26 +1,31 @@
 // Ported from Chart.js v4.6.1 test/fixtures/scale.time/data-ty.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
-Map<String, Object?> fixture() {
+FixtureConfig fixture() {
   DateTime newDateFromRef(int days) {
     // moment('01/01/2015 12:00', 'DD/MM/YYYY HH:mm').add(days, 'd').toDate()
     // DIVERGES(chartjs): harness-fixture-sources, a moment value.
     return DateTime.utc(2015, 1, 1 + days, 12);
   }
 
-  return <String, Object?>{
-    'threshold': 0.01,
-    'tolerance': 0.003,
-    'config': <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
+  return FixtureConfig.typed(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.none,
+          extra: <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'t': newDateFromRef(0), 'y': 1},
               <String, Object?>{'t': newDateFromRef(1), 'y': 10},
@@ -30,28 +35,24 @@ Map<String, Object?> fixture() {
               <String, Object?>{'t': newDateFromRef(7), 'y': 9},
               <String, Object?>{'t': newDateFromRef(9), 'y': 5},
             ],
-            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-            'fill': FillTarget.none,
             'parsing': <String, Object?>{'xAxisKey': 't'},
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'type': 'time',
-            // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-            'position': ChartPosition.bottom,
-            'ticks': <String, Object?>{'maxRotation': 0},
-          },
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'y': <String, Object?>{'display': ScaleDisplay.off},
-        },
-      },
-    },
-    'options': <String, Object?>{
+        ),
+      ],
+      scales: [
+        TimeAxis(
+          CartesianAxis.x,
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          position: ChartPosition.bottom,
+          ticks: AxisTicks(maxRotation: 0),
+        ),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+    ),
+    options: <String, Object?>{
       'spriteText': true,
       'canvas': <String, Object?>{'width': 800, 'height': 200},
     },
-  };
+  );
 }
