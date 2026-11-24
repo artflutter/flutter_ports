@@ -24,11 +24,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
         backgroundColor: .constant(
           ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.25)),
         ),
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const FillTarget.toDataset(1),
-          'xAxisID': 'x1',
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: const FillTarget.toDataset(1),
+        extra: <String, Object?>{'xAxisID': 'x1'},
       ),
       LineDataset(
         data: .values(<num?>[65, 59, 80, 81, 56, 55, 40]),

@@ -28,13 +28,11 @@ FixtureConfig fixture() => FixtureConfig.typed(
         spanGaps: true,
         borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
         pointRadius: .constant(0),
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const FillTarget.toDataset(1).split(
-            above: nativeFixturePaint('rgba(53, 221, 53, 0.4)'),
-            below: nativeFixturePaint('rgba(255, 0, 0, 0.4)'),
-          ),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: const FillTarget.toDataset(1).split(
+          above: nativeFixturePaint('rgba(53, 221, 53, 0.4)'),
+          below: nativeFixturePaint('rgba(255, 0, 0, 0.4)'),
+        ),
       ),
       LineDataset(
         data: .values(<num?>[400, 200, 400, 200]),

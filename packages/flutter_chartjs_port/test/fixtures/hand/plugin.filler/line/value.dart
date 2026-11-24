@@ -22,10 +22,8 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.25)),
         ),
         data: .values(<num?>[-4, 4, 0, -1, 0, 1, 0, -1, 0]),
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const FillTarget.toValue(2),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: const FillTarget.toValue(2),
       ),
     ],
     labels: <Object>['0', '1', '2', '3', '4', '5', '6', '7', '8'],

@@ -471,7 +471,7 @@ void main() {
               extra: {'type': 'typedLinear'},
             ),
           ],
-          extra: const {'parsing': false},
+          parsing: false,
         ),
       ).lower(),
     );

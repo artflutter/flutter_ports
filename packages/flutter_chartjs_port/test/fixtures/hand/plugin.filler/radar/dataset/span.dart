@@ -22,10 +22,8 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.25)),
         ),
         data: <num?>[null, null, 0, -1, 0, 1, 0, -1, 0],
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const FillTarget.toDataset(1),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: const FillTarget.toDataset(1),
       ),
       RadarDataset(
         backgroundColor: .constant(
@@ -41,21 +39,17 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.25)),
         ),
         data: <num?>[0, 2, 0, -2, 0, 2, 0],
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const FillTarget.toDataset(3),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: const FillTarget.toDataset(3),
       ),
       RadarDataset(
         backgroundColor: .constant(
           ChartPaint.solid(Color.fromRGBO(255, 0, 255, 0.25)),
         ),
         data: <num?>[2, 0, -2, 0, 2, 0, -2, 0, 2],
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target
-          // value.
-          'fill': const FillTarget.toRelative(-2),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target
+        // value.
+        fill: const FillTarget.toRelative(-2),
       ),
       RadarDataset(
         backgroundColor: .constant(

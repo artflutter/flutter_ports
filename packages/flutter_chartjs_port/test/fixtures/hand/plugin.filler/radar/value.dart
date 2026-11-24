@@ -37,10 +37,8 @@ FixtureConfig fixture() => FixtureConfig.typed(
       point: PointElementStyle(radius: 0),
       line: LineElementStyle(
         borderColor: ChartPaint.solid(Color(0x00000000)),
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const FillTarget.toValue(3),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: const FillTarget.toValue(3),
       ),
     ),
     disabledPlugins: [

@@ -1305,7 +1305,7 @@ void main() {
                   ),
                 ],
                 animation: ChartAnimation.none,
-                extra: const {'parsing': false},
+                parsing: false,
               ),
             ),
           ),
@@ -1379,7 +1379,7 @@ void main() {
           ChartConfig(
             datasets: [BubbleDataset(data: points())],
             animation: ChartAnimation.none,
-            extra: const {'parsing': false},
+            parsing: false,
           ),
         ).lower(),
       );

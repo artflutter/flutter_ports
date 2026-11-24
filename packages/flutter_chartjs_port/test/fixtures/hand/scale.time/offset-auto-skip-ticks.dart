@@ -37,7 +37,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
         CartesianAxis.x,
         grid: AxisGrid(offset: true),
         offset: true,
-        extra: <String, Object?>{'offsetAfterAutoskip': true},
+        offsetAfterAutoskip: true,
       ),
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),

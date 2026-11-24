@@ -1917,7 +1917,7 @@ void main() {
 
   group('a category axis', () {
     const dataBounds = <ChartAxis>[
-      CategoryAxis(.x, extra: {'bounds': ScaleBounds.data}),
+      CategoryAxis(.x, bounds: ScaleBounds.data),
       LinearAxis(.y, min: 0, max: 100),
     ];
 
@@ -1938,7 +1938,7 @@ void main() {
           ],
           scales: dataBounds,
           animation: ChartAnimation.none,
-          extra: const {'parsing': false},
+          parsing: false,
         );
         Widget view(int step) => _view(line(step), dataOnly: dataOnly);
         await _warm(tester, view);

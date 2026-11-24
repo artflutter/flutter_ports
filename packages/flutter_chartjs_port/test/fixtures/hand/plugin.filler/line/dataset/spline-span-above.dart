@@ -24,11 +24,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.25)),
         ),
         data: .values(<num?>[null, null, 0, -1, 0, 1, 0, -1, 0]),
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const FillTarget.toDataset(1)
-              .split(below: nativeFixturePaint('transparent')),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: const FillTarget.toDataset(1)
+            .split(below: nativeFixturePaint('transparent')),
       ),
       LineDataset(
         backgroundColor: .constant(
@@ -43,11 +41,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ChartPaint.solid(Color.fromRGBO(255, 0, 255, 0.25)),
         ),
         data: .values(<num?>[2, 0, -2, 0, 2, 0, -2, 0, 2]),
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const FillTarget.toRelative(-2)
-              .split(below: nativeFixturePaint('transparent')),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: const FillTarget.toRelative(-2)
+            .split(below: nativeFixturePaint('transparent')),
       ),
       LineDataset(
         backgroundColor: .constant(

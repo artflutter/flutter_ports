@@ -121,7 +121,7 @@ ChartConfigurationScope _config() => ChartConfigLowering(
       PluginOff<TitlePlugin>(),
       PluginOff<TooltipPlugin>(),
     ],
-    extra: const {'parsing': false},
+    parsing: false,
   ),
 ).lower();
 

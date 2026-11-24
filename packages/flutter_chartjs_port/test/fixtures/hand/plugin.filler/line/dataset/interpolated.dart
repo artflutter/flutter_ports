@@ -60,11 +60,9 @@ FixtureConfig fixture() {
           backgroundColor: .constant(
             ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.25)),
           ),
-          extra: <String, Object?>{
-            'data': data2,
-            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-            'fill': const FillTarget.toDataset(0),
-          },
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: const FillTarget.toDataset(0),
+          extra: <String, Object?>{'data': data2},
         ),
         LineDataset(
           borderColor: .constant(
@@ -73,11 +71,9 @@ FixtureConfig fixture() {
           backgroundColor: .constant(
             ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.25)),
           ),
-          extra: <String, Object?>{
-            'data': data3,
-            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-            'fill': const FillTarget.toDataset(1),
-          },
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: const FillTarget.toDataset(1),
+          extra: <String, Object?>{'data': data3},
         ),
       ],
       animation: ChartAnimation.none,

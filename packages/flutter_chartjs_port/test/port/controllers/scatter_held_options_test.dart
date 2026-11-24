@@ -74,7 +74,7 @@ ChartConfigurationScope _config({
       PluginOff<LegendPlugin>(),
       PluginOff<TooltipPlugin>(),
     ],
-    extra: const {'parsing': false},
+    parsing: false,
   ),
 ).lower();
 

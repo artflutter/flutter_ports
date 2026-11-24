@@ -98,7 +98,7 @@ ChartConfig config({ChartScript<ChartPaint> color = _blue}) => ChartConfig(
     LinearAxis(.y, display: ScaleDisplay.off),
   ],
   disabledPlugins: const [PluginOff<LegendPlugin>()],
-  extra: const {'parsing': false},
+  parsing: false,
 );
 
 void main() {

@@ -52,7 +52,7 @@ ChartConfig _config(
     PluginOff<LegendPlugin>(),
     PluginOff<TooltipPlugin>(),
   ],
-  extra: const {'parsing': false},
+  parsing: false,
 );
 
 String _describe(Object? value) => switch (value) {

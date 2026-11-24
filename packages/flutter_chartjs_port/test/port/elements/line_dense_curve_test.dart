@@ -143,7 +143,8 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
     maintainAspectRatio: false,
     padding: EdgeInsets.zero,
     events: const [],
-    extra: {'parsing': false, 'devicePixelRatio': ratio},
+    parsing: false,
+    devicePixelRatio: ratio,
   );
 }
 

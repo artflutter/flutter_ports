@@ -220,7 +220,7 @@ ChartConfig _typed(List<DataPoint> points, {ChartValue<ChartPaint>? color}) =>
         LinearAxis(.y, min: -5, max: 10, display: ScaleDisplay.off),
       ],
       animation: ChartAnimation.none,
-      extra: const {'parsing': false},
+      parsing: false,
     );
 
 List<DataPoint> _points({double step = 0}) => [

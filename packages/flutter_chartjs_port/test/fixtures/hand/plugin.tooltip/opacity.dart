@@ -59,10 +59,8 @@ FixtureConfig fixture() {
           label: '',
           data: .values(<num?>[4, 4, 4, 4, 4, 5, 3, 4, 4, 4, 4]),
           showLine: false,
-          extra: <String, Object?>{
-            'pointBorderColor': pattern,
-            'pointBackgroundColor': pattern,
-          },
+          pointBorderColor: .constant(pattern),
+          pointBackgroundColor: .constant(pattern),
         ),
         LineDataset(
           label: '',

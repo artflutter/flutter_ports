@@ -225,7 +225,7 @@ typed.ChartConfig _typedConfig(List<typed.DataPoint> points) =>
         PluginOff<ColorsPlugin>(),
         PluginOff<FillerPlugin>(),
       ],
-      extra: const {'parsing': false},
+      parsing: false,
     );
 
 List<typed.DataPoint> _points() => [

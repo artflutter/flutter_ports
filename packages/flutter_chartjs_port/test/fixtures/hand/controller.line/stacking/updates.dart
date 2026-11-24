@@ -22,23 +22,17 @@ FixtureConfig fixture() => FixtureConfig.typed(
       LineDataset(
         data: .values(<num?>[1, 1, 1]),
         stack: 's1',
-        extra: <String, Object?>{
-          'borderColor': const ChartPaint.solid(ui.Color(0xFFFF0000)),
-        },
+        borderColor: .constant(const ChartPaint.solid(ui.Color(0xFFFF0000))),
       ),
       LineDataset(
         data: .values(<num?>[2, 2, 2]),
         stack: 's1',
-        extra: <String, Object?>{
-          'borderColor': const ChartPaint.solid(ui.Color(0xFF00FF00)),
-        },
+        borderColor: .constant(const ChartPaint.solid(ui.Color(0xFF00FF00))),
       ),
       LineDataset(
         data: .values(<num?>[3, 3, 3]),
         stack: 's1',
-        extra: <String, Object?>{
-          'borderColor': const ChartPaint.solid(ui.Color(0xFF0000FF)),
-        },
+        borderColor: .constant(const ChartPaint.solid(ui.Color(0xFF0000FF))),
       ),
     ],
     labels: <Object>[0, 1, 2],

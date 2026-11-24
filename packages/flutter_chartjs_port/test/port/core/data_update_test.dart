@@ -818,7 +818,7 @@ void main() {
         PluginOff<ColorsPlugin>(),
         PluginOff<FillerPlugin>(),
       ],
-      extra: const {'parsing': false},
+      parsing: false,
     );
     final first = [typed.DataPoint(1, 2), typed.DataPoint(2, 3)];
     final lowering = ChartConfigLowering(cfg(first));

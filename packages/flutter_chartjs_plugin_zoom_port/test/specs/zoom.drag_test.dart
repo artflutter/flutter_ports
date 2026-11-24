@@ -298,13 +298,11 @@ void main() {
                     ),
                   ),
                 ],
-                extra: {
-                  'onClick': (
-                    ChartEvent event,
-                    List<ActiveElement> elements,
-                    Chart _,
-                  ) => clickCalls.add(event),
-                },
+                onClick: (
+                  event,
+                  elements,
+                  _,
+                ) => clickCalls.add(event),
               ),
             );
 

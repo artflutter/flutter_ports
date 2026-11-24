@@ -22,11 +22,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.25)),
         ),
         data: .values(<num?>[null, null, 0, -1, 0, 1, 0, -1, 0]),
-        extra: <String, Object?>{
-          'stepped': true,
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const FillTarget.toDataset(1),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: const FillTarget.toDataset(1),
+        extra: <String, Object?>{'stepped': true},
       ),
       LineDataset(
         backgroundColor: .constant(
@@ -44,10 +42,8 @@ FixtureConfig fixture() => FixtureConfig.typed(
         ),
         stepped: SteppedLine.before,
         data: .values(<num?>[0, 2, 0, -2, 0, 2, 0]),
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': const FillTarget.toDataset(3),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: const FillTarget.toDataset(3),
       ),
       LineDataset(
         backgroundColor: .constant(
@@ -55,11 +51,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
         ),
         stepped: SteppedLine.middle,
         data: .values(<num?>[2, 0, -2, 0, 2, 0, -2, 0, 2]),
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target
-          // value.
-          'fill': const FillTarget.toRelative(-2),
-        },
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target
+        // value.
+        fill: const FillTarget.toRelative(-2),
       ),
       LineDataset(
         backgroundColor: .constant(

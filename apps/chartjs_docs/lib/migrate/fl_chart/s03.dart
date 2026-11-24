@@ -106,8 +106,8 @@ class _Sample3State() extends State<Sample3> {
           pointHoverBackgroundColor: const .constant(.solid(Colors.white)),
           pointHoverBorderColor: const .constant(.solid(Fl.yellow)),
           pointHoverBorderWidth: const .constant(5),
+          stepped: SteppedLine.middle,
           extra: {
-            'stepped': SteppedLine.middle,
             'backgroundColor': verticalGradient(
               [Fl.red.withValues(alpha: 0.5), Fl.red.withValues(alpha: 0)],
               const [0.5, 1],
@@ -138,11 +138,11 @@ class _Sample3State() extends State<Sample3> {
           .x,
           grid: AxisGrid(
             drawTicks: false,
+            lineWidth: 0.5,
             extra: {
               'color': (Object? c) => ChartPaint.solid(
                 tickOf(c) == 0 ? Colors.transparent : Fl.white10,
               ),
-              'lineWidth': 0.5,
             },
           ),
           border: Fl.noBorder,
@@ -158,11 +158,11 @@ class _Sample3State() extends State<Sample3> {
           min: 0,
           grid: AxisGrid(
             drawTicks: false,
+            lineWidth: 0.5,
             extra: {
               'color': (Object? c) => ChartPaint.solid(
                 tickOf(c) == 0 ? Colors.transparent : Fl.white10,
               ),
-              'lineWidth': 0.5,
             },
           ),
           border: Fl.noBorder,

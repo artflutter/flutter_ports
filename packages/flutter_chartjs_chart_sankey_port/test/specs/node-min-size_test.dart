@@ -26,7 +26,8 @@ Chart _buildSankeyWithMinSize(Object? nodeMinSize) => acquireChartRoot(
       datasets: [
         SankeyDataset(
           data: _data(),
-          extra: {'nodeMinSize': nodeMinSize, 'nodeWidth': _nodeWidth},
+          nodeWidth: _nodeWidth,
+          extra: {'nodeMinSize': nodeMinSize},
         ),
       ],
       animation: ChartAnimation.none,

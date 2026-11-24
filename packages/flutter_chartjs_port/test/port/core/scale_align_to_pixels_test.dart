@@ -29,7 +29,7 @@ ChartConfig _config(Object? value) {
       PluginOff<LegendPlugin>(),
       PluginOff<TooltipPlugin>(),
     ],
-    extra: const {'devicePixelRatio': 2.0},
+    devicePixelRatio: 2,
   );
 }
 

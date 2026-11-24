@@ -1192,7 +1192,7 @@ void main() {
               if (!legend) const PluginOff<LegendPlugin>(),
               const PluginOff<TitlePlugin>(),
             ],
-            extra: const {'parsing': false},
+            parsing: false,
           ),
         ).lower(),
       );
