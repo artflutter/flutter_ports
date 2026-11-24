@@ -844,6 +844,42 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
         ],
         {'offsetAfterAutoskip': true},
       ),
+      'time.parser': (
+        const [
+          (TimeAxis(.x, parser: 'yyyy'), 'time'),
+          (TimeSeriesAxis(.x, parser: 'yyyy'), 'timeseries'),
+        ],
+        {
+          'time': {'parser': 'yyyy'},
+        },
+      ),
+      'time.round': (
+        const [
+          (TimeAxis(.x, round: TimeUnit.day), 'time'),
+          (TimeSeriesAxis(.x, round: TimeUnit.day), 'timeseries'),
+        ],
+        {
+          'time': {'round': TimeUnit.day},
+        },
+      ),
+      'time.minUnit': (
+        const [
+          (TimeAxis(.x, minUnit: TimeUnit.second), 'time'),
+          (TimeSeriesAxis(.x, minUnit: TimeUnit.second), 'timeseries'),
+        ],
+        {
+          'time': {'minUnit': TimeUnit.second},
+        },
+      ),
+      'time.isoWeekday': (
+        const [
+          (TimeAxis(.x, isoWeekday: 3), 'time'),
+          (TimeSeriesAxis(.x, isoWeekday: 3), 'timeseries'),
+        ],
+        {
+          'time': {'isoWeekday': 3},
+        },
+      ),
       'startAngle': (
         const [(RadialLinearAxis(startAngle: 45), 'radialLinear')],
         {'startAngle': 45},

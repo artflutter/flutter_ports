@@ -19231,15 +19231,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          unit: TimeUnit.week,
-          extra: <String, Object?>{
-            'time': <String, Object?>{'isoWeekday': true},
-          },
-        ),
-      ],
+      scales: const [TimeAxis(.x, unit: TimeUnit.week, isoWeekday: 1)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -20141,15 +20133,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          unit: TimeUnit.week,
-          extra: <String, Object?>{
-            'time': <String, Object?>{'isoWeekday': 3.0},
-          },
-        ),
-      ],
+      scales: const [TimeAxis(.x, unit: TimeUnit.week, isoWeekday: 3)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -21060,14 +21044,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'time': <String, Object?>{'minUnit': TimeUnit.day},
-          },
-        ),
-      ],
+      scales: const [TimeAxis(.x, minUnit: TimeUnit.day)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -21748,14 +21725,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'time': <String, Object?>{'round': TimeUnit.day},
-          },
-        ),
-      ],
+      scales: const [TimeAxis(.x, round: TimeUnit.day)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -23058,17 +23028,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'time': <String, Object?>{
-              'round': TimeUnit.week,
-              'isoWeekday': 1.0,
-            },
-          },
-        ),
-      ],
+      scales: const [TimeAxis(.x, round: TimeUnit.week, isoWeekday: 1)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -42727,14 +42687,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
       datasets: [
         TestDataset(const ChartKind('timeTest'), data: [1.0, 2.0, 3.0, 4.0]),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'time': <String, Object?>{'parser': 'HH:mm'},
-          },
-        ),
-      ],
+      scales: const [TimeAxis(.x, parser: 'HH:mm')],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -59819,10 +59772,8 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
       scales: const [
         TimeAxis(
           .x,
+          minUnit: TimeUnit.day,
           ticks: AxisTicks(autoSkip: false, source: TickSource.labels),
-          extra: <String, Object?>{
-            'time': <String, Object?>{'minUnit': TimeUnit.day},
-          },
         ),
       ],
     ),
@@ -70993,14 +70944,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'time': <String, Object?>{'round': TimeUnit.week},
-          },
-        ),
-      ],
+      scales: const [TimeAxis(.x, round: TimeUnit.week)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -72209,17 +72153,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'time': <String, Object?>{
-              'round': TimeUnit.week,
-              'isoWeekday': true,
-            },
-          },
-        ),
-      ],
+      scales: const [TimeAxis(.x, round: TimeUnit.week, isoWeekday: 1)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{

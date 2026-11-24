@@ -388,10 +388,8 @@ class _LiveChartState()
         ticks: AxisTicks(maxRotation: 0, callback: _timeLabel),
         afterBuildTicks: _gridTicks,
         afterFit: _noLabelPadding,
-        extra: {
-          // No tick for each millisecond of a range of some seconds.
-          'time': {'minUnit': TimeUnit.second},
-        },
+        // No tick for each millisecond of a range of some seconds.
+        minUnit: TimeUnit.second,
       ),
       // No tick at the eased bounds, and whole numbers only (precision 0
       // rounds the step to an integer).

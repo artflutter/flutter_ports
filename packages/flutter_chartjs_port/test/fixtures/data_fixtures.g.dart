@@ -1247,10 +1247,8 @@ FixtureConfig _controller_bar_bar_thickness_absolute() => FixtureConfig.typed(
         CartesianAxis.x,
         offset: true,
         display: ScaleDisplay.off,
+        parser: 'YYYY',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1280,10 +1278,8 @@ FixtureConfig _controller_bar_bar_thickness_absolute_icu() =>
             CartesianAxis.x,
             offset: true,
             display: ScaleDisplay.off,
+            parser: 'yyyy',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1315,10 +1311,8 @@ FixtureConfig _controller_bar_bar_thickness_flex_offset() =>
             CartesianAxis.x,
             offset: true,
             display: ScaleDisplay.off,
+            parser: 'YYYY',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'YYYY'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1350,10 +1344,8 @@ FixtureConfig _controller_bar_bar_thickness_flex_offset_icu() =>
             CartesianAxis.x,
             offset: true,
             display: ScaleDisplay.off,
+            parser: 'yyyy',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1385,11 +1377,9 @@ FixtureConfig _controller_bar_bar_thickness_flex_single_reverse() =>
             CartesianAxis.x,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'YYYY',
             reverse: true,
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'YYYY'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1421,11 +1411,9 @@ FixtureConfig _controller_bar_bar_thickness_flex_single_reverse_icu() =>
             CartesianAxis.x,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'yyyy',
             reverse: true,
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1457,10 +1445,8 @@ FixtureConfig _controller_bar_bar_thickness_flex_single() =>
             CartesianAxis.x,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'YYYY',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'YYYY'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1492,10 +1478,8 @@ FixtureConfig _controller_bar_bar_thickness_flex_single_icu() =>
             CartesianAxis.x,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'yyyy',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1526,10 +1510,8 @@ FixtureConfig _controller_bar_bar_thickness_flex() => FixtureConfig.typed(
         CartesianAxis.x,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'YYYY',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1556,10 +1538,8 @@ FixtureConfig _controller_bar_bar_thickness_flex_icu() => FixtureConfig.typed(
         CartesianAxis.x,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'yyyy',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1586,10 +1566,8 @@ FixtureConfig _controller_bar_bar_thickness_max() => FixtureConfig.typed(
         CartesianAxis.x,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'YYYY',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1616,10 +1594,8 @@ FixtureConfig _controller_bar_bar_thickness_max_icu() => FixtureConfig.typed(
         CartesianAxis.x,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'yyyy',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1650,11 +1626,8 @@ _controller_bar_bar_thickness_min_interval_multi() => FixtureConfig.typed(
       TimeAxis(
         CartesianAxis.x,
         display: ScaleDisplay.off,
-        extra: <String, Object?>{
-          'min': '2000',
-          'max': '2100',
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
+        parser: 'YYYY',
+        extra: <String, Object?>{'min': '2000', 'max': '2100'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1685,11 +1658,8 @@ _controller_bar_bar_thickness_min_interval_multi_icu() => FixtureConfig.typed(
       TimeAxis(
         CartesianAxis.x,
         display: ScaleDisplay.off,
-        extra: <String, Object?>{
-          'min': '2000',
-          'max': '2100',
-          'time': <String, Object?>{'parser': 'yyyy'},
-        },
+        parser: 'yyyy',
+        extra: <String, Object?>{'min': '2000', 'max': '2100'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1716,10 +1686,8 @@ FixtureConfig _controller_bar_bar_thickness_min_interval() =>
             CartesianAxis.x,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'YYYY',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'YYYY'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1750,10 +1718,8 @@ FixtureConfig _controller_bar_bar_thickness_min_interval_icu() =>
             CartesianAxis.x,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'yyyy',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1789,10 +1755,8 @@ FixtureConfig _controller_bar_bar_thickness_multiple() => FixtureConfig.typed(
         CartesianAxis.x,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'YYYY',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1830,10 +1794,8 @@ FixtureConfig _controller_bar_bar_thickness_multiple_icu() =>
             CartesianAxis.x,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'yyyy',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1877,10 +1839,8 @@ FixtureConfig _controller_bar_bar_thickness_no_overlap() => FixtureConfig.typed(
         CartesianAxis.x,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'YYYY-MM',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY-MM'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1918,10 +1878,8 @@ FixtureConfig _controller_bar_bar_thickness_no_overlap_icu() =>
             CartesianAxis.x,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'yyyy-MM',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'yyyy-MM'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -1965,10 +1923,8 @@ FixtureConfig _controller_bar_bar_thickness_offset() => FixtureConfig.typed(
         CartesianAxis.x,
         offset: true,
         display: ScaleDisplay.off,
+        parser: 'YYYY',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -2005,10 +1961,8 @@ FixtureConfig _controller_bar_bar_thickness_offset_icu() => FixtureConfig.typed(
         CartesianAxis.x,
         offset: true,
         display: ScaleDisplay.off,
+        parser: 'yyyy',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -2215,11 +2169,9 @@ FixtureConfig _controller_bar_bar_thickness_reverse() => FixtureConfig.typed(
         CartesianAxis.x,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'YYYY',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -2257,11 +2209,9 @@ FixtureConfig _controller_bar_bar_thickness_reverse_icu() =>
             CartesianAxis.x,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'yyyy',
             reverse: true,
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -2299,10 +2249,8 @@ FixtureConfig _controller_bar_bar_thickness_single_xy() => FixtureConfig.typed(
         CartesianAxis.x,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'YYYY',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -2329,10 +2277,8 @@ FixtureConfig _controller_bar_bar_thickness_single_xy_icu() =>
             CartesianAxis.x,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'yyyy',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -2362,11 +2308,9 @@ FixtureConfig _controller_bar_bar_thickness_single() => FixtureConfig.typed(
         CartesianAxis.x,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'YYYY',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-          'min': '2013',
-        },
+        extra: <String, Object?>{'min': '2013'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -2392,11 +2336,9 @@ FixtureConfig _controller_bar_bar_thickness_single_icu() => FixtureConfig.typed(
         CartesianAxis.x,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'yyyy',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy'},
-          'min': '2013',
-        },
+        extra: <String, Object?>{'min': '2013'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -2429,10 +2371,8 @@ FixtureConfig _controller_bar_bar_thickness_stacked() => FixtureConfig.typed(
         stacked: StackMode.on,
         display: ScaleDisplay.off,
         offset: false,
+        parser: 'YYYY',
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(
         CartesianAxis.y,
@@ -2476,10 +2416,8 @@ FixtureConfig _controller_bar_bar_thickness_stacked_icu() =>
             stacked: StackMode.on,
             display: ScaleDisplay.off,
             offset: false,
+            parser: 'yyyy',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
           ),
           LinearAxis(
             CartesianAxis.y,
@@ -3494,10 +3432,9 @@ FixtureConfig _controller_bar_not_grouped_on_time() => FixtureConfig.typed(
         offset: false,
         position: ChartPosition.bottom,
         display: ScaleDisplay.on,
+        isoWeekday: 1,
+        unit: TimeUnit.day,
         grid: AxisGrid(offset: false),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'isoWeekday': true, 'unit': TimeUnit.day},
-        },
       ),
       LinearAxis(CartesianAxis.y, beginAtZero: true, display: ScaleDisplay.off),
     ],
@@ -8174,10 +8111,9 @@ FixtureConfig _scale_time_source_auto_linear() => FixtureConfig.typed(
     scales: [
       TimeAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.auto),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8194,10 +8130,9 @@ FixtureConfig _scale_time_source_auto_linear_icu() => FixtureConfig.typed(
     scales: [
       TimeAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.auto),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8214,10 +8149,9 @@ FixtureConfig _scale_time_source_data_linear() => FixtureConfig.typed(
     scales: [
       TimeAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.data),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8234,10 +8168,9 @@ FixtureConfig _scale_time_source_data_linear_icu() => FixtureConfig.typed(
     scales: [
       TimeAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.data),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8259,12 +8192,9 @@ FixtureConfig _scale_time_source_labels_linear_offset_min_max() =>
           TimeAxis(
             CartesianAxis.x,
             offset: true,
+            parser: 'YYYY',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'min': '2012',
-              'max': '2051',
-              'time': <String, Object?>{'parser': 'YYYY'},
-            },
+            extra: <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8286,12 +8216,9 @@ FixtureConfig _scale_time_source_labels_linear_offset_min_max_icu() =>
           TimeAxis(
             CartesianAxis.x,
             offset: true,
+            parser: 'yyyy',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'min': '2012',
-              'max': '2051',
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
+            extra: <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8308,10 +8235,9 @@ FixtureConfig _scale_time_source_labels_linear() => FixtureConfig.typed(
     scales: [
       TimeAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8328,10 +8254,9 @@ FixtureConfig _scale_time_source_labels_linear_icu() => FixtureConfig.typed(
     scales: [
       TimeAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8401,13 +8326,10 @@ FixtureConfig _scale_time_ticks_reverse_linear_min_max() => FixtureConfig.typed(
     scales: [
       TimeAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'min': '2012',
-          'max': '2050',
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
+        extra: <String, Object?>{'min': '2012', 'max': '2050'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8428,13 +8350,10 @@ FixtureConfig _scale_time_ticks_reverse_linear_min_max_icu() =>
         scales: [
           TimeAxis(
             CartesianAxis.x,
+            parser: 'yyyy',
             reverse: true,
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'min': '2012',
-              'max': '2050',
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
+            extra: <String, Object?>{'min': '2012', 'max': '2050'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8451,11 +8370,9 @@ FixtureConfig _scale_time_ticks_reverse_linear() => FixtureConfig.typed(
     scales: [
       TimeAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8472,11 +8389,9 @@ FixtureConfig _scale_time_ticks_reverse_linear_icu() => FixtureConfig.typed(
     scales: [
       TimeAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8495,10 +8410,9 @@ FixtureConfig _scale_time_ticks_reverse_offset() => FixtureConfig.typed(
         CartesianAxis.x,
         reverse: true,
         offset: true,
+        parser: 'YYYY',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8517,10 +8431,9 @@ FixtureConfig _scale_time_ticks_reverse_offset_icu() => FixtureConfig.typed(
         CartesianAxis.x,
         reverse: true,
         offset: true,
+        parser: 'yyyy',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8538,10 +8451,9 @@ FixtureConfig _scale_time_ticks_reverse() => FixtureConfig.typed(
       TimeAxis(
         CartesianAxis.x,
         reverse: true,
+        parser: 'YYYY',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8559,10 +8471,9 @@ FixtureConfig _scale_time_ticks_reverse_icu() => FixtureConfig.typed(
       TimeAxis(
         CartesianAxis.x,
         reverse: true,
+        parser: 'yyyy',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8653,10 +8564,8 @@ FixtureConfig _scale_timeseries_normalize() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
         ticks: AxisTicks(source: TickSource.data),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8682,10 +8591,8 @@ FixtureConfig _scale_timeseries_normalize_icu() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
         ticks: AxisTicks(source: TickSource.data),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8702,10 +8609,9 @@ FixtureConfig _scale_timeseries_source_auto() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.auto),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8722,10 +8628,9 @@ FixtureConfig _scale_timeseries_source_auto_icu() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.auto),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8747,12 +8652,9 @@ FixtureConfig _scale_timeseries_source_data_offset_min_max() =>
           TimeSeriesAxis(
             CartesianAxis.x,
             offset: true,
+            parser: 'YYYY',
             ticks: AxisTicks(source: TickSource.data),
-            extra: <String, Object?>{
-              'min': '2012',
-              'max': '2051',
-              'time': <String, Object?>{'parser': 'YYYY'},
-            },
+            extra: <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8774,12 +8676,9 @@ FixtureConfig _scale_timeseries_source_data_offset_min_max_icu() =>
           TimeSeriesAxis(
             CartesianAxis.x,
             offset: true,
+            parser: 'yyyy',
             ticks: AxisTicks(source: TickSource.data),
-            extra: <String, Object?>{
-              'min': '2012',
-              'max': '2051',
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
+            extra: <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8796,10 +8695,9 @@ FixtureConfig _scale_timeseries_source_data() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.data),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8816,10 +8714,9 @@ FixtureConfig _scale_timeseries_source_data_icu() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.data),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8841,12 +8738,9 @@ FixtureConfig _scale_timeseries_source_labels_offset_min_max() =>
           TimeSeriesAxis(
             CartesianAxis.x,
             offset: true,
+            parser: 'YYYY',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'min': '2012',
-              'max': '2051',
-              'time': <String, Object?>{'parser': 'YYYY'},
-            },
+            extra: <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8868,12 +8762,9 @@ FixtureConfig _scale_timeseries_source_labels_offset_min_max_icu() =>
           TimeSeriesAxis(
             CartesianAxis.x,
             offset: true,
+            parser: 'yyyy',
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'min': '2012',
-              'max': '2051',
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
+            extra: <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8890,10 +8781,9 @@ FixtureConfig _scale_timeseries_source_labels() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8910,10 +8800,9 @@ FixtureConfig _scale_timeseries_source_labels_icu() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
+        unit: TimeUnit.year,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy', 'unit': TimeUnit.year},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8930,12 +8819,10 @@ FixtureConfig _scale_timeseries_ticks_reverse_max() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'max': '2050',
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
+        extra: <String, Object?>{'max': '2050'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8952,12 +8839,10 @@ FixtureConfig _scale_timeseries_ticks_reverse_max_icu() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'max': '2050',
-          'time': <String, Object?>{'parser': 'yyyy'},
-        },
+        extra: <String, Object?>{'max': '2050'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8974,13 +8859,10 @@ FixtureConfig _scale_timeseries_ticks_reverse_min_max() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'min': '2012',
-          'max': '2050',
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
+        extra: <String, Object?>{'min': '2012', 'max': '2050'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -9001,13 +8883,10 @@ FixtureConfig _scale_timeseries_ticks_reverse_min_max_icu() =>
         scales: [
           TimeSeriesAxis(
             CartesianAxis.x,
+            parser: 'yyyy',
             reverse: true,
             ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{
-              'min': '2012',
-              'max': '2050',
-              'time': <String, Object?>{'parser': 'yyyy'},
-            },
+            extra: <String, Object?>{'min': '2012', 'max': '2050'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -9024,12 +8903,10 @@ FixtureConfig _scale_timeseries_ticks_reverse_min() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'min': '2012',
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
+        extra: <String, Object?>{'min': '2012'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -9046,12 +8923,10 @@ FixtureConfig _scale_timeseries_ticks_reverse_min_icu() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'min': '2012',
-          'time': <String, Object?>{'parser': 'yyyy'},
-        },
+        extra: <String, Object?>{'min': '2012'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -9068,11 +8943,9 @@ FixtureConfig _scale_timeseries_ticks_reverse() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'YYYY',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'YYYY'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -9089,11 +8962,9 @@ FixtureConfig _scale_timeseries_ticks_reverse_icu() => FixtureConfig.typed(
     scales: [
       TimeSeriesAxis(
         CartesianAxis.x,
+        parser: 'yyyy',
         reverse: true,
         ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{
-          'time': <String, Object?>{'parser': 'yyyy'},
-        },
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],

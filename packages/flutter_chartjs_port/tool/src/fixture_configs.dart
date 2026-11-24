@@ -1781,6 +1781,19 @@ String? _time(FixtureEmitter e, FixtureValue v, String k, String? o) {
         args.add('unit: $unit');
       case 'tooltipFormat' when value is FixtureString:
         args.add('tooltipFormat: ${literalOf(value)}');
+      case 'parser' when value is FixtureString:
+        args.add('parser: ${literalOf(value)}');
+      case 'parser' when value is FixtureCode && value.isFunction:
+        args.add('parserFunction: ${value.source}');
+      case 'round' || 'minUnit':
+        final unit = _enum('TimeUnit')(e, value, entry.key, 'time');
+        if (unit == null) return null;
+        args.add('${entry.key}: $unit');
+      case 'isoWeekday' when value is FixtureBool && value.value:
+        args.add('isoWeekday: 1');
+      case 'isoWeekday'
+          when value is FixtureNumber && value.value == value.value.toInt():
+        args.add('isoWeekday: ${value.value.toInt()}');
       default:
         return null;
     }

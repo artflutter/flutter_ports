@@ -132,9 +132,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
         maxTicksLimit: 7,
       ),
       border: const AxisBorder(display: false),
-      extra: const {
-        'time': {'minUnit': TimeUnit.day},
-      },
+      minUnit: TimeUnit.day,
     ),
     // zoom.autoScaleYaxis: Chart.js fits the y axis to the points in the
     // range of the x axis.

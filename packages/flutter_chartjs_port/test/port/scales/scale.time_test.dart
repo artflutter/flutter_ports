@@ -742,9 +742,8 @@ void main() {
                 .x,
                 unit: TimeUnit.week,
                 ticks: AxisTicks(source: TickSource.data),
-                extra: {
-                  'time': {'round': TimeUnit.week, 'isoWeekday': 1},
-                },
+                round: TimeUnit.week,
+                isoWeekday: 1,
               ),
             ],
           ),
@@ -771,9 +770,7 @@ void main() {
                 TimeAxis(
                   .x,
                   ticks: AxisTicks(source: TickSource.labels),
-                  extra: {
-                    'time': {'parser': 'yyyy'},
-                  },
+                  parser: 'yyyy',
                 ),
               ],
             ),
@@ -844,9 +841,7 @@ void main() {
                 TimeAxis(
                   .x,
                   ticks: AxisTicks(source: TickSource.data),
-                  extra: {
-                    'time': {'parser': 'yyyy'},
-                  },
+                  parser: 'yyyy',
                 ),
               ],
             ),
@@ -950,9 +945,7 @@ void main() {
                   TimeSeriesAxis(
                     .x,
                     ticks: AxisTicks(source: TickSource.labels),
-                    extra: {
-                      'time': {'parser': 'yyyy'},
-                    },
+                    parser: 'yyyy',
                   ),
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
@@ -1076,9 +1069,7 @@ void main() {
                   TimeAxis(
                     .x,
                     ticks: AxisTicks(source: TickSource.labels),
-                    extra: {
-                      'time': {'parser': 'yyyy'},
-                    },
+                    parser: 'yyyy',
                   ),
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
@@ -1177,9 +1168,7 @@ void main() {
                     .x,
                     bounds: ScaleBounds.data,
                     unit: TimeUnit.day,
-                    extra: {
-                      'time': {'parser': 'MM/dd HH:mm'},
-                    },
+                    parser: 'MM/dd HH:mm',
                   ),
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
@@ -1222,9 +1211,7 @@ void main() {
                     .x,
                     bounds: ScaleBounds.ticks,
                     unit: TimeUnit.day,
-                    extra: {
-                      'time': {'parser': 'MM/dd HH:mm'},
-                    },
+                    parser: 'MM/dd HH:mm',
                   ),
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
@@ -1281,9 +1268,7 @@ void main() {
                         bounds: bounds,
                         unit: TimeUnit.day,
                         ticks: AxisTicks(source: source),
-                        extra: const {
-                          'time': {'parser': 'MM/dd HH:mm'},
-                        },
+                        parser: 'MM/dd HH:mm',
                       ),
                       const LinearAxis(.y, display: ScaleDisplay.off),
                     ],
@@ -1373,18 +1358,14 @@ void main() {
                         .x,
                         unit: TimeUnit.year,
                         ticks: AxisTicks(source: source),
-                        extra: const {
-                          'time': {'parser': 'yyyy'},
-                        },
+                        parser: 'yyyy',
                       )
                     else
                       TimeSeriesAxis(
                         .x,
                         unit: TimeUnit.year,
                         ticks: AxisTicks(source: source),
-                        extra: const {
-                          'time': {'parser': 'yyyy'},
-                        },
+                        parser: 'yyyy',
                       ),
                   ],
                 ),
@@ -1475,19 +1456,15 @@ void main() {
                       TimeAxis(
                         .x,
                         ticks: AxisTicks(source: source),
-                        extra: const {
-                          'id': 'x',
-                          'time': {'parser': 'yyyy'},
-                        },
+                        parser: 'yyyy',
+                        extra: const {'id': 'x'},
                       )
                     else
                       TimeSeriesAxis(
                         .x,
                         ticks: AxisTicks(source: source),
-                        extra: const {
-                          'id': 'x',
-                          'time': {'parser': 'yyyy'},
-                        },
+                        parser: 'yyyy',
+                        extra: const {'id': 'x'},
                       ),
                   ],
                 ),

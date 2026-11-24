@@ -880,10 +880,23 @@ base mixin _TimeOptions on ChartAxis {
   String? get tooltipFormat;
   TimeDisplayFormats? get displayFormats;
   bool? get offsetAfterAutoskip;
+  String? get parser;
+  TimeParser? get parserFunction;
+  TimeUnit? get round;
+  TimeUnit? get minUnit;
+  int? get isoWeekday;
 
   void _lowerTime(ScaleOptionsScope scope) {
+    assert(
+      parser == null || parserFunction == null,
+      'Give parser or parserFunction, not both.',
+    );
     final time = TimeScaleTimeOptionsScope();
+    put(time, OptionKey.parser, parser ?? parserFunction);
+    put(time, OptionKey.round, round);
+    put(time, OptionKey.isoWeekday, isoWeekday);
     put(time, OptionKey.unit, unit);
+    put(time, OptionKey.minUnit, minUnit);
     put(time, OptionKey.tooltipFormat, tooltipFormat);
     if (_lowerDisplayFormats(displayFormats) case final formats?) {
       time.displayFormats = formats;
@@ -901,6 +914,11 @@ base mixin _TimeOptions on ChartAxis {
     ('tooltipFormat', tooltipFormat),
     ('displayFormats', displayFormats),
     ('offsetAfterAutoskip', offsetAfterAutoskip),
+    ('parser', parser),
+    ('parserFunction', parserFunction),
+    ('round', round),
+    ('minUnit', minUnit),
+    ('isoWeekday', isoWeekday),
   ];
 }
 
@@ -953,6 +971,27 @@ final class const TimeAxis(
   /// default is `false`.
   /// {@endtemplate}
   @override final bool? offsetAfterAutoskip,
+
+  /// The date format of the data texts: `time.parser`, an ICU pattern of
+  /// the default date adapter, for example `'yyyy-MM-dd'`. Give this or
+  /// [parserFunction].
+  @override final String? parser,
+
+  /// A function that converts each data value to a time: the function form
+  /// of `time.parser`. Give this or [parser].
+  @override final TimeParser? parserFunction,
+
+  /// The unit that each time rounds down to: `time.round`. Null keeps the
+  /// times.
+  @override final TimeUnit? round,
+
+  /// The smallest unit of the ticks: `time.minUnit`. The default is
+  /// [TimeUnit.millisecond].
+  @override final TimeUnit? minUnit,
+
+  /// The first day of a week of [round] `TimeUnit.week`: `time.isoWeekday`,
+  /// 1 for Monday to 7 for Sunday. The upstream `true` is 1.
+  @override final int? isoWeekday,
 
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
@@ -1013,6 +1052,11 @@ final class const TimeAxis(
     String? tooltipFormat,
     TimeDisplayFormats? displayFormats,
     bool? offsetAfterAutoskip,
+    String? parser,
+    TimeParser? parserFunction,
+    TimeUnit? round,
+    TimeUnit? minUnit,
+    int? isoWeekday,
     ScaleBounds? bounds,
     bool? offset,
     String? stack,
@@ -1052,6 +1096,11 @@ final class const TimeAxis(
     tooltipFormat: tooltipFormat ?? this.tooltipFormat,
     displayFormats: displayFormats ?? this.displayFormats,
     offsetAfterAutoskip: offsetAfterAutoskip ?? this.offsetAfterAutoskip,
+    parser: parser ?? this.parser,
+    parserFunction: parserFunction ?? this.parserFunction,
+    round: round ?? this.round,
+    minUnit: minUnit ?? this.minUnit,
+    isoWeekday: isoWeekday ?? this.isoWeekday,
     bounds: bounds ?? this.bounds,
     offset: offset ?? this.offset,
     stack: stack ?? this.stack,
@@ -1140,6 +1189,27 @@ final class const TimeSeriesAxis(
   /// {@macro flutter_chartjs_port.typed.offsetAfterAutoskip}
   @override final bool? offsetAfterAutoskip,
 
+  /// The date format of the data texts: `time.parser`, an ICU pattern of
+  /// the default date adapter, for example `'yyyy-MM-dd'`. Give this or
+  /// [parserFunction].
+  @override final String? parser,
+
+  /// A function that converts each data value to a time: the function form
+  /// of `time.parser`. Give this or [parser].
+  @override final TimeParser? parserFunction,
+
+  /// The unit that each time rounds down to: `time.round`. Null keeps the
+  /// times.
+  @override final TimeUnit? round,
+
+  /// The smallest unit of the ticks: `time.minUnit`. The default is
+  /// [TimeUnit.millisecond].
+  @override final TimeUnit? minUnit,
+
+  /// The first day of a week of [round] `TimeUnit.week`: `time.isoWeekday`,
+  /// 1 for Monday to 7 for Sunday. The upstream `true` is 1.
+  @override final int? isoWeekday,
+
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
 
@@ -1199,6 +1269,11 @@ final class const TimeSeriesAxis(
     String? tooltipFormat,
     TimeDisplayFormats? displayFormats,
     bool? offsetAfterAutoskip,
+    String? parser,
+    TimeParser? parserFunction,
+    TimeUnit? round,
+    TimeUnit? minUnit,
+    int? isoWeekday,
     ScaleBounds? bounds,
     bool? offset,
     String? stack,
@@ -1238,6 +1313,11 @@ final class const TimeSeriesAxis(
     tooltipFormat: tooltipFormat ?? this.tooltipFormat,
     displayFormats: displayFormats ?? this.displayFormats,
     offsetAfterAutoskip: offsetAfterAutoskip ?? this.offsetAfterAutoskip,
+    parser: parser ?? this.parser,
+    parserFunction: parserFunction ?? this.parserFunction,
+    round: round ?? this.round,
+    minUnit: minUnit ?? this.minUnit,
+    isoWeekday: isoWeekday ?? this.isoWeekday,
     bounds: bounds ?? this.bounds,
     offset: offset ?? this.offset,
     stack: stack ?? this.stack,

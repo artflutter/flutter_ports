@@ -3437,6 +3437,13 @@ function axisNode(cls, axis, conf, state, id) {
           args.push(['unit', node(`TimeUnit.${v}`)]);
         } else if (t === 'tooltipFormat' && typeof v === 'string') {
           args.push(['tooltipFormat', node(dart(v, state))]);
+        } else if (t === 'parser' && typeof v === 'string') {
+          args.push(['parser', node(dart(v, state))]);
+        } else if ((t === 'round' || t === 'minUnit') && TIME_UNIT_NAMES.has(v)) {
+          state.timeUnits = true;
+          args.push([t, node(`TimeUnit.${v}`)]);
+        } else if (t === 'isoWeekday' && (v === true || Number.isInteger(v))) {
+          args.push(['isoWeekday', node(String(v === true ? 1 : v))]);
         } else if (t === 'displayFormats' && v && v.constructor === Object && Object.values(v).every((x) => typeof x === 'string')) {
           args.push(['displayFormats', call('TimeDisplayFormats', Object.keys(v).map((u) => [u, node(dart(v[u], state))]))]);
         } else {
