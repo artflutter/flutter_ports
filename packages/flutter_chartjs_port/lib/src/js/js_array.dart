@@ -2,15 +2,12 @@
 
 /// `Array.prototype.sort` and the key order of `Object.keys` for ported code
 /// (Chart.js ADR 0146, "Sort"), `Object.getOwnPropertyNames` (Chart.js
-/// ADR 0019, section 1) and a string as an array-like value
-/// ([JsStringList]).
+/// ADR 0019, section 1).
 ///
 /// A JavaScript array is a `List<Object?>`. A plain object is a
 /// `Map<String, Object?>` or a typed object with a face (Chart.js ADR 0054
 /// §5).
 library;
-
-import 'dart:collection' show ListBase;
 
 import 'package:collection/collection.dart' show mergeSort;
 import 'package:flutter_chartjs_port/chartjs_core.dart';
@@ -172,42 +169,4 @@ int? jsArrayIndex(String key) {
     index = index * 10 + digit;
   }
   return index <= _maxArrayIndex ? index : null;
-}
-
-/// A JavaScript string as an array-like value: the reads `string[i]` and
-/// `string.length`.
-///
-/// `_dataCheck` of the dataset controller keeps a string `data`: a string
-/// is not extensible, so it gets no array listener
-/// (core.datasetController.js:386). `parse` then reads `data[i]` and
-/// `data.length`, and a parsing `false` makes the string the parsed items.
-/// This List gives the same reads: the item at index `i` is the UTF-16 code
-/// unit `i` of [string] as a String of length 1, and [length] is the count
-/// of code units.
-///
-/// A write throws a [TypeError], as a write into a string in strict mode
-/// code does: an index write, a change of the length and each List method
-/// that changes the List.
-///
-/// It stays a `List` for the other checks: `isArray` is true and `typeof` is
-/// `'object'`, where JavaScript gives false and `'string'`. No ported reader
-/// of `_data` or of the parsed items makes these checks on the List itself.
-final class JsStringList(
-  /// The JavaScript string.
-  final String string,
-) extends ListBase<Object?> {
-  /// The array-like view of [string].
-  this;
-
-  @override
-  int get length => string.length;
-
-  @override
-  set length(int newLength) => throw TypeError();
-
-  @override
-  Object? operator [](int index) => string[index];
-
-  @override
-  void operator []=(int index, Object? value) => throw TypeError();
 }

@@ -409,8 +409,8 @@ repository.
       their List directly (Chart.js ADR 0096). `stacksOf` reads `item._stacks` of a parsed item, also of a List item,
       through an `Expando` (Chart.js ADR 0036).
       `_insertElements` keeps the old parsed item at each new index below the old length, as the
-      upstream `move` does. `_dataCheck` keeps a string `data` as a `JsStringList`, with no array
-      listener (`core.datasetController.js:386`).
+      upstream `move` does. A string `data` throws a `TypeError` in `_dataCheck` (Chart.js ADR
+      0202, row `adapt-no-string-data`).
       It is not a pure layer: it imports `core.animations`.
     - `core.typedRegistry.dart` (`TypedRegistry`) is a pure layer. `core.registry.dart`
       (`Registry` and the singleton `registry`) and `core.plugins.dart` (`PluginService` and the

@@ -1304,9 +1304,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   runtime function: they are `dart:math` `max` and `min` with the type argument `double`, explicit
   or inferred (`math.max<double>(x, 0)`; a call in arithmetic infers `num`), never `num` (Chart.js
   ADR 0146 §4). `lib/js_semantics.dart` exports each
-  name of `lib/src/js/` for add-on ports (Chart.js ADR 0132). `JsStringList` of `js_array.dart` is a string
-  as an array-like value: the reads `s[i]` and `s.length`, and a `TypeError` for each write.
-  `_dataCheck` keeps a string `data` in it.
+  name of `lib/src/js/` for add-on ports (Chart.js ADR 0132). A string `data` throws a `TypeError` in
+  `_dataCheck` (Chart.js ADR 0202).
   `jsToString` of a `DateTime` gives the `Date.prototype.toString` text in the platform zone, with
   the V8 zone name on the web and in UTC on the VM (Chart.js ADR 0036, differences.md row
   `platform-date-zone-name`). The functions of `lib/src/canvas/canvas_values.dart` (`canvasStyle`,

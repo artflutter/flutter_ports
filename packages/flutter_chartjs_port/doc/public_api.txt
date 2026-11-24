@@ -265,7 +265,6 @@ JsConstruct
 JsFreezable
 JsObjectFace
 JsProxyObject
-JsStringList
 LabelIndexScale
 LabelItem
 LayoutBoxOptions
@@ -1320,7 +1319,6 @@ JsConstruct
 JsFreezable
 JsObjectFace
 JsProxyObject
-JsStringList
 KurkleColor
 LabelIndexScale
 LabelItem
@@ -2234,7 +2232,6 @@ JsConstruct
 JsFreezable
 JsObjectFace
 JsProxyObject
-JsStringList
 Undefined
 jsAdd
 jsArrayIndex

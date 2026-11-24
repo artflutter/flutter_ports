@@ -38,7 +38,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0033](0033-radial-scale-centers.md) Radial scale centers before the first layout: accepted, supersedes 0025.
 - [0034](0034-no-display-only-js-exactness.md) No display-only JS exactness: accepted, supersedes 0009, superseded in part by 0178.
 - [0035](0035-third-party-sources.md) Third-party sources: accepted, supersedes 0011, superseded in part by 0122, 0146, 0178.
-- [0036](0036-parsed-data.md) Parsed data in the controllers: accepted, supersedes 0027, superseded in part by 0054, 0109.
+- [0036](0036-parsed-data.md) Parsed data in the controllers: accepted, supersedes 0027, superseded in part by 0054, 0109, 0202.
 - [0037](0037-legend-and-tooltip-input-path.md) Legend and tooltip input path: accepted, supersedes 0014, superseded in part by 0108, 0200.
 - [0038](0038-plugin-modules-class-values-and-interfaces.md) Plugin modules, class values and interfaces: accepted, superseded in part by 0054, 0145.
 - [0039](0039-tooltip-model-and-animation.md) Tooltip model and animation: accepted, superseded in part by 0145.
@@ -195,4 +195,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0199](0199-typed-fixture-configs.md) Typed fixture configs: accepted, supersedes 0029.
 - [0200](0200-native-canvas-style-members.md) Native canvas style members and typed harness options: accepted, supersedes 0022, 0037, 0055, 0108, 0124.
 - [0201](0201-remove-extra.md) No extra Map in the typed API: accepted, supersedes 0052.
+- [0202](0202-no-string-data.md) No string data: accepted, supersedes 0036.
 <!-- adr-index:end -->

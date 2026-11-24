@@ -272,15 +272,9 @@ void main() {
   // generated value. The generated cases `parsed: ...` give the upstream
   // values of the same configs.
   group('parsed data', () {
-    // A string `data` (Chart.js ADR 0036 §5 item 4): `_dataCheck` keeps the
-    // string, and `parse` reads its characters
-    // (core.datasetController.js:386). A probe of the build at the pin in
-    // x64 Node.js v24.12.0 gives the
-    // same points for the data '123' and [1, 2, 3], the raw value '3' of the
-    // context of index 2 and the label and value of index 1 'b' and '2'.
-    testWidgets("the string data '123' gives the points of [1, 2, 3]", (
-      tester,
-    ) async {
+    // A string `data` throws a TypeError (row `adapt-no-string-data`).
+    // Upstream reads its characters (core.datasetController.js:386).
+    testWidgets("the string data '123' throws a TypeError", (tester) async {
       final savedAudit = foreignAudit;
       foreignAudit = (owner, key, raw) {
         if (owner == 'LineControllerDatasetOptionsScope' && key == 'data') {
@@ -290,37 +284,13 @@ void main() {
         }
       };
       addTearDown(() => foreignAudit = savedAudit);
-      final chart = acquireChartRoot(
-        _lines(<Object?>[
-          <String, Object?>{'data': '123'},
-        ]),
-      );
-      final meta = chart.getDatasetMeta(0);
-      expect(meta.data, hasLength(3));
-      expect([for (final item in meta.parsed) jsGet(item, 'y')], [1, 2, 3]);
-      final controller = meta.controller!;
-      expect(controller.getContext(2).raw, '3');
-      final (:label, :value) = controller.getLabelAndValue(1);
       expect(
-        [label, value],
-        [
-          ['b'],
-          '2',
-        ],
-      );
-      expect(
-        _points(chart),
-        referenceMatcher(
-          _points(
-            acquireChartRoot(
-              _lines(<Object?>[
-                <String, Object?>{
-                  'data': <Object?>[1.0, 2.0, 3.0],
-                },
-              ]),
-            ),
-          ),
+        () => acquireChartRoot(
+          _lines(<Object?>[
+            <String, Object?>{'data': '123'},
+          ]),
         ),
+        throwsA(isA<TypeError>()),
       );
     });
 

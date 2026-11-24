@@ -288,10 +288,9 @@ void main() {
   // generated value. The generated cases `parsed: ...` give the upstream
   // values.
   group('parsed data', () {
-    // A string `data` (Chart.js ADR 0036 §5 item 4). `_dataCheck` keeps the
-    // string (core.datasetController.js:386), and `parse` reads its
-    // characters. The values come from a probe of the build at the pin in
-    // x64 Node.js v24.12.0.
+    // A string `data` throws a TypeError in `_dataCheck` (row
+    // `adapt-no-string-data`). Upstream reads its characters
+    // (core.datasetController.js:386).
     ChartConfigurationScope stringData(AnyObject extra, String data) {
       final savedAudit = foreignAudit;
       foreignAudit = (owner, key, raw) {
@@ -308,20 +307,10 @@ void main() {
       return config;
     }
 
-    testWidgets("the string data 'abc' gives 3 arcs with the parsed values "
-        'NaN', (tester) async {
-      final chart = acquireChartRoot(stringData(const {}, 'abc'));
-      final meta = chart.getDatasetMeta(0);
-      expect(jsGet(_dataset(chart, 0), 'data'), 'abc');
-      expect(meta.data, hasLength(3));
-      expect([for (final item in meta.parsed) item!.r], [isNaN, isNaN, isNaN]);
-      expect((meta.controller! as DoughnutController).total, 0);
+    testWidgets("the string data 'abc' throws a TypeError", (tester) async {
       expect(
-        [
-          for (final arc in meta.data)
-            (arc as ElementPropertyRead)['circumference'],
-        ],
-        [0, 0, 0],
+        () => acquireChartRoot(stringData(const {}, 'abc')),
+        throwsA(isA<TypeError>()),
       );
     });
 

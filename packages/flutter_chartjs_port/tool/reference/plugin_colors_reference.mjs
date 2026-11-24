@@ -33,8 +33,8 @@
 // - `elements colors given`: an `elements.line.borderColor` option. No
 //   change.
 // - `string data`: a doughnut with a string `data` throws the TypeError of
-//   `dataset.data.map` (plugin.colors.ts:43), and a bar with a string
-//   `data` colorizes, because the default colorizer does not read `data`.
+//   `dataset.data.map` (plugin.colors.ts:43). The port has no case of a bar
+//   with a string `data`: `_dataCheck` throws (Chart.js ADR 0202).
 // - `mixed types`: the datasets of the upstream fixture
 //   test/fixtures/plugin.colors/mixed.js (line, bar and pie, no chart
 //   type) and a polar area dataset. The three colorizers share the one
@@ -175,11 +175,6 @@ const cases = [
   colorsCase('string data: doughnut throws', {
     type: 'doughnut',
     data: {labels: labels(3), datasets: [{label: 'd0', data: 'abc'}]},
-    options: colorsOn(),
-  }),
-  colorsCase('string data: bar colorizes', {
-    type: 'bar',
-    data: {labels: labels(3), datasets: [{label: 'd0', data: '123'}]},
     options: colorsOn(),
   }),
   colorsCase('mixed types: one counter over the three colorizers', {

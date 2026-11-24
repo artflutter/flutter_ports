@@ -279,17 +279,14 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   ///
   /// Override data parsing, since we are not using scales
   ///
-  /// `data` is a List or a String after `_dataCheck` of the port: a falsy
+  /// `data` is a List after `_dataCheck` of the port: a falsy
   /// `data` is `[]` (core.datasetController.js:367), and object data throws
   /// at `meta.iScale!` of `_convertObjectDataToArray` in
   /// core.datasetController.dart, as upstream throws at
-  /// core.datasetController.js:104. `_dataCheck` keeps a string `data`
-  /// (core.datasetController.js:386), and this function reads its
-  /// characters with [jsGetIndex]. Any other truthy `data` throws the
-  /// [TypeError] of the cast in `_dataCheck`. Thus the cast here cannot fail
-  /// in the port (Chart.js ADR 0036, section 5 item 4). With parsing
-  /// `false`, `meta._parsed = data` gives a string the [JsStringList] of its
-  /// characters: the parsed items are a List in the port.
+  /// core.datasetController.js:104. Any other truthy `data` that is not a
+  /// List throws the [TypeError] of the cast in `_dataCheck`, also a string
+  /// (row `adapt-no-string-data`). Thus the cast here cannot fail in the
+  /// port.
   ///
   /// The default `key = 'value'` of the destructuring is the default of the
   /// Dart `null` key of [parsing] (row `adapt-parsing-keys`).

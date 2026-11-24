@@ -1267,43 +1267,6 @@ void main() {
   // a line chart: the parsed values 1, 2 and 3; the same `_parsed` and the
   // same elements after a write of an equal string; 4 elements after
   // '4321'; and a listener on the next array.
-  group('string data', () {
-    test('parses the characters, compares by value and adds no listener', () {
-      final run = _runTo('parsePrimitiveData with labels', 1);
-      run._dataset(0)['data'] = '123';
-      run.step(<Object?>['elements', false]);
-      final meta = run.meta(0);
-      expect(run._dataset(0)['data'], '123');
-      expect(meta.data, hasLength(3));
-      expect([for (final item in meta.parsed) item!.x], [0, 1, 2]);
-      expect([for (final item in meta.parsed) item!.y], [1, 2, 3]);
-
-      // An equal string that is not the same object.
-      final parsed = meta.parsed;
-      final element = meta.data[0];
-      final equal = String.fromCharCodes('123'.codeUnits);
-      run._dataset(0)['data'] = equal;
-      run.step(<Object?>['elements', false]);
-      expect(identical(meta.parsed, parsed), isTrue);
-      expect(identical(meta.data[0], element), isTrue);
-
-      run._dataset(0)['data'] = '4321';
-      run.step(<Object?>['elements', false]);
-      expect(meta.data, hasLength(4));
-      expect([for (final item in meta.parsed) item!.y], [4, 3, 2, 1]);
-      expect(run.chart.dataChanges, isEmpty);
-
-      final data = <Object?>[5.0, 6.0];
-      run._dataset(0)['data'] = data;
-      run.step(<Object?>['elements', false]);
-      data.add(7.0);
-      notifyArrayListeners(data, 'push', const [7.0]);
-      expect(run.chart.dataChanges, [
-        [0.0, '_insertElements', 2.0, 1.0],
-      ]);
-    });
-  });
-
   group('adapt-parsed-data-items', () {
     // With parsing false and a stacked scale, updateStacks writes
     // `item._stacks = {}` into each data item (core.datasetController.js:165).
@@ -1356,7 +1319,6 @@ void main() {
         <Object?>[1.0, 2.0],
         <Object?>['a', 'b'],
         <Object?>[true, false],
-        '12',
       ]) {
         final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
         run._dataset(0)['data'] = items;
@@ -1366,6 +1328,13 @@ void main() {
           reason: '$items',
         );
       }
+      // A string `data` throws in `_dataCheck` (row `adapt-no-string-data`).
+      final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
+      run._dataset(0)['data'] = '12';
+      expect(
+        () => run.step(<Object?>['elements', false]),
+        throwsA(isA<TypeError>()),
+      );
     });
   });
 

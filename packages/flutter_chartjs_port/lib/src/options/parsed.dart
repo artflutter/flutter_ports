@@ -100,7 +100,7 @@ final class const ParsingKeys({
 /// item, which has no value.
 List<ParsedItem?> parsedDataItems(Object? data) {
   if (data is List<ParsedItem?>) return data;
-  final items = data is String ? JsStringList(data) : data! as List<Object?>;
+  final items = data! as List<Object?>;
   return [
     for (final item in items)
       if (item is ParsedItem?) item else _foreignDataItem(item),
