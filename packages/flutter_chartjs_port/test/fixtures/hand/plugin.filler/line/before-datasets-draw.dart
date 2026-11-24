@@ -41,15 +41,17 @@ FixtureConfig fixture() => FixtureConfig.typed(
       const FillerOptions(drawTime: FillerDrawTime.beforeDatasetsDraw),
     ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
-      'borderWidth': 4,
-      // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-      'fill': FillTarget.toOrigin,
-      'radius': 20,
-      'pointBackgroundColor': ChartPaint.solid(Color(0xFFFFFFFF)),
-      // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
-      // class.
-      'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
-    },
+    datasetDefaults: [
+      LineDataset(
+        borderWidth: 4,
+        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+        fill: FillTarget.toOrigin,
+        pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFFFFFFFF))),
+        // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+        // class.
+        cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
+      ),
+    ],
+    extra: <String, Object?>{'radius': 20},
   ),
 );

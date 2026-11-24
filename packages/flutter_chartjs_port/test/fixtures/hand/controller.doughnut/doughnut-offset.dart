@@ -29,6 +29,6 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>['Red', 'Blue', 'Yellow'],
     padding: const EdgeInsets.all(50),
-    extra: <String, Object?>{'offset': 40.0},
+    datasetDefaults: [DoughnutDataset(offset: 40)],
   ),
 );

@@ -668,6 +668,7 @@ final class FixtureEmitter(
     // The datasets.
     final scales = _Scales(this, chartType, indexAxis, optionsMap['scales']);
     final datasetSources = <String>[];
+    final kinds = <String>{};
     for (final (i, item) in datasets.items.indexed) {
       if (item is! FixtureMap) {
         mapReason = 'the dataset $i is no object';
@@ -691,6 +692,7 @@ final class FixtureEmitter(
       final dataset = _dataset(item, kind, chartType, scales);
       if (dataset == null) return null;
       datasetSources.add(dataset);
+      kinds.add(kind);
     }
     // labels
     final labels = data['labels'];
@@ -721,6 +723,25 @@ final class FixtureEmitter(
     }
     // The options.
     final extra = <String>[];
+    // The fields of the one dataset type of the chart, when no `datasets`
+    // key gives the options by type (ChartConfig.datasetDefaults).
+    // The colors stay at the root: the colors plugin reads them there as the
+    // colors of the chart (plugin.colors.js, containsColorsDefinitions).
+    final defaultFields = kinds.length == 1 && optionsMap['datasets'] == null
+        ? {
+            for (final MapEntry(:key, :value) in _datasetFields(
+              kinds.single,
+            ).entries)
+              if (!const {
+                'backgroundColor',
+                'borderColor',
+                'hoverBackgroundColor',
+                'hoverBorderColor',
+              }.contains(key))
+                key: value,
+          }
+        : null;
+    final defaultArgs = <String>[];
     final pluginOptions = <String>[];
     final disabled = <String>[];
     String? scalesSource;
@@ -818,10 +839,21 @@ final class FixtureEmitter(
       }
       if (typed != null) {
         args.add('$c${_param(key)}: $typed');
+      } else if (defaultFields?[key]?.call(this, value, key, 'options')
+          case final dataset?) {
+        // A dataset option at the root: the options of the one dataset type
+        // of the chart (ChartConfig.datasetDefaults).
+        defaultArgs.add('$c$key: $dataset');
       } else {
         extra.add('$c${dartString(key)}: ${nativeValue(key, value)}');
         extras.add('ChartConfig.extra[$key]');
       }
+    }
+    if (defaultArgs.isNotEmpty) {
+      args.add(
+        'datasetDefaults: [${_datasetClasses[kinds.single]}('
+        '${defaultArgs.map(_comma).join()})]',
+      );
     }
     if (pluginOptions.isNotEmpty) {
       args.add('pluginOptions: [${pluginOptions.map(_comma).join()}]');

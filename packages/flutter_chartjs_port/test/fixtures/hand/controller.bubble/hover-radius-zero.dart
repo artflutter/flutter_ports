@@ -55,9 +55,8 @@ FixtureConfig fixture() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
     padding: const EdgeInsets.all(24),
+    datasetDefaults: [BubbleDataset(radius: 10, hoverRadius: 0)],
     extra: <String, Object?>{
-      'radius': 10,
-      'hoverRadius': 0,
       'backgroundColor': ChartPaint.solid(Color(0xFF0000FF)),
       'hoverBackgroundColor': ChartPaint.solid(Color(0xFFFF0000)),
     },

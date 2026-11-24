@@ -45,7 +45,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
       ),
     ],
     maintainAspectRatio: false,
-    extra: <String, Object?>{'base': 2},
+    datasetDefaults: [BarDataset(base: 2)],
   ),
   options: AcquireOptions(canvas: HarnessCanvas(width: 128, height: 128)),
 );

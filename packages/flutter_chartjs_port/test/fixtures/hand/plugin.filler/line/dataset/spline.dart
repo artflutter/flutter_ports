@@ -80,7 +80,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
       PluginOff<TitlePlugin>(),
       PluginOff<TooltipPlugin>(),
     ],
-    extra: <String, Object?>{'spanGaps': false},
+    datasetDefaults: [LineDataset(spanGaps: false)],
   ),
   options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );

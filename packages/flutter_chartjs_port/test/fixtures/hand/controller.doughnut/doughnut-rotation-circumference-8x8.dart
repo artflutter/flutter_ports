@@ -50,7 +50,7 @@ FixtureConfig fixture() {
       ],
       labels: <Object>['A', 'B', 'C', 'D', 'E'],
       events: <String>[],
-      extra: <String, Object?>{'rotation': -360, 'circumference': 180},
+      datasetDefaults: [DoughnutDataset(rotation: -360, circumference: 180)],
     ),
     options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
     run: (chart) {

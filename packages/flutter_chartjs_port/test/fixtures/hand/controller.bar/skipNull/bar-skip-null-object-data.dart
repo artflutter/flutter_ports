@@ -45,7 +45,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
-    extra: <String, Object?>{'skipNull': true},
+    datasetDefaults: [BarDataset(skipNull: true)],
   ),
   options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );

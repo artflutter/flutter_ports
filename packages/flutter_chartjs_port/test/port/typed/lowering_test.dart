@@ -1470,6 +1470,17 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     ChartConfig(datasets: [BarDataset()], normalized: true),
     {'normalized': true},
   ),
+  'datasetDefaults': (
+    ChartConfig(
+      datasets: [LineDataset()],
+      datasetDefaults: [LineDataset(spanGaps: true, tension: 0.4)],
+    ),
+    {
+      'datasets': {
+        'line': {'tension': 0.4, 'spanGaps': true},
+      },
+    },
+  ),
   'color': (
     ChartConfig(datasets: [BarDataset()], color: ChartPaint.solid(_red)),
     {'color': _redValue},

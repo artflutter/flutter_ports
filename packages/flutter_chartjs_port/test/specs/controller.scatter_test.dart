@@ -139,7 +139,7 @@ void main() {
                   label: 'dataset2',
                 ),
               ],
-              extra: const {'showLine': true},
+              datasetDefaults: const [ScatterDataset(showLine: true)],
             ),
           ).lower(),
         );

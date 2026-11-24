@@ -117,7 +117,7 @@ void main() {
             ChartConfigLowering(
               const ChartConfig(
                 datasets: [LineDataset()],
-                extra: {'fill': FillTarget.toOrigin},
+                datasetDefaults: [LineDataset(fill: FillTarget.toOrigin)],
               ),
             ).lower(),
             warnings,

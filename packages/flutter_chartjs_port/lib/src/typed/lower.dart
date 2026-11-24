@@ -329,6 +329,24 @@ final class ChartConfigLowering(
     put(options, OptionKey.locale, config.locale);
     put(options, OptionKey.normalized, config.normalized);
     put(options, OptionKey.color, config.color);
+    if (config.datasetDefaults case final defaults? when defaults.isNotEmpty) {
+      final byType = DatasetOptionsByTypeScope();
+      for (final dataset in defaults) {
+        // The lowering of the typed API reads the kind (Chart.js ADR 0189).
+        // ignore: invalid_use_of_protected_member
+        final kind = dataset.kind;
+        final name = kind.name;
+        assert(
+          byType.ownCell(name) == null,
+          'ChartConfig.datasetDefaults has two items of the type $name.',
+        );
+        byType.store(
+          name,
+          byType.classifyName(name, lowerDataset(dataset, kind)),
+        );
+      }
+      options.datasets = byType;
+    }
     if (config.padding case final padding?) {
       options.layout = LayoutOptionsScope()..padding = padding;
     }

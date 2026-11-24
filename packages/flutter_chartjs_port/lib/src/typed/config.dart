@@ -116,6 +116,13 @@ final class const ChartConfig({
   /// `options.color`. The default is `#666`.
   final ChartPaint? color,
 
+  /// The options of all datasets of a type: `options.datasets.<type>`
+  /// (`docs/configuration/index.md`, "Dataset Configuration"). Each item
+  /// gives the options of its class for each dataset of that type, for
+  /// example `[LineDataset(spanGaps: true)]`. The `data` and the `label` of
+  /// an item have no effect. A dataset option of a dataset wins.
+  final List<Dataset>? datasetDefaults,
+
   /// The space around the chart: `options.layout.padding`.
   final EdgeInsets? padding,
 
@@ -247,6 +254,7 @@ final class const ChartConfig({
     Locale? locale,
     bool? normalized,
     ChartPaint? color,
+    List<Dataset>? datasetDefaults,
     EdgeInsets? padding,
     ChartInteraction? interaction,
     ChartAnimation? animation,
@@ -273,6 +281,7 @@ final class const ChartConfig({
     locale: locale ?? this.locale,
     normalized: normalized ?? this.normalized,
     color: color ?? this.color,
+    datasetDefaults: datasetDefaults ?? this.datasetDefaults,
     padding: padding ?? this.padding,
     interaction: interaction ?? this.interaction,
     animation: animation ?? this.animation,
@@ -310,6 +319,7 @@ final class const ChartConfig({
     ('locale', locale),
     ('normalized', normalized),
     ('color', color),
+    ('datasetDefaults', byItems(datasetDefaults)),
     ('padding', padding),
     ('interaction', interaction),
     ('animation', animation),

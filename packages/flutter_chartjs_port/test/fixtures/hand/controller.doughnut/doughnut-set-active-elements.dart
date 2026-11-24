@@ -27,13 +27,17 @@ FixtureConfig fixture() => FixtureConfig.typed(
       ),
     ],
     events: <String>[],
+    datasetDefaults: [
+      DoughnutDataset(
+        // for easier saving of the fixture only
+        borderWidth: 0,
+        hoverBorderWidth: 4,
+        // DIVERGES(chartjs): adapt-length-objects, the length class.
+        cutout: const PercentRadius(80),
+      ),
+    ],
     extra: <String, Object?>{
-      // for easier saving of the fixture only
-      'borderWidth': 0,
-      'hoverBorderWidth': 4,
       'hoverBorderColor': ChartPaint.solid(Color(0xFF000000)),
-      // DIVERGES(chartjs): adapt-length-objects, the length class.
-      'cutout': const PercentRadius(80),
     },
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9248',

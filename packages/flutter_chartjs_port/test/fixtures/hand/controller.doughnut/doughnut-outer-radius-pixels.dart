@@ -37,10 +37,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
       ),
     ],
     labels: <Object>['A', 'B', 'C', 'D', 'E'],
-    extra: <String, Object?>{
-      // DIVERGES(chartjs): adapt-length-objects, the length
-      // class.
-      'radius': const PixelRadius(150),
-    },
+    datasetDefaults: [
+      DoughnutDataset(
+        // DIVERGES(chartjs): adapt-length-objects, the length
+        // class.
+        radius: const PixelRadius(150),
+      ),
+    ],
   ),
 );

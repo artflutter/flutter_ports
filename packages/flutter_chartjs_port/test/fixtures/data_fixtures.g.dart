@@ -2451,12 +2451,12 @@ FixtureConfig _controller_bar_bordercolor_border_dpr() => FixtureConfig.typed(
       CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
+    datasetDefaults: [
+      BarDataset(barPercentage: 1, categoryPercentage: 1, borderWidth: 8),
+    ],
     extra: <String, Object?>{
-      'barPercentage': 1,
-      'categoryPercentage': 1,
       'backgroundColor': ChartPaint.solid(Color(0xFF000000)),
       'borderColor': ChartPaint.solid(Color(0xFF000000)),
-      'borderWidth': 8,
     },
   ),
   options: AcquireOptions(canvas: HarnessCanvas(width: 501, height: 256)),
@@ -2770,11 +2770,13 @@ FixtureConfig _controller_bar_borderskipped_middle() => FixtureConfig.typed(
         stacked: StackMode.on,
       ),
     ],
-    extra: <String, Object?>{
-      'borderRadius': 1.7976931348623157e+308,
-      'borderSkipped': BorderSkippedEdge.middle,
-      'borderWidth': 2,
-    },
+    datasetDefaults: [
+      BarDataset(
+        borderRadius: 1.7976931348623157e+308,
+        borderSkipped: BorderSkip.middle,
+        borderWidth: 2,
+      ),
+    ],
   ),
   options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
@@ -3438,10 +3440,9 @@ FixtureConfig _controller_bar_not_grouped_on_time() => FixtureConfig.typed(
       ),
       LinearAxis(CartesianAxis.y, beginAtZero: true, display: ScaleDisplay.off),
     ],
-    extra: <String, Object?>{
-      'barThickness': BarThickness.pixels(10),
-      'grouped': false,
-    },
+    datasetDefaults: [
+      BarDataset(barThickness: BarThickness.pixels(10), grouped: false),
+    ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/5139',
   options: AcquireOptions(canvas: HarnessCanvas(width: 1000, height: 300)),
@@ -3472,7 +3473,7 @@ FixtureConfig _controller_bar_skipnull_combinations() => FixtureConfig.typed(
       CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
-    extra: <String, Object?>{'skipNull': true},
+    datasetDefaults: [BarDataset(skipNull: true)],
   ),
   options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
@@ -3668,9 +3669,9 @@ FixtureConfig _controller_bar_stacking_stacked_and_multiple_axis() =>
           'June',
           'July',
         ],
+        datasetDefaults: [BarDataset(barThickness: BarThickness.flex)],
         extra: <String, Object?>{
           'plugins': false,
-          'barThickness': BarThickness.flex,
           'scales': <String, Object?>{
             'x': <String, Object?>{
               'stacked': StackMode.on,
@@ -4202,7 +4203,7 @@ FixtureConfig _controller_doughnut_doughnut_circumference_over_2pi() =>
         ],
         labels: <Object>['A'],
         responsive: false,
-        extra: <String, Object?>{'circumference': 400},
+        datasetDefaults: [DoughnutDataset(circumference: 400)],
       ),
     );
 
@@ -4233,7 +4234,7 @@ FixtureConfig _controller_doughnut_doughnut_circumference_per_dataset() =>
         ],
         labels: <Object>['A', 'B', 'C', 'D', 'E'],
         responsive: false,
-        extra: <String, Object?>{'circumference': 57.32},
+        datasetDefaults: [DoughnutDataset(circumference: 57.32)],
       ),
     );
 
@@ -4263,7 +4264,7 @@ FixtureConfig _controller_doughnut_doughnut_circumference() =>
         ],
         labels: <Object>['A', 'B', 'C', 'D', 'E'],
         responsive: false,
-        extra: <String, Object?>{'circumference': 57.32},
+        datasetDefaults: [DoughnutDataset(circumference: 57.32)],
       ),
     );
 
@@ -4317,7 +4318,7 @@ FixtureConfig _controller_doughnut_doughnut_rotation_300() =>
           ),
         ],
         labels: <Object>['A', 'B', 'C', 'D', 'E'],
-        extra: <String, Object?>{'rotation': 300},
+        datasetDefaults: [DoughnutDataset(rotation: 300)],
       ),
     );
 
@@ -4367,7 +4368,7 @@ FixtureConfig _controller_doughnut_doughnut_rotation_per_dataset() =>
         ],
         labels: <Object>['A', 'B', 'C', 'D', 'E'],
         responsive: false,
-        extra: <String, Object?>{'circumference': 180},
+        datasetDefaults: [DoughnutDataset(circumference: 180)],
       ),
     );
 
@@ -4389,8 +4390,8 @@ FixtureConfig _controller_doughnut_doughnut_spacing_and_offset() =>
           ),
         ],
         labels: <Object>['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'],
+        datasetDefaults: [DoughnutDataset(spacing: 20)],
         extra: <String, Object?>{
-          'spacing': 20,
           'offset': <Object?>[0, 50, 0, 0, 0],
         },
       ),
@@ -4414,10 +4415,9 @@ FixtureConfig _controller_doughnut_doughnut_spacing_parallel() =>
           ),
         ],
         labels: <Object>['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'],
-        extra: <String, Object?>{
-          'spacing': 20,
-          'spacingMode': ArcSpacingMode.parallel,
-        },
+        datasetDefaults: [
+          DoughnutDataset(spacing: 20, spacingMode: ArcSpacingMode.parallel),
+        ],
       ),
     );
 
@@ -4438,7 +4438,7 @@ FixtureConfig _controller_doughnut_doughnut_spacing() => FixtureConfig.typed(
       ),
     ],
     labels: <Object>['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'],
-    extra: <String, Object?>{'spacing': 20},
+    datasetDefaults: [DoughnutDataset(spacing: 20)],
   ),
 );
 
@@ -4561,7 +4561,7 @@ FixtureConfig _controller_doughnut_pie_circumference() => FixtureConfig.typed(
     ],
     labels: <Object>['A', 'B', 'C', 'D', 'E'],
     responsive: false,
-    extra: <String, Object?>{'circumference': 57.32},
+    datasetDefaults: [PieDataset(circumference: 57.32)],
   ),
 );
 
@@ -4647,7 +4647,7 @@ _controller_doughnut_selfjoin_single_slice_360_border_no_selfjoin() =>
           ),
         ],
         labels: <Object>['A'],
-        extra: <String, Object?>{'spacing': 10},
+        datasetDefaults: [DoughnutDataset(spacing: 10)],
       ),
     );
 
@@ -4666,7 +4666,7 @@ _controller_doughnut_selfjoin_single_slice_360_border_selfjoin() =>
           ),
         ],
         labels: <Object>['A'],
-        extra: <String, Object?>{'spacing': 10},
+        datasetDefaults: [DoughnutDataset(spacing: 10)],
       ),
     );
 
@@ -4704,7 +4704,7 @@ FixtureConfig _controller_doughnut_single_slice_offset() => FixtureConfig.typed(
       ),
     ],
     labels: <Object>['A'],
-    extra: <String, Object?>{'offset': 20},
+    datasetDefaults: [DoughnutDataset(offset: 20)],
   ),
 );
 

@@ -37,7 +37,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
         borderWidth: 0,
       ),
     ],
-    extra: <String, Object?>{'rotation': -90},
+    datasetDefaults: [DoughnutDataset(rotation: -90)],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9832',
   options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),

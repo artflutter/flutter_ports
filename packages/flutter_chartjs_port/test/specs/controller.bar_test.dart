@@ -1797,7 +1797,7 @@ void main() {
               BarDataset(data: .values([1, 2])),
               BarDataset(data: .values([1, 2, 3])),
             ],
-            extra: {'skipNull': true},
+            datasetDefaults: [BarDataset(skipNull: true)],
           ),
         );
       }

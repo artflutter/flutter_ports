@@ -1172,6 +1172,7 @@ void main() {
         'locale',
         'normalized',
         'color',
+        'datasetDefaults',
         'padding',
         'interaction',
         'animation',

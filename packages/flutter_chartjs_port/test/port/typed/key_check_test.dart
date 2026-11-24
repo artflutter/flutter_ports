@@ -354,6 +354,7 @@ List<ChartConfig> _configs() {
       responsive: true,
       maintainAspectRatio: true,
       normalized: false,
+      datasetDefaults: const [BarDataset(categoryPercentage: 0.8)],
       color: const ChartPaint.solid(_red),
       aspectRatio: 2,
       padding: _padding,

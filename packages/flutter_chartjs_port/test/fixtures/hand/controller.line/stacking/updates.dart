@@ -47,7 +47,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
         stacked: StackMode.on,
       ),
     ],
-    extra: <String, Object?>{'borderWidth': 5},
+    datasetDefaults: [LineDataset(borderWidth: 5)],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9424',
   run: (chart) {
