@@ -15,6 +15,8 @@
 // - MATRIX_IGNORE_COVER: 1 measures while a lock screen covers the window.
 //   Start the app with `-NSAppSleepDisabled YES` too, or the system throttles
 //   it.
+// - MATRIX_CPU_LOAD: 0 turns off the background CPU load of the lab
+//   (`BenchmarkConfig.cpuLoad`), default on.
 // - MATRIX_COOL: 1 waits before a cell until the fixed CPU test of the UI
 //   thread is within 10% of its best time, and measures again each cell whose
 //   test was more than 15% above its best time after the capture: a phone that
@@ -49,6 +51,7 @@ const Map<String, String> _defines = {
   'MATRIX_SECONDS': String.fromEnvironment('MATRIX_SECONDS'),
   'MATRIX_IGNORE_COVER': String.fromEnvironment('MATRIX_IGNORE_COVER'),
   'MATRIX_COOL': String.fromEnvironment('MATRIX_COOL'),
+  'MATRIX_CPU_LOAD': String.fromEnvironment('MATRIX_CPU_LOAD'),
 };
 
 String? _option(String name) {
@@ -118,6 +121,8 @@ void _measureFrames() {
   SchedulerBinding.instance.scheduleFrameCallback(onFrame);
 }
 
+bool get _cpuLoad => _option('MATRIX_CPU_LOAD') != '0';
+
 BenchmarkConfig _config(ChartType type, int count, String preset) =>
     preset == 'full'
     ? BenchmarkConfig(
@@ -129,8 +134,9 @@ BenchmarkConfig _config(ChartType type, int count, String preset) =>
         axes: true,
         grid: true,
         alternateColors: true,
+        cpuLoad: _cpuLoad,
       )
-    : BenchmarkConfig(type: type, count: count);
+    : BenchmarkConfig(type: type, count: count, cpuLoad: _cpuLoad);
 
 Future<void> _delay(int ms) => Future<void>.delayed(Duration(milliseconds: ms));
 
@@ -210,6 +216,7 @@ Future<Map<String, Object?>> _attempt(
     'type': type.name,
     'count': count,
     'preset': preset,
+    'cpuLoad': _cpuLoad,
     'saved': saved,
     'message': c.message,
     if (m != null) ...{
