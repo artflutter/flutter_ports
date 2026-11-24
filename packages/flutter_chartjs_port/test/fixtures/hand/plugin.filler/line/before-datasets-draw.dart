@@ -36,6 +36,10 @@ FixtureConfig fixture() => FixtureConfig.typed(
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const FillerOptions(drawTime: FillerDrawTime.beforeDatasetsDraw),
+    ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
     extra: <String, Object?>{
       'borderWidth': 4,
@@ -46,12 +50,6 @@ FixtureConfig fixture() => FixtureConfig.typed(
       // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
       // class.
       'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'filler': const FillerOptions(
-          drawTime: FillerDrawTime.beforeDatasetsDraw,
-        ),
-      },
     },
   ),
 );

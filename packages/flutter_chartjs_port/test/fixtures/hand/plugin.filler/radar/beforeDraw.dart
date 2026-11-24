@@ -46,12 +46,10 @@ FixtureConfig fixture() => FixtureConfig.typed(
         ),
       ),
     ],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const FillerOptions(drawTime: FillerDrawTime.beforeDraw),
+    ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'filler': const FillerOptions(drawTime: FillerDrawTime.beforeDraw),
-      },
-    },
   ),
 );

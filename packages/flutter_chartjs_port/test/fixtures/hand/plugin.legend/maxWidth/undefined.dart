@@ -33,17 +33,15 @@ FixtureConfig fixture() => FixtureConfig.typed(
       CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(position: ChartPosition.left),
+    ],
     disabledPlugins: [
       PluginOff<TitlePlugin>(),
       PluginOff<TooltipPlugin>(),
       PluginOff<FillerPlugin>(),
     ],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(position: ChartPosition.left),
-      },
-    },
   ),
   options: <String, Object?>{
     'spriteText': true,

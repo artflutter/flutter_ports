@@ -46,17 +46,15 @@ FixtureConfig fixture() => FixtureConfig.typed(
         },
       ),
     ],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const TitleOptions(
+        display: true,
+        position: ChartPosition.right,
+        text: ['Chart Title'],
+      ),
+    ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'title': const TitleOptions(
-          display: true,
-          position: ChartPosition.right,
-          text: ['Chart Title'],
-        ),
-      },
-    },
   ),
   options: <String, Object?>{'spriteText': true},
 );

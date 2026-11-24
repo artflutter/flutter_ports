@@ -31,6 +31,16 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>['aaa', 'bb', 'c'],
     padding: const EdgeInsets.only(left: 30, top: 50, right: 30, bottom: 50),
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(
+        position: ChartPosition.top,
+        // DIVERGES(chartjs): adapt-bool-options, the text 'true' of
+        // upstream is the bool true.
+        rtl: true,
+      ),
+    ],
     plugins: [
       // DIVERGES(chartjs): adapt-typed-plugins, a native Plugin.
       Plugin<Object?>(
@@ -50,18 +60,6 @@ FixtureConfig fixture() => FixtureConfig.typed(
         },
       ),
     ],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(
-          position: ChartPosition.top,
-          // DIVERGES(chartjs): adapt-bool-options, the text 'true' of
-          // upstream is the bool true.
-          rtl: true,
-        ),
-      },
-    },
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9278',
   options: <String, Object?>{

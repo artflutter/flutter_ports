@@ -123,15 +123,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(
-          display: true,
-          labels: LegendLabelOptions(usePointStyle: true),
-        ),
-      },
-    },
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(
+        display: true,
+        labels: LegendLabelOptions(usePointStyle: true),
+      ),
+    ],
   ),
   options: <String, Object?>{
     'canvas': <String, Object?>{'height': 512, 'width': 1024},

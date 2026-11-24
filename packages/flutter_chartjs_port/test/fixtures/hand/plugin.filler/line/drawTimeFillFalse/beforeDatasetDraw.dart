@@ -26,14 +26,10 @@ FixtureConfig fixture() => FixtureConfig.typed(
       ),
     ],
     labels: <Object>['0', '1', '2', '3', '4', '5'],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const FillerOptions(drawTime: FillerDrawTime.beforeDatasetDraw),
+    ],
     disabledPlugins: [PluginOff<LegendPlugin>(), PluginOff<TitlePlugin>()],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'filler': const FillerOptions(
-          drawTime: FillerDrawTime.beforeDatasetDraw,
-        ),
-      },
-    },
   ),
 );

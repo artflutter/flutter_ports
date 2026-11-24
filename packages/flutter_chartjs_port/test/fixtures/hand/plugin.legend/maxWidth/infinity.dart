@@ -34,21 +34,19 @@ FixtureConfig fixture() => FixtureConfig.typed(
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(
+        // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+        position: ChartPosition.left,
+        maxWidth: double.infinity,
+      ),
+    ],
     disabledPlugins: [
       PluginOff<TitlePlugin>(),
       PluginOff<TooltipPlugin>(),
       PluginOff<FillerPlugin>(),
     ],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(
-          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-          position: ChartPosition.left,
-          maxWidth: double.infinity,
-        ),
-      },
-    },
   ),
   options: <String, Object?>{
     'spriteText': true,

@@ -26,12 +26,10 @@ FixtureConfig fixture() => FixtureConfig.typed(
         pointLabelsDisplay: ScaleDisplay.off,
       ),
     ],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const ColorsPluginOptions(enabled: true),
+    ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'colors': const ColorsPluginOptions(enabled: true),
-      },
-    },
   ),
 );

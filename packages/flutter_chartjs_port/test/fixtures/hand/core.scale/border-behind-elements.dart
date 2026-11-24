@@ -47,12 +47,10 @@ FixtureConfig fixture() => FixtureConfig.typed(
         ),
       ),
     ],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(display: false),
-      },
-    },
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(display: false),
+    ],
   ),
   options: <String, Object?>{
     'canvas': <String, Object?>{'height': 512, 'width': 512},

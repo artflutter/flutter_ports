@@ -25,12 +25,10 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'],
     padding: const EdgeInsets.fromLTRB(30, 50, 30, 50),
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(position: ChartPosition.left),
-      },
-    },
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(position: ChartPosition.left),
+    ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9278',
   options: <String, Object?>{

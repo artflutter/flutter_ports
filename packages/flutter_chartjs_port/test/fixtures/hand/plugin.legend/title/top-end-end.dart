@@ -26,20 +26,18 @@ FixtureConfig fixture() => FixtureConfig.typed(
       CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(
-          position: ChartPosition.top,
-          align: ChartAlign.end,
-          title: LegendTitleOptions(
-            display: true,
-            position: ChartAlign.end,
-            text: ['title'],
-          ),
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(
+        position: ChartPosition.top,
+        align: ChartAlign.end,
+        title: LegendTitleOptions(
+          display: true,
+          position: ChartAlign.end,
+          text: ['title'],
         ),
-      },
-    },
+      ),
+    ],
   ),
   options: <String, Object?>{
     'spriteText': true,

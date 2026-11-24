@@ -21,12 +21,10 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     scales: [RadialLinearAxis(ticks: AxisTicks(display: false))],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const ColorsPluginOptions(enabled: true),
+    ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'colors': const ColorsPluginOptions(enabled: true),
-      },
-    },
   ),
 );

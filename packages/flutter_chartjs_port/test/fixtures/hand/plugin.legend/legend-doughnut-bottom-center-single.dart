@@ -26,15 +26,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
       ),
     ],
     labels: <Object>[''],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(
-          position: ChartPosition.bottom,
-          align: ChartAlign.center,
-        ),
-      },
-    },
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(
+        position: ChartPosition.bottom,
+        align: ChartAlign.center,
+      ),
+    ],
   ),
   options: <String, Object?>{
     'canvas': <String, Object?>{'height': 256, 'width': 512},

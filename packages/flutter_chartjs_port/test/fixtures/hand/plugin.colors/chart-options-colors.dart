@@ -26,16 +26,16 @@ FixtureConfig fixture() => FixtureConfig.typed(
       CategoryAxis(CartesianAxis.x, ticks: AxisTicks(display: false)),
       LinearAxis(CartesianAxis.y, ticks: AxisTicks(display: false)),
     ],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const ColorsPluginOptions(enabled: true),
+    ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
     extra: <String, Object?>{
       'backgroundColor': <Object?>[
         ChartPaint.solid(Color(0xFFFF0000)),
         ChartPaint.solid(Color(0xFF008000)),
       ],
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'colors': const ColorsPluginOptions(enabled: true),
-      },
     },
   ),
 );

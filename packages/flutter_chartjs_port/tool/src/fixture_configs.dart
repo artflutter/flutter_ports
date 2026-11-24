@@ -758,7 +758,9 @@ final class FixtureEmitter(
               );
             } else if (v is FixtureCode &&
                 _pluginOptionClasses.any(
-                  (name) => v.source.startsWith('$name('),
+                  (name) =>
+                      v.source.startsWith('$name(') ||
+                      v.source.startsWith('const $name('),
                 )) {
               pluginOptions.add('${_commentLines(plugin.comments)}${v.source}');
             } else {

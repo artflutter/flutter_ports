@@ -22,15 +22,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
       PieDataset(data: <num?>[1, 2, 3]),
     ],
     labels: <Object>['aaaa', 'bb', 'c'],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(
-          position: ChartPosition.top,
-          labels: LegendLabelOptions(textAlign: TextAlign.right),
-        ),
-      },
-    },
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(
+        position: ChartPosition.top,
+        labels: LegendLabelOptions(textAlign: TextAlign.right),
+      ),
+    ],
   ),
   options: <String, Object?>{
     'spriteText': true,

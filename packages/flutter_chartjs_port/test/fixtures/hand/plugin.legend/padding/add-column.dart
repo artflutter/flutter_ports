@@ -23,13 +23,11 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'],
     padding: const EdgeInsets.only(left: 30, top: 55, right: 30),
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(position: ChartPosition.left),
-      },
-    },
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(position: ChartPosition.left),
+    ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9278',
   options: <String, Object?>{

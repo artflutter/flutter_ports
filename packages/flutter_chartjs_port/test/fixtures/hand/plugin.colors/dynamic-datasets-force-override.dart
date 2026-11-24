@@ -28,16 +28,11 @@ FixtureConfig fixture() {
         CategoryAxis(CartesianAxis.x, ticks: AxisTicks(display: false)),
         LinearAxis(CartesianAxis.y, ticks: AxisTicks(display: false)),
       ],
+      pluginOptions: [
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        const ColorsPluginOptions(enabled: true, forceOverride: true),
+      ],
       disabledPlugins: [PluginOff<LegendPlugin>()],
-      extra: <String, Object?>{
-        'plugins': <String, Object?>{
-          // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-          'colors': const ColorsPluginOptions(
-            enabled: true,
-            forceOverride: true,
-          ),
-        },
-      },
     ),
     options: <String, Object?>{
       'run': (Chart chart) {

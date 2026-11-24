@@ -41,12 +41,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'Bernard',
     ],
     maintainAspectRatio: false,
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const TitleOptions(display: true, text: ['test']),
+    ],
     extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        'legend': true,
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'title': const TitleOptions(display: true, text: ['test']),
-      },
+      'plugins': <String, Object?>{'legend': true},
     },
   ),
   options: <String, Object?>{

@@ -51,13 +51,15 @@ FixtureConfig fixture() => FixtureConfig.typed(
     // DIVERGES(chartjs): adapt-axis-objects, the axis
     // class.
     indexAxis: const YAxis(),
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const FillerOptions(propagate: false),
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(display: false),
+    ],
     extra: <String, Object?>{
       'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'filler': const FillerOptions(propagate: false),
         'datalabels': <String, Object?>{'display': false},
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(display: false),
       },
     },
   ),

@@ -38,13 +38,11 @@ FixtureConfig fixture() => FixtureConfig.typed(
     scales: [
       RadialLinearAxis(startAngle: 45, pointLabelsDisplay: ScaleDisplay.on),
     ],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const TitleOptions(display: true, text: ['Chart Title']),
+    ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'title': const TitleOptions(display: true, text: ['Chart Title']),
-      },
-    },
   ),
   options: <String, Object?>{'spriteText': true},
 );

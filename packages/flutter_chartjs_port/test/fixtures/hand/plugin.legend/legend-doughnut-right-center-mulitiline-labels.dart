@@ -32,15 +32,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'Example Label',
       'Example Label',
     ],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'legend': const LegendOptions(
-          position: ChartPosition.right,
-          align: ChartAlign.center,
-        ),
-      },
-    },
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const LegendOptions(
+        position: ChartPosition.right,
+        align: ChartAlign.center,
+      ),
+    ],
   ),
   options: <String, Object?>{
     'spriteText': true,

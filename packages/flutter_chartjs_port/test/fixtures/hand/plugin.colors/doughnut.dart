@@ -19,12 +19,10 @@ FixtureConfig fixture() => FixtureConfig.typed(
       DoughnutDataset(data: <num?>[0, 2, 4, null, 6, 8]),
       DoughnutDataset(data: <num?>[5, 1, 6, 2, null, 9]),
     ],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const ColorsPluginOptions(enabled: true),
+    ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
-      'plugins': <String, Object?>{
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'colors': const ColorsPluginOptions(enabled: true),
-      },
-    },
   ),
 );
