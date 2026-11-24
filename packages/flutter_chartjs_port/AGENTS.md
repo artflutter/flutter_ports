@@ -25,8 +25,8 @@ repository.
     `JsClass`, `JsObjectFace`, `Undefined`, `undefined` and `lib/src/upstream.dart`; the native
     plugin API of Chart.js ADRs 0108 and 0144: `Plugin`, `PluginHook`, `PluginHookFunction`,
     `CancelableHookFunction` and the seven hook argument classes; and the input surface of Chart.js ADR 0108: `NativeEvent`, `NativeTouch`,
-    `NativeEventListener`, `NativeEventTarget`, `DOMRect` and the extensions `CanvasEventTarget`
-    and `CssStyleProperties`; and the option types of the rows `adapt-interaction-mode-objects`,
+    `NativeEventListener`, `NativeEventTarget`, `DOMRect`, the extension `CanvasEventTarget` and
+    the enum `CanvasTouchAction` (Chart.js ADR 0200); and the option types of the rows `adapt-interaction-mode-objects`,
     `adapt-interaction-axis-enum`, `adapt-tooltip-positioner-objects` and
     `adapt-decimation-algorithm-objects`: `InteractionMode` with its six mode classes,
     `InteractionAxis` and `ActiveElement`, `TooltipPositioner` with `AverageTooltipPositioner`,
@@ -886,8 +886,15 @@ repository.
     (`canvas_ui_path.dart`, `canvas_ui_paint.dart`, `canvas_ui_text.dart`,
     `canvas_ui_batch.dart`, the circle batch, and `canvas_ui_shadow.dart`, the kept shadow objects) are the
     `dart:ui` implementation. No helper imports
-    them. `canvas_ui.dart` reflects the `style` attribute of the canvas. Other attributes keep their
-    values as strings (Chart.js ADR 0022). The canvas `textBaseline` holds the enum
+    them. The canvas has no CSS style (Chart.js ADR 0200, row `adapt-native-canvas-style`): its
+    display size is `displayWidth` and `displayHeight` (`double?`, `null` is the render size), its
+    touch action the enum `CanvasTouchAction`, its select flag `userSelect` (`bool`) and the
+    direction that a context with a `null` `direction` inherits `textDirection`. `retinaScale`,
+    `initCanvas`, `releaseContext` and the chart host read and write them; `initCanvas` writes no
+    `display` and no `box-sizing`. `setAttribute('style', ...)` throws an `ArgumentError`, and
+    `HTMLCanvasElement.style` is a read-only view of the members (`'<n>px'`, `'none'`, `'rtl'`)
+    that waits for the gallery and a tooltip test, then goes. Other attributes keep their values
+    as strings (Chart.js ADR 0022). The canvas `textBaseline` holds the enum
     `CanvasTextBaseline` of `canvas.dart` (row `adapt-canvas-text-baseline-enum`), also in a label
     item and in the options of `renderText`.
     - [Chart.js ADR 0070](doc/adr/0070-native-rectangular-bar-drawing.md): an ordinary bar rectangle draws through
@@ -986,11 +993,10 @@ repository.
     `click` and `pointercancel` while it is outside the box; while it has a key listener, one
     `HardwareKeyboard` handler sends it each key (`domKeyValue`), before the focus tree. The key
     events of `ChartKeyboard` do not bubble; its virtual mouse events bubble with the mouse fields.
-    With `touch-action: none` in the canvas style at the start of a touch sequence, the host
-    begins no pan and claims its touch pointers in the gesture arena past the slop or at a second
-    finger; a prevented `wheel` claims the pointer signal. `platform.flutter.dart` registers its
-    listeners with `passive: true`. `CssStyleProperties` of `lib/src/canvas/canvas.dart` gives
-    `style.touchAction`, `style.userSelect` and `removeProperty`. See
+    With `touchAction == CanvasTouchAction.none` on the canvas at the start of a touch sequence, the
+    host begins no pan and claims its touch pointers in the gesture arena past the slop or at a
+    second finger; a prevented `wheel` claims the pointer signal (Chart.js ADRs 0108 and 0200).
+    `platform.flutter.dart` registers its listeners with `passive: true`. See
     `test/port/platform/chart_host_test.dart` (groups `canvas event target`, `document target`,
     `getBoundingClientRect`, `touch sequence`) and `native_event_test.dart`.
     [Chart.js ADR 0137](doc/adr/0137-trackpad-wheel-events.md): a trackpad scroll gives a `wheel` with the scroll

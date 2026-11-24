@@ -483,62 +483,22 @@ abstract interface class TextMetrics() {
   double get actualBoundingBoxDescent;
 }
 
-/// lib.dom.d.ts `CSSStyleDeclaration`: the part that `helpers.rtl`
-/// (helpers.rtl.ts:56-73), `helpers.dom` and `platform.dom.js` use on
-/// `canvas.style`. The extension [CssStyleProperties] adds the members that
-/// add-on plugins write (Chart.js ADR 0108).
+/// lib.dom.d.ts `CSSStyleDeclaration`: the read-only view of
+/// [HTMLCanvasElement.style] (Chart.js ADR 0200, item 8).
 ///
-/// The canvas layer reads the `direction` property of the canvas style when
-/// [CanvasRenderingContext2D.direction] is `'inherit'`, as the DOM does. The
-/// chart host reads `width` and `height`, and `touch-action` at the first
-/// touch-like down of a touch sequence (Chart.js ADR 0108).
+/// The canvas has no CSS style: no library reads or writes it. The view
+/// gives the typed members of the canvas as CSS text for its last readers,
+/// the gallery and a tooltip test, and then goes.
 abstract interface class CSSStyleDeclaration() {
   /// `getPropertyValue(property)`. An unset property gives `''`.
   String getPropertyValue(String property);
 
-  /// `getPropertyPriority(property)`: `'important'` or `''`.
+  /// `getPropertyPriority(property)`: always `''`.
   String getPropertyPriority(String property);
 
-  /// `setProperty(property, value, priority)`. A `null` or empty [value]
-  /// removes the property.
-  ///
-  /// As in the DOM, a [priority] other than `''`, `null` and `'important'`
-  /// (ASCII case-insensitive) does nothing, and so does a [value] that does
-  /// not parse for [property].
+  /// `setProperty(property, value, priority)`: the view throws an
+  /// [UnsupportedError].
   void setProperty(String property, String? value, [String? priority]);
-}
-
-/// The CSSOM members of an inline style that add-on plugins write (Chart.js
-/// ADR 0108). Port-only.
-///
-/// They are extension members over [CSSStyleDeclaration.getPropertyValue]
-/// and [CSSStyleDeclaration.setProperty], so that each style has them, also
-/// a fake style of a test. The upstream lines keep their form:
-/// `style.touchAction = 'none'`, `style.removeProperty('user-select')`.
-/// `user-select` has no effect: the canvas has no text to select.
-extension CssStyleProperties on CSSStyleDeclaration {
-  /// `style.touchAction`: the `touch-action` property, `''` when it is not
-  /// set.
-  String get touchAction => getPropertyValue('touch-action');
-
-  /// `style.touchAction = value`. An empty [value] removes the property.
-  set touchAction(String value) => setProperty('touch-action', value);
-
-  /// `style.userSelect`: the `user-select` property, `''` when it is not
-  /// set.
-  String get userSelect => getPropertyValue('user-select');
-
-  /// `style.userSelect = value`. An empty [value] removes the property.
-  set userSelect(String value) => setProperty('user-select', value);
-
-  /// `removeProperty(property)`: removes [property] and gives its old value,
-  /// `''` when it was not set. The CSSOM removal is `setProperty(property,
-  /// '')`.
-  String removeProperty(String property) {
-    final old = getPropertyValue(property);
-    setProperty(property, null);
-    return old;
-  }
 }
 
 /// lib.dom.d.ts `HTMLCanvasElement`: the part that the ported code reads
@@ -557,13 +517,13 @@ abstract interface class HTMLCanvasElement() {
   /// It reflects the `height` attribute: a write sets the attribute.
   abstract int height;
 
-  /// `style`: the inline style of the canvas.
+  /// `style`: a read-only view of the typed members below as CSS text
+  /// (Chart.js ADR 0200, item 8). No library reads it.
   CSSStyleDeclaration get style;
 
-  /// The display width of the canvas in logical pixels, the `width` of its
-  /// inline style, or `null` when the canvas has none: then the display
-  /// width is the render width ([width]). `retinaScale` writes it
-  /// (Chart.js ADR 0200).
+  /// The display width of the canvas in logical pixels (the `style.width`
+  /// of upstream), or `null` for none: then the display width is the render
+  /// width ([width]). `retinaScale` writes it (Chart.js ADR 0200).
   abstract double? displayWidth;
 
   /// The display height of the canvas in logical pixels, as [displayWidth].

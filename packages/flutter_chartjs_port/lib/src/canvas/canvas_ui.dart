@@ -4,7 +4,7 @@
 /// 0015, porting-flow.md 2.2 and 2.8).
 ///
 /// [UiCanvasElement] stands for the HTML `<canvas>`: it has the bitmap size
-/// in device pixels, a style and one [UiCanvasContext].
+/// in device pixels, the typed display members and one [UiCanvasContext].
 ///
 /// The context keeps a retained bitmap as `ui.Picture`s:
 /// - Draw calls record into a `ui.PictureRecorder`. The content of the
@@ -108,140 +108,44 @@ const TextStyle _defaultFont = TextStyle(
 /// `UiCanvasContext._snappedTextMatrix`).
 const double _textAngleStep = math.pi / 90;
 
-/// A map-backed [CSSStyleDeclaration]: the inline style of a
-/// [UiCanvasElement], and the reflection of its `style` attribute
-/// (Chart.js ADR 0022, section 4).
-///
-/// The declarations keep their order. A write of an existing property keeps
-/// its place, as in the CSSOM. The style does not expand shorthand
-/// properties and does not parse values.
-final class UiCssStyleDeclaration() implements CSSStyleDeclaration {
-  /// An empty style.
-  this;
-
-  final Map<String, (String, String)> _properties = {};
-
-  /// The `style` attribute as it was set, or `null` for no attribute. After
-  /// a CSSOM write, [_serialized] is true and the attribute is [cssText].
-  String? _attribute;
-  bool _serialized = false;
-
-  static String _name(String property) =>
-      property.startsWith('--') ? property : property.toLowerCase();
+/// The read-only `style` of a [UiCanvasElement]: a view of its typed
+/// members as CSS text (Chart.js ADR 0200, item 8). It waits for the
+/// gallery and a tooltip test that read it, then goes. A write throws.
+final class _CanvasStyleView(final UiCanvasElement _element)
+    implements CSSStyleDeclaration {
+  static String _px(double? value) =>
+      value == null ? '' : '${jsToString(value)}px';
 
   @override
-  String getPropertyValue(String property) =>
-      _properties[_name(property)]?.$1 ?? '';
+  String getPropertyValue(String property) => switch (property) {
+    'width' => _px(_element.displayWidth),
+    'height' => _px(_element.displayHeight),
+    'touch-action' =>
+      _element.touchAction == CanvasTouchAction.none ? 'none' : '',
+    'user-select' => _element.userSelect ? '' : 'none',
+    'direction' => _element.textDirection?.name ?? '',
+    _ => '',
+  };
 
   @override
-  String getPropertyPriority(String property) =>
-      _properties[_name(property)]?.$2 ?? '';
+  String getPropertyPriority(String property) => '';
 
-  /// A [priority] other than `'important'`, `''` or `null` does nothing, as
-  /// in the DOM.
   @override
-  void setProperty(String property, String? value, [String? priority]) {
-    if (priority != null && priority != '' && priority != 'important') {
-      return;
-    }
-    final name = _name(property);
-    if (value == null || value.isEmpty) {
-      _properties.remove(name);
-    } else {
-      _properties[name] = (value, priority ?? '');
-    }
-    // Each write makes the attribute the serialization, also a write that
-    // changes nothing. A compare of the old value cost 9 ns more on AOT, and
-    // the attribute text is not a behavior of Chart.js ADR 0034.
-    _serialized = true;
-  }
-
-  /// `cssText`: the declarations as `name: value;`, with ` !important` for
-  /// an important one, joined by one space. The CSSOM serializes a
-  /// declaration block in this form.
-  String get cssText => [
-    for (final MapEntry(key: name, value: (value, priority))
-        in _properties.entries)
-      if (priority.isEmpty) '$name: $value;' else '$name: $value !$priority;',
-  ].join(' ');
-
-  /// `cssText = text`: replaces the declarations with the declarations of
-  /// [text]. Then the `style` attribute is [cssText], as the CSSOM updates
-  /// it after the write.
-  set cssText(String text) {
-    _properties.clear();
-    _parseDeclarations(text);
-    _serialized = true;
-  }
-
-  /// The `style` attribute of the element: `getAttribute('style')`. It is
-  /// the text of [styleAttribute] as it was set, until a CSSOM write
-  /// ([setProperty], [cssText]) makes it the serialization [cssText]. It is
-  /// `null` when the element has no `style` attribute.
-  String? get styleAttribute => _serialized ? cssText : _attribute;
-
-  /// `setAttribute('style', value)`, or `removeAttribute('style')` for
-  /// `null`: replaces the declarations with the declarations of [value].
-  set styleAttribute(String? value) {
-    _attribute = value;
-    _serialized = false;
-    _properties.clear();
-    if (value != null) _parseDeclarations(value);
-  }
-
-  static final RegExp _important = RegExp(
-    r'!\s*important\s*$',
-    caseSensitive: false,
-  );
-
-  /// Adds the declarations of [text]: `name: value` items separated by `;`
-  /// outside parentheses and quotes, each with an optional `!important`.
-  /// An item without a name or a value is ignored. A later normal
-  /// declaration does not replace an earlier important one.
-  void _parseDeclarations(String text) {
-    var start = 0;
-    var depth = 0;
-    String? quote;
-    for (var i = 0; i <= text.length; i++) {
-      final char = i < text.length ? text[i] : ';';
-      if (quote != null) {
-        if (char == quote) quote = null;
-      } else if (char == '"' || char == "'") {
-        quote = char;
-      } else if (char == '(') {
-        depth++;
-      } else if (char == ')' && depth > 0) {
-        depth--;
-      } else if (char == ';' && depth == 0) {
-        _addDeclaration(text.substring(start, i));
-        start = i + 1;
-      }
-    }
-  }
-
-  void _addDeclaration(String item) {
-    final colon = item.indexOf(':');
-    if (colon < 0) return;
-    final name = _name(item.substring(0, colon).trim());
-    var value = item.substring(colon + 1).trim();
-    var priority = '';
-    final important = _important.firstMatch(value);
-    if (important != null) {
-      value = value.substring(0, important.start).trim();
-      priority = 'important';
-    }
-    if (name.isEmpty || value.isEmpty) return;
-    if (priority.isEmpty && _properties[name]?.$2 == 'important') return;
-    _properties[name] = (value, priority);
-  }
+  void setProperty(String property, String? value, [String? priority]) =>
+      throw UnsupportedError(
+        'The canvas has no CSS style: write its typed members '
+        '(Chart.js ADR 0200).',
+      );
 }
 
 /// The `dart:ui` [HTMLCanvasElement]: the bitmap size, the attributes, the
-/// style and the one 2D context.
+/// typed display members and the one 2D context.
 ///
-/// The `width` and `height` attributes set the bitmap size. The `style`
-/// attribute reflects the inline [style] (Chart.js ADR 0022, section 4).
-/// Another attribute keeps its value as a string. Attribute names are ASCII
+/// The `width` and `height` attributes set the bitmap size. The canvas has
+/// no CSS style (Chart.js ADR 0200): [displayWidth], [displayHeight],
+/// [touchAction], [userSelect] and [textDirection] are fields, and the
+/// name `style` of an attribute throws an [ArgumentError]. Another
+/// attribute keeps its value as a string. Attribute names are ASCII
 /// case-insensitive, as in an HTML document.
 ///
 /// It is a [CanvasNode]: the chart host that shows it sets [parentNode].
@@ -277,46 +181,51 @@ final class UiCanvasElement({int? width, int? height})
   @override
   set height(int value) => _setSize('height', '${math.max(0, value)}');
 
-  /// The attributes other than `width`, `height` and `style`, by lower-case
-  /// name.
+  /// The attributes other than `width` and `height`, by lower-case name.
   final Map<String, String> _attributes = {};
 
   @override
   String? getAttribute(String name) => switch (name.toLowerCase()) {
     'width' => _widthAttribute,
     'height' => _heightAttribute,
-    'style' => style.styleAttribute,
+    'style' => _noStyle(name),
     final other => _attributes[other],
   };
 
   /// `setAttribute(name, value)`: `width` and `height` set the bitmap size,
-  /// `style` replaces the inline style with the declarations of [value],
-  /// and another name keeps [value].
+  /// and another name keeps [value]. `style` throws an [ArgumentError].
   @override
   void setAttribute(String name, String value) {
     switch (name.toLowerCase()) {
       case 'width' || 'height':
         _setSize(name, value);
       case 'style':
-        style.styleAttribute = value;
+        _noStyle(name);
       case final other:
         _attributes[other] = value;
     }
   }
 
-  /// `removeAttribute(name)`: the removal of `style` empties the inline
-  /// style.
+  /// `removeAttribute(name)`. `style` throws an [ArgumentError].
   @override
   void removeAttribute(String name) {
     switch (name.toLowerCase()) {
       case 'width' || 'height':
         if (getAttribute(name) != null) _setSize(name, null);
       case 'style':
-        style.styleAttribute = null;
+        _noStyle(name);
       case final other:
         _attributes.remove(other);
     }
   }
+
+  /// The canvas has no `style` attribute (Chart.js ADR 0200).
+  static Never _noStyle(String name) => throw ArgumentError.value(
+    name,
+    'name',
+    'The canvas has no CSS style: write its typed members (Chart.js ADR '
+        '0200)',
+  );
 
   /// Sets the `width` or `height` attribute to [value], or removes it for
   /// `null`, and resets the context. The size is [value] by the HTML rules
@@ -342,67 +251,25 @@ final class UiCanvasElement({int? width, int? height})
 
   static final RegExp _sizePattern = RegExp(r'^[\t\n\f\r ]*\+?(\d+)');
 
+  /// A read-only view of the typed members as CSS text (Chart.js ADR 0200,
+  /// item 8). It waits for its last readers, then goes.
   @override
-  final UiCssStyleDeclaration style = UiCssStyleDeclaration();
-
-  static final RegExp _pixels = RegExp(r'^(\d*\.?\d+(?:e[+-]?\d+)?)px$');
-
-  static double? _readPixels(String value) {
-    final match = _pixels.firstMatch(value);
-    return match == null ? null : double.tryParse(match[1]!);
-  }
-
-  // The typed members read and write the inline style until the harness
-  // stops writing CSS text (Chart.js ADR 0200, step 2).
+  late final CSSStyleDeclaration style = _CanvasStyleView(this);
 
   @override
-  double? get displayWidth => _readPixels(style.getPropertyValue('width'));
+  double? displayWidth;
 
   @override
-  set displayWidth(double? value) => style.setProperty(
-    'width',
-    value == null ? null : '${jsToString(value)}px',
-  );
+  double? displayHeight;
 
   @override
-  double? get displayHeight => _readPixels(style.getPropertyValue('height'));
+  CanvasTouchAction touchAction = CanvasTouchAction.auto;
 
   @override
-  set displayHeight(double? value) => style.setProperty(
-    'height',
-    value == null ? null : '${jsToString(value)}px',
-  );
+  bool userSelect = true;
 
   @override
-  CanvasTouchAction get touchAction =>
-      style.getPropertyValue('touch-action').trim().toLowerCase() == 'none'
-      ? CanvasTouchAction.none
-      : CanvasTouchAction.auto;
-
-  @override
-  set touchAction(CanvasTouchAction value) => style.setProperty(
-    'touch-action',
-    value == CanvasTouchAction.none ? 'none' : null,
-  );
-
-  @override
-  bool get userSelect => style.getPropertyValue('user-select') != 'none';
-
-  @override
-  set userSelect(bool value) =>
-      style.setProperty('user-select', value ? null : 'none');
-
-  @override
-  ui.TextDirection? get textDirection =>
-      switch (style.getPropertyValue('direction')) {
-        'rtl' => ui.TextDirection.rtl,
-        'ltr' => ui.TextDirection.ltr,
-        _ => null,
-      };
-
-  @override
-  set textDirection(ui.TextDirection? value) =>
-      style.setProperty('direction', value?.name);
+  ui.TextDirection? textDirection;
 
   /// The container of the chart host that shows this canvas, or `null`.
   /// The host sets it when it attaches and clears it when it detaches.

@@ -579,14 +579,13 @@ void main() {
       chart.destroy();
     });
 
-    testWidgets('a non-responsive chart shows its bitmap at the size of its '
-        'styles', (tester) async {
+    testWidgets('a non-responsive chart shows its bitmap at its display '
+        'size', (tester) async {
       // The upstream case "attributes for the render size and style for the
-      // display size": attributes 165 x 85, styles 345 x 125.
-      final canvas = UiCanvasElement(width: 165, height: 85);
-      canvas.style
-        ..setProperty('width', '345px')
-        ..setProperty('height', '125px');
+      // display size": attributes 165 x 85, display size 345 x 125.
+      final canvas = UiCanvasElement(width: 165, height: 85)
+        ..displayWidth = 345
+        ..displayHeight = 125;
       await tester.pumpWidget(
         _box(RepaintBoundary(child: ChartHost(canvas: canvas))),
       );
@@ -606,12 +605,12 @@ void main() {
       chart.destroy();
     });
 
-    testWidgets('one style alone shows the render size', (tester) async {
-      // The CSS rule of a replaced element (one style keeps the aspect ratio
+    testWidgets('one display side alone shows the render size', (tester) async {
+      // The CSS rule of a replaced element (one side keeps the aspect ratio
       // of the render size) is for the harness matcher toBeChartOfSize. The
       // host shows the render size.
-      final canvas = UiCanvasElement(width: 200, height: 100);
-      canvas.style.setProperty('width', '600px');
+      final canvas = UiCanvasElement(width: 200, height: 100)
+        ..displayWidth = 600;
       canvas.getContext2d()
         ..fillStyle = const native_ui.Color.fromRGBO(0, 0, 255, 1)
         ..fillRect(0, 0, 100, 100);
@@ -624,8 +623,8 @@ void main() {
       expect(image.alphaAt(90, 50), 255);
       expect(image.alphaAt(110, 50), 0);
 
-      final other = UiCanvasElement(width: 200, height: 100);
-      other.style.setProperty('height', '50px');
+      final other = UiCanvasElement(width: 200, height: 100)
+        ..displayHeight = 50;
       await tester.pumpWidget(
         _box(RepaintBoundary(child: ChartHost(canvas: other)), width: 800),
       );
@@ -643,7 +642,7 @@ void main() {
       await tester.pump();
       expect((chart.width, chart.height), (320.0, 240.0));
       expect((canvas.width, canvas.height), (960, 720));
-      expect(canvas.style.getPropertyValue('width'), '320px');
+      expect(canvas.displayWidth, 320);
       expect(_host(tester).size, const Size(320, 240));
       expect(paintScales(tester), [(1 / 3, 1 / 3)]);
       chart.destroy();
@@ -660,8 +659,7 @@ void main() {
       chart.destroy();
       await tester.pump();
       expect((canvas.width, canvas.height), (300, 150));
-      expect(canvas.style.getPropertyValue('width'), '');
-      expect(canvas.style.getPropertyValue('height'), '');
+      expect((canvas.displayWidth, canvas.displayHeight), (null, null));
       expect(_host(tester).size, const Size(300, 150));
     });
   });
@@ -3228,18 +3226,18 @@ void main() {
       // It gives up the arena of a pointer that it did not claim at its up.
       // Each other value keeps Chart.js ADR 0037. The host is at (0, 0).
 
-      /// Shows a host for a new canvas with the inline style [touchAction]
+      /// Shows a host for a new canvas with the touch action [touchAction]
       /// in [wrap], and records its events in [log].
       Future<UiCanvasElement> pumpStyled(
         WidgetTester tester,
         List<NativeEvent> log, {
-        String touchAction = 'none',
+        CanvasTouchAction touchAction = CanvasTouchAction.none,
         double touchSlop = kTouchSlop,
         Widget Function(Widget host)? wrap,
       }) async {
         final canvas = UiCanvasElement();
         _record(canvas, log);
-        canvas.style.touchAction = touchAction;
+        canvas.touchAction = touchAction;
         final host = ChartHost(canvas: canvas);
         await tester.pumpWidget(
           MediaQuery(
@@ -3412,7 +3410,12 @@ void main() {
       ) async {
         final log = <NativeEvent>[];
         final probe = _ArenaProbe();
-        await pumpStyled(tester, log, touchAction: 'auto', wrap: probed(probe));
+        await pumpStyled(
+          tester,
+          log,
+          touchAction: CanvasTouchAction.auto,
+          wrap: probed(probe),
+        );
         final first = await tester.startGesture(const Offset(100, 50));
         final second = await tester.startGesture(const Offset(200, 50));
         await first.moveBy(const Offset(30, 0));
@@ -3423,13 +3426,10 @@ void main() {
       });
 
       for (final (value, scrolls) in const [
-        ('none', false),
-        (' None ', false),
-        ('auto', true),
-        ('pan-y', true),
-        ('', true),
+        (CanvasTouchAction.none, false),
+        (CanvasTouchAction.auto, true),
       ]) {
-        testWidgets('touch-action "$value": a drag on the host '
+        testWidgets('touch-action "${value.name}": a drag on the host '
             '${scrolls ? 'scrolls' : 'does not scroll'} a parent ListView', (
           tester,
         ) async {
@@ -3469,8 +3469,11 @@ void main() {
         });
       }
 
-      for (final (value, turns) in const [('none', false), ('auto', true)]) {
-        testWidgets('touch-action "$value": a drag on the host '
+      for (final (value, turns) in const [
+        (CanvasTouchAction.none, false),
+        (CanvasTouchAction.auto, true),
+      ]) {
+        testWidgets('touch-action "${value.name}": a drag on the host '
             '${turns ? 'turns' : 'does not turn'} a parent PageView', (
           tester,
         ) async {
@@ -3496,8 +3499,11 @@ void main() {
         });
       }
 
-      for (final (value, zooms) in const [('none', false), ('auto', true)]) {
-        testWidgets('touch-action "$value": a pinch on the host '
+      for (final (value, zooms) in const [
+        (CanvasTouchAction.none, false),
+        (CanvasTouchAction.auto, true),
+      ]) {
+        testWidgets('touch-action "${value.name}": a pinch on the host '
             '${zooms ? 'zooms' : 'does not zoom'} a parent '
             'InteractiveViewer', (tester) async {
           final log = <NativeEvent>[];
@@ -3540,35 +3546,40 @@ void main() {
         expect(_types(log), contains('click'));
       });
 
-      testWidgets('the host reads the style at the first down of a sequence', (
-        tester,
-      ) async {
-        final log = <NativeEvent>[];
-        final canvas = await pumpStyled(tester, log, touchAction: 'auto');
-        var gesture = await tester.startGesture(const Offset(100, 50));
-        canvas.style.touchAction = 'none';
-        log.clear();
-        await gesture.moveBy(const Offset(30, 0));
-        expect(_types(log), contains('pointercancel'));
-        await gesture.up();
+      testWidgets(
+        'the host reads the touch action at the first down of a sequence',
+        (tester) async {
+          final log = <NativeEvent>[];
+          final canvas = await pumpStyled(
+            tester,
+            log,
+            touchAction: CanvasTouchAction.auto,
+          );
+          var gesture = await tester.startGesture(const Offset(100, 50));
+          canvas.touchAction = CanvasTouchAction.none;
+          log.clear();
+          await gesture.moveBy(const Offset(30, 0));
+          expect(_types(log), contains('pointercancel'));
+          await gesture.up();
 
-        // The next sequence has none, also for a second finger after a
-        // change of the style.
-        gesture = await tester.startGesture(const Offset(100, 50));
-        canvas.style.touchAction = 'auto';
-        final second = await tester.startGesture(const Offset(200, 50));
-        log.clear();
-        await gesture.moveBy(const Offset(30, 0));
-        await second.moveBy(const Offset(30, 0));
-        expect(_types(log), [
-          'pointermove',
-          'touchmove',
-          'pointermove',
-          'touchmove',
-        ]);
-        await gesture.up();
-        await second.up();
-      });
+          // The next sequence has none, also for a second finger after a
+          // change of the touch action.
+          gesture = await tester.startGesture(const Offset(100, 50));
+          canvas.touchAction = CanvasTouchAction.auto;
+          final second = await tester.startGesture(const Offset(200, 50));
+          log.clear();
+          await gesture.moveBy(const Offset(30, 0));
+          await second.moveBy(const Offset(30, 0));
+          expect(_types(log), [
+            'pointermove',
+            'touchmove',
+            'pointermove',
+            'touchmove',
+          ]);
+          await gesture.up();
+          await second.up();
+        },
+      );
 
       testWidgets('a canvas swap and a detach give up the open arena', (
         tester,
@@ -3582,8 +3593,8 @@ void main() {
                 : ChartHost(canvas: canvas),
           ),
         );
-        final a = UiCanvasElement()..style.touchAction = 'none';
-        final b = UiCanvasElement()..style.touchAction = 'none';
+        final a = UiCanvasElement()..touchAction = CanvasTouchAction.none;
+        final b = UiCanvasElement()..touchAction = CanvasTouchAction.none;
         await tester.pumpWidget(tree(a));
         var gesture = await tester.startGesture(const Offset(100, 50));
         expect(probe.won, isEmpty);
@@ -4175,34 +4186,49 @@ void main() {
     });
   });
 
-  group('CssStyleProperties', () {
-    // Chart.js ADR 0108: the CSSOM members of the canvas style that add-on
-    // plugins write (chartjs-plugin-zoom gestures.ts:200-222).
-    test('touchAction and userSelect read and write the properties', () {
-      final style = UiCanvasElement().style;
-      expect((style.touchAction, style.userSelect), ('', ''));
-      style
-        ..touchAction = 'none'
-        ..userSelect = 'none';
-      expect(style.getPropertyValue('touch-action'), 'none');
-      expect(style.getPropertyValue('user-select'), 'none');
-      expect((style.touchAction, style.userSelect), ('none', 'none'));
-      // A write of '' removes the property, as in the CSSOM.
-      style.touchAction = '';
-      expect(style.getPropertyValue('touch-action'), '');
+  group('the typed style members', () {
+    // Chart.js ADR 0200: the members that add-on plugins write in place of
+    // the CSS style (chartjs-plugin-zoom gestures.ts:200-222).
+    test('the defaults and the writes', () {
+      final canvas = UiCanvasElement();
+      expect(canvas.touchAction, CanvasTouchAction.auto);
+      expect(canvas.userSelect, isTrue);
+      expect(canvas.textDirection, isNull);
+      expect((canvas.displayWidth, canvas.displayHeight), (null, null));
+      canvas
+        ..touchAction = CanvasTouchAction.none
+        ..userSelect = false
+        ..textDirection = native_ui.TextDirection.rtl
+        ..displayWidth = 345.5
+        ..displayHeight = 125;
+      expect(canvas.touchAction, CanvasTouchAction.none);
+      expect(canvas.userSelect, isFalse);
+      expect(canvas.textDirection, native_ui.TextDirection.rtl);
+      expect((canvas.displayWidth, canvas.displayHeight), (345.5, 125));
     });
 
-    test('removeProperty removes a property and gives its old value', () {
-      final style = UiCanvasElement().style
-        ..setProperty('-webkit-user-select', 'none')
-        ..setProperty('user-select', 'none', 'important');
-      expect(style.removeProperty('-webkit-user-select'), 'none');
-      expect(style.getPropertyValue('-webkit-user-select'), '');
-      // An important property goes too.
-      expect(style.removeProperty('user-select'), 'none');
-      expect(style.getPropertyPriority('user-select'), '');
-      // A property that is not set gives ''.
-      expect(style.removeProperty('touch-action'), '');
+    test('style is a read-only view of the members', () {
+      // Chart.js ADR 0200, item 8: the view of the last readers.
+      final canvas = UiCanvasElement();
+      final style = canvas.style;
+      expect(style.getPropertyValue('width'), '');
+      expect(style.getPropertyValue('touch-action'), '');
+      expect(style.getPropertyValue('user-select'), '');
+      expect(style.getPropertyValue('direction'), '');
+      canvas
+        ..displayWidth = 345.5
+        ..displayHeight = 125
+        ..touchAction = CanvasTouchAction.none
+        ..userSelect = false
+        ..textDirection = native_ui.TextDirection.rtl;
+      expect(style.getPropertyValue('width'), '345.5px');
+      expect(style.getPropertyValue('height'), '125px');
+      expect(style.getPropertyValue('touch-action'), 'none');
+      expect(style.getPropertyValue('user-select'), 'none');
+      expect(style.getPropertyValue('direction'), 'rtl');
+      expect(style.getPropertyPriority('direction'), '');
+      expect(style.getPropertyValue('display'), '');
+      expect(() => style.setProperty('width', '10px'), throwsUnsupportedError);
     });
   });
 
@@ -4241,12 +4267,12 @@ void main() {
       expect((move.offsetX, move.offsetY), (110.5, 40.25));
     });
 
-    testWidgets('the display size of the style gives the size', (tester) async {
+    testWidgets('the display size gives the size', (tester) async {
       final canvas = UiCanvasElement();
       await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
-      canvas.style
-        ..setProperty('width', '200px')
-        ..setProperty('height', '100px');
+      canvas
+        ..displayWidth = 200
+        ..displayHeight = 100;
       expect(canvas.getBoundingClientRect(), const DOMRect(0, 0, 200, 100));
     });
 

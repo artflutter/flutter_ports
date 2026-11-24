@@ -159,7 +159,6 @@ ContextResolver
 CoreScaleOptions
 CrossPointStyle
 CrossRotPointStyle
-CssStyleProperties
 CubicInterpolationMode
 DOMRect
 DashPointStyle
@@ -563,7 +562,6 @@ TypedRecord
 TypedRegistry
 UiCanvasContext
 UiCanvasElement
-UiCssStyleDeclaration
 UiImageSource
 UiPathBuilder
 UiPathPieces
@@ -1212,7 +1210,6 @@ ContextResolver
 CoreScaleOptions
 CrossPointStyle
 CrossRotPointStyle
-CssStyleProperties
 CubicInterpolationMode
 DOMRect
 DashPointStyle
@@ -1614,7 +1611,6 @@ TypedRecord
 TypedRegistry
 UiCanvasContext
 UiCanvasElement
-UiCssStyleDeclaration
 UiImageSource
 UiPathBuilder
 UiPathPieces

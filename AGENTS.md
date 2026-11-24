@@ -232,10 +232,17 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `acquireChart`, `releaseChart`, `releaseCharts`, `afterEvent`, `waitForResize` and
     `triggerMouseEvent` (Chart.js ADR 0022). `acquireChart` takes the config Map of a spec;
     `acquireChartRoot` takes the typed root scope of a typed config (`ChartConfigLowering`,
-    Chart.js ADR 0054 §7). The DOM stand-in exports are `document`, `window`,
-    `HarnessDocument`, `HarnessElement`, `HarnessWindow`, `setTimeout`, `afterEachChart`,
-    `pumpFrames`, `pumpFrame`, `waitForDone`, `frameInterval`, `specTimeout`, and the extensions
-    `CanvasParentElement` and `CssProperties`. Only one `pumpFrames` loop pumps at a time: a loop
+    Chart.js ADR 0054 §7). Both take an `AcquireOptions` (Chart.js ADR 0200, row
+    `harness-acquire-options`): `canvas` a `HarnessCanvas` (render size, display size, `hidden`),
+    `wrapper` a `HarnessBox`, and `useOffscreenCanvas`, `useShadowDOM` and `persistent`; a Map of
+    numbers (`AcquireOptions.fromMap`) stays for the fixture runner and the reference harnesses, and
+    a `style` or `wrapper` key in it throws. The harness has no CSS: each `HarnessElement` is laid
+    out from the typed fields of its `HarnessBox` (`width`, `height`, `maxWidth`, `maxHeight`,
+    `padding`, `hidden`, `absolute`, `offset`, `direction`), and a spec writes them as Dart values
+    (`wrapper.width = 455`, `canvas.hidden = false`). The DOM stand-in exports are `document`,
+    `window`, `HarnessDocument`, `HarnessElement`, `HarnessBox`, `HarnessWindow`, `setTimeout`,
+    `afterEachChart`, `pumpFrames`, `pumpFrame`, `waitForDone`, `frameInterval`, `specTimeout`,
+    and the extensions `CanvasParentElement` and `HarnessCanvasDisplay`. Only one `pumpFrames` loop pumps at a time: a loop
     that starts while another loop pumps awaits each step of that loop. It also exports the fixture
     runner of `lib/src/fixture.dart`.
   - `lib/src/fixture.dart` ports `src/fixture.js` (Chart.js ADR 0029): `specsFromFixtures`,
@@ -252,8 +259,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `triggerMouseEvent`. `triggerMouseEvent` builds its event with `bubbles: true`,
     `cancelable: true` and the client point `rect.left + x`, `rect.top + y` of
     `canvas.getBoundingClientRect()`, and calls `canvas.dispatchEvent` (Chart.js ADR 0108 §11, row
-    `harness-trigger-mouse-event`). The DOM stand-in reads `left` and `top` (px) of an element with
-    `position: absolute`. `lib/src/index.dart` ports `src/index.js`: `acquireChart`, `releaseChart`,
+    `harness-trigger-mouse-event`). The DOM stand-in places an `absolute` box at its `offset`
+    from the padding box of its parent. `lib/src/index.dart` ports `src/index.js`: `acquireChart`, `releaseChart`,
     `releaseCharts` and the registry `charts`. It imports `utils.dart` with the prefix `utils`
     (Chart.js ADR 0012, Collisions). Neither file is a pure layer.
   - `lib/fonts/`: the test font, Liberation Sans 2.1.5 (SIL OFL 1.1), with its `LICENSE`
@@ -877,7 +884,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     of Flutter through the input path of the host: a wheel in a `ListView` zooms and does not
     scroll it, a mouse drag that lifts outside the box zooms, a press on the legend starts no drag,
     Escape cancels a drag with no focus, Enter, Enter on a keyboard target leaves no drag state, a
-    one-finger pan and a two-finger pinch with `touch-action: none` in a vertical `ListView` do
+    one-finger pan and a two-finger pinch with `CanvasTouchAction.none` in a vertical `ListView` do
     not scroll it, and the range stays across an equal config and new data and goes at another
     option and at a theme switch (row `theme-switch-zoom-range`).
   - `test/upstream_test.dart` (`@TestOn('vm')`) compares `chartjsPluginZoomPackageVersion` with
