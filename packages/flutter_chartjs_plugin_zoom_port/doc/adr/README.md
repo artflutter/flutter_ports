@@ -5,11 +5,11 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 <!-- adr-index:start -->
 - [0001](0001-upstream-sources.md) Upstream source, name and license: proposed.
 - [0002](0002-file-naming-and-layout.md) File naming and package layout: proposed, superseded in part by 0006.
-- [0003](0003-host-connection.md) The connection to the host port: proposed, superseded in part by 0004, 0005.
+- [0003](0003-host-connection.md) The connection to the host port: proposed, superseded in part by 0004, 0005, 0009.
 - [0004](0004-native-zoom-pan-callbacks.md) Native zoom and pan callbacks: accepted, supersedes 0003, superseded in part by 0005.
 - [0005](0005-typed-zoom-options.md) Typed zoom options: accepted, supersedes 0003, 0004, superseded in part by 0007, 0008.
 - [0006](0006-native-test-matchers.md) Native matchers and spies in the zoom specs: accepted, supersedes 0002.
 - [0007](0007-typed-zoom-limits.md) Typed zoom limits: accepted, supersedes 0005.
 - [0008](0008-typed-mode-option.md) Typed mode option: accepted, supersedes 0005.
-- [0009](0009-native-canvas-style-members.md) Native canvas style members: proposed, supersedes 0003.
+- [0009](0009-native-canvas-style-members.md) Native canvas style members: accepted, supersedes 0003.
 <!-- adr-index:end -->

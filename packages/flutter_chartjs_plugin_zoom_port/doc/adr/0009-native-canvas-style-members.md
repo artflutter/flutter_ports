@@ -1,6 +1,6 @@
 # Zoom ADR 0009: Native canvas style members
 
-- Status: proposed
+- Status: accepted (2026-11-24): its code is on main, and the gates of AGENTS.md pass.
 - Date: 2026-11-24
 - Supersedes: [Zoom ADR 0003](0003-host-connection.md) item 7, the sentence "The extension `CssStyleProperties`
   gives `style.touchAction`, `style.userSelect` and `style.removeProperty(...)`. Thus the upstream lines
