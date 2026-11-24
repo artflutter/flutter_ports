@@ -147,7 +147,7 @@ ChartConfig _config(ChartKind type, int step, List<Object> labels) =>
     );
 
 /// A scriptable radius that reads the mode of its context.
-Object? _radiusOfMode(ScriptableContext context) =>
+double _radiusOfMode(ScriptableContext context) =>
     context.mode == UpdateMode.none ? 2.0 : 9.0;
 
 /// The bar chart that most tests vary.
@@ -160,7 +160,7 @@ ChartConfig _bars(
   TitleOptions? title,
   List<Plugin<Object?>>? plugins,
   List<PluginOptions<Object?>>? pluginOptions,
-  Map<String, Object?>? extra,
+  ui.Locale? locale,
 }) => ChartConfig(
   labels: labels,
   datasets:
@@ -178,7 +178,7 @@ ChartConfig _bars(
   animation: animation,
   plugins: plugins,
   pluginOptions: [?title, ...?pluginOptions],
-  extra: extra,
+  locale: locale,
 );
 
 Widget _box(Widget child, {double width = 400, double height = 300}) =>
@@ -574,11 +574,10 @@ void main() {
       expect(spy.layouts, 1);
     });
 
-    testWidgets('an entry of extra', (tester) async {
+    testWidgets('a new locale', (tester) async {
       final spy = await afterChange(
         tester,
-        (labels) =>
-            _bars(1, labels, extra: const {'locale': ui.Locale('de', 'DE')}),
+        (labels) => _bars(1, labels, locale: const ui.Locale('de', 'DE')),
       );
       expect(spy.layouts, 1);
     });
@@ -807,14 +806,14 @@ void main() {
         final labels = _newLabels();
         ChartConfig line(int step) => ChartConfig(
           labels: labels,
-          datasets: [LineDataset(data: .points(_points(step)))],
+          datasets: [
+            LineDataset(
+              data: .points(_points(step)),
+              pointRadius: const .resolver(_radiusOfMode),
+            ),
+          ],
           scales: _categoryAxes,
           animation: ChartAnimation.none,
-          extra: const {
-            'elements': {
-              'point': {'radius': _radiusOfMode},
-            },
-          },
         );
         Widget view(int step) =>
             _view(line(step), dataOnly: dataOnly, updateMode: null);
@@ -881,17 +880,13 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('an animation of extra over ChartAnimation.none', (
-      tester,
-    ) async {
+    testWidgets('an animation over ChartAnimation.none', (tester) async {
       final spy = _spyOnChart();
       final labels = _newLabels();
       ChartConfig animated(int step) => _bars(
         step,
         labels,
-        extra: const {
-          'animation': {'duration': 500},
-        },
+        animation: const ChartAnimation(duration: Duration(milliseconds: 500)),
       );
       await tester.pumpWidget(_view(animated(0)));
       await tester.pumpAndSettle();
@@ -1764,7 +1759,7 @@ void main() {
     ChartConfig bubbles(
       int step,
       double radius, {
-      Map<String, Object?>? xExtra,
+      AxisTicks? xTicks,
       LegendOptions? legend,
     }) => ChartConfig(
       datasets: [
@@ -1783,7 +1778,7 @@ void main() {
             color: .constant(ChartPaint.solid(_red)),
             lineWidth: .constant(3),
           ),
-          extra: xExtra,
+          ticks: xTicks,
         ),
         const LinearAxis(
           .y,
@@ -1803,13 +1798,13 @@ void main() {
     /// radius keeps the layout that it made.
     Future<void> expectPixels(
       WidgetTester tester, {
-      Map<String, Object?>? xExtra,
+      AxisTicks? xTicks,
       LegendOptions? legend,
     }) async {
       final spy = _spyOnChart();
       Future<List<Object>> run({required bool dataOnly}) async {
         Widget view(int step, double radius) => _view(
-          bubbles(step, radius, xExtra: xExtra, legend: legend),
+          bubbles(step, radius, xTicks: xTicks, legend: legend),
           dataOnly: dataOnly,
         );
         await _warm(tester, (step) => view(step, 4));
@@ -1846,12 +1841,7 @@ void main() {
 
     testWidgets('draws a layer of z above 0 after the datasets, and the other '
         'layers before them', (tester) async {
-      await expectPixels(
-        tester,
-        xExtra: const {
-          'ticks': {'z': 1},
-        },
-      );
+      await expectPixels(tester, xTicks: const AxisTicks(z: 1));
     });
 
     testWidgets('adjusts the hit boxes of its new fit once', (tester) async {

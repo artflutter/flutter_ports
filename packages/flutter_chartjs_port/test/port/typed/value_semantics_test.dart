@@ -1199,6 +1199,7 @@ void main() {
         'elements',
         'onClick',
         'onHover',
+        'onResize',
         'events',
         'pluginOptions',
         'plugins',

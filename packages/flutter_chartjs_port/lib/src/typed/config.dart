@@ -172,6 +172,10 @@ final class const ChartConfig({
   /// The function of a pointer move on the chart: `options.onHover`.
   final ChartEventHandler? onHover,
 
+  /// The function of a resize of the chart: `options.onResize`. It gets the
+  /// chart and its new size.
+  final ChartResizeHandler? onResize,
+
   /// The names of the input events that the chart listens to:
   /// `options.events`, for example `['click']`. The default is
   /// `['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove']`
@@ -269,6 +273,7 @@ final class const ChartConfig({
     ChartElements? elements,
     ChartEventHandler? onClick,
     ChartEventHandler? onHover,
+    ChartResizeHandler? onResize,
     List<String>? events,
     List<PluginOptions<Object?>>? pluginOptions,
     List<Plugin<Object?>>? plugins,
@@ -297,6 +302,7 @@ final class const ChartConfig({
     elements: elements ?? this.elements,
     onClick: onClick ?? this.onClick,
     onHover: onHover ?? this.onHover,
+    onResize: onResize ?? this.onResize,
     events: events ?? this.events,
     pluginOptions: pluginOptions ?? this.pluginOptions,
     plugins: plugins ?? this.plugins,
@@ -336,6 +342,7 @@ final class const ChartConfig({
     ('elements', elements),
     ('onClick', byPresence(onClick)),
     ('onHover', byPresence(onHover)),
+    ('onResize', byPresence(onResize)),
     ('events', byItems(events)),
     ('pluginOptions', byItems(pluginOptions)),
   ];

@@ -39,15 +39,21 @@ ChartConfig _typedConfig({
   Dataset dataset = const BarDataset(data: .values([1, 2, 3])),
   bool? maintainAspectRatio,
   bool? responsive,
-  Map<String, Object?> options = const {},
+  ChartAnimation animation = ChartAnimation.none,
+  ChartEventHandler? onClick,
+  ChartEventHandler? onHover,
+  ChartResizeHandler? onResize,
   List<Plugin<Object?>>? plugins,
 }) => ChartConfig(
   datasets: [dataset],
   maintainAspectRatio: maintainAspectRatio,
   responsive: responsive,
   labels: const ['a', 'b', 'c'],
+  animation: animation,
+  onClick: onClick,
+  onHover: onHover,
+  onResize: onResize,
   plugins: plugins,
-  extra: {'animation': false, ...options},
 );
 
 /// [child] at the top left of a loose box of [width] x [height].
@@ -183,12 +189,10 @@ void main() {
         _box(
           ChartView(
             config: _typedConfig(
-              options: <String, Object?>{
-                'animation': <String, Object?>{
-                  'onComplete': (Object? context) => complete++,
-                  'onProgress': (Object? context) => progress++,
-                },
-              },
+              animation: ChartAnimation(
+                onComplete: (event) => complete++,
+                onProgress: (event) => progress++,
+              ),
               plugins: [_counter('render', 'afterRender', counts)],
             ),
           ),
@@ -244,11 +248,7 @@ void main() {
         'change unmutes it', (tester) async {
       var progress = 0;
       final config = _typedConfig(
-        options: <String, Object?>{
-          'animation': <String, Object?>{
-            'onProgress': (Object? context) => progress++,
-          },
-        },
+        animation: ChartAnimation(onProgress: (event) => progress++),
       );
       Widget build({required bool enabled}) => TickerMode(
         enabled: enabled,
@@ -445,7 +445,7 @@ void main() {
 
     testWidgets('a GlobalKey move keeps the chart', (tester) async {
       final key = GlobalKey();
-      final config = _typedConfig(options: {'maintainAspectRatio': false});
+      final config = _typedConfig(maintainAspectRatio: false);
       Widget build({required bool left}) => _box(
         Row(
           children: [
@@ -887,12 +887,10 @@ void main() {
       var complete = 0;
       var progress = 0;
       final config = _typedConfig(
-        options: <String, Object?>{
-          'animation': <String, Object?>{
-            'onComplete': (Object? context) => complete++,
-            'onProgress': (Object? context) => progress++,
-          },
-        },
+        animation: ChartAnimation(
+          onComplete: (event) => complete++,
+          onProgress: (event) => progress++,
+        ),
       );
       await tester.pumpWidget(
         _motion(_box(ChartView(config: config)), reduced: true),
@@ -917,9 +915,7 @@ void main() {
         'animation', (tester) async {
       final counts = <String, int>{};
       final config = _typedConfig(
-        options: <String, Object?>{
-          'animation': <String, Object?>{'loop': true},
-        },
+        animation: const ChartAnimation(loop: true),
         plugins: [_counter('update', 'beforeUpdate', counts)],
       );
       Widget build({required bool reduced}) =>
@@ -981,7 +977,7 @@ void main() {
     testWidgets('a theme switch and a theme removal draw once', (tester) async {
       final counts = <String, int>{};
       final config = _typedConfig(
-        options: <String, Object?>{'animation': <String, Object?>{}},
+        animation: const ChartAnimation(),
         plugins: [_counter('draw', 'afterDraw', counts)],
       );
       const themeA = ChartThemeData(color: Color(0xFFFF0000));
@@ -1044,17 +1040,13 @@ void main() {
       late _ParentState parent;
       final calls = <String>[];
       final config = _typedConfig(
-        options: <String, Object?>{
-          'onHover':
-              (ChartEvent event, List<ActiveElement> active, Chart chart) {
-                calls.add('hover ${event.type} ${active.length}');
-                parent.write(calls.last);
-              },
-          'onClick':
-              (ChartEvent event, List<ActiveElement> active, Chart chart) {
-                calls.add('click ${event.type} ${active.length}');
-                parent.write(calls.last);
-              },
+        onHover: (event, active, chart) {
+          calls.add('hover ${event.type} ${active.length}');
+          parent.write(calls.last);
+        },
+        onClick: (event, active, chart) {
+          calls.add('click ${event.type} ${active.length}');
+          parent.write(calls.last);
         },
       );
       await tester.pumpWidget(_Parent(config: config));
@@ -1087,11 +1079,7 @@ void main() {
       tester,
     ) async {
       late StateSetter setOuter;
-      final config = _typedConfig(
-        options: <String, Object?>{
-          'onResize': (Object? chart, Object? size) => setOuter(() {}),
-        },
-      );
+      final config = _typedConfig(onResize: (chart, size) => setOuter(() {}));
       await tester.pumpWidget(
         StatefulBuilder(
           builder: (context, setState) {
@@ -1110,13 +1098,9 @@ void main() {
       var resizes = 0;
       var builds = 0;
       final config = _typedConfig(
-        options: <String, Object?>{
-          'onResize': (Object? chart, Object? size) {
-            resizes++;
-            WidgetsBinding.instance.addPostFrameCallback(
-              (_) => setOuter(() {}),
-            );
-          },
+        onResize: (chart, size) {
+          resizes++;
+          WidgetsBinding.instance.addPostFrameCallback((_) => setOuter(() {}));
         },
       );
       await tester.pumpWidget(

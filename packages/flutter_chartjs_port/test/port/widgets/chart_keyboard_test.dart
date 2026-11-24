@@ -54,12 +54,12 @@ const List<_Move> _moves = [
 
 /// A chart config of [type]: labels `a` to `c`, 2 datasets, no animation,
 /// no aspect ratio. The legend logs its `onHover` and `onLeave` calls in
-/// [log]. [options] and [legend] add keys to the options and to the legend
+/// [log]. [edit] changes the config, and [legend] adds keys to the legend
 /// options.
 ChartConfig _config(
   String type, {
   List<String>? log,
-  Map<String, Object?> options = const {},
+  ChartConfig Function(ChartConfig config)? edit,
   LegendOptions legend = const LegendOptions(),
   List<Plugin<Object?>>? plugins,
 }) {
@@ -72,7 +72,7 @@ ChartConfig _config(
     'radar' => RadarDataset(label: label, data: data),
     _ => throw ArgumentError.value(type, 'type'),
   };
-  return ChartConfig(
+  final config = ChartConfig(
     labels: const ['a', 'b', 'c'],
     datasets: [
       dataset('d0', [3, 5, 4]),
@@ -80,18 +80,15 @@ ChartConfig _config(
     ],
     animation: ChartAnimation.none,
     maintainAspectRatio: false,
-    // An explicit plugins object replaces the default legend options in
-    // the original config, so it must not inherit these logging callbacks.
     pluginOptions: [
-      if (!options.containsKey('plugins'))
-        LegendOptions(
-          onHover: (event, item, legend) => entry('hover', event, item),
-          onLeave: (event, item, legend) => entry('leave', event, item),
-        ).merge(legend),
+      LegendOptions(
+        onHover: (event, item, legend) => entry('hover', event, item),
+        onLeave: (event, item, legend) => entry('leave', event, item),
+      ).merge(legend),
     ],
-    extra: options,
     plugins: plugins,
   );
+  return edit == null ? config : edit(config);
 }
 
 /// The chart of [config] in a box of 400 x 280 at the top left.
@@ -171,7 +168,7 @@ Future<bool> _key(WidgetTester tester, LogicalKeyboardKey key) async {
 /// oracle chart, with their legend logs.
 final class _Charts(
   final String type, {
-  final Map<String, Object?> options = const {},
+  final ChartConfig Function(ChartConfig config)? edit,
   final LegendOptions legend = const LegendOptions(),
 }) {
   final FocusNode node = FocusNode(debugLabel: 'keys');
@@ -185,12 +182,12 @@ final class _Charts(
     await tester.pumpWidget(
       _pair(
         _view(
-          _config(type, log: keysLog, options: options, legend: legend),
+          _config(type, log: keysLog, edit: edit, legend: legend),
           focusNode: node,
           onChartCreated: (chart) => keys = chart,
         ),
         _view(
-          _config(type, log: mouseLog, options: options, legend: legend),
+          _config(type, log: mouseLog, edit: edit, legend: legend),
           onChartCreated: (chart) => mouse = chart,
         ),
       ),
@@ -324,11 +321,9 @@ void main() {
     ) async {
       final charts = _Charts(
         'bar',
-        options: <String, Object?>{
-          'interaction': <String, Object?>{
-            'mode': const IndexInteractionMode(),
-          },
-        },
+        edit: (c) => c.copyWith(
+          interaction: const ChartInteraction(mode: IndexInteractionMode()),
+        ),
       );
       await charts.pump(tester);
       await charts.both(tester, LogicalKeyboardKey.arrowDown, 'mousemove', (
@@ -411,13 +406,10 @@ void main() {
       final mouseClicks = <List<String>>[];
       ChartConfig config(List<List<String>> log) => _config(
         'bar',
-        options: <String, Object?>{
-          'onClick': (
-            ChartEvent event,
-            List<ActiveElement> active,
-            Chart chart,
-          ) => log.add([event.type, ..._items(active)]),
-        },
+        edit: (c) => c.copyWith(
+          onClick: (event, active, chart) =>
+              log.add([event.type, ..._items(active)]),
+        ),
       );
       final keysConfig = config(keysClicks);
       final mouseConfig = config(mouseClicks);
@@ -465,14 +457,10 @@ void main() {
       final clicks = <List<String>>[];
       final charts = _Charts(
         'bar',
-        options: <String, Object?>{
-          'events': <Object?>['click'],
-          'onClick': (
-            ChartEvent event,
-            List<ActiveElement> active,
-            Chart chart,
-          ) => clicks.add(_items(active)),
-        },
+        edit: (c) => c.copyWith(
+          events: const ['click'],
+          onClick: (event, active, chart) => clicks.add(_items(active)),
+        ),
       );
       await charts.pump(tester);
       expect(await _key(tester, LogicalKeyboardKey.arrowDown), isTrue);
@@ -493,8 +481,8 @@ void main() {
       final events = <String>[];
       final config = _config(
         'bar',
-        options: <String, Object?>{
-          'events': <Object?>[
+        edit: (c) => c.copyWith(
+          events: const [
             'mousemove',
             'mouseout',
             'click',
@@ -502,7 +490,7 @@ void main() {
             'keypress',
             'keyup',
           ],
-        },
+        ),
         plugins: [
           Plugin<Object?>(
             id: 'events',
@@ -855,19 +843,18 @@ void main() {
       var armed = false;
       final config = _config(
         'bar',
-        options: <String, Object?>{
-          'animation': <String, Object?>{
-            'duration': 0,
-            'onComplete': (Object? context) {
+        edit: (c) => c.copyWith(
+          animation: ChartAnimation(
+            duration: Duration.zero,
+            onComplete: (event) {
               completes++;
               if (armed) setOuter(() => label = 'complete $completes');
             },
+          ),
+          onHover: (event, active, chart) {
+            if (armed) setOuter(() => label = 'hover ${active.length}');
           },
-          'onHover':
-              (ChartEvent event, List<ActiveElement> active, Chart chart) {
-                if (armed) setOuter(() => label = 'hover ${active.length}');
-              },
-        },
+        ),
       );
       await tester.pumpWidget(
         _top(
@@ -985,25 +972,20 @@ void main() {
       expect(_ring(chart), isEmpty);
     });
 
-    testWidgets('the ring takes the resolved options.color, and '
-        r'plugins.$chartView: false turns it off', (tester) async {
+    testWidgets('the ring takes the resolved options.color', (tester) async {
       _highlight(FocusHighlightStrategy.alwaysTraditional);
       final node = FocusNode();
       addTearDown(node.dispose);
       late Chart chart;
-      Widget build(Map<String, Object?> options) => _top(
+      Widget build(ChartPaint color) => _top(
         _view(
-          _config('bar', options: options),
+          _config('bar', edit: (c) => c.copyWith(color: color)),
           focusNode: node,
           onChartCreated: (c) => chart = c,
         ),
       );
       await tester.pumpWidget(
-        build(<String, Object?>{
-          'color': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(18, 52, 86, 1),
-          ),
-        }),
+        build(const ChartPaint.solid(native_ui.Color.fromRGBO(18, 52, 86, 1))),
       );
       node.requestFocus();
       await tester.pump();
@@ -1012,14 +994,6 @@ void main() {
         'setStrokeStyle',
         const native_ui.Color.fromRGBO(18, 52, 86, 1),
       ]);
-
-      await tester.pumpWidget(
-        build(<String, Object?>{
-          'plugins': <String, Object?>{r'$chartView': false},
-        }),
-      );
-      await tester.pump();
-      expect(_ring(chart), isEmpty);
     });
   });
 
@@ -1086,9 +1060,9 @@ void main() {
         'and a canvas listener with the key value', (tester) async {
       final config = _config(
         'bar',
-        options: <String, Object?>{
-          'events': <Object?>['mousemove', 'mouseout', 'click', 'keydown'],
-        },
+        edit: (c) => c.copyWith(
+          events: const ['mousemove', 'mouseout', 'click', 'keydown'],
+        ),
       );
       final node = FocusNode();
       addTearDown(node.dispose);

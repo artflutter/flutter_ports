@@ -331,20 +331,22 @@ ChartConfigurationScope _config({
       labels: labels ?? <Object>[for (var i = 0; i < n; i++) 'Label $i'],
       responsive: false,
       scales: [
-        RadialLinearAxis(
-          min: 0,
-          max: 100,
-          grid: const AxisGrid(
-            color: .constant(ChartPaint.solid(ui.Color(0x33000000))),
+        raw(
+          RadialLinearAxis(
+            min: 0,
+            max: 100,
+            grid: const AxisGrid(
+              color: .constant(ChartPaint.solid(ui.Color(0x33000000))),
+            ),
+            angleLinesDisplay: baseLines ? true : null,
+            angleLinesColor: baseLines
+                ? const ChartPaint.solid(ui.Color(0xFF336699))
+                : null,
+            ticks: const AxisTicks(display: false),
+            pointLabelsDisplay: ScaleDisplay.on,
+            pointLabelsCallback: typedCallback,
           ),
-          angleLinesDisplay: baseLines ? true : null,
-          angleLinesColor: baseLines
-              ? const ChartPaint.solid(ui.Color(0xFF336699))
-              : null,
-          ticks: const AxisTicks(display: false),
-          pointLabelsDisplay: ScaleDisplay.on,
-          pointLabelsCallback: typedCallback,
-          extra: {
+          {
             'type': ?scaleType,
             ...rOptions,
             if (labelOptions.isNotEmpty) 'pointLabels': labelOptions,
@@ -1351,9 +1353,7 @@ void main() {
                       stepSize: 25,
                       font: .constant(TextStyle(fontSize: 10)),
                     ),
-                    extra: {
-                      'pointLabels': {'callback': _everyFourth},
-                    },
+                    pointLabelsCallback: _everyFourth,
                   ),
                 ],
                 animation: ChartAnimation.none,

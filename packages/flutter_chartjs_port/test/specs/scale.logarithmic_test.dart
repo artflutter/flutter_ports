@@ -127,22 +127,22 @@ Chart _acquireWhenChart(Map<String, Object?> setup) {
 }
 
 // The second, third and fourth y axes of the specs. Their options are equal
-// upstream, so an `id` in `extra` makes them distinct by `==`; Chart.js
-// writes the scale id over it (core.controller.js:309, Chart.js ADR 0191).
+// upstream, so a hidden title text makes them distinct by `==` (Chart.js ADR
+// 0191); a title with `display` false takes no space.
 const _y1 = LogarithmicAxis(
   .y,
   position: ChartPosition.right,
-  extra: {'id': 'y1'},
+  title: AxisTitle(text: ['y1']),
 );
 const _y2 = LogarithmicAxis(
   .y,
   position: ChartPosition.right,
-  extra: {'id': 'y2'},
+  title: AxisTitle(text: ['y2']),
 );
 const _y3 = LogarithmicAxis(
   .y,
   position: ChartPosition.right,
-  extra: {'id': 'y3'},
+  title: AxisTitle(text: ['y3']),
 );
 
 void main() {
@@ -190,12 +190,7 @@ void main() {
             BarDataset(yAxis: _y3, data: .values([67, 0.0004, 0, 820, 0.001])),
           ],
           labels: ['a', 'b', 'c', 'd', 'e'],
-          scales: [
-            LogarithmicAxis(.y, extra: {'id': 'y'}),
-            _y1,
-            _y2,
-            _y3,
-          ],
+          scales: [LogarithmicAxis(.y), _y1, _y2, _y3],
         ),
       );
 
@@ -1001,7 +996,7 @@ void main() {
             min: ((scale[axis]! as Map<String, Object?>)['min']! as num)
                 .toDouble(),
           ),
-          _ => LogarithmicAxis(direction, extra: const {'beginAtZero': false}),
+          _ => LogarithmicAxis(direction, beginAtZero: false),
         };
 
         final description =

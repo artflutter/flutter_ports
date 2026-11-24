@@ -963,6 +963,7 @@ removeCanvasEventListener
 renderText
 requestAnimFrame
 requireUiColor
+resizeTrampoline
 resolve
 resolveObjectKey
 resolveTarget
@@ -2036,6 +2037,7 @@ removeCanvasEventListener
 renderText
 requestAnimFrame
 requireUiColor
+resizeTrampoline
 resolve
 resolveObjectKey
 resolveTarget

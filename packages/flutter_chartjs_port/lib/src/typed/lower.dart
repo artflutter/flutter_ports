@@ -374,6 +374,13 @@ final class ChartConfigLowering(
     if (config.onHover != null) {
       options.onHover = eventTrampoline(() => this.config.onHover);
     }
+    if (config.onResize != null) {
+      put(
+        options,
+        OptionKey.onResize,
+        resizeTrampoline(() => this.config.onResize),
+      );
+    }
     if (config.events case final events?) {
       put(options, OptionKey.events, List<String>.of(events));
     }
@@ -567,6 +574,11 @@ TooltipCallbacks tooltipCallbacksTrampoline(
       ? null
       : (tooltip, arg) => newest()?.labelPointStyle?.call(tooltip, arg),
 );
+
+/// The `onResize` of a config: it calls the `onResize` of the newest config
+/// of its lowering, as [eventTrampoline] does.
+ChartResizeHandler resizeTrampoline(ChartResizeHandler? Function() newest) =>
+    (chart, size) => newest()?.call(chart, size);
 
 /// The trampoline of the chart callback that [newest] reads:
 /// `options.onClick` or `options.onHover`.
