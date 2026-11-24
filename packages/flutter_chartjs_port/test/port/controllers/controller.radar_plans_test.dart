@@ -149,30 +149,32 @@ ChartConfigurationScope _config(
   final values =
       data ?? <num?>[for (var i = 0; i < n; i++) ((i * 13) % 50) * 2.0];
   return lowerForTest(
-    ChartConfig(
-      datasets: [
-        raw(
-          RadarDataset(
-            data: values is List<num?> ? values : null,
-            pointRadius: pointRadius,
+    raw(
+      ChartConfig(
+        datasets: [
+          raw(
+            RadarDataset(
+              data: values is List<num?> ? values : null,
+              pointRadius: pointRadius,
 
-            // The controller of the chart type: a RadarDataset alone gives
-            // the type `radar`.
+              // The controller of the chart type: a RadarDataset alone gives
+              // the type `radar`.
+            ),
+            {
+              'type': type,
+              if (values is! List<num?>) 'data': values,
+              ...?datasetExtra?.call(),
+            },
           ),
-          {
-            'type': type,
-            if (values is! List<num?>) 'data': values,
-            ...?datasetExtra?.call(),
-          },
-        ),
-      ],
-      labels: labels ?? [for (var i = 0; i < values.length; i++) 'L$i'],
-      responsive: false,
-      scales: [axis],
-      elements: elements,
-      animation: animation,
-      events: const [],
-      extra: extra,
+        ],
+        labels: labels ?? [for (var i = 0; i < values.length; i++) 'L$i'],
+        responsive: false,
+        scales: [axis],
+        elements: elements,
+        animation: animation,
+        events: const [],
+      ),
+      extra,
     ),
   );
 }

@@ -122,13 +122,15 @@ List<Object> _pointLabels() => <Object>['Point 1', 'Point 2', 'Point 3'];
 
 /// `Dataset 1` of most cases (:10-17, :40-51): the data [10, 20, 30],
 /// with the options [order] and [extra].
-LineDataset _dataset1({int? order, Map<String, Object?>? extra}) => LineDataset(
-  label: 'Dataset 1',
-  data: const .values([10, 20, 30]),
-  order: order,
-  pointHoverBorderColor: const .constant(_red),
-  pointHoverBackgroundColor: const .constant(_green),
-  extra: extra,
+LineDataset _dataset1({int? order, Map<String, Object?>? extra}) => raw(
+  LineDataset(
+    label: 'Dataset 1',
+    data: const .values([10, 20, 30]),
+    order: order,
+    pointHoverBorderColor: const .constant(_red),
+    pointHoverBackgroundColor: const .constant(_green),
+  ),
+  extra,
 );
 
 /// `Dataset 2` of most cases (:10-17, :40-51): the data [40, 40, 40],
@@ -149,12 +151,14 @@ ChartConfig _lineConfig(
   List<Dataset>? datasets,
   List<ChartAxis>? scales,
   Map<String, Object?>? extra,
-}) => ChartConfig(
-  datasets: datasets ?? [_dataset1(), _dataset2()],
-  labels: _pointLabels(),
-  scales: scales,
-  pluginOptions: [tooltip],
-  extra: extra,
+}) => raw(
+  ChartConfig(
+    datasets: datasets ?? [_dataset1(), _dataset2()],
+    labels: _pointLabels(),
+    scales: scales,
+    pluginOptions: [tooltip],
+  ),
+  extra,
 );
 
 /// The chart of the two `should tolerate ... removed on events outside

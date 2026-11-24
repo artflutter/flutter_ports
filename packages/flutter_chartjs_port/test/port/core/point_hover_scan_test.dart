@@ -342,32 +342,34 @@ Chart _scatterChart({
   ChartAnimation animation = ChartAnimation.none,
 }) => acquireChartRoot(
   lowerForTest(
-    ChartConfig(
-      datasets: [
-        for (var k = 0; k < datasets; k++)
-          if (type == ChartKind.line)
-            raw(
-              LineDataset(
-                label: 'series $k',
-                data: .points(values?.call(k) ?? _values(count, k)),
-                pointRadius: pointRadius?.call(k),
+    raw(
+      ChartConfig(
+        datasets: [
+          for (var k = 0; k < datasets; k++)
+            if (type == ChartKind.line)
+              raw(
+                LineDataset(
+                  label: 'series $k',
+                  data: .points(values?.call(k) ?? _values(count, k)),
+                  pointRadius: pointRadius?.call(k),
+                ),
+                datasetExtra?.call(k),
+              )
+            else
+              raw(
+                ScatterDataset(
+                  label: 'series $k',
+                  data: .points(values?.call(k) ?? _values(count, k)),
+                  pointRadius: pointRadius?.call(k),
+                ),
+                datasetExtra?.call(k),
               ),
-              datasetExtra?.call(k),
-            )
-          else
-            raw(
-              ScatterDataset(
-                label: 'series $k',
-                data: .points(values?.call(k) ?? _values(count, k)),
-                pointRadius: pointRadius?.call(k),
-              ),
-              datasetExtra?.call(k),
-            ),
-      ],
-      interaction: interaction,
-      scales: scales,
-      animation: animation,
-      extra: extra,
+        ],
+        interaction: interaction,
+        scales: scales,
+        animation: animation,
+      ),
+      extra,
     ),
   ),
 );

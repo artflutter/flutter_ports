@@ -300,14 +300,16 @@ ChartConfigurationScope _mapLine(Object? legendOptions) =>
 /// The typed config of a line chart with two datasets and the legend
 /// options [legend].
 ChartConfig _config([LegendOptions? legend, Map<String, Object?>? extra]) =>
-    ChartConfig(
-      labels: const ['a', 'b'],
-      datasets: const [
-        LineDataset(label: 'one', data: .values([1, 2])),
-        LineDataset(label: 'two', data: .values([2, 1])),
-      ],
-      pluginOptions: [?legend],
-      extra: extra,
+    raw(
+      ChartConfig(
+        labels: const ['a', 'b'],
+        datasets: const [
+          LineDataset(label: 'one', data: .values([1, 2])),
+          LineDataset(label: 'two', data: .values([2, 1])),
+        ],
+        pluginOptions: [?legend],
+      ),
+      extra,
     );
 
 /// A line chart with two datasets and the legend options [legend].

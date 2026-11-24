@@ -179,16 +179,18 @@ ChartConfigurationScope _typedConfig(
   List<Plugin<Object?>>? plugins,
   List<typed.PluginOff<Plugin<Object?>>>? disabledPlugins,
 }) => lowerForTest(
-  typed.ChartConfig(
-    labels: labelValues ?? <Object>['a', 'b', 'c'],
-    datasets: datasets ?? [_typedDataset(type, data: data)],
-    scales: scales,
-    responsive: responsive,
-    animation: animation,
-    pluginOptions: [legend],
-    plugins: plugins,
-    disabledPlugins: disabledPlugins,
-    extra: extra,
+  raw(
+    typed.ChartConfig(
+      labels: labelValues ?? <Object>['a', 'b', 'c'],
+      datasets: datasets ?? [_typedDataset(type, data: data)],
+      scales: scales,
+      responsive: responsive,
+      animation: animation,
+      pluginOptions: [legend],
+      plugins: plugins,
+      disabledPlugins: disabledPlugins,
+    ),
+    extra,
   ),
 );
 
