@@ -16,39 +16,33 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 /// The config of the upstream file, as tool 4 decoded it, with the
 /// title and the subtitle options as one object each. Each call makes
 /// new objects.
-FixtureConfig fixture() => FixtureConfig.typed(ChartConfig(datasets: [ScatterDataset(data: .points([DataPoint(0, 0),
-DataPoint(1, 1),
-DataPoint(2, 2),
-]),
-backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-extra: <String, Object?>{'radius': 1,
-'hoverRadius': 0,
-},
-),
-],
-scales: [LinearAxis(CartesianAxis.x,
-display: ScaleDisplay.off,
-),
-LinearAxis(CartesianAxis.y,
-display: ScaleDisplay.off,
-),
-],
-pluginOptions: [// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-const TitleOptions(display: true, text: ['Title Text']),
-// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-const SubtitleOptions(
-          display: true,
-          text: ['SubTitle Text'],
-        ),
-],
-disabledPlugins: [PluginOff<LegendPlugin>(),
-PluginOff<FillerPlugin>(),
-PluginOff<TooltipPlugin>(),
-],
-),
-options: <String, Object?>{'spriteText': true,
-'canvas': <String, Object?>{'height': 400,
-'width': 400,
-},
-},
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      ScatterDataset(
+        data: .points([DataPoint(0, 0), DataPoint(1, 1), DataPoint(2, 2)]),
+        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        extra: <String, Object?>{'radius': 1, 'hoverRadius': 0},
+      ),
+    ],
+    scales: [
+      LinearAxis(CartesianAxis.x, display: ScaleDisplay.off),
+      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+    ],
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const TitleOptions(display: true, text: ['Title Text']),
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      const SubtitleOptions(display: true, text: ['SubTitle Text']),
+    ],
+    disabledPlugins: [
+      PluginOff<LegendPlugin>(),
+      PluginOff<FillerPlugin>(),
+      PluginOff<TooltipPlugin>(),
+    ],
+  ),
+  options: <String, Object?>{
+    'spriteText': true,
+    'canvas': <String, Object?>{'height': 400, 'width': 400},
+  },
 );
