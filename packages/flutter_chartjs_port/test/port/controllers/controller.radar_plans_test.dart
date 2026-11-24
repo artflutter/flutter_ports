@@ -349,9 +349,7 @@ void main() {
           elements: const ChartElements(
             point: PointElementStyle(
               hoverRadius: 9,
-              extra: {
-                'hoverBackgroundColor': ChartPaint.solid(ui.Color(0xFFFF0000)),
-              },
+              hoverBackgroundColor: ChartPaint.solid(ui.Color(0xFFFF0000)),
             ),
           ),
         ),

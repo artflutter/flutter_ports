@@ -241,7 +241,7 @@ class CoreDemoState() extends State<CoreDemo> {
         hoverRadius: 12,
         borderWidth: 1,
         // `elements.point.hoverBorderWidth` has no typed parameter.
-        extra: {'hoverBorderWidth': 3.0},
+        hoverBorderWidth: 3,
       ),
     ),
     // The duration of the hover transition.

@@ -3584,6 +3584,11 @@ function elementsNode(v, state) {
       borderWidth: number,
       hitRadius: number,
       hoverRadius: number,
+      rotation: number,
+      hoverBackgroundColor: paint,
+      hoverBorderColor: paint,
+      hoverBorderWidth: number,
+      drawActiveElementsOnTop: boolNode,
     }],
     line: ['LineElementStyle', {
       tension: number,
@@ -3593,12 +3598,15 @@ function elementsNode(v, state) {
       borderDash: dashNode,
       fill: (x) => fillNode(x, state),
       stepped: (x) => enumNode('SteppedLine', ['before', 'after', 'middle'], x, state, 'steppedLines'),
+      borderDashOffset: number,
+      capBezierPoints: boolNode,
     }],
     bar: ['BarElementStyle', {
       backgroundColor: paint,
       borderColor: paint,
       borderWidth: number,
       borderRadius: number,
+      inflateAmount: number,
     }],
     arc: ['ArcElementStyle', {
       backgroundColor: paint,
@@ -3608,6 +3616,12 @@ function elementsNode(v, state) {
       spacing: number,
       borderAlign: (x) => enumNode('ArcBorderAlign', ['center', 'inner'], x, state, 'arcEnums'),
       spacingMode: (x) => enumNode('ArcSpacingMode', ['angular', 'proportional', 'parallel'], x, state, 'arcEnums'),
+      borderDash: dashNode,
+      borderDashOffset: number,
+      borderJoinStyle: (x) => (['miter', 'round', 'bevel'].includes(x) ? strokeNode('StrokeJoin', x, state) : undefined),
+      selfJoin: boolNode,
+      circular: boolNode,
+      angle: number,
     }],
   };
   const args = [];

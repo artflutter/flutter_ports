@@ -4012,9 +4012,7 @@ FixtureConfig _controller_doughnut_borderdash_value() => FixtureConfig.typed(
       arc: ArcElementStyle(
         backgroundColor: ChartPaint.solid(Color(0x00000000)),
         borderWidth: 1,
-        extra: <String, Object?>{
-          'borderDash': <double>[3, 3],
-        },
+        borderDash: <double>[3, 3],
       ),
     ),
     scales: [RadialLinearAxis(display: ScaleDisplay.off)],
@@ -5345,9 +5343,7 @@ FixtureConfig _controller_polararea_borderdash_value() => FixtureConfig.typed(
       arc: ArcElementStyle(
         backgroundColor: ChartPaint.solid(Color(0x00000000)),
         borderWidth: 1,
-        extra: <String, Object?>{
-          'borderDash': <double>[3, 3],
-        },
+        borderDash: <double>[3, 3],
       ),
     ),
     scales: [RadialLinearAxis(display: ScaleDisplay.off)],

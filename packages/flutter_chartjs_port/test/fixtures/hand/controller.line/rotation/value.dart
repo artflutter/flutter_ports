@@ -33,7 +33,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
         // class.
         pointStyle: const LinePointStyle(),
         radius: 10,
-        extra: <String, Object?>{'rotation': 0},
+        rotation: 0,
       ),
     ),
     scales: [

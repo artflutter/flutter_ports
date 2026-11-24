@@ -1066,8 +1066,8 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
       'point': {'hoverRadius': 6},
     },
   ),
-  'point.extra': (
-    ChartElements(point: PointElementStyle(extra: {'rotation': 45})),
+  'point.rotation': (
+    ChartElements(point: PointElementStyle(rotation: 45)),
     {
       'point': {'rotation': 45},
     },
@@ -1135,7 +1135,7 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
     },
   ),
   'line.extra': (
-    ChartElements(line: LineElementStyle(extra: {'capBezierPoints': false})),
+    ChartElements(line: LineElementStyle(capBezierPoints: false)),
     {
       'line': {'capBezierPoints': false},
     },
@@ -1184,8 +1184,86 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
       'bar': {'borderSkipped': BorderSkippedEdge.left},
     },
   ),
-  'bar.extra': (
-    ChartElements(bar: BarElementStyle(extra: {'inflateAmount': 0})),
+  'point.hoverBackgroundColor': (
+    ChartElements(
+      point: PointElementStyle(hoverBackgroundColor: ChartPaint.solid(_red)),
+    ),
+    {
+      'point': {'hoverBackgroundColor': _redValue},
+    },
+  ),
+  'point.hoverBorderColor': (
+    ChartElements(
+      point: PointElementStyle(hoverBorderColor: ChartPaint.solid(_red)),
+    ),
+    {
+      'point': {'hoverBorderColor': _redValue},
+    },
+  ),
+  'point.hoverBorderWidth': (
+    ChartElements(point: PointElementStyle(hoverBorderWidth: 3)),
+    {
+      'point': {'hoverBorderWidth': 3},
+    },
+  ),
+  'point.drawActiveElementsOnTop': (
+    ChartElements(point: PointElementStyle(drawActiveElementsOnTop: false)),
+    {
+      'point': {'drawActiveElementsOnTop': false},
+    },
+  ),
+  'line.borderDashOffset': (
+    ChartElements(line: LineElementStyle(borderDashOffset: 2)),
+    {
+      'line': {'borderDashOffset': 2},
+    },
+  ),
+  'line.capBezierPoints': (
+    ChartElements(line: LineElementStyle(capBezierPoints: false)),
+    {
+      'line': {'capBezierPoints': false},
+    },
+  ),
+  'arc.borderDash': (
+    ChartElements(arc: ArcElementStyle(borderDash: [4, 2])),
+    {
+      'arc': {
+        'borderDash': [4.0, 2.0],
+      },
+    },
+  ),
+  'arc.borderDashOffset': (
+    ChartElements(arc: ArcElementStyle(borderDashOffset: 1)),
+    {
+      'arc': {'borderDashOffset': 1},
+    },
+  ),
+  'arc.borderJoinStyle': (
+    ChartElements(arc: ArcElementStyle(borderJoinStyle: .round)),
+    {
+      'arc': {'borderJoinStyle': native_ui.StrokeJoin.round},
+    },
+  ),
+  'arc.selfJoin': (
+    ChartElements(arc: ArcElementStyle(selfJoin: true)),
+    {
+      'arc': {'selfJoin': true},
+    },
+  ),
+  'arc.circular': (
+    ChartElements(arc: ArcElementStyle(circular: false)),
+    {
+      'arc': {'circular': false},
+    },
+  ),
+  'arc.angle': (
+    ChartElements(arc: ArcElementStyle(angle: 90)),
+    {
+      'arc': {'angle': 90},
+    },
+  ),
+  'bar.inflateAmount': (
+    ChartElements(bar: BarElementStyle(inflateAmount: 0)),
     {
       'bar': {'inflateAmount': 0},
     },

@@ -133,6 +133,23 @@ final class const PointElementStyle({
   /// default is 4.
   final double? hoverRadius,
 
+  /// The rotation of the point style in degrees: `rotation`.
+  final double? rotation,
+
+  /// The fill color of a point under the pointer: `hoverBackgroundColor`.
+  final ChartPaint? hoverBackgroundColor,
+
+  /// The border color of a point under the pointer: `hoverBorderColor`.
+  final ChartPaint? hoverBorderColor,
+
+  /// The border width of a point under the pointer, in pixels:
+  /// `hoverBorderWidth`.
+  final double? hoverBorderWidth,
+
+  /// Whether the points under the pointer draw over the other points:
+  /// `drawActiveElementsOnTop`. The default is `true`.
+  final bool? drawActiveElementsOnTop,
+
   /// The Chart.js point options that have no parameter, for example
   /// `{'rotation': 45}`. The rules of [ChartElements.extra] apply.
   final Map<String, Object?>? extra,
@@ -150,6 +167,11 @@ final class const PointElementStyle({
     double? borderWidth,
     double? hitRadius,
     double? hoverRadius,
+    double? rotation,
+    ChartPaint? hoverBackgroundColor,
+    ChartPaint? hoverBorderColor,
+    double? hoverBorderWidth,
+    bool? drawActiveElementsOnTop,
     Map<String, Object?>? extra,
   }) => PointElementStyle(
     radius: radius ?? this.radius,
@@ -159,6 +181,12 @@ final class const PointElementStyle({
     borderWidth: borderWidth ?? this.borderWidth,
     hitRadius: hitRadius ?? this.hitRadius,
     hoverRadius: hoverRadius ?? this.hoverRadius,
+    rotation: rotation ?? this.rotation,
+    hoverBackgroundColor: hoverBackgroundColor ?? this.hoverBackgroundColor,
+    hoverBorderColor: hoverBorderColor ?? this.hoverBorderColor,
+    hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
+    drawActiveElementsOnTop:
+        drawActiveElementsOnTop ?? this.drawActiveElementsOnTop,
     extra: extra ?? this.extra,
   );
 
@@ -172,6 +200,11 @@ final class const PointElementStyle({
     put(scope, OptionKey.borderWidth, borderWidth);
     put(scope, OptionKey.hitRadius, hitRadius);
     put(scope, OptionKey.hoverRadius, hoverRadius);
+    put(scope, OptionKey.rotation, rotation);
+    put(scope, OptionKey.hoverBackgroundColor, hoverBackgroundColor);
+    put(scope, OptionKey.hoverBorderColor, hoverBorderColor);
+    put(scope, OptionKey.hoverBorderWidth, hoverBorderWidth);
+    put(scope, OptionKey.drawActiveElementsOnTop, drawActiveElementsOnTop);
     return mergeExtra(scope, extra);
   }
 
@@ -183,6 +216,11 @@ final class const PointElementStyle({
     ('borderWidth', borderWidth),
     ('hitRadius', hitRadius),
     ('hoverRadius', hoverRadius),
+    ('rotation', rotation),
+    ('hoverBackgroundColor', hoverBackgroundColor),
+    ('hoverBorderColor', hoverBorderColor),
+    ('hoverBorderWidth', hoverBorderWidth),
+    ('drawActiveElementsOnTop', drawActiveElementsOnTop),
     ('extra', byEntries(extra)),
   ];
 
@@ -253,6 +291,13 @@ final class const LineElementStyle({
   /// keeps the line style for that part.
   final LineSegmentStyle? segment,
 
+  /// The offset of the dash pattern of the line: `borderDashOffset`.
+  final double? borderDashOffset,
+
+  /// Whether the control points of a curve stay inside the chart area:
+  /// `capBezierPoints`. The default is `true`.
+  final bool? capBezierPoints,
+
   /// The Chart.js line options that have no parameter, for example
   /// `{'capBezierPoints': false}`. The rules of
   /// [ChartElements.extra] apply.
@@ -275,6 +320,8 @@ final class const LineElementStyle({
     SteppedLine? stepped,
     CubicInterpolationMode? cubicInterpolationMode,
     LineSegmentStyle? segment,
+    double? borderDashOffset,
+    bool? capBezierPoints,
     Map<String, Object?>? extra,
   }) => LineElementStyle(
     tension: tension ?? this.tension,
@@ -289,6 +336,8 @@ final class const LineElementStyle({
     cubicInterpolationMode:
         cubicInterpolationMode ?? this.cubicInterpolationMode,
     segment: segment ?? this.segment,
+    borderDashOffset: borderDashOffset ?? this.borderDashOffset,
+    capBezierPoints: capBezierPoints ?? this.capBezierPoints,
     extra: extra ?? this.extra,
   );
 
@@ -306,6 +355,8 @@ final class const LineElementStyle({
     put(scope, OptionKey.stepped, stepped);
     put(scope, OptionKey.cubicInterpolationMode, cubicInterpolationMode);
     put(scope, OptionKey.segment, segment);
+    put(scope, OptionKey.borderDashOffset, borderDashOffset);
+    put(scope, OptionKey.capBezierPoints, capBezierPoints);
     return mergeExtra(scope, extra);
   }
 
@@ -321,6 +372,8 @@ final class const LineElementStyle({
     ('stepped', stepped),
     ('cubicInterpolationMode', cubicInterpolationMode),
     ('segment', segment),
+    ('borderDashOffset', borderDashOffset),
+    ('capBezierPoints', capBezierPoints),
     ('extra', byEntries(extra)),
   ];
 
@@ -409,6 +462,10 @@ final class const BarElementStyle({
   /// [BorderSkip]. The default is [BorderSkip.start].
   final BorderSkip? borderSkipped,
 
+  /// The pixels that each side of a bar grows by: `inflateAmount`. Null is the
+  /// upstream `'auto'` (row `adapt-inflate-amount-auto`).
+  final double? inflateAmount,
+
   /// The Chart.js bar options that have no parameter, for example
   /// `{'inflateAmount': 0}`. The rules of [ChartElements.extra] apply.
   final Map<String, Object?>? extra,
@@ -424,6 +481,7 @@ final class const BarElementStyle({
     double? borderWidth,
     double? borderRadius,
     BorderSkip? borderSkipped,
+    double? inflateAmount,
     Map<String, Object?>? extra,
   }) => BarElementStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -431,6 +489,7 @@ final class const BarElementStyle({
     borderWidth: borderWidth ?? this.borderWidth,
     borderRadius: borderRadius ?? this.borderRadius,
     borderSkipped: borderSkipped ?? this.borderSkipped,
+    inflateAmount: inflateAmount ?? this.inflateAmount,
     extra: extra ?? this.extra,
   );
 
@@ -442,6 +501,7 @@ final class const BarElementStyle({
     put(scope, OptionKey.borderWidth, borderWidth);
     put(scope, OptionKey.borderRadius, borderRadius);
     put(scope, OptionKey.borderSkipped, borderSkippedOf(borderSkipped));
+    put(scope, OptionKey.inflateAmount, inflateAmount);
     return mergeExtra(scope, extra);
   }
 
@@ -451,6 +511,7 @@ final class const BarElementStyle({
     ('borderWidth', borderWidth),
     ('borderRadius', borderRadius),
     ('borderSkipped', borderSkipped),
+    ('inflateAmount', inflateAmount),
     ('extra', byEntries(extra)),
   ];
 
@@ -500,6 +561,26 @@ final class const ArcElementStyle({
   /// is [ArcSpacingMode.angular].
   final ArcSpacingMode? spacingMode,
 
+  /// The dash pattern of the border of an arc: `borderDash`, for example `[4,
+  /// 2]`.
+  final List<double>? borderDash,
+
+  /// The offset of the dash pattern of the border: `borderDashOffset`.
+  final double? borderDashOffset,
+
+  /// The join of the border lines: `borderJoinStyle`.
+  final StrokeJoin? borderJoinStyle,
+
+  /// Whether an arc of a full circle joins its border at its start: `selfJoin`.
+  final bool? selfJoin,
+
+  /// Whether an arc keeps its circle shape when it fills the full circle:
+  /// `circular`. The default is `true`.
+  final bool? circular,
+
+  /// The angle of an arc of a polar area chart, in degrees: `angle`.
+  final double? angle,
+
   /// The Chart.js arc options that have no parameter, for example
   /// `{'circular': false}`. The rules of [ChartElements.extra] apply.
   final Map<String, Object?>? extra,
@@ -517,6 +598,12 @@ final class const ArcElementStyle({
     double? spacing,
     ArcBorderAlign? borderAlign,
     ArcSpacingMode? spacingMode,
+    List<double>? borderDash,
+    double? borderDashOffset,
+    StrokeJoin? borderJoinStyle,
+    bool? selfJoin,
+    bool? circular,
+    double? angle,
     Map<String, Object?>? extra,
   }) => ArcElementStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -526,6 +613,12 @@ final class const ArcElementStyle({
     spacing: spacing ?? this.spacing,
     borderAlign: borderAlign ?? this.borderAlign,
     spacingMode: spacingMode ?? this.spacingMode,
+    borderDash: borderDash ?? this.borderDash,
+    borderDashOffset: borderDashOffset ?? this.borderDashOffset,
+    borderJoinStyle: borderJoinStyle ?? this.borderJoinStyle,
+    selfJoin: selfJoin ?? this.selfJoin,
+    circular: circular ?? this.circular,
+    angle: angle ?? this.angle,
     extra: extra ?? this.extra,
   );
 
@@ -539,6 +632,12 @@ final class const ArcElementStyle({
     put(scope, OptionKey.spacing, spacing);
     put(scope, OptionKey.borderAlign, borderAlign);
     put(scope, OptionKey.spacingMode, spacingMode);
+    put(scope, OptionKey.borderDash, borderDash);
+    put(scope, OptionKey.borderDashOffset, borderDashOffset);
+    put(scope, OptionKey.borderJoinStyle, borderJoinStyle);
+    put(scope, OptionKey.selfJoin, selfJoin);
+    put(scope, OptionKey.circular, circular);
+    put(scope, OptionKey.angle, angle);
     return mergeExtra(scope, extra);
   }
 
@@ -550,6 +649,12 @@ final class const ArcElementStyle({
     ('spacing', spacing),
     ('borderAlign', borderAlign),
     ('spacingMode', spacingMode),
+    ('borderDash', byItems(borderDash)),
+    ('borderDashOffset', borderDashOffset),
+    ('borderJoinStyle', borderJoinStyle),
+    ('selfJoin', selfJoin),
+    ('circular', circular),
+    ('angle', angle),
     ('extra', byEntries(extra)),
   ];
 

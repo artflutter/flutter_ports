@@ -1321,6 +1321,11 @@ const Map<String, _Convert> _pointStyleFields = {
   'borderWidth': _double,
   'hitRadius': _double,
   'hoverRadius': _double,
+  'rotation': _double,
+  'hoverBackgroundColor': _paint,
+  'hoverBorderColor': _paint,
+  'hoverBorderWidth': _double,
+  'drawActiveElementsOnTop': _bool,
 };
 
 const Map<String, _Convert> _lineStyleFields = {
@@ -1335,6 +1340,8 @@ const Map<String, _Convert> _lineStyleFields = {
   'stepped': _stepped,
   'cubicInterpolationMode': _object,
   'segment': _object,
+  'borderDashOffset': _double,
+  'capBezierPoints': _bool,
 };
 
 const Map<String, _Convert> _barStyleFields = {
@@ -1343,6 +1350,7 @@ const Map<String, _Convert> _barStyleFields = {
   'borderWidth': _double,
   'borderRadius': _double,
   'borderSkipped': _borderSkip,
+  'inflateAmount': _double,
 };
 
 const Map<String, _Convert> _arcStyleFields = {
@@ -1353,6 +1361,12 @@ const Map<String, _Convert> _arcStyleFields = {
   'spacing': _double,
   'borderAlign': _arcBorderAlign,
   'spacingMode': _arcSpacingMode,
+  'borderDash': _doubles,
+  'borderDashOffset': _double,
+  'borderJoinStyle': _strokeJoin,
+  'selfJoin': _bool,
+  'circular': _bool,
+  'angle': _double,
 };
 
 String? _arcBorderAlign(

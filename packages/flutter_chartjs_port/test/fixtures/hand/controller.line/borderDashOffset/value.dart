@@ -33,7 +33,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
         borderDash: <double>[20],
         // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
         fill: FillTarget.none,
-        extra: <String, Object?>{'borderDashOffset': 0.0},
+        borderDashOffset: 0,
       ),
       point: PointElementStyle(radius: 10),
     ),
