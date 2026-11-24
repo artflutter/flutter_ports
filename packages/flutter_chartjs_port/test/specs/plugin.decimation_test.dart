@@ -42,15 +42,19 @@ List<Object?> _data(Chart chart) =>
 
 /// The acquireChart options of a canvas and a wrapper of [width] x
 /// [height] (the second argument of `acquireChart`, not a chart config).
-AnyObject _canvas(int width, int height) => <String, Object?>{
-  'canvas': <String, Object?>{'height': height, 'width': width},
-  'wrapper': <String, Object?>{'height': height, 'width': width},
-};
+///
+/// The attributes `height` and `width` of the wrapper `div` of upstream have
+/// no effect on its layout: the wrapper is a static block box (Chart.js ADR
+/// 0200).
+AcquireOptions _canvas(int width, int height) => AcquireOptions(
+  canvas: HarnessCanvas(width: width, height: height),
+  wrapper: const HarnessBox(),
+);
 
 /// The acquireChart options of a canvas of [width] x [height].
-AnyObject _canvasOnly(int width, int height) => <String, Object?>{
-  'canvas': <String, Object?>{'width': width, 'height': height},
-};
+AcquireOptions _canvasOnly(int width, int height) => AcquireOptions(
+  canvas: HarnessCanvas(width: width, height: height),
+);
 
 void main() {
   group('Plugin.decimation', () {

@@ -64,7 +64,7 @@ import '../support/tick_label.dart';
 //   through the face: `undefined` has no typed form.
 
 /// The chart of the typed [config] (Chart.js ADR 0052).
-Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// The typed config of a scatter chart with the two datasets of the
@@ -367,9 +367,7 @@ void main() {
           scales: [LinearAxis(.y, display: ScaleDisplay.off)],
           disabledPlugins: [PluginOff<LegendPlugin>()],
         ),
-        {
-          'canvas': <String, Object?>{'height': 100, 'width': 200},
-        },
+        const AcquireOptions(canvas: HarnessCanvas(width: 200, height: 100)),
       );
 
       final scale = chart.scales['x']!;

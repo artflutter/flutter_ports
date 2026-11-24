@@ -1386,9 +1386,7 @@ void main() {
                 ),
               },
             }),
-          <String, Object?>{
-            'canvas': <String, Object?>{'height': 0, 'width': 0},
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 0, height: 0)),
         );
       }
 

@@ -7,8 +7,9 @@
 ///   [HarnessElement] (a `div`, and `document.body`) or a `UiCanvasElement`.
 /// - The harness body: the first DOM write or forced layout in a
 ///   `testWidgets` body makes `document.body` the root widget of the test.
-///   Each [HarnessElement] is one port-only render box with a subset of CSS.
-///   A canvas child is a `ChartHost`.
+///   Each [HarnessElement] is one port-only render box, laid out from typed
+///   fields (a [HarnessBox], Chart.js ADR 0200): no CSS text. A canvas child
+///   is a `ChartHost`.
 /// - A DOM write changes the element tree at once. It then rebuilds the
 ///   body. During build, layout or paint, the rebuild waits for a
 ///   post-frame callback.
@@ -38,7 +39,6 @@ import 'package:flutter/widgets.dart';
 // The harness shows the canvas elements of the canvas layer in chart hosts.
 // flutter_chartjs_port does not export lib/src.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// The canvas element and its style of the canvas layer.
 // The chart host and the mutation checkpoint of Chart.js ADR 0022.
 import 'package:flutter_test/flutter_test.dart';
 
@@ -93,7 +93,6 @@ final class HarnessDocument._() {
       devicePixelRatio: _view.devicePixelRatio,
     );
     _harness.standbyHosts[canvas] = standby;
-    _canvasOfStyle[canvas.style] = canvas;
     return canvas;
   }
 
@@ -159,59 +158,188 @@ TestFlutterView get _view => _harness.binding.platformDispatcher.implicitView!;
 /// The parent element of each canvas in the harness tree.
 final Expando<HarnessElement> _canvasParents = Expando('canvas parent');
 
-/// The canvas of each canvas style that the harness knows.
-final Expando<UiCanvasElement> _canvasOfStyle = Expando('style canvas');
+/// The `display: none` of each canvas ([HarnessCanvasDisplay.hidden]).
+final Expando<bool> _canvasHidden = Expando('canvas hidden');
+
+/// The box of a [HarnessElement]: the typed layout facts of the DOM
+/// stand-in (Chart.js ADR 0200). All lengths are in logical pixels.
+///
+/// It is the `wrapper` option of `acquireChart` (`AcquireOptions`), and
+/// [HarnessElement.box] reads and writes all fields of an element at once,
+/// as a write of `style.cssText` does upstream.
+@immutable
+final class const HarnessBox({
+  /// `width`: the width of the content box, or `null` for `auto`.
+  final double? width,
+
+  /// `height`: the height of the content box, or `null` for `auto`.
+  final double? height,
+
+  /// `max-width`: a cap of the content width.
+  final double? maxWidth,
+
+  /// `max-height`: a cap of the content height.
+  final double? maxHeight,
+
+  /// `padding`: the padding outside the content box (`box-sizing:
+  /// content-box`).
+  final EdgeInsets padding = EdgeInsets.zero,
+
+  /// `display: none`: the element and its subtree get the size 0.
+  final bool hidden = false,
+
+  /// `position: absolute`: a shrink-to-fit width, out of the flow.
+  final bool absolute = false,
+
+  /// `left` and `top` of an [absolute] box: the offset of the box from the
+  /// top left corner of the padding box of its parent. `null` keeps the
+  /// static position.
+  final Offset? offset,
+
+  /// `direction`: the text direction of the subtree, or `null` to inherit.
+  final TextDirection? direction,
+}) {
+  /// A box with the given layout facts.
+  this;
+
+  @override
+  bool operator ==(Object other) =>
+      other is HarnessBox &&
+      other.width == width &&
+      other.height == height &&
+      other.maxWidth == maxWidth &&
+      other.maxHeight == maxHeight &&
+      other.padding == padding &&
+      other.hidden == hidden &&
+      other.absolute == absolute &&
+      other.offset == offset &&
+      other.direction == direction;
+
+  @override
+  int get hashCode => Object.hash(
+    width,
+    height,
+    maxWidth,
+    maxHeight,
+    padding,
+    hidden,
+    absolute,
+    offset,
+    direction,
+  );
+}
 
 /// A `div` element of the harness, or `document.body`.
 ///
-/// The harness lays out each element with this CSS subset (Chart.js ADR
-/// 0022, section 3). All lengths are in logical pixels:
-/// - `width`, `height` (px): the size of the content box.
-/// - No `width`: the content width of the parent. With `position: absolute`
-///   or the class `chartjs-wrapper`: the width of the content
-///   (shrink-to-fit).
-/// - No `height`: the height of the content. The content of a canvas child
-///   is the display size of the canvas, 0 x 0 for a canvas with its own
-///   `display: none`.
-/// - `max-width`, `max-height` (px): a cap of the content box.
-/// - `padding` (one px value): the padding lies outside the content box
-///   (`box-sizing: content-box`).
-/// - `left`, `top` (px, also negative) of an element with
-///   `position: absolute` (Chart.js ADR 0108): the offset of its box from
-///   the top left corner of the padding box of its parent. The parent
-///   stands for the containing block, also for `position: fixed`. Without
-///   one of them, that coordinate keeps the static position: the place of
-///   the element in the flow. The offset does not change the width.
-/// - `display: none`: the element and its subtree get the size 0. The
-///   hosts stay mounted.
-/// - `direction: rtl`: a `Directionality` with `TextDirection.rtl` for the
-///   subtree.
-/// - Other properties and attributes are kept, with no effect on the
-///   layout.
+/// The harness lays out each element from its typed fields (Chart.js ADRs
+/// 0022, section 3, and 0200). All lengths are in logical pixels:
+/// - [width], [height]: the size of the content box.
+/// - No [width]: the content width of the parent. With [absolute]: the
+///   width of the content (shrink-to-fit).
+/// - No [height]: the height of the content. The content of a canvas child
+///   is the display size of the canvas, 0 x 0 for a canvas with
+///   [HarnessCanvasDisplay.hidden].
+/// - [maxWidth], [maxHeight]: a cap of the content box.
+/// - [padding]: the padding lies outside the content box (`box-sizing:
+///   content-box`).
+/// - [offset] of an [absolute] element (Chart.js ADR 0108): the offset of
+///   its box from the top left corner of the padding box of its parent.
+///   Without it, the box keeps the static position: the place of the
+///   element in the flow. The offset does not change the width.
+/// - [hidden] (`display: none`): the element and its subtree get the size
+///   0. The hosts stay mounted.
+/// - [direction]: a `Directionality` for the subtree.
 ///
-/// The class `chartjs-wrapper` has the effect of `injectWrapperCSS`
-/// (`src/index.js:37-48`): no padding and `position: absolute`, unless the
-/// inline style sets them. An element gives a canvas child loose
-/// constraints whose max size is its content box. Thus the container size
-/// of the chart is the content box, as `getMaximumSize` reads it upstream.
-/// An element child gets the content width of its parent as its max width:
-/// an element that is wider than its parent's content box is cut to it,
-/// where CSS lets it overflow.
+/// The wrapper of `acquireChart` is [absolute] when the options give no
+/// wrapper: the effect of `injectWrapperCSS` (`src/index.js:37-48`). An
+/// element gives a canvas child loose constraints whose max size is its
+/// content box. Thus the container size of the chart is the content box,
+/// as `getMaximumSize` reads it upstream. An element child gets the content
+/// width of its parent as its max width: an element that is wider than its
+/// parent's content box is cut to it, where CSS lets it overflow.
 ///
 /// `document.body` has the size of the test view (800 x 600 logical
 /// pixels) and no margin. It places each child at its top left corner (the
-/// static position), with the view width as its content width. A child
-/// with `position: absolute` goes to its `left` and `top`. Thus
+/// static position), with the view width as its content width. An
+/// [absolute] child goes to its [offset]. Thus
 /// `canvas.getBoundingClientRect()` of a canvas in a wrapper with
-/// `position: absolute; left: 50px; top: 50px` has `left` 50 and `top` 50.
+/// `HarnessBox(absolute: true, offset: Offset(50, 50))` has `left` 50 and
+/// `top` 50.
 final class HarnessElement._([final bool _isBody = false]) {
   /// A new element.
-  this {
-    style = _HarnessStyle(this);
+  this;
+
+  /// The typed fields of the box, as a [HarnessBox].
+  HarnessBox _box$ = const HarnessBox();
+
+  /// All the box fields at once. A write replaces each field, as a write of
+  /// `style.cssText` replaces the declarations upstream.
+  HarnessBox get box => _box$;
+  set box(HarnessBox value) {
+    _box$ = value;
+    _harness.write();
   }
 
-  /// `element.style`: the inline style.
-  late final CSSStyleDeclaration style;
+  /// `style.width`: the width of the content box, `null` for `auto`.
+  double? get width => _box$.width;
+  set width(double? value) => box = _copy(width: () => value);
+
+  /// `style.height`: the height of the content box, `null` for `auto`.
+  double? get height => _box$.height;
+  set height(double? value) => box = _copy(height: () => value);
+
+  /// `style.maxWidth`.
+  double? get maxWidth => _box$.maxWidth;
+  set maxWidth(double? value) => box = _copy(maxWidth: () => value);
+
+  /// `style.maxHeight`.
+  double? get maxHeight => _box$.maxHeight;
+  set maxHeight(double? value) => box = _copy(maxHeight: () => value);
+
+  /// `style.padding`.
+  EdgeInsets get padding => _box$.padding;
+  set padding(EdgeInsets value) => box = _copy(padding: value);
+
+  /// `style.display = 'none'`.
+  bool get hidden => _box$.hidden;
+  set hidden(bool value) => box = _copy(hidden: value);
+
+  /// `style.position = 'absolute'`.
+  bool get absolute => _box$.absolute;
+  set absolute(bool value) => box = _copy(absolute: value);
+
+  /// `style.left` and `style.top` of an [absolute] element.
+  Offset? get offset => _box$.offset;
+  set offset(Offset? value) => box = _copy(offset: () => value);
+
+  /// `style.direction`.
+  TextDirection? get direction => _box$.direction;
+  set direction(TextDirection? value) => box = _copy(direction: () => value);
+
+  HarnessBox _copy({
+    double? Function()? width,
+    double? Function()? height,
+    double? Function()? maxWidth,
+    double? Function()? maxHeight,
+    EdgeInsets? padding,
+    bool? hidden,
+    bool? absolute,
+    Offset? Function()? offset,
+    TextDirection? Function()? direction,
+  }) {
+    final b = _box$;
+    return HarnessBox(
+      width: width == null ? b.width : width(),
+      height: height == null ? b.height : height(),
+      maxWidth: maxWidth == null ? b.maxWidth : maxWidth(),
+      maxHeight: maxHeight == null ? b.maxHeight : maxHeight(),
+      padding: padding ?? b.padding,
+      hidden: hidden ?? b.hidden,
+      absolute: absolute ?? b.absolute,
+      offset: offset == null ? b.offset : offset(),
+      direction: direction == null ? b.direction : direction(),
+    );
+  }
 
   final Map<String, String> _attributes = {};
 
@@ -223,10 +351,9 @@ final class HarnessElement._([final bool _isBody = false]) {
   _RenderHarnessElement? _box;
 
   /// A count of the writes that change the layout of the element without a
-  /// change of its own style: the style writes of a canvas child.
+  /// change of its own box: the [HarnessCanvasDisplay.hidden] writes of a
+  /// canvas child.
   int _revision = 0;
-
-  UiCssStyleDeclaration get _declarations => (style as _HarnessStyle)._inner;
 
   /// `element.parentNode`.
   HarnessElement? get parentNode => _parent;
@@ -266,7 +393,6 @@ final class HarnessElement._([final bool _isBody = false]) {
     _parentOf(node)?._detach(node);
     _children.add(node);
     _setParent(node, this);
-    if (node is UiCanvasElement) _canvasOfStyle[node.style] = node;
     _harness.write(mutation: true);
   }
 
@@ -300,34 +426,35 @@ final class HarnessElement._([final bool _isBody = false]) {
   /// one.
   void remove() => _parent?.removeChild(this);
 
-  /// `element.setAttribute(name, value)`. `style` replaces the inline style
-  /// with the declarations of [value]. Names are ASCII case-insensitive.
+  /// `element.setAttribute(name, value)`. Names are ASCII
+  /// case-insensitive. An attribute has no effect on the layout. The
+  /// element has no `style` attribute: the name `style` throws an
+  /// [ArgumentError], and [box] gives the layout (Chart.js ADR 0200).
   void setAttribute(String name, String value) {
-    final key = name.toLowerCase();
-    if (key == 'style') {
-      _declarations.styleAttribute = value;
-    } else {
-      _attributes[key] = value;
-    }
+    _attributes[_attributeKey(name)] = value;
     _harness.write();
   }
 
   /// `element.getAttribute(name)`: the value, or `null` when the element
   /// does not have the attribute.
-  String? getAttribute(String name) {
-    final key = name.toLowerCase();
-    return key == 'style' ? _declarations.styleAttribute : _attributes[key];
-  }
+  String? getAttribute(String name) => _attributes[_attributeKey(name)];
 
   /// `element.removeAttribute(name)`.
   void removeAttribute(String name) {
+    _attributes.remove(_attributeKey(name));
+    _harness.write();
+  }
+
+  static String _attributeKey(String name) {
     final key = name.toLowerCase();
     if (key == 'style') {
-      _declarations.styleAttribute = null;
-    } else {
-      _attributes.remove(key);
+      throw ArgumentError.value(
+        name,
+        'name',
+        'The harness has no CSS: write the box fields (Chart.js ADR 0200)',
+      );
     }
-    _harness.write();
+    return key;
   }
 
   void _detach(Object node) {
@@ -360,36 +487,6 @@ final class HarnessElement._([final bool _isBody = false]) {
   String toString() => _isBody ? 'HarnessElement(body)' : 'HarnessElement(div)';
 }
 
-/// The inline style of a [HarnessElement]: a write rebuilds the harness
-/// body.
-final class _HarnessStyle(final HarnessElement _element)
-    implements CSSStyleDeclaration {
-  final UiCssStyleDeclaration _inner = UiCssStyleDeclaration();
-
-  @override
-  String getPropertyValue(String property) => _inner.getPropertyValue(property);
-
-  @override
-  String getPropertyPriority(String property) =>
-      _inner.getPropertyPriority(property);
-
-  @override
-  void setProperty(String property, String? value, [String? priority]) {
-    _inner.setProperty(property, value, priority);
-    _harness.write();
-  }
-
-  String get cssText => _inner.cssText;
-
-  set cssText(String value) {
-    _inner.cssText = value;
-    _harness.write();
-  }
-
-  @override
-  String toString() => 'CSSStyleDeclaration(${_inner.cssText}) of $_element';
-}
-
 /// The DOM parent of a canvas, and `remove()`.
 extension CanvasParentElement on HTMLCanvasElement {
   /// `canvas.parentElement`: the [HarnessElement] that contains the canvas.
@@ -404,86 +501,21 @@ extension CanvasParentElement on HTMLCanvasElement {
   void remove() => parentElement?.removeChild(this);
 }
 
-/// The style properties that the specs read and write, with the upstream
-/// text: `wrapper.style.width = '455px'`.
+/// The `display: none` of a canvas in the DOM stand-in (Chart.js ADR 0200).
 ///
-/// A write is a `setProperty` call. An empty value removes the property. A
-/// write of the style of a canvas in the harness tree also lays out its
-/// parent element again.
-extension CssProperties on CSSStyleDeclaration {
-  /// `style.width`.
-  String get width => getPropertyValue('width');
-  set width(String value) => _write('width', value);
+/// Only the layout of the harness reads it: a hidden canvas has the content
+/// size 0 x 0. A write lays out the parent element of the canvas again.
+extension HarnessCanvasDisplay on HTMLCanvasElement {
+  /// `canvas.style.display === 'none'`.
+  bool get hidden => _canvasHidden[this] ?? false;
 
-  /// `style.height`.
-  String get height => getPropertyValue('height');
-  set height(String value) => _write('height', value);
-
-  /// `style.maxWidth`.
-  String get maxWidth => getPropertyValue('max-width');
-  set maxWidth(String value) => _write('max-width', value);
-
-  /// `style.maxHeight`.
-  String get maxHeight => getPropertyValue('max-height');
-  set maxHeight(String value) => _write('max-height', value);
-
-  /// `style.padding`.
-  String get padding => getPropertyValue('padding');
-  set padding(String value) => _write('padding', value);
-
-  /// `style.display`.
-  String get display => getPropertyValue('display');
-  set display(String value) => _write('display', value);
-
-  /// `style.position`.
-  String get position => getPropertyValue('position');
-  set position(String value) => _write('position', value);
-
-  /// `style.left`.
-  String get left => getPropertyValue('left');
-  set left(String value) => _write('left', value);
-
-  /// `style.top`.
-  String get top => getPropertyValue('top');
-  set top(String value) => _write('top', value);
-
-  /// `style.direction`.
-  String get direction => getPropertyValue('direction');
-  set direction(String value) => _write('direction', value);
-
-  /// `style.cssText`: the declarations as text. A write replaces them.
-  String get cssText => switch (this) {
-    final _HarnessStyle style => style.cssText,
-    final UiCssStyleDeclaration style => style.cssText,
-    _ => throw UnsupportedError('cssText of $runtimeType'),
-  };
-
-  set cssText(String value) {
-    switch (this) {
-      case final _HarnessStyle style:
-        style.cssText = value;
-      case final UiCssStyleDeclaration style:
-        style.cssText = value;
-        _canvasStyleWritten(style);
-      default:
-        throw UnsupportedError('cssText of $runtimeType');
-    }
+  set hidden(bool value) {
+    _canvasHidden[this] = value;
+    final parent = _canvasParents[this];
+    if (parent == null) return;
+    parent._revision++;
+    _harness.write();
   }
-
-  void _write(String property, String value) {
-    setProperty(property, value);
-    final self = this;
-    if (self is UiCssStyleDeclaration) _canvasStyleWritten(self);
-  }
-}
-
-/// Lays out the parent element of the canvas of [style] again.
-void _canvasStyleWritten(UiCssStyleDeclaration style) {
-  final canvas = _canvasOfStyle[style];
-  final parent = canvas == null ? null : _canvasParents[canvas];
-  if (parent == null) return;
-  parent._revision++;
-  _harness.write();
 }
 
 // The state of the harness.
@@ -810,78 +842,42 @@ final class _CanvasSlotState() extends State<_CanvasSlot> {
   Widget build(BuildContext context) => ChartHost(canvas: widget.canvas);
 }
 
-/// The CSS subset of one element, read at the build of the body.
+/// The layout facts of one element, read at the build of the body.
 @immutable
 final class const _Layout({
   required final bool isBody,
   required final bool none,
 
-  /// `position: absolute`: shrink-to-fit width, out of the flow.
+  /// An absolute box: shrink-to-fit width, out of the flow.
   required final bool absolute,
-  required final double padding,
+  required final EdgeInsets padding,
   final double? width,
   final double? height,
   final double? maxWidth,
   final double? maxHeight,
 
-  /// `left` of an element with `position: absolute`, else `null`.
+  /// The left offset of an absolute element, else `null`.
   final double? left,
 
-  /// `top` of an element with `position: absolute`, else `null`.
+  /// The top offset of an absolute element, else `null`.
   final double? top,
   final TextDirection? direction,
 }) {
   factory of(HarnessElement element) {
-    final style = element._declarations;
-    final classes = (element._attributes['class'] ?? '').split(_spaces);
-    final wrapper = classes.contains('chartjs-wrapper');
-    final position = style.getPropertyValue('position').trim().toLowerCase();
-    final absolute = position.isEmpty
-        ? wrapper
-        : position == 'absolute' || position == 'fixed';
-    final display = style.getPropertyValue('display').trim().toLowerCase();
-    final direction = switch (style
-        .getPropertyValue('direction')
-        .trim()
-        .toLowerCase()) {
-      'rtl' => TextDirection.rtl,
-      'ltr' => TextDirection.ltr,
-      _ => null,
-    };
+    final box = element._box$;
     return _Layout(
       isBody: element._isBody,
-      none: display == 'none',
-      absolute: absolute,
-      padding: _pixels(style.getPropertyValue('padding')) ?? 0,
-      width: _pixels(style.getPropertyValue('width')),
-      height: _pixels(style.getPropertyValue('height')),
-      maxWidth: _pixels(style.getPropertyValue('max-width')),
-      maxHeight: _pixels(style.getPropertyValue('max-height')),
-      left: absolute
-          ? _pixels(style.getPropertyValue('left'), signed: true)
-          : null,
-      top: absolute
-          ? _pixels(style.getPropertyValue('top'), signed: true)
-          : null,
-      direction: direction,
+      none: box.hidden,
+      absolute: box.absolute,
+      padding: box.padding,
+      width: box.width,
+      height: box.height,
+      maxWidth: box.maxWidth,
+      maxHeight: box.maxHeight,
+      left: box.absolute ? box.offset?.dx : null,
+      top: box.absolute ? box.offset?.dy : null,
+      direction: box.direction,
     );
-  }
-
-  static final RegExp _spaces = RegExp(r'[\t\n\f\r ]+');
-
-  static final RegExp _length = RegExp(
-    r'^\s*([+-]?\d*\.?\d+(?:e[+-]?\d+)?)(px)?\s*$',
-    caseSensitive: false,
-  );
-
-  /// A px length, or `0` without a unit. `null` for another value, and for
-  /// a negative length unless [signed].
-  static double? _pixels(String value, {bool signed = false}) {
-    final match = _length.firstMatch(value);
-    if (match == null) return null;
-    final number = double.parse(match[1]!);
-    if (number < 0 && !signed) return null;
-    return match[2] != null || number == 0 ? number : null;
   }
 
   /// The offset of the box from the parent: [left] and [top] where they
@@ -944,7 +940,7 @@ final class const _ElementBox({
 
 final class _ElementParentData() extends ContainerBoxParentData<RenderBox>;
 
-/// The render box of one [HarnessElement] (see its CSS subset).
+/// The render box of one [HarnessElement] (see its layout rules).
 final class _RenderHarnessElement(
   var HarnessElement _element,
   var _Layout _layout,
@@ -1010,18 +1006,17 @@ final class _RenderHarnessElement(
   }
 
   /// The content size of a canvas child: the display size of the canvas
-  /// (Chart.js ADR 0022, sections 3 and 9), 0 x 0 for a canvas with its own
-  /// `display: none`.
+  /// (Chart.js ADR 0022, sections 3 and 9), 0 x 0 for a canvas with
+  /// [HarnessCanvasDisplay.hidden].
   ///
   /// The display size is the one of `toBeChartOfSize`
-  /// ([computedCanvasSize]): with one px style, the other side keeps the
-  /// aspect ratio of the render size, the CSS rule for a replaced element.
-  /// `RenderChartHost.displaySize` does not apply that rule.
+  /// ([computedCanvasSize]): with one display side, the other side keeps
+  /// the aspect ratio of the render size, the CSS rule for a replaced
+  /// element. `RenderChartHost.displaySize` does not apply that rule.
   static Size _contentOf(RenderChartHost host) {
-    final display = host.canvas.style.getPropertyValue('display');
-    if (display.trim().toLowerCase() == 'none') return Size.zero;
+    if (host.canvas.hidden) return Size.zero;
     final (:width, :height) = computedCanvasSize(host.canvas);
-    return Size(width!, height!);
+    return Size(width, height);
   }
 
   /// The min-content and max-content widths of the children, for a
@@ -1040,13 +1035,13 @@ final class _RenderHarnessElement(
           if (layout.none) continue;
           final fixed = layout.width;
           if (fixed != null) {
-            final width = fixed + 2 * layout.padding;
+            final width = fixed + layout.padding.horizontal;
             minWidth = max(minWidth, width);
             maxWidth = max(maxWidth, width);
           } else {
             final (childMin, childMax) = element._contentWidths();
-            minWidth = max(minWidth, childMin + 2 * layout.padding);
-            maxWidth = max(maxWidth, childMax + 2 * layout.padding);
+            minWidth = max(minWidth, childMin + layout.padding.horizontal);
+            maxWidth = max(maxWidth, childMax + layout.padding.horizontal);
           }
       }
     }
@@ -1113,7 +1108,7 @@ final class _RenderHarnessElement(
 
   void _layoutElement(_Layout layout) {
     final padding = layout.padding;
-    final available = max<double>(0, constraints.maxWidth - 2 * padding);
+    final available = max<double>(0, constraints.maxWidth - padding.horizontal);
     var width = layout.width;
     if (width == null) {
       if (layout.absolute) {
@@ -1145,7 +1140,7 @@ final class _RenderHarnessElement(
         child.layout(BoxConstraints(maxWidth: width), parentUsesSize: true);
         childHeight = child.size.height;
       }
-      final inFlow = Offset(padding, padding + flow);
+      final inFlow = Offset(padding.left, padding.top + flow);
       (child.parentData! as _ElementParentData).offset =
           child is _RenderHarnessElement ? child._layout.place(inFlow) : inFlow;
       final outOfFlow =
@@ -1159,7 +1154,7 @@ final class _RenderHarnessElement(
       contentHeight = min(contentHeight, maxHeight);
     }
     size = constraints.constrain(
-      Size(width + 2 * padding, contentHeight + 2 * padding),
+      Size(width + padding.horizontal, contentHeight + padding.vertical),
     );
   }
 

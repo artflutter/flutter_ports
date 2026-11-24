@@ -66,11 +66,7 @@ void main() {
               responsive: true,
             ),
           ).lower(),
-          {
-            'wrapper': <String, Object?>{
-              'style': 'height: 400px; width: 800px;',
-            },
-          },
+          const AcquireOptions(wrapper: HarnessBox(width: 800, height: 400)),
         );
         early.add(_ink(chart));
       });
@@ -80,7 +76,7 @@ void main() {
       final stableInk = _ink(chart);
       expect(stableInk, greaterThan(0));
 
-      chart.canvas!.parentElement!.style.width = '500px';
+      chart.canvas!.parentElement!.width = 500;
 
       final frames = <double>[];
       for (var i = 0; i < 6; i++) {

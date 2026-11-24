@@ -19,8 +19,8 @@
 ///
 /// `createCanvas` and `readImageData` (:3-23) are `n/a`: the port compares
 /// no image (Chart.js ADR 0034). `injectCSS` (:117) is `n/a`: Flutter has no
-/// CSS. The DOM stand-in `dom.dart` gives the class `chartjs-wrapper` the
-/// effect of the rule of `injectWrapperCSS`.
+/// CSS. The default wrapper of [acquireChart] is an absolute box, the effect
+/// of the rule of `injectWrapperCSS` (Chart.js ADR 0200).
 ///
 /// This library is not a pure layer: it imports `core.controller`, the chart
 /// host and `dom.dart`.
@@ -29,6 +29,7 @@ library;
 import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/foundation.dart';
 // flutter_chartjs_port does not export lib/src. The harness reads the canvas
 // interface,
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -51,12 +52,111 @@ import 'package:flutter_test/flutter_test.dart';
 // callback)`: n/a. Only the image comparison of fixtures calls them.
 
 /// The own property `chart.$test` of a chart of [acquireChart]
-/// (utils.js:99-102): the Map `{persistent, wrapper}`. A chart of `Chart(...)`
-/// has none.
-final Expando<Map<String, Object?>> $test = Expando(r'$test');
+/// (utils.js:99-102): the record `{persistent, wrapper}`. A chart of
+/// `Chart(...)` has none.
+final Expando<({bool persistent, HarnessElement wrapper})> $test = Expando(
+  r'$test',
+);
 
 /// `a || b` of a JS value.
 Object? _or(Object? a, Object? b) => jsTruthy(a) ? a : b;
+
+/// The `canvas` option of [acquireChart]: the attributes and the display of
+/// the canvas (utils.js:43, Chart.js ADR 0200).
+@immutable
+final class const HarnessCanvas({
+  /// The `width` attribute: the render width in device pixels, or `null`
+  /// for no attribute (the default 300).
+  final int? width,
+
+  /// The `height` attribute, as [width] (the default 150).
+  final int? height,
+
+  /// The display width (`style.width`), or `null` for `auto`.
+  final double? displayWidth,
+
+  /// The display height (`style.height`), or `null` for `auto`.
+  final double? displayHeight,
+
+  /// `style.display = 'none'` ([HarnessCanvasDisplay.hidden]).
+  final bool hidden = false,
+}) {
+  /// A canvas with the given attributes and display.
+  this;
+}
+
+/// The `options` of [acquireChart] (utils.js:36, Chart.js ADR 0200).
+@immutable
+final class const AcquireOptions({
+  /// `canvas`: the canvas. `null` gives the attributes 512 x 512
+  /// (utils.js:43).
+  final HarnessCanvas? canvas,
+
+  /// `wrapper`: the box of the wrapper. `null` gives an absolute box, the
+  /// class `chartjs-wrapper` with the rule of `injectWrapperCSS`
+  /// (utils.js:44).
+  final HarnessBox? wrapper,
+
+  /// `useOffscreenCanvas`: the chart draws on a canvas that no host shows.
+  final bool useOffscreenCanvas = false,
+
+  /// `useShadowDOM`: throws an [UnsupportedError] (Flutter has no shadow
+  /// DOM).
+  final bool useShadowDOM = false,
+
+  /// `persistent`: `releaseCharts` does not release the chart.
+  final bool persistent = false,
+}) {
+  /// The options of one [acquireChart] call.
+  this;
+
+  /// The options of a Map of the fixture runner and of the reference
+  /// harnesses: `canvas` with the numbers `width` and `height`,
+  /// `useOffscreenCanvas`, `useShadowDOM` and `persistent`. A wait of
+  /// Chart.js ADR 0200, item 8: it goes when no caller gives a Map. A
+  /// `style` of the canvas and a `wrapper` throw an [ArgumentError]: the
+  /// harness has no CSS. The keys `spriteText` and `run` have no effect.
+  factory fromMap(Map<Object?, Object?> options) {
+    if (options.containsKey('wrapper')) {
+      throw ArgumentError.value(
+        options,
+        'options',
+        'The harness has no CSS: give AcquireOptions(wrapper: HarnessBox(...))',
+      );
+    }
+    final canvas = options['canvas'];
+    int? size(Map<Object?, Object?> map, String key) {
+      final value = map[key];
+      return value == null ? null : jsToNumber(value).truncate();
+    }
+
+    return AcquireOptions(
+      canvas: switch (canvas) {
+        null => null,
+        final Map<Object?, Object?> map when !map.containsKey('style') =>
+          HarnessCanvas(width: size(map, 'width'), height: size(map, 'height')),
+        _ => throw ArgumentError.value(
+          canvas,
+          'options.canvas',
+          'The harness has no CSS: give AcquireOptions(canvas: '
+              'HarnessCanvas(...))',
+        ),
+      },
+      useOffscreenCanvas: jsTruthy(options['useOffscreenCanvas']),
+      useShadowDOM: jsTruthy(options['useShadowDOM']),
+      persistent: jsTruthy(options['persistent']),
+    );
+  }
+
+  /// [options] as [AcquireOptions]: an [AcquireOptions] itself, a Map
+  /// ([AcquireOptions.fromMap]) or `null` (the defaults).
+  static AcquireOptions of(Object? options) => switch (options) {
+    null => const AcquireOptions(),
+    final AcquireOptions options => options,
+    final Map<Object?, Object?> map => AcquireOptions.fromMap(map),
+    _ => throw ArgumentError.value(options, 'options', 'Not AcquireOptions'),
+  };
+}
 
 /// The data items of `parsing: false` of the spec config [config] as
 /// [ParsedItem] objects (differences.md row `harness-parsed-data-items`): a
@@ -123,21 +223,23 @@ Object? _parsedItemOf(Object? item) {
 /// instance using the given config. Additional options allow tweaking
 /// elements generation.
 /// - [config]: Chart config.
-/// - [options]: Chart acquisition options.
-///   - `canvas`: Canvas attributes.
-///   - `wrapper`: Canvas wrapper attributes.
+/// - [options]: Chart acquisition options, an [AcquireOptions] (Chart.js
+///   ADR 0200, row `harness-acquire-options`).
+///   - `canvas`: the canvas attributes and display ([HarnessCanvas]).
+///   - `wrapper`: the box of the canvas wrapper ([HarnessBox]).
 ///   - `useOffscreenCanvas`: use an OffscreenCanvas instead of the normal
 ///     HTMLCanvasElement.
 ///   - `useShadowDOM`: use shadowDom.
 ///   - `persistent`: If true, the chart will not be released after the spec.
+///   A Map of numbers is the wait of [AcquireOptions.fromMap].
 ///
-/// Both are JS objects: Maps, or for [config] also the typed root scope of
-/// a typed config (Chart.js ADR 0054 §7, `acquireChartRoot` of
-/// `index.dart`). As upstream, the function
-/// writes `canvas` and `wrapper` into [options], and `options` into
-/// [config]. It writes `animation`, `responsive` and `locale` into the
-/// options of [config]. A nested Map literal of a spec thus needs the type
-/// `<String, Object?>`: a narrower Map throws a `TypeError` at the write.
+/// [config] is a JS object: a Map, or the typed root scope of a typed config
+/// (Chart.js ADR 0054 §7, `acquireChartRoot` of `index.dart`). As upstream,
+/// the function writes `options` into [config], and `animation`,
+/// `responsive` and `locale` into the options of [config]. A nested Map
+/// literal of a spec thus needs the type `<String, Object?>`: a narrower Map
+/// throws a `TypeError` at the write. The options are immutable: the
+/// function writes no defaults into them.
 ///
 /// The hunks of `harness-acquire-chart` (Chart.js ADR 0022, section 4):
 /// - The function works only in the body of a `testWidgets` test. Outside
@@ -157,7 +259,7 @@ Object? _parsedItemOf(Object? item) {
 /// - `useShadowDOM: true` throws an [UnsupportedError], in place of the
 ///   `pending()` of a browser without the shadow DOM (:64-68).
 /// - `spriteText` (:90-92) has no port: the port compares no image.
-Chart acquireChart([Object? config, Map<String, Object?>? options]) {
+Chart acquireChart([Object? config, Object? options]) {
   // DIVERGES(chartjs): harness-acquire-chart, only in a testWidgets body.
   if (!TestWidgetsFlutterBinding.ensureInitialized().inTest) {
     throw StateError(
@@ -171,27 +273,24 @@ Chart acquireChart([Object? config, Map<String, Object?>? options]) {
 
   // `config || {}` and `options || {}`: a Map is truthy.
   config ??= <String, Object?>{};
-  options ??= <String, Object?>{};
-  options['canvas'] = _or(options['canvas'], <String, Object?>{
-    'height': 512,
-    'width': 512,
-  });
-  options['wrapper'] = _or(options['wrapper'], <String, Object?>{
-    'class': 'chartjs-wrapper',
-  });
+  // DIVERGES(chartjs): harness-acquire-options, typed options.
+  final acquire = AcquireOptions.of(options);
+  // utils.js:43-44 the defaults: the attributes 512 x 512, and the class
+  // `chartjs-wrapper`, whose rule of `injectWrapperCSS` makes the wrapper
+  // an absolute box.
+  final canvasOptions =
+      acquire.canvas ?? const HarnessCanvas(width: 512, height: 512);
+  final wrapperBox = acquire.wrapper ?? const HarnessBox(absolute: true);
 
-  // `for (key in object)` with `hasOwnProperty`: the own enumerable keys, in
-  // the order of `Object.keys`. `setAttribute` converts the value with
-  // `ToString`.
-  final canvasAttributes = options['canvas']! as Map<String, Object?>;
-  for (final key in jsObjectKeys(canvasAttributes)) {
-    canvas.setAttribute(key, jsToString(canvasAttributes[key]));
-  }
-
-  final wrapperAttributes = options['wrapper']! as Map<String, Object?>;
-  for (final key in jsObjectKeys(wrapperAttributes)) {
-    wrapper.setAttribute(key, jsToString(wrapperAttributes[key]));
-  }
+  // utils.js:46-55 the attributes of the canvas and of the wrapper: the
+  // render size, the display and the box, as typed members.
+  if (canvasOptions.height case final height?) canvas.height = height;
+  if (canvasOptions.width case final width?) canvas.width = width;
+  canvas
+    ..displayWidth = canvasOptions.displayWidth
+    ..displayHeight = canvasOptions.displayHeight
+    ..hidden = canvasOptions.hidden;
+  wrapper.box = wrapperBox;
 
   // by default, remove chart animation and auto resize
   // The config is a Map of the spec, or the typed root scope of a typed
@@ -220,7 +319,7 @@ Chart acquireChart([Object? config, Map<String, Object?>? options]) {
   // DIVERGES(chartjs): harness-parsed-data-items, the typed data items.
   _parseDataItems(config);
 
-  if (jsTruthy(options['useShadowDOM'])) {
+  if (acquire.useShadowDOM) {
     // If shadowDOM is not supported by the browsers, mark test as 'pending'.
     // Flutter has no shadow DOM: a spec case with it skips as
     // 'n/a: Flutter has no shadow DOM'.
@@ -240,7 +339,7 @@ Chart acquireChart([Object? config, Map<String, Object?>? options]) {
 
   try {
     CanvasRenderingContext2D? ctx;
-    if (jsTruthy(options['useOffscreenCanvas'])) {
+    if (acquire.useOffscreenCanvas) {
       // The port always has an offscreen canvas. Thus the `pending()` of a
       // browser without `transferControlToOffscreen` (:78-84) has no port.
       // DIVERGES(chartjs): harness-acquire-chart, a canvas that no host shows.
@@ -259,10 +358,7 @@ Chart acquireChart([Object? config, Map<String, Object?>? options]) {
     rethrow;
   }
 
-  $test[chart] = <String, Object?>{
-    'persistent': jsGet(options, 'persistent'),
-    'wrapper': wrapper,
-  };
+  $test[chart] = (persistent: acquire.persistent, wrapper: wrapper);
 
   return chart;
 }
@@ -277,8 +373,8 @@ void releaseChart(Chart chart) {
   // utils.js:108 `spritingOff(chart.ctx)`: n/a.
   chart.destroy();
 
-  final wrapper = jsGet($test[chart] ?? <String, Object?>{}, 'wrapper');
-  if (wrapper is HarnessElement && wrapper.parentNode != null) {
+  final wrapper = $test[chart]?.wrapper;
+  if (wrapper != null && wrapper.parentNode != null) {
     wrapper.parentNode!.removeChild(wrapper);
   }
 }

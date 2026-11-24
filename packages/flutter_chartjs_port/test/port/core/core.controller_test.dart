@@ -460,8 +460,9 @@ Chart _hostedChart(AnyObject config, {void Function(Chart chart)? replace}) {
   final wrapper = document.createElement<HarnessElement>('div');
   final chart = Chart(canvas, withParsedDataItems(config));
   replace?.call(chart);
-  wrapper.style.cssText = 'width: 300px; height: 200px';
-  wrapper.appendChild(canvas);
+  wrapper
+    ..box = const HarnessBox(width: 300, height: 200)
+    ..appendChild(canvas);
   document.body.appendChild(wrapper);
   addTearDown(() {
     chart.destroy();
@@ -1752,7 +1753,7 @@ void main() {
       expect(calls, ['resize(null, null)', 'resize(300.0, 200.0)']);
       expect(chart.width, 300);
 
-      chart.canvas!.parentElement!.style.width = '400px';
+      chart.canvas!.parentElement!.width = 400;
       await pumpFrames(() => calls.length >= 3);
       expect(calls.last, 'resize(400.0, 200.0)');
 
@@ -2042,12 +2043,10 @@ void main() {
               'maintainAspectRatio': true,
             },
           },
-          <String, Object?>{
-            'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
-            'wrapper': <String, Object?>{
-              'style': 'width: 300px; height: 350px',
-            },
-          },
+          const AcquireOptions(
+            canvas: HarnessCanvas(displayWidth: 150, displayHeight: 245),
+            wrapper: HarnessBox(width: 300, height: 350),
+          ),
         );
 
         expect(

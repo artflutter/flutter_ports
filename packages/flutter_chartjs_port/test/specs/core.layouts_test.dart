@@ -69,9 +69,7 @@ void main() {
               'tick5',
               'tick6',
             ]),
-        <String, Object?>{
-          'canvas': <String, Object?>{'height': 150, 'width': 250},
-        },
+        const AcquireOptions(canvas: HarnessCanvas(width: 250, height: 150)),
       );
 
       expect(chart.chartArea!.bottom, toBeCloseToPixel(120));
@@ -126,9 +124,7 @@ void main() {
               },
             },
           }),
-        <String, Object?>{
-          'canvas': <String, Object?>{'height': 150, 'width': 250},
-        },
+        const AcquireOptions(canvas: HarnessCanvas(width: 250, height: 150)),
       );
 
       expect(chart.chartArea!.bottom, toBeCloseToPixel(139));
@@ -228,9 +224,7 @@ void main() {
               'y2': <String, Object?>{'type': 'linear'},
             },
           }),
-        <String, Object?>{
-          'canvas': <String, Object?>{'height': 150, 'width': 250},
-        },
+        const AcquireOptions(canvas: HarnessCanvas(width: 250, height: 150)),
       );
 
       expect(chart.chartArea!.bottom, toBeCloseToPixel(110));
@@ -357,9 +351,7 @@ void main() {
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'layout': <String, Object?>{'padding': const EdgeInsets.all(10)},
             }),
-          <String, Object?>{
-            'canvas': <String, Object?>{'height': 150, 'width': 250},
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 250, height: 150)),
         );
 
         expect(chart.chartArea!.bottom, toBeCloseToPixel(140));
@@ -410,9 +402,7 @@ void main() {
                 ),
               },
             }),
-          <String, Object?>{
-            'canvas': <String, Object?>{'height': 150, 'width': 250},
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 250, height: 150)),
         );
 
         expect(chart.chartArea!.bottom, toBeCloseToPixel(138));
@@ -458,9 +448,7 @@ void main() {
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'layout': <String, Object?>{'padding': EdgeInsets.zero},
             }),
-          <String, Object?>{
-            'canvas': <String, Object?>{'height': 150, 'width': 250},
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 250, height: 150)),
         );
 
         expect(chart.chartArea!.bottom, toBeCloseToPixel(150));
@@ -506,9 +494,7 @@ void main() {
                 ),
               },
             }),
-          <String, Object?>{
-            'canvas': <String, Object?>{'height': 150, 'width': 250},
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 250, height: 150)),
         );
 
         final xAxis = chart.scales['x']!;
@@ -604,9 +590,7 @@ void main() {
                 },
               },
             }),
-          <String, Object?>{
-            'canvas': <String, Object?>{'height': 150, 'width': 250},
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 250, height: 150)),
         );
 
         final xScale0 = chart.scales['x']!;
@@ -682,9 +666,7 @@ void main() {
             ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{'legend': false},
             }),
-          <String, Object?>{
-            'canvas': <String, Object?>{'height': 256, 'width': 256},
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
         );
         final yAxis = chart.scales['y']!;
 

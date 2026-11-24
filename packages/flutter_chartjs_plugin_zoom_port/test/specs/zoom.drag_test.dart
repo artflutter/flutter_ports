@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../flutter_test_config.dart';
 
 /// Acquires a chart through the typed config boundary.
-Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 void main() {
@@ -364,11 +364,9 @@ void main() {
               ),
             ],
           ),
-          <String, Object?>{
-            'wrapper': <String, Object?>{
-              'style': 'position: absolute; left: 50px; top: 50px;',
-            },
-          },
+          const AcquireOptions(
+            wrapper: HarnessBox(absolute: true, offset: Offset(50, 50)),
+          ),
         );
 
         scaleX = chart.scales['x']!;
@@ -408,11 +406,9 @@ void main() {
               ),
             ],
           ),
-          <String, Object?>{
-            'wrapper': <String, Object?>{
-              'style': 'position: absolute; left: 50px; top: 50px;',
-            },
-          },
+          const AcquireOptions(
+            wrapper: HarnessBox(absolute: true, offset: Offset(50, 50)),
+          ),
         );
 
         scaleX = chart.scales['x']!;

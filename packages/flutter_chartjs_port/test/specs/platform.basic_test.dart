@@ -31,7 +31,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(const ChartConfig(datasets: [LineDataset()]))
               .lower(),
-          {'useOffscreenCanvas': true},
+          const AcquireOptions(useOffscreenCanvas: true),
         );
 
         expect(chart.platform, isA<BasicPlatform>());
@@ -48,7 +48,7 @@ void main() {
             animation: ChartAnimation(),
           ),
         ).lower(),
-        {'useOffscreenCanvas': true},
+        const AcquireOptions(useOffscreenCanvas: true),
       );
 
       expect(chart.options['animation'], false);
@@ -73,10 +73,10 @@ void main() {
               labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5', 'tick6'],
             ),
           ).lower(),
-          <String, Object?>{
-            'canvas': <String, Object?>{'height': 150, 'width': 250},
-            'useOffscreenCanvas': true,
-          },
+          const AcquireOptions(
+            canvas: HarnessCanvas(width: 250, height: 150),
+            useOffscreenCanvas: true,
+          ),
         );
 
         expect(chart.platform, isA<BasicPlatform>());
@@ -97,10 +97,10 @@ void main() {
               labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5', 'tick6'],
             ),
           ).lower(),
-          <String, Object?>{
-            'canvas': <String, Object?>{'height': 150, 'width': 250},
-            'useOffscreenCanvas': true,
-          },
+          const AcquireOptions(
+            canvas: HarnessCanvas(width: 250, height: 150),
+            useOffscreenCanvas: true,
+          ),
         );
 
         expect(chart.platform, isA<BasicPlatform>());

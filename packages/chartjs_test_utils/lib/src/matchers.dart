@@ -14,8 +14,8 @@
 /// - [toBeValidChart] (matchers.js:106) and [toBeChartOfSize]
 ///   (matchers.js:131). They test a chart and its canvas through the pure
 ///   interfaces `types.Chart`, `HTMLCanvasElement`,
-///   `CanvasRenderingContext2D` and `CSSStyleDeclaration` (Chart.js ADR
-///   0022, section 9, `harness-chart-matchers`);
+///   `CanvasRenderingContext2D` (Chart.js ADRs 0022, section 9, and 0200,
+///   `harness-chart-matchers`);
 /// - `toEqualOptions` from `matchers.options.dart`, which matchers.js:229
 ///   re-exports.
 ///
@@ -208,14 +208,14 @@ final class const _ToBeChartOfSize(final Map<String, Object?> expected)
     String? message;
     final canvas = chart.ctx!.canvas;
     // DIVERGES(chartjs): harness-chart-matchers, the display size rule.
-    final style = computedCanvasSize(canvas);
+    final display = computedCanvasSize(canvas);
     final devicePixelRatio = jsGet(chart.options, 'devicePixelRatio');
     // DIVERGES(chartjs): harness-chart-matchers, the ratio of the platform.
     final pixelRatio = jsTruthy(devicePixelRatio)
         ? jsToNumber(devicePixelRatio)
         : chart.platform.getDevicePixelRatio();
-    final dh = _parseInt(style.height);
-    final dw = _parseInt(style.width);
+    final dh = _parseInt(display.height);
+    final dw = _parseInt(display.width);
     final rh = canvas.height;
     final rw = canvas.width;
     final orh = rh / pixelRatio;
@@ -269,46 +269,33 @@ final class const _ToBeChartOfSize(final Map<String, Object?> expected)
 }
 
 /// `getComputedStyle(canvas)` of `toBeChartOfSize` (matchers.js:141): the
-/// display width and height of [canvas], in px, or Dart `null` for `auto`
-/// (Chart.js ADR 0022, section 9).
+/// display width and height of [canvas] in logical pixels (Chart.js ADRs
+/// 0022, section 9, and 0200).
 ///
-/// - A side with an inline px style has that value.
-/// - With one px style only, the other side keeps the aspect ratio of the
-///   render size: the CSS rule for a replaced element. A render width or
-///   height of 0 gives no ratio: the side has its render size.
-/// - Without a px style, a side has the render size.
-/// - A canvas with its own `display: none` gives `auto` for a side without
-///   a px style.
-({double? width, double? height}) computedCanvasSize(HTMLCanvasElement canvas) {
-  final style = canvas.style;
-  final styleWidth = _px(style.getPropertyValue('width'));
-  final styleHeight = _px(style.getPropertyValue('height'));
+/// - A side with a display size ([HTMLCanvasElement.displayWidth],
+///   [HTMLCanvasElement.displayHeight]) has that value.
+/// - With one display side only, the other side keeps the aspect ratio of
+///   the render size: the CSS rule for a replaced element. A render width
+///   or height of 0 gives no ratio: the side has its render size.
+/// - Without a display size, a side has the render size.
+({double width, double height}) computedCanvasSize(HTMLCanvasElement canvas) {
+  final displayWidth = canvas.displayWidth;
+  final displayHeight = canvas.displayHeight;
   final rw = canvas.width.toDouble();
   final rh = canvas.height.toDouble();
-  if (style.getPropertyValue('display') == 'none') {
-    return (width: styleWidth, height: styleHeight);
-  }
   return (
     width:
-        styleWidth ??
-        (styleHeight != null && rh != 0 ? styleHeight * rw / rh : rw),
+        displayWidth ??
+        (displayHeight != null && rh != 0 ? displayHeight * rw / rh : rw),
     height:
-        styleHeight ??
-        (styleWidth != null && rw != 0 ? styleWidth * rh / rw : rh),
+        displayHeight ??
+        (displayWidth != null && rw != 0 ? displayWidth * rh / rw : rh),
   );
 }
 
-/// The number of a px length, for example `'455px'`, or Dart `null` for
-/// another value.
-double? _px(String value) {
-  final text = value.trim();
-  if (!text.endsWith('px')) return null;
-  return double.tryParse(text.substring(0, text.length - 2).trim());
-}
-
 /// `parseInt(value, 10) || 0` of a px value: the integer part, toward zero.
-/// `auto` (Dart `null`) gives NaN, and `|| 0` gives 0.
-int _parseInt(double? value) {
-  if (value == null || !value.isFinite) return 0;
+/// NaN and the infinities give 0.
+int _parseInt(double value) {
+  if (!value.isFinite) return 0;
   return value.truncate();
 }

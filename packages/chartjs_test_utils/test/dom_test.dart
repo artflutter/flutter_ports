@@ -26,16 +26,13 @@ Size _containerOf(HTMLCanvasElement canvas) {
   return Size(host.contentWidth, host.contentHeight);
 }
 
-/// A div with [style] and the attributes [attributes], with [canvas] (a new
-/// canvas of 300 x 150 by default) as its child, appended to the body.
+/// A div with the box [box], with [canvas] (a new canvas of 300 x 150 by
+/// default) as its child, appended to the body.
 (HarnessElement, HTMLCanvasElement) _wrap(
-  String style, {
+  HarnessBox box, {
   HTMLCanvasElement? canvas,
-  Map<String, String> attributes = const {},
 }) {
-  final wrapper = document.createElement<HarnessElement>('div')
-    ..setAttribute('style', style);
-  attributes.forEach(wrapper.setAttribute);
+  final wrapper = document.createElement<HarnessElement>('div')..box = box;
   final child = canvas ?? document.createElement<HTMLCanvasElement>('canvas');
   wrapper.appendChild(child);
   document.body.appendChild(wrapper);
@@ -167,25 +164,46 @@ void main() {
     });
   });
 
-  group('style and attributes', () {
-    test('the style attribute reflects the inline style', () {
+  group('box and attributes', () {
+    test('the box fields of an element', () {
       final div = document.createElement<HarnessElement>('div')
-        ..setAttribute('STYLE', 'width: 300px; height:350px');
-      expect(div.style.width, '300px');
-      expect(div.style.height, '350px');
-      expect(div.getAttribute('style'), 'width: 300px; height:350px');
-      div.style.display = 'none';
-      expect(div.style.display, 'none');
+        ..box = const HarnessBox(width: 300, height: 350);
+      expect((div.width, div.height), (300, 350));
+      div.hidden = true;
+      expect(div.box, const HarnessBox(width: 300, height: 350, hidden: true));
+      // A box write replaces each field, as a write of `style.cssText`.
+      div.box = const HarnessBox(width: 455, height: 355);
+      expect(div.hidden, isFalse);
+      div
+        ..maxWidth = 10
+        ..maxHeight = 20
+        ..padding = const EdgeInsets.all(1)
+        ..absolute = true
+        ..offset = const Offset(5, -6)
+        ..direction = TextDirection.rtl
+        ..width = null;
       expect(
-        div.getAttribute('style'),
-        'width: 300px; height: 350px; display: none;',
+        div.box,
+        const HarnessBox(
+          height: 355,
+          maxWidth: 10,
+          maxHeight: 20,
+          padding: EdgeInsets.all(1),
+          absolute: true,
+          offset: Offset(5, -6),
+          direction: TextDirection.rtl,
+        ),
       );
-      div.style.cssText = 'width: 455px; height: 355px';
-      expect(div.style.cssText, 'width: 455px; height: 355px;');
-      expect(div.style.display, '');
-      div.removeAttribute('style');
-      expect(div.getAttribute('style'), isNull);
-      expect(div.style.width, '');
+    });
+
+    test('the element has no style attribute', () {
+      final div = document.createElement<HarnessElement>('div');
+      expect(
+        () => div.setAttribute('style', 'width: 300px'),
+        throwsArgumentError,
+      );
+      expect(() => div.getAttribute('STYLE'), throwsArgumentError);
+      expect(() => div.removeAttribute('style'), throwsArgumentError);
     });
 
     test('other attributes keep their value', () {
@@ -194,42 +212,28 @@ void main() {
         ..setAttribute('id', 'a');
       expect(div.getAttribute('CLASS'), 'chartjs-wrapper');
       expect(div.getAttribute('id'), 'a');
+      // The class has no effect on the layout (Chart.js ADR 0200).
+      expect(div.box, const HarnessBox());
       div.removeAttribute('id');
       expect(div.getAttribute('id'), isNull);
     });
 
-    testWidgets('the style properties of a canvas', (tester) async {
+    testWidgets('the display of a canvas', (tester) async {
       final canvas = document.createElement<HTMLCanvasElement>('canvas');
-      canvas.style
-        ..display = 'block'
-        ..width = '345px';
-      expect(canvas.style.display, 'block');
-      expect(canvas.style.width, '345px');
-      expect(canvas.style.cssText, 'display: block; width: 345px;');
-      canvas.style.cssText = 'height: 125px';
-      expect(canvas.getAttribute('style'), 'height: 125px;');
-      expect(canvas.style.maxWidth, '');
-      canvas.style
-        ..maxWidth = '10px'
-        ..maxHeight = '20px'
-        ..padding = '1px'
-        ..position = 'absolute'
-        ..left = '5px'
-        ..top = '-6px'
-        ..direction = 'rtl';
-      expect(canvas.style.maxWidth, '10px');
-      expect(canvas.style.maxHeight, '20px');
-      expect(canvas.style.padding, '1px');
-      expect(canvas.style.position, 'absolute');
-      expect(canvas.style.left, '5px');
-      expect(canvas.style.top, '-6px');
-      expect(canvas.style.direction, 'rtl');
+      expect(canvas.hidden, isFalse);
+      canvas
+        ..hidden = true
+        ..displayWidth = 345;
+      expect(canvas.hidden, isTrue);
+      expect(canvas.displayWidth, 345);
     });
   });
 
   group('layout', () {
     testWidgets('the px width and height give the content box', (tester) async {
-      final (wrapper, canvas) = _wrap('width: 300px; height: 350px');
+      final (wrapper, canvas) = _wrap(
+        const HarnessBox(width: 300, height: 350),
+      );
       await _checkpoint();
       expect(_containerOf(canvas), const Size(300, 350));
       expect((wrapper.clientWidth, wrapper.clientHeight), (300, 350));
@@ -241,7 +245,7 @@ void main() {
     testWidgets('no width gives the content width of the parent', (
       tester,
     ) async {
-      final (wrapper, canvas) = _wrap('height: 100px; position: relative');
+      final (wrapper, canvas) = _wrap(const HarnessBox(height: 100));
       await _checkpoint();
       expect(_containerOf(canvas), const Size(800, 100));
       expect(wrapper.clientWidth, 800);
@@ -253,7 +257,10 @@ void main() {
       final canvas = document.createElement<HTMLCanvasElement>('canvas')
         ..setAttribute('width', '200')
         ..setAttribute('height', '100');
-      final (wrapper, _) = _wrap('position: absolute', canvas: canvas);
+      final (wrapper, _) = _wrap(
+        const HarnessBox(absolute: true),
+        canvas: canvas,
+      );
       await _checkpoint();
       expect(_containerOf(canvas), const Size(200, 100));
       expect((wrapper.clientWidth, wrapper.clientHeight), (200, 100));
@@ -261,12 +268,13 @@ void main() {
 
     testWidgets('the default wrapper is a box of the display size of the '
         'canvas', (tester) async {
-      // acquireChart: the class chartjs-wrapper and a canvas of 512 x 512.
+      // acquireChart: an absolute wrapper (the class chartjs-wrapper) and a
+      // canvas of 512 x 512.
       final canvas = document.createElement<HTMLCanvasElement>('canvas')
         ..setAttribute('height', '512')
         ..setAttribute('width', '512');
       final wrapper = document.createElement<HarnessElement>('div')
-        ..setAttribute('class', 'chartjs-wrapper')
+        ..absolute = true
         ..appendChild(canvas);
       document.body.appendChild(wrapper);
       await _checkpoint();
@@ -274,12 +282,9 @@ void main() {
       expect((wrapper.clientWidth, wrapper.clientHeight), (512, 512));
     });
 
-    testWidgets('an inline style wins over the class chartjs-wrapper', (
-      tester,
-    ) async {
+    testWidgets('the padding of a static box', (tester) async {
       final (wrapper, canvas) = _wrap(
-        'padding: 10px; position: relative',
-        attributes: {'class': 'chartjs-wrapper'},
+        const HarnessBox(padding: EdgeInsets.all(10)),
       );
       await _checkpoint();
       expect(_containerOf(canvas), const Size(780, 150));
@@ -288,26 +293,34 @@ void main() {
 
     testWidgets('no height gives the height of the content', (tester) async {
       final canvas = document.createElement<HTMLCanvasElement>('canvas')
-        ..setAttribute('style', 'width: 400px; height: 120px');
-      final (wrapper, _) = _wrap('width: 500px', canvas: canvas);
+        ..displayWidth = 400
+        ..displayHeight = 120;
+      final (wrapper, _) = _wrap(const HarnessBox(width: 500), canvas: canvas);
       await _checkpoint();
       expect(_containerOf(canvas), const Size(500, 120));
       expect(wrapper.clientHeight, 120);
 
       // A canvas with its own display none has no content.
-      canvas.style.display = 'none';
+      canvas.hidden = true;
       await tester.pump();
       expect(_containerOf(canvas), const Size(500, 0));
       expect(wrapper.clientHeight, 0);
     });
 
     testWidgets('max-width and max-height cap the content box', (tester) async {
-      final (wrapper, canvas) = _wrap('max-width: 600px; max-height: 50px');
+      final (wrapper, canvas) = _wrap(
+        const HarnessBox(maxWidth: 600, maxHeight: 50),
+      );
       await _checkpoint();
       expect(_containerOf(canvas), const Size(600, 50));
       expect((wrapper.clientWidth, wrapper.clientHeight), (600, 50));
       final (fixed, fixedCanvas) = _wrap(
-        'width: 700px; height: 700px; max-width: 650px; max-height: 300px',
+        const HarnessBox(
+          width: 700,
+          height: 700,
+          maxWidth: 650,
+          maxHeight: 300,
+        ),
       );
       await _checkpoint();
       expect(_containerOf(fixedCanvas), const Size(650, 300));
@@ -316,7 +329,7 @@ void main() {
 
     testWidgets('the padding lies outside the content box', (tester) async {
       final (wrapper, canvas) = _wrap(
-        'padding: 50px; width: 320px; height: 350px; position: relative',
+        const HarnessBox(width: 320, height: 350, padding: EdgeInsets.all(50)),
       );
       await _checkpoint();
       expect(_containerOf(canvas), const Size(320, 350));
@@ -329,15 +342,14 @@ void main() {
       tester,
     ) async {
       final (wrapper, canvas) = _wrap(
-        'display: none; width: 460px; '
-        'height: 380px',
+        const HarnessBox(width: 460, height: 380, hidden: true),
       );
       await _checkpoint();
       final host = _hostOf(canvas);
       expect(_containerOf(canvas), Size.zero);
       expect((wrapper.clientWidth, wrapper.clientHeight), (0, 0));
       expect(host.attached, isTrue);
-      wrapper.style.display = 'block';
+      wrapper.hidden = false;
       await tester.pump();
       expect(_hostOf(canvas), same(host));
       expect(_containerOf(canvas), const Size(460, 380));
@@ -350,9 +362,9 @@ void main() {
       // CSS hides the whole subtree. The getBoundingClientRect of the inner
       // div is 0 x 0, so getMaximumSize (helpers.dom.ts:163-200) gives 0 x 0.
       final outer = document.createElement<HarnessElement>('div')
-        ..setAttribute('style', 'display: none');
+        ..box = const HarnessBox(hidden: true);
       final inner = document.createElement<HarnessElement>('div')
-        ..setAttribute('style', 'width: 300px; height: 200px');
+        ..box = const HarnessBox(width: 300, height: 200);
       final canvas = document.createElement<HTMLCanvasElement>('canvas');
       inner.appendChild(canvas);
       outer.appendChild(inner);
@@ -361,22 +373,22 @@ void main() {
       expect(_containerOf(canvas), Size.zero);
       expect((inner.clientWidth, inner.clientHeight), (0, 0));
       expect(_hostOf(canvas).attached, isTrue);
-      outer.style.display = 'block';
+      outer.hidden = false;
       await tester.pump();
       expect(_containerOf(canvas), const Size(300, 200));
       expect((inner.clientWidth, inner.clientHeight), (300, 200));
     });
 
-    testWidgets('a canvas with one px style gives its CSS display size', (
+    testWidgets('a canvas with one display side gives its CSS display size', (
       tester,
     ) async {
-      // A replaced element with one px side keeps the aspect ratio of its
-      // render size (Chart.js ADR 0022, section 9): 400 x 200 for a canvas
-      // of 300 x 150 with `width: 400px`.
+      // A replaced element with one display side keeps the aspect ratio of
+      // its render size (Chart.js ADR 0022, section 9): 400 x 200 for a
+      // canvas of 300 x 150 with the display width 400.
       final canvas = document.createElement<HTMLCanvasElement>('canvas')
-        ..setAttribute('style', 'width: 400px');
+        ..displayWidth = 400;
       final wrapper = document.createElement<HarnessElement>('div')
-        ..setAttribute('class', 'chartjs-wrapper')
+        ..absolute = true
         ..appendChild(canvas);
       document.body.appendChild(wrapper);
       await _checkpoint();
@@ -386,7 +398,9 @@ void main() {
 
     testWidgets('direction rtl gives the subtree a right-to-left '
         'Directionality', (tester) async {
-      _wrap('width: 300px; height: 100px; direction: rtl');
+      _wrap(
+        const HarnessBox(width: 300, height: 100, direction: TextDirection.rtl),
+      );
       await _checkpoint();
       final context = tester.element(find.byType(ChartHost));
       expect(Directionality.of(context), TextDirection.rtl);
@@ -396,7 +410,9 @@ void main() {
       tester,
     ) async {
       // core.controller.tests.js:918, after the display change.
-      final (wrapper, canvas) = _wrap('max-width: 600px; max-height: 400px');
+      final (wrapper, canvas) = _wrap(
+        const HarnessBox(maxWidth: 600, maxHeight: 400),
+      );
       await _checkpoint();
       expect(_containerOf(canvas), const Size(600, 150));
       expect(wrapper.clientWidth, 600);
@@ -406,9 +422,9 @@ void main() {
       tester,
     ) async {
       final outer = document.createElement<HarnessElement>('div')
-        ..setAttribute('style', 'width: 400px; height: 300px');
+        ..box = const HarnessBox(width: 400, height: 300);
       final inner = document.createElement<HarnessElement>('div')
-        ..setAttribute('style', 'height: 100px');
+        ..box = const HarnessBox(height: 100);
       final canvas = document.createElement<HTMLCanvasElement>('canvas');
       inner.appendChild(canvas);
       outer.appendChild(inner);
@@ -426,7 +442,7 @@ void main() {
         ..setAttribute('width', '200')
         ..setAttribute('height', '100');
       final (wrapper, _) = _wrap(
-        'position: absolute; left: 50px; top: 30px;',
+        const HarnessBox(absolute: true, offset: Offset(50, 30)),
         canvas: canvas,
       );
       await _checkpoint();
@@ -437,71 +453,58 @@ void main() {
 
       // A write moves the box at the next frame. A child of the body is a
       // relayout boundary: the body places it again.
-      wrapper.style
-        ..left = '-10px'
-        ..top = '0';
+      wrapper.offset = const Offset(-10, 0);
       await tester.pump();
       expect(canvas.getBoundingClientRect(), const DOMRect(-10, 0, 200, 100));
     });
 
-    testWidgets('left and top have no effect without position absolute', (
-      tester,
-    ) async {
+    testWidgets('an offset has no effect without absolute', (tester) async {
       final (_, canvas) = _wrap(
-        'width: 300px; height: 150px; position: relative; left: 50px; '
-        'top: 30px',
+        const HarnessBox(width: 300, height: 150, offset: Offset(50, 30)),
       );
       await _checkpoint();
       expect(_hostOf(canvas).localToGlobal(Offset.zero), Offset.zero);
-      // The class chartjs-wrapper gives position absolute.
-      final (_, wrapped) = _wrap(
-        'left: 20px; top: 40px',
-        attributes: {'class': 'chartjs-wrapper'},
-      );
-      await _checkpoint();
-      expect(_hostOf(wrapped).localToGlobal(Offset.zero), const Offset(20, 40));
-      // A percentage is not a px length: the static position stays.
-      final (_, percent) = _wrap('position: absolute; left: 10%; top: 5px');
-      await _checkpoint();
-      expect(_hostOf(percent).localToGlobal(Offset.zero), const Offset(0, 5));
     });
 
-    testWidgets('without left or top, a coordinate keeps the static '
+    testWidgets('without an offset, an absolute box keeps the static '
         'position in the padding box of the parent', (tester) async {
       final outer = document.createElement<HarnessElement>('div')
-        ..setAttribute('style', 'width: 400px; height: 300px; padding: 10px');
+        ..box = const HarnessBox(
+          width: 400,
+          height: 300,
+          padding: EdgeInsets.all(10),
+        );
       final first = document.createElement<HarnessElement>('div')
-        ..setAttribute('style', 'height: 40px');
-      final onlyTop = document.createElement<HarnessElement>('div')
-        ..setAttribute(
-          'style',
-          'position: absolute; top: 100px; width: 50px; height: 20px',
+        ..box = const HarnessBox(height: 40);
+      final unplaced = document.createElement<HarnessElement>('div')
+        ..box = const HarnessBox(width: 50, height: 20, absolute: true);
+      final placed = document.createElement<HarnessElement>('div')
+        ..box = const HarnessBox(
+          width: 50,
+          height: 20,
+          absolute: true,
+          offset: Offset(20, 100),
         );
-      final onlyLeft = document.createElement<HarnessElement>('div')
-        ..setAttribute(
-          'style',
-          'position: absolute; left: 20px; width: 50px; height: 20px',
-        );
-      final topCanvas = document.createElement<HTMLCanvasElement>('canvas');
-      final leftCanvas = document.createElement<HTMLCanvasElement>('canvas');
-      onlyTop.appendChild(topCanvas);
-      onlyLeft.appendChild(leftCanvas);
+      final staticCanvas = document.createElement<HTMLCanvasElement>('canvas');
+      final placedCanvas = document.createElement<HTMLCanvasElement>('canvas');
+      unplaced.appendChild(staticCanvas);
+      placed.appendChild(placedCanvas);
       outer
         ..appendChild(first)
-        ..appendChild(onlyTop)
-        ..appendChild(onlyLeft);
+        ..appendChild(unplaced)
+        ..appendChild(placed);
       document.body.appendChild(outer);
       await _checkpoint();
-      // `left` and `top` start at the padding edge of the parent. The static
+      // The offset starts at the padding edge of the parent. The static
       // position is in the content box, after the elements in the flow: an
       // absolute element is out of the flow.
       expect(
-        _hostOf(topCanvas).localToGlobal(Offset.zero),
-        const Offset(10, 100),
+        _hostOf(staticCanvas).localToGlobal(Offset.zero),
+        const Offset(10, 50),
       );
       expect(
-        _hostOf(leftCanvas).localToGlobal(Offset.zero),
-        const Offset(20, 50),
+        _hostOf(placedCanvas).localToGlobal(Offset.zero),
+        const Offset(20, 100),
       );
     });
 
@@ -516,9 +519,11 @@ void main() {
     });
 
     testWidgets('a style write alone waits for the next frame', (tester) async {
-      final (wrapper, canvas) = _wrap('width: 300px; height: 350px');
+      final (wrapper, canvas) = _wrap(
+        const HarnessBox(width: 300, height: 350),
+      );
       await _checkpoint();
-      wrapper.style.width = '455px';
+      wrapper.width = 455;
       await _checkpoint();
       expect(_hostOf(canvas).contentWidth, 300);
       await tester.pump();
@@ -528,9 +533,11 @@ void main() {
     testWidgets('a read of clientWidth lays out the body first', (
       tester,
     ) async {
-      final (wrapper, canvas) = _wrap('width: 300px; height: 350px');
+      final (wrapper, canvas) = _wrap(
+        const HarnessBox(width: 300, height: 350),
+      );
       await _checkpoint();
-      wrapper.style.width = '455px';
+      wrapper.width = 455;
       expect(wrapper.clientWidth, 455);
       expect(_hostOf(canvas).contentWidth, 455);
     });
@@ -546,7 +553,7 @@ void main() {
       setUp(() {
         canvas = document.createElement<HTMLCanvasElement>('canvas');
         wrapper = document.createElement<HarnessElement>('div')
-          ..setAttribute('style', 'width: 300px; height: 300px')
+          ..box = const HarnessBox(width: 300, height: 300)
           ..appendChild(canvas);
         document.body.appendChild(wrapper);
       });
@@ -557,11 +564,11 @@ void main() {
         var calls = 0;
         final observer = CanvasMutationObserver(({required connected}) {
           calls++;
-          wrapper.style.width = '200px';
+          wrapper.width = 200;
           document.body.appendChild(other);
         })..observe(canvas);
         // The setUp changed only the tree. This write attaches the body.
-        wrapper.style.height = '350px';
+        wrapper.height = 350;
         expect(find.byType(ChartHost), findsNothing);
         await tester.pump();
         expect(calls, 1);
@@ -579,7 +586,7 @@ void main() {
         'frame', (tester) async {
       final canvas = document.createElement<HTMLCanvasElement>('canvas');
       final wrapper = document.createElement<HarnessElement>('div')
-        ..setAttribute('style', 'width: 300px; height: 350px');
+        ..box = const HarnessBox(width: 300, height: 350);
       final other = document.createElement<HarnessElement>('div');
       Object? error;
       var calls = 0;
@@ -587,7 +594,7 @@ void main() {
       final observer = CanvasMutationObserver(({required connected}) {
         calls++;
         try {
-          wrapper.style.width = '200px';
+          wrapper.width = 200;
           document.body.appendChild(other);
         } on Object catch (e) {
           error = e;
@@ -599,7 +606,7 @@ void main() {
       expect(calls, 1);
       expect(error, isNull);
       // The tree changed at once. The layout waits.
-      expect(wrapper.style.width, '200px');
+      expect(wrapper.width, 200);
       expect(other.parentNode, same(document.body));
       expect(_hostOf(canvas).contentWidth, 300);
       await tester.pump();
@@ -614,7 +621,9 @@ void main() {
     Future<(HarnessElement, List<bool>, CanvasMutationObserver)> attached(
       WidgetTester tester,
     ) async {
-      final (wrapper, canvas) = _wrap('width: 320px; height: 350px');
+      final (wrapper, canvas) = _wrap(
+        const HarnessBox(width: 320, height: 350),
+      );
       await _checkpoint();
       await tester.pump();
       final calls = <bool>[];
@@ -668,7 +677,9 @@ void main() {
 
     testWidgets('a removal in a frame callback reaches the chart before the '
         'layout of the frame', (tester) async {
-      final (wrapper, canvas) = _wrap('width: 320px; height: 350px');
+      final (wrapper, canvas) = _wrap(
+        const HarnessBox(width: 320, height: 350),
+      );
       await _checkpoint();
       await tester.pump();
       final phases = <SchedulerPhase>[];
@@ -687,7 +698,10 @@ void main() {
     testWidgets('a removed canvas gets its standby host back', (tester) async {
       final canvas = document.createElement<HTMLCanvasElement>('canvas');
       final standby = _hostOf(canvas);
-      final (wrapper, _) = _wrap('width: 100px; height: 100px', canvas: canvas);
+      final (wrapper, _) = _wrap(
+        const HarnessBox(width: 100, height: 100),
+        canvas: canvas,
+      );
       await _checkpoint();
       expect(_hostOf(canvas), isNot(same(standby)));
       wrapper.remove();
@@ -711,7 +725,7 @@ void main() {
       tester,
     ) async {
       final unmounts = _unmounts;
-      _wrap('width: 100px; height: 100px');
+      _wrap(const HarnessBox(width: 100, height: 100));
       await _checkpoint();
       expect(find.byType(ChartHost), findsOneWidget);
       await tester.pumpWidget(const SizedBox());
@@ -731,7 +745,7 @@ void main() {
       void callback() => count++;
       afterEachChart(callback);
       afterEachChart(callback);
-      _wrap('width: 100px; height: 100px');
+      _wrap(const HarnessBox(width: 100, height: 100));
       await _checkpoint();
       await tester.pumpWidget(const SizedBox());
       expect(count, 1);
@@ -743,7 +757,7 @@ void main() {
         'logical size', (tester) async {
       addTearDown(tester.view.reset);
       final standbyCanvas = document.createElement<HTMLCanvasElement>('canvas');
-      final (_, canvas) = _wrap('width: 100px; height: 100px');
+      final (_, canvas) = _wrap(const HarnessBox(width: 100, height: 100));
       await _checkpoint();
       window.devicePixelRatio = 2;
       expect(window.devicePixelRatio, 2);
@@ -761,7 +775,7 @@ void main() {
     });
 
     testWidgets('lays out the body at once', (tester) async {
-      final (_, canvas) = _wrap('width: 320px; height: 350px');
+      final (_, canvas) = _wrap(const HarnessBox(width: 320, height: 350));
       _forceLayout();
       expect(_containerOf(canvas), const Size(320, 350));
       expect(_hostOf(canvas).isConnected, isTrue);
@@ -777,7 +791,7 @@ void main() {
           error = e;
         }
       })..observe(canvas);
-      _wrap('width: 320px; height: 350px', canvas: canvas);
+      _wrap(const HarnessBox(width: 320, height: 350), canvas: canvas);
       await _checkpoint();
       expect(error, isA<StateError>());
       observer.disconnect();

@@ -7,8 +7,9 @@
 ///   calls `installTestFont` before each test file.
 /// - The DOM stand-in of `src/dom.dart` (Chart.js ADR 0022): `document`,
 ///   `window`, `setTimeout`, `afterEachChart`, `pumpFrames`, `pumpFrame`,
-///   `waitForDone`, `frameInterval`, `specTimeout`, the element classes and
-///   the extensions `CanvasParentElement` and `CssProperties`.
+///   `waitForDone`, `frameInterval`, `specTimeout`, the element classes,
+///   `HarnessBox` and the extensions `CanvasParentElement` and
+///   `HarnessCanvasDisplay` (Chart.js ADR 0200).
 /// - The chart helpers of chartjs-test-utils `src/index.js` and
 ///   `src/utils.js` (Chart.js ADR 0022, sections 4 to 6): `acquireChart`,
 ///   `releaseChart` and `releaseCharts`, which need the chart host;

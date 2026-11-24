@@ -42,9 +42,8 @@ Scale createCategoryScale({
         const LinearAxis(.y, display: ScaleDisplay.off),
       ],
     ),
-    <String, Object?>{
-      'canvas': <String, Object?>{'width': width, 'height': 100},
-    },
+    // The attribute `width` takes the integer part of the number.
+    AcquireOptions(canvas: HarnessCanvas(width: width.truncate(), height: 100)),
   );
   final scale = chart.scales['x']!;
   expect(scale.id, 'x');
@@ -92,7 +91,7 @@ Matcher _sameNumber(double expected) => expected.isNaN
       );
 
 /// Acquires a chart through the typed config boundary.
-Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 void main() {

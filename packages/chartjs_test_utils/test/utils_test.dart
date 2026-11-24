@@ -48,7 +48,7 @@ ChartConfig _config({
 );
 
 /// The chart of the typed [config] with the acquisition options [options].
-Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+Chart _acquire(ChartConfig config, [Object? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// A dataset of the controller id [kind], which no test registers.
@@ -221,14 +221,15 @@ void main() {
 
     testWidgets('the canvas of 512 x 512 through attributes, in a wrapper of '
         'the class chartjs-wrapper', (tester) async {
-      final options = <String, Object?>{};
-      final chart = _acquire(_config(), options);
+      final chart = _acquire(_config());
       final canvas = chart.canvas!;
       final wrapper = canvas.parentElement!;
 
       expect(canvas.getAttribute('height'), '512');
       expect(canvas.getAttribute('width'), '512');
-      expect(wrapper.getAttribute('class'), 'chartjs-wrapper');
+      // The class chartjs-wrapper with the rule of injectWrapperCSS is an
+      // absolute box (Chart.js ADR 0200).
+      expect(wrapper.box, const HarnessBox(absolute: true));
       expect(wrapper.parentNode, same(document.body));
       expect(chart, toBeValidChart());
       expect(
@@ -238,42 +239,57 @@ void main() {
       // The default wrapper is a box of the display size of the canvas.
       expect(wrapper.clientWidth, 512);
       expect(wrapper.clientHeight, 512);
-      // utils.js:43-44 write the defaults into the options.
-      expect(options['canvas'], {'height': 512, 'width': 512});
-      expect(options['wrapper'], {'class': 'chartjs-wrapper'});
       expect(chart.runtimeType, Chart);
     });
 
-    testWidgets('the attributes of the options canvas and wrapper', (
-      tester,
-    ) async {
-      final chart = _acquire(_config(), <String, Object?>{
-        'canvas': <String, Object?>{
-          'style': 'width: 150px; height: 245px',
-          'data-index': 3,
-        },
-        'wrapper': <String, Object?>{
-          'style': 'width: 300px; height: 350px',
-          'id': 'acquired',
-        },
-      });
+    testWidgets('the canvas and the wrapper of the options', (tester) async {
+      final chart = _acquire(
+        _config(),
+        const AcquireOptions(
+          canvas: HarnessCanvas(displayWidth: 150, displayHeight: 245),
+          wrapper: HarnessBox(width: 300, height: 350),
+        ),
+      );
       final canvas = chart.canvas!;
       final wrapper = canvas.parentElement!;
 
-      // initCanvas writes no display style (Chart.js ADR 0200).
-      expect(canvas.getAttribute('style'), 'width: 150px; height: 245px');
-      // setAttribute applies ToString to the value.
-      expect(canvas.getAttribute('data-index'), '3');
+      expect((canvas.displayWidth, canvas.displayHeight), (150, 245));
       // No height attribute in the options: retinaScale (helpers.dom.ts)
       // writes the render size of the display size into the attribute.
       expect(canvas.getAttribute('height'), '245');
-      expect(wrapper.getAttribute('style'), 'width: 300px; height: 350px');
-      expect(document.getElementById<HarnessElement>('acquired'), wrapper);
-      expect(wrapper.getAttribute('class'), isNull);
+      expect(wrapper.box, const HarnessBox(width: 300, height: 350));
       expect(
         chart,
         toBeChartOfSize({'dw': 150, 'dh': 245, 'rw': 150, 'rh': 245}),
       );
+    });
+
+    testWidgets('the Map options of the fixture runner', (tester) async {
+      // Chart.js ADR 0200, item 8: the numbers of a canvas Map.
+      final chart = _acquire(_config(), <String, Object?>{
+        'canvas': <String, Object?>{'width': 300.0, 'height': '150'},
+        'persistent': true,
+      });
+      expect(chart.canvas!.getAttribute('width'), '300');
+      expect(chart.canvas!.getAttribute('height'), '150');
+      expect($test[chart]!.persistent, isTrue);
+    });
+
+    test('a Map with CSS text throws an ArgumentError', () {
+      expect(
+        () => AcquireOptions.of(<String, Object?>{
+          'canvas': <String, Object?>{'style': 'width: 150px'},
+        }),
+        throwsArgumentError,
+      );
+      expect(
+        () => AcquireOptions.of(<String, Object?>{
+          'wrapper': <String, Object?>{'style': 'width: 150px'},
+        }),
+        throwsArgumentError,
+      );
+      expect(() => AcquireOptions.of(3), throwsArgumentError);
+      expect(AcquireOptions.of(null).canvas, isNull);
     });
 
     testWidgets('the defaults of animation, responsive and locale', (
@@ -327,10 +343,10 @@ void main() {
           maintainAspectRatio: false,
           plugins: [_resizeLog(log)],
         ),
-        <String, Object?>{
-          'canvas': <String, Object?>{'style': ''},
-          'wrapper': <String, Object?>{'style': 'width: 300px; height: 350px'},
-        },
+        const AcquireOptions(
+          canvas: HarnessCanvas(),
+          wrapper: HarnessBox(width: 300, height: 350),
+        ),
       );
 
       expect(chart.platform, isA<FlutterPlatform>());
@@ -361,9 +377,9 @@ void main() {
       expect(chart.attached, isFalse);
       expect(chart, toBeChartOfSize({'dw': 0, 'dh': 0, 'rw': 0, 'rh': 0}));
 
-      final wrapper = document.createElement<HarnessElement>('div');
-      wrapper.style.cssText = 'width: 200px; height: 100px';
-      wrapper.appendChild(canvas);
+      final wrapper = document.createElement<HarnessElement>('div')
+        ..box = const HarnessBox(width: 200, height: 100)
+        ..appendChild(canvas);
       document.body.appendChild(wrapper);
       addTearDown(wrapper.remove);
       // The mutation checkpoint of the append attaches the chart.
@@ -379,7 +395,7 @@ void main() {
         'shows, thus BasicPlatform', (tester) async {
       final chart = _acquire(
         _config(animation: const ChartAnimation()),
-        <String, Object?>{'useOffscreenCanvas': true},
+        const AcquireOptions(useOffscreenCanvas: true),
       );
       final wrappers = document.body.childNodes.whereType<HarnessElement>();
       final placeholder = wrappers.last.childNodes.single;
@@ -398,7 +414,7 @@ void main() {
     ) async {
       final children = document.body.childNodes.length;
       expect(
-        () => _acquire(_config(), <String, Object?>{'useShadowDOM': true}),
+        () => _acquire(_config(), const AcquireOptions(useShadowDOM: true)),
         throwsUnsupportedError,
       );
       expect(document.body.childNodes, hasLength(children));
@@ -448,8 +464,8 @@ void main() {
         children.add(document.body.childNodes.length);
       });
       final wrapper = document.createElement<HarnessElement>('div')
-        ..appendChild(canvas);
-      wrapper.style.cssText = 'width: 200px; height: 100px';
+        ..appendChild(canvas)
+        ..box = const HarnessBox(width: 200, height: 100);
       document.body.appendChild(wrapper);
       addTearDown(wrapper.remove);
       await Future<void>.value();
@@ -464,9 +480,7 @@ void main() {
     /// into [log].
     Chart eventChart(List<String> log, [List<String>? events]) => _acquire(
       _config(events: events, plugins: [_eventLog(log)]),
-      <String, Object?>{
-        'canvas': <String, Object?>{'height': 100, 'width': 200},
-      },
+      const AcquireOptions(canvas: HarnessCanvas(width: 200, height: 100)),
     );
 
     testWidgets('one frame of 16 ms, after the whole handler', (tester) async {
@@ -536,12 +550,10 @@ void main() {
       final log = <String>[];
       final chart = _acquire(
         _config(plugins: [_eventLog(log)]),
-        <String, Object?>{
-          'canvas': <String, Object?>{'height': 100, 'width': 200},
-          'wrapper': <String, Object?>{
-            'style': 'position: absolute; left: 50px; top: 30px;',
-          },
-        },
+        const AcquireOptions(
+          canvas: HarnessCanvas(width: 200, height: 100),
+          wrapper: HarnessBox(absolute: true, offset: Offset(50, 30)),
+        ),
       );
       expect(
         chart.canvas!.getBoundingClientRect(),
@@ -683,12 +695,13 @@ void main() {
       tester,
     ) async {
       await waitForDone((done) {
-        final chart = _acquire(responsive(), <String, Object?>{
-          'canvas': <String, Object?>{'style': ''},
-          'wrapper': <String, Object?>{
-            'style': 'width: 300px; height: 350px; position: relative',
-          },
-        });
+        final chart = _acquire(
+          responsive(),
+          const AcquireOptions(
+            canvas: HarnessCanvas(),
+            wrapper: HarnessBox(width: 300, height: 350),
+          ),
+        );
 
         expect(
           chart,
@@ -710,21 +723,22 @@ void main() {
 
             done();
           });
-          wrapper.style.width = '150px';
+          wrapper.width = 150;
         });
-        wrapper.style.width = '455px';
+        wrapper.width = 455;
       });
     });
 
     testWidgets(':697 should restore the original size when parent became '
         'invisible', (tester) async {
       await waitForDone((done) {
-        final chart = _acquire(responsive(), <String, Object?>{
-          'canvas': <String, Object?>{'style': ''},
-          'wrapper': <String, Object?>{
-            'style': 'width: 300px; height: 350px; position: relative',
-          },
-        });
+        final chart = _acquire(
+          responsive(),
+          const AcquireOptions(
+            canvas: HarnessCanvas(),
+            wrapper: HarnessBox(width: 300, height: 350),
+          ),
+        );
 
         waitForResize(chart, () {
           expect(
@@ -737,8 +751,7 @@ void main() {
             fail('resize should not have been called');
           };
 
-          final wrapper = chart.canvas!.parentElement!;
-          wrapper.style.display = 'none';
+          final wrapper = chart.canvas!.parentElement!..hidden = true;
 
           setTimeout(() {
             expect(wrapper.clientWidth, 0);
@@ -759,7 +772,7 @@ void main() {
 
               done();
             });
-            wrapper.style.display = 'block';
+            wrapper.hidden = false;
           }, 200);
         });
       });
@@ -773,12 +786,13 @@ void main() {
         'style changes from "none" to "block"', (tester) async {
       await waitForDone((done) {
         // https://github.com/chartjs/Chart.js/issues/4659
-        final chart = _acquire(responsive(), <String, Object?>{
-          'canvas': <String, Object?>{'style': ''},
-          'wrapper': <String, Object?>{
-            'style': 'display: none; max-width: 600px; max-height: 400px;',
-          },
-        });
+        final chart = _acquire(
+          responsive(),
+          const AcquireOptions(
+            canvas: HarnessCanvas(),
+            wrapper: HarnessBox(maxWidth: 600, maxHeight: 400, hidden: true),
+          ),
+        );
 
         final wrapper = chart.canvas!.parentElement!;
         waitForResize(chart, () {
@@ -789,7 +803,7 @@ void main() {
 
           done();
         });
-        wrapper.style.display = 'block';
+        wrapper.hidden = false;
       });
     });
 
@@ -797,10 +811,13 @@ void main() {
         're-attached to the DOM', (tester) async {
       final log = <String>[];
       await waitForDone((done) {
-        final chart = _acquire(responsive([_resizeLog(log)]), {
-          'canvas': <String, Object?>{'style': ''},
-          'wrapper': <String, Object?>{'style': 'width: 320px; height: 350px'},
-        });
+        final chart = _acquire(
+          responsive([_resizeLog(log)]),
+          const AcquireOptions(
+            canvas: HarnessCanvas(),
+            wrapper: HarnessBox(width: 320, height: 350),
+          ),
+        );
 
         expect(
           chart,
@@ -826,7 +843,7 @@ void main() {
           });
 
           parent.removeChild(wrapper);
-          wrapper.style.width = '455px';
+          wrapper.width = 455;
           parent.appendChild(wrapper);
         });
 
@@ -834,7 +851,7 @@ void main() {
         setTimeout(
           () {
             parent.appendChild(wrapper);
-            wrapper.style.height = '355px';
+            wrapper.height = 355;
           },
           // The upstream text passes the delay 0.
           // ignore: avoid_redundant_argument_values
@@ -859,10 +876,13 @@ void main() {
     testWidgets(':1116 should detect detach/attach in series', (tester) async {
       final log = <String>[];
       await waitForDone((done) {
-        final chart = _acquire(responsive([_resizeLog(log)]), {
-          'canvas': <String, Object?>{'style': ''},
-          'wrapper': <String, Object?>{'style': 'width: 320px; height: 350px'},
-        });
+        final chart = _acquire(
+          responsive([_resizeLog(log)]),
+          const AcquireOptions(
+            canvas: HarnessCanvas(),
+            wrapper: HarnessBox(width: 320, height: 350),
+          ),
+        );
 
         final wrapper = chart.canvas!.parentElement!;
         final parent = wrapper.parentNode!;
@@ -889,10 +909,13 @@ void main() {
     ) async {
       final log = <String>[];
       await waitForDone((done) {
-        final chart = _acquire(responsive([_resizeLog(log)]), {
-          'canvas': <String, Object?>{'style': ''},
-          'wrapper': <String, Object?>{'style': 'width: 320px; height: 350px'},
-        });
+        final chart = _acquire(
+          responsive([_resizeLog(log)]),
+          const AcquireOptions(
+            canvas: HarnessCanvas(),
+            wrapper: HarnessBox(width: 320, height: 350),
+          ),
+        );
 
         final wrapper = chart.canvas!.parentElement!;
         final parent = wrapper.parentNode!;
@@ -920,10 +943,13 @@ void main() {
 
     testWidgets(':1179 should detect attach/detach in series', (tester) async {
       await waitForDone((done) {
-        final chart = _acquire(responsive(), <String, Object?>{
-          'canvas': <String, Object?>{'style': ''},
-          'wrapper': <String, Object?>{'style': 'width: 320px; height: 350px'},
-        });
+        final chart = _acquire(
+          responsive(),
+          const AcquireOptions(
+            canvas: HarnessCanvas(),
+            wrapper: HarnessBox(width: 320, height: 350),
+          ),
+        );
 
         final wrapper = chart.canvas!.parentElement!;
         final parent = wrapper.parentNode!;
@@ -956,9 +982,10 @@ void main() {
       tester,
     ) async {
       await waitForDone((done) {
-        var chart = _acquire(_config(responsive: true), <String, Object?>{
-          'wrapper': <String, Object?>{'style': 'width: 320px'},
-        });
+        var chart = _acquire(
+          _config(responsive: true),
+          const AcquireOptions(wrapper: HarnessBox(width: 320)),
+        );
 
         final wrapper = chart.canvas!.parentElement!;
 
@@ -985,8 +1012,8 @@ void main() {
             document.body.removeChild(wrapper);
             done();
           });
-          canvas.parentElement!.style.width = '455px';
-          canvas.parentElement!.style.height = '455px';
+          canvas.parentElement!.width = 455;
+          canvas.parentElement!.height = 455;
         });
       });
     });

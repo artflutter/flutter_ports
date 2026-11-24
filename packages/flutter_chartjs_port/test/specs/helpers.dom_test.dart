@@ -141,13 +141,17 @@ void main() {
     testWidgets(
       'should leave styled height and width on canvas if explicitly set',
       (tester) async {
-        final chart = acquireChartRoot(ChartConfigurationScope(), {
-          'canvas': <String, Object?>{
-            'height': 200,
-            'width': 200,
-            'style': 'height: 400px; width: 400px;',
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope(),
+          const AcquireOptions(
+            canvas: HarnessCanvas(
+              width: 200,
+              height: 200,
+              displayWidth: 400,
+              displayHeight: 400,
+            ),
+          ),
+        );
 
         // retinaScale(chart, true): JavaScript multiplies with the ratio
         // `true`, which ToNumber makes 1. The Dart ratio is a `double?`.
@@ -155,8 +159,10 @@ void main() {
 
         final canvas = chart.canvas!;
 
-        expect(canvas.style.height, '400px');
-        expect(canvas.style.width, '400px');
+        // `style.height` and `style.width` are the display size (Chart.js
+        // ADR 0200).
+        expect(canvas.displayHeight, 400);
+        expect(canvas.displayWidth, 400);
       },
     );
 
@@ -164,9 +170,12 @@ void main() {
       const chartWidth = 800;
       const chartHeight = 400;
       const devicePixelRatio = 0.8999999761581421; // 1.7999999523162842;
-      final chart = acquireChartRoot(ChartConfigurationScope(), {
-        'canvas': <String, Object?>{'width': chartWidth, 'height': chartHeight},
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope(),
+        const AcquireOptions(
+          canvas: HarnessCanvas(width: chartWidth, height: chartHeight),
+        ),
+      );
 
       retinaScale(chart, devicePixelRatio, true);
 
@@ -177,8 +186,8 @@ void main() {
       expect(chart.width, chartWidth);
       expect(chart.height, chartHeight);
 
-      expect(canvas.style.width, '${chartWidth}px');
-      expect(canvas.style.height, '${chartHeight}px');
+      expect(canvas.displayWidth, chartWidth);
+      expect(canvas.displayHeight, chartHeight);
     });
 
     group('getRelativePosition', () {

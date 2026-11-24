@@ -35,16 +35,15 @@ Plugin<Object?> _destroyLog(String name) => Plugin<Object?>(
 /// A chart of [acquireChartRoot] whose plugin logs as [name]: the typed
 /// config of a doughnut chart with one dataset and no data (Chart.js ADRs
 /// 0190 and 0195).
-Chart _acquire(String name, [Map<String, Object?>? options]) =>
-    acquireChartRoot(
-      ChartConfigLowering(
-        ChartConfig(
-          datasets: const [DoughnutDataset()],
-          plugins: [_destroyLog(name)],
-        ),
-      ).lower(),
-      options,
-    );
+Chart _acquire(String name, [AcquireOptions? options]) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      datasets: const [DoughnutDataset()],
+      plugins: [_destroyLog(name)],
+    ),
+  ).lower(),
+  options,
+);
 
 /// The wrapper of the chart of the unmount test.
 late HarnessElement _released;
@@ -111,7 +110,7 @@ void main() {
     });
 
     testWidgets('releaseCharts keeps a persistent chart', (tester) async {
-      final chart = _acquire('c', <String, Object?>{'persistent': true});
+      final chart = _acquire('c', const AcquireOptions(persistent: true));
       releaseCharts();
       expect(chart.canvas, isNotNull);
       expect(_destroyCount('c'), 0);

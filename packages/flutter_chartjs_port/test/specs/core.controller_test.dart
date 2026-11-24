@@ -1097,12 +1097,10 @@ void main() {
               'responsive': true,
               'maintainAspectRatio': false,
             }),
-          <String, Object?>{
-            'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
-            'wrapper': <String, Object?>{
-              'style': 'width: 300px; height: 350px',
-            },
-          },
+          const AcquireOptions(
+            canvas: HarnessCanvas(displayWidth: 150, displayHeight: 245),
+            wrapper: HarnessBox(width: 300, height: 350),
+          ),
         );
 
         expect(
@@ -1132,12 +1130,10 @@ void main() {
                 size['height'] = newSize.height;
               },
             }),
-          <String, Object?>{
-            'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
-            'wrapper': <String, Object?>{
-              'style': 'width: 300px; height: 350px',
-            },
-          },
+          const AcquireOptions(
+            canvas: HarnessCanvas(displayWidth: 150, displayHeight: 245),
+            wrapper: HarnessBox(width: 300, height: 350),
+          ),
         );
 
         expect(count, 1);
@@ -1155,12 +1151,10 @@ void main() {
                 'responsive': true,
                 'maintainAspectRatio': false,
               }),
-            <String, Object?>{
-              'canvas': <String, Object?>{'style': ''},
-              'wrapper': <String, Object?>{
-                'style': 'width: 300px; height: 350px; position: relative',
-              },
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(),
+              wrapper: HarnessBox(width: 300, height: 350),
+            ),
           );
 
           expect(
@@ -1183,9 +1177,9 @@ void main() {
 
               done();
             });
-            wrapper.style.width = '150px';
+            wrapper.width = 150;
           });
-          wrapper.style.width = '455px';
+          wrapper.width = 455;
         });
       });
 
@@ -1199,12 +1193,10 @@ void main() {
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
-              <String, Object?>{
-                'canvas': <String, Object?>{'style': ''},
-                'wrapper': <String, Object?>{
-                  'style': 'width: 300px; height: 350px; position: relative',
-                },
-              },
+              const AcquireOptions(
+                canvas: HarnessCanvas(),
+                wrapper: HarnessBox(width: 300, height: 350),
+              ),
             );
 
             waitForResize(chart, () {
@@ -1218,8 +1210,7 @@ void main() {
                 fail('resize should not have been called');
               };
 
-              final wrapper = chart.canvas!.parentElement!;
-              wrapper.style.display = 'none';
+              final wrapper = chart.canvas!.parentElement!..hidden = true;
 
               setTimeout(() {
                 expect(wrapper.clientWidth, 0);
@@ -1245,7 +1236,7 @@ void main() {
 
                   done();
                 });
-                wrapper.style.display = 'block';
+                wrapper.hidden = false;
               }, 200);
             });
           });
@@ -1262,14 +1253,14 @@ void main() {
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
-              <String, Object?>{
-                'canvas': <String, Object?>{'style': ''},
-                'wrapper': <String, Object?>{
-                  'style':
-                      'width: 300px; height: 350px; position: relative; '
-                      'direction: rtl',
-                },
-              },
+              const AcquireOptions(
+                canvas: HarnessCanvas(),
+                wrapper: HarnessBox(
+                  width: 300,
+                  height: 350,
+                  direction: native_ui.TextDirection.rtl,
+                ),
+              ),
             );
 
             expect(
@@ -1292,9 +1283,9 @@ void main() {
 
                 done();
               });
-              wrapper.style.width = '150px';
+              wrapper.width = 150;
             });
-            wrapper.style.width = '455px';
+            wrapper.width = 455;
           });
         },
       );
@@ -1309,12 +1300,10 @@ void main() {
                 'responsive': true,
                 'maintainAspectRatio': false,
               }),
-            <String, Object?>{
-              'canvas': <String, Object?>{'style': ''},
-              'wrapper': <String, Object?>{
-                'style': 'width: 300px; height: 350px; position: relative',
-              },
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(),
+              wrapper: HarnessBox(width: 300, height: 350),
+            ),
           );
 
           expect(
@@ -1337,9 +1326,9 @@ void main() {
 
               done();
             });
-            wrapper.style.height = '150px';
+            wrapper.height = 150;
           });
-          wrapper.style.height = '455px';
+          wrapper.height = 455;
         });
       });
 
@@ -1355,14 +1344,14 @@ void main() {
                   maintainAspectRatio: false,
                 ),
               ).lower(),
-              <String, Object?>{
-                'canvas': <String, Object?>{'style': ''},
-                'wrapper': <String, Object?>{
-                  'style':
-                      'padding: 50px; width: 320px; height: 350px; '
-                      'position: relative',
-                },
-              },
+              const AcquireOptions(
+                canvas: HarnessCanvas(),
+                wrapper: HarnessBox(
+                  width: 320,
+                  height: 350,
+                  padding: EdgeInsets.all(50),
+                ),
+              ),
             );
 
             expect(
@@ -1379,9 +1368,9 @@ void main() {
 
               done();
             });
-            wrapper.style
-              ..height = '355px'
-              ..width = '455px';
+            wrapper
+              ..height = 355
+              ..width = 455;
           });
         },
       );
@@ -1397,12 +1386,10 @@ void main() {
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
-              <String, Object?>{
-                'canvas': <String, Object?>{'style': 'display: none;'},
-                'wrapper': <String, Object?>{
-                  'style': 'width: 320px; height: 350px',
-                },
-              },
+              const AcquireOptions(
+                canvas: HarnessCanvas(hidden: true),
+                wrapper: HarnessBox(width: 320, height: 350),
+              ),
             );
 
             final canvas = chart.canvas!;
@@ -1414,7 +1401,7 @@ void main() {
 
               done();
             });
-            canvas.style.display = 'block';
+            canvas.hidden = false;
           });
         },
       );
@@ -1430,12 +1417,10 @@ void main() {
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
-              <String, Object?>{
-                'canvas': <String, Object?>{'style': ''},
-                'wrapper': <String, Object?>{
-                  'style': 'display: none; width: 460px; height: 380px',
-                },
-              },
+              const AcquireOptions(
+                canvas: HarnessCanvas(),
+                wrapper: HarnessBox(width: 460, height: 380, hidden: true),
+              ),
             );
 
             final wrapper = chart.canvas!.parentElement!;
@@ -1447,7 +1432,7 @@ void main() {
 
               done();
             });
-            wrapper.style.display = 'block';
+            wrapper.hidden = false;
           });
         },
       );
@@ -1464,13 +1449,14 @@ void main() {
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
-              <String, Object?>{
-                'canvas': <String, Object?>{'style': ''},
-                'wrapper': <String, Object?>{
-                  'style':
-                      'display: none; max-width: 600px; max-height: 400px;',
-                },
-              },
+              const AcquireOptions(
+                canvas: HarnessCanvas(),
+                wrapper: HarnessBox(
+                  maxWidth: 600,
+                  maxHeight: 400,
+                  hidden: true,
+                ),
+              ),
             );
 
             final wrapper = chart.canvas!.parentElement!;
@@ -1482,7 +1468,7 @@ void main() {
 
               done();
             });
-            wrapper.style.display = 'block';
+            wrapper.hidden = false;
           });
         },
       );
@@ -1499,12 +1485,10 @@ void main() {
                   'maintainAspectRatio': false,
                   'devicePixelRatio': 1,
                 }),
-              <String, Object?>{
-                'canvas': <String, Object?>{'style': ''},
-                'wrapper': <String, Object?>{
-                  'style': 'width: 400px; height: 200px; position: relative',
-                },
-              },
+              const AcquireOptions(
+                canvas: HarnessCanvas(),
+                wrapper: HarnessBox(width: 400, height: 200),
+              ),
             );
 
             expect(
@@ -1564,8 +1548,9 @@ void main() {
               done();
             });
 
-            wrapper.style.cssText = 'width: 455px; height: 355px';
-            wrapper.appendChild(canvas);
+            wrapper
+              ..box = const HarnessBox(width: 455, height: 355)
+              ..appendChild(canvas);
             body.appendChild(wrapper);
           });
         },
@@ -1615,13 +1600,15 @@ void main() {
                 done();
               });
 
-              target.style.cssText = 'width: 640px; height: 480px';
-              target.appendChild(canvas);
+              target
+                ..box = const HarnessBox(width: 640, height: 480)
+                ..appendChild(canvas);
               body.appendChild(target);
             });
 
-            wrapper.style.cssText = 'width: 455px; height: 355px';
-            wrapper.appendChild(canvas);
+            wrapper
+              ..box = const HarnessBox(width: 455, height: 355)
+              ..appendChild(canvas);
             body.appendChild(wrapper);
           });
         },
@@ -1639,12 +1626,10 @@ void main() {
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
-              <String, Object?>{
-                'canvas': <String, Object?>{'style': ''},
-                'wrapper': <String, Object?>{
-                  'style': 'width: 320px; height: 350px',
-                },
-              },
+              const AcquireOptions(
+                canvas: HarnessCanvas(),
+                wrapper: HarnessBox(width: 320, height: 350),
+              ),
             );
 
             expect(
@@ -1671,7 +1656,7 @@ void main() {
               });
 
               parent.removeChild(wrapper);
-              wrapper.style.width = '455px';
+              wrapper.width = 455;
               parent.appendChild(wrapper);
             });
 
@@ -1679,7 +1664,7 @@ void main() {
             setTimeout(
               () {
                 parent.appendChild(wrapper);
-                wrapper.style.height = '355px';
+                wrapper.height = 355;
               },
               // The upstream text passes the delay 0.
               // ignore: avoid_redundant_argument_values
@@ -1698,12 +1683,10 @@ void main() {
                 'responsive': true,
                 'maintainAspectRatio': false,
               }),
-            <String, Object?>{
-              'canvas': <String, Object?>{'style': ''},
-              'wrapper': <String, Object?>{
-                'style': 'width: 320px; height: 350px',
-              },
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(),
+              wrapper: HarnessBox(width: 320, height: 350),
+            ),
           );
 
           final wrapper = chart.canvas!.parentElement!;
@@ -1734,12 +1717,10 @@ void main() {
                 'responsive': true,
                 'maintainAspectRatio': false,
               }),
-            <String, Object?>{
-              'canvas': <String, Object?>{'style': ''},
-              'wrapper': <String, Object?>{
-                'style': 'width: 320px; height: 350px',
-              },
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(),
+              wrapper: HarnessBox(width: 320, height: 350),
+            ),
           );
 
           final wrapper = chart.canvas!.parentElement!;
@@ -1769,12 +1750,10 @@ void main() {
                 'responsive': true,
                 'maintainAspectRatio': false,
               }),
-            <String, Object?>{
-              'canvas': <String, Object?>{'style': ''},
-              'wrapper': <String, Object?>{
-                'style': 'width: 320px; height: 350px',
-              },
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(),
+              wrapper: HarnessBox(width: 320, height: 350),
+            ),
           );
 
           final wrapper = chart.canvas!.parentElement!;
@@ -1814,9 +1793,7 @@ void main() {
               ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
               }),
-            <String, Object?>{
-              'wrapper': <String, Object?>{'style': 'width: 320px'},
-            },
+            const AcquireOptions(wrapper: HarnessBox(width: 320)),
           );
 
           final wrapper = chart.canvas!.parentElement!;
@@ -1846,8 +1823,8 @@ void main() {
               document.body.removeChild(wrapper);
               done();
             });
-            canvas.parentElement!.style.width = '455px';
-            canvas.parentElement!.style.height = '455px';
+            canvas.parentElement!.width = 455;
+            canvas.parentElement!.height = 455;
           });
         });
       });
@@ -1895,8 +1872,9 @@ void main() {
 
             wrapper3.appendChild(wrapper2);
             wrapper2.appendChild(wrapper);
-            wrapper.style.cssText = 'width: 455px; height: 355px';
-            wrapper.appendChild(canvas);
+            wrapper
+              ..box = const HarnessBox(width: 455, height: 355)
+              ..appendChild(canvas);
             body.appendChild(wrapper3);
           });
         },
@@ -1920,12 +1898,10 @@ void main() {
                   'responsive': true,
                   'maintainAspectRatio': true,
                 }),
-              <String, Object?>{
-                'canvas': <String, Object?>{'style': ''},
-                'wrapper': <String, Object?>{
-                  'style': 'width: 300px; height: 350px; position: relative',
-                },
-              },
+              const AcquireOptions(
+                canvas: HarnessCanvas(),
+                wrapper: HarnessBox(width: 300, height: 350),
+              ),
             );
 
             expect(
@@ -1948,9 +1924,9 @@ void main() {
 
                 done();
               });
-              wrapper.style.width = '150px';
+              wrapper.width = 150;
             });
-            wrapper.style.width = '450px';
+            wrapper.width = 450;
           });
         },
       );
@@ -1965,12 +1941,10 @@ void main() {
                 'responsive': true,
                 'maintainAspectRatio': true,
               }),
-            <String, Object?>{
-              'canvas': <String, Object?>{'style': ''},
-              'wrapper': <String, Object?>{
-                'style': 'width: 320px; height: 350px; position: relative',
-              },
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(),
+              wrapper: HarnessBox(width: 320, height: 350),
+            ),
           );
 
           expect(
@@ -1993,9 +1967,9 @@ void main() {
 
               done();
             });
-            wrapper.style.height = '150px';
+            wrapper.height = 150;
           });
-          wrapper.style.height = '455px';
+          wrapper.height = 455;
         });
       });
     });
@@ -2023,9 +1997,9 @@ void main() {
               ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': false,
               }),
-            <String, Object?>{
-              'canvas': <String, Object?>{'width': 320, 'height': 240},
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(width: 320, height: 240),
+            ),
           );
 
           expect(
@@ -2043,11 +2017,9 @@ void main() {
               ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': false,
               }),
-            <String, Object?>{
-              'canvas': <String, Object?>{
-                'style': 'width: 320px; height: 240px',
-              },
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(displayWidth: 320, displayHeight: 240),
+            ),
           );
 
           expect(
@@ -2080,9 +2052,9 @@ void main() {
                 'responsive': false,
                 'devicePixelRatio': 3,
               }),
-            <String, Object?>{
-              'canvas': <String, Object?>{'width': 320, 'height': 240},
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(width: 320, height: 240),
+            ),
           );
 
           expect(
@@ -2101,11 +2073,9 @@ void main() {
                 'responsive': false,
                 'devicePixelRatio': 3,
               }),
-            <String, Object?>{
-              'canvas': <String, Object?>{
-                'style': 'width: 320px; height: 240px',
-              },
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(displayWidth: 320, displayHeight: 240),
+            ),
           );
 
           expect(
@@ -2127,9 +2097,7 @@ void main() {
                   'responsive': true,
                   'aspectRatio': 1,
                 }),
-              <String, Object?>{
-                'canvas': <String, Object?>{'style': '', 'width': 400},
-              },
+              const AcquireOptions(canvas: HarnessCanvas(width: 400)),
             );
 
             expect(
@@ -2471,9 +2439,7 @@ void main() {
                 responsive: true,
               ),
             ).lower(),
-            <String, Object?>{
-              'wrapper': <String, Object?>{'style': 'width: 300px'},
-            },
+            const AcquireOptions(wrapper: HarnessBox(width: 300)),
           );
 
           waitForResize(chart, () {
@@ -2498,8 +2464,8 @@ void main() {
 
             done();
           });
-          chart.canvas!.parentElement!.style.width = '400px';
-          chart.canvas!.parentElement!.style.height = '400px';
+          chart.canvas!.parentElement!.width = 400;
+          chart.canvas!.parentElement!.height = 400;
         });
       });
 

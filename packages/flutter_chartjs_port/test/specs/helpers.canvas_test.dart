@@ -109,9 +109,12 @@ void main() {
 
     group('clearCanvas', () {
       testWidgets('should clear the chart canvas', (tester) async {
-        final chart = acquireChartRoot(ChartConfigurationScope(), {
-          'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope(),
+          const AcquireOptions(
+            canvas: HarnessCanvas(displayWidth: 150, displayHeight: 245),
+          ),
+        );
 
         final clearRectCalls = _recordClearRect(chart);
 
@@ -126,7 +129,11 @@ void main() {
       testWidgets('should not throw error when chart is null', (tester) async {
         void createAndClearChart() {
           final chart =
-              acquireChartRoot(ChartConfigurationScope(), {'canvas': null})
+              // `{canvas: null}` gives the default canvas of acquireChart.
+              acquireChartRoot(
+                  ChartConfigurationScope(),
+                  const AcquireOptions(),
+                )
                 // explicitly set canvas and ctx to null since setting it in
                 // acquireChart doesn't do anything
                 ..canvas = null

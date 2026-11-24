@@ -95,9 +95,9 @@ Scale _createScale(
       ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
         'scales': <String, Object?>{'x': options},
       }),
-    <String, Object?>{
-      'canvas': <String, Object?>{'width': width, 'height': height},
-    },
+    AcquireOptions(
+      canvas: HarnessCanvas(width: width! as int, height: height! as int),
+    ),
   );
 
   return chart.scales['x']!;
@@ -492,9 +492,7 @@ void main() {
                 },
               },
             }),
-          <String, Object?>{
-            'canvas': <String, Object?>{'width': 800, 'height': 200},
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 800, height: 200)),
         );
 
         scale = chart.scales['x']!;
@@ -867,9 +865,7 @@ void main() {
             },
             'responsive': true,
           }),
-        <String, Object?>{
-          'wrapper': <String, Object?>{'style': 'display: none'},
-        },
+        const AcquireOptions(wrapper: HarnessBox(hidden: true)),
       );
       expect(chart.scales['y']!.width, equals(0));
       expect(chart.scales['y']!.maxWidth, equals(0));

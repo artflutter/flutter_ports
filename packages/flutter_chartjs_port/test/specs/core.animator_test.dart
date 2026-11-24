@@ -66,9 +66,7 @@ void main() {
               ),
             ),
           ).lower(),
-          <String, Object?>{
-            'canvas': <String, Object?>{'height': 150, 'width': 250},
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 250, height: 150)),
         );
       });
     });

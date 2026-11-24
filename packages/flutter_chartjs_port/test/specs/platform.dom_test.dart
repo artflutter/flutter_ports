@@ -144,9 +144,7 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..options = (ChartOptionsScope()..responsive = false),
-            <String, Object?>{
-              'canvas': <String, Object?>{'style': 'width: 620px'},
-            },
+            const AcquireOptions(canvas: HarnessCanvas(displayWidth: 620)),
           );
 
           expect(
@@ -167,9 +165,7 @@ void main() {
             ChartConfigurationScope()
               ..type = 'doughnut'
               ..options = (ChartOptionsScope()..responsive = false),
-            <String, Object?>{
-              'canvas': <String, Object?>{'style': 'width: 425px'},
-            },
+            const AcquireOptions(canvas: HarnessCanvas(displayWidth: 425)),
           );
 
           doughnut['aspectRatio'] = ratio;
@@ -189,9 +185,7 @@ void main() {
               ..options = (ChartOptionsScope()
                 ..responsive = false
                 ..aspectRatio = 3),
-            <String, Object?>{
-              'canvas': <String, Object?>{'style': 'width: 405px'},
-            },
+            const AcquireOptions(canvas: HarnessCanvas(displayWidth: 405)),
           );
 
           expect(
@@ -209,9 +203,9 @@ void main() {
             ..options = (ChartOptionsScope()
               ..responsive = false
               ..aspectRatio = 3),
-          <String, Object?>{
-            'canvas': <String, Object?>{'style': 'width: 400px; height: 410px'},
-          },
+          const AcquireOptions(
+            canvas: HarnessCanvas(displayWidth: 400, displayHeight: 410),
+          ),
         );
 
         expect(
@@ -228,9 +222,7 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..options = (ChartOptionsScope()..responsive = false),
-            <String, Object?>{
-              'canvas': <String, Object?>{'style': ''},
-            },
+            const AcquireOptions(canvas: HarnessCanvas()),
           );
 
           expect(
@@ -246,13 +238,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..options = (ChartOptionsScope()..responsive = false),
-          <String, Object?>{
-            'canvas': <String, Object?>{
-              'style': '',
-              'width': 305,
-              'height': 245,
-            },
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 305, height: 245)),
         );
 
         expect(
@@ -266,9 +252,9 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..options = (ChartOptionsScope()..responsive = false),
-          <String, Object?>{
-            'canvas': <String, Object?>{'style': 'width: 345px; height: 125px'},
-          },
+          const AcquireOptions(
+            canvas: HarnessCanvas(displayWidth: 345, displayHeight: 125),
+          ),
         );
 
         expect(
@@ -284,13 +270,14 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..options = (ChartOptionsScope()..responsive = false),
-            <String, Object?>{
-              'canvas': <String, Object?>{
-                'style': 'width: 345px; height: 125px;',
-                'width': 165,
-                'height': 85,
-              },
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(
+                width: 165,
+                height: 85,
+                displayWidth: 345,
+                displayHeight: 125,
+              ),
+            ),
           );
 
           expect(
@@ -307,11 +294,9 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..options = (ChartOptionsScope()..responsive = false),
-          <String, Object?>{
-            'canvas': <String, Object?>{
-              'style': 'width: 345.42px; height: 125.42px;',
-            },
-          },
+          const AcquireOptions(
+            canvas: HarnessCanvas(displayWidth: 345.42, displayHeight: 125.42),
+          ),
         );
 
         expect(
@@ -334,12 +319,10 @@ void main() {
             ..options = (ChartOptionsScope()
               ..responsive = true
               ..maintainAspectRatio = true),
-          <String, Object?>{
-            'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
-            'wrapper': <String, Object?>{
-              'style': 'width: 300px; height: 350px',
-            },
-          },
+          const AcquireOptions(
+            canvas: HarnessCanvas(displayWidth: 150, displayHeight: 245),
+            wrapper: HarnessBox(width: 300, height: 350),
+          ),
         );
 
         waitForResize(chart, () {
@@ -387,14 +370,15 @@ void main() {
       testWidgets('should restore canvas initial values', (tester) async {
         await waitForDone((done) {
           final wrapper = document.createElement<HarnessElement>('div');
+          // The style `width: 512px; height: 480px` of the canvas is its
+          // display size, and the style of the wrapper its box (Chart.js
+          // ADR 0200).
           final canvas = document.createElement<HTMLCanvasElement>('canvas')
             ..setAttribute('width', '180')
-            ..setAttribute('style', 'width: 512px; height: 480px');
+            ..displayWidth = 512
+            ..displayHeight = 480;
           wrapper
-            ..setAttribute(
-              'style',
-              'width: 450px; height: 450px; position: relative',
-            )
+            ..box = const HarnessBox(width: 450, height: 450)
             ..appendChild(canvas);
           document.body.appendChild(wrapper);
 
@@ -415,14 +399,15 @@ void main() {
 
             expect(canvas.getAttribute('width'), '180');
             expect(canvas.getAttribute('height'), isNull);
-            expect(canvas.style.width, '512px');
-            expect(canvas.style.height, '480px');
-            expect(canvas.style.display, '');
+            expect(canvas.displayWidth, 512);
+            expect(canvas.displayHeight, 480);
+            // `expect(canvas.style.display).toBe('')`: the canvas has no
+            // display style (row adapt-native-canvas-style).
 
             wrapper.parentNode!.removeChild(wrapper);
             done();
           });
-          wrapper.style.width = '475px';
+          wrapper.width = 475;
         });
       });
     });

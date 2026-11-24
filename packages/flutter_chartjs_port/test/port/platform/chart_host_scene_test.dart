@@ -22,14 +22,12 @@ const double _height = 80;
 
 /// A canvas of the display size [_width] x [_height] at the ratio [dpr].
 UiCanvasElement _canvas(double dpr) {
-  final canvas = UiCanvasElement(
-    width: (_width * dpr).round(),
-    height: (_height * dpr).round(),
-  );
-  canvas.style
-    ..setProperty('width', '${_width}px')
-    ..setProperty('height', '${_height}px');
-  return canvas;
+  return UiCanvasElement(
+      width: (_width * dpr).round(),
+      height: (_height * dpr).round(),
+    )
+    ..displayWidth = _width
+    ..displayHeight = _height;
 }
 
 /// Draws a little of each kind of draw call, in the bitmap space of [dpr].
@@ -187,8 +185,7 @@ void main() {
     }
 
     testWidgets('a stretched bitmap, each axis on its own', (tester) async {
-      final scene = _canvas(1);
-      scene.style.setProperty('width', '${_width * 1.5}px');
+      final scene = _canvas(1)..displayWidth = _width * 1.5;
       final context = scene.getContext2d();
       addTearDown(context.dispose);
       _chart(context, 1);

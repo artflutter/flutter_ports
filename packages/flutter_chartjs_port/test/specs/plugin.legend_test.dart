@@ -62,7 +62,7 @@ LegendOptions _legendDefaults() =>
 
 /// The chart of the typed config [config], with the harness options
 /// [options] of `acquireChart`.
-Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// The point `{x, y}` at the center of the hit box [hb] (:1094-1097,
@@ -495,9 +495,7 @@ void main() {
           labels: const [],
           pluginOptions: const [LegendOptions(position: ChartPosition.right)],
         ),
-        <String, Object?>{
-          'canvas': <String, Object?>{'width': 512, 'height': 105},
-        },
+        const AcquireOptions(canvas: HarnessCanvas(width: 512, height: 105)),
       );
 
       // Check some basic assertions about the test setup
@@ -571,9 +569,7 @@ void main() {
             ),
           ],
         ),
-        <String, Object?>{
-          'canvas': <String, Object?>{'width': 512, 'height': 105},
-        },
+        const AcquireOptions(canvas: HarnessCanvas(width: 512, height: 105)),
       );
       final hitBox = _hitBoxes(chart)[0];
       expect(hitBox.height, 40);

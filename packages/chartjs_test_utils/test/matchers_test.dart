@@ -10,46 +10,14 @@ import 'package:test/test.dart';
 final class const _Point(@override final double? x, @override final double? y)
     implements Point;
 
-/// The inline style of [_Canvas].
-final class _Style(String cssText) implements CSSStyleDeclaration {
-  this {
-    for (final declaration in cssText.split(';')) {
-      final colon = declaration.indexOf(':');
-      if (colon < 0) continue;
-      final name = declaration.substring(0, colon).trim();
-      final value = declaration.substring(colon + 1).trim();
-      if (name.isNotEmpty && value.isNotEmpty) _properties[name] = value;
-    }
-  }
-
-  final Map<String, String> _properties = {};
-
-  @override
-  String getPropertyValue(String property) => _properties[property] ?? '';
-
-  @override
-  String getPropertyPriority(String property) => '';
-
-  @override
-  void setProperty(String property, String? value, [String? priority]) {
-    if (value == null || value.isEmpty) {
-      _properties.remove(property);
-    } else {
-      _properties[property] = value;
-    }
-  }
-}
-
-/// A canvas with the render size [width] x [height] and the inline style
-/// [style].
+/// A canvas with the render size [width] x [height] and the display size
+/// [displayWidth] x [displayHeight] (Chart.js ADR 0200).
 final class _Canvas(
   @override var int width,
-  @override var int height, [
-  String style = '',
-]) implements HTMLCanvasElement {
-  @override
-  final _Style style = _Style(style);
-
+  @override var int height, {
+  @override var double? displayWidth,
+  @override var double? displayHeight,
+}) implements HTMLCanvasElement {
   @override
   CanvasRenderingContext2D? getContext(String contextId) => null;
 
@@ -108,11 +76,11 @@ final class _Chart({
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// A chart on a canvas of [rw] x [rh] with the inline style [style]. The
-/// chart has the size of the render size divided by [ratio].
-_Chart _chartOn(int rw, int rh, [String style = '', double ratio = 1]) =>
+/// A chart on a canvas of [rw] x [rh] with the display size [dw] x [dh].
+/// The chart has the size of the render size divided by [ratio].
+_Chart _chartOn(int rw, int rh, {double? dw, double? dh, double ratio = 1}) =>
     _Chart(
-      canvas: _Canvas(rw, rh, style),
+      canvas: _Canvas(rw, rh, displayWidth: dw, displayHeight: dh),
       width: rw / ratio,
       height: rh / ratio,
       platformRatio: ratio,
@@ -536,63 +504,52 @@ void main() {
       );
     });
 
-    test('a canvas without a px style has the render size', () {
+    test('a canvas without a display size has the render size', () {
       expect(
         _chartOn(300, 150),
         toBeChartOfSize({'dw': 300, 'dh': 150, 'rw': 300, 'rh': 150}),
       );
     });
 
-    test('a side with a px style has that value', () {
+    test('a side with a display size has that value', () {
       expect(
-        _chartOn(300, 150, 'width: 320px; height: 240px'),
+        _chartOn(300, 150, dw: 320, dh: 240),
         toBeChartOfSize({'dw': 320, 'dh': 240, 'rw': 300, 'rh': 150}),
       );
       // parseInt('345.42px', 10) is 345.
       expect(
-        _chartOn(300, 150, 'width: 345.42px; height: 150px'),
+        _chartOn(300, 150, dw: 345.42, dh: 150),
         toBeChartOfSize({'dw': 345, 'dh': 150, 'rw': 300, 'rh': 150}),
       );
     });
 
-    test('one px style keeps the aspect ratio of the render size', () {
+    test('one display side keeps the aspect ratio of the render size', () {
       // 405 * 150 / 300 is 202.5, and parseInt truncates it.
       expect(
-        _chartOn(300, 150, 'width: 405px'),
+        _chartOn(300, 150, dw: 405),
         toBeChartOfSize({'dw': 405, 'dh': 202, 'rw': 300, 'rh': 150}),
       );
       // 425 * 410 / 400 is 435.625.
       expect(
-        _chartOn(400, 410, 'width: 425px'),
+        _chartOn(400, 410, dw: 425),
         toBeChartOfSize({'dw': 425, 'dh': 435, 'rw': 400, 'rh': 410}),
       );
       // 401 * 400 / 200 is 802.
       expect(
-        _chartOn(400, 200, 'height: 401px'),
+        _chartOn(400, 200, dh: 401),
         toBeChartOfSize({'dw': 802, 'dh': 401, 'rw': 400, 'rh': 200}),
-      );
-    });
-
-    test('display none gives auto, thus 0, for a side without a px style', () {
-      expect(
-        _chartOn(300, 150, 'display: none'),
-        toBeChartOfSize({'dw': 0, 'dh': 0, 'rw': 300, 'rh': 150}),
-      );
-      expect(
-        _chartOn(300, 150, 'display: none; width: 200px'),
-        toBeChartOfSize({'dw': 200, 'dh': 0, 'rw': 300, 'rh': 150}),
       );
     });
 
     test('the pixel ratio is the option, else the one of the platform', () {
       // The platform ratio 3: the chart is a third of the render size.
       expect(
-        _chartOn(960, 720, 'width: 320px; height: 240px', 3),
+        _chartOn(960, 720, dw: 320, dh: 240, ratio: 3),
         toBeChartOfSize({'dw': 320, 'dh': 240, 'rw': 960, 'rh': 720}),
       );
       // The option `devicePixelRatio` 2 takes the place of the platform.
       final chart = _Chart(
-        canvas: _Canvas(640, 480, 'width: 320px; height: 240px'),
+        canvas: _Canvas(640, 480, displayWidth: 320, displayHeight: 240),
         width: 320,
         height: 240,
         devicePixelRatio: 2,

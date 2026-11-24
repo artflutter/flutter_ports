@@ -33,9 +33,7 @@ Chart _buildSankey(double devicePixelRatio) => acquireChartRoot(
       extra: <String, Object?>{'devicePixelRatio': devicePixelRatio},
     ),
   ).lower(),
-  {
-    'canvas': <String, Object?>{'height': 400, 'width': 800},
-  },
+  const AcquireOptions(canvas: HarnessCanvas(width: 800, height: 400)),
 );
 
 Chart _buildSankeyWithPadding(Object? nodePadding) => acquireChartRoot(
@@ -48,9 +46,7 @@ Chart _buildSankeyWithPadding(Object? nodePadding) => acquireChartRoot(
       maintainAspectRatio: false,
     ),
   ).lower(),
-  {
-    'canvas': <String, Object?>{'height': 400, 'width': 800},
-  },
+  const AcquireOptions(canvas: HarnessCanvas(width: 800, height: 400)),
 );
 
 void main() {
@@ -134,9 +130,7 @@ void main() {
               animation: ChartAnimation.none,
             ),
           ).lower(),
-          {
-            'canvas': <String, Object?>{'height': 300, 'width': 300},
-          },
+          const AcquireOptions(canvas: HarnessCanvas(width: 300, height: 300)),
         );
         final controller = chart.getDatasetMeta(0).controller!;
         return [

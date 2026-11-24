@@ -34,13 +34,17 @@ phase of each module.
   - `installTestFont()` registers the test font, Liberation Sans 2.1.5, under the names
     `Helvetica Neue`, `Helvetica`, `Arial`, `Liberation Sans` and `sans-serif`.
   - The DOM stand-in of the chart specs (`lib/src/dom.dart`, Chart.js ADR 0022): `document`,
-    `window`, the `div` elements (`HarnessElement`) and the canvas elements in chart hosts, a
-    subset of CSS, the harness body, the mutation checkpoint, `setTimeout`, `pumpFrames`,
-    `waitForDone` and `afterEachChart`. Write
-    `final canvas = document.createElement<HTMLCanvasElement>('canvas');`.
+    `window`, the `div` elements (`HarnessElement`, laid out from the typed fields of a
+    `HarnessBox`: no CSS, Chart.js ADR 0200) and the canvas elements in chart hosts, the harness
+    body, the mutation checkpoint, `setTimeout`, `pumpFrames`, `waitForDone` and
+    `afterEachChart`. Write `final canvas = document.createElement<HTMLCanvasElement>('canvas');`
+    and `wrapper.width = 455;`.
   - `acquireChart`, `releaseChart` and `releaseCharts` (`src/index.js`, `src/utils.js`). The
     function `acquireChart` works only in the body of a `testWidgets` test. It gives a chart that is
-    attached at its construction. The unmount of the harness body calls `releaseCharts`.
+    attached at its construction. The unmount of the harness body calls `releaseCharts`. Its
+    options are an `AcquireOptions`:
+    `acquireChartRoot(config, const AcquireOptions(canvas: HarnessCanvas(displayWidth: 150,
+    displayHeight: 245), wrapper: HarnessBox(width: 300, height: 350)))`.
   - `waitForResize` and `afterEvent` (`src/utils.js`): they replace the function fields `resize`
     and `eventHandler` of one chart (Chart.js ADR 0022).
   - `triggerMouseEvent` (`src/utils.js`): it dispatches an event to the listeners of the canvas.

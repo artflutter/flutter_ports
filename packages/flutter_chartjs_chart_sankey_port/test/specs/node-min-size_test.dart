@@ -33,9 +33,7 @@ Chart _buildSankeyWithMinSize(Object? nodeMinSize) => acquireChartRoot(
       maintainAspectRatio: false,
     ),
   ).lower(),
-  {
-    'canvas': <String, Object?>{'height': 400, 'width': 800},
-  },
+  const AcquireOptions(canvas: HarnessCanvas(width: 800, height: 400)),
 );
 
 typedef _Rect = ({double height, double width, double x, double y});

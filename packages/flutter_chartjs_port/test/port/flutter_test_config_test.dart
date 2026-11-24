@@ -148,12 +148,12 @@ void main() {
             ..maintainAspectRatio = false
             ..resizeDelay = 100)
           ..plugins = [_destroyLog()],
-        <String, Object?>{
-          'canvas': <String, Object?>{'style': ''},
-          'wrapper': <String, Object?>{'style': 'width: 300px; height: 350px'},
-        },
+        const AcquireOptions(
+          canvas: HarnessCanvas(),
+          wrapper: HarnessBox(width: 300, height: 350),
+        ),
       );
-      chart.canvas!.parentElement!.style.width = '400px';
+      chart.canvas!.parentElement!.width = 400;
       // The first notification at the next layout, then the throttled
       // resize. The debounced update waits for its Timer of 100 ms.
       await tester.pump(frameInterval);

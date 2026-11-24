@@ -49,9 +49,7 @@ void main() {
     ) async {
       final chart = acquireChartRoot(
         ChartConfigLowering(config()).lower(),
-        <String, Object?>{
-          'canvas': <String, Object?>{'width': 800, 'height': 300},
-        },
+        const AcquireOptions(canvas: HarnessCanvas(width: 800, height: 300)),
       );
       final area = chart.chartArea!;
       final x = chart.scales['x']!;
@@ -66,9 +64,7 @@ void main() {
     ) async {
       final chart = acquireChartRoot(
         ChartConfigLowering(config()).lower(),
-        <String, Object?>{
-          'canvas': <String, Object?>{'width': 1600, 'height': 300},
-        },
+        const AcquireOptions(canvas: HarnessCanvas(width: 1600, height: 300)),
       );
       final area = chart.chartArea!;
       final x = chart.scales['x']!;

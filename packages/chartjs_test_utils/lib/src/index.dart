@@ -21,9 +21,9 @@
 ///   smoke runner of Chart.js ADR 0029 (`specsFromFixtures`,
 ///   `specFromFixture`, `FixtureSource` and its types).
 ///   `package:chartjs_test_utils/flutter.dart` exports them.
-/// - `injectWrapperCSS` (index.js:37): `n/a`. Flutter has no CSS. The DOM
-///   stand-in (`dom.dart`) gives the class `chartjs-wrapper` the effect of
-///   the rule.
+/// - `injectWrapperCSS` (index.js:37): `n/a`. Flutter has no CSS. The
+///   default wrapper of `acquireChart` is an absolute `HarnessBox`, the
+///   effect of the rule (Chart.js ADR 0200).
 /// - `addMatchers` (index.js:50): `n/a`. A matcher is a function that
 ///   returns a `Matcher` (`matchers.dart`). A spec imports it.
 library;
@@ -32,7 +32,6 @@ import 'package:chartjs_test_utils/src/utils.dart' as utils;
 // The harness keeps the charts of flutter_chartjs_port, which does not export
 // lib/src.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// The JS property read and ToBoolean of `(chart.$test || {}).persistent`.
 // The JS property read.
 
 export 'package:chartjs_test_utils/src/fixture.dart';
@@ -53,8 +52,8 @@ final Map<Object, Chart> charts = {};
 /// Injects a new canvas (and div wrapper) and creates the associated Chart
 /// instance using the given config. Additional options allow tweaking
 /// elements generation. See `utils.acquireChart` for [config] and
-/// [options]: `canvas`, `wrapper`, `useOffscreenCanvas`, `useShadowDOM`
-/// and `persistent`.
+/// [options], an `AcquireOptions` (Chart.js ADR 0200): `canvas`, `wrapper`,
+/// `useOffscreenCanvas`, `useShadowDOM` and `persistent`.
 ///
 /// It is synchronous, and it works only in the body of a `testWidgets` test
 /// (Chart.js ADR 0022, section 4). The chart is attached at its
@@ -62,10 +61,7 @@ final Map<Object, Chart> charts = {};
 ///
 /// [config] is a JS object literal of a spec: a Map. A nested Map literal
 /// gets the type `<String, Object?>` from the parameter type.
-Chart acquireChart([
-  Map<String, Object?>? config,
-  Map<String, Object?>? options,
-]) {
+Chart acquireChart([Map<String, Object?>? config, Object? options]) {
   final chart = utils.acquireChart(config, options);
   charts[chart.id] = chart;
   return chart;
@@ -73,7 +69,7 @@ Chart acquireChart([
 
 /// [acquireChart] for a config that is not a Map: the typed root scope of a
 /// typed config (`ChartConfigLowering`, Chart.js ADR 0054 §7). Port-only.
-Chart acquireChartRoot(Object config, [Map<String, Object?>? options]) {
+Chart acquireChartRoot(Object config, [Object? options]) {
   final chart = utils.acquireChart(config, options);
   charts[chart.id] = chart;
   return chart;
@@ -88,8 +84,8 @@ void releaseChart(Chart chart) {
 // index.js:33-35 `createMockContext` is in context.dart
 // (harness-index-pure-split).
 
-// index.js:37 `injectWrapperCSS()`: n/a. The class `chartjs-wrapper` of
-// dom.dart gives the effect of the rule.
+// index.js:37 `injectWrapperCSS()`: n/a. The default wrapper of
+// acquireChart is an absolute HarnessBox, the effect of the rule.
 
 // index.js:50 `addMatchers()`: n/a. A spec imports the matchers.
 
@@ -106,9 +102,7 @@ void releaseChart(Chart chart) {
 void releaseCharts() {
   for (final id in List.of(charts.keys)) {
     final chart = charts[id]!;
-    if (!jsTruthy(
-      jsGet(utils.$test[chart] ?? <String, Object?>{}, 'persistent'),
-    )) {
+    if (!(utils.$test[chart]?.persistent ?? false)) {
       utils.releaseChart(chart);
     }
   }

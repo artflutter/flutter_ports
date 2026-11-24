@@ -43,9 +43,7 @@ Chart _buildChart(Map<String, Object?> chartOptionOverrides) =>
           },
         ),
       ).lower(),
-      {
-        'canvas': <String, Object?>{'height': 400, 'width': 700},
-      },
+      const AcquireOptions(canvas: HarnessCanvas(width: 700, height: 400)),
     );
 
 SankeyController _controller(Chart chart) =>
