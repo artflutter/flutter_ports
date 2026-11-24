@@ -36,11 +36,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
       RadialLinearAxis(
         min: 0,
         max: 3,
-        ticks: AxisTicks(
-          display: false,
-          stepSize: 1,
-          extra: <String, Object?>{'maxTicksLimit': 1.0},
-        ),
+        ticks: AxisTicks(display: false, stepSize: 1, maxTicksLimit: 1),
         extra: <String, Object?>{
           'pointLabels': <String, Object?>{
             'backdropColor': ChartPaint.solid(Color(0xFF0000FF)),

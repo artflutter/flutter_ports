@@ -239,7 +239,7 @@ CategoryAxis shadcnCategoryAxis({
     maxRotation: 0,
     callback: callback,
     autoSkip: autoSkipPadding != null,
-    extra: {'autoSkipPadding': ?autoSkipPadding},
+    autoSkipPadding: autoSkipPadding,
   ),
   border: const AxisBorder(display: false),
   extra: display ? const {'afterFit': _height30} : null,

@@ -104,7 +104,7 @@ LinearAxis sfValueAxis({
     drawTicks: ticks,
     offset: false,
     tickLength: 5,
-    extra: const {'tickColor': ChartPaint.solid(Sf.axisLine)},
+    tickColor: const ChartPaint.solid(Sf.axisLine),
   ),
   ticks: AxisTicks(
     stepSize: stepSize,

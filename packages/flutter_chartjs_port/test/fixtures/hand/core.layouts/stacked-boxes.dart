@@ -23,7 +23,7 @@ FixtureConfig fixture() {
     position: ChartPosition.left,
     // DIVERGES(chartjs): adapt-native-scale-border, the border object.
     border: const AxisBorder(color: ChartPaint.solid(Color(0xFF008000))),
-    ticks: AxisTicks(extra: <String, Object?>{'precision': 0}),
+    ticks: AxisTicks(precision: 0),
     extra: <String, Object?>{'stack': '1', 'offset': true},
   );
   final x1Axis = LinearAxis(
@@ -32,11 +32,7 @@ FixtureConfig fixture() {
     bounds: ScaleBounds.data,
     // DIVERGES(chartjs): adapt-native-scale-border, the border object.
     border: const AxisBorder(color: ChartPaint.solid(Color(0xFF008000))),
-    ticks: AxisTicks(
-      autoSkip: false,
-      maxRotation: 0,
-      extra: <String, Object?>{'count': 3},
-    ),
+    ticks: AxisTicks(autoSkip: false, maxRotation: 0, count: 3),
     extra: <String, Object?>{'stack': '1', 'offset': true},
   );
   final y2Axis = LinearAxis(
@@ -44,7 +40,7 @@ FixtureConfig fixture() {
     position: ChartPosition.left,
     // DIVERGES(chartjs): adapt-native-scale-border, the border object.
     border: const AxisBorder(color: ChartPaint.solid(Color(0xFF0000FF))),
-    ticks: AxisTicks(extra: <String, Object?>{'precision': 0}),
+    ticks: AxisTicks(precision: 0),
     extra: <String, Object?>{'stack': '1', 'offset': true},
   );
   final x2Axis = LinearAxis(
@@ -53,11 +49,7 @@ FixtureConfig fixture() {
     bounds: ScaleBounds.data,
     // DIVERGES(chartjs): adapt-native-scale-border, the border object.
     border: const AxisBorder(color: ChartPaint.solid(Color(0xFF0000FF))),
-    ticks: AxisTicks(
-      autoSkip: false,
-      maxRotation: 0,
-      extra: <String, Object?>{'count': 3},
-    ),
+    ticks: AxisTicks(autoSkip: false, maxRotation: 0, count: 3),
     extra: <String, Object?>{'stack': '1', 'offset': true},
   );
   return FixtureConfig.typed(
@@ -88,11 +80,7 @@ FixtureConfig fixture() {
           bounds: ScaleBounds.data,
           // DIVERGES(chartjs): adapt-native-scale-border, the border object.
           border: const AxisBorder(color: ChartPaint.solid(Color(0xFFFF0000))),
-          ticks: AxisTicks(
-            autoSkip: false,
-            maxRotation: 0,
-            extra: <String, Object?>{'count': 3},
-          ),
+          ticks: AxisTicks(autoSkip: false, maxRotation: 0, count: 3),
           extra: <String, Object?>{'stack': '1', 'offset': true},
         ),
         x1Axis,
@@ -102,7 +90,7 @@ FixtureConfig fixture() {
           position: ChartPosition.left,
           // DIVERGES(chartjs): adapt-native-scale-border, the border object.
           border: const AxisBorder(color: ChartPaint.solid(Color(0xFFFF0000))),
-          ticks: AxisTicks(extra: <String, Object?>{'precision': 0}),
+          ticks: AxisTicks(precision: 0),
           extra: <String, Object?>{'stack': '1', 'offset': true},
         ),
         y1Axis,

@@ -14960,13 +14960,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
       scales: const [
-        CategoryAxis(
-          .x,
-          ticks: AxisTicks(
-            maxRotation: 0,
-            extra: <String, Object?>{'maxTicksLimit': 5.0},
-          ),
-        ),
+        CategoryAxis(.x, ticks: AxisTicks(maxTicksLimit: 5, maxRotation: 0)),
       ],
     ),
     options: const AcquireOptions(),

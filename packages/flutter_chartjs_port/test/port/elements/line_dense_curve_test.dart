@@ -53,7 +53,7 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
     font: TextStyle(fontSize: 10),
     maxRotation: 0,
     autoSkip: true,
-    extra: {'maxTicksLimit': 5},
+    maxTicksLimit: 5,
   );
   final a = _ys(count, 7);
   final b = variant == 'anim' ? _ys(count, 8) : a;

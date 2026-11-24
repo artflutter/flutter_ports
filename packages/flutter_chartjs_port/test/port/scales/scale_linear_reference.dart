@@ -24455,12 +24455,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           extra: const <String, Object?>{'yAxisID': 'y2'},
         ),
       ],
-      scales: const [
-        LinearAxis(
-          .y,
-          ticks: AxisTicks(extra: <String, Object?>{'precision': 0.0}),
-        ),
-      ],
+      scales: const [LinearAxis(.y, ticks: AxisTicks(precision: 0))],
       extra: const <String, Object?>{
         'scales': <String, Object?>{
           'y2': <String, Object?>{
@@ -25174,12 +25169,9 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           .x,
           min: -11,
           max: 103.5,
-          ticks: AxisTicks(extra: <String, Object?>{'includeBounds': false}),
+          ticks: AxisTicks(includeBounds: false),
         ),
-        LinearAxis(
-          .y,
-          ticks: AxisTicks(extra: <String, Object?>{'count': 6.0}),
-        ),
+        LinearAxis(.y, ticks: AxisTicks(count: 6)),
       ],
     ),
     options: const AcquireOptions(),
@@ -26338,11 +26330,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         TestDataset(const ChartKind('scaleTest'), data: [0.5, 2.5]),
       ],
       scales: const [
-        LinearAxis(
-          .y,
-          beginAtZero: false,
-          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 21.0}),
-        ),
+        LinearAxis(.y, beginAtZero: false, ticks: AxisTicks(maxTicksLimit: 21)),
       ],
     ),
     options: const AcquireOptions(),
@@ -31248,12 +31236,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       datasets: [
         TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
       ],
-      scales: const [
-        LinearAxis(
-          .y,
-          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 1000.0}),
-        ),
-      ],
+      scales: const [LinearAxis(.y, ticks: AxisTicks(maxTicksLimit: 1000))],
     ),
     options: const AcquireOptions(
       canvas: HarnessCanvas(width: 300, height: 150),
@@ -31708,8 +31691,8 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(
           .y,
           ticks: AxisTicks(
+            maxTicksLimit: 1000,
             font: ChartTextStyle(fontSize: 40),
-            extra: <String, Object?>{'maxTicksLimit': 1000.0},
           ),
         ),
       ],
@@ -32165,8 +32148,8 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(
           .y,
           ticks: AxisTicks(
+            maxTicksLimit: 1000,
             font: ChartTextStyle(fontSize: 12, height: 1.6666666666666667),
-            extra: <String, Object?>{'maxTicksLimit': 1000.0},
           ),
         ),
       ],
@@ -32774,15 +32757,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
       ],
       scales: const [
-        LinearAxis(
-          .y,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'maxTicksLimit': 1000.0,
-              'minRotation': 60.0,
-            },
-          ),
-        ),
+        LinearAxis(.y, ticks: AxisTicks(maxTicksLimit: 1000, minRotation: 60)),
       ],
     ),
     options: const AcquireOptions(),
@@ -33388,15 +33363,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
       ],
       scales: const [
-        LinearAxis(
-          .y,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'maxTicksLimit': 1000.0,
-              'minRotation': 90.0,
-            },
-          ),
-        ),
+        LinearAxis(.y, ticks: AxisTicks(maxTicksLimit: 1000, minRotation: 90)),
       ],
     ),
     options: const AcquireOptions(),
@@ -34004,12 +33971,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       scales: const [
         LinearAxis(
           .y,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'maxTicksLimit': 1000.0,
-              'minRotation': double.nan,
-            },
-          ),
+          ticks: AxisTicks(maxTicksLimit: 1000, minRotation: double.nan),
         ),
       ],
     ),
@@ -35824,12 +35786,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       datasets: [
         TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
       ],
-      scales: const [
-        LinearAxis(
-          .x,
-          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 1000.0}),
-        ),
-      ],
+      scales: const [LinearAxis(.x, ticks: AxisTicks(maxTicksLimit: 1000))],
       indexAxis: const YAxis(),
     ),
     options: const AcquireOptions(),
@@ -36439,15 +36396,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
       ],
       scales: const [
-        LinearAxis(
-          .x,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'maxTicksLimit': 1000.0,
-              'minRotation': 30.0,
-            },
-          ),
-        ),
+        LinearAxis(.x, ticks: AxisTicks(maxTicksLimit: 1000, minRotation: 30)),
       ],
       indexAxis: const YAxis(),
     ),
@@ -37057,10 +37006,8 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(
           .x,
           ticks: AxisTicks(
-            extra: <String, Object?>{
-              'maxTicksLimit': 1000.0,
-              'minRotation': '45',
-            },
+            maxTicksLimit: 1000,
+            extra: <String, Object?>{'minRotation': '45'},
           ),
         ),
       ],
@@ -38001,8 +37948,8 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(
           .x,
           ticks: AxisTicks(
+            maxTicksLimit: 1000,
             font: ChartTextStyle(height: 0.002),
-            extra: <String, Object?>{'maxTicksLimit': 1000.0},
           ),
         ),
       ],
@@ -38938,11 +38885,9 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(
           .x,
           ticks: AxisTicks(
+            maxTicksLimit: 1000,
+            minRotation: 45,
             font: ChartTextStyle(fontSize: 30),
-            extra: <String, Object?>{
-              'maxTicksLimit': 1000.0,
-              'minRotation': 45.0,
-            },
           ),
         ),
       ],
@@ -39416,12 +39361,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           points: [DataPoint(1000000.125, 1.0), DataPoint(9999999.5, 2.0)],
         ),
       ],
-      scales: const [
-        LinearAxis(
-          .x,
-          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 1000.0}),
-        ),
-      ],
+      scales: const [LinearAxis(.x, ticks: AxisTicks(maxTicksLimit: 1000))],
     ),
     options: const AcquireOptions(
       canvas: HarnessCanvas(width: 200, height: 300),

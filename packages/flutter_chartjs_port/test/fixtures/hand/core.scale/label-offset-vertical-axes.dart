@@ -33,7 +33,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
       ),
       CategoryAxis(
         CartesianAxis.y,
-        ticks: AxisTicks(extra: <String, Object?>{'labelOffset': 25}),
+        ticks: AxisTicks(labelOffset: 25),
         // DIVERGES(chartjs): adapt-native-scale-border, the border object.
         border: const AxisBorder(display: false),
         grid: AxisGrid(display: false),

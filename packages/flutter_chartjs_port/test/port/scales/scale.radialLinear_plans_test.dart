@@ -1343,7 +1343,7 @@ void main() {
                     grid: AxisGrid(
                       color: ChartPaint.solid(grid),
                       drawTicks: false,
-                      extra: {'circular': true},
+                      circular: true,
                     ),
                     ticks: AxisTicks(
                       stepSize: 25,

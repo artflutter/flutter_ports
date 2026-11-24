@@ -61607,12 +61607,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 4.0}),
-        ),
-      ],
+      scales: const [TimeAxis(.x, ticks: AxisTicks(maxTicksLimit: 4))],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -69433,13 +69428,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
       scales: const [
         TimeAxis(
           .x,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'count': 3.0,
-              'precision': 0.0,
-              'includeBounds': false,
-            },
-          ),
+          ticks: AxisTicks(count: 3, precision: 0, includeBounds: false),
           extra: <String, Object?>{
             'suggestedMin': 1610150400000.0,
             'suggestedMax': '2021-01-20',

@@ -17062,7 +17062,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
           reverse: true,
           beginAtZero: true,
           angleLinesDisplay: false,
-          grid: AxisGrid(extra: <String, Object?>{'circular': true}),
+          grid: AxisGrid(circular: true),
           pointLabelsDisplay: ScaleDisplay.on,
           pointLabelsPadding: 8,
           ticks: AxisTicks(stepSize: 5),

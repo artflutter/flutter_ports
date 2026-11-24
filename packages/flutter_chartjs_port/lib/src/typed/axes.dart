@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 /// An axis of a chart: an entry of `options.scales` of a Chart.js config
 /// (`docs/axes/index.md`).
@@ -1077,8 +1078,67 @@ final class const AxisTicks({
   /// in each build is a new value, and the chart then updates.
   final TickCallback? callback,
 
+  /// The color of the box behind a tick label: `backdropColor`. The box shows
+  /// when [showLabelBackdrop] is `true`.
+  final ChartPaint? backdropColor,
+
+  /// The space between a tick label and its box: `backdropPadding`.
+  final EdgeInsets? backdropPadding,
+
+  /// Whether a box shows behind each tick label: `showLabelBackdrop`. The
+  /// default is `true` for a radial axis.
+  final bool? showLabelBackdrop,
+
+  /// The color of the outline of the tick labels: `textStrokeColor`.
+  final ChartPaint? textStrokeColor,
+
+  /// The width of the outline of the tick labels in pixels: `textStrokeWidth`.
+  final double? textStrokeWidth,
+
+  /// The drawing order of the tick labels: `z`. A value above 0 draws the
+  /// labels over the chart area.
+  final double? z,
+
+  /// The number of ticks that the axis measures to fit the labels:
+  /// `sampleSize`. The default is all ticks.
+  final double? sampleSize,
+
+  /// The space between two labels that [autoSkip] keeps, in pixels:
+  /// `autoSkipPadding`.
+  final double? autoSkipPadding,
+
+  /// Whether the axis gives ticks at its minimum and its maximum:
+  /// `includeBounds`. The default is `true`.
+  final bool? includeBounds,
+
+  /// The distance of a tick label from its tick along the axis, in pixels:
+  /// `labelOffset`.
+  final double? labelOffset,
+
+  /// The minimum rotation of the tick labels in degrees: `minRotation`.
+  final double? minRotation,
+
+  /// Whether the tick labels go inside the chart area: `mirror`.
+  final bool? mirror,
+
+  /// The maximum number of ticks and grid lines: `maxTicksLimit`. The default
+  /// is 11.
+  final double? maxTicksLimit,
+
+  /// The number format of the tick labels of a linear or logarithmic axis:
+  /// `format` (Chart.js ADR 0119).
+  final NumberFormat? format,
+
+  /// The number of decimal places of a computed step size of a linear axis:
+  /// `precision`.
+  final double? precision,
+
+  /// The number of ticks of a linear axis: `count`. The axis computes the step
+  /// size.
+  final double? count,
+
   /// The Chart.js tick options that have no parameter, for example
-  /// `{'precision': 0}`. The rules of [ChartAxis.extra] apply.
+  /// `{'major': {'enabled': true}}`. The rules of [ChartAxis.extra] apply.
   final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The tick options of an axis.
@@ -1098,6 +1158,22 @@ final class const AxisTicks({
     TickCrossAlign? crossAlign,
     TickSource? source,
     TickCallback? callback,
+    ChartPaint? backdropColor,
+    EdgeInsets? backdropPadding,
+    bool? showLabelBackdrop,
+    ChartPaint? textStrokeColor,
+    double? textStrokeWidth,
+    double? z,
+    double? sampleSize,
+    double? autoSkipPadding,
+    bool? includeBounds,
+    double? labelOffset,
+    double? minRotation,
+    bool? mirror,
+    double? maxTicksLimit,
+    NumberFormat? format,
+    double? precision,
+    double? count,
     Map<String, Object?>? extra,
   }) => AxisTicks(
     display: display ?? this.display,
@@ -1111,6 +1187,22 @@ final class const AxisTicks({
     crossAlign: crossAlign ?? this.crossAlign,
     source: source ?? this.source,
     callback: callback ?? this.callback,
+    backdropColor: backdropColor ?? this.backdropColor,
+    backdropPadding: backdropPadding ?? this.backdropPadding,
+    showLabelBackdrop: showLabelBackdrop ?? this.showLabelBackdrop,
+    textStrokeColor: textStrokeColor ?? this.textStrokeColor,
+    textStrokeWidth: textStrokeWidth ?? this.textStrokeWidth,
+    z: z ?? this.z,
+    sampleSize: sampleSize ?? this.sampleSize,
+    autoSkipPadding: autoSkipPadding ?? this.autoSkipPadding,
+    includeBounds: includeBounds ?? this.includeBounds,
+    labelOffset: labelOffset ?? this.labelOffset,
+    minRotation: minRotation ?? this.minRotation,
+    mirror: mirror ?? this.mirror,
+    maxTicksLimit: maxTicksLimit ?? this.maxTicksLimit,
+    format: format ?? this.format,
+    precision: precision ?? this.precision,
+    count: count ?? this.count,
     extra: extra ?? this.extra,
   );
 
@@ -1126,6 +1218,22 @@ final class const AxisTicks({
     ('crossAlign', crossAlign),
     ('source', source),
     ('callback', callback),
+    ('backdropColor', backdropColor),
+    ('backdropPadding', backdropPadding),
+    ('showLabelBackdrop', showLabelBackdrop),
+    ('textStrokeColor', textStrokeColor),
+    ('textStrokeWidth', textStrokeWidth),
+    ('z', z),
+    ('sampleSize', sampleSize),
+    ('autoSkipPadding', autoSkipPadding),
+    ('includeBounds', includeBounds),
+    ('labelOffset', labelOffset),
+    ('minRotation', minRotation),
+    ('mirror', mirror),
+    ('maxTicksLimit', maxTicksLimit),
+    ('format', format),
+    ('precision', precision),
+    ('count', count),
     ('extra', byEntries(extra)),
   ];
 
@@ -1159,6 +1267,22 @@ TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   put(scope, OptionKey.crossAlign, ticks.crossAlign);
   put(scope, OptionKey.source, ticks.source);
   put(scope, OptionKey.callback, ticks.callback);
+  put(scope, OptionKey.backdropColor, ticks.backdropColor);
+  put(scope, OptionKey.backdropPadding, ticks.backdropPadding);
+  put(scope, OptionKey.showLabelBackdrop, ticks.showLabelBackdrop);
+  put(scope, OptionKey.textStrokeColor, ticks.textStrokeColor);
+  put(scope, OptionKey.textStrokeWidth, ticks.textStrokeWidth);
+  put(scope, OptionKey.z, ticks.z);
+  put(scope, OptionKey.sampleSize, ticks.sampleSize);
+  put(scope, OptionKey.autoSkipPadding, ticks.autoSkipPadding);
+  put(scope, OptionKey.includeBounds, ticks.includeBounds);
+  put(scope, OptionKey.labelOffset, ticks.labelOffset);
+  put(scope, OptionKey.minRotation, ticks.minRotation);
+  put(scope, OptionKey.mirror, ticks.mirror);
+  put(scope, OptionKey.maxTicksLimit, ticks.maxTicksLimit);
+  put(scope, OptionKey.format, ticks.format);
+  put(scope, OptionKey.precision, ticks.precision);
+  put(scope, OptionKey.count, ticks.count);
   return mergeExtra(scope, ticks.extra);
 }
 
@@ -1191,8 +1315,30 @@ final class const AxisGrid({
   /// tick marks: `tickLength`. The default is 8.
   final double? tickLength,
 
-  /// The Chart.js grid options that have no parameter, for example
-  /// `{'tickWidth': 2}`. The rules of [ChartAxis.extra] apply.
+  /// Whether the grid lines of a radial axis are circles, not polygons:
+  /// `circular`.
+  final bool? circular,
+
+  /// The dash pattern of the tick marks: `tickBorderDash`, for example `[4,
+  /// 2]`.
+  final List<double>? tickBorderDash,
+
+  /// The offset of the dash pattern of the tick marks: `tickBorderDashOffset`.
+  final double? tickBorderDashOffset,
+
+  /// The color of the tick marks: `tickColor`. The default is [color].
+  final ChartPaint? tickColor,
+
+  /// The width of the tick marks in pixels: `tickWidth`. The default is
+  /// [lineWidth].
+  final double? tickWidth,
+
+  /// The drawing order of the grid lines: `z`. A value above 0 draws the lines
+  /// over the datasets.
+  final double? z,
+
+  /// The Chart.js grid options that have no parameter, for example a
+  /// function for `color`. The rules of [ChartAxis.extra] apply.
   final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The grid options of an axis.
@@ -1208,6 +1354,12 @@ final class const AxisGrid({
     bool? drawTicks,
     bool? offset,
     double? tickLength,
+    bool? circular,
+    List<double>? tickBorderDash,
+    double? tickBorderDashOffset,
+    ChartPaint? tickColor,
+    double? tickWidth,
+    double? z,
     Map<String, Object?>? extra,
   }) => AxisGrid(
     display: display ?? this.display,
@@ -1217,6 +1369,12 @@ final class const AxisGrid({
     drawTicks: drawTicks ?? this.drawTicks,
     offset: offset ?? this.offset,
     tickLength: tickLength ?? this.tickLength,
+    circular: circular ?? this.circular,
+    tickBorderDash: tickBorderDash ?? this.tickBorderDash,
+    tickBorderDashOffset: tickBorderDashOffset ?? this.tickBorderDashOffset,
+    tickColor: tickColor ?? this.tickColor,
+    tickWidth: tickWidth ?? this.tickWidth,
+    z: z ?? this.z,
     extra: extra ?? this.extra,
   );
 
@@ -1228,6 +1386,12 @@ final class const AxisGrid({
     ('drawTicks', drawTicks),
     ('offset', offset),
     ('tickLength', tickLength),
+    ('circular', circular),
+    ('tickBorderDash', byItems(tickBorderDash)),
+    ('tickBorderDashOffset', tickBorderDashOffset),
+    ('tickColor', tickColor),
+    ('tickWidth', tickWidth),
+    ('z', z),
     ('extra', byEntries(extra)),
   ];
 
@@ -1257,6 +1421,12 @@ GridLineOptionsScope? _lowerGrid(AxisGrid? grid) {
   put(scope, OptionKey.drawTicks, grid.drawTicks);
   put(scope, OptionKey.offset, grid.offset);
   put(scope, OptionKey.tickLength, grid.tickLength);
+  put(scope, OptionKey.circular, grid.circular);
+  put(scope, OptionKey.tickBorderDash, grid.tickBorderDash);
+  put(scope, OptionKey.tickBorderDashOffset, grid.tickBorderDashOffset);
+  put(scope, OptionKey.tickColor, grid.tickColor);
+  put(scope, OptionKey.tickWidth, grid.tickWidth);
+  put(scope, OptionKey.z, grid.z);
   return mergeExtra(scope, grid.extra);
 }
 
@@ -1285,6 +1455,12 @@ final class const AxisTitle({
   /// bottom.
   final EdgeInsets? padding,
 
+  /// The color of the outline of the title: `strokeColor`.
+  final ChartPaint? strokeColor,
+
+  /// The width of the outline of the title in pixels: `strokeWidth`.
+  final double? strokeWidth,
+
   /// The Chart.js title options that have no parameter. The rules of
   /// [ChartAxis.extra] apply.
   final Map<String, Object?>? extra,
@@ -1301,6 +1477,8 @@ final class const AxisTitle({
     TextStyle? font,
     ChartAlign? align,
     EdgeInsets? padding,
+    ChartPaint? strokeColor,
+    double? strokeWidth,
     Map<String, Object?>? extra,
   }) => AxisTitle(
     display: display ?? this.display,
@@ -1309,6 +1487,8 @@ final class const AxisTitle({
     font: font ?? this.font,
     align: align ?? this.align,
     padding: padding ?? this.padding,
+    strokeColor: strokeColor ?? this.strokeColor,
+    strokeWidth: strokeWidth ?? this.strokeWidth,
     extra: extra ?? this.extra,
   );
 
@@ -1319,6 +1499,8 @@ final class const AxisTitle({
     ('font', font),
     ('align', align),
     ('padding', padding),
+    ('strokeColor', strokeColor),
+    ('strokeWidth', strokeWidth),
     ('extra', byEntries(extra)),
   ];
 
@@ -1347,5 +1529,7 @@ ScaleTitleOptionsScope? _lowerTitle(AxisTitle? title) {
   put(scope, OptionKey.font, title.font);
   put(scope, OptionKey.align, title.align);
   put(scope, OptionKey.padding, title.padding);
+  put(scope, OptionKey.strokeColor, title.strokeColor);
+  put(scope, OptionKey.strokeWidth, title.strokeWidth);
   return mergeExtra(scope, title.extra);
 }

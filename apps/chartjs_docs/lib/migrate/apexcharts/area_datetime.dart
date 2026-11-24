@@ -129,7 +129,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
         font: apexLabelFont,
         padding: 8,
         maxRotation: 0,
-        extra: {'maxTicksLimit': 7},
+        maxTicksLimit: 7,
       ),
       border: const AxisBorder(display: false),
       extra: const {

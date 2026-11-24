@@ -30,7 +30,7 @@ Chart _chart(
   int count,
   bool Function(int value) keep,
   _Seen seen, {
-  int? sampleSize,
+  double? sampleSize,
 }) {
   final canvas = UiCanvasElement(width: 600, height: 300);
   final config = ChartConfig(
@@ -47,7 +47,7 @@ Chart _chart(
         ticks: AxisTicks(
           callback: (scale, value, index, ticks) =>
               keep(value.toInt()) ? ['$value'] : null,
-          extra: {'sampleSize': ?sampleSize},
+          sampleSize: sampleSize,
         ),
         extra: {
           'afterBuildTicks': (Scale scale) {

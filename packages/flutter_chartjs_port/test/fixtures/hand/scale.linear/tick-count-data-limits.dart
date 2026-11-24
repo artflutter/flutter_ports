@@ -26,7 +26,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
           // Number.prototype.toString.
           // A TickCallback (row adapt-native-tick).
           callback: (scale, v, index, ticks) => <String>[jsToString(v)],
-          extra: <String, Object?>{'count': 21},
+          count: 21,
         ),
       ),
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

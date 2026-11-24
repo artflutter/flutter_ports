@@ -156,7 +156,7 @@ class _Sample12State() extends State<Sample12> {
               final date = _history![index].$1;
               return ['${date.month}/${date.day}'];
             },
-            extra: const {'minRotation': 45},
+            minRotation: 45,
           ),
         ),
         LinearAxis(

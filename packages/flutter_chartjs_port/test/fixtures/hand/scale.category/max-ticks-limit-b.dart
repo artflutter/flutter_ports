@@ -112,10 +112,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
     scales: [
       CategoryAxis(
         CartesianAxis.x,
-        ticks: AxisTicks(
-          display: false,
-          extra: <String, Object?>{'maxTicksLimit': 6.0},
-        ),
+        ticks: AxisTicks(display: false, maxTicksLimit: 6),
         grid: AxisGrid(color: ChartPaint.solid(Color(0xFFFF0000))),
       ),
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

@@ -23,7 +23,7 @@ ChartConfig _config(int count, {required bool shown}) {
     font: const TextStyle(fontSize: 10),
     maxRotation: 0,
     autoSkip: true,
-    extra: const {'maxTicksLimit': 5},
+    maxTicksLimit: 5,
   );
   return ChartConfig(
     animation: ChartAnimation.none,

@@ -30,7 +30,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
       RadialLinearAxis(
         // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
         display: ScaleDisplay.off,
-        grid: AxisGrid(extra: <String, Object?>{'circular': true}),
+        grid: AxisGrid(circular: true),
       ),
     ],
     elements: ChartElements(

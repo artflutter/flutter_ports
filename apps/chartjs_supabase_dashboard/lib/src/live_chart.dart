@@ -397,7 +397,7 @@ class _LiveChartState()
       // rounds the step to an integer).
       LinearAxis(
         .y,
-        ticks: AxisTicks(extra: {'includeBounds': false, 'precision': 0}),
+        ticks: AxisTicks(includeBounds: false, precision: 0),
         extra: {'afterFit': _fixedWidth},
       ),
     ],

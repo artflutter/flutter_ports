@@ -14861,9 +14861,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       scales: const [
         RadialLinearAxis(
           grid: AxisGrid(
+            circular: true,
             color: ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
             lineWidth: 2,
-            extra: <String, Object?>{'circular': true},
           ),
         ),
       ],
@@ -15952,11 +15952,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       labels: [],
       datasets: [TestDataset(const ChartKind('radialTest'), data: [])],
       scales: const [
-        RadialLinearAxis(
-          grid: AxisGrid(extra: <String, Object?>{'circular': true}),
-          min: 0,
-          max: 10,
-        ),
+        RadialLinearAxis(grid: AxisGrid(circular: true), min: 0, max: 10),
       ],
     ),
     options: const AcquireOptions(),
@@ -17354,7 +17350,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [
         RadialLinearAxis(
-          grid: AxisGrid(extra: <String, Object?>{'circular': true}),
+          grid: AxisGrid(circular: true),
           extra: <String, Object?>{
             'backgroundColor': ChartPaint.solid(
               Color.fromRGBO(255, 192, 203, 1),
@@ -22885,13 +22881,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [
         RadialLinearAxis(
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'count': 4.0,
-              'precision': 1.0,
-              'maxTicksLimit': 3.0,
-            },
-          ),
+          ticks: AxisTicks(count: 4, precision: 1, maxTicksLimit: 3),
         ),
       ],
     ),
@@ -23302,12 +23292,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         RadialLinearAxis(
           min: 3,
           max: 97,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'maxTicksLimit': 4.0,
-              'includeBounds': false,
-            },
-          ),
+          ticks: AxisTicks(maxTicksLimit: 4, includeBounds: false),
         ),
       ],
     ),
@@ -24153,14 +24138,12 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       scales: const [
         RadialLinearAxis(
           ticks: AxisTicks(
+            backdropColor: ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
+            backdropPadding: EdgeInsets.fromLTRB(4, 1, 4, 1),
             color: ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+            textStrokeColor: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+            textStrokeWidth: 2,
             font: ChartTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            extra: <String, Object?>{
-              'backdropColor': ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
-              'backdropPadding': EdgeInsets.fromLTRB(4, 1, 4, 1),
-              'textStrokeColor': ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
-              'textStrokeWidth': 2.0,
-            },
           ),
         ),
       ],
@@ -24742,9 +24725,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       scales: [
         RadialLinearAxis(
           ticks: AxisTicks(
+            showLabelBackdrop: false,
             callback: functions['tickUnit']! as TickCallback,
             font: const ChartTextStyle(fontSize: 9),
-            extra: const <String, Object?>{'showLabelBackdrop': false},
           ),
         ),
       ],

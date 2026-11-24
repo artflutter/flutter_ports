@@ -389,7 +389,7 @@ class const BenchmarkChart({
       font: const TextStyle(fontSize: 10),
       maxRotation: 0,
       autoSkip: true,
-      extra: const {'maxTicksLimit': 5},
+      maxTicksLimit: 5,
     );
     final view = cj.ChartView(
       config: cj.ChartConfig(

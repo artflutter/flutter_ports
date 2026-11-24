@@ -27,10 +27,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
       CategoryAxis(
         CartesianAxis.y,
         position: ChartPosition.left,
-        ticks: AxisTicks(
-          crossAlign: TickCrossAlign.far,
-          extra: <String, Object?>{'mirror': true},
-        ),
+        ticks: AxisTicks(crossAlign: TickCrossAlign.far, mirror: true),
       ),
     ],
   ),

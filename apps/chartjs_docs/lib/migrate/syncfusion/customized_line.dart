@@ -135,7 +135,7 @@ final ChartConfig _config = ChartConfig(
         color: .solid(_grid),
         lineWidth: 0.7,
         tickLength: 6,
-        extra: {'tickColor': ChartPaint.solid(_axisLine)},
+        tickColor: ChartPaint.solid(_axisLine),
       ),
       ticks: const AxisTicks(
         stepSize: 3,

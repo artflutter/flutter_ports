@@ -55567,10 +55567,7 @@ List<PluginFillerReferenceCase> pluginFillerReference(
         ),
       ],
       scales: const [
-        RadialLinearAxis(
-          grid: AxisGrid(extra: <String, Object?>{'circular': true}),
-          beginAtZero: true,
-        ),
+        RadialLinearAxis(grid: AxisGrid(circular: true), beginAtZero: true),
       ],
       disabledPlugins: const [
         PluginOff<ColorsPlugin>(),
@@ -56263,10 +56260,7 @@ List<PluginFillerReferenceCase> pluginFillerReference(
         ),
       ],
       scales: const [
-        RadialLinearAxis(
-          grid: AxisGrid(extra: <String, Object?>{'circular': true}),
-          beginAtZero: true,
-        ),
+        RadialLinearAxis(grid: AxisGrid(circular: true), beginAtZero: true),
       ],
       disabledPlugins: const [
         PluginOff<ColorsPlugin>(),

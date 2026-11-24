@@ -56472,11 +56472,9 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
           .y,
           ticks: AxisTicks(
             stepSize: 7,
-            extra: <String, Object?>{
-              'count': 3.0,
-              'precision': 1.0,
-              'includeBounds': false,
-            },
+            count: 3,
+            precision: 1,
+            includeBounds: false,
           ),
         ),
       ],
@@ -60716,14 +60714,8 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
       scales: const [
-        LogarithmicAxis(
-          .x,
-          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 3.0}),
-        ),
-        LogarithmicAxis(
-          .y,
-          ticks: AxisTicks(extra: <String, Object?>{'maxTicksLimit': 5.0}),
-        ),
+        LogarithmicAxis(.x, ticks: AxisTicks(maxTicksLimit: 3)),
+        LogarithmicAxis(.y, ticks: AxisTicks(maxTicksLimit: 5)),
       ],
     ),
     options: const AcquireOptions(

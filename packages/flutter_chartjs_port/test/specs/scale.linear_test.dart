@@ -652,7 +652,7 @@ void main() {
               .x,
               min: 2.404e-8,
               max: 2.4143e-8,
-              ticks: AxisTicks(extra: {'includeBounds': false}),
+              ticks: AxisTicks(includeBounds: false),
             ),
           ],
         ),
@@ -722,9 +722,7 @@ void main() {
               BarDataset(data: .values([0, 1, 2, 1, 0, 1])),
             ],
             labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-            scales: [
-              LinearAxis(.y, ticks: AxisTicks(extra: {'precision': 0})),
-            ],
+            scales: [LinearAxis(.y, ticks: AxisTicks(precision: 0))],
           ),
         );
 
@@ -746,9 +744,7 @@ void main() {
                 BarDataset(data: .values([0, 0.001, 0.002, 0.003, 0, 0.001])),
               ],
               labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-              scales: [
-                LinearAxis(.y, ticks: AxisTicks(extra: {'precision': 2})),
-              ],
+              scales: [LinearAxis(.y, ticks: AxisTicks(precision: 2))],
             ),
           );
 

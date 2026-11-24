@@ -818,7 +818,43 @@ const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
   'stepSize': (AxisTicks(stepSize: 5), {'stepSize': 5}),
   'maxRotation': (AxisTicks(maxRotation: 0), {'maxRotation': 0}),
   'autoSkip': (AxisTicks(autoSkip: false), {'autoSkip': false}),
-  'extra': (AxisTicks(extra: {'precision': 0}), {'precision': 0}),
+  'backdropColor': (
+    AxisTicks(backdropColor: ChartPaint.solid(_red)),
+    {'backdropColor': _redValue},
+  ),
+  'backdropPadding': (
+    AxisTicks(backdropPadding: EdgeInsets.all(3)),
+    {'backdropPadding': EdgeInsets.all(3)},
+  ),
+  'showLabelBackdrop': (
+    AxisTicks(showLabelBackdrop: true),
+    {'showLabelBackdrop': true},
+  ),
+  'textStrokeColor': (
+    AxisTicks(textStrokeColor: ChartPaint.solid(_red)),
+    {'textStrokeColor': _redValue},
+  ),
+  'textStrokeWidth': (AxisTicks(textStrokeWidth: 2), {'textStrokeWidth': 2}),
+  'z': (AxisTicks(z: 1), {'z': 1}),
+  'sampleSize': (AxisTicks(sampleSize: 4), {'sampleSize': 4}),
+  'autoSkipPadding': (AxisTicks(autoSkipPadding: 8), {'autoSkipPadding': 8}),
+  'includeBounds': (AxisTicks(includeBounds: false), {'includeBounds': false}),
+  'labelOffset': (AxisTicks(labelOffset: 5), {'labelOffset': 5}),
+  'minRotation': (AxisTicks(minRotation: 30), {'minRotation': 30}),
+  'mirror': (AxisTicks(mirror: true), {'mirror': true}),
+  'maxTicksLimit': (AxisTicks(maxTicksLimit: 6), {'maxTicksLimit': 6}),
+  'precision': (AxisTicks(precision: 0), {'precision': 0}),
+  'count': (AxisTicks(count: 5), {'count': 5}),
+  'extra': (
+    AxisTicks(
+      extra: {
+        'major': {'enabled': true},
+      },
+    ),
+    {
+      'major': {'enabled': true},
+    },
+  ),
 };
 
 /// The cases of the parameters of [AxisGrid] and the twin `grid` Map.
@@ -833,7 +869,23 @@ const Map<String, (AxisGrid, Map<String, Object?>)> _grid = {
   'drawTicks': (AxisGrid(drawTicks: false), {'drawTicks': false}),
   'offset': (AxisGrid(offset: true), {'offset': true}),
   'tickLength': (AxisGrid(tickLength: 4), {'tickLength': 4}),
-  'extra': (AxisGrid(extra: {'tickWidth': 2}), {'tickWidth': 2}),
+  'circular': (AxisGrid(circular: true), {'circular': true}),
+  'tickBorderDash': (
+    AxisGrid(tickBorderDash: [4, 2]),
+    {
+      'tickBorderDash': [4.0, 2.0],
+    },
+  ),
+  'tickBorderDashOffset': (
+    AxisGrid(tickBorderDashOffset: 1),
+    {'tickBorderDashOffset': 1},
+  ),
+  'tickColor': (
+    AxisGrid(tickColor: ChartPaint.solid(_red)),
+    {'tickColor': _redValue},
+  ),
+  'tickWidth': (AxisGrid(tickWidth: 2), {'tickWidth': 2}),
+  'z': (AxisGrid(z: 1), {'z': 1}),
 };
 
 /// The cases of the parameters of [AxisTitle] and the twin `title` Map.
@@ -852,7 +904,11 @@ const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
     AxisTitle(padding: EdgeInsets.symmetric(vertical: 4)),
     {'padding': EdgeInsets.only(left: 0, top: 4, right: 0, bottom: 4)},
   ),
-  'extra': (AxisTitle(extra: {'strokeWidth': 1}), {'strokeWidth': 1}),
+  'strokeColor': (
+    AxisTitle(strokeColor: ChartPaint.solid(_red)),
+    {'strokeColor': _redValue},
+  ),
+  'strokeWidth': (AxisTitle(strokeWidth: 1), {'strokeWidth': 1}),
 };
 
 /// The cases of the parameters of [ChartElements] and of the element

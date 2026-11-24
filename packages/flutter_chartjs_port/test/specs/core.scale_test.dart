@@ -218,7 +218,7 @@ void main() {
         );
       }
 
-      Chart getChartBigData(int maxTicksLimit) {
+      Chart getChartBigData(double maxTicksLimit) {
         return _acquire(
           ChartConfig(
             labels: List<Object>.filled(300, 'red'),
@@ -226,10 +226,7 @@ void main() {
             scales: [
               CategoryAxis(
                 .x,
-                ticks: AxisTicks(
-                  autoSkip: true,
-                  extra: {'maxTicksLimit': maxTicksLimit},
-                ),
+                ticks: AxisTicks(autoSkip: true, maxTicksLimit: maxTicksLimit),
               ),
             ],
           ),
@@ -745,9 +742,16 @@ void main() {
           var chart = _acquire(
             const ChartConfig(
               datasets: [LineDataset()],
-              scales: [
-                LinearAxis(.x, ticks: AxisTicks(extra: {'z': 10})),
-              ],
+              scales: [LinearAxis(.x, ticks: AxisTicks(z: 10))],
+            ),
+          );
+
+          expect(chart.scales['x']!.layers!().length, 3);
+
+          chart = _acquire(
+            const ChartConfig(
+              datasets: [LineDataset()],
+              scales: [LinearAxis(.x, grid: AxisGrid(z: 11))],
             ),
           );
 
@@ -757,22 +761,7 @@ void main() {
             const ChartConfig(
               datasets: [LineDataset()],
               scales: [
-                LinearAxis(.x, grid: AxisGrid(extra: {'z': 11})),
-              ],
-            ),
-          );
-
-          expect(chart.scales['x']!.layers!().length, 3);
-
-          chart = _acquire(
-            const ChartConfig(
-              datasets: [LineDataset()],
-              scales: [
-                LinearAxis(
-                  .x,
-                  ticks: AxisTicks(extra: {'z': 10}),
-                  grid: AxisGrid(extra: {'z': 11}),
-                ),
+                LinearAxis(.x, ticks: AxisTicks(z: 10), grid: AxisGrid(z: 11)),
               ],
             ),
           );
@@ -897,9 +886,7 @@ void main() {
                 data: .values([12, 19, 3, 5, 2, 3]),
               ),
             ],
-            scales: [
-              CategoryAxis(.x, ticks: AxisTicks(extra: {'minRotation': 90})),
-            ],
+            scales: [CategoryAxis(.x, ticks: AxisTicks(minRotation: 90))],
           ),
         );
         // `parseFloat(value.toFixed(2))`.
@@ -934,12 +921,10 @@ void main() {
                   color: ChartPaint.solid(
                     native_ui.Color.fromRGBO(221, 221, 221, 1),
                   ),
-                  extra: {
-                    'strokeWidth': 1,
-                    'strokeColor': ChartPaint.solid(
-                      native_ui.Color.fromRGBO(51, 51, 51, 1),
-                    ),
-                  },
+                  strokeWidth: 1,
+                  strokeColor: ChartPaint.solid(
+                    native_ui.Color.fromRGBO(51, 51, 51, 1),
+                  ),
                 ),
               ),
               LinearAxis(
@@ -950,12 +935,10 @@ void main() {
                   color: ChartPaint.solid(
                     native_ui.Color.fromRGBO(221, 221, 221, 1),
                   ),
-                  extra: {
-                    'strokeWidth': 2,
-                    'strokeColor': ChartPaint.solid(
-                      native_ui.Color.fromRGBO(34, 34, 34, 1),
-                    ),
-                  },
+                  strokeWidth: 2,
+                  strokeColor: ChartPaint.solid(
+                    native_ui.Color.fromRGBO(34, 34, 34, 1),
+                  ),
                 ),
               ),
             ],

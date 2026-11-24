@@ -3290,6 +3290,21 @@ function axisSpec(cls, state) {
       crossAlign: (x) => enumNode('TickCrossAlign', ['near', 'center', 'far'], x, state, 'scaleEnums'),
       source: (x) => enumNode('TickSource', ['auto', 'data', 'labels'], x, state, 'scaleEnums'),
       callback: (x) => (functionName(x) === null ? undefined : node(functionCode(x, state, 'TickCallback').code, false)),
+      backdropColor: (x) => paintNode(x, state),
+      backdropPadding: (x) => paddingNode(x, state),
+      showLabelBackdrop: boolNode,
+      textStrokeColor: (x) => paintNode(x, state),
+      textStrokeWidth: number,
+      z: number,
+      sampleSize: number,
+      autoSkipPadding: number,
+      includeBounds: boolNode,
+      labelOffset: number,
+      minRotation: number,
+      mirror: boolNode,
+      maxTicksLimit: number,
+      precision: number,
+      count: number,
     }, state, 'ticks', 'options.scales.<id>.ticks');
   };
   const grid = (v) => {
@@ -3302,6 +3317,12 @@ function axisSpec(cls, state) {
       drawTicks: boolNode,
       offset: boolNode,
       tickLength: number,
+      circular: boolNode,
+      tickBorderDash: dashNode,
+      tickBorderDashOffset: number,
+      tickColor: (x) => paintNode(x, state),
+      tickWidth: number,
+      z: number,
     }, state, 'grid', 'options.scales.<id>.grid');
   };
   const title = (v) => {
@@ -3313,6 +3334,8 @@ function axisSpec(cls, state) {
       font: (x) => fontNode(x, state),
       align: (x) => enumNode('ChartAlign', ['start', 'center', 'end'], x, state, 'aligns'),
       padding: (x) => paddingNode(x, state),
+      strokeColor: (x) => paintNode(x, state),
+      strokeWidth: number,
     }, state, 'title', 'options.scales.<id>.title');
   };
   const head = {

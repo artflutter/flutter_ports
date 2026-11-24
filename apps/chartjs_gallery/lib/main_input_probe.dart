@@ -364,7 +364,8 @@ ChartConfig inputProbeConfig(int points, Plugin<Object?> plugin) => ChartConfig(
       .x,
       ticks: const AxisTicks(
         maxRotation: 0,
-        extra: {'includeBounds': false, 'minRotation': 0.0},
+        includeBounds: false,
+        minRotation: 0,
       ),
       // The x axis asks for room at the sides for half of its first and
       // last label, from the positions of these ticks. A pan moves them,
@@ -380,7 +381,7 @@ ChartConfig inputProbeConfig(int points, Plugin<Object?> plugin) => ChartConfig(
     ),
     LinearAxis(
       .y,
-      ticks: const AxisTicks(extra: {'includeBounds': false}),
+      ticks: const AxisTicks(includeBounds: false),
       extra: {
         'afterFit': (Scale scale) {
           scale.width = inputProbeYAxisWidth;

@@ -226,7 +226,7 @@ void main() {
 
     for (final (name, ticks) in const [
       ('{stepSize: 25.0}', AxisTicks(stepSize: 25)),
-      ('{count: 6.0}', AxisTicks(extra: {'count': 6.0})),
+      ('{count: 6.0}', AxisTicks(count: 6)),
     ]) {
       testWidgets('string bounds with $name give the NaN ticks of upstream', (
         tester,
