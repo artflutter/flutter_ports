@@ -404,8 +404,6 @@ bool _listEquals(List<Object?> a, List<Object?> b) {
 ///
 /// The chart needs `Chart.register(sankeyRegisterables)`. A parameter that
 /// is `null` is not set: the chart uses the default of chartjs-chart-sankey.
-/// The options with no parameter, for example `parsing`, go through
-/// [extra].
 final class const SankeyDataset({
   super.key,
   super.label,
@@ -501,7 +499,6 @@ final class const SankeyDataset({
   /// The size of a node from its flows in and out: `size`. The default is
   /// [SankeySize.max].
   final SankeySize? size,
-  super.extra,
 }) extends Dataset {
   /// A sankey dataset.
   this;
@@ -541,7 +538,6 @@ final class const SankeyDataset({
     double? padding,
     Map<String, double>? priority,
     SankeySize? size,
-    Map<String, Object?>? extra,
   }) => SankeyDataset(
     key: key ?? this.key,
     label: label ?? this.label,
@@ -575,7 +571,6 @@ final class const SankeyDataset({
     padding: padding ?? this.padding,
     priority: priority ?? this.priority,
     size: size ?? this.size,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -648,6 +643,5 @@ final class const SankeyDataset({
     ('padding', padding),
     ('priority', byEntries(priority)),
     ('size', size),
-    ('extra', byEntries(extra)),
   ];
 }

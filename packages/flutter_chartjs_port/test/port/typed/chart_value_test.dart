@@ -186,42 +186,6 @@ void main() {
     expect(calls, [0, 1]);
   });
 
-  test('omission inherits while raw extra null remains explicitly present', () {
-    final omitted = lowerDataset(const BarDataset(), ChartKind.bar);
-    expect(omitted.ownCell(OptionKey.backgroundColor), isNull);
-    final explicitNull = lowerDataset(
-      const BarDataset(
-        backgroundColor: ChartValue.constant(_red),
-        extra: {'backgroundColor': null},
-      ),
-      ChartKind.bar,
-    );
-    expect(explicitNull.ownCell(OptionKey.backgroundColor), isA<OptNull>());
-  });
-
-  test(
-    'extra overrides the value and preserves the background key position',
-    () {
-      final scope = lowerDataset(
-        const BarDataset(
-          label: 'A',
-          backgroundColor: ChartValue.constant(_red),
-          borderColor: ChartValue.constant(_red),
-          borderWidth: 1,
-          extra: {'backgroundColor': _blue},
-        ),
-        ChartKind.bar,
-      );
-      expect(scope.jsKeys(), [
-        'label',
-        'backgroundColor',
-        'borderColor',
-        'borderWidth',
-      ]);
-      expect(scope.ownCell(OptionKey.backgroundColor)!.raw, same(_blue));
-    },
-  );
-
   for (final empty in _datasets()) {
     test('${empty.runtimeType}: copyWith switches one background value', () {
       final indexed = empty.copyWith(
@@ -360,28 +324,6 @@ void main() {
       expect(changed, isNot(dataset));
     },
   );
-
-  test('border omission, extra overrides and key order are preserved', () {
-    expect(
-      lowerDataset(
-        const BarDataset(),
-        ChartKind.bar,
-      ).ownCell(OptionKey.borderColor),
-      isNull,
-    );
-    final scope = lowerDataset(
-      const BarDataset(
-        backgroundColor: ChartValue.constant(_red),
-        borderColor: ChartValue.constant(_blue),
-        borderWidth: 1,
-        extra: {'borderColor': null},
-      ),
-      ChartKind.bar,
-    );
-    expect(scope.jsKeys(), ['backgroundColor', 'borderColor', 'borderWidth']);
-    expect(scope.ownCell(OptionKey.borderColor), same(optNull));
-    expect(scope.ownCell(OptionKey.backgroundColor)!.raw, _red);
-  });
 
   test('equivalent values preserve Dataset and ChartConfig equality', () {
     final data = <num?>[1, 2];

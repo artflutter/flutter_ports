@@ -65,12 +65,7 @@ BarDataset scriptableBarDataset(int index) => BarDataset(
     ChartPaint.solid(Color(0xff36a2eb)),
     ChartPaint.solid(Color(0xffffce56)),
   ]),
-  // The typed API has no function form of `borderWidth`: the function of
-  // the context and the options goes through `extra`.
-  extra: {
-    'borderWidth': (ScriptableContext ctx, Object? options) =>
-        ctx.active ? 2.0 : 1.0,
-  },
+  borderWidths: .resolver((ctx) => ctx.active ? 2.0 : 1.0),
 );
 
 /// A bar chart config with three [datasets] (by default the static ones),

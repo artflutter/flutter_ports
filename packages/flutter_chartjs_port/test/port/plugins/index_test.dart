@@ -493,7 +493,7 @@ void main() {
           );
         }
         final typed = (c.config as ChartConfig Function())();
-        if (typed.extra?['plugins'] == false) {
+        if (rawOptionsOf(typed)?['plugins'] == false) {
           // This reference case deliberately disables the entire plugin set.
           final savedAudit = foreignAudit;
           foreignAudit = (owner, key, raw) {

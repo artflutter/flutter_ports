@@ -656,8 +656,8 @@ repository.
       of upstream; an app or a plugin gives its own as a subclass, with no registration. The base
       class is in the pure `decimation_algorithm.dart`. The field takes no other value, so the
       error of `plugin.decimation.js:277` has no port. A decimation test gives a typed
-      `ChartConfig` (`parsing: false`, `pluginOptions: [DecimationOptions(...)]`) with no
-      `extra`; a change of an option pumps a `ChartView` with the next config.
+      `ChartConfig` (`parsing: false`, `pluginOptions: [DecimationOptions(...)]`); a change of
+      an option pumps a `ChartView` with the next config.
     - The scale options `bounds`, `ticks.source`, `ticks.align` and `ticks.crossAlign` hold the
       enums `ScaleBounds`, `TickSource`, `TickAlign` and `TickCrossAlign` of the pure
       `lib/src/core/scale_option_enums.dart` (row `adapt-scale-option-enums`), also in a raw
@@ -790,8 +790,8 @@ repository.
       registration. `false` stays a boolean: the legend falls back to the dataset style on a
       falsy `labels.pointStyle`. A style name stops a debug build. The circle batch tests
       `CirclePointStyle`. The typed API takes a `PointStyle` (`ChartPointStyle` is gone), a
-      `ChartValue<PointStyle>` on the line, scatter and radar datasets;
-      `pointStyle: false` goes through `extra`. A compare with upstream JSON text puts a marker
+      `ChartValue<PointStyle>` on the line, scatter and radar datasets; the typed API has no
+      `pointStyle: false`. A compare with upstream JSON text puts a marker
       on both sides (`withPointStyleMarkers` of `test/support/point_style_json.dart`).
     - The line option `cubicInterpolationMode` holds a `CubicInterpolationMode` (row
       `adapt-cubic-interpolation-mode-objects`), also in a raw config: an object with the methods
@@ -813,7 +813,7 @@ repository.
       `adapt-border-skipped-enum`), also in a raw config. A keyword is a foreign value, with no
       debug stop: `stepped` draws the form `before`, and `borderSkipped` writes the key of its
       text, as for each value that is not of the enum. The typed API has `stepped` on the line, scatter and radar datasets and on `LineElementStyle`;
-      `stepped: true` and `borderSkipped` go through `extra`.
+      `stepped: true` of Chart.js is `SteppedLine.before`, and `borderSkipped` takes a `BorderSkip`.
     - `plugin.filler/`: the 8 files of `src/plugins/plugin.filler/` (Chart.js ADR 0040).
       `index.dart` has the plugin `filler` and the source class `FillerSource`; `meta.$filler`
       is an entry of its own `Expando` (`fillerSourceOf`). The filler wraps each plain point of upstream
@@ -1087,9 +1087,13 @@ repository.
     (`ScriptableContext`). The event callbacks take the function types
     of the core (Chart.js ADR 0130). Each
     config class is `@immutable` and `final`, with a `const` constructor, `copyWith`, and `==`
-    from its `_props` list (`props.dart`). Each class has `extra`, the Chart.js options with no
-    parameter. `lower.dart` (internal) gives the typed option scopes of the chart for a config
-    (`ChartConfigLowering`: a `ChartConfigurationScope` root, `put`, the typed `mergeExtra`). A
+    from its `_props` list (`props.dart`). No class has `extra` (Chart.js ADR 0201): an option with
+    two forms has a second parameter (`borderRadiusCorners`, `borderWidths`, `borderWidthSides`,
+    `spanGapsDistance`, `minIndex`, `maxIndex`, `parserFunction`, `borderFunction`), a scriptable
+    option of an axis part is a `ScaleValue` of `scale_value.dart`, `ChartConfig.datasetDefaults`
+    writes `options.datasets.<type>`, and `DatasetData.ranges` gives floating bars. `lower.dart`
+    (internal) gives the typed option scopes of the chart for a config (`ChartConfigLowering`: a
+    `ChartConfigurationScope` root, `put`). A
     paint and a font go to the chart as the `ChartPaint` and the `TextStyle` themselves (Chart.js ADRs
     0116 and 0147). Ported files never import
     `lib/src/typed/`, and no file of it imports

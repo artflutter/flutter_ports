@@ -161,10 +161,6 @@ final Map<String, (Dataset Function(Dataset), Map<String, Object?>)> _common = {
     (d) => d.copyWith(shadow: const ChartShadow(color: _red, blur: 4)),
     {'shadow': const ChartShadow(color: _red, blur: 4)},
   ),
-  'extra': (
-    (d) => d.copyWith(extra: {'normalized': true}),
-    {'normalized': true},
-  ),
 };
 
 /// The segment function of the cases: red from the second part on.
@@ -647,10 +643,6 @@ _axisCommon = {
     (a) => a.copyWith(afterUpdate: _scaleHook),
     {'afterUpdate': _scaleHook},
   ),
-  'extra': (
-    (a) => a.copyWith(extra: {'grace': const PercentGrace(5)}),
-    {'grace': const PercentGrace(5)},
-  ),
 };
 
 /// The cases of the parameters of the axis classes: the typed axes with
@@ -990,16 +982,6 @@ const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
   'maxTicksLimit': (AxisTicks(maxTicksLimit: 6), {'maxTicksLimit': 6}),
   'precision': (AxisTicks(precision: 0), {'precision': 0}),
   'count': (AxisTicks(count: 5), {'count': 5}),
-  'extra': (
-    AxisTicks(
-      extra: {
-        'major': {'enabled': true},
-      },
-    ),
-    {
-      'major': {'enabled': true},
-    },
-  ),
 };
 
 /// The cases of the parameters of [AxisGrid] and the twin `grid` Map.
@@ -1342,24 +1324,6 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
       'arc': {'spacing': 2},
     },
   ),
-  'arc.extra': (
-    ChartElements(
-      arc: ArcElementStyle(extra: {'borderAlign': ArcBorderAlign.inner}),
-    ),
-    {
-      'arc': {'borderAlign': ArcBorderAlign.inner},
-    },
-  ),
-  'extra': (
-    ChartElements(
-      extra: {
-        'line': {'borderWidth': 1},
-      },
-    ),
-    {
-      'line': {'borderWidth': 1},
-    },
-  ),
   'the four styles, in parameter order': (
     ChartElements(
       arc: ArcElementStyle(offset: 1),
@@ -1388,7 +1352,6 @@ const Map<String, (ChartInteraction, Map<String, Object?>)> _interaction = {
     {'includeInvisible': true},
   ),
   'axis': (ChartInteraction(axis: .xy), {'axis': InteractionAxis.xy}),
-  'extra': (ChartInteraction(extra: {'unknownKey': 1}), {'unknownKey': 1}),
 };
 
 /// The cases of the parameters of [ChartAnimation] and the twin value.
@@ -1421,7 +1384,6 @@ const Map<String, (ChartAnimation, Object)> _animation = {
     ChartAnimation(onComplete: _onAnimation),
     {'onComplete': _function},
   ),
-  'extra': (ChartAnimation(extra: {'to': 1}), {'to': 1}),
 };
 
 /// The cases of the option parameters of [ChartConfig] and the twin
@@ -1553,13 +1515,6 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       'plugins': {'legend': false, 'title': false},
     },
   ),
-  'extra': (
-    ChartConfig(
-      datasets: [BarDataset()],
-      extra: {'locale': native_ui.Locale('de', 'DE')},
-    ),
-    {'locale': native_ui.Locale('de', 'DE')},
-  ),
   'all options, in parameter order': (
     ChartConfig(
       datasets: [BarDataset()],
@@ -1580,7 +1535,6 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
         LegendOptions(display: true),
         TooltipOptions(enabled: true),
       ],
-      extra: {'locale': native_ui.Locale('en', 'US')},
     ),
     {
       'scales': {
@@ -1604,7 +1558,6 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       'onClick': _function,
       'onHover': _function,
       'events': ['click'],
-      'locale': native_ui.Locale('en', 'US'),
     },
   ),
 };
@@ -1740,138 +1693,6 @@ void main() {
       });
     });
 
-    group('extra', () {
-      test('a key of a nested Map that is not a String fails the debug '
-          'assert with the key', () {
-        expect(
-          () => _lower(
-            const BarDataset(
-              extra: {
-                'datalabels': {1: 'one'},
-              },
-            ),
-          ),
-          throwsA(
-            isA<AssertionError>().having(
-              (error) => '${error.message}',
-              'message',
-              allOf(
-                contains('The key 1 of an extra Map is a int, not a String.'),
-                contains("write the key as '1'"),
-              ),
-            ),
-          ),
-        );
-      });
-
-      test('an entry wins over a parameter, in the place of the key', () {
-        expectTwin(
-          _lower(
-            const BarDataset(
-              label: 'A',
-              borderWidth: 2,
-              extra: {'borderWidth': 3, 'clip': ChartClip.all(5)},
-            ),
-          ),
-          {'label': 'A', 'borderWidth': 3, 'clip': const ChartClip.all(5)},
-        );
-      });
-
-      test('a CSS string wins over a color', () {
-        expectTwin(
-          _lower(
-            const LineDataset(
-              backgroundColor: ChartValue.constant(.solid(_red)),
-              extra: {
-                'backgroundColor': ChartPaint.solid(
-                  native_ui.Color.fromRGBO(255, 0, 0, 1),
-                ),
-              },
-            ),
-          ),
-          {
-            'backgroundColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
-          },
-        );
-      });
-
-      test('a Map merges into the Map of the key', () {
-        const callbacks = TooltipCallbacks();
-        expectTwin(
-          _lower(
-            const LineDataset(
-              tooltipCallbacks: callbacks,
-              extra: {
-                'tooltip': {'enabled': false},
-              },
-            ),
-          ),
-          {
-            'tooltip': {'callbacks': callbacks, 'enabled': false},
-          },
-        );
-      });
-
-      test('a Map replaces a value that is not a Map', () {
-        expectTwin(
-          _lower(
-            const BarDataset(
-              borderWidth: 4,
-              extra: {
-                'borderWidth': {'top': 8},
-              },
-            ),
-          ),
-          {
-            'borderWidth': {'top': 8},
-          },
-        );
-      });
-
-      test('a const Map lowers to new Maps', () {
-        const options = {
-          'datalabels': {
-            'font': {'size': 9},
-          },
-        };
-        final lowered = _lower(const BarDataset(extra: options));
-        expectTwin(lowered, {
-          'datalabels': {
-            'font': {'size': 9},
-          },
-        });
-        expect(lowered['datalabels'], isNot(same(options['datalabels'])));
-      });
-
-      test('a List and a function go by reference', () {
-        final datalabels = <String, Object?>{
-          'formatter': (Object? c) =>
-              const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
-        };
-        final list = <Object?>[1, 2];
-        final lowered = _lower(
-          LineDataset(extra: {'datalabels': datalabels, 'tags': list}),
-        );
-        expect(lowered['tags'], same(list));
-        final copy = lowered['datalabels']!;
-        expect(copy, isNot(same(datalabels)));
-        expect(jsGet(copy, 'formatter'), same(datalabels['formatter']));
-      });
-
-      test('a segment style goes by reference', () {
-        final segment = LineSegmentStyle(borderWidth: (s) => 2);
-        expect(_lower(LineDataset(segment: segment))['segment'], same(segment));
-      });
-
-      test('an entry with the value null gives the JS null', () {
-        expectTwin(_lower(const LineDataset(extra: {'clip': null})), {
-          'clip': null,
-        });
-      });
-    });
-
     group('all parameters, in parameter order', () {
       final data = <num?>[1, 2];
       final points = [DataPoint(1, 2)];
@@ -1901,7 +1722,6 @@ void main() {
             maxBarThickness: 12,
             minBarLength: 2,
             grouped: false,
-            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -1926,7 +1746,6 @@ void main() {
           'maxBarThickness': 12,
           'minBarLength': 2,
           'grouped': false,
-          'clip': const ChartClip.all(5),
         });
       });
 
@@ -1979,7 +1798,6 @@ void main() {
             pointBorderWidth: 1,
             pointHoverBackgroundColor: const .constant(.solid(_blue)),
             pointHoverBorderColor: const .constant(.solid(_red)),
-            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -1998,7 +1816,6 @@ void main() {
           'stack': 's',
           'indexAxis': const XAxis(),
           ...lineStyleTwin,
-          'clip': const ChartClip.all(5),
         });
       });
 
@@ -2032,7 +1849,6 @@ void main() {
             pointBorderWidth: 1,
             pointHoverBackgroundColor: const .constant(.solid(_blue)),
             pointHoverBorderColor: const .constant(.solid(_red)),
-            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -2050,7 +1866,6 @@ void main() {
           'yAxisID': 'y1',
           'stack': 's',
           ...lineStyleTwin,
-          'clip': const ChartClip.all(5),
         });
       });
 
@@ -2073,7 +1888,6 @@ void main() {
             radius: 7,
             hoverRadius: 2,
             pointStyle: const TrianglePointStyle(),
-            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -2092,7 +1906,6 @@ void main() {
           'radius': 7,
           'hoverRadius': 2,
           'pointStyle': const TrianglePointStyle(),
-          'clip': const ChartClip.all(5),
         });
       });
 
@@ -2115,7 +1928,6 @@ void main() {
         'rotation': -90,
         'cutout': const PercentRadius(60),
         'radius': const PixelRadius(120),
-        'clip': const ChartClip.all(5),
       };
 
       test('PieDataset', () {
@@ -2142,7 +1954,6 @@ void main() {
             rotation: -90,
             cutout: const PercentRadius(60),
             radius: const PixelRadius(120),
-            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, arcTwin);
@@ -2172,7 +1983,6 @@ void main() {
             rotation: -90,
             cutout: const PercentRadius(60),
             radius: const PixelRadius(120),
-            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, arcTwin);
@@ -2194,7 +2004,6 @@ void main() {
             offset: 4,
             hoverOffset: 8,
             spacing: 2,
-            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -2211,7 +2020,6 @@ void main() {
           'offset': 4,
           'hoverOffset': 8,
           'spacing': 2,
-          'clip': const ChartClip.all(5),
         });
       });
 
@@ -2242,7 +2050,6 @@ void main() {
             pointBorderWidth: 1,
             pointHoverBackgroundColor: const .constant(.solid(_blue)),
             pointHoverBorderColor: const .constant(.solid(_red)),
-            extra: const {'clip': ChartClip.all(5)},
           ),
         );
         expectTwin(lowered, {
@@ -2257,7 +2064,6 @@ void main() {
           'hoverBorderColor': _redValue,
           'hoverBorderWidth': 3,
           ...lineStyleTwin,
-          'clip': const ChartClip.all(5),
         });
       });
     });
@@ -2335,26 +2141,6 @@ void main() {
       }
     });
 
-    test('extra merges into the Map of a part', () {
-      expectTwin(
-        lowerAxis(
-          const LinearAxis(
-            .y,
-            grid: AxisGrid(color: .constant(ChartPaint.solid(_red))),
-            extra: {
-              'grid': {'tickWidth': 2},
-              'grace': PercentGrace(5),
-            },
-          ),
-        ),
-        {
-          'type': 'linear',
-          'grid': {'color': _redValue, 'tickWidth': 2},
-          'grace': const PercentGrace(5),
-        },
-      );
-    });
-
     test('each axis class with all its parameters, in parameter order', () {
       const ticks = AxisTicks(
         display: true,
@@ -2369,7 +2155,6 @@ void main() {
           'display': true,
           'text': ['T'],
         },
-        'grace': ValueGrace(1),
       };
       const head = <String, Object?>{
         'display': ScaleDisplay.on,
@@ -2392,7 +2177,6 @@ void main() {
             ticks: ticks,
             grid: grid,
             title: title,
-            extra: const {'grace': ValueGrace(1)},
           ),
           {
             'type': 'category',
@@ -2418,7 +2202,6 @@ void main() {
             ticks: ticks,
             grid: grid,
             title: title,
-            extra: {'grace': ValueGrace(1)},
           ),
           {
             'type': 'linear',
@@ -2445,7 +2228,6 @@ void main() {
             ticks: ticks,
             grid: grid,
             title: title,
-            extra: {'grace': ValueGrace(1)},
           ),
           {
             'type': 'logarithmic',
@@ -2473,7 +2255,6 @@ void main() {
               ticks: ticks,
               grid: grid,
               title: title,
-              extra: const {'grace': ValueGrace(1)},
             ),
             'time',
           ),
@@ -2492,7 +2273,6 @@ void main() {
               ticks: ticks,
               grid: grid,
               title: title,
-              extra: const {'grace': ValueGrace(1)},
             ),
             'timeseries',
           ),
@@ -2534,7 +2314,6 @@ void main() {
             ticks: ticks,
             grid: grid,
             title: title,
-            extra: {'grace': ValueGrace(1)},
           ),
           {
             'type': 'radialLinear',
@@ -2882,26 +2661,6 @@ void main() {
     });
 
     group('disabledPlugins', () {
-      test('a built-in plugin off is the false of extra', () {
-        const typed = ChartConfig(
-          datasets: [BarDataset()],
-          pluginOptions: [LegendOptions(display: true)],
-          disabledPlugins: [PluginOff<LegendPlugin>()],
-        );
-        const raw = ChartConfig(
-          datasets: [BarDataset()],
-          pluginOptions: [LegendOptions(display: true)],
-          extra: {
-            'plugins': {'legend': false},
-          },
-        );
-        const twin = {
-          'plugins': {'legend': false},
-        };
-        expectTwin(_options(typed), twin);
-        expectTwin(_options(raw), twin);
-      });
-
       test('an inline plugin of its own class is off by its id', () {
         final probe = _ProbePlugin();
         final options = _options(
@@ -2958,34 +2717,6 @@ void main() {
         ),
       );
       expect(jsObjectKeys(options['scales']), ['y', 'x', 'y1']);
-    });
-
-    test('extra merges into options, into a group and wins', () {
-      expectTwin(
-        _options(
-          const ChartConfig(
-            datasets: [BarDataset()],
-            responsive: true,
-            interaction: ChartInteraction(intersect: true, axis: .x),
-            pluginOptions: [DecimationOptions(enabled: true)],
-            extra: {
-              'responsive': false,
-              'interaction': {'intersect': false, 'includeInvisible': true},
-              'locale': native_ui.Locale('de', 'DE'),
-            },
-          ),
-        ),
-        {
-          'responsive': false,
-          'plugins': {'decimation': const DecimationOptions(enabled: true)},
-          'interaction': {
-            'intersect': false,
-            'axis': InteractionAxis.x,
-            'includeInvisible': true,
-          },
-          'locale': const native_ui.Locale('de', 'DE'),
-        },
-      );
     });
 
     test('a const config lowers to new Maps at each call', () {

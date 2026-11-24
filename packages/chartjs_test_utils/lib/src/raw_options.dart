@@ -46,6 +46,9 @@ T raw<T extends Object>(T object, Map<String, Object?>? options) {
   return object;
 }
 
+/// The raw options of the last call of [raw] for [object], or Dart `null`.
+Map<String, Object?>? rawOptionsOf(Object object) => _rawOptions[object]?.last;
+
 /// The root scope of [config], with the raw options of [raw] merged into
 /// the scopes of their objects.
 ChartConfigurationScope lowerForTest(ChartConfig config) =>

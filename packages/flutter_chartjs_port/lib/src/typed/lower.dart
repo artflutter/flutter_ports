@@ -2,8 +2,8 @@
 
 /// The lowering of the typed config (Chart.js ADR 0052, section 2):
 /// [ChartConfigLowering], the root scope of a config, the conversions of
-/// the typed values to their option values, the merge of the `extra` Maps
-/// and the trampolines of the callbacks.
+/// the typed values to their option values and the trampolines of the
+/// callbacks.
 ///
 /// The typed config lowers to the typed option scopes of Chart.js ADR 0054
 /// (§7): the scope classes of `lib/src/options/scopes.g.dart`, with one
@@ -34,8 +34,6 @@
 ///    [tooltipCallbacksTrampoline]
 ///    and [animationTrampoline]). Thus a new closure in a config that is
 ///    `==` to the last one needs no new lowering.
-/// 6. `extra` merges last ([mergeExtra]): each entry becomes a cell of the
-///    shape of its key, and an object a typed scope of the kind of its key.
 ///
 /// Internal: no public library exports it.
 library;
@@ -90,7 +88,7 @@ final class ChartConfigLowering(
   bool _lastApplyDataOnly = false;
 
   /// Whether the `options` scope of the last [lower] or [apply] holds
-  /// `animation: false`: from `ChartAnimation.none`, from `extra`, or from an
+  /// `animation: false`: from `ChartAnimation.none`, or from an
   /// imperative write into the live scope.
   bool get animationOff {
     final options = _root.optionsCell?.raw;
@@ -100,7 +98,7 @@ final class ChartConfigLowering(
 
   /// The root scope of [config]: a new scope at each call, with the keys
   /// `type`, `data` (`labels` by reference and a new `datasets` List),
-  /// `options` (a new scope, `ChartConfig.extra` merged last) and `plugins`
+  /// `options` (a new scope) and `plugins`
   /// by reference.
   ///
   /// The new scopes become the live scopes of the next [apply].
@@ -282,8 +280,7 @@ final class ChartConfigLowering(
     return data;
   }
 
-  /// The `options` scope of [config]: a new scope, `ChartConfig.extra`
-  /// merged last.
+  /// The `options` scope of [config]: a new scope.
   ChartOptionsScope _options() {
     final config = this.config;
     final plugins = PluginOptionsByTypeScope();
@@ -294,8 +291,7 @@ final class ChartConfigLowering(
       plugins.jsWrite(options.pluginId, options);
     }
     // `options.plugins.<id>: false` for each plugin that an item of
-    // `disabledPlugins` matches, as an `extra` entry
-    // `{'plugins': {<id>: false}}` stores it (`core.plugins.js:146-172`).
+    // `disabledPlugins` matches (`core.plugins.js:146-172`).
     if (config.disabledPlugins case final offs?) {
       for (final plugin in [
         ...registry.plugins.items.values.whereType<Plugin<Object?>>(),
@@ -384,7 +380,7 @@ final class ChartConfigLowering(
     if (config.events case final events?) {
       put(options, OptionKey.events, List<String>.of(events));
     }
-    return mergeExtra(options, config.extra);
+    return options;
   }
 }
 
@@ -479,9 +475,7 @@ final class _LiveDataset(
       currentTooltipCallbacks: () => callbacks.dataset.tooltipCallbacks,
     );
     final last = lowered;
-    // An `extra` List goes by reference, so a new one is a new value even
-    // with the same items.
-    var dataOnly = byEntries(next.extra) == byEntries(dataset.extra);
+    var dataOnly = true;
     for (final key in last.ownKeys) {
       if (written.ownCell(key) == null) {
         scope.delete(key);
@@ -753,68 +747,6 @@ OptionScope _scopeOf(ScopeKind kind, Map<Object?, Object?> map) {
   return scope;
 }
 
-/// Merges [extra] into [scope] and gives [scope] (Chart.js ADR 0052, section
-/// 2 rule 9; Chart.js ADR 0054 §7).
-///
-/// Each entry of [extra] goes into [scope] after the typed keys, so an entry
-/// wins over a typed key of the same name. A Map value merges into the
-/// object of the key when [scope] has one (a typed scope or a Map), else it
-/// replaces the value with a new typed scope of the kind of the key, or a
-/// new `<String, Object?>` Map for a key with no kind. A List or another
-/// value replaces the value by reference. Each object of the result is new:
-/// Chart.js writes into the option objects, and a `const` Map of the app
-/// would throw. The keys of a Map of [extra] are Strings, as the keys of a
-/// JS object: in debug mode, a key of a nested Map that is not a `String`
-/// fails an assert that names the key.
-T mergeExtra<T extends OptionScope>(T scope, Map<String, Object?>? extra) {
-  if (extra != null) _mergeInto(scope, extra);
-  return scope;
-}
-
-/// Merges [source] into [target], a scope that the lowering made.
-void _mergeInto(OptionScope target, Map<Object?, Object?> source) {
-  for (final MapEntry(:key, :value) in source.entries) {
-    final name = _key(key);
-    if (value is Map<Object?, Object?>) {
-      final current = target.ownCell(name)?.raw;
-      if (current is OptionScope) {
-        _mergeInto(current, value);
-        continue;
-      }
-      if (current is Map<String, Object?>) {
-        _merge(current, value);
-        continue;
-      }
-    }
-    final previous = target.ownCell(name)?.raw;
-    _store(
-      target,
-      name,
-      previous is TooltipCallbacks && value is TooltipCallbacks
-          ? previous.merge(value)
-          : value,
-    );
-  }
-}
-
-/// Merges [source] into [target], a Map of the lowering under a key that no
-/// kind declares.
-void _merge(Map<String, Object?> target, Map<Object?, Object?> source) {
-  for (final MapEntry(:key, :value) in source.entries) {
-    final name = _key(key);
-    if (value is Map<Object?, Object?>) {
-      final current = target[name];
-      if (current is Map<String, Object?>) {
-        _merge(current, value);
-      } else {
-        target[name] = _copy(value);
-      }
-    } else {
-      target[name] = value;
-    }
-  }
-}
-
 /// A new `<String, Object?>` copy of [map], with a new copy of each Map
 /// value and the other values by reference.
 Map<String, Object?> _copy(Map<Object?, Object?> map) => <String, Object?>{
@@ -822,11 +754,11 @@ Map<String, Object?> _copy(Map<Object?, Object?> map) => <String, Object?>{
     _key(key): value is Map<Object?, Object?> ? _copy(value) : value,
 };
 
-/// [key], a key of a Map of `extra`, as a `String`.
+/// [key], a key of a Map of the lowering, as a `String`.
 String _key(Object? key) {
   assert(
     key is String,
-    'The key $key of an extra Map is a ${key.runtimeType}, not a String. '
+    'The key $key of an option Map is a ${key.runtimeType}, not a String. '
     'Chart.js options are objects with String keys: write the key as '
     "'$key'.",
   );

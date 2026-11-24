@@ -54,7 +54,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0049](0049-chart-view-widget.md) The ChartView widget and reduced motion: accepted, superseded in part by 0052.
 - [0050](0050-public-theme-api.md) The public theme API, the presets, the theme switch and the touch sizes: accepted, supersedes 0042, superseded by 0147, superseded in part by 0054, 0057, 0116, 0117, 0118, 0141.
 - [0051](0051-input-events-and-interaction-state.md) Input events and interaction state: accepted, superseded in part by 0108.
-- [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144, 0145, 0170, 0189, 0190, 0191, 0192, 0193, 0194, 0195, 0196, 0197.
+- [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144, 0145, 0170, 0189, 0190, 0191, 0192, 0193, 0194, 0195, 0196, 0197, 0201.
 - [0053](0053-resolver-fast-paths.md) The resolver fast paths: rejected.
 - [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147, 0165, 0183, 0192, 0193, 0194, 0196, 0197.
 - [0055](0055-native-draw-path.md) The native draw path of the canvas layer: accepted, supersedes 0013, superseded in part by 0106, 0200.
@@ -194,4 +194,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0198](0198-remove-raw-chart-view.md) Remove the raw ChartView config: accepted, supersedes 0195.
 - [0199](0199-typed-fixture-configs.md) Typed fixture configs: accepted, supersedes 0029.
 - [0200](0200-native-canvas-style-members.md) Native canvas style members and typed harness options: accepted, supersedes 0022, 0037, 0055, 0108, 0124.
+- [0201](0201-remove-extra.md) No extra Map in the typed API: accepted, supersedes 0052.
 <!-- adr-index:end -->

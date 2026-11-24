@@ -38,13 +38,6 @@ final class const ChartElements({
 
   /// The options of the arcs: `elements.arc`.
   final ArcElementStyle? arc,
-
-  /// The Chart.js element options that have no parameter, for example the
-  /// options of a custom element type. The entries go into the `elements`
-  /// Map last: an entry wins over a parameter with the same key. A Map
-  /// value merges into the Map of the key, a List or another value replaces
-  /// it.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The element options.
   this;
@@ -56,13 +49,11 @@ final class const ChartElements({
     LineElementStyle? line,
     BarElementStyle? bar,
     ArcElementStyle? arc,
-    Map<String, Object?>? extra,
   }) => ChartElements(
     point: point ?? this.point,
     line: line ?? this.line,
     bar: bar ?? this.bar,
     arc: arc ?? this.arc,
-    extra: extra ?? this.extra,
   );
 
   List<TypedProperty> get _props => [
@@ -70,7 +61,6 @@ final class const ChartElements({
     ('line', line),
     ('bar', bar),
     ('arc', arc),
-    ('extra', byEntries(extra)),
   ];
 
   @override
@@ -89,14 +79,14 @@ final class const ChartElements({
 }
 
 /// The `elements` scope of [elements] (Chart.js ADR 0054 §7): the keys in
-/// parameter order, `extra` last.
+/// parameter order.
 ElementOptionsByTypeScope lowerElements(ChartElements elements) {
   final scope = ElementOptionsByTypeScope();
   if (elements.point case final point?) scope.point = point._lower();
   if (elements.line case final line?) scope.line = line._lower();
   if (elements.bar case final bar?) scope.bar = bar._lower();
   if (elements.arc case final arc?) scope.arc = arc._lower();
-  return mergeExtra(scope, elements.extra);
+  return scope;
 }
 
 /// The options of the points of a chart: `elements.point`
@@ -112,7 +102,6 @@ final class const PointElementStyle({
 
   /// The style of a point: `pointStyle`, a [PointStyle] (row
   /// `adapt-point-style-objects`). The default is `CirclePointStyle`.
-  /// `false`, no point, goes through [extra].
   final PointStyle? pointStyle,
 
   /// The fill color of a point: `backgroundColor`.
@@ -149,10 +138,6 @@ final class const PointElementStyle({
   /// Whether the points under the pointer draw over the other points:
   /// `drawActiveElementsOnTop`. The default is `true`.
   final bool? drawActiveElementsOnTop,
-
-  /// The Chart.js point options that have no parameter, for example
-  /// `{'rotation': 45}`. The rules of [ChartElements.extra] apply.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The point options.
   this;
@@ -172,7 +157,6 @@ final class const PointElementStyle({
     ChartPaint? hoverBorderColor,
     double? hoverBorderWidth,
     bool? drawActiveElementsOnTop,
-    Map<String, Object?>? extra,
   }) => PointElementStyle(
     radius: radius ?? this.radius,
     pointStyle: pointStyle ?? this.pointStyle,
@@ -187,7 +171,6 @@ final class const PointElementStyle({
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     drawActiveElementsOnTop:
         drawActiveElementsOnTop ?? this.drawActiveElementsOnTop,
-    extra: extra ?? this.extra,
   );
 
   /// The `point` Map.
@@ -205,7 +188,7 @@ final class const PointElementStyle({
     put(scope, OptionKey.hoverBorderColor, hoverBorderColor);
     put(scope, OptionKey.hoverBorderWidth, hoverBorderWidth);
     put(scope, OptionKey.drawActiveElementsOnTop, drawActiveElementsOnTop);
-    return mergeExtra(scope, extra);
+    return scope;
   }
 
   List<TypedProperty> get _props => [
@@ -221,7 +204,6 @@ final class const PointElementStyle({
     ('hoverBorderColor', hoverBorderColor),
     ('hoverBorderWidth', hoverBorderWidth),
     ('drawActiveElementsOnTop', drawActiveElementsOnTop),
-    ('extra', byEntries(extra)),
   ];
 
   @override
@@ -297,11 +279,6 @@ final class const LineElementStyle({
   /// Whether the control points of a curve stay inside the chart area:
   /// `capBezierPoints`. The default is `true`.
   final bool? capBezierPoints,
-
-  /// The Chart.js line options that have no parameter, for example
-  /// `{'capBezierPoints': false}`. The rules of
-  /// [ChartElements.extra] apply.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The line options.
   this;
@@ -322,7 +299,6 @@ final class const LineElementStyle({
     LineSegmentStyle? segment,
     double? borderDashOffset,
     bool? capBezierPoints,
-    Map<String, Object?>? extra,
   }) => LineElementStyle(
     tension: tension ?? this.tension,
     backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -338,7 +314,6 @@ final class const LineElementStyle({
     segment: segment ?? this.segment,
     borderDashOffset: borderDashOffset ?? this.borderDashOffset,
     capBezierPoints: capBezierPoints ?? this.capBezierPoints,
-    extra: extra ?? this.extra,
   );
 
   /// The `line` Map.
@@ -357,7 +332,7 @@ final class const LineElementStyle({
     put(scope, OptionKey.segment, segment);
     put(scope, OptionKey.borderDashOffset, borderDashOffset);
     put(scope, OptionKey.capBezierPoints, capBezierPoints);
-    return mergeExtra(scope, extra);
+    return scope;
   }
 
   List<TypedProperty> get _props => [
@@ -374,7 +349,6 @@ final class const LineElementStyle({
     ('segment', segment),
     ('borderDashOffset', borderDashOffset),
     ('capBezierPoints', capBezierPoints),
-    ('extra', byEntries(extra)),
   ];
 
   @override
@@ -455,7 +429,7 @@ final class const BarElementStyle({
   final double? borderWidth,
 
   /// The radius of the corners of a bar in pixels: `borderRadius` as a
-  /// number. The object form goes through [extra].
+  /// number.
   final double? borderRadius,
 
   /// The edges of a bar that draw no border: `borderSkipped`, a
@@ -465,10 +439,6 @@ final class const BarElementStyle({
   /// The pixels that each side of a bar grows by: `inflateAmount`. Null is the
   /// upstream `'auto'` (row `adapt-inflate-amount-auto`).
   final double? inflateAmount,
-
-  /// The Chart.js bar options that have no parameter, for example
-  /// `{'inflateAmount': 0}`. The rules of [ChartElements.extra] apply.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The bar options.
   this;
@@ -482,7 +452,6 @@ final class const BarElementStyle({
     double? borderRadius,
     BorderSkip? borderSkipped,
     double? inflateAmount,
-    Map<String, Object?>? extra,
   }) => BarElementStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
@@ -490,7 +459,6 @@ final class const BarElementStyle({
     borderRadius: borderRadius ?? this.borderRadius,
     borderSkipped: borderSkipped ?? this.borderSkipped,
     inflateAmount: inflateAmount ?? this.inflateAmount,
-    extra: extra ?? this.extra,
   );
 
   /// The `bar` Map.
@@ -502,7 +470,7 @@ final class const BarElementStyle({
     put(scope, OptionKey.borderRadius, borderRadius);
     put(scope, OptionKey.borderSkipped, borderSkippedOf(borderSkipped));
     put(scope, OptionKey.inflateAmount, inflateAmount);
-    return mergeExtra(scope, extra);
+    return scope;
   }
 
   List<TypedProperty> get _props => [
@@ -512,7 +480,6 @@ final class const BarElementStyle({
     ('borderRadius', borderRadius),
     ('borderSkipped', borderSkipped),
     ('inflateAmount', inflateAmount),
-    ('extra', byEntries(extra)),
   ];
 
   @override
@@ -580,10 +547,6 @@ final class const ArcElementStyle({
 
   /// The angle of an arc of a polar area chart, in degrees: `angle`.
   final double? angle,
-
-  /// The Chart.js arc options that have no parameter, for example
-  /// `{'circular': false}`. The rules of [ChartElements.extra] apply.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The arc options.
   this;
@@ -604,7 +567,6 @@ final class const ArcElementStyle({
     bool? selfJoin,
     bool? circular,
     double? angle,
-    Map<String, Object?>? extra,
   }) => ArcElementStyle(
     backgroundColor: backgroundColor ?? this.backgroundColor,
     borderColor: borderColor ?? this.borderColor,
@@ -619,7 +581,6 @@ final class const ArcElementStyle({
     selfJoin: selfJoin ?? this.selfJoin,
     circular: circular ?? this.circular,
     angle: angle ?? this.angle,
-    extra: extra ?? this.extra,
   );
 
   /// The `arc` Map.
@@ -638,7 +599,7 @@ final class const ArcElementStyle({
     put(scope, OptionKey.selfJoin, selfJoin);
     put(scope, OptionKey.circular, circular);
     put(scope, OptionKey.angle, angle);
-    return mergeExtra(scope, extra);
+    return scope;
   }
 
   List<TypedProperty> get _props => [
@@ -655,7 +616,6 @@ final class const ArcElementStyle({
     ('selfJoin', selfJoin),
     ('circular', circular),
     ('angle', angle),
-    ('extra', byEntries(extra)),
   ];
 
   @override

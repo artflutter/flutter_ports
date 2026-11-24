@@ -27,7 +27,7 @@ import 'package:intl/intl.dart' show NumberFormat;
 /// A radial chart (polar area, radar) has one [RadialLinearAxis].
 ///
 /// A parameter that is `null` is not set: the chart uses the default of
-/// Chart.js. The keys that this class does not have go through [extra].
+/// Chart.js. The typed API takes no option that a class does not have.
 ///
 /// An axis is immutable. `==` compares the parameters: [CategoryAxis.labels]
 /// by identity, and [AxisTicks.callback] with `==`.
@@ -43,8 +43,8 @@ abstract final class const ChartAxis({
   /// A cartesian axis takes [ChartPosition.top], [ChartPosition.left],
   /// [ChartPosition.bottom], [ChartPosition.right] and
   /// [ChartPosition.center]. The default is the bottom for an x axis and
-  /// the left for a y axis. The position at a value of another axis goes
-  /// through [extra]: `{'position': ScaleValuePosition('x', 0)}`.
+  /// the left for a y axis. The typed API has no position at a value of
+  /// another axis.
   final ChartPosition? position,
 
   /// Whether the axis runs in the other direction: `reverse`.
@@ -138,15 +138,6 @@ abstract final class const ChartAxis({
 
   /// The title of the axis: `title`.
   final AxisTitle? title,
-
-  /// The Chart.js options of the axis that have no parameter, for example
-  /// `{'time': {'round': TimeUnit.day}}`.
-  ///
-  /// The entries go into the axis Map last: an entry wins over a parameter
-  /// with the same key. A Map value merges into the Map of the key, a List
-  /// or another value replaces it. The chart gets a copy of each Map and the
-  /// Lists of the app.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The parameters of each axis class.
   this;
@@ -189,7 +180,6 @@ abstract final class const ChartAxis({
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisTitle? title,
-    Map<String, Object?>? extra,
   });
 
   /// The scale type: the id of the scale class.
@@ -236,7 +226,6 @@ abstract final class const ChartAxis({
     ('grid', grid),
     ('border', border),
     ('title', title),
-    ('extra', byEntries(extra)),
   ];
 
   @override
@@ -258,7 +247,7 @@ abstract final class const ChartAxis({
 
 /// The axis scope of [axis] (Chart.js ADR 0052, section 2; Chart.js ADR
 /// 0054 §7): a new `ScaleOptionsScope` with `type` first, then the keys in
-/// parameter order, and [ChartAxis.extra] last. With [writeAxis], the
+/// parameter order. With [writeAxis], the
 /// option `axis` follows `type`: the id of the axis does not name its
 /// direction (Chart.js ADR 0191, item 3).
 ScaleOptionsScope lowerAxis(ChartAxis axis, {bool writeAxis = false}) {
@@ -318,7 +307,7 @@ ScaleOptionsScope lowerAxis(ChartAxis axis, {bool writeAxis = false}) {
     );
   }
   if (_lowerTitle(axis.title) case final title?) scope.title = title;
-  return mergeExtra(scope, axis.extra);
+  return scope;
 }
 
 /// A category axis: the scale type `category` (`docs/axes/cartesian/
@@ -399,7 +388,6 @@ final class const CategoryAxis(
   /// default `borderColor`.
   @override final AxisBorder? border,
   super.title,
-  super.extra,
 }) extends ChartAxis {
   /// A category axis.
   this;
@@ -443,7 +431,6 @@ final class const CategoryAxis(
     AxisGrid? grid,
     AxisBorder? border,
     AxisTitle? title,
-    Map<String, Object?>? extra,
   }) => CategoryAxis(
     axis ?? this.axis,
     display: display ?? this.display,
@@ -486,7 +473,6 @@ final class const CategoryAxis(
     grid: grid ?? this.grid,
     border: border ?? this.border,
     title: title ?? this.title,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -605,7 +591,6 @@ final class const LinearAxis(
   /// default `borderColor`.
   @override final AxisBorder? border,
   super.title,
-  super.extra,
 }) extends ChartAxis {
   /// A linear axis.
   this;
@@ -650,7 +635,6 @@ final class const LinearAxis(
     AxisGrid? grid,
     AxisBorder? border,
     AxisTitle? title,
-    Map<String, Object?>? extra,
   }) => LinearAxis(
     axis ?? this.axis,
     display: display ?? this.display,
@@ -694,7 +678,6 @@ final class const LinearAxis(
     grid: grid ?? this.grid,
     border: border ?? this.border,
     title: title ?? this.title,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -798,7 +781,6 @@ final class const LogarithmicAxis(
   /// default `borderColor`.
   @override final AxisBorder? border,
   super.title,
-  super.extra,
 }) extends ChartAxis {
   /// A logarithmic axis.
   this;
@@ -842,7 +824,6 @@ final class const LogarithmicAxis(
     AxisGrid? grid,
     AxisBorder? border,
     AxisTitle? title,
-    Map<String, Object?>? extra,
   }) => LogarithmicAxis(
     axis ?? this.axis,
     display: display ?? this.display,
@@ -885,7 +866,6 @@ final class const LogarithmicAxis(
     grid: grid ?? this.grid,
     border: border ?? this.border,
     title: title ?? this.title,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -1085,7 +1065,6 @@ final class const TimeAxis(
   /// default `borderColor`.
   @override final AxisBorder? border,
   super.title,
-  super.extra,
 }) extends ChartAxis with _TimeOptions {
   /// A time axis.
   this;
@@ -1135,7 +1114,6 @@ final class const TimeAxis(
     AxisGrid? grid,
     AxisBorder? border,
     AxisTitle? title,
-    Map<String, Object?>? extra,
   }) => TimeAxis(
     axis ?? this.axis,
     display: display ?? this.display,
@@ -1184,7 +1162,6 @@ final class const TimeAxis(
     grid: grid ?? this.grid,
     border: border ?? this.border,
     title: title ?? this.title,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -1305,7 +1282,6 @@ final class const TimeSeriesAxis(
   /// default `borderColor`.
   @override final AxisBorder? border,
   super.title,
-  super.extra,
 }) extends ChartAxis with _TimeOptions {
   /// A time series axis.
   this;
@@ -1355,7 +1331,6 @@ final class const TimeSeriesAxis(
     AxisGrid? grid,
     AxisBorder? border,
     AxisTitle? title,
-    Map<String, Object?>? extra,
   }) => TimeSeriesAxis(
     axis ?? this.axis,
     display: display ?? this.display,
@@ -1404,7 +1379,6 @@ final class const TimeSeriesAxis(
     grid: grid ?? this.grid,
     border: border ?? this.border,
     title: title ?? this.title,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -1646,7 +1620,6 @@ final class const RadialLinearAxis({
   /// axis has no axis line. The default is a solid line.
   @override final RadialAxisBorder? border,
   super.title,
-  super.extra,
 }) extends ChartAxis {
   /// A radial linear axis.
   this;
@@ -1695,7 +1668,6 @@ final class const RadialLinearAxis({
     AxisGrid? grid,
     RadialAxisBorder? border,
     AxisTitle? title,
-    Map<String, Object?>? extra,
   }) => RadialLinearAxis(
     display: display ?? this.display,
     position: position ?? this.position,
@@ -1743,7 +1715,6 @@ final class const RadialLinearAxis({
     grid: grid ?? this.grid,
     border: border ?? this.border,
     title: title ?? this.title,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -1907,10 +1878,6 @@ final class const AxisTicks({
   /// The number of ticks of a linear axis: `count`. The axis computes the step
   /// size.
   final double? count,
-
-  /// The Chart.js tick options that have no parameter, for example
-  /// `{'major': {'enabled': true}}`. The rules of [ChartAxis.extra] apply.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The tick options of an axis.
   this;
@@ -1945,7 +1912,6 @@ final class const AxisTicks({
     NumberFormat? format,
     double? precision,
     double? count,
-    Map<String, Object?>? extra,
   }) => AxisTicks(
     display: display ?? this.display,
     color: color ?? this.color,
@@ -1974,7 +1940,6 @@ final class const AxisTicks({
     format: format ?? this.format,
     precision: precision ?? this.precision,
     count: count ?? this.count,
-    extra: extra ?? this.extra,
   );
 
   List<TypedProperty> get _props => [
@@ -2005,7 +1970,6 @@ final class const AxisTicks({
     ('format', format),
     ('precision', precision),
     ('count', count),
-    ('extra', byEntries(extra)),
   ];
 
   @override
@@ -2062,7 +2026,7 @@ TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   put(scope, OptionKey.format, ticks.format);
   put(scope, OptionKey.precision, ticks.precision);
   put(scope, OptionKey.count, ticks.count);
-  return mergeExtra(scope, ticks.extra);
+  return scope;
 }
 
 /// The grid lines of an axis: `grid` (`docs/axes/styling.md`, "Grid Line
@@ -2116,10 +2080,6 @@ final class const AxisGrid({
   /// The drawing order of the grid lines: `z`. A value above 0 draws the lines
   /// over the datasets.
   final double? z,
-
-  /// The Chart.js grid options that have no parameter, for example a
-  /// function for `color`. The rules of [ChartAxis.extra] apply.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The grid options of an axis.
   this;
@@ -2140,7 +2100,6 @@ final class const AxisGrid({
     ScaleValue<ChartPaint>? tickColor,
     ScaleValue<double>? tickWidth,
     double? z,
-    Map<String, Object?>? extra,
   }) => AxisGrid(
     display: display ?? this.display,
     color: color ?? this.color,
@@ -2155,7 +2114,6 @@ final class const AxisGrid({
     tickColor: tickColor ?? this.tickColor,
     tickWidth: tickWidth ?? this.tickWidth,
     z: z ?? this.z,
-    extra: extra ?? this.extra,
   );
 
   List<TypedProperty> get _props => [
@@ -2172,7 +2130,6 @@ final class const AxisGrid({
     ('tickColor', tickColor),
     ('tickWidth', tickWidth),
     ('z', z),
-    ('extra', byEntries(extra)),
   ];
 
   @override
@@ -2215,7 +2172,7 @@ GridLineOptionsScope? _lowerGrid(AxisGrid? grid) {
     scope.store(OptionKey.tickWidth, value.toOptionCell());
   }
   put(scope, OptionKey.z, grid.z);
-  return mergeExtra(scope, grid.extra);
+  return scope;
 }
 
 /// The title of an axis: `title` (`docs/axes/labelling.md`, "Scale
@@ -2248,10 +2205,6 @@ final class const AxisTitle({
 
   /// The width of the outline of the title in pixels: `strokeWidth`.
   final double? strokeWidth,
-
-  /// The Chart.js title options that have no parameter. The rules of
-  /// [ChartAxis.extra] apply.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The title options of an axis.
   this;
@@ -2267,7 +2220,6 @@ final class const AxisTitle({
     EdgeInsets? padding,
     ChartPaint? strokeColor,
     double? strokeWidth,
-    Map<String, Object?>? extra,
   }) => AxisTitle(
     display: display ?? this.display,
     text: text ?? this.text,
@@ -2277,7 +2229,6 @@ final class const AxisTitle({
     padding: padding ?? this.padding,
     strokeColor: strokeColor ?? this.strokeColor,
     strokeWidth: strokeWidth ?? this.strokeWidth,
-    extra: extra ?? this.extra,
   );
 
   List<TypedProperty> get _props => [
@@ -2289,7 +2240,6 @@ final class const AxisTitle({
     ('padding', padding),
     ('strokeColor', strokeColor),
     ('strokeWidth', strokeWidth),
-    ('extra', byEntries(extra)),
   ];
 
   @override
@@ -2319,5 +2269,5 @@ ScaleTitleOptionsScope? _lowerTitle(AxisTitle? title) {
   put(scope, OptionKey.padding, title.padding);
   put(scope, OptionKey.strokeColor, title.strokeColor);
   put(scope, OptionKey.strokeWidth, title.strokeWidth);
-  return mergeExtra(scope, title.extra);
+  return scope;
 }

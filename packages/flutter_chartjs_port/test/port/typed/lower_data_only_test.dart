@@ -2,7 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' show Color, Locale;
+import 'dart:ui' show Color;
 
 import 'package:flutter/widgets.dart' show EdgeInsets, ValueKey;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -35,7 +35,6 @@ ChartConfig _config(
   EdgeInsets? padding,
   ChartAnimation? animation = ChartAnimation.none,
   List<Plugin<Object?>>? plugins,
-  Map<String, Object?>? extra,
 }) => ChartConfig(
   labels: labels ?? _labels,
   datasets: datasets,
@@ -45,7 +44,6 @@ ChartConfig _config(
   padding: padding,
   animation: animation,
   plugins: plugins,
-  extra: extra,
 );
 
 bool _report(ChartConfig first, ChartConfig next) {
@@ -190,19 +188,6 @@ void main() {
       );
     });
 
-    test('an entry of extra of the config', () {
-      expect(
-        _report(
-          _config([BarDataset(data: .values(_data()))]),
-          _config(
-            [BarDataset(data: .values(_data()))],
-            extra: const {'locale': Locale('de', 'DE')},
-          ),
-        ),
-        isFalse,
-      );
-    });
-
     test('a replaced plugin', () {
       expect(
         _report(
@@ -288,11 +273,9 @@ void main() {
             ),
           ),
           (
-            'an extra entry',
-            (data) => BarDataset(
-              data: .values(data),
-              extra: const {'clip': ChartClip.all(5)},
-            ),
+            'a clip',
+            (data) =>
+                BarDataset(data: .values(data), clip: const ChartClip.all(5)),
           ),
         ]) {
       test('a dataset field that comes: $name', () {
@@ -379,43 +362,6 @@ void main() {
       expect(_report(_config([colored()]), _config([colored()])), isFalse);
     });
 
-    test('a new extra List with the same items: it goes by reference', () {
-      Dataset dataset(List<Object?> list) => BarDataset(
-        data: .values(_data()),
-        extra: <String, Object?>{'backgroundColor': list},
-      );
-      expect(
-        _report(
-          _config([
-            dataset(<Object?>[_red]),
-          ]),
-          _config([
-            dataset(<Object?>[_red]),
-          ]),
-        ),
-        isFalse,
-      );
-    });
-
-    test('the same extra List stays data only', () {
-      final list = <Object?>[_red];
-      Dataset dataset() => BarDataset(
-        data: .values(_data()),
-        extra: <String, Object?>{'backgroundColor': list},
-      );
-      expect(_report(_config([dataset()]), _config([dataset()])), isTrue);
-    });
-
-    test('an equal extra Map of a dataset: a new scope in each lowering', () {
-      Dataset dataset() => BarDataset(
-        data: .values(_data()),
-        extra: const {
-          'datalabels': {'a': 1},
-        },
-      );
-      expect(_report(_config([dataset()]), _config([dataset()])), isFalse);
-    });
-
     test('a data List that goes', () {
       expect(
         _report(
@@ -492,33 +438,6 @@ void main() {
           _config([
             BarDataset(data: .values(_data())),
           ], animation: const ChartAnimation(duration: Duration(seconds: 1))),
-        ),
-        isFalse,
-      );
-    });
-
-    test('false in extra', () {
-      expect(
-        off(
-          _config(
-            [BarDataset(data: .values(_data()))],
-            animation: null,
-            extra: const {'animation': false},
-          ),
-        ),
-        isTrue,
-      );
-    });
-
-    test('an object of extra over ChartAnimation.none', () {
-      expect(
-        off(
-          _config(
-            [BarDataset(data: .values(_data()))],
-            extra: const {
-              'animation': {'duration': 500},
-            },
-          ),
         ),
         isFalse,
       );

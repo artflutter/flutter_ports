@@ -17,8 +17,8 @@
 ///   style Lists (`borderDash`) and the dataset List
 ///   use it.
 /// - [byEntries]: the entries of a Map compare by `==`, in key order, and a
-///   value that is a Map compares by its entries too. The `scales` Map and
-///   the `extra` Maps use it. Lists in the Map compare by identity, as the
+///   value that is a Map compares by its entries too. The `scales` Map uses
+///   it. Lists in the Map compare by identity, as the
 ///   lowering passes them by reference.
 /// - [byIdentityItems]: the items of a List compare by identity, in order.
 ///   The `plugins` List uses it: `plugins: [plugin]` in each build is the

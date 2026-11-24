@@ -865,7 +865,6 @@ maxPieceCommands
 measureCanvasText
 measureText
 merge
-mergeExtra
 mergeIf
 mergeNativeOptionValues
 merger
@@ -1934,7 +1933,6 @@ maxPieceCommands
 measureCanvasText
 measureText
 merge
-mergeExtra
 mergeIf
 mergeNativeOptionValues
 merger

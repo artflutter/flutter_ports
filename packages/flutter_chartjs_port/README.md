@@ -51,8 +51,6 @@ The zoom port uses it with its option `rangeOnlyUpdates`
 - A typed Dart API: `ChartConfig`, one dataset class for each chart type, typed axes and option
   groups, Flutter values (`Color`, `TextStyle`, `Duration`, `EdgeInsets`) and callbacks with
   `int` indexes.
-- `extra` for each Chart.js option with no parameter: the same keys, the same defaults and the
-  same results.
 - Animations, hover, tooltips and legend clicks with a mouse, a touch screen or the keyboard.
 - A theme API with light and dark presets, a semantics node for screen readers, and reduced
   motion.
@@ -190,24 +188,23 @@ The values of the options are Dart and Flutter values:
   calculated from each item's context. Scalar paint fields take `ChartPaint`.
   Use `.solid(color)`, `ChartGradient.linear(...)` or `ChartPattern(image)`.
   Shadow colors, theme tokens, palette entries and gradient stops remain `Color`.
-- Fonts are `TextStyle` values, also in `extra`: the chart lays out each text with the
-  whole style, and the line height is `fontSize * height`. `extra` and a font function can
-  give a `ChartTextStyle`, a `TextStyle` with the field `lineHeight`. The chart does not read the
+- Fonts are `TextStyle` values: the chart lays out each text with the whole style, and the
+  line height is `fontSize * height`. A font can be a `ChartTextStyle`, a `TextStyle` with the
+  field `lineHeight`. The chart does not read the
   color of a `TextStyle`: each font parameter has a color parameter next to it, for example
   `labelFont` and `labelColor`.
-- The legend and tooltip `textDirection` options take `TextDirection` values, also in
-  `extra`. Each override is restored after drawing; omitting it keeps the current canvas direction.
+- The legend and tooltip `textDirection` options take `TextDirection` values. Each override is restored after drawing; omitting it keeps the current canvas direction.
 - Durations are `Duration` values, and paddings are `EdgeInsets` values.
 - A pie or doughnut `cutout` or `radius` is a `RadiusLength`: `const PercentRadius(50)` or
   `const PixelRadius(80)`. A scale `grace` is a `GraceLength`: `const PercentGrace(5)` or
-  `const ValueGrace(0.3)`, through `extra`.
+  `const ValueGrace(0.3)`.
 - Names are dot shorthands: `position: .bottom`, `fill: .toOrigin`.
 - A point style is a class: `pointStyle: const .constant(StarPointStyle())`. An app or a plugin
   can add its own style as a subclass of `PathPointStyle`. The point radius, the hover radius and
   the point style of a line, scatter or radar dataset take a `ChartValue`, as the colors do:
   `pointRadius: .indexed([0, 4, 0])` or `pointStyle: .resolver(styleOf)`. The cubic interpolation mode of a line is a class
   too: `cubicInterpolationMode: const MonotoneCubicInterpolationMode()`.
-- A fill is a `FillTarget`, in the typed API and in `extra`: `.none`, `.toOrigin`,
+- A fill is a `FillTarget`: `.none`, `.toOrigin`,
   `.toStart`, `.toEnd`, `.toStacked`, `.shape`, `.toPrevious`, `.toNext`, `.toDataset(0)`,
   `.toRelative(-2)` and `.toValue(10)`. `FillTarget.toOrigin.split(above: green, below: red)`
   gives the fill its own colors above and below the target.
@@ -232,8 +229,8 @@ and `copyWith(borderColor: ...)` independently switch between the three forms;
 a `null` copy argument retains the current form. Indexed style lists are copied
 when lowered, and callbacks should use a stable tear-off when possible.
 Hover and point-specific dataset colors use the same variants. Element-style
-colors take `ChartPaint` directly. Options in `extra` keep value/list/function forms with
-`ChartPaint` leaves.
+colors take `ChartPaint` directly. The scriptable options of an axis take a `ScaleValue`
+(`.constant`, `.indexed` or `.resolver` of a `ScriptableScaleContext`).
 
 Each dataset class takes a `shadow`. The lines, the points, the bars and the arcs of the dataset
 cast it. The area fill of a line does not. `blur` is the `shadowBlur` of the canvas: the Gaussian
@@ -286,7 +283,7 @@ List<String>? formatVotes(
 ```
 
 The result is the lines of the label. A `null` result removes the tick, and an empty list keeps
-the tick with no label. The same `TickCallback` is the value of `ticks.callback` in `extra`. The axes are `CategoryAxis`, `LinearAxis`, `LogarithmicAxis`,
+the tick with no label. The axes are `CategoryAxis`, `LinearAxis`, `LogarithmicAxis`,
 `TimeAxis`, `TimeSeriesAxis` and `RadialLinearAxis` (the axis `r` of a radar or polar area chart).
 A `TimeAxis` takes `DateTime` limits and a `unit`, for example `TimeAxis(.x, unit: .day)`.
 
@@ -358,7 +355,7 @@ horizontal bar chart: the index axis takes `XAxis` or `YAxis` only. `responsive`
 
 ### Callbacks
 
-The callbacks are typed functions, with `int` indexes. `extra` takes the same types:
+The callbacks are typed functions, with `int` indexes:
 
 ```dart
 class const VotesPage({super.key}) extends StatefulWidget {
@@ -438,23 +435,21 @@ class _VotesPageState() extends State<VotesPage> {
   `legend.legendHitBoxes` exposes native `LegendHitBox` objects with mutable geometry, integer
   row/column membership, and overridable `contains`, `center`, `copyWith` and `merge`.
   The `equalsTo` extension compares hit-box fields explicitly; `==` retains identity equality.
-- `TooltipOptions.callbacks` takes a `TooltipCallbacks` object, also in `extra`. Its text
+- `TooltipOptions.callbacks` takes a `TooltipCallbacks` object. Its text
   hooks return a list of lines: `null` requests the built-in default and `[]` emits no text.
   Each callback receives the tooltip model and its item or item list. Dataset `tooltipCallbacks`
   override the six per-item hooks. Callback objects merge field by field with `merge`.
 - `AxisTicks.callback` is a `TickCallback`: it gets the scale, the value, the index and all ticks,
   and gives the lines of the tick label. `ChartAnimation.onProgress` and `onComplete` are an
   `AnimationEventHandler`: they get the `AnimationEvent` of the animator.
-- In `extra`, the scale hooks (`beforeUpdate` to `afterFit`) are a `ScaleHook`, which gets the
-  scale; the animation `fn` is an `Interpolator`; a time `parser` function is a `TimeParser`; and
-  the radial `pointLabels.callback` is a `PointLabelCallback`, which gets the label and its `int`
-  index. A function of another type stops a debug build.
+- The scale hooks of an axis (`beforeUpdate` to `afterFit`) are a `ScaleHook`, which gets the
+  scale; `TimeAxis.parserFunction` is a `TimeParser`; and
+  `RadialLinearAxis.pointLabelsCallback` is a `PointLabelCallback`, which gets the label and its
+  `int` index.
 - A dataset's `backgroundColor: ChartValue.resolver(...)` and `borderColor: .resolver(...)` get a
   `ScriptableContext` (`dataIndex`, `datasetIndex`, `raw`, `parsed`, `active`, `mode`, `chart`)
-  for each element. A scriptable option in `extra` takes the context class of its option:
-  `ScriptableContext` for a dataset, `ScriptableScaleContext` for a scale or a tick, and
-  `ScriptableChartContext`, `ScriptableScalePointLabelContext` or `ScriptableTooltipContext`. A
-  context has typed members only: an absent member is `null`.
+  for each element, and an axis `.resolver(...)` gets a `ScriptableScaleContext`. A context has
+  typed members only: an absent member is `null`.
 
 The chart methods take `int` indexes: `chart.hide(hit.datasetIndex)`,
 `chart.isDatasetVisible(index)`, `chart.getDatasetMeta(index)`. The callbacks run in the phases of
@@ -531,30 +526,31 @@ class _ScoresState() extends State<Scores> {
   options.
 - `updateMode` sets the mode of the update, for example `updateMode: 'none'` for no animation.
 
-### Options without a parameter
+### The second form of an option
 
-The typed config has the common options of the Chart.js docs. Each class has `extra`, a Map of
-Chart.js options that go into the Map of that class last:
+Some Chart.js options take two forms. The typed config gives the second form its own parameter,
+and a config gives one of the two:
 
 ```dart
 ChartConfig(
   labels: labels,
   datasets: [
-    LineDataset(
-      label: 'Visitors',
-      data: .values(visitors),
-      borderCapStyle: StrokeCap.round,
-      extra: const {'cubicInterpolationMode': 'monotone'},
+    BarDataset(
+      label: 'Range',
+      data: .ranges([(1, 5), (2, 6)]),
+      borderRadiusCorners: const BorderRadius.vertical(top: Radius.circular(4)),
     ),
   ],
-  interaction: const ChartInteraction(intersect: false, axis: .x),
-  extra: const {'locale': 'de-DE'},
+  datasetDefaults: [const BarDataset(borderWidth: 1)],
+  locale: const Locale('de', 'DE'),
 )
 ```
 
-`ChartConfig.extra` goes into `options`. A key of `extra` wins over a parameter with the same
-key, and a Map value merges into the Map of the key. Thus `extra` also takes a native `ChartPaint`,
-a gradient function or the JavaScript `null` (Dart `null` in a parameter means "not set").
+The pairs are `borderRadius` and `borderRadiusCorners`, `borderWidth`, `borderWidths` and
+`borderWidthSides`, `spanGaps` and `spanGapsDistance`, the `min` and `max` of a `CategoryAxis` and
+`minIndex` and `maxIndex`, `parser` and `parserFunction` of a time axis, and `border` and
+`borderFunction` of an axis. The options of all datasets of a type go in
+`ChartConfig.datasetDefaults`.
 
 ### Registration
 
@@ -678,7 +674,7 @@ Custom canvas drawing uses `CanvasCompositeOperation` for
 The enum is available from both public chart libraries and needs no `dart:ui`
 import. A null assignment leaves the native canvas operation unchanged.
 
-Paint options use `ChartPaint` in the typed API and in `extra`. CSS color strings such as
+Paint options use `ChartPaint` in the typed API. CSS color strings such as
 `'red'`, `'#36A2EB'` and `'rgba(54, 162, 235, 0.5)'`, and bare Flutter colors,
 are rejected. Use `const ChartPaint.solid(Color(0xFF36A2EB))` instead.
 Lists contain paints and scriptable callbacks return paints. Gradient stops,

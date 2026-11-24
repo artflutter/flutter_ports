@@ -53,13 +53,13 @@ List<BenchCase> helperCases() => [
             .x,
             grid: AxisGrid(offset: true, display: true),
             ticks: AxisTicks(autoSkip: true, padding: 3),
-            extra: {'offset': true},
+            offset: true,
           ),
           LinearAxis(
             .y,
             beginAtZero: true,
             ticks: AxisTicks(padding: 3),
-            extra: {'grace': ValueGrace(0)},
+            grace: ValueGrace(0),
           ),
         ],
         pluginOptions: [

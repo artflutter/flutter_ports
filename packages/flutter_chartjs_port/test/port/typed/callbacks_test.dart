@@ -51,8 +51,7 @@ ChartConfig _bar({
 );
 
 /// The chart of the typed [config] (Chart.js ADR 0195).
-Chart _acquire(ChartConfig config) =>
-    acquireChartRoot(ChartConfigLowering(config).lower());
+Chart _acquire(ChartConfig config) => acquireChartRoot(lowerForTest(config));
 
 /// The center of the legend hit box [index] of [chart].
 Map<String, Object?> _legendBox(Chart chart, int index) {
@@ -134,20 +133,22 @@ void main() {
         return const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1));
       }
 
+      // A scriptable padding has no parameter: `padding` takes an
+      // `EdgeInsets`. The raw options of the harness give the function.
       final chart = _acquire(
-        ChartConfig(
-          labels: const ['a', 'b'],
-          datasets: [
-            LineDataset(
-              data: const .values([5, 7]),
-              borderColor: ChartValue.resolver(record),
-              hoverBorderColor: ChartValue.resolver(record),
-            ),
-          ],
-          animation: ChartAnimation.none,
-          // A scriptable padding has no parameter: `padding` takes an
-          // `EdgeInsets`.
-          extra: {
+        raw(
+          ChartConfig(
+            labels: const ['a', 'b'],
+            datasets: [
+              LineDataset(
+                data: const .values([5, 7]),
+                borderColor: ChartValue.resolver(record),
+                hoverBorderColor: ChartValue.resolver(record),
+              ),
+            ],
+            animation: ChartAnimation.none,
+          ),
+          {
             'layout': {
               'padding': (ContextObject context, Object? options) {
                 contexts.add(context);

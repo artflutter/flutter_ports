@@ -44,8 +44,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// widget owns. Register the components first: `Chart.register(registerables)`.
 ///
 /// The config is a typed `ChartConfig` (Chart.js ADRs 0052 and 0198): the
-/// datasets, the data and the options as Dart classes. `extra` gives an
-/// option that the classes do not have.
+/// datasets, the data and the options as Dart classes.
 ///
 /// ```dart
 /// ChartView(

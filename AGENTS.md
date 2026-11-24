@@ -236,6 +236,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `harness-index-pure-split`). It also has `setUpBuiltins()` and `removeBuiltins()` (the row
     `harness-register-builtins`). `setUpSpecs()` calls `removeBuiltins()` and then
     `setUpDefaultsRestore()`. It exports each file of `lib/src/` of the pure part (ADR 0011).
+  - `lib/src/raw_options.dart` (Chart.js ADR 0201): `raw(object, map)` attaches the raw options of
+    a test to an object of a typed config, and `lowerForTest(config)` lowers the config and merges
+    each Map into the scope of its object, last; `rawOptionsOf` reads them. `lib/src/scope_from_map.dart`
+    has `scopeFromMap`, the Map merge of the tests (`pure.dart`). The fixture runner lowers with
+    `lowerForTest`.
   - `lib/flutter.dart`: the part that needs the Flutter engine, for `flutter test` only. It
     exports each other file of `lib/src/`, with `hide acquireChart, releaseChart` on `utils.dart`
     (ADR 0011). It has `installTestFont()`. It also has the DOM stand-in of `lib/src/dom.dart` and the chart helpers
@@ -334,8 +339,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     and Axes. The Core tab (`lib/demo/core_demo.dart`) runs a `LineController` chart with the
     typed config of Chart.js ADR 0052 §13, on two hidden linear axes (the typed form of
     `unitScales()`). `build` makes the `ChartConfig` from the control values: a control changes a
-    value in `setState`, and the data commands give new data Lists. `interaction.axis` and
-    `elements.point.hoverBorderWidth` go through `extra`. The duration of the hover transition is a
+    value in `setState`, and the data commands give new data Lists. The duration of the hover transition is a
     `HoverTransition` of `ChartConfig.transitions`. Thus `gallery:build:web` compiles the typed path with dart2wasm. Its controls are
     above the chart: `mode`, `axis`, one line of toggles and commands, `hover` and `update`. The
     Axes tab (`lib/demo/axes_demo.dart`) runs a `LineController` chart on the scales of phase 6,
@@ -1136,7 +1140,7 @@ The decimation options are one immutable object too, `DecimationOptions` (Chart.
 `DecimationAlgorithm`), `samples`, `threshold` and `events`, in `ChartConfig.pluginOptions` or in
 `options.plugins.decimation` of a raw config, where a Map stops a debug build. The scope kind
 `DecimationOptions`, `DecimationOptions.of` and `DecimationAlgorithm.of` are gone. `ChartConfig` has `parsing`
-and `devicePixelRatio`. Each decimation test gives a typed `ChartConfig` with no `extra` and no Map patch, and a
+and `devicePixelRatio`. Each decimation test gives a typed `ChartConfig` with no Map patch, and a
 change of an option pumps a `ChartView` with the next config.
 
 The filler and colors options are one immutable object each (Chart.js ADR 0196, row
@@ -1684,8 +1688,9 @@ sankey ADRs are proposed. The doc paths are relative to
   fixture config (Chart.js ADR 0029, section 4).` before `library;`, and the function
   `FixtureConfig fixture()`, which makes new objects at each call (Chart.js ADR 0199). It returns
   `FixtureConfig.typed` with a typed `ChartConfig`: an option with no typed parameter goes to the
-  `extra` Map of the nearest typed class, with its native value (a `ChartPaint.solid(Color(...))`
-  for a color, the enum value for a keyword), and a function of a color option returns a
+  raw options of the nearest typed object (`raw(object, map)` of `chartjs_test_utils`, Chart.js ADR
+  0201), with its native value (a `ChartPaint.solid(Color(...))` for a color, the enum value for a
+  keyword), and a function of a color option returns a
   `ChartPaint`. Only a config that a `ChartConfig` cannot hold (no dataset, no chart type, a first
   dataset of another type than the chart, `xLabels` or another key with no parameter) returns
   `FixtureConfig.map`, with the reason in its doc. A typed hand port ignores the lints

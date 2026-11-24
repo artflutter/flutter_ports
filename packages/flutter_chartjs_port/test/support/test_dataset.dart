@@ -28,7 +28,6 @@ final class const TestDataset(
   super.borderColor,
   super.backgroundColor,
   super.borderWidth,
-  super.extra,
 }) extends Dataset {
   /// A dataset of the test controller [kind].
   this : assert(data == null || points == null, 'Give data or points.');
@@ -47,6 +46,5 @@ final class const TestDataset(
     ('data', data),
     ('points', points),
     ...styleProps,
-    ('extra', byEntries(extra)),
   ];
 }

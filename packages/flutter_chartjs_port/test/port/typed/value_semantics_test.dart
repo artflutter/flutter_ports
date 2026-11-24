@@ -154,7 +154,6 @@ const List<(Dataset, List<String>)> _datasets = [
       'animation',
       'borderWidths',
       'borderWidthSides',
-      'extra',
     ],
   ),
   (
@@ -172,7 +171,6 @@ const List<(Dataset, List<String>)> _datasets = [
       'parsing',
       'normalized',
       'animation',
-      'extra',
     ],
   ),
   (
@@ -189,7 +187,6 @@ const List<(Dataset, List<String>)> _datasets = [
       'parsing',
       'normalized',
       'animation',
-      'extra',
     ],
   ),
   (
@@ -205,11 +202,10 @@ const List<(Dataset, List<String>)> _datasets = [
       'hoverRadius',
       'pointStyle',
       'drawActiveElementsOnTop',
-      'extra',
     ],
   ),
-  (PieDataset(), ['key', 'label', 'data', ..._style, ..._arcs, 'extra']),
-  (DoughnutDataset(), ['key', 'label', 'data', ..._style, ..._arcs, 'extra']),
+  (PieDataset(), ['key', 'label', 'data', ..._style, ..._arcs]),
+  (DoughnutDataset(), ['key', 'label', 'data', ..._style, ..._arcs]),
   (
     PolarAreaDataset(),
     [
@@ -226,10 +222,9 @@ const List<(Dataset, List<String>)> _datasets = [
       'selfJoin',
       'spacingMode',
       'angle',
-      'extra',
     ],
   ),
-  (RadarDataset(), ['key', 'label', 'data', ..._style, ..._lineStyle, 'extra']),
+  (RadarDataset(), ['key', 'label', 'data', ..._style, ..._lineStyle]),
 ];
 
 /// The diagnostics properties of [object].
@@ -263,7 +258,7 @@ void main() {
           data: .values(data),
           backgroundColor: const ChartValue.constant(.solid(_red)),
           borderColor: const ChartValue.resolver(_colorFor),
-          extra: const {'clip': ChartClip.all(5)},
+          clip: const ChartClip.all(5),
         ),
         BarDataset(
           key: const ValueKey('a'),
@@ -271,7 +266,7 @@ void main() {
           data: .values(data),
           backgroundColor: const ChartValue.constant(.solid(_red)),
           borderColor: const ChartValue.resolver(_colorFor),
-          extra: const {'clip': ChartClip.all(5)},
+          clip: const ChartClip.all(5),
         ),
       );
       _expectEqual(
@@ -423,43 +418,6 @@ void main() {
           isNot(make(.resolver((context) => 3), null)),
         );
       }
-    });
-
-    test('extra compares by its entries, in key order', () {
-      final list = <Object?>[1];
-      _expectEqual(
-        BarDataset(
-          extra: {
-            'a': 1,
-            'b': {'c': list},
-          },
-        ),
-        BarDataset(
-          extra: {
-            'a': 1,
-            'b': {'c': list},
-          },
-        ),
-      );
-      expect(
-        const BarDataset(extra: {'a': 1, 'b': 2}),
-        isNot(const BarDataset(extra: {'b': 2, 'a': 1})),
-      );
-      expect(
-        BarDataset(
-          extra: {
-            'a': _runtime([1]),
-          },
-        ),
-        isNot(
-          BarDataset(
-            extra: {
-              'a': _runtime([1]),
-            },
-          ),
-        ),
-        reason: 'a List in extra goes by reference',
-      );
     });
 
     test('borderSkipped compares by its value', () {
@@ -1204,7 +1162,6 @@ void main() {
         'pluginOptions',
         'plugins',
         'disabledPlugins',
-        'extra',
       ]);
       expect(names(const RadialLinearAxis()), [
         'axis',
@@ -1250,7 +1207,6 @@ void main() {
         'grid',
         'border',
         'title',
-        'extra',
       ]);
       for (final axis in const <ChartAxis>[TimeAxis(.x), TimeSeriesAxis(.x)]) {
         expect(names(axis), [
@@ -1297,7 +1253,6 @@ void main() {
           'grid',
           'border',
           'title',
-          'extra',
         ]);
       }
       expect(names(ChartAnimation.none).first, 'none');

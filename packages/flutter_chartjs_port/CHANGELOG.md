@@ -1,5 +1,16 @@
 ## Unreleased
 
+- BREAKING: no class of the typed API has `extra` (Chart.js ADR 0201). Each option is a typed parameter:
+  write `LinearAxis(.y, stack: '1', offset: true)` in place of `extra: {'stack': '1', 'offset': true}`.
+  New parameters: the axis parts (`precision`, `count`, `maxTicksLimit`, `circular`, `tickColor` and more),
+  the axes (`offset`, `stack`, `stackWeight`, `grace`, `clip`, the 14 scale hooks, `borderFunction`, the time
+  options `parser`, `parserFunction`, `round`, `minUnit` and `isoWeekday`), the element styles, the datasets
+  (`base`, `inflateAmount`, `skipNull`, `pointRotation`, `parsing`, `normalized`, `animation` and more) and
+  `ChartConfig` (`locale`, `normalized`, `color`, `autoPadding`, `onResize` and `datasetDefaults`, the options
+  of all datasets of a type). The second form of an option is a parameter of its own: `borderRadiusCorners`,
+  `borderWidths`, `borderWidthSides`, `spanGapsDistance`, `minIndex` and `maxIndex`, and floating bars are
+  `data: .ranges([(1, 5), (2, 6)])`. The scriptable colors, widths and fonts of `AxisGrid` and `AxisTicks` are
+  a `ScaleValue`: write `color: .constant(paint)` or `color: .resolver(colorOfTick)`.
 - BREAKING: the canvas has typed members in place of its CSS style (Chart.js ADR 0200): `HTMLCanvasElement`
   has `displayWidth` and `displayHeight` (`double?`, the display size in logical pixels; `null` is the render
   size), `touchAction` (the enum `CanvasTouchAction`: `auto` or `none`), `userSelect` (`bool`) and

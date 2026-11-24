@@ -1,5 +1,7 @@
 ## Unreleased
 
+- BREAKING: `SankeyDataset` has no `extra` (Chart.js ADR 0201 of flutter_chartjs_port): each option is a typed
+  parameter.
 - The options of a dataset and of a flow are immutable classes with a typed field for each option,
   read once from the host resolver (Sankey ADR 0005). Breaking: `SankeyControllerDatasetOptions`,
   `SankeyNodeLabelsOptions`, `SankeyParsingOptions` and `FlowLabelsOptions` are classes with a

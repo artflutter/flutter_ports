@@ -41,14 +41,6 @@ final class const ChartInteraction({
   /// Whether an event also hits the elements outside the chart area:
   /// `includeInvisible`. The default is `false`.
   final bool? includeInvisible,
-
-  /// The Chart.js interaction options that have no parameter.
-  ///
-  /// The entries go into the interaction Map last: an entry wins over a
-  /// parameter with the same key. A Map value merges into the Map of the
-  /// key, a List or another value replaces it. The chart gets a copy of
-  /// each Map and the Lists of the app.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The interaction options.
   this;
@@ -60,13 +52,11 @@ final class const ChartInteraction({
     bool? intersect,
     InteractionAxis? axis,
     bool? includeInvisible,
-    Map<String, Object?>? extra,
   }) => ChartInteraction(
     mode: mode ?? this.mode,
     intersect: intersect ?? this.intersect,
     axis: axis ?? this.axis,
     includeInvisible: includeInvisible ?? this.includeInvisible,
-    extra: extra ?? this.extra,
   );
 
   List<TypedProperty> get _props => [
@@ -74,7 +64,6 @@ final class const ChartInteraction({
     ('intersect', intersect),
     ('axis', axis),
     ('includeInvisible', includeInvisible),
-    ('extra', byEntries(extra)),
   ];
 
   @override
@@ -99,7 +88,7 @@ InteractionOptionsScope lowerInteraction(ChartInteraction interaction) {
   put(scope, OptionKey.intersect, interaction.intersect);
   put(scope, OptionKey.axis, interaction.axis);
   put(scope, OptionKey.includeInvisible, interaction.includeInvisible);
-  return mergeExtra(scope, interaction.extra);
+  return scope;
 }
 
 /// The animation of the chart: `options.animation`
@@ -126,7 +115,6 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
     this.animateRotate,
     this.onProgress,
     this.onComplete,
-    this.extra,
   }) : _none = false;
 
   const new _none()
@@ -134,7 +122,6 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
       animateRotate = null,
       onProgress = null,
       onComplete = null,
-      extra = null,
       _none = true;
 
   /// No animation: `animation: false`. A change of the data then shows at
@@ -156,10 +143,6 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
   /// The function of the end of the animations: `onComplete`.
   final AnimationEventHandler? onComplete;
 
-  /// The Chart.js animation options that have no parameter. The rules of
-  /// [ChartInteraction.extra] apply.
-  final Map<String, Object?>? extra;
-
   /// Whether this is [none].
   final bool _none;
 
@@ -174,7 +157,6 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
     bool? animateRotate,
     AnimationEventHandler? onProgress,
     AnimationEventHandler? onComplete,
-    Map<String, Object?>? extra,
   }) => _none
       ? none
       : ChartAnimation(
@@ -186,7 +168,6 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
           animateRotate: animateRotate ?? this.animateRotate,
           onProgress: onProgress ?? this.onProgress,
           onComplete: onComplete ?? this.onComplete,
-          extra: extra ?? this.extra,
         );
 
   List<TypedProperty> get _props => [
@@ -199,7 +180,6 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
     ('animateRotate', animateRotate),
     ('onProgress', byPresence(onProgress)),
     ('onComplete', byPresence(onComplete)),
-    ('extra', byEntries(extra)),
   ];
 
   @override
@@ -283,7 +263,7 @@ Object lowerDatasetAnimation(ChartAnimation animation) {
   if (animation.animateRotate case final animateRotate?) {
     scope.animateRotate = animateRotate;
   }
-  return mergeExtra(scope, animation.extra);
+  return scope;
 }
 
 /// The `animation` option of [animation]: `false` for
@@ -313,5 +293,5 @@ Object lowerAnimation(ChartAnimation animation, ChartConfigLowering lowering) {
       () => lowering.config.animation?.onComplete,
     );
   }
-  return mergeExtra(scope, animation.extra);
+  return scope;
 }

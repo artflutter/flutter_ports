@@ -36,8 +36,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// A config is immutable. `==` compares the parameters: the Lists of the
 /// app by identity, the [datasets] by their items, the [plugins] by the
 /// identity of their items, the [scales], the [events] and the
-/// [disabledPlugins] by their items, the `extra` Maps by their entries, and
-/// the callbacks [onClick] and [onHover] only by their presence. The chart
+/// [disabledPlugins] by their items, and the callbacks [onClick], [onHover]
+/// and [onResize] only by their presence. The chart
 /// calls the callback of the newest config. Thus a new config that is `==`
 /// to the last one does not update the chart. For new data, give a new List.
 /// Or change the List and call `chart.update()`.
@@ -224,15 +224,6 @@ final class const ChartConfig({
   ///
   /// `==` compares the items one by one with `==`.
   final List<PluginOff<Plugin<Object?>>>? disabledPlugins,
-
-  /// The Chart.js options that have no parameter, for example
-  /// `{'locale': 'de-DE'}`.
-  ///
-  /// The entries go into `options` last: an entry wins over a parameter
-  /// with the same key. A Map value merges into the Map of the key, a List
-  /// or another value replaces it. The chart gets a copy of each Map and
-  /// the Lists of the app.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// A chart config.
   this;
@@ -278,7 +269,6 @@ final class const ChartConfig({
     List<PluginOptions<Object?>>? pluginOptions,
     List<Plugin<Object?>>? plugins,
     List<PluginOff<Plugin<Object?>>>? disabledPlugins,
-    Map<String, Object?>? extra,
   }) => ChartConfig(
     datasets: datasets ?? this.datasets,
     labels: labels ?? this.labels,
@@ -307,7 +297,6 @@ final class const ChartConfig({
     pluginOptions: pluginOptions ?? this.pluginOptions,
     plugins: plugins ?? this.plugins,
     disabledPlugins: disabledPlugins ?? this.disabledPlugins,
-    extra: extra ?? this.extra,
   );
 
   List<TypedProperty> get _props => [
@@ -316,7 +305,6 @@ final class const ChartConfig({
     ..._optionProps,
     _pluginsProp,
     _disabledPluginsProp,
-    _extraProp,
   ];
 
   /// The properties of the parameters that lower into `options`, before
@@ -354,9 +342,6 @@ final class const ChartConfig({
   TypedProperty get _disabledPluginsProp =>
       ('disabledPlugins', byItems(disabledPlugins));
 
-  /// The property of [extra], which lowers into `options` too.
-  TypedProperty get _extraProp => ('extra', byEntries(extra));
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -378,8 +363,7 @@ final class const ChartConfig({
 /// reconcile keeps the live `options` Map.
 bool optionFieldsEqual(ChartConfig a, ChartConfig b) =>
     propsEqual(a._optionProps, b._optionProps) &&
-    a._disabledPluginsProp.$2 == b._disabledPluginsProp.$2 &&
-    a._extraProp.$2 == b._extraProp.$2;
+    a._disabledPluginsProp.$2 == b._disabledPluginsProp.$2;
 
 /// Whether the [ChartConfig.plugins] of [a] and [b] are `==`, by the compare
 /// rule of `==`. Then the reconcile keeps the live `plugins` List.

@@ -100,19 +100,6 @@ void main() {
       expect(scope.jsKeys(), isNot(contains('shadowColor')));
     });
 
-    test('an extra entry wins over the shadow', () {
-      const other = ChartShadow(color: _black, blur: 2);
-      final scope = lowerDataset(
-        const LineDataset(
-          data: .values([1]),
-          shadow: _shadow,
-          extra: {'shadow': other},
-        ),
-        ChartKind.line,
-      );
-      expect(scope.jsRead('shadow'), same(other));
-    });
-
     test('no shadow writes no key', () {
       final scope = lowerDataset(
         const BarDataset(data: .values([1])),

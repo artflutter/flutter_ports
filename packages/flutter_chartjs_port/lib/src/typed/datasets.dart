@@ -31,8 +31,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// Indexed and callback values resolve per data item. Prefer a constant
 /// value when the whole dataset uses one color.
 ///
-/// The keys that this class does not have go through [extra].
-///
 /// A package can add the dataset class of its own chart type (Chart.js ADR
 /// 0189): a `final` subclass that gives [kind], [chartData], [lowerOwn] and
 /// [props]. The class takes the parameters of [Dataset] that its chart type
@@ -118,16 +116,6 @@ abstract base class const Dataset({
 
   /// Native per-item tooltip callback overrides for this dataset.
   final TooltipCallbacks? tooltipCallbacks,
-
-  /// The Chart.js options of the dataset that have no parameter, for
-  /// example `{'normalized': true}`.
-  ///
-  /// The entries go into the dataset Map last: an entry wins over a
-  /// parameter with the same key. A Map value merges into the Map of the
-  /// key, a List or another value replaces it. Thus [extra] also gives a
-  /// CSS string, a gradient or the Chart.js `null` of a key. The chart gets
-  /// a copy of each Map and the Lists of the app.
-  final Map<String, Object?>? extra,
 }) with Diagnosticable {
   /// The parameters of each dataset class.
   this;
@@ -143,7 +131,7 @@ abstract base class const Dataset({
   List<Object?>? get chartData;
 
   /// Writes the keys of the dataset class into [scope], after the keys of
-  /// [Dataset] and before [extra]. A key with no [OptionKey] goes by its
+  /// [Dataset]. A key with no [OptionKey] goes by its
   /// name: `scope['colorFrom'] = value`.
   @protected
   void lowerOwn(OptionScope scope);
@@ -197,8 +185,8 @@ abstract base class const Dataset({
 /// when the controller of the dataset is not the controller of the chart:
 /// Chart.js reads `dataset.type || config.type` (`core.config.js:93-95`).
 /// Thus a bar chart lowers to the docs form, and a [LineDataset] in a bar
-/// chart lowers to the form of `docs/charts/mixed.md`. [Dataset.extra]
-/// merges last. [Dataset.key] does not lower.
+/// chart lowers to the form of `docs/charts/mixed.md`. [Dataset.key] does
+/// not lower.
 OptionScope lowerDataset(
   Dataset dataset,
   ChartKind chartType, {
@@ -241,7 +229,7 @@ OptionScope lowerDataset(
       ),
     );
   }
-  return mergeExtra(scope, dataset.extra);
+  return scope;
 }
 
 /// A new dataset scope of the controller [kind] (Chart.js ADR 0054 §3): the
@@ -321,8 +309,8 @@ final class const BarDataset({
   /// The radius of the bar corners in pixels: `borderRadius` as a number.
   ///
   /// The number rounds the corners that are not on the base of the bar, as
-  /// in `docs/samples/bar/border-radius.md`. The object form goes through
-  /// [extra].
+  /// in `docs/samples/bar/border-radius.md`. The object form is
+  /// [borderRadiusCorners].
   final double? borderRadius,
 
   /// The part of the category width that each bar takes, from 0 to 1:
@@ -404,8 +392,6 @@ final class const BarDataset({
   /// for example `EdgeInsets.only(top: 6)`. Give this, [borderWidth] or
   /// [borderWidths].
   final EdgeInsets? borderWidthSides,
-
-  super.extra,
 }) extends Dataset {
   /// A bar dataset.
   this;
@@ -450,7 +436,6 @@ final class const BarDataset({
     ChartAnimation? animation,
     ChartValue<double>? borderWidths,
     EdgeInsets? borderWidthSides,
-    Map<String, Object?>? extra,
   }) => BarDataset(
     key: key ?? this.key,
     label: label ?? this.label,
@@ -489,7 +474,6 @@ final class const BarDataset({
     animation: animation ?? this.animation,
     borderWidths: borderWidths ?? this.borderWidths,
     borderWidthSides: borderWidthSides ?? this.borderWidthSides,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -581,7 +565,6 @@ final class const BarDataset({
     ('animation', animation),
     ('borderWidths', borderWidths),
     ('borderWidthSides', borderWidthSides),
-    ('extra', byEntries(extra)),
   ];
 }
 
@@ -779,7 +762,7 @@ final class const LineDataset({
 
   /// {@template flutter_chartjs_port.typed.spanGaps}
   /// Whether the line spans the gaps of `null` values: `spanGaps` as a
-  /// boolean. The default is `false`. The number form goes through `extra`.
+  /// boolean. The default is `false`. The number form is `spanGapsDistance`.
   /// {@endtemplate}
   @override final bool? spanGaps,
 
@@ -827,7 +810,7 @@ final class const LineDataset({
   /// The style of the points: `pointStyle`, a [ChartValue] of [PointStyle]
   /// (row `adapt-point-style-objects`): one style
   /// (`.constant(RectPointStyle())`), one for each point or a function of
-  /// the data context. `false`, no point, goes through `extra`.
+  /// the data context.
   /// {@endtemplate}
   @override final ChartValue<PointStyle>? pointStyle,
 
@@ -911,8 +894,6 @@ final class const LineDataset({
   /// The largest gap that the line spans, in the unit of the index scale: the
   /// number form of `spanGaps`. Give this or `spanGaps`.
   @override final double? spanGapsDistance,
-
-  super.extra,
 }) extends Dataset with _LineStyle {
   /// A line dataset.
   this;
@@ -970,7 +951,6 @@ final class const LineDataset({
     double? hoverBorderDashOffset,
     StrokeJoin? hoverBorderJoinStyle,
     double? spanGapsDistance,
-    Map<String, Object?>? extra,
   }) => LineDataset(
     key: key ?? this.key,
     label: label ?? this.label,
@@ -1025,7 +1005,6 @@ final class const LineDataset({
     hoverBorderDashOffset: hoverBorderDashOffset ?? this.hoverBorderDashOffset,
     hoverBorderJoinStyle: hoverBorderJoinStyle ?? this.hoverBorderJoinStyle,
     spanGapsDistance: spanGapsDistance ?? this.spanGapsDistance,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -1070,7 +1049,6 @@ final class const LineDataset({
     ('parsing', parsing),
     ('normalized', normalized),
     ('animation', animation),
-    ('extra', byEntries(extra)),
   ];
 }
 
@@ -1217,8 +1195,6 @@ final class const ScatterDataset({
   /// The largest gap that the line spans, in the unit of the index scale: the
   /// number form of `spanGaps`. Give this or `spanGaps`.
   @override final double? spanGapsDistance,
-
-  super.extra,
 }) extends Dataset with _LineStyle {
   /// A scatter dataset.
   this;
@@ -1275,7 +1251,6 @@ final class const ScatterDataset({
     double? hoverBorderDashOffset,
     StrokeJoin? hoverBorderJoinStyle,
     double? spanGapsDistance,
-    Map<String, Object?>? extra,
   }) => ScatterDataset(
     key: key ?? this.key,
     label: label ?? this.label,
@@ -1329,7 +1304,6 @@ final class const ScatterDataset({
     hoverBorderDashOffset: hoverBorderDashOffset ?? this.hoverBorderDashOffset,
     hoverBorderJoinStyle: hoverBorderJoinStyle ?? this.hoverBorderJoinStyle,
     spanGapsDistance: spanGapsDistance ?? this.spanGapsDistance,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -1372,7 +1346,6 @@ final class const ScatterDataset({
     ('parsing', parsing),
     ('normalized', normalized),
     ('animation', animation),
-    ('extra', byEntries(extra)),
   ];
 }
 
@@ -1421,8 +1394,6 @@ final class const BubbleDataset({
   /// Whether the bubbles under the pointer draw over the other bubbles:
   /// `drawActiveElementsOnTop`. The default is `true`.
   final bool? drawActiveElementsOnTop,
-
-  super.extra,
 }) extends Dataset {
   /// A bubble dataset.
   this;
@@ -1450,7 +1421,6 @@ final class const BubbleDataset({
     double? hoverRadius,
     PointStyle? pointStyle,
     bool? drawActiveElementsOnTop,
-    Map<String, Object?>? extra,
   }) => BubbleDataset(
     key: key ?? this.key,
     label: label ?? this.label,
@@ -1473,7 +1443,6 @@ final class const BubbleDataset({
     pointStyle: pointStyle ?? this.pointStyle,
     drawActiveElementsOnTop:
         drawActiveElementsOnTop ?? this.drawActiveElementsOnTop,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -1504,7 +1473,6 @@ final class const BubbleDataset({
     ('hoverRadius', hoverRadius),
     ('pointStyle', pointStyle),
     ('drawActiveElementsOnTop', drawActiveElementsOnTop),
-    ('extra', byEntries(extra)),
   ];
 }
 
@@ -1655,8 +1623,6 @@ final class const PieDataset({
 
   /// How [spacing] applies to the arcs: `spacingMode`.
   @override final ArcSpacingMode? spacingMode,
-
-  super.extra,
 }) extends Dataset with _ArcStyle {
   /// A pie dataset.
   this;
@@ -1691,7 +1657,6 @@ final class const PieDataset({
     double? borderRadius,
     bool? selfJoin,
     ArcSpacingMode? spacingMode,
-    Map<String, Object?>? extra,
   }) => PieDataset(
     key: key ?? this.key,
     label: label ?? this.label,
@@ -1720,7 +1685,6 @@ final class const PieDataset({
     borderRadius: borderRadius ?? this.borderRadius,
     selfJoin: selfJoin ?? this.selfJoin,
     spacingMode: spacingMode ?? this.spacingMode,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -1739,7 +1703,6 @@ final class const PieDataset({
     ('data', data),
     ...styleProps,
     ..._arcProps,
-    ('extra', byEntries(extra)),
   ];
 }
 
@@ -1807,8 +1770,6 @@ final class const DoughnutDataset({
 
   /// How [spacing] applies to the arcs: `spacingMode`.
   @override final ArcSpacingMode? spacingMode,
-
-  super.extra,
 }) extends Dataset with _ArcStyle {
   /// A doughnut dataset.
   this;
@@ -1843,7 +1804,6 @@ final class const DoughnutDataset({
     double? borderRadius,
     bool? selfJoin,
     ArcSpacingMode? spacingMode,
-    Map<String, Object?>? extra,
   }) => DoughnutDataset(
     key: key ?? this.key,
     label: label ?? this.label,
@@ -1872,7 +1832,6 @@ final class const DoughnutDataset({
     borderRadius: borderRadius ?? this.borderRadius,
     selfJoin: selfJoin ?? this.selfJoin,
     spacingMode: spacingMode ?? this.spacingMode,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -1891,7 +1850,6 @@ final class const DoughnutDataset({
     ('data', data),
     ...styleProps,
     ..._arcProps,
-    ('extra', byEntries(extra)),
   ];
 }
 
@@ -1946,8 +1904,6 @@ final class const PolarAreaDataset({
   /// The angle of each arc in degrees: `angle`. The default is the full circle
   /// shared by the data.
   final double? angle,
-
-  super.extra,
 }) extends Dataset {
   /// A polar area dataset.
   this;
@@ -1978,7 +1934,6 @@ final class const PolarAreaDataset({
     bool? selfJoin,
     ArcSpacingMode? spacingMode,
     double? angle,
-    Map<String, Object?>? extra,
   }) => PolarAreaDataset(
     key: key ?? this.key,
     label: label ?? this.label,
@@ -2003,7 +1958,6 @@ final class const PolarAreaDataset({
     selfJoin: selfJoin ?? this.selfJoin,
     spacingMode: spacingMode ?? this.spacingMode,
     angle: angle ?? this.angle,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -2040,7 +1994,6 @@ final class const PolarAreaDataset({
     ('selfJoin', selfJoin),
     ('spacingMode', spacingMode),
     ('angle', angle),
-    ('extra', byEntries(extra)),
   ];
 }
 
@@ -2160,8 +2113,6 @@ final class const RadarDataset({
   /// The largest gap that the line spans, in the unit of the index scale: the
   /// number form of `spanGaps`. Give this or `spanGaps`.
   @override final double? spanGapsDistance,
-
-  super.extra,
 }) extends Dataset with _LineStyle {
   /// A radar dataset.
   this;
@@ -2212,7 +2163,6 @@ final class const RadarDataset({
     double? hoverBorderDashOffset,
     StrokeJoin? hoverBorderJoinStyle,
     double? spanGapsDistance,
-    Map<String, Object?>? extra,
   }) => RadarDataset(
     key: key ?? this.key,
     label: label ?? this.label,
@@ -2260,7 +2210,6 @@ final class const RadarDataset({
     hoverBorderDashOffset: hoverBorderDashOffset ?? this.hoverBorderDashOffset,
     hoverBorderJoinStyle: hoverBorderJoinStyle ?? this.hoverBorderJoinStyle,
     spanGapsDistance: spanGapsDistance ?? this.spanGapsDistance,
-    extra: extra ?? this.extra,
   );
 
   @override
@@ -2279,6 +2228,5 @@ final class const RadarDataset({
     ('data', data),
     ...styleProps,
     ..._lineProps,
-    ('extra', byEntries(extra)),
   ];
 }

@@ -29,7 +29,6 @@ extension BuiltInDatasetCopy on Dataset {
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
-    Map<String, Object?>? extra,
   }) => switch (this) {
     final BarDataset d => d.copyWith(
       key: key,
@@ -45,7 +44,6 @@ extension BuiltInDatasetCopy on Dataset {
       hoverBorderWidth: hoverBorderWidth,
       shadow: shadow,
       tooltipCallbacks: tooltipCallbacks,
-      extra: extra,
     ),
     final LineDataset d => d.copyWith(
       key: key,
@@ -61,7 +59,6 @@ extension BuiltInDatasetCopy on Dataset {
       hoverBorderWidth: hoverBorderWidth,
       shadow: shadow,
       tooltipCallbacks: tooltipCallbacks,
-      extra: extra,
     ),
     final ScatterDataset d => d.copyWith(
       key: key,
@@ -77,7 +74,6 @@ extension BuiltInDatasetCopy on Dataset {
       hoverBorderWidth: hoverBorderWidth,
       shadow: shadow,
       tooltipCallbacks: tooltipCallbacks,
-      extra: extra,
     ),
     final BubbleDataset d => d.copyWith(
       key: key,
@@ -93,7 +89,6 @@ extension BuiltInDatasetCopy on Dataset {
       hoverBorderWidth: hoverBorderWidth,
       shadow: shadow,
       tooltipCallbacks: tooltipCallbacks,
-      extra: extra,
     ),
     final PieDataset d => d.copyWith(
       key: key,
@@ -109,7 +104,6 @@ extension BuiltInDatasetCopy on Dataset {
       hoverBorderWidth: hoverBorderWidth,
       shadow: shadow,
       tooltipCallbacks: tooltipCallbacks,
-      extra: extra,
     ),
     final DoughnutDataset d => d.copyWith(
       key: key,
@@ -125,7 +119,6 @@ extension BuiltInDatasetCopy on Dataset {
       hoverBorderWidth: hoverBorderWidth,
       shadow: shadow,
       tooltipCallbacks: tooltipCallbacks,
-      extra: extra,
     ),
     final PolarAreaDataset d => d.copyWith(
       key: key,
@@ -141,7 +134,6 @@ extension BuiltInDatasetCopy on Dataset {
       hoverBorderWidth: hoverBorderWidth,
       shadow: shadow,
       tooltipCallbacks: tooltipCallbacks,
-      extra: extra,
     ),
     final RadarDataset d => d.copyWith(
       key: key,
@@ -157,7 +149,6 @@ extension BuiltInDatasetCopy on Dataset {
       hoverBorderWidth: hoverBorderWidth,
       shadow: shadow,
       tooltipCallbacks: tooltipCallbacks,
-      extra: extra,
     ),
     _ => throw UnsupportedError('No built-in dataset: $runtimeType.'),
   };
