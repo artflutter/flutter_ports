@@ -3273,6 +3273,13 @@ function scaleTypeOf(config, id, conf) {
   return {axis, type};
 }
 
+/** The 14 scale hooks of Chart.js ADR 0130 (`ScaleHook`). */
+const SCALE_HOOKS = [
+  'beforeUpdate', 'beforeSetDimensions', 'afterSetDimensions', 'beforeDataLimits', 'afterDataLimits',
+  'beforeBuildTicks', 'afterBuildTicks', 'beforeTickToLabelConversion', 'afterTickToLabelConversion',
+  'beforeCalculateLabelRotation', 'afterCalculateLabelRotation', 'beforeFit', 'afterFit', 'afterUpdate',
+];
+
 /** The field writers of a scale of the class [cls]. */
 function axisSpec(cls, state) {
   const number = (v) => doubleNode(v);
@@ -3351,6 +3358,16 @@ function axisSpec(cls, state) {
     ticks,
     grid,
     title,
+    alignToPixels: boolNode,
+    backgroundColor: (v) => paintNode(v, state),
+    clip: boolNode,
+    weight: number,
+    ...Object.fromEntries(SCALE_HOOKS.map((h) => [h, (x) => (functionName(x) === null ? undefined : node(functionCode(x, state, 'ScaleHook').code, false))])),
+  };
+  const cartesian = {offset: boolNode, stack: (v) => stringNode(v, state), stackWeight: number};
+  const grace = (v) => {
+    const length = lengthValue('grace', v);
+    return length ? literalNode(length, state, 'grace') : undefined;
   };
   const border = (radial) => (v) => {
     if (v === null || typeof v !== 'object' || v.constructor !== Object) return undefined;
@@ -3368,16 +3385,17 @@ function axisSpec(cls, state) {
         max: (v) => stringNode(v, state),
         bounds,
         border: border(false),
+        ...cartesian,
       };
     case 'LinearAxis':
-      return {...head, ...range, beginAtZero: boolNode, bounds, border: border(false)};
+      return {...head, ...range, beginAtZero: boolNode, bounds, border: border(false), ...cartesian, grace};
     case 'LogarithmicAxis':
-      return {...head, ...range, bounds, border: border(false)};
+      return {...head, ...range, bounds, border: border(false), ...cartesian};
     case 'TimeAxis':
     case 'TimeSeriesAxis':
-      return {...head, offsetAfterAutoskip: boolNode, bounds, border: border(false)};
+      return {...head, offsetAfterAutoskip: boolNode, bounds, border: border(false), ...cartesian};
     case 'RadialLinearAxis':
-      return {...head, ...range, beginAtZero: boolNode, startAngle: number, border: border(true)};
+      return {...head, ...range, beginAtZero: boolNode, startAngle: number, border: border(true), grace};
     default:
       throw new Error(`No axis class ${cls}`);
   }

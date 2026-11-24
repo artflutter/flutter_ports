@@ -321,7 +321,7 @@ void main() {
                 .x,
                 grid: AxisGrid(offset: test.offsetGridLines, drawTicks: false),
                 ticks: const AxisTicks(display: false),
-                extra: {'offset': test.offset},
+                offset: test.offset,
               ),
               const LinearAxis(.y, display: ScaleDisplay.off),
             ],
@@ -523,10 +523,8 @@ void main() {
               CategoryAxis(
                 .x,
                 labels: labels,
-                extra: {
-                  'afterBuildTicks': (Scale scale) {
-                    scale.ticks = scale.ticks!.sublist(1);
-                  },
+                afterBuildTicks: (scale) {
+                  scale.ticks = scale.ticks!.sublist(1);
                 },
               ),
             ],
@@ -542,13 +540,7 @@ void main() {
         final chart = _acquire(
           ChartConfig(
             datasets: const [LineDataset()],
-            scales: [
-              CategoryAxis(
-                .x,
-                labels: labels,
-                extra: {'afterBuildTicks': (_) {}},
-              ),
-            ],
+            scales: [CategoryAxis(.x, labels: labels, afterBuildTicks: (_) {})],
           ),
         );
 
@@ -565,10 +557,8 @@ void main() {
               CategoryAxis(
                 .x,
                 labels: labels,
-                extra: {
-                  'afterBuildTicks': (Scale scale) {
-                    scale.ticks = [];
-                  },
+                afterBuildTicks: (scale) {
+                  scale.ticks = [];
                 },
               ),
             ],

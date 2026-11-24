@@ -47,7 +47,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
         CartesianAxis.x,
         // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
         display: ScaleDisplay.off,
-        extra: <String, Object?>{'alignToPixels': true},
+        alignToPixels: true,
       ),
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),

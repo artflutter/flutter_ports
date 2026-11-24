@@ -78,24 +78,22 @@ LinearAxis groupAxis({
   grid: const AxisGrid(display: false, drawTicks: false),
   border: const AxisBorder(display: false),
   ticks: ticks,
-  extra: {
-    'offset': false,
-    'afterBuildTicks': (Scale scale) {
-      final length = scale.isHorizontal() ? scale.width : scale.height;
-      final (first, pitch) = groupPlacement(
-        alignment,
-        count,
-        groupWidth,
-        length,
-        groupsSpace,
-      );
-      scale
-        ..min = -first / pitch
-        ..max = (length - first) / pitch
-        ..ticks = [for (var i = 0; i < count; i++) Tick(value: i.toDouble())];
-    },
-    'afterFit': reserve(reservedSize),
+  offset: false,
+  afterBuildTicks: (scale) {
+    final length = scale.isHorizontal() ? scale.width : scale.height;
+    final (first, pitch) = groupPlacement(
+      alignment,
+      count,
+      groupWidth,
+      length,
+      groupsSpace,
+    );
+    scale
+      ..min = -first / pitch
+      ..max = (length - first) / pitch
+      ..ticks = [for (var i = 0; i < count; i++) Tick(value: i.toDouble())];
   },
+  afterFit: reserve(reservedSize),
 );
 
 /// The value axis of fl_chart: from [min] to [max], with a title at [min],
@@ -126,18 +124,18 @@ LinearAxis valueAxis({
   grid: grid,
   border: border,
   ticks: ticks,
-  extra: {
-    // The bar chart gives offset to each axis of the index direction.
-    'offset': false,
-    'grid': const {'offset': false},
-    'afterBuildTicks': (Scale scale) {
-      final length = scale.isHorizontal() ? scale.width : scale.height;
-      final step = interval ?? flInterval(length, max - min);
-      scale.ticks = [
-        for (final value in flAxisValues(min, max, step)) Tick(value: value),
-      ];
-    },
-    'afterFit': reserve(reservedSize),
+  // The bar chart gives offset to each axis of the index direction.
+  offset: false,
+  afterBuildTicks: (scale) {
+    final length = scale.isHorizontal() ? scale.width : scale.height;
+    final step = interval ?? flInterval(length, max - min);
+    scale.ticks = [
+      for (final value in flAxisValues(min, max, step)) Tick(value: value),
+    ];
+  },
+  afterFit: reserve(reservedSize),
+  extra: const {
+    'grid': {'offset': false},
   },
 );
 

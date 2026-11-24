@@ -40534,14 +40534,7 @@ List<PluginFillerReferenceCase> pluginFillerReference(
           fill: FillTarget.toOrigin,
         ),
       ],
-      scales: const [
-        CategoryAxis(
-          .x,
-          min: 'b',
-          max: 'e',
-          extra: <String, Object?>{'offset': true},
-        ),
-      ],
+      scales: const [CategoryAxis(.x, offset: true, min: 'b', max: 'e')],
       disabledPlugins: const [
         PluginOff<ColorsPlugin>(),
         PluginOff<DecimationPlugin>(),

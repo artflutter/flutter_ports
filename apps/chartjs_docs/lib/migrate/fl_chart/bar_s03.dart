@@ -80,7 +80,7 @@ class _BarSample3State() extends State<BarSample3> {
             color: .solid(_darkBlue),
             font: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
-          extra: {'afterFit': reserve(30)},
+          afterFit: reserve(30),
         ),
         valueAxis(min: 0, max: 20),
       ],

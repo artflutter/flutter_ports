@@ -28,11 +28,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
     labels: <Object>[0.0],
     scales: [
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      CategoryAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        extra: <String, Object?>{'offset': true},
-      ),
+      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off, offset: true),
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],

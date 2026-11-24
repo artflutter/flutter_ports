@@ -91,6 +91,25 @@ const Map<String, int> _allowlist = {
   'options.scales.*.grid.z': 3112,
   'options.scales.*.title.strokeColor': 3319,
   'options.scales.*.title.strokeWidth': 3321,
+  'options.scales.*.stack': 3275,
+  'options.scales.*.stackWeight': 3281,
+  'options.scales.*.alignToPixels': 1209,
+  'options.scales.*.backgroundColor': 1213,
+  'options.scales.*.weight': 1228,
+  'options.scales.*.beforeUpdate': 1248,
+  'options.scales.*.beforeSetDimensions': 1252,
+  'options.scales.*.afterSetDimensions': 1256,
+  'options.scales.*.beforeDataLimits': 1260,
+  'options.scales.*.afterDataLimits': 1264,
+  'options.scales.*.beforeBuildTicks': 1268,
+  'options.scales.*.afterBuildTicks': 1272,
+  'options.scales.*.beforeTickToLabelConversion': 1276,
+  'options.scales.*.afterTickToLabelConversion': 1280,
+  'options.scales.*.beforeCalculateLabelRotation': 1284,
+  'options.scales.*.afterCalculateLabelRotation': 1288,
+  'options.scales.*.beforeFit': 1292,
+  'options.scales.*.afterFit': 1296,
+  'options.scales.*.afterUpdate': 1300,
   'options.animation.onProgress': 1802,
   'options.animation.onComplete': 1806,
   'options.animation.animateRotate': 298,
@@ -120,6 +139,9 @@ const Map<String, List<String>> _elementsOf = {
 };
 
 const Color _red = Color(0xFFFF0000);
+
+/// A scale hook of the configs (Chart.js ADR 0130).
+void _scaleHook(Scale scale) {}
 const TextStyle _font = TextStyle(fontSize: 12);
 const EdgeInsets _padding = EdgeInsets.all(4);
 
@@ -711,6 +733,27 @@ const _xAxis = CategoryAxis(
   ticks: _ticks,
   grid: _grid,
   title: _axisTitle,
+  offset: true,
+  stack: 'a',
+  stackWeight: 1,
+  alignToPixels: false,
+  backgroundColor: ChartPaint.solid(_red),
+  clip: true,
+  weight: 0,
+  beforeUpdate: _scaleHook,
+  beforeSetDimensions: _scaleHook,
+  afterSetDimensions: _scaleHook,
+  beforeDataLimits: _scaleHook,
+  afterDataLimits: _scaleHook,
+  beforeBuildTicks: _scaleHook,
+  afterBuildTicks: _scaleHook,
+  beforeTickToLabelConversion: _scaleHook,
+  afterTickToLabelConversion: _scaleHook,
+  beforeCalculateLabelRotation: _scaleHook,
+  afterCalculateLabelRotation: _scaleHook,
+  beforeFit: _scaleHook,
+  afterFit: _scaleHook,
+  afterUpdate: _scaleHook,
 );
 const _yAxis = LinearAxis(
   .y,
@@ -719,6 +762,7 @@ const _yAxis = LinearAxis(
   suggestedMin: 0,
   suggestedMax: 10,
   beginAtZero: true,
+  grace: PercentGrace(5),
 );
 
 void main() {
@@ -776,7 +820,7 @@ void main() {
         final key = path.substring(path.lastIndexOf('.') + 1);
         expect(
           lines[line - 1],
-          matches(RegExp('^\\s*$key\\??:')),
+          matches(RegExp('^\\s*$key\\??[:(]')),
           reason: '$path at index.d.ts:$line',
         );
       }

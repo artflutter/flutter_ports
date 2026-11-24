@@ -16776,11 +16776,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [
         RadialLinearAxis(
-          extra: <String, Object?>{
-            'backgroundColor': ChartPaint.solid(
-              Color.fromRGBO(0, 255, 0, 0.25),
-            ),
-          },
+          backgroundColor: ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.25)),
         ),
       ],
     ),
@@ -17350,13 +17346,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [
         RadialLinearAxis(
+          backgroundColor: ChartPaint.solid(Color.fromRGBO(255, 192, 203, 1)),
           grid: AxisGrid(circular: true),
-          extra: <String, Object?>{
-            'backgroundColor': ChartPaint.solid(
-              Color.fromRGBO(255, 192, 203, 1),
-            ),
-            'offset': true,
-          },
+          extra: <String, Object?>{'offset': true},
         ),
       ],
     ),
@@ -22400,8 +22392,8 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       scales: const [
         RadialLinearAxis(
           suggestedMin: 10,
+          grace: PercentGrace(10),
           ticks: AxisTicks(stepSize: 15),
-          extra: <String, Object?>{'grace': PercentGrace(10)},
         ),
       ],
     ),
@@ -36202,14 +36194,12 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: [
         RadialLinearAxis(
+          backgroundColor: const ChartPaint.solid(
+            Color.fromRGBO(255, 192, 203, 1),
+          ),
           grid: AxisGrid(
             extra: <String, Object?>{'circular': functions['circularEven']},
           ),
-          extra: const <String, Object?>{
-            'backgroundColor': ChartPaint.solid(
-              Color.fromRGBO(255, 192, 203, 1),
-            ),
-          },
         ),
       ],
     ),
@@ -36762,13 +36752,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       datasets: [TestDataset(const ChartKind('radialTest'), data: [])],
       scales: const [
         RadialLinearAxis(
+          backgroundColor: ChartPaint.solid(Color.fromRGBO(255, 192, 203, 1)),
           min: 0,
           max: 10,
-          extra: <String, Object?>{
-            'backgroundColor': ChartPaint.solid(
-              Color.fromRGBO(255, 192, 203, 1),
-            ),
-          },
         ),
       ],
     ),

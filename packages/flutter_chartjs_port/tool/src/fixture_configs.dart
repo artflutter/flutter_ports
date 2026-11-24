@@ -1502,6 +1502,17 @@ final class _Scales(
       'title': _title,
       'border': _object,
       'bounds': _enum('ScaleBounds'),
+      'alignToPixels': _bool,
+      'backgroundColor': _paint,
+      'clip': _bool,
+      'weight': _double,
+      for (final hook in _scaleHooks) hook: _function,
+      if (type != 'radialLinear') ...{
+        'offset': _bool,
+        'stack': _string,
+        'stackWeight': _double,
+      },
+      if (type == 'linear' || type == 'radialLinear') 'grace': _grace,
       ...switch (type) {
         'category' => {'labels': _labels, 'min': _string, 'max': _string},
         'linear' => {
@@ -1685,6 +1696,37 @@ String? _title(FixtureEmitter e, FixtureValue v, String k, String? o) =>
         owner: 'id',
       )
     : null;
+
+/// The 14 scale hooks of Chart.js ADR 0130 (`ScaleHook`).
+const List<String> _scaleHooks = [
+  'beforeUpdate',
+  'beforeSetDimensions',
+  'afterSetDimensions',
+  'beforeDataLimits',
+  'afterDataLimits',
+  'beforeBuildTicks',
+  'afterBuildTicks',
+  'beforeTickToLabelConversion',
+  'afterTickToLabelConversion',
+  'beforeCalculateLabelRotation',
+  'afterCalculateLabelRotation',
+  'beforeFit',
+  'afterFit',
+  'afterUpdate',
+];
+
+/// A `GraceLength`: a number is a `ValueGrace`, a percent text a
+/// `PercentGrace` (row `adapt-length-objects`).
+String? _grace(FixtureEmitter e, FixtureValue v, String k, String? o) =>
+    switch (v) {
+      FixtureNumber(:final text) => 'ValueGrace($text)',
+      FixtureString(value: final s) when RegExp(r'^-?[0-9.]+%$').hasMatch(s) =>
+        'PercentGrace(${s.substring(0, s.length - 1)})',
+      FixtureCode(:final source)
+          when !v.isFunction && source.contains('Grace(') =>
+        source,
+      _ => null,
+    };
 
 /// The `time` options of a time axis: typed parameters of the axis when
 /// each key has one, else Dart `null` (the object goes to `extra`).

@@ -32659,11 +32659,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
         ),
       ],
       scales: const [
-        TimeAxis(
-          .x,
-          ticks: AxisTicks(source: TickSource.data),
-          extra: <String, Object?>{'offset': true},
-        ),
+        TimeAxis(.x, offset: true, ticks: AxisTicks(source: TickSource.data)),
       ],
     ),
     options: const AcquireOptions(),
@@ -33450,11 +33446,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
         ),
       ],
       scales: const [
-        TimeAxis(
-          .x,
-          ticks: AxisTicks(source: TickSource.data),
-          extra: <String, Object?>{'offset': true},
-        ),
+        TimeAxis(.x, offset: true, ticks: AxisTicks(source: TickSource.data)),
       ],
     ),
     options: const AcquireOptions(),
@@ -34016,11 +34008,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
         TestDataset(const ChartKind('timeTest'), data: [1.0, 2.0]),
       ],
       scales: const [
-        TimeAxis(
-          .x,
-          ticks: AxisTicks(source: TickSource.labels),
-          extra: <String, Object?>{'offset': true},
-        ),
+        TimeAxis(.x, offset: true, ticks: AxisTicks(source: TickSource.labels)),
       ],
     ),
     options: const AcquireOptions(),
@@ -34686,9 +34674,9 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
       scales: const [
         TimeAxis(
           .x,
+          offset: true,
           offsetAfterAutoskip: true,
           ticks: AxisTicks(source: TickSource.data),
-          extra: <String, Object?>{'offset': true},
         ),
       ],
     ),
@@ -65517,9 +65505,9 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
       scales: const [
         TimeAxis(
           .x,
+          offset: true,
           offsetAfterAutoskip: true,
           ticks: AxisTicks(source: TickSource.labels),
-          extra: <String, Object?>{'offset': true},
         ),
       ],
     ),
@@ -77441,9 +77429,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(.y, reverse: true, extra: <String, Object?>{'offset': true}),
-      ],
+      scales: const [TimeAxis(.y, reverse: true, offset: true)],
       indexAxis: const YAxis(),
     ),
     options: const AcquireOptions(),
@@ -78486,9 +78472,9 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
         TimeAxis(
           .x,
           reverse: true,
+          offset: true,
           offsetAfterAutoskip: true,
           ticks: AxisTicks(source: TickSource.labels),
-          extra: <String, Object?>{'offset': true},
         ),
       ],
     ),
@@ -82806,11 +82792,7 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
         ),
       ],
       scales: const [
-        TimeAxis(
-          .x,
-          ticks: AxisTicks(source: TickSource.data),
-          extra: <String, Object?>{'offset': true},
-        ),
+        TimeAxis(.x, offset: true, ticks: AxisTicks(source: TickSource.data)),
       ],
     ),
     options: const AcquireOptions(),

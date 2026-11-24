@@ -55,6 +55,77 @@ abstract final class const ChartAxis({
   /// that have a `stack` (row `adapt-stacked-option-enum`).
   final StackMode? stacked,
 
+  /// Whether the scale aligns its pixel values to the device pixels:
+  /// `alignToPixels`.
+  final bool? alignToPixels,
+
+  /// The color of the area of the axis: `backgroundColor`.
+  final ChartPaint? backgroundColor,
+
+  /// Whether the chart clips the datasets of the axis to the chart area:
+  /// `clip`. The default is `true`.
+  final bool? clip,
+
+  /// The order of the axis among the axes of one side: `weight`. A larger
+  /// weight is farther from the chart area.
+  final double? weight,
+
+  /// A function that the scale calls before it updates: `beforeUpdate`
+  /// (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? beforeUpdate,
+
+  /// A function that the scale calls before it sets its size:
+  /// `beforeSetDimensions` (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? beforeSetDimensions,
+
+  /// A function that the scale calls after it sets its size:
+  /// `afterSetDimensions` (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? afterSetDimensions,
+
+  /// A function that the scale calls before it computes its data range:
+  /// `beforeDataLimits` (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? beforeDataLimits,
+
+  /// A function that the scale calls after it computes its data range:
+  /// `afterDataLimits` (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? afterDataLimits,
+
+  /// A function that the scale calls before it makes its ticks:
+  /// `beforeBuildTicks` (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? beforeBuildTicks,
+
+  /// A function that the scale calls after it makes its ticks:
+  /// `afterBuildTicks` (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? afterBuildTicks,
+
+  /// A function that the scale calls before it makes the tick labels:
+  /// `beforeTickToLabelConversion` (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? beforeTickToLabelConversion,
+
+  /// A function that the scale calls after it makes the tick labels:
+  /// `afterTickToLabelConversion` (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? afterTickToLabelConversion,
+
+  /// A function that the scale calls before it computes the label rotation:
+  /// `beforeCalculateLabelRotation` (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? beforeCalculateLabelRotation,
+
+  /// A function that the scale calls after it computes the label rotation:
+  /// `afterCalculateLabelRotation` (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? afterCalculateLabelRotation,
+
+  /// A function that the scale calls before it fits its size: `beforeFit`
+  /// (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? beforeFit,
+
+  /// A function that the scale calls after it fits its size: `afterFit`
+  /// (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? afterFit,
+
+  /// A function that the scale calls after it updates: `afterUpdate`
+  /// (`docs/axes/index.md`, "Callbacks").
+  final ScaleHook? afterUpdate,
+
   /// The tick marks and the tick labels: `ticks`.
   final AxisTicks? ticks,
 
@@ -65,7 +136,7 @@ abstract final class const ChartAxis({
   final AxisTitle? title,
 
   /// The Chart.js options of the axis that have no parameter, for example
-  /// `{'grace': '5%'}`.
+  /// `{'time': {'round': TimeUnit.day}}`.
   ///
   /// The entries go into the axis Map last: an entry wins over a parameter
   /// with the same key. A Map value merges into the Map of the key, a List
@@ -92,6 +163,24 @@ abstract final class const ChartAxis({
     ChartPosition? position,
     bool? reverse,
     StackMode? stacked,
+    bool? alignToPixels,
+    ChartPaint? backgroundColor,
+    bool? clip,
+    double? weight,
+    ScaleHook? beforeUpdate,
+    ScaleHook? beforeSetDimensions,
+    ScaleHook? afterSetDimensions,
+    ScaleHook? beforeDataLimits,
+    ScaleHook? afterDataLimits,
+    ScaleHook? beforeBuildTicks,
+    ScaleHook? afterBuildTicks,
+    ScaleHook? beforeTickToLabelConversion,
+    ScaleHook? afterTickToLabelConversion,
+    ScaleHook? beforeCalculateLabelRotation,
+    ScaleHook? afterCalculateLabelRotation,
+    ScaleHook? beforeFit,
+    ScaleHook? afterFit,
+    ScaleHook? afterUpdate,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisTitle? title,
@@ -119,6 +208,24 @@ abstract final class const ChartAxis({
 
   /// The properties of [ChartAxis] after the parameters of the class.
   List<TypedProperty> get _tailProps => [
+    ('alignToPixels', alignToPixels),
+    ('backgroundColor', backgroundColor),
+    ('clip', clip),
+    ('weight', weight),
+    ('beforeUpdate', beforeUpdate),
+    ('beforeSetDimensions', beforeSetDimensions),
+    ('afterSetDimensions', afterSetDimensions),
+    ('beforeDataLimits', beforeDataLimits),
+    ('afterDataLimits', afterDataLimits),
+    ('beforeBuildTicks', beforeBuildTicks),
+    ('afterBuildTicks', afterBuildTicks),
+    ('beforeTickToLabelConversion', beforeTickToLabelConversion),
+    ('afterTickToLabelConversion', afterTickToLabelConversion),
+    ('beforeCalculateLabelRotation', beforeCalculateLabelRotation),
+    ('afterCalculateLabelRotation', afterCalculateLabelRotation),
+    ('beforeFit', beforeFit),
+    ('afterFit', afterFit),
+    ('afterUpdate', afterUpdate),
     ('ticks', ticks),
     ('grid', grid),
     ('border', border),
@@ -156,6 +263,40 @@ ScaleOptionsScope lowerAxis(ChartAxis axis, {bool writeAxis = false}) {
   put(scope, OptionKey.reverse, axis.reverse);
   put(scope, OptionKey.stacked, axis.stacked);
   axis._lowerOwn(scope);
+  put(scope, OptionKey.alignToPixels, axis.alignToPixels);
+  put(scope, OptionKey.backgroundColor, axis.backgroundColor);
+  put(scope, OptionKey.clip, axis.clip);
+  put(scope, OptionKey.weight, axis.weight);
+  put(scope, OptionKey.beforeUpdate, axis.beforeUpdate);
+  put(scope, OptionKey.beforeSetDimensions, axis.beforeSetDimensions);
+  put(scope, OptionKey.afterSetDimensions, axis.afterSetDimensions);
+  put(scope, OptionKey.beforeDataLimits, axis.beforeDataLimits);
+  put(scope, OptionKey.afterDataLimits, axis.afterDataLimits);
+  put(scope, OptionKey.beforeBuildTicks, axis.beforeBuildTicks);
+  put(scope, OptionKey.afterBuildTicks, axis.afterBuildTicks);
+  put(
+    scope,
+    OptionKey.beforeTickToLabelConversion,
+    axis.beforeTickToLabelConversion,
+  );
+  put(
+    scope,
+    OptionKey.afterTickToLabelConversion,
+    axis.afterTickToLabelConversion,
+  );
+  put(
+    scope,
+    OptionKey.beforeCalculateLabelRotation,
+    axis.beforeCalculateLabelRotation,
+  );
+  put(
+    scope,
+    OptionKey.afterCalculateLabelRotation,
+    axis.afterCalculateLabelRotation,
+  );
+  put(scope, OptionKey.beforeFit, axis.beforeFit);
+  put(scope, OptionKey.afterFit, axis.afterFit);
+  put(scope, OptionKey.afterUpdate, axis.afterUpdate);
   if (_lowerTicks(axis.ticks) case final ticks?) scope.ticks = ticks;
   if (_lowerGrid(axis.grid) case final grid?) scope.grid = grid;
   // The object itself, with the typed setter (Chart.js ADR 0141).
@@ -194,6 +335,37 @@ final class const CategoryAxis(
   /// the range to the outer ticks, and [ScaleBounds.data] keeps the data.
   /// {@endtemplate}
   final ScaleBounds? bounds,
+
+  /// Whether the axis adds half a category of space at each end: `offset`. The
+  /// default of the index axis of a bar chart is `true`.
+  final bool? offset,
+
+  /// The group of the axis: `stack`. The axes of one side with the same group
+  /// share its length (`docs/axes/cartesian/index.md`, "Common options").
+  final String? stack,
+
+  /// The share of the axis in its [stack] group: `stackWeight`. The default is
+  /// 1.
+  final double? stackWeight,
+
+  super.alignToPixels,
+  super.backgroundColor,
+  super.clip,
+  super.weight,
+  super.beforeUpdate,
+  super.beforeSetDimensions,
+  super.afterSetDimensions,
+  super.beforeDataLimits,
+  super.afterDataLimits,
+  super.beforeBuildTicks,
+  super.afterBuildTicks,
+  super.beforeTickToLabelConversion,
+  super.afterTickToLabelConversion,
+  super.beforeCalculateLabelRotation,
+  super.afterCalculateLabelRotation,
+  super.beforeFit,
+  super.afterFit,
+  super.afterUpdate,
   super.ticks,
   super.grid,
 
@@ -218,6 +390,27 @@ final class const CategoryAxis(
     String? min,
     String? max,
     ScaleBounds? bounds,
+    bool? offset,
+    String? stack,
+    double? stackWeight,
+    bool? alignToPixels,
+    ChartPaint? backgroundColor,
+    bool? clip,
+    double? weight,
+    ScaleHook? beforeUpdate,
+    ScaleHook? beforeSetDimensions,
+    ScaleHook? afterSetDimensions,
+    ScaleHook? beforeDataLimits,
+    ScaleHook? afterDataLimits,
+    ScaleHook? beforeBuildTicks,
+    ScaleHook? afterBuildTicks,
+    ScaleHook? beforeTickToLabelConversion,
+    ScaleHook? afterTickToLabelConversion,
+    ScaleHook? beforeCalculateLabelRotation,
+    ScaleHook? afterCalculateLabelRotation,
+    ScaleHook? beforeFit,
+    ScaleHook? afterFit,
+    ScaleHook? afterUpdate,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisBorder? border,
@@ -233,6 +426,31 @@ final class const CategoryAxis(
     min: min ?? this.min,
     max: max ?? this.max,
     bounds: bounds ?? this.bounds,
+    offset: offset ?? this.offset,
+    stack: stack ?? this.stack,
+    stackWeight: stackWeight ?? this.stackWeight,
+    alignToPixels: alignToPixels ?? this.alignToPixels,
+    backgroundColor: backgroundColor ?? this.backgroundColor,
+    clip: clip ?? this.clip,
+    weight: weight ?? this.weight,
+    beforeUpdate: beforeUpdate ?? this.beforeUpdate,
+    beforeSetDimensions: beforeSetDimensions ?? this.beforeSetDimensions,
+    afterSetDimensions: afterSetDimensions ?? this.afterSetDimensions,
+    beforeDataLimits: beforeDataLimits ?? this.beforeDataLimits,
+    afterDataLimits: afterDataLimits ?? this.afterDataLimits,
+    beforeBuildTicks: beforeBuildTicks ?? this.beforeBuildTicks,
+    afterBuildTicks: afterBuildTicks ?? this.afterBuildTicks,
+    beforeTickToLabelConversion:
+        beforeTickToLabelConversion ?? this.beforeTickToLabelConversion,
+    afterTickToLabelConversion:
+        afterTickToLabelConversion ?? this.afterTickToLabelConversion,
+    beforeCalculateLabelRotation:
+        beforeCalculateLabelRotation ?? this.beforeCalculateLabelRotation,
+    afterCalculateLabelRotation:
+        afterCalculateLabelRotation ?? this.afterCalculateLabelRotation,
+    beforeFit: beforeFit ?? this.beforeFit,
+    afterFit: afterFit ?? this.afterFit,
+    afterUpdate: afterUpdate ?? this.afterUpdate,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -249,6 +467,9 @@ final class const CategoryAxis(
     put(scope, OptionKey.min, min);
     put(scope, OptionKey.max, max);
     put(scope, OptionKey.bounds, bounds);
+    put(scope, OptionKey.offset, offset);
+    put(scope, OptionKey.stack, stack);
+    put(scope, OptionKey.stackWeight, stackWeight);
   }
 
   @override
@@ -258,6 +479,9 @@ final class const CategoryAxis(
     ('min', min),
     ('max', max),
     ('bounds', bounds),
+    ('offset', offset),
+    ('stack', stack),
+    ('stackWeight', stackWeight),
     ..._tailProps,
   ];
 }
@@ -300,6 +524,41 @@ final class const LinearAxis(
 
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
+
+  /// Whether the axis adds half a category of space at each end: `offset`. The
+  /// default of the index axis of a bar chart is `true`.
+  final bool? offset,
+
+  /// The group of the axis: `stack`. The axes of one side with the same group
+  /// share its length (`docs/axes/cartesian/index.md`, "Common options").
+  final String? stack,
+
+  /// The share of the axis in its [stack] group: `stackWeight`. The default is
+  /// 1.
+  final double? stackWeight,
+
+  /// The space above the data range and below it: `grace`, for example
+  /// `PercentGrace(5)` (row `adapt-length-objects`).
+  final GraceLength? grace,
+
+  super.alignToPixels,
+  super.backgroundColor,
+  super.clip,
+  super.weight,
+  super.beforeUpdate,
+  super.beforeSetDimensions,
+  super.afterSetDimensions,
+  super.beforeDataLimits,
+  super.afterDataLimits,
+  super.beforeBuildTicks,
+  super.afterBuildTicks,
+  super.beforeTickToLabelConversion,
+  super.afterTickToLabelConversion,
+  super.beforeCalculateLabelRotation,
+  super.afterCalculateLabelRotation,
+  super.beforeFit,
+  super.afterFit,
+  super.afterUpdate,
   super.ticks,
   super.grid,
 
@@ -326,6 +585,28 @@ final class const LinearAxis(
     double? suggestedMax,
     bool? beginAtZero,
     ScaleBounds? bounds,
+    bool? offset,
+    String? stack,
+    double? stackWeight,
+    GraceLength? grace,
+    bool? alignToPixels,
+    ChartPaint? backgroundColor,
+    bool? clip,
+    double? weight,
+    ScaleHook? beforeUpdate,
+    ScaleHook? beforeSetDimensions,
+    ScaleHook? afterSetDimensions,
+    ScaleHook? beforeDataLimits,
+    ScaleHook? afterDataLimits,
+    ScaleHook? beforeBuildTicks,
+    ScaleHook? afterBuildTicks,
+    ScaleHook? beforeTickToLabelConversion,
+    ScaleHook? afterTickToLabelConversion,
+    ScaleHook? beforeCalculateLabelRotation,
+    ScaleHook? afterCalculateLabelRotation,
+    ScaleHook? beforeFit,
+    ScaleHook? afterFit,
+    ScaleHook? afterUpdate,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisBorder? border,
@@ -343,6 +624,32 @@ final class const LinearAxis(
     suggestedMax: suggestedMax ?? this.suggestedMax,
     beginAtZero: beginAtZero ?? this.beginAtZero,
     bounds: bounds ?? this.bounds,
+    offset: offset ?? this.offset,
+    stack: stack ?? this.stack,
+    stackWeight: stackWeight ?? this.stackWeight,
+    grace: grace ?? this.grace,
+    alignToPixels: alignToPixels ?? this.alignToPixels,
+    backgroundColor: backgroundColor ?? this.backgroundColor,
+    clip: clip ?? this.clip,
+    weight: weight ?? this.weight,
+    beforeUpdate: beforeUpdate ?? this.beforeUpdate,
+    beforeSetDimensions: beforeSetDimensions ?? this.beforeSetDimensions,
+    afterSetDimensions: afterSetDimensions ?? this.afterSetDimensions,
+    beforeDataLimits: beforeDataLimits ?? this.beforeDataLimits,
+    afterDataLimits: afterDataLimits ?? this.afterDataLimits,
+    beforeBuildTicks: beforeBuildTicks ?? this.beforeBuildTicks,
+    afterBuildTicks: afterBuildTicks ?? this.afterBuildTicks,
+    beforeTickToLabelConversion:
+        beforeTickToLabelConversion ?? this.beforeTickToLabelConversion,
+    afterTickToLabelConversion:
+        afterTickToLabelConversion ?? this.afterTickToLabelConversion,
+    beforeCalculateLabelRotation:
+        beforeCalculateLabelRotation ?? this.beforeCalculateLabelRotation,
+    afterCalculateLabelRotation:
+        afterCalculateLabelRotation ?? this.afterCalculateLabelRotation,
+    beforeFit: beforeFit ?? this.beforeFit,
+    afterFit: afterFit ?? this.afterFit,
+    afterUpdate: afterUpdate ?? this.afterUpdate,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -361,6 +668,10 @@ final class const LinearAxis(
     put(scope, OptionKey.suggestedMax, suggestedMax);
     put(scope, OptionKey.beginAtZero, beginAtZero);
     put(scope, OptionKey.bounds, bounds);
+    put(scope, OptionKey.offset, offset);
+    put(scope, OptionKey.stack, stack);
+    put(scope, OptionKey.stackWeight, stackWeight);
+    put(scope, OptionKey.grace, grace);
   }
 
   @override
@@ -372,6 +683,10 @@ final class const LinearAxis(
     ('suggestedMax', suggestedMax),
     ('beginAtZero', beginAtZero),
     ('bounds', bounds),
+    ('offset', offset),
+    ('stack', stack),
+    ('stackWeight', stackWeight),
+    ('grace', grace),
     ..._tailProps,
   ];
 }
@@ -400,6 +715,37 @@ final class const LogarithmicAxis(
 
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
+
+  /// Whether the axis adds half a category of space at each end: `offset`. The
+  /// default of the index axis of a bar chart is `true`.
+  final bool? offset,
+
+  /// The group of the axis: `stack`. The axes of one side with the same group
+  /// share its length (`docs/axes/cartesian/index.md`, "Common options").
+  final String? stack,
+
+  /// The share of the axis in its [stack] group: `stackWeight`. The default is
+  /// 1.
+  final double? stackWeight,
+
+  super.alignToPixels,
+  super.backgroundColor,
+  super.clip,
+  super.weight,
+  super.beforeUpdate,
+  super.beforeSetDimensions,
+  super.afterSetDimensions,
+  super.beforeDataLimits,
+  super.afterDataLimits,
+  super.beforeBuildTicks,
+  super.afterBuildTicks,
+  super.beforeTickToLabelConversion,
+  super.afterTickToLabelConversion,
+  super.beforeCalculateLabelRotation,
+  super.afterCalculateLabelRotation,
+  super.beforeFit,
+  super.afterFit,
+  super.afterUpdate,
   super.ticks,
   super.grid,
 
@@ -425,6 +771,27 @@ final class const LogarithmicAxis(
     double? suggestedMin,
     double? suggestedMax,
     ScaleBounds? bounds,
+    bool? offset,
+    String? stack,
+    double? stackWeight,
+    bool? alignToPixels,
+    ChartPaint? backgroundColor,
+    bool? clip,
+    double? weight,
+    ScaleHook? beforeUpdate,
+    ScaleHook? beforeSetDimensions,
+    ScaleHook? afterSetDimensions,
+    ScaleHook? beforeDataLimits,
+    ScaleHook? afterDataLimits,
+    ScaleHook? beforeBuildTicks,
+    ScaleHook? afterBuildTicks,
+    ScaleHook? beforeTickToLabelConversion,
+    ScaleHook? afterTickToLabelConversion,
+    ScaleHook? beforeCalculateLabelRotation,
+    ScaleHook? afterCalculateLabelRotation,
+    ScaleHook? beforeFit,
+    ScaleHook? afterFit,
+    ScaleHook? afterUpdate,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisBorder? border,
@@ -441,6 +808,31 @@ final class const LogarithmicAxis(
     suggestedMin: suggestedMin ?? this.suggestedMin,
     suggestedMax: suggestedMax ?? this.suggestedMax,
     bounds: bounds ?? this.bounds,
+    offset: offset ?? this.offset,
+    stack: stack ?? this.stack,
+    stackWeight: stackWeight ?? this.stackWeight,
+    alignToPixels: alignToPixels ?? this.alignToPixels,
+    backgroundColor: backgroundColor ?? this.backgroundColor,
+    clip: clip ?? this.clip,
+    weight: weight ?? this.weight,
+    beforeUpdate: beforeUpdate ?? this.beforeUpdate,
+    beforeSetDimensions: beforeSetDimensions ?? this.beforeSetDimensions,
+    afterSetDimensions: afterSetDimensions ?? this.afterSetDimensions,
+    beforeDataLimits: beforeDataLimits ?? this.beforeDataLimits,
+    afterDataLimits: afterDataLimits ?? this.afterDataLimits,
+    beforeBuildTicks: beforeBuildTicks ?? this.beforeBuildTicks,
+    afterBuildTicks: afterBuildTicks ?? this.afterBuildTicks,
+    beforeTickToLabelConversion:
+        beforeTickToLabelConversion ?? this.beforeTickToLabelConversion,
+    afterTickToLabelConversion:
+        afterTickToLabelConversion ?? this.afterTickToLabelConversion,
+    beforeCalculateLabelRotation:
+        beforeCalculateLabelRotation ?? this.beforeCalculateLabelRotation,
+    afterCalculateLabelRotation:
+        afterCalculateLabelRotation ?? this.afterCalculateLabelRotation,
+    beforeFit: beforeFit ?? this.beforeFit,
+    afterFit: afterFit ?? this.afterFit,
+    afterUpdate: afterUpdate ?? this.afterUpdate,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -458,6 +850,9 @@ final class const LogarithmicAxis(
     put(scope, OptionKey.suggestedMin, suggestedMin);
     put(scope, OptionKey.suggestedMax, suggestedMax);
     put(scope, OptionKey.bounds, bounds);
+    put(scope, OptionKey.offset, offset);
+    put(scope, OptionKey.stack, stack);
+    put(scope, OptionKey.stackWeight, stackWeight);
   }
 
   @override
@@ -468,6 +863,9 @@ final class const LogarithmicAxis(
     ('suggestedMin', suggestedMin),
     ('suggestedMax', suggestedMax),
     ('bounds', bounds),
+    ('offset', offset),
+    ('stack', stack),
+    ('stackWeight', stackWeight),
     ..._tailProps,
   ];
 }
@@ -558,6 +956,37 @@ final class const TimeAxis(
 
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
+
+  /// Whether the axis adds half a category of space at each end: `offset`. The
+  /// default of the index axis of a bar chart is `true`.
+  final bool? offset,
+
+  /// The group of the axis: `stack`. The axes of one side with the same group
+  /// share its length (`docs/axes/cartesian/index.md`, "Common options").
+  final String? stack,
+
+  /// The share of the axis in its [stack] group: `stackWeight`. The default is
+  /// 1.
+  final double? stackWeight,
+
+  super.alignToPixels,
+  super.backgroundColor,
+  super.clip,
+  super.weight,
+  super.beforeUpdate,
+  super.beforeSetDimensions,
+  super.afterSetDimensions,
+  super.beforeDataLimits,
+  super.afterDataLimits,
+  super.beforeBuildTicks,
+  super.afterBuildTicks,
+  super.beforeTickToLabelConversion,
+  super.afterTickToLabelConversion,
+  super.beforeCalculateLabelRotation,
+  super.afterCalculateLabelRotation,
+  super.beforeFit,
+  super.afterFit,
+  super.afterUpdate,
   super.ticks,
   super.grid,
 
@@ -585,6 +1014,27 @@ final class const TimeAxis(
     TimeDisplayFormats? displayFormats,
     bool? offsetAfterAutoskip,
     ScaleBounds? bounds,
+    bool? offset,
+    String? stack,
+    double? stackWeight,
+    bool? alignToPixels,
+    ChartPaint? backgroundColor,
+    bool? clip,
+    double? weight,
+    ScaleHook? beforeUpdate,
+    ScaleHook? beforeSetDimensions,
+    ScaleHook? afterSetDimensions,
+    ScaleHook? beforeDataLimits,
+    ScaleHook? afterDataLimits,
+    ScaleHook? beforeBuildTicks,
+    ScaleHook? afterBuildTicks,
+    ScaleHook? beforeTickToLabelConversion,
+    ScaleHook? afterTickToLabelConversion,
+    ScaleHook? beforeCalculateLabelRotation,
+    ScaleHook? afterCalculateLabelRotation,
+    ScaleHook? beforeFit,
+    ScaleHook? afterFit,
+    ScaleHook? afterUpdate,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisBorder? border,
@@ -603,6 +1053,31 @@ final class const TimeAxis(
     displayFormats: displayFormats ?? this.displayFormats,
     offsetAfterAutoskip: offsetAfterAutoskip ?? this.offsetAfterAutoskip,
     bounds: bounds ?? this.bounds,
+    offset: offset ?? this.offset,
+    stack: stack ?? this.stack,
+    stackWeight: stackWeight ?? this.stackWeight,
+    alignToPixels: alignToPixels ?? this.alignToPixels,
+    backgroundColor: backgroundColor ?? this.backgroundColor,
+    clip: clip ?? this.clip,
+    weight: weight ?? this.weight,
+    beforeUpdate: beforeUpdate ?? this.beforeUpdate,
+    beforeSetDimensions: beforeSetDimensions ?? this.beforeSetDimensions,
+    afterSetDimensions: afterSetDimensions ?? this.afterSetDimensions,
+    beforeDataLimits: beforeDataLimits ?? this.beforeDataLimits,
+    afterDataLimits: afterDataLimits ?? this.afterDataLimits,
+    beforeBuildTicks: beforeBuildTicks ?? this.beforeBuildTicks,
+    afterBuildTicks: afterBuildTicks ?? this.afterBuildTicks,
+    beforeTickToLabelConversion:
+        beforeTickToLabelConversion ?? this.beforeTickToLabelConversion,
+    afterTickToLabelConversion:
+        afterTickToLabelConversion ?? this.afterTickToLabelConversion,
+    beforeCalculateLabelRotation:
+        beforeCalculateLabelRotation ?? this.beforeCalculateLabelRotation,
+    afterCalculateLabelRotation:
+        afterCalculateLabelRotation ?? this.afterCalculateLabelRotation,
+    beforeFit: beforeFit ?? this.beforeFit,
+    afterFit: afterFit ?? this.afterFit,
+    afterUpdate: afterUpdate ?? this.afterUpdate,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -617,6 +1092,9 @@ final class const TimeAxis(
   void _lowerOwn(ScaleOptionsScope scope) {
     _lowerTime(scope);
     put(scope, OptionKey.bounds, bounds);
+    put(scope, OptionKey.offset, offset);
+    put(scope, OptionKey.stack, stack);
+    put(scope, OptionKey.stackWeight, stackWeight);
   }
 
   @override
@@ -624,6 +1102,9 @@ final class const TimeAxis(
     ..._headProps,
     ..._timeProps,
     ('bounds', bounds),
+    ('offset', offset),
+    ('stack', stack),
+    ('stackWeight', stackWeight),
     ..._tailProps,
   ];
 }
@@ -661,6 +1142,37 @@ final class const TimeSeriesAxis(
 
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
+
+  /// Whether the axis adds half a category of space at each end: `offset`. The
+  /// default of the index axis of a bar chart is `true`.
+  final bool? offset,
+
+  /// The group of the axis: `stack`. The axes of one side with the same group
+  /// share its length (`docs/axes/cartesian/index.md`, "Common options").
+  final String? stack,
+
+  /// The share of the axis in its [stack] group: `stackWeight`. The default is
+  /// 1.
+  final double? stackWeight,
+
+  super.alignToPixels,
+  super.backgroundColor,
+  super.clip,
+  super.weight,
+  super.beforeUpdate,
+  super.beforeSetDimensions,
+  super.afterSetDimensions,
+  super.beforeDataLimits,
+  super.afterDataLimits,
+  super.beforeBuildTicks,
+  super.afterBuildTicks,
+  super.beforeTickToLabelConversion,
+  super.afterTickToLabelConversion,
+  super.beforeCalculateLabelRotation,
+  super.afterCalculateLabelRotation,
+  super.beforeFit,
+  super.afterFit,
+  super.afterUpdate,
   super.ticks,
   super.grid,
 
@@ -688,6 +1200,27 @@ final class const TimeSeriesAxis(
     TimeDisplayFormats? displayFormats,
     bool? offsetAfterAutoskip,
     ScaleBounds? bounds,
+    bool? offset,
+    String? stack,
+    double? stackWeight,
+    bool? alignToPixels,
+    ChartPaint? backgroundColor,
+    bool? clip,
+    double? weight,
+    ScaleHook? beforeUpdate,
+    ScaleHook? beforeSetDimensions,
+    ScaleHook? afterSetDimensions,
+    ScaleHook? beforeDataLimits,
+    ScaleHook? afterDataLimits,
+    ScaleHook? beforeBuildTicks,
+    ScaleHook? afterBuildTicks,
+    ScaleHook? beforeTickToLabelConversion,
+    ScaleHook? afterTickToLabelConversion,
+    ScaleHook? beforeCalculateLabelRotation,
+    ScaleHook? afterCalculateLabelRotation,
+    ScaleHook? beforeFit,
+    ScaleHook? afterFit,
+    ScaleHook? afterUpdate,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisBorder? border,
@@ -706,6 +1239,31 @@ final class const TimeSeriesAxis(
     displayFormats: displayFormats ?? this.displayFormats,
     offsetAfterAutoskip: offsetAfterAutoskip ?? this.offsetAfterAutoskip,
     bounds: bounds ?? this.bounds,
+    offset: offset ?? this.offset,
+    stack: stack ?? this.stack,
+    stackWeight: stackWeight ?? this.stackWeight,
+    alignToPixels: alignToPixels ?? this.alignToPixels,
+    backgroundColor: backgroundColor ?? this.backgroundColor,
+    clip: clip ?? this.clip,
+    weight: weight ?? this.weight,
+    beforeUpdate: beforeUpdate ?? this.beforeUpdate,
+    beforeSetDimensions: beforeSetDimensions ?? this.beforeSetDimensions,
+    afterSetDimensions: afterSetDimensions ?? this.afterSetDimensions,
+    beforeDataLimits: beforeDataLimits ?? this.beforeDataLimits,
+    afterDataLimits: afterDataLimits ?? this.afterDataLimits,
+    beforeBuildTicks: beforeBuildTicks ?? this.beforeBuildTicks,
+    afterBuildTicks: afterBuildTicks ?? this.afterBuildTicks,
+    beforeTickToLabelConversion:
+        beforeTickToLabelConversion ?? this.beforeTickToLabelConversion,
+    afterTickToLabelConversion:
+        afterTickToLabelConversion ?? this.afterTickToLabelConversion,
+    beforeCalculateLabelRotation:
+        beforeCalculateLabelRotation ?? this.beforeCalculateLabelRotation,
+    afterCalculateLabelRotation:
+        afterCalculateLabelRotation ?? this.afterCalculateLabelRotation,
+    beforeFit: beforeFit ?? this.beforeFit,
+    afterFit: afterFit ?? this.afterFit,
+    afterUpdate: afterUpdate ?? this.afterUpdate,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -720,6 +1278,9 @@ final class const TimeSeriesAxis(
   void _lowerOwn(ScaleOptionsScope scope) {
     _lowerTime(scope);
     put(scope, OptionKey.bounds, bounds);
+    put(scope, OptionKey.offset, offset);
+    put(scope, OptionKey.stack, stack);
+    put(scope, OptionKey.stackWeight, stackWeight);
   }
 
   @override
@@ -727,6 +1288,9 @@ final class const TimeSeriesAxis(
     ..._headProps,
     ..._timeProps,
     ('bounds', bounds),
+    ('offset', offset),
+    ('stack', stack),
+    ('stackWeight', stackWeight),
     ..._tailProps,
   ];
 }
@@ -915,6 +1479,29 @@ final class const RadialLinearAxis({
   /// The width of the lines from the center to the point labels, in pixels:
   /// `angleLines.lineWidth`. The default is 1.
   final double? angleLinesLineWidth,
+
+  /// The space above the data range and below it: `grace`, for example
+  /// `PercentGrace(5)` (row `adapt-length-objects`).
+  final GraceLength? grace,
+
+  super.alignToPixels,
+  super.backgroundColor,
+  super.clip,
+  super.weight,
+  super.beforeUpdate,
+  super.beforeSetDimensions,
+  super.afterSetDimensions,
+  super.beforeDataLimits,
+  super.afterDataLimits,
+  super.beforeBuildTicks,
+  super.afterBuildTicks,
+  super.beforeTickToLabelConversion,
+  super.afterTickToLabelConversion,
+  super.beforeCalculateLabelRotation,
+  super.afterCalculateLabelRotation,
+  super.beforeFit,
+  super.afterFit,
+  super.afterUpdate,
   super.ticks,
   super.grid,
 
@@ -947,6 +1534,25 @@ final class const RadialLinearAxis({
     bool? angleLinesDisplay,
     ChartPaint? angleLinesColor,
     double? angleLinesLineWidth,
+    GraceLength? grace,
+    bool? alignToPixels,
+    ChartPaint? backgroundColor,
+    bool? clip,
+    double? weight,
+    ScaleHook? beforeUpdate,
+    ScaleHook? beforeSetDimensions,
+    ScaleHook? afterSetDimensions,
+    ScaleHook? beforeDataLimits,
+    ScaleHook? afterDataLimits,
+    ScaleHook? beforeBuildTicks,
+    ScaleHook? afterBuildTicks,
+    ScaleHook? beforeTickToLabelConversion,
+    ScaleHook? afterTickToLabelConversion,
+    ScaleHook? beforeCalculateLabelRotation,
+    ScaleHook? afterCalculateLabelRotation,
+    ScaleHook? beforeFit,
+    ScaleHook? afterFit,
+    ScaleHook? afterUpdate,
     AxisTicks? ticks,
     AxisGrid? grid,
     RadialAxisBorder? border,
@@ -971,6 +1577,29 @@ final class const RadialLinearAxis({
     angleLinesDisplay: angleLinesDisplay ?? this.angleLinesDisplay,
     angleLinesColor: angleLinesColor ?? this.angleLinesColor,
     angleLinesLineWidth: angleLinesLineWidth ?? this.angleLinesLineWidth,
+    grace: grace ?? this.grace,
+    alignToPixels: alignToPixels ?? this.alignToPixels,
+    backgroundColor: backgroundColor ?? this.backgroundColor,
+    clip: clip ?? this.clip,
+    weight: weight ?? this.weight,
+    beforeUpdate: beforeUpdate ?? this.beforeUpdate,
+    beforeSetDimensions: beforeSetDimensions ?? this.beforeSetDimensions,
+    afterSetDimensions: afterSetDimensions ?? this.afterSetDimensions,
+    beforeDataLimits: beforeDataLimits ?? this.beforeDataLimits,
+    afterDataLimits: afterDataLimits ?? this.afterDataLimits,
+    beforeBuildTicks: beforeBuildTicks ?? this.beforeBuildTicks,
+    afterBuildTicks: afterBuildTicks ?? this.afterBuildTicks,
+    beforeTickToLabelConversion:
+        beforeTickToLabelConversion ?? this.beforeTickToLabelConversion,
+    afterTickToLabelConversion:
+        afterTickToLabelConversion ?? this.afterTickToLabelConversion,
+    beforeCalculateLabelRotation:
+        beforeCalculateLabelRotation ?? this.beforeCalculateLabelRotation,
+    afterCalculateLabelRotation:
+        afterCalculateLabelRotation ?? this.afterCalculateLabelRotation,
+    beforeFit: beforeFit ?? this.beforeFit,
+    afterFit: afterFit ?? this.afterFit,
+    afterUpdate: afterUpdate ?? this.afterUpdate,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -1004,6 +1633,7 @@ final class const RadialLinearAxis({
     put(scope, OptionKey.startAngle, startAngle);
     if (pointLabels.ownKeyCount != 0) scope.pointLabels = pointLabels;
     if (angleLines.ownKeyCount != 0) scope.angleLines = angleLines;
+    put(scope, OptionKey.grace, grace);
   }
 
   @override
@@ -1023,6 +1653,7 @@ final class const RadialLinearAxis({
     ('angleLinesDisplay', angleLinesDisplay),
     ('angleLinesColor', angleLinesColor),
     ('angleLinesLineWidth', angleLinesLineWidth),
+    ('grace', grace),
     ..._tailProps,
   ];
 }

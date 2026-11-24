@@ -28,11 +28,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
       CategoryAxis(CartesianAxis.y, display: ScaleDisplay.off),
       LinearAxis(
         CartesianAxis.x,
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-length-objects, the length
-          // class.
-          'grace': const PercentGrace(10),
-        },
+        // DIVERGES(chartjs): adapt-length-objects, the length
+        // class.
+        grace: const PercentGrace(10),
       ),
     ],
   ),

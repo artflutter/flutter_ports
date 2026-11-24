@@ -9804,9 +9804,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
           data: [10.0, 50.0, 20.0, 90.0, 30.0, 0.0],
         ),
       ],
-      scales: const [
-        CategoryAxis(.x, extra: <String, Object?>{'offset': true}),
-      ],
+      scales: const [CategoryAxis(.x, offset: true)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -10387,8 +10385,9 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       scales: const [
         CategoryAxis(
           .x,
+          offset: true,
           grid: AxisGrid(offset: true),
-          extra: <String, Object?>{'offset': true, 'min': 1.0, 'max': 4.0},
+          extra: <String, Object?>{'min': 1.0, 'max': 4.0},
         ),
       ],
     ),
@@ -12048,11 +12047,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
       scales: const [
-        CategoryAxis(
-          .y,
-          position: ChartPosition.right,
-          extra: <String, Object?>{'offset': true},
-        ),
+        CategoryAxis(.y, position: ChartPosition.right, offset: true),
       ],
       indexAxis: const YAxis(),
     ),
@@ -23943,7 +23938,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
           .y,
           position: ChartPosition.left,
           reverse: true,
-          extra: <String, Object?>{'offset': true},
+          offset: true,
         ),
       ],
       indexAxis: const YAxis(),

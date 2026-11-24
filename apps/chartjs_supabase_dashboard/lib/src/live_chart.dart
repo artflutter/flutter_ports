@@ -386,11 +386,11 @@ class _LiveChartState()
         .x,
         tooltipFormat: 'HH:mm:ss',
         ticks: AxisTicks(maxRotation: 0, callback: _timeLabel),
+        afterBuildTicks: _gridTicks,
+        afterFit: _noLabelPadding,
         extra: {
           // No tick for each millisecond of a range of some seconds.
           'time': {'minUnit': TimeUnit.second},
-          'afterBuildTicks': _gridTicks,
-          'afterFit': _noLabelPadding,
         },
       ),
       // No tick at the eased bounds, and whole numbers only (precision 0
@@ -398,7 +398,7 @@ class _LiveChartState()
       LinearAxis(
         .y,
         ticks: AxisTicks(includeBounds: false, precision: 0),
-        extra: {'afterFit': _fixedWidth},
+        afterFit: _fixedWidth,
       ),
     ],
   );

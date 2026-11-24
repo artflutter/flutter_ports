@@ -34,10 +34,8 @@ FixtureConfig fixture() => FixtureConfig.typed(
           // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
           crossAlign: TickCrossAlign.far,
         ),
-        extra: <String, Object?>{
-          'afterFit': (Scale axis) {
-            axis.width = 64;
-          },
+        afterFit: (axis) {
+          axis.width = 64;
         },
       ),
     ],

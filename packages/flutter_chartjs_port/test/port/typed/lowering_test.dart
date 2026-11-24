@@ -537,6 +537,9 @@ const List<(ChartAxis, String)> _axes = [
   (RadialLinearAxis(), 'radialLinear'),
 ];
 
+/// A scale hook of the cases (Chart.js ADR 0130).
+void _scaleHook(Scale scale) {}
+
 /// The cases of the parameters of [ChartAxis]: a function that sets one
 /// parameter with `copyWith`, and the raw twin without its `type`.
 final Map<String, (ChartAxis Function(ChartAxis), Map<String, Object?>)>
@@ -577,6 +580,72 @@ _axisCommon = {
         'text': ['T'],
       },
     },
+  ),
+  'alignToPixels': (
+    (a) => a.copyWith(alignToPixels: true),
+    {'alignToPixels': true},
+  ),
+  'backgroundColor': (
+    (a) => a.copyWith(backgroundColor: const ChartPaint.solid(_red)),
+    {'backgroundColor': _redValue},
+  ),
+  'clip': ((a) => a.copyWith(clip: false), {'clip': false}),
+  'weight': ((a) => a.copyWith(weight: 2), {'weight': 2}),
+  'beforeUpdate': (
+    (a) => a.copyWith(beforeUpdate: _scaleHook),
+    {'beforeUpdate': _scaleHook},
+  ),
+  'beforeSetDimensions': (
+    (a) => a.copyWith(beforeSetDimensions: _scaleHook),
+    {'beforeSetDimensions': _scaleHook},
+  ),
+  'afterSetDimensions': (
+    (a) => a.copyWith(afterSetDimensions: _scaleHook),
+    {'afterSetDimensions': _scaleHook},
+  ),
+  'beforeDataLimits': (
+    (a) => a.copyWith(beforeDataLimits: _scaleHook),
+    {'beforeDataLimits': _scaleHook},
+  ),
+  'afterDataLimits': (
+    (a) => a.copyWith(afterDataLimits: _scaleHook),
+    {'afterDataLimits': _scaleHook},
+  ),
+  'beforeBuildTicks': (
+    (a) => a.copyWith(beforeBuildTicks: _scaleHook),
+    {'beforeBuildTicks': _scaleHook},
+  ),
+  'afterBuildTicks': (
+    (a) => a.copyWith(afterBuildTicks: _scaleHook),
+    {'afterBuildTicks': _scaleHook},
+  ),
+  'beforeTickToLabelConversion': (
+    (a) => a.copyWith(beforeTickToLabelConversion: _scaleHook),
+    {'beforeTickToLabelConversion': _scaleHook},
+  ),
+  'afterTickToLabelConversion': (
+    (a) => a.copyWith(afterTickToLabelConversion: _scaleHook),
+    {'afterTickToLabelConversion': _scaleHook},
+  ),
+  'beforeCalculateLabelRotation': (
+    (a) => a.copyWith(beforeCalculateLabelRotation: _scaleHook),
+    {'beforeCalculateLabelRotation': _scaleHook},
+  ),
+  'afterCalculateLabelRotation': (
+    (a) => a.copyWith(afterCalculateLabelRotation: _scaleHook),
+    {'afterCalculateLabelRotation': _scaleHook},
+  ),
+  'beforeFit': (
+    (a) => a.copyWith(beforeFit: _scaleHook),
+    {'beforeFit': _scaleHook},
+  ),
+  'afterFit': (
+    (a) => a.copyWith(afterFit: _scaleHook),
+    {'afterFit': _scaleHook},
+  ),
+  'afterUpdate': (
+    (a) => a.copyWith(afterUpdate: _scaleHook),
+    {'afterUpdate': _scaleHook},
   ),
   'extra': (
     (a) => a.copyWith(extra: {'grace': const PercentGrace(5)}),
@@ -642,6 +711,43 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
           (RadialLinearAxis(suggestedMax: 8), 'radialLinear'),
         ],
         {'suggestedMax': 8},
+      ),
+      'offset': (
+        const [
+          (CategoryAxis(.x, offset: true), 'category'),
+          (LinearAxis(.y, offset: true), 'linear'),
+          (LogarithmicAxis(.y, offset: true), 'logarithmic'),
+          (TimeAxis(.x, offset: true), 'time'),
+          (TimeSeriesAxis(.x, offset: true), 'timeseries'),
+        ],
+        {'offset': true},
+      ),
+      'stack': (
+        const [
+          (CategoryAxis(.x, stack: '1'), 'category'),
+          (LinearAxis(.y, stack: '1'), 'linear'),
+          (LogarithmicAxis(.y, stack: '1'), 'logarithmic'),
+          (TimeAxis(.x, stack: '1'), 'time'),
+          (TimeSeriesAxis(.x, stack: '1'), 'timeseries'),
+        ],
+        {'stack': '1'},
+      ),
+      'stackWeight': (
+        const [
+          (CategoryAxis(.x, stackWeight: 2), 'category'),
+          (LinearAxis(.y, stackWeight: 2), 'linear'),
+          (LogarithmicAxis(.y, stackWeight: 2), 'logarithmic'),
+          (TimeAxis(.x, stackWeight: 2), 'time'),
+          (TimeSeriesAxis(.x, stackWeight: 2), 'timeseries'),
+        ],
+        {'stackWeight': 2},
+      ),
+      'grace': (
+        const [
+          (LinearAxis(.y, grace: PercentGrace(5)), 'linear'),
+          (RadialLinearAxis(grace: PercentGrace(5)), 'radialLinear'),
+        ],
+        {'grace': const PercentGrace(5)},
       ),
       'beginAtZero': (
         const [

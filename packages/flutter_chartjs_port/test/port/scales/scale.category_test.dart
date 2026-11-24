@@ -441,11 +441,7 @@ void main() {
       testWidgets('a double and an int give the same pixel, offset $offset', (
         tester,
       ) async {
-        final x = _x(
-          _abcChart([
-            CategoryAxis(.x, extra: {'offset': offset}),
-          ]),
-        );
+        final x = _x(_abcChart([CategoryAxis(.x, offset: offset)]));
         final min = x.min;
         final max = x.max;
         expect((min, max), (0.0, 2.0));

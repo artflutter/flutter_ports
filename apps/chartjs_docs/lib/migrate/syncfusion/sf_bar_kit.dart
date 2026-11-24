@@ -118,7 +118,7 @@ LinearAxis sfValueAxis({
   title: title == null ? null : sfAxisTitle(title),
   // The ends of the range sit on the ends of the axis, also when the axis is
   // the index axis of the bars.
-  extra: const {'offset': false},
+  offset: false,
 );
 
 /// A number as Syncfusion shows it: no `.0` and no float noise.

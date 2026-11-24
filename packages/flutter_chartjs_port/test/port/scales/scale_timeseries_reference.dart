@@ -2808,9 +2808,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
           ],
         ),
       ],
-      scales: const [
-        TimeSeriesAxis(.x, extra: <String, Object?>{'offset': true}),
-      ],
+      scales: const [TimeSeriesAxis(.x, offset: true)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -16913,11 +16911,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
       scales: const [
-        TimeSeriesAxis(
-          .x,
-          offsetAfterAutoskip: true,
-          extra: <String, Object?>{'offset': true},
-        ),
+        TimeSeriesAxis(.x, offset: true, offsetAfterAutoskip: true),
       ],
     ),
     options: const AcquireOptions(),
@@ -24353,8 +24347,8 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         TimeSeriesAxis(
           .x,
           reverse: true,
+          offset: true,
           offsetAfterAutoskip: true,
-          extra: <String, Object?>{'offset': true},
         ),
       ],
     ),
@@ -25223,8 +25217,8 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
       scales: const [
         TimeSeriesAxis(
           .x,
+          offset: true,
           ticks: AxisTicks(source: TickSource.data),
-          extra: <String, Object?>{'offset': true},
         ),
       ],
     ),
@@ -30785,7 +30779,8 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
       scales: const [
         TimeSeriesAxis(
           .x,
-          extra: <String, Object?>{'offset': true, 'min': 1610150400000.0},
+          offset: true,
+          extra: <String, Object?>{'min': 1610150400000.0},
         ),
       ],
     ),

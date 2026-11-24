@@ -19250,7 +19250,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [
         LinearAxis(.x, min: 0, max: 3000),
-        CategoryAxis(.y, extra: <String, Object?>{'offset': false}),
+        CategoryAxis(.y, offset: false),
       ],
       indexAxis: const YAxis(),
     ),
@@ -22359,9 +22359,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       datasets: [
         TestDataset(const ChartKind('scaleTest'), data: [20.0, 30.0, 40.0]),
       ],
-      scales: const [
-        LinearAxis(.y, extra: <String, Object?>{'grace': PercentGrace(10)}),
-      ],
+      scales: const [LinearAxis(.y, grace: PercentGrace(10))],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -22841,13 +22839,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       datasets: [
         TestDataset(const ChartKind('scaleTest'), data: [0.0, 30.0, 40.0]),
       ],
-      scales: const [
-        LinearAxis(
-          .y,
-          beginAtZero: true,
-          extra: <String, Object?>{'grace': ValueGrace(5)},
-        ),
-      ],
+      scales: const [LinearAxis(.y, grace: ValueGrace(5), beginAtZero: true)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -28486,9 +28478,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
         ),
       ],
-      scales: const [
-        LinearAxis(.y, extra: <String, Object?>{'offset': true}),
-      ],
+      scales: const [LinearAxis(.y, offset: true)],
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{

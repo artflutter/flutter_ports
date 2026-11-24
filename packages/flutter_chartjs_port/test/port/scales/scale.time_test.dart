@@ -548,7 +548,7 @@ void main() {
             .x,
             ticks: AxisTicks(source: TickSource.labels),
             offsetAfterAutoskip: true,
-            extra: {'offset': true},
+            offset: true,
           ),
         ),
       );

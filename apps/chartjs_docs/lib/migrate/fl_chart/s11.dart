@@ -65,7 +65,7 @@ class _Sample11State() extends State<Sample11> {
       },
     ),
     border: flGridDash,
-    extra: {'afterBuildTicks': (Object? s) => _ticksFrom(s, base)},
+    afterBuildTicks: (s) => _ticksFrom(s, base),
   );
 
   @override

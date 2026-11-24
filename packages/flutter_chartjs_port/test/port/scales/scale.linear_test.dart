@@ -275,9 +275,7 @@ void main() {
       ('a horizontal scale', []),
       (
         'a reversed vertical scale with offset',
-        [
-          const LinearAxis(.y, reverse: true, extra: {'offset': true}),
-        ],
+        [const LinearAxis(.y, reverse: true, offset: true)],
       ),
     ]) {
       testWidgets('a double and an int give the same pixel, $name', (

@@ -371,21 +371,17 @@ ChartConfig inputProbeConfig(int points, Plugin<Object?> plugin) => ChartConfig(
       // last label, from the positions of these ticks. A pan moves them,
       // so the room changes in each step. The fixed layout padding at the
       // right gives the last label its room.
-      extra: {
-        'afterFit': (Scale scale) {
-          scale
-            ..paddingLeft = 0
-            ..paddingRight = 0;
-        },
+      afterFit: (scale) {
+        scale
+          ..paddingLeft = 0
+          ..paddingRight = 0;
       },
     ),
     LinearAxis(
       .y,
       ticks: const AxisTicks(includeBounds: false),
-      extra: {
-        'afterFit': (Scale scale) {
-          scale.width = inputProbeYAxisWidth;
-        },
+      afterFit: (scale) {
+        scale.width = inputProbeYAxisWidth;
       },
     ),
   ],

@@ -51229,8 +51229,8 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
       scales: const [
-        LogarithmicAxis(.x, extra: <String, Object?>{'offset': true}),
-        LogarithmicAxis(.y, extra: <String, Object?>{'offset': true}),
+        LogarithmicAxis(.x, offset: true),
+        LogarithmicAxis(.y, offset: true),
       ],
     ),
     options: const AcquireOptions(),

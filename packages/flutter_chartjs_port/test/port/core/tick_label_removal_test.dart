@@ -49,21 +49,19 @@ Chart _chart(
               keep(value.toInt()) ? ['$value'] : null,
           sampleSize: sampleSize,
         ),
-        extra: {
-          'afterBuildTicks': (Scale scale) {
-            seen
-              ..built = [
-                for (var i = 0; i < count; i++) Tick(value: i.toDouble()),
-              ]
-              ..all = [...seen.built];
-            scale.ticks = seen.built;
-          },
-          'afterTickToLabelConversion': (Scale scale) {
-            seen
-              ..calls += 1
-              ..sameList = identical(scale.ticks, seen.built)
-              ..kept = [...scale.ticks!];
-          },
+        afterBuildTicks: (scale) {
+          seen
+            ..built = [
+              for (var i = 0; i < count; i++) Tick(value: i.toDouble()),
+            ]
+            ..all = [...seen.built];
+          scale.ticks = seen.built;
+        },
+        afterTickToLabelConversion: (scale) {
+          seen
+            ..calls += 1
+            ..sameList = identical(scale.ticks, seen.built)
+            ..kept = [...scale.ticks!];
         },
       ),
       const LinearAxis(.y),

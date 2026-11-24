@@ -32,7 +32,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
       LinearAxis(
         CartesianAxis.x,
         display: ScaleDisplay.off,
-        extra: <String, Object?>{'alignToPixels': true},
+        alignToPixels: true,
       ),
       // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
