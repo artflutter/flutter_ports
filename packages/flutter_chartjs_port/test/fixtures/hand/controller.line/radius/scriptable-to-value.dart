@@ -14,18 +14,20 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(data: .values(<num?>[12, 19, 3])),
-    ],
-    labels: <Object>['A', 'B', 'C'],
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(data: .values(<num?>[12, 19, 3])),
+      ],
+      labels: <Object>['A', 'B', 'C'],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+    ),
+    <String, Object?>{
       'animation': <String, Object?>{'duration': 0},
       'backgroundColor': ChartPaint.solid(Color(0xFFFF0000)),
       'radius': () => 20,

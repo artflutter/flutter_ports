@@ -53,14 +53,16 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     elements: ChartElements(
       point: PointElementStyle(radius: 0),
-      line: LineElementStyle(
-        // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
-        // class.
-        cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
-        borderColor: ChartPaint.solid(Color(0x00000000)),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toOrigin,
-        extra: <String, Object?>{'stepped': true},
+      line: raw(
+        LineElementStyle(
+          // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+          // class.
+          cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
+          borderColor: ChartPaint.solid(Color(0x00000000)),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.toOrigin,
+        ),
+        <String, Object?>{'stepped': true},
       ),
     ),
     disabledPlugins: [

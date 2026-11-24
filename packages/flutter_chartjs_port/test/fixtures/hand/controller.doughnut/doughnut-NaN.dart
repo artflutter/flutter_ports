@@ -16,22 +16,24 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      DoughnutDataset(
-        backgroundColor: .indexed(<ChartPaint>[
-          ChartPaint.solid(Color(0xCCFF6384)),
-          ChartPaint.solid(Color(0xCC36A2EB)),
-          ChartPaint.solid(Color(0xCCFFCE56)),
-          ChartPaint.solid(Color(0xCC4BC0C0)),
-          ChartPaint.solid(Color(0xCC9966FF)),
-        ]),
-        borderColor: .indexed(<ChartPaint>[
-          ChartPaint.solid(Color(0xFFFF6384)),
-          ChartPaint.solid(Color(0xFF36A2EB)),
-          ChartPaint.solid(Color(0xFFFFCE56)),
-          ChartPaint.solid(Color(0xFF4BC0C0)),
-          ChartPaint.solid(Color(0xFF9966FF)),
-        ]),
-        extra: <String, Object?>{
+      raw(
+        DoughnutDataset(
+          backgroundColor: .indexed(<ChartPaint>[
+            ChartPaint.solid(Color(0xCCFF6384)),
+            ChartPaint.solid(Color(0xCC36A2EB)),
+            ChartPaint.solid(Color(0xCCFFCE56)),
+            ChartPaint.solid(Color(0xCC4BC0C0)),
+            ChartPaint.solid(Color(0xCC9966FF)),
+          ]),
+          borderColor: .indexed(<ChartPaint>[
+            ChartPaint.solid(Color(0xFFFF6384)),
+            ChartPaint.solid(Color(0xFF36A2EB)),
+            ChartPaint.solid(Color(0xFFFFCE56)),
+            ChartPaint.solid(Color(0xFF4BC0C0)),
+            ChartPaint.solid(Color(0xFF9966FF)),
+          ]),
+        ),
+        <String, Object?>{
           'data': <Object?>[1, 5, double.nan, 50, 100],
         },
       ),

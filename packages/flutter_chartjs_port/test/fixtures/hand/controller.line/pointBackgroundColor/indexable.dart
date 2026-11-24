@@ -36,19 +36,16 @@ FixtureConfig fixture() => FixtureConfig.typed(
         // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
         fill: FillTarget.none,
       ),
-      point: PointElementStyle(
-        radius: 10,
-        extra: <String, Object?>{
-          'backgroundColor': <Object?>[
-            ChartPaint.solid(Color(0xFFFF88FF)),
-            ChartPaint.solid(Color(0xFF888888)),
-            ChartPaint.solid(Color(0xFFFF8800)),
-            ChartPaint.solid(Color(0xFF00FF88)),
-            ChartPaint.solid(Color(0xFF8800FF)),
-            ChartPaint.solid(Color(0xFFFFFF88)),
-          ],
-        },
-      ),
+      point: raw(PointElementStyle(radius: 10), <String, Object?>{
+        'backgroundColor': <Object?>[
+          ChartPaint.solid(Color(0xFFFF88FF)),
+          ChartPaint.solid(Color(0xFF888888)),
+          ChartPaint.solid(Color(0xFFFF8800)),
+          ChartPaint.solid(Color(0xFF00FF88)),
+          ChartPaint.solid(Color(0xFF8800FF)),
+          ChartPaint.solid(Color(0xFFFFFF88)),
+        ],
+      }),
     ),
     scales: [
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

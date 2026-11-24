@@ -42,11 +42,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
       line: LineElementStyle(fill: FillTarget.none),
-      point: PointElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0xFF0000FF)),
-        borderColor: ChartPaint.solid(Color(0xFF0000FF)),
-        radius: 10,
-        extra: <String, Object?>{
+      point: raw(
+        PointElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0xFF0000FF)),
+          borderColor: ChartPaint.solid(Color(0xFF0000FF)),
+          radius: 10,
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
           'pointStyle': (ScriptableContext ctx) {
             final value = jsOrZero(

@@ -23,15 +23,17 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>['foo', 'bar'],
     scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-        position: ChartPosition.bottom,
-        ticks: AxisTicks(
-          // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
-          source: TickSource.labels,
+      raw(
+        TimeAxis(
+          CartesianAxis.x,
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          position: ChartPosition.bottom,
+          ticks: AxisTicks(
+            // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+            source: TickSource.labels,
+          ),
         ),
-        extra: <String, Object?>{
+        <String, Object?>{
           'time': <String, Object?>{
             // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
             'unit': TimeUnit.day,

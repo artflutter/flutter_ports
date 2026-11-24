@@ -34,11 +34,10 @@ Scale createCategoryScale({
       padding: EdgeInsets.zero,
       pluginOptions: const [LegendOptions(display: false)],
       scales: [
-        CategoryAxis(
-          .x,
-          display: ScaleDisplay.off,
-          extra: {'min': min, 'max': max},
-        ),
+        raw(const CategoryAxis(.x, display: ScaleDisplay.off), {
+          'min': min,
+          'max': max,
+        }),
         const LinearAxis(.y, display: ScaleDisplay.off),
       ],
     ),

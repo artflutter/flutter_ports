@@ -4,7 +4,6 @@
 // (fixture.js:24): the chart keeps the Lists of its config and writes
 // into some of them.
 // ignore_for_file: prefer_const_constructors
-// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
@@ -24,12 +23,14 @@ FixtureConfig fixture() {
 
   final xAxis = TimeAxis(
     CartesianAxis.x,
-    ticks: AxisTicks(
-      // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
-      source: TickSource.data,
-      autoSkip: true,
-      maxRotation: 0,
-      extra: <String, Object?>{
+    ticks: raw(
+      AxisTicks(
+        // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+        source: TickSource.data,
+        autoSkip: true,
+        maxRotation: 0,
+      ),
+      <String, Object?>{
         'major': <String, Object?>{'enabled': true},
       },
     ),
@@ -37,11 +38,9 @@ FixtureConfig fixture() {
   return FixtureConfig.typed(
     ChartConfig(
       datasets: [
-        LineDataset(
-          xAxis: xAxis,
-          fill: FillTarget.none,
-          extra: <String, Object?>{'data': data},
-        ),
+        raw(LineDataset(xAxis: xAxis, fill: FillTarget.none), <String, Object?>{
+          'data': data,
+        }),
       ],
       scales: [
         xAxis,

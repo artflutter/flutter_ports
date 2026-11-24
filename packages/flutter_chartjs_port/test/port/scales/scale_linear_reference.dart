@@ -774,12 +774,9 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd', 'e', 'f'],
       datasets: [
-        TestDataset(
-          const ChartKind('scaleTest'),
-          extra: <String, Object?>{
-            'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
-          },
-        ),
+        raw(TestDataset(const ChartKind('scaleTest')), <String, Object?>{
+          'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -1476,33 +1473,28 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
   ),
   (
     name: 'two value axes and a hidden dataset',
-    config: () => ChartConfig(
-      labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-      datasets: [
-        TestDataset(
-          const ChartKind('scaleTest'),
-          extra: <String, Object?>{
+    config: () => raw(
+      ChartConfig(
+        labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+        datasets: [
+          raw(TestDataset(const ChartKind('scaleTest')), <String, Object?>{
             'yAxisID': 'y',
             'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
-          },
-        ),
-        TestDataset(
-          const ChartKind('scaleTest'),
-          extra: <String, Object?>{
+          }),
+          raw(TestDataset(const ChartKind('scaleTest')), <String, Object?>{
             'yAxisID': 'y2',
             'data': <Object?>['-1000', '1000'],
-          },
-        ),
-        TestDataset(
-          const ChartKind('scaleTest'),
-          hidden: true,
-          extra: <String, Object?>{
-            'yAxisID': 'y',
-            'data': <Object?>['150'],
-          },
-        ),
-      ],
-      extra: const <String, Object?>{
+          }),
+          raw(
+            TestDataset(const ChartKind('scaleTest'), hidden: true),
+            <String, Object?>{
+              'yAxisID': 'y',
+              'data': <Object?>['150'],
+            },
+          ),
+        ],
+      ),
+      const <String, Object?>{
         'scales': <String, Object?>{
           'y2': <String, Object?>{
             'position': ChartPosition.right,
@@ -2677,21 +2669,18 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
       datasets: [
-        TestDataset(
-          const ChartKind('scaleTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              null,
-              90.0,
-              double.nan,
-              undefined,
-              45.0,
-              30.0,
-              double.infinity,
-              double.negativeInfinity,
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('scaleTest')), <String, Object?>{
+          'data': <Object?>[
+            null,
+            90.0,
+            double.nan,
+            undefined,
+            45.0,
+            30.0,
+            double.infinity,
+            double.negativeInfinity,
+          ],
+        }),
       ],
       scales: const [LinearAxis(.y, beginAtZero: false)],
     ),
@@ -3354,12 +3343,9 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd'],
       datasets: [
-        TestDataset(
-          const ChartKind('scaleTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[null, double.nan, double.infinity, 'abc'],
-          },
-        ),
+        raw(TestDataset(const ChartKind('scaleTest')), <String, Object?>{
+          'data': <Object?>[null, double.nan, double.infinity, 'abc'],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -8488,19 +8474,16 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
     name: 'objects with null, NaN and string values',
     config: () => ChartConfig(
       datasets: [
-        TestDataset(
-          const ChartKind('linearTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 1.0, 'y': null},
-              const <String, Object?>{'x': 2.0, 'y': double.nan},
-              const <String, Object?>{'x': null, 'y': 4.0},
-              const <String, Object?>{'x': 3.0, 'y': 5.0},
-              const <String, Object?>{'x': 'abc', 'y': 6.0},
-              const <String, Object?>{'x': '7', 'y': '8.5'},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('linearTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 1.0, 'y': null},
+            const <String, Object?>{'x': 2.0, 'y': double.nan},
+            const <String, Object?>{'x': null, 'y': 4.0},
+            const <String, Object?>{'x': 3.0, 'y': 5.0},
+            const <String, Object?>{'x': 'abc', 'y': 6.0},
+            const <String, Object?>{'x': '7', 'y': '8.5'},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -9242,25 +9225,22 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
     name: 'raw values with parsing false',
     config: () => ChartConfig(
       datasets: [
-        TestDataset(
-          const ChartKind('linearTest'),
-          extra: <String, Object?>{
-            'parsing': false,
-            'data': <Object?>[
-              const <String, Object?>{'x': 1.0, 'y': '5'},
-              const <String, Object?>{'x': 2.0},
-              const <String, Object?>{'x': '3', 'y': 4.0},
-              const <String, Object?>{'x': 4.0, 'y': null},
-              const <String, Object?>{'x': 5.0, 'y': true},
-              const <String, Object?>{
-                'x': 6.0,
-                'y': <Object?>[7.0],
-              },
-              const <String, Object?>{'x': 7.0, 'y': 'abc'},
-              const <String, Object?>{'x': 8.0, 'y': -2.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('linearTest')), <String, Object?>{
+          'parsing': false,
+          'data': <Object?>[
+            const <String, Object?>{'x': 1.0, 'y': '5'},
+            const <String, Object?>{'x': 2.0},
+            const <String, Object?>{'x': '3', 'y': 4.0},
+            const <String, Object?>{'x': 4.0, 'y': null},
+            const <String, Object?>{'x': 5.0, 'y': true},
+            const <String, Object?>{
+              'x': 6.0,
+              'y': <Object?>[7.0],
+            },
+            const <String, Object?>{'x': 7.0, 'y': 'abc'},
+            const <String, Object?>{'x': 8.0, 'y': -2.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -12314,20 +12294,26 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd', 'e', 'f'],
       datasets: [
-        TestDataset(
-          const ChartKind('scaleTest'),
-          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          extra: const <String, Object?>{'stack': 'a'},
+        raw(
+          TestDataset(
+            const ChartKind('scaleTest'),
+            data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+          ),
+          const <String, Object?>{'stack': 'a'},
         ),
-        TestDataset(
-          const ChartKind('scaleTest'),
-          data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
-          extra: const <String, Object?>{'stack': 'a'},
+        raw(
+          TestDataset(
+            const ChartKind('scaleTest'),
+            data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
+          ),
+          const <String, Object?>{'stack': 'a'},
         ),
-        TestDataset(
-          const ChartKind('scaleTest'),
-          data: [10.0, 10.0, 10.0, 10.0, 10.0, 10.0],
-          extra: const <String, Object?>{'stack': 'b'},
+        raw(
+          TestDataset(
+            const ChartKind('scaleTest'),
+            data: [10.0, 10.0, 10.0, 10.0, 10.0, 10.0],
+          ),
+          const <String, Object?>{'stack': 'b'},
         ),
       ],
     ),
@@ -13118,15 +13104,19 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd', 'e', 'f'],
       datasets: [
-        TestDataset(
-          const ChartKind('scaleTest'),
-          data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
-          extra: const <String, Object?>{'stack': 'a'},
+        raw(
+          TestDataset(
+            const ChartKind('scaleTest'),
+            data: [10.0, 5.0, 0.0, -5.0, 78.0, -100.0],
+          ),
+          const <String, Object?>{'stack': 'a'},
         ),
-        TestDataset(
-          const ChartKind('scaleTest'),
-          data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
-          extra: const <String, Object?>{'stack': 'a'},
+        raw(
+          TestDataset(
+            const ChartKind('scaleTest'),
+            data: [150.0, 0.0, 0.0, -100.0, -10.0, 9.0],
+          ),
+          const <String, Object?>{'stack': 'a'},
         ),
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.off)],
@@ -21408,18 +21398,22 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
   ),
   (
     name: 'beginAtZero with positive and negative data',
-    config: () => ChartConfig(
-      labels: ['a', 'b', 'c'],
-      datasets: [
-        TestDataset(const ChartKind('scaleTest'), data: [20.0, 30.0, 40.0]),
-        TestDataset(
-          const ChartKind('scaleTest'),
-          data: [-20.0, -30.0, -40.0],
-          extra: const <String, Object?>{'yAxisID': 'y2'},
-        ),
-      ],
-      scales: const [LinearAxis(.y, beginAtZero: true)],
-      extra: const <String, Object?>{
+    config: () => raw(
+      ChartConfig(
+        labels: ['a', 'b', 'c'],
+        datasets: [
+          TestDataset(const ChartKind('scaleTest'), data: [20.0, 30.0, 40.0]),
+          raw(
+            TestDataset(
+              const ChartKind('scaleTest'),
+              data: [-20.0, -30.0, -40.0],
+            ),
+            const <String, Object?>{'yAxisID': 'y2'},
+          ),
+        ],
+        scales: const [LinearAxis(.y, beginAtZero: true)],
+      ),
+      const <String, Object?>{
         'scales': <String, Object?>{
           'y2': <String, Object?>{
             'type': 'linear',
@@ -24437,18 +24431,25 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
   ),
   (
     name: 'precision',
-    config: () => ChartConfig(
-      labels: ['a', 'b', 'c', 'd'],
-      datasets: [
-        TestDataset(const ChartKind('scaleTest'), data: [0.1, 0.4, 0.9, 1.25]),
-        TestDataset(
-          const ChartKind('scaleTest'),
-          data: [0.111, 0.244, 0.315],
-          extra: const <String, Object?>{'yAxisID': 'y2'},
-        ),
-      ],
-      scales: const [LinearAxis(.y, ticks: AxisTicks(precision: 0))],
-      extra: const <String, Object?>{
+    config: () => raw(
+      ChartConfig(
+        labels: ['a', 'b', 'c', 'd'],
+        datasets: [
+          TestDataset(
+            const ChartKind('scaleTest'),
+            data: [0.1, 0.4, 0.9, 1.25],
+          ),
+          raw(
+            TestDataset(
+              const ChartKind('scaleTest'),
+              data: [0.111, 0.244, 0.315],
+            ),
+            const <String, Object?>{'yAxisID': 'y2'},
+          ),
+        ],
+        scales: const [LinearAxis(.y, ticks: AxisTicks(precision: 0))],
+      ),
+      const <String, Object?>{
         'scales': <String, Object?>{
           'y2': <String, Object?>{
             'type': 'linear',
@@ -30446,14 +30447,16 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
   ),
   (
     name: 'locale de-DE',
-    config: () => ChartConfig(
-      datasets: [
-        TestDataset(
-          const ChartKind('linearTest'),
-          points: [DataPoint(10000000.0, -1234.5), DataPoint(0.0, 98765.25)],
-        ),
-      ],
-      extra: const <String, Object?>{'locale': Locale('de', 'DE')},
+    config: () => raw(
+      ChartConfig(
+        datasets: [
+          TestDataset(
+            const ChartKind('linearTest'),
+            points: [DataPoint(10000000.0, -1234.5), DataPoint(0.0, 98765.25)],
+          ),
+        ],
+      ),
+      const <String, Object?>{'locale': Locale('de', 'DE')},
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -36999,13 +37002,12 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       datasets: [
         TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
       ],
-      scales: const [
+      scales: [
         LinearAxis(
           .x,
-          ticks: AxisTicks(
-            maxTicksLimit: 1000,
-            extra: <String, Object?>{'minRotation': '45'},
-          ),
+          ticks: raw(AxisTicks(maxTicksLimit: 1000), const <String, Object?>{
+            'minRotation': '45',
+          }),
         ),
       ],
       indexAxis: const YAxis(),
@@ -41449,11 +41451,10 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           ],
         ),
       ],
-      scales: const [
-        LinearAxis(
-          .y,
-          extra: <String, Object?>{'position': ScaleValuePosition('x', 20.0)},
-        ),
+      scales: [
+        raw(LinearAxis(.y), const <String, Object?>{
+          'position': ScaleValuePosition('x', 20.0),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -42229,11 +42230,10 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           ],
         ),
       ],
-      scales: const [
-        LinearAxis(
-          .y,
-          extra: <String, Object?>{'position': ScaleValuePosition('x', '20')},
-        ),
+      scales: [
+        raw(LinearAxis(.y), const <String, Object?>{
+          'position': ScaleValuePosition('x', '20'),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -43009,11 +43009,10 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           ],
         ),
       ],
-      scales: const [
-        LinearAxis(
-          .x,
-          extra: <String, Object?>{'position': ScaleValuePosition('y', null)},
-        ),
+      scales: [
+        raw(LinearAxis(.x), const <String, Object?>{
+          'position': ScaleValuePosition('y', null),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -45710,21 +45709,18 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
       datasets: [
-        TestDataset(
-          const ChartKind('scaleTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              null,
-              90.0,
-              double.nan,
-              undefined,
-              45.0,
-              30.0,
-              double.infinity,
-              double.negativeInfinity,
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('scaleTest')), <String, Object?>{
+          'data': <Object?>[
+            null,
+            90.0,
+            double.nan,
+            undefined,
+            45.0,
+            30.0,
+            double.infinity,
+            double.negativeInfinity,
+          ],
+        }),
       ],
       scales: const [LinearAxis(.y, beginAtZero: false)],
     ),

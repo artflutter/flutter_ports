@@ -24,13 +24,15 @@ List<SankeyDataPoint> _data() => [
 
 Chart _buildSankey(double devicePixelRatio) => acquireChartRoot(
   lowerForTest(
-    ChartConfig(
-      datasets: [
-        SankeyDataset(data: _data(), extra: const {'nodePadding': 10}),
-      ],
-      animation: ChartAnimation.none,
-      maintainAspectRatio: false,
-      extra: <String, Object?>{'devicePixelRatio': devicePixelRatio},
+    raw(
+      ChartConfig(
+        datasets: [
+          raw(SankeyDataset(data: _data()), const {'nodePadding': 10}),
+        ],
+        animation: ChartAnimation.none,
+        maintainAspectRatio: false,
+      ),
+      <String, Object?>{'devicePixelRatio': devicePixelRatio},
     ),
   ),
   const AcquireOptions(canvas: HarnessCanvas(width: 800, height: 400)),
@@ -40,7 +42,7 @@ Chart _buildSankeyWithPadding(Object? nodePadding) => acquireChartRoot(
   lowerForTest(
     ChartConfig(
       datasets: [
-        SankeyDataset(data: _data(), extra: {'nodePadding': nodePadding}),
+        raw(SankeyDataset(data: _data()), {'nodePadding': nodePadding}),
       ],
       animation: ChartAnimation.none,
       maintainAspectRatio: false,
@@ -122,10 +124,9 @@ void main() {
           lowerForTest(
             ChartConfig(
               datasets: [
-                SankeyDataset(
-                  data: columnData(),
-                  extra: {'nodePadding': nodePadding},
-                ),
+                raw(SankeyDataset(data: columnData()), {
+                  'nodePadding': nodePadding,
+                }),
               ],
               animation: ChartAnimation.none,
             ),

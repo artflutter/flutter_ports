@@ -16,22 +16,24 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(data: .values(<num?>[0, 5, 10, null, -10, -5])),
-      BarDataset(data: .values(<num?>[10, 2, 3, null, 10, 5])),
-    ],
-    labels: <Object>[0, 1, 2, 3, 4, 5],
-    scales: [
-      CategoryAxis(CartesianAxis.x, ticks: AxisTicks(display: false)),
-      LinearAxis(CartesianAxis.y, ticks: AxisTicks(display: false)),
-    ],
-    pluginOptions: [
-      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-      const ColorsPluginOptions(enabled: true),
-    ],
-    disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(data: .values(<num?>[0, 5, 10, null, -10, -5])),
+        BarDataset(data: .values(<num?>[10, 2, 3, null, 10, 5])),
+      ],
+      labels: <Object>[0, 1, 2, 3, 4, 5],
+      scales: [
+        CategoryAxis(CartesianAxis.x, ticks: AxisTicks(display: false)),
+        LinearAxis(CartesianAxis.y, ticks: AxisTicks(display: false)),
+      ],
+      pluginOptions: [
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        const ColorsPluginOptions(enabled: true),
+      ],
+      disabledPlugins: [PluginOff<LegendPlugin>()],
+    ),
+    <String, Object?>{
       'backgroundColor': <Object?>[
         ChartPaint.solid(Color(0xFFFF0000)),
         ChartPaint.solid(Color(0xFF008000)),

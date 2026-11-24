@@ -725,15 +725,14 @@ void main() {
         (tester) async {
           final chart = acquireChartRoot(
             lowerForTest(
-              const ChartConfig(
-                labels: ['A', 'B', 'C', 'D'],
+              ChartConfig(
+                labels: const ['A', 'B', 'C', 'D'],
                 datasets: [
-                  LineDataset(
-                    data: .values([10, 20, 30, 100]),
-                    extra: {'hoverRadius': 0},
-                  ),
+                  raw(const LineDataset(data: .values([10, 20, 30, 100])), {
+                    'hoverRadius': 0,
+                  }),
                 ],
-                scales: [
+                scales: const [
                   CategoryAxis(.x, display: ScaleDisplay.off),
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
@@ -788,19 +787,18 @@ void main() {
         (tester) async {
           final chart = acquireChartRoot(
             lowerForTest(
-              const ChartConfig(
-                labels: ['A', 'B', 'C', 'D'],
+              ChartConfig(
+                labels: const ['A', 'B', 'C', 'D'],
                 datasets: [
-                  LineDataset(
-                    data: .values([10, 20, 30, 100]),
-                    extra: {'hoverRadius': 0},
-                  ),
+                  raw(const LineDataset(data: .values([10, 20, 30, 100])), {
+                    'hoverRadius': 0,
+                  }),
                 ],
-                scales: [
+                scales: const [
                   CategoryAxis(.x, display: ScaleDisplay.off),
                   LinearAxis(.y, display: ScaleDisplay.off),
                 ],
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
               ),
             ),
           );
@@ -2313,14 +2311,16 @@ void main() {
         // typed parameter: it goes through `extra`.
         final chart = acquireChartRoot(
           lowerForTest(
-            const ChartConfig(
-              labels: ['A', 'B', 'C', 'D'],
-              datasets: [
-                LineDataset(data: .values([10, 20, 30, 100])),
-              ],
-              responsive: true,
-              extra: {
-                'tooltip': {'mode': NearestInteractionMode()},
+            raw(
+              const ChartConfig(
+                labels: ['A', 'B', 'C', 'D'],
+                datasets: [
+                  LineDataset(data: .values([10, 20, 30, 100])),
+                ],
+                responsive: true,
+              ),
+              {
+                'tooltip': {'mode': const NearestInteractionMode()},
               },
             ),
           ),

@@ -40,56 +40,64 @@ FixtureConfig fixture() {
   }
 
   return FixtureConfig.typed(
-    ChartConfig(
-      datasets: [
-        LineDataset(
-          borderColor: .constant(
-            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.5)),
+    raw(
+      ChartConfig(
+        datasets: [
+          raw(
+            LineDataset(
+              borderColor: .constant(
+                ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.5)),
+              ),
+              backgroundColor: .constant(
+                ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.25)),
+              ),
+              // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+              fill: FillTarget.none,
+            ),
+            <String, Object?>{'data': data1},
           ),
-          backgroundColor: .constant(
-            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.25)),
+          raw(
+            LineDataset(
+              borderColor: .constant(
+                ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.5)),
+              ),
+              backgroundColor: .constant(
+                ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.25)),
+              ),
+              // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+              fill: const FillTarget.toDataset(0),
+            ),
+            <String, Object?>{'data': data2},
           ),
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          fill: FillTarget.none,
-          extra: <String, Object?>{'data': data1},
-        ),
-        LineDataset(
-          borderColor: .constant(
-            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.5)),
+          raw(
+            LineDataset(
+              borderColor: .constant(
+                ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.5)),
+              ),
+              backgroundColor: .constant(
+                ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.25)),
+              ),
+              // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+              fill: const FillTarget.toDataset(1),
+            ),
+            <String, Object?>{'data': data3},
           ),
-          backgroundColor: .constant(
-            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.25)),
-          ),
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          fill: const FillTarget.toDataset(0),
-          extra: <String, Object?>{'data': data2},
-        ),
-        LineDataset(
-          borderColor: .constant(
-            ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.5)),
-          ),
-          backgroundColor: .constant(
-            ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.25)),
-          ),
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          fill: const FillTarget.toDataset(1),
-          extra: <String, Object?>{'data': data3},
-        ),
-      ],
-      animation: ChartAnimation.none,
-      responsive: false,
-      scales: [
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        LinearAxis(CartesianAxis.x, display: ScaleDisplay.off),
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
-      ],
-      disabledPlugins: [
-        PluginOff<LegendPlugin>(),
-        PluginOff<TitlePlugin>(),
-        PluginOff<TooltipPlugin>(),
-      ],
-      extra: <String, Object?>{
+        ],
+        animation: ChartAnimation.none,
+        responsive: false,
+        scales: [
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          LinearAxis(CartesianAxis.x, display: ScaleDisplay.off),
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+        ],
+        disabledPlugins: [
+          PluginOff<LegendPlugin>(),
+          PluginOff<TitlePlugin>(),
+          PluginOff<TooltipPlugin>(),
+        ],
+      ),
+      <String, Object?>{
         'datasets': <String, Object?>{
           'line': <String, Object?>{
             'tension': 0.4,

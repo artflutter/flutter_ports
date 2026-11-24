@@ -15,10 +15,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      RadarDataset(
-        // option in dataset
-        data: <num?>[null, 3, 3],
-        extra: <String, Object?>{
+      raw(
+        RadarDataset(
+          // option in dataset
+          data: <num?>[null, 3, 3],
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enum.
           'borderCapStyle': (ScriptableContext ctx) {
             final index = jsToNumber(ctx.datasetIndex ?? undefined)
@@ -42,12 +44,14 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2],
     elements: ChartElements(
-      line: LineElementStyle(
-        borderColor: ChartPaint.solid(Color(0xFFFF0000)),
-        borderWidth: 32,
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.none,
-        extra: <String, Object?>{
+      line: raw(
+        LineElementStyle(
+          borderColor: ChartPaint.solid(Color(0xFFFF0000)),
+          borderWidth: 32,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.none,
+        ),
+        <String, Object?>{
           'borderCapStyle': (ScriptableContext ctx) {
             final index = jsToNumber(ctx.datasetIndex ?? undefined)
                 .remainder(3);

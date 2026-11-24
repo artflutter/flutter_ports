@@ -26,8 +26,8 @@ void main() {
             pluginOptions: const [
               ZoomPluginOptions(pan: PanOptions(enabled: true, mode: Mode.x)),
             ],
-            scales: const [
-              CategoryAxis(.x, extra: {'min': 1, 'max': 2}),
+            scales: [
+              raw(const CategoryAxis(.x), {'min': 1, 'max': 2}),
             ],
           ),
         );
@@ -110,8 +110,8 @@ void main() {
                 ),
               ),
             ],
-            scales: const [
-              CategoryAxis(.x, extra: {'min': 1, 'max': 2}),
+            scales: [
+              raw(const CategoryAxis(.x), {'min': 1, 'max': 2}),
             ],
           ),
         );

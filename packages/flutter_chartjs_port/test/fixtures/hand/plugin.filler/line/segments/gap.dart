@@ -20,19 +20,21 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toOrigin,
-        segment: LineSegmentStyle(
-          backgroundColor: (ctx) =>
-              (ctx.p0.skip ?? false) || (ctx.p1.skip ?? false)
-              ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
-              : null,
+      raw(
+        LineDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF000000))),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.toOrigin,
+          segment: LineSegmentStyle(
+            backgroundColor: (ctx) =>
+                (ctx.p0.skip ?? false) || (ctx.p1.skip ?? false)
+                ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
+                : null,
+          ),
+          spanGaps: true,
         ),
-        spanGaps: true,
-        extra: <String, Object?>{
+        <String, Object?>{
           'data': <Object?>[1, 3, double.nan, double.nan, 2, 1],
         },
       ),

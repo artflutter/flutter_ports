@@ -15,13 +15,15 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      RadarDataset(
-        // option in dataset
-        data: <num?>[1, 1, 1, 1],
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
-        borderDash: <double>[20],
-        extra: <String, Object?>{
+      raw(
+        RadarDataset(
+          // option in dataset
+          data: <num?>[1, 1, 1, 1],
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
+          borderDash: <double>[20],
+        ),
+        <String, Object?>{
           'borderDashOffset': (ScriptableContext ctx) {
             return ctx.datasetIndex == 0 ? 5.0 : 0.0;
           },
@@ -34,13 +36,15 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3],
     elements: ChartElements(
-      line: LineElementStyle(
-        borderColor: ChartPaint.solid(Color(0xFF00FF00)),
-        // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
-        borderDash: <double>[20],
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.none,
-        extra: <String, Object?>{
+      line: raw(
+        LineElementStyle(
+          borderColor: ChartPaint.solid(Color(0xFF00FF00)),
+          // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
+          borderDash: <double>[20],
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.none,
+        ),
+        <String, Object?>{
           'borderDashOffset': (ScriptableContext ctx) {
             return ctx.datasetIndex == 0 ? 5.0 : 0.0;
           },

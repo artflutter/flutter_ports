@@ -27,13 +27,15 @@ FixtureConfig fixture() => FixtureConfig.typed(
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
       line: LineElementStyle(fill: FillTarget.none),
-      point: PointElementStyle(
-        borderColor: ChartPaint.solid(Color(0xFFFF0000)),
-        borderWidth: 10,
-        // DIVERGES(chartjs): adapt-point-style-objects, the style
-        // class.
-        pointStyle: const LinePointStyle(),
-        extra: <String, Object?>{
+      point: raw(
+        PointElementStyle(
+          borderColor: ChartPaint.solid(Color(0xFFFF0000)),
+          borderWidth: 10,
+          // DIVERGES(chartjs): adapt-point-style-objects, the style
+          // class.
+          pointStyle: const LinePointStyle(),
+        ),
+        <String, Object?>{
           'rotation': <Object?>[150, 120, 90, 60, 30, 0],
         },
       ),

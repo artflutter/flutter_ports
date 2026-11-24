@@ -85,11 +85,13 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
           ),
           pointStyle: const RectRotPointStyle(),
         ),
-        BarDataset(
-          label: 'Dataset 3',
-          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
-          pointStyle: const TrianglePointStyle(),
-          extra: const <String, Object?>{
+        raw(
+          BarDataset(
+            label: 'Dataset 3',
+            data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+            pointStyle: const TrianglePointStyle(),
+          ),
+          const <String, Object?>{
             'borderDash': <double>[4, 2],
           },
         ),

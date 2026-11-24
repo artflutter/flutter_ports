@@ -23,11 +23,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      arc: ArcElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderColor: ChartPaint.solid(Color(0xFFFF00FF)),
-        borderWidth: 8,
-        extra: <String, Object?>{
+      arc: raw(
+        ArcElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderColor: ChartPaint.solid(Color(0xFFFF00FF)),
+          borderWidth: 8,
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
           'borderAlign': (ScriptableContext ctx) {
             final value = jsOrZero(

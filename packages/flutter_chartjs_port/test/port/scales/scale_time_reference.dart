@@ -1183,20 +1183,14 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
     name: 'ISO strings in {x, y} data',
     config: () => ChartConfig(
       datasets: [
-        TestDataset(
-          const ChartKind('timeTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': '2021-01-04T06:00:00', 'y': 1.0},
-              const <String, Object?>{'x': '2021-01-05T18:30:00Z', 'y': 4.0},
-              const <String, Object?>{'x': '2021-01-07', 'y': 2.0},
-              const <String, Object?>{
-                'x': '2021-01-09T12:00:00+02:00',
-                'y': 8.0,
-              },
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('timeTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': '2021-01-04T06:00:00', 'y': 1.0},
+            const <String, Object?>{'x': '2021-01-05T18:30:00Z', 'y': 4.0},
+            const <String, Object?>{'x': '2021-01-07', 'y': 2.0},
+            const <String, Object?>{'x': '2021-01-09T12:00:00+02:00', 'y': 8.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -25245,12 +25239,10 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          bounds: ScaleBounds.ticks,
-          extra: <String, Object?>{'min': 1609826400000.0},
-        ),
+      scales: [
+        raw(TimeAxis(.x, bounds: ScaleBounds.ticks), const <String, Object?>{
+          'min': 1609826400000.0,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -27916,11 +27908,10 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           data: [1.0, 2.0, 3.0, 4.0, 5.0],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          ticks: AxisTicks(source: TickSource.labels),
-          extra: <String, Object?>{'min': '2021-01-05', 'max': '2021-02-02'},
+      scales: [
+        raw(
+          TimeAxis(.x, ticks: const AxisTicks(source: TickSource.labels)),
+          const <String, Object?>{'min': '2021-01-05', 'max': '2021-02-02'},
         ),
       ],
     ),
@@ -29166,15 +29157,13 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
+      scales: [
         TimeAxis(
           .x,
           unit: TimeUnit.day,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'major': <String, Object?>{'enabled': true},
-            },
-          ),
+          ticks: raw(AxisTicks(), const <String, Object?>{
+            'major': <String, Object?>{'enabled': true},
+          }),
         ),
       ],
     ),
@@ -30466,14 +30455,12 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
+      scales: [
         TimeAxis(
           .x,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'major': <String, Object?>{'enabled': true},
-            },
-          ),
+          ticks: raw(AxisTicks(), const <String, Object?>{
+            'major': <String, Object?>{'enabled': true},
+          }),
         ),
       ],
     ),
@@ -31656,14 +31643,12 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
+      scales: [
         TimeAxis(
           .x,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'major': <String, Object?>{'enabled': true},
-            },
-          ),
+          ticks: raw(AxisTicks(), const <String, Object?>{
+            'major': <String, Object?>{'enabled': true},
+          }),
         ),
       ],
     ),
@@ -38037,14 +38022,11 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'min': '2021-01-10',
-            'max': '2021-02-01T12:00:00',
-          },
-        ),
+      scales: [
+        raw(TimeAxis(.x), const <String, Object?>{
+          'min': '2021-01-10',
+          'max': '2021-02-01T12:00:00',
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -39266,14 +39248,11 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'min': 1609286400000.0,
-            'max': 1611446400000.0,
-          },
-        ),
+      scales: [
+        raw(TimeAxis(.x), const <String, Object?>{
+          'min': 1609286400000.0,
+          'max': 1611446400000.0,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -40466,14 +40445,11 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'suggestedMin': '2021-01-01',
-            'suggestedMax': 1610755200000.0,
-          },
-        ),
+      scales: [
+        raw(TimeAxis(.x), const <String, Object?>{
+          'suggestedMin': '2021-01-01',
+          'suggestedMax': 1610755200000.0,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -41690,12 +41666,9 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
         ),
       ],
       scales: [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'time': <String, Object?>{'parser': functions['seconds']},
-          },
-        ),
+        raw(TimeAxis(.x), <String, Object?>{
+          'time': <String, Object?>{'parser': functions['seconds']},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -44550,14 +44523,10 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          unit: TimeUnit.day,
-          extra: <String, Object?>{
-            'time': <String, Object?>{'stepSize': 5.0},
-          },
-        ),
+      scales: [
+        raw(TimeAxis(.x, unit: TimeUnit.day), const <String, Object?>{
+          'time': <String, Object?>{'stepSize': 5.0},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -49685,8 +49654,10 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
     name: 'no data with a min',
     config: () => ChartConfig(
       datasets: [TestDataset(const ChartKind('timeTest'), data: [])],
-      scales: const [
-        TimeAxis(.x, extra: <String, Object?>{'min': '2021-06-15T08:00:00'}),
+      scales: [
+        raw(TimeAxis(.x), const <String, Object?>{
+          'min': '2021-06-15T08:00:00',
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -62586,17 +62557,14 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
     name: 'null and invalid x values',
     config: () => ChartConfig(
       datasets: [
-        TestDataset(
-          const ChartKind('timeTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': '2021-01-04', 'y': 1.0},
-              const <String, Object?>{'x': null, 'y': 2.0},
-              const <String, Object?>{'x': 'garbage', 'y': 3.0},
-              const <String, Object?>{'x': '2021-01-09', 'y': 4.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('timeTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': '2021-01-04', 'y': 1.0},
+            const <String, Object?>{'x': null, 'y': 2.0},
+            const <String, Object?>{'x': 'garbage', 'y': 3.0},
+            const <String, Object?>{'x': '2021-01-09', 'y': 4.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -67751,17 +67719,14 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          extra: <String, Object?>{
-            'grace': PercentGrace(10),
-            'beginAtZero': true,
-            'adapters': <String, Object?>{
-              'date': <String, Object?>{'zone': 'Europe/Kyiv'},
-            },
+      scales: [
+        raw(TimeAxis(.x), const <String, Object?>{
+          'grace': PercentGrace(10),
+          'beginAtZero': true,
+          'adapters': <String, Object?>{
+            'date': <String, Object?>{'zone': 'Europe/Kyiv'},
           },
-        ),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -69364,11 +69329,17 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          ticks: AxisTicks(count: 3, precision: 0, includeBounds: false),
-          extra: <String, Object?>{
+      scales: [
+        raw(
+          TimeAxis(
+            .x,
+            ticks: const AxisTicks(
+              count: 3,
+              precision: 0,
+              includeBounds: false,
+            ),
+          ),
+          const <String, Object?>{
             'suggestedMin': 1610150400000.0,
             'suggestedMax': '2021-01-20',
           },
@@ -73364,14 +73335,10 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
-        TimeAxis(
-          .x,
-          unit: TimeUnit.week,
-          extra: <String, Object?>{
-            'time': <String, Object?>{'isoWeekday': '3'},
-          },
-        ),
+      scales: [
+        raw(TimeAxis(.x, unit: TimeUnit.week), const <String, Object?>{
+          'time': <String, Object?>{'isoWeekday': '3'},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -74286,11 +74253,11 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
+      scales: [
         TimeAxis(
           .x,
           unit: TimeUnit.day,
-          ticks: AxisTicks(extra: <String, Object?>{'stepSize': '3'}),
+          ticks: raw(AxisTicks(), const <String, Object?>{'stepSize': '3'}),
         ),
       ],
     ),
@@ -78997,15 +78964,13 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
+      scales: [
         TimeAxis(
           .x,
           reverse: true,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'major': <String, Object?>{'enabled': true},
-            },
-          ),
+          ticks: raw(AxisTicks(), const <String, Object?>{
+            'major': <String, Object?>{'enabled': true},
+          }),
         ),
       ],
     ),
@@ -80191,16 +80156,14 @@ List<ScaleTimeReferenceCase> scaleTimeReference(
           ],
         ),
       ],
-      scales: const [
+      scales: [
         TimeAxis(
           .x,
           unit: TimeUnit.day,
-          displayFormats: TimeDisplayFormats(month: ''),
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'major': <String, Object?>{'enabled': true},
-            },
-          ),
+          displayFormats: const TimeDisplayFormats(month: ''),
+          ticks: raw(AxisTicks(), const <String, Object?>{
+            'major': <String, Object?>{'enabled': true},
+          }),
         ),
       ],
     ),

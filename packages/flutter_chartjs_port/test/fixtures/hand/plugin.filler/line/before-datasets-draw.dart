@@ -16,42 +16,44 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0x8000ADEE))),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00ADEE))),
-        data: .values(<num?>[0, 1, 1, 2, 2, 0]),
-      ),
-      LineDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0x80BD2628))),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFBD2628))),
-        data: .values(<num?>[0, 2, 2, 1, 1, 1]),
-      ),
-    ],
-    labels: <Object>['15:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
-    ],
-    pluginOptions: [
-      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-      const FillerOptions(drawTime: FillerDrawTime.beforeDatasetsDraw),
-    ],
-    disabledPlugins: [PluginOff<LegendPlugin>()],
-    datasetDefaults: [
-      LineDataset(
-        borderWidth: 4,
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toOrigin,
-        pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFFFFFFFF))),
-        // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
-        // class.
-        cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
-      ),
-    ],
-    extra: <String, Object?>{'radius': 20},
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0x8000ADEE))),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF00ADEE))),
+          data: .values(<num?>[0, 1, 1, 2, 2, 0]),
+        ),
+        LineDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0x80BD2628))),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFBD2628))),
+          data: .values(<num?>[0, 2, 2, 1, 1, 1]),
+        ),
+      ],
+      labels: <Object>['15:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+      pluginOptions: [
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        const FillerOptions(drawTime: FillerDrawTime.beforeDatasetsDraw),
+      ],
+      disabledPlugins: [PluginOff<LegendPlugin>()],
+      datasetDefaults: [
+        LineDataset(
+          borderWidth: 4,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.toOrigin,
+          pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFFFFFFFF))),
+          // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+          // class.
+          cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
+        ),
+      ],
+    ),
+    <String, Object?>{'radius': 20},
   ),
 );

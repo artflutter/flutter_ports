@@ -27,37 +27,39 @@ FixtureConfig fixture() {
   final ctx = canvas.getContext('2d')!;
 
   return FixtureConfig.typed(
-    ChartConfig(
-      datasets: [
-        PolarAreaDataset(
-          data: <num?>[1, 5, 10, 2, 4],
-          backgroundColor: .indexed(<ChartPaint>[
-            ChartPaint.solid(Color(0xCCFF6384)),
-            ChartPaint.solid(Color(0xCC36A2EB)),
-            ChartPaint.solid(Color(0xCCFFCE56)),
-            ChartPaint.solid(Color(0xCC4BC0C0)),
-            ChartPaint.solid(Color(0xCC9966FF)),
-          ]),
-          borderWidth: 4,
-          borderColor: .indexed(<ChartPaint>[
-            ChartPaint.solid(Color(0xFFFF6384)),
-            ChartPaint.solid(Color(0xFF36A2EB)),
-            ChartPaint.solid(Color(0xFFFFCE56)),
-            ChartPaint.solid(Color(0xFF4BC0C0)),
-            ChartPaint.solid(Color(0xFF9966FF)),
-          ]),
-        ),
-      ],
-      labels: <Object>['A', 'B', 'C', 'D', 'E'],
-      responsive: false,
-      scales: [RadialLinearAxis(ticks: AxisTicks(display: false))],
-      disabledPlugins: [
-        PluginOff<LegendPlugin>(),
-        PluginOff<TitlePlugin>(),
-        PluginOff<TooltipPlugin>(),
-        PluginOff<FillerPlugin>(),
-      ],
-      extra: <String, Object?>{
+    raw(
+      ChartConfig(
+        datasets: [
+          PolarAreaDataset(
+            data: <num?>[1, 5, 10, 2, 4],
+            backgroundColor: .indexed(<ChartPaint>[
+              ChartPaint.solid(Color(0xCCFF6384)),
+              ChartPaint.solid(Color(0xCC36A2EB)),
+              ChartPaint.solid(Color(0xCCFFCE56)),
+              ChartPaint.solid(Color(0xCC4BC0C0)),
+              ChartPaint.solid(Color(0xCC9966FF)),
+            ]),
+            borderWidth: 4,
+            borderColor: .indexed(<ChartPaint>[
+              ChartPaint.solid(Color(0xFFFF6384)),
+              ChartPaint.solid(Color(0xFF36A2EB)),
+              ChartPaint.solid(Color(0xFFFFCE56)),
+              ChartPaint.solid(Color(0xFF4BC0C0)),
+              ChartPaint.solid(Color(0xFF9966FF)),
+            ]),
+          ),
+        ],
+        labels: <Object>['A', 'B', 'C', 'D', 'E'],
+        responsive: false,
+        scales: [RadialLinearAxis(ticks: AxisTicks(display: false))],
+        disabledPlugins: [
+          PluginOff<LegendPlugin>(),
+          PluginOff<TitlePlugin>(),
+          PluginOff<TooltipPlugin>(),
+          PluginOff<FillerPlugin>(),
+        ],
+      ),
+      <String, Object?>{
         'animation': <String, Object?>{
           'animateRotate': true,
           'animateScale': false,

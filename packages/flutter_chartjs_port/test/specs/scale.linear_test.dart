@@ -1118,14 +1118,14 @@ void main() {
               ]),
             ),
           ],
-          scales: const [
-            LinearAxis(.x, position: ChartPosition.bottom),
+          scales: [
+            const LinearAxis(.x, position: ChartPosition.bottom),
             LinearAxis(
               .y,
-              grid: AxisGrid(drawTicks: false),
-              border: AxisBorder(display: false),
-              title: AxisTitle(display: false, extra: {'lineHeight': 1.2}),
-              ticks: AxisTicks(display: false, padding: 0),
+              grid: const AxisGrid(drawTicks: false),
+              border: const AxisBorder(display: false),
+              title: raw(const AxisTitle(display: false), {'lineHeight': 1.2}),
+              ticks: const AxisTicks(display: false, padding: 0),
             ),
           ],
         ),

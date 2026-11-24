@@ -8165,9 +8165,9 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
       labels: ['a', 'b', 'c', 'd', 'e'],
       datasets: [
         RadarDataset(data: [10.0, null, 5.0, 15.0, null], spanGaps: true),
-        RadarDataset(
-          data: [4.0, 12.0, null, 6.0, 14.0],
-          extra: const <String, Object?>{'spanGaps': 2.0},
+        raw(
+          RadarDataset(data: [4.0, 12.0, null, 6.0, 14.0]),
+          const <String, Object?>{'spanGaps': 2.0},
         ),
         RadarDataset(data: [null, 8.0, 16.0, null, 3.0]),
       ],
@@ -18217,14 +18217,16 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
       labels: ['a', 'b', 'c', 'd', 'e'],
       datasets: [
         RadarDataset(data: [10.0, 20.0, 5.0, 15.0, 8.0], label: 'one'),
-        RadarDataset(
-          data: [4.0, 12.0, 18.0, 6.0, 14.0],
-          label: 'two',
-          pointHoverBackgroundColor: const ChartValue.constant(
-            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+        raw(
+          RadarDataset(
+            data: [4.0, 12.0, 18.0, 6.0, 14.0],
+            label: 'two',
+            pointHoverBackgroundColor: const ChartValue.constant(
+              ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+            ),
+            pointHoverBorderWidth: const ChartValue.constant(3),
           ),
-          pointHoverBorderWidth: const ChartValue.constant(3),
-          extra: const <String, Object?>{'hoverRadius': 7.0},
+          const <String, Object?>{'hoverRadius': 7.0},
         ),
       ],
     ),
@@ -21025,10 +21027,9 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        RadarDataset(
-          data: [5.0, 3.0, 1.0],
-          extra: const <String, Object?>{'parsing': false},
-        ),
+        raw(RadarDataset(data: [5.0, 3.0, 1.0]), const <String, Object?>{
+          'parsing': false,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -21724,16 +21725,14 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        RadarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'r': 5.0},
-              null,
-              const <String, Object?>{'r': 1.0},
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(RadarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'r': 5.0},
+            null,
+            const <String, Object?>{'r': 1.0},
+          ],
+          'parsing': false,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -22355,25 +22354,21 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        RadarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'r': 10.0},
-              const <String, Object?>{'r': 20.0},
-              const <String, Object?>{'r': 15.0},
-            ],
-          },
-        ),
-        RadarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'v': 4.0},
-              const <String, Object?>{'v': '12'},
-              const <String, Object?>{},
-            ],
-            'parsing': const <String, Object?>{'key': 'v'},
-          },
-        ),
+        raw(RadarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'r': 10.0},
+            const <String, Object?>{'r': 20.0},
+            const <String, Object?>{'r': 15.0},
+          ],
+        }),
+        raw(RadarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'v': 4.0},
+            const <String, Object?>{'v': '12'},
+            const <String, Object?>{},
+          ],
+          'parsing': const <String, Object?>{'key': 'v'},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -25153,10 +25148,12 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'interfaces: an r scale that is not radial, no data',
-    config: () => ChartConfig(
-      labels: [],
-      datasets: [RadarDataset(data: [])],
-      extra: const <String, Object?>{
+    config: () => raw(
+      ChartConfig(
+        labels: [],
+        datasets: [RadarDataset(data: [])],
+      ),
+      const <String, Object?>{
         'scales': <String, Object?>{
           'r': <String, Object?>{'type': 'linear'},
         },
@@ -25730,12 +25727,14 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
   ),
   (
     name: 'interfaces: an r scale that is not radial, with data',
-    config: () => ChartConfig(
-      labels: ['a', 'b'],
-      datasets: [
-        RadarDataset(data: [1.0, 2.0]),
-      ],
-      extra: const <String, Object?>{
+    config: () => raw(
+      ChartConfig(
+        labels: ['a', 'b'],
+        datasets: [
+          RadarDataset(data: [1.0, 2.0]),
+        ],
+      ),
+      const <String, Object?>{
         'scales': <String, Object?>{
           'r': <String, Object?>{'type': 'linear'},
         },

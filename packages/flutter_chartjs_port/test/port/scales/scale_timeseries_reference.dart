@@ -6990,11 +6990,11 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
           ],
         ),
       ],
-      scales: const [
-        TimeSeriesAxis(
-          .x,
-          extra: <String, Object?>{'min': 1609891200000.0, 'max': '2021-02-14'},
-        ),
+      scales: [
+        raw(TimeSeriesAxis(.x), const <String, Object?>{
+          'min': 1609891200000.0,
+          'max': '2021-02-14',
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -7712,11 +7712,11 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
           ],
         ),
       ],
-      scales: const [
-        TimeSeriesAxis(
-          .x,
-          extra: <String, Object?>{'min': '2020-12-01', 'max': 1620086400000.0},
-        ),
+      scales: [
+        raw(TimeSeriesAxis(.x), const <String, Object?>{
+          'min': '2020-12-01',
+          'max': 1620086400000.0,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -15026,14 +15026,12 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
           ],
         ),
       ],
-      scales: const [
+      scales: [
         TimeSeriesAxis(
           .x,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'major': <String, Object?>{'enabled': true},
-            },
-          ),
+          ticks: raw(AxisTicks(), const <String, Object?>{
+            'major': <String, Object?>{'enabled': true},
+          }),
         ),
       ],
     ),
@@ -20545,18 +20543,15 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
     name: 'null and invalid x values',
     config: () => ChartConfig(
       datasets: [
-        TestDataset(
-          const ChartKind('timeseriesTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 1609718400000.0, 'y': 1.0},
-              const <String, Object?>{'x': null, 'y': 2.0},
-              const <String, Object?>{'x': 'garbage', 'y': 3.0},
-              const <String, Object?>{'x': 1609977600000.0, 'y': 4.0},
-              const <String, Object?>{'x': 1612310400000.0, 'y': 5.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('timeseriesTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 1609718400000.0, 'y': 1.0},
+            const <String, Object?>{'x': null, 'y': 2.0},
+            const <String, Object?>{'x': 'garbage', 'y': 3.0},
+            const <String, Object?>{'x': 1609977600000.0, 'y': 4.0},
+            const <String, Object?>{'x': 1612310400000.0, 'y': 5.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -23538,11 +23533,10 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
           ],
         ),
       ],
-      scales: const [
-        TimeSeriesAxis(
-          .x,
-          bounds: ScaleBounds.ticks,
-          extra: <String, Object?>{'min': 1609826400000.0},
+      scales: [
+        raw(
+          TimeSeriesAxis(.x, bounds: ScaleBounds.ticks),
+          const <String, Object?>{'min': 1609826400000.0},
         ),
       ],
     ),
@@ -29185,14 +29179,11 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
           ],
         ),
       ],
-      scales: const [
-        TimeSeriesAxis(
-          .x,
-          extra: <String, Object?>{
-            'suggestedMin': '2020-12-20',
-            'suggestedMax': 1620950400000.0,
-          },
-        ),
+      scales: [
+        raw(TimeSeriesAxis(.x), const <String, Object?>{
+          'suggestedMin': '2020-12-20',
+          'suggestedMax': 1620950400000.0,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -30128,14 +30119,11 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
           ],
         ),
       ],
-      scales: const [
-        TimeSeriesAxis(
-          .x,
-          extra: <String, Object?>{
-            'min': 1610150400000.0,
-            'max': 1610236800000.0,
-          },
-        ),
+      scales: [
+        raw(TimeSeriesAxis(.x), const <String, Object?>{
+          'min': 1610150400000.0,
+          'max': 1610236800000.0,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -30776,12 +30764,10 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
           ],
         ),
       ],
-      scales: const [
-        TimeSeriesAxis(
-          .x,
-          offset: true,
-          extra: <String, Object?>{'min': 1610150400000.0},
-        ),
+      scales: [
+        raw(TimeSeriesAxis(.x, offset: true), const <String, Object?>{
+          'min': 1610150400000.0,
+        }),
       ],
     ),
     options: const AcquireOptions(),

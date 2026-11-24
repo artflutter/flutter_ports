@@ -23,37 +23,39 @@ double _p1x(ScriptableLineSegmentContext ctx) =>
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(
-        data: .values(<num?>[1, 3, null, null, 2, 1]),
-        segment: LineSegmentStyle(
-          borderColor: (ctx) => _p1x(ctx) > 2
-              ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
-              : null,
-          borderDash: (ctx) => _p1x(ctx) > 3 ? <double>[6, 6] : null,
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          data: .values(<num?>[1, 3, null, null, 2, 1]),
+          segment: LineSegmentStyle(
+            borderColor: (ctx) => _p1x(ctx) > 2
+                ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
+                : null,
+            borderDash: (ctx) => _p1x(ctx) > 3 ? <double>[6, 6] : null,
+          ),
+          spanGaps: true,
         ),
-        spanGaps: true,
-      ),
-      LineDataset(
-        data: .values(<num?>[0, 2, null, null, 1, 0]),
-        segment: LineSegmentStyle(
-          borderColor: (ctx) => _p1x(ctx) > 2
-              ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
-              : null,
-          borderDash: (ctx) => _p1x(ctx) > 3 ? <double>[6, 6] : null,
+        LineDataset(
+          data: .values(<num?>[0, 2, null, null, 1, 0]),
+          segment: LineSegmentStyle(
+            borderColor: (ctx) => _p1x(ctx) > 2
+                ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
+                : null,
+            borderDash: (ctx) => _p1x(ctx) > 3 ? <double>[6, 6] : null,
+          ),
+          spanGaps: false,
         ),
-        spanGaps: false,
-      ),
-    ],
-    labels: <Object>['a', 'b', 'c', 'd', 'e', 'f'],
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
-    ],
-    extra: <String, Object?>{
+      ],
+      labels: <Object>['a', 'b', 'c', 'd', 'e', 'f'],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+    ),
+    <String, Object?>{
       'borderColor': ChartPaint.solid(Color(0xFF000000)),
       'radius': 0,
     },

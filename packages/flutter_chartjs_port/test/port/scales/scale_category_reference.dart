@@ -2191,16 +2191,13 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'c', 'y': 10.0},
-              const <String, Object?>{'x': 'a', 'y': 30.0},
-              const <String, Object?>{'x': 'd', 'y': 20.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'c', 'y': 10.0},
+            const <String, Object?>{'x': 'a', 'y': 30.0},
+            const <String, Object?>{'x': 'd', 'y': 20.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -2676,20 +2673,17 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'name': 'b', 'v': 4.0},
-              const <String, Object?>{'name': 'c', 'v': 8.0},
-              const <String, Object?>{'name': 'a', 'v': 0.0},
-            ],
-            'parsing': const <String, Object?>{
-              'xAxisKey': 'name',
-              'yAxisKey': 'v',
-            },
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'name': 'b', 'v': 4.0},
+            const <String, Object?>{'name': 'c', 'v': 8.0},
+            const <String, Object?>{'name': 'a', 'v': 0.0},
+          ],
+          'parsing': const <String, Object?>{
+            'xAxisKey': 'name',
+            'yAxisKey': 'v',
           },
-        ),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -3121,20 +3115,17 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd', 'e', 'f'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 2.0, 'y': 10.0},
-              const <String, Object?>{'x': null, 'y': 20.0},
-              const <String, Object?>{'x': double.nan, 'y': 30.0},
-              const <String, Object?>{'x': true, 'y': 40.0},
-              const <String, Object?>{'x': undefined, 'y': 50.0},
-              const <String, Object?>{'x': 'f', 'y': 60.0},
-              const <String, Object?>{'x': 'b', 'y': 0.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 2.0, 'y': 10.0},
+            const <String, Object?>{'x': null, 'y': 20.0},
+            const <String, Object?>{'x': double.nan, 'y': 30.0},
+            const <String, Object?>{'x': true, 'y': 40.0},
+            const <String, Object?>{'x': undefined, 'y': 50.0},
+            const <String, Object?>{'x': 'f', 'y': 60.0},
+            const <String, Object?>{'x': 'b', 'y': 0.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -4164,17 +4155,14 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'a', 'y': 1.0},
-              const <String, Object?>{'x': 'd', 'y': 2.0},
-              const <String, Object?>{'x': 'e', 'y': 3.0},
-              const <String, Object?>{'x': 'd', 'y': 4.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'a', 'y': 1.0},
+            const <String, Object?>{'x': 'd', 'y': 2.0},
+            const <String, Object?>{'x': 'e', 'y': 3.0},
+            const <String, Object?>{'x': 'd', 'y': 4.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -4690,15 +4678,12 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     name: 'labels that parse adds to empty data labels',
     config: () => ChartConfig(
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'p', 'y': 5.0},
-              const <String, Object?>{'x': 'q', 'y': 1.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'p', 'y': 5.0},
+            const <String, Object?>{'x': 'q', 'y': 1.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -6992,8 +6977,8 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
           data: [10.0, 50.0, 20.0, 90.0, 30.0, 0.0],
         ),
       ],
-      scales: const [
-        CategoryAxis(.x, extra: <String, Object?>{'min': 1.4, 'max': 3.5}),
+      scales: [
+        raw(CategoryAxis(.x), const <String, Object?>{'min': 1.4, 'max': 3.5}),
       ],
     ),
     options: const AcquireOptions(),
@@ -7490,8 +7475,11 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
           data: [10.0, 50.0, 20.0, 90.0, 30.0, 0.0],
         ),
       ],
-      scales: const [
-        CategoryAxis(.x, extra: <String, Object?>{'min': -3.0, 'max': 99.0}),
+      scales: [
+        raw(CategoryAxis(.x), const <String, Object?>{
+          'min': -3.0,
+          'max': 99.0,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -8828,15 +8816,12 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['January', 'February', 'March', 'April', 'May', 'June'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'February', 'y': 1.0},
-              const <String, Object?>{'x': 'April', 'y': 7.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'February', 'y': 1.0},
+            const <String, Object?>{'x': 'April', 'y': 7.0},
+          ],
+        }),
       ],
       scales: const [CategoryAxis(.x, bounds: ScaleBounds.data)],
     ),
@@ -9278,25 +9263,18 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['January', 'February', 'March', 'April', 'May', 'June'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'March', 'y': 1.0},
-              const <String, Object?>{'x': 'April', 'y': 7.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'March', 'y': 1.0},
+            const <String, Object?>{'x': 'April', 'y': 7.0},
+          ],
+        }),
       ],
-      scales: const [
-        CategoryAxis(
-          .x,
-          bounds: ScaleBounds.data,
-          extra: <String, Object?>{
-            'suggestedMin': 'February',
-            'suggestedMax': 5.0,
-          },
-        ),
+      scales: [
+        raw(CategoryAxis(.x, bounds: ScaleBounds.data), const <String, Object?>{
+          'suggestedMin': 'February',
+          'suggestedMax': 5.0,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -10382,12 +10360,10 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
           data: [10.0, 50.0, 20.0, 90.0, 30.0, 0.0],
         ),
       ],
-      scales: const [
-        CategoryAxis(
-          .x,
-          offset: true,
-          grid: AxisGrid(offset: true),
-          extra: <String, Object?>{'min': 1.0, 'max': 4.0},
+      scales: [
+        raw(
+          CategoryAxis(.x, offset: true, grid: const AxisGrid(offset: true)),
+          const <String, Object?>{'min': 1.0, 'max': 4.0},
         ),
       ],
     ),
@@ -16439,25 +16415,21 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          hidden: true,
-          extra: <String, Object?>{
+        raw(
+          TestDataset(const ChartKind('categoryTest'), hidden: true),
+          <String, Object?>{
             'data': <Object?>[
               const <String, Object?>{'x': 'h1', 'y': 100.0},
               const <String, Object?>{'x': 'h2', 'y': -100.0},
             ],
           },
         ),
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'b', 'y': 10.0},
-              const <String, Object?>{'x': 'c', 'y': 20.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'b', 'y': 10.0},
+            const <String, Object?>{'x': 'c', 'y': 20.0},
+          ],
+        }),
       ],
       scales: const [CategoryAxis(.x, bounds: ScaleBounds.data)],
     ),
@@ -17373,16 +17345,13 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['A', 'B', 'C'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'A', 'y': 1.0},
-              const <String, Object?>{'x': 'C', 'y': 3.0},
-              const <String, Object?>{'x': 'B', 'y': 2.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'A', 'y': 1.0},
+            const <String, Object?>{'x': 'C', 'y': 3.0},
+            const <String, Object?>{'x': 'B', 'y': 2.0},
+          ],
+        }),
       ],
       parsing: false,
     ),
@@ -18590,17 +18559,14 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'a', 'b'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'a', 'y': 1.0},
-              const <String, Object?>{'x': 'b', 'y': 2.0},
-              const <String, Object?>{'x': 'a', 'y': 3.0},
-              const <String, Object?>{'x': 'a', 'y': 4.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'a', 'y': 1.0},
+            const <String, Object?>{'x': 'b', 'y': 2.0},
+            const <String, Object?>{'x': 'a', 'y': 3.0},
+            const <String, Object?>{'x': 'a', 'y': 4.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -20893,15 +20859,12 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': '', 'y': 1.0},
-              const <String, Object?>{'x': 'b', 'y': 2.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': '', 'y': 1.0},
+            const <String, Object?>{'x': 'b', 'y': 2.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -21324,15 +21287,12 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: [2020.0, 2021.0, 2022.0],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': '2021', 'y': 1.0},
-              const <String, Object?>{'x': 2022.0, 'y': 2.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': '2021', 'y': 1.0},
+            const <String, Object?>{'x': 2022.0, 'y': 2.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -21790,15 +21750,12 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['x'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'p', 'y': 1.0},
-              const <String, Object?>{'x': 'z', 'y': 2.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'p', 'y': 1.0},
+            const <String, Object?>{'x': 'z', 'y': 2.0},
+          ],
+        }),
       ],
       scales: [
         CategoryAxis(.x, labels: ['p', 'q']),
@@ -22224,16 +22181,13 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              1.0,
-              2.0,
-              const <String, Object?>{'x': 'k', 'y': 3.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            1.0,
+            2.0,
+            const <String, Object?>{'x': 'k', 'y': 3.0},
+          ],
+        }),
       ],
       scales: [CategoryAxis(.x, labels: [])],
     ),
@@ -24507,12 +24461,14 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
   ),
   (
     name: 'a y axis at the position of a label',
-    config: () => ChartConfig(
-      labels: ['A', 'B', 'C'],
-      datasets: [
-        TestDataset(const ChartKind('categoryTest'), data: [1.0, 3.0, 2.0]),
-      ],
-      extra: const <String, Object?>{
+    config: () => raw(
+      ChartConfig(
+        labels: ['A', 'B', 'C'],
+        datasets: [
+          TestDataset(const ChartKind('categoryTest'), data: [1.0, 3.0, 2.0]),
+        ],
+      ),
+      const <String, Object?>{
         'scales': <String, Object?>{
           'y': <String, Object?>{'position': ScaleValuePosition('x', 'B')},
         },
@@ -24947,12 +24903,14 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
   ),
   (
     name: 'a y axis at the position null',
-    config: () => ChartConfig(
-      labels: ['A', 'B', 'C'],
-      datasets: [
-        TestDataset(const ChartKind('categoryTest'), data: [1.0, 3.0, 2.0]),
-      ],
-      extra: const <String, Object?>{
+    config: () => raw(
+      ChartConfig(
+        labels: ['A', 'B', 'C'],
+        datasets: [
+          TestDataset(const ChartKind('categoryTest'), data: [1.0, 3.0, 2.0]),
+        ],
+      ),
+      const <String, Object?>{
         'scales': <String, Object?>{
           'y': <String, Object?>{'position': ScaleValuePosition('x', null)},
         },
@@ -25840,16 +25798,13 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'a', 'y': 1.0},
-              const <String, Object?>{'x': 'd', 'y': 2.0},
-              const <String, Object?>{'x': 'e', 'y': 3.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'a', 'y': 1.0},
+            const <String, Object?>{'x': 'd', 'y': 2.0},
+            const <String, Object?>{'x': 'e', 'y': 3.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -26272,16 +26227,13 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'a', 'y': 1.0},
-              const <String, Object?>{'x': 'd', 'y': 2.0},
-              const <String, Object?>{'x': 'e', 'y': 3.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'a', 'y': 1.0},
+            const <String, Object?>{'x': 'd', 'y': 2.0},
+            const <String, Object?>{'x': 'e', 'y': 3.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -28129,15 +28081,12 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'a', 'y': 1.0},
-              const <String, Object?>{'x': 'd', 'y': 2.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'a', 'y': 1.0},
+            const <String, Object?>{'x': 'd', 'y': 2.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -28604,15 +28553,12 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
     config: () => ChartConfig(
       labels: ['x'],
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'p', 'y': 1.0},
-              const <String, Object?>{'x': 'z', 'y': 2.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('categoryTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'p', 'y': 1.0},
+            const <String, Object?>{'x': 'z', 'y': 2.0},
+          ],
+        }),
       ],
       scales: [
         CategoryAxis(.x, labels: ['p', 'q']),

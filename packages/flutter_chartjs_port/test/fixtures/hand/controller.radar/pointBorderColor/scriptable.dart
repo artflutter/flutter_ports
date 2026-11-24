@@ -39,10 +39,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
       line: LineElementStyle(fill: FillTarget.none),
-      point: PointElementStyle(
-        borderWidth: 5,
-        radius: 10,
-        extra: <String, Object?>{
+      point: raw(
+        PointElementStyle(borderWidth: 5, radius: 10),
+        <String, Object?>{
           'borderColor': (ScriptableContext ctx) {
             final value = jsOrZero(
               jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),

@@ -9,12 +9,15 @@ import 'package:flutter_test/flutter_test.dart';
 /// A line chart at the pixel ratio 2 with two linear scales, `alignToPixels`
 /// [value] on both, or no key for [undefined].
 ChartConfig _config(Object? value) {
-  LinearAxis scale(CartesianAxis direction) => LinearAxis(
-    direction,
-    min: 0,
-    max: 7,
-    // Keep explicit null distinct from an absent option in these cases.
-    extra: {if (!identical(value, undefined)) 'alignToPixels': value},
+  LinearAxis scale(CartesianAxis direction) => raw(
+    LinearAxis(
+      direction,
+      min: 0,
+      max: 7,
+
+      // Keep explicit null distinct from an absent option in these cases.
+    ),
+    {if (!identical(value, undefined)) 'alignToPixels': value},
   );
   return ChartConfig(
     datasets: [

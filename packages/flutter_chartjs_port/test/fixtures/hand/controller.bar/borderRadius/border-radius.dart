@@ -34,10 +34,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
     // class.
     indexAxis: const YAxis(),
     elements: ChartElements(
-      bar: BarElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x80AAAAAA)),
-        borderColor: ChartPaint.solid(Color(0x80808080)),
-        extra: <String, Object?>{
+      bar: raw(
+        BarElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x80AAAAAA)),
+          borderColor: ChartPaint.solid(Color(0x80808080)),
+        ),
+        <String, Object?>{
           'borderWidth': <String, Object?>{
             'bottom': 6,
             'left': 15,

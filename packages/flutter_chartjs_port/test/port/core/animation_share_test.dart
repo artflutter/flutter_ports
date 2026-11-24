@@ -39,12 +39,14 @@ ChartAnimation _animation(
   List<String> log,
   Map<String, Object?>? extra, {
   required bool twin,
-}) => ChartAnimation(
-  onProgress: (event) =>
-      log.add('progress ${event.currentStep} of ${event.numSteps}'),
-  onComplete: (event) =>
-      log.add('complete ${event.currentStep} of ${event.numSteps}'),
-  extra: {if (twin) 'delay': _twinDelay, ...?extra},
+}) => raw(
+  ChartAnimation(
+    onProgress: (event) =>
+        log.add('progress ${event.currentStep} of ${event.numSteps}'),
+    onComplete: (event) =>
+        log.add('complete ${event.currentStep} of ${event.numSteps}'),
+  ),
+  {if (twin) 'delay': _twinDelay, ...?extra},
 );
 
 typedef _Config = ChartConfigurationScope Function(
@@ -60,7 +62,7 @@ _Config _bar({
     (log, {required twin}) => lowerForTest(
       ChartConfig(
         labels: [for (var i = 0; i < _count; i++) 'l$i'],
-        datasets: [BarDataset(data: .values(_data(1)), extra: dataset)],
+        datasets: [raw(BarDataset(data: .values(_data(1))), dataset)],
         animation: _animation(log, animation, twin: twin),
         scales: const [LinearAxis(.y, min: 0, max: 100)],
       ),

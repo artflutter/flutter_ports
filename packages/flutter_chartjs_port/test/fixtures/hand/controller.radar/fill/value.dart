@@ -15,34 +15,36 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      RadarDataset(
-        data: <num?>[0, 5, 10, null, -10, -5],
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.none,
+  raw(
+    ChartConfig(
+      datasets: [
+        RadarDataset(
+          data: <num?>[0, 5, 10, null, -10, -5],
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.none,
+        ),
+        RadarDataset(data: <num?>[4, -5, -10, null, 10, 5]),
+      ],
+      labels: <Object>[0, 1, 2, 3, 4, 5],
+      elements: ChartElements(
+        line: LineElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0xFF00FF00)),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.toOrigin,
+        ),
       ),
-      RadarDataset(data: <num?>[4, -5, -10, null, 10, 5]),
-    ],
-    labels: <Object>[0, 1, 2, 3, 4, 5],
-    elements: ChartElements(
-      line: LineElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0xFF00FF00)),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toOrigin,
-      ),
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        RadialLinearAxis(display: ScaleDisplay.off, min: -15),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
     ),
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      RadialLinearAxis(display: ScaleDisplay.off, min: -15),
-    ],
-    disabledPlugins: [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TitlePlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: <String, Object?>{
+    <String, Object?>{
       'plugins': <String, Object?>{'filler': true},
     },
   ),

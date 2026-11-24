@@ -27,23 +27,25 @@ FixtureConfig fixture() {
   final ctx = canvas.getContext('2d')!;
 
   return FixtureConfig.typed(
-    ChartConfig(
-      datasets: [
-        PolarAreaDataset(
-          data: <num?>[20],
-          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        ),
-      ],
-      labels: <Object>['A'],
-      responsive: false,
-      scales: [RadialLinearAxis(ticks: AxisTicks(display: false))],
-      disabledPlugins: [
-        PluginOff<LegendPlugin>(),
-        PluginOff<TitlePlugin>(),
-        PluginOff<TooltipPlugin>(),
-        PluginOff<FillerPlugin>(),
-      ],
-      extra: <String, Object?>{
+    raw(
+      ChartConfig(
+        datasets: [
+          PolarAreaDataset(
+            data: <num?>[20],
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          ),
+        ],
+        labels: <Object>['A'],
+        responsive: false,
+        scales: [RadialLinearAxis(ticks: AxisTicks(display: false))],
+        disabledPlugins: [
+          PluginOff<LegendPlugin>(),
+          PluginOff<TitlePlugin>(),
+          PluginOff<TooltipPlugin>(),
+          PluginOff<FillerPlugin>(),
+        ],
+      ),
+      <String, Object?>{
         'animation': <String, Object?>{
           'duration': 0,
           // DIVERGES(chartjs): adapt-flutter-curves, the curve.

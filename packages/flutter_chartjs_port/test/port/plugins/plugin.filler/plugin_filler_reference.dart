@@ -15391,16 +15391,18 @@ List<PluginFillerReferenceCase> pluginFillerReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd', 'e', 'f'],
       datasets: [
-        LineDataset(
-          data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
-          borderColor: const ChartValue.constant(
-            ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+        raw(
+          LineDataset(
+            data: DatasetData.values([-2.0, 1.0, -3.0, 2.0, -1.0, 3.0]),
+            borderColor: const ChartValue.constant(
+              ChartPaint.solid(Color.fromRGBO(0, 0, 0, 1)),
+            ),
+            backgroundColor: const ChartValue.constant(
+              ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
+            ),
+            fill: FillTarget.toOrigin,
           ),
-          backgroundColor: const ChartValue.constant(
-            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.3)),
-          ),
-          fill: FillTarget.toOrigin,
-          extra: const <String, Object?>{'stepped': true},
+          const <String, Object?>{'stepped': true},
         ),
       ],
       disabledPlugins: const [

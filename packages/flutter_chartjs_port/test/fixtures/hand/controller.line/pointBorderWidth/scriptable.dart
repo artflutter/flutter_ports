@@ -15,11 +15,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        // option in dataset
-        data: .values(<num?>[0, 5, 10, null, -10, -5]),
-        pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        extra: <String, Object?>{
+      raw(
+        LineDataset(
+          // option in dataset
+          data: .values(<num?>[0, 5, 10, null, -10, -5]),
+          pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+        ),
+        <String, Object?>{
           'pointBorderWidth': (ScriptableContext ctx) {
             final value = jsOrZero(
               jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
@@ -40,10 +42,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
       line: LineElementStyle(fill: FillTarget.none),
-      point: PointElementStyle(
-        borderColor: ChartPaint.solid(Color(0xFFFF0000)),
-        radius: 10,
-        extra: <String, Object?>{
+      point: raw(
+        PointElementStyle(
+          borderColor: ChartPaint.solid(Color(0xFFFF0000)),
+          radius: 10,
+        ),
+        <String, Object?>{
           'borderWidth': (ScriptableContext ctx) {
             final value = jsOrZero(
               jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),

@@ -16,38 +16,47 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 FixtureConfig fixture() {
   final yAxis = LinearAxis(CartesianAxis.y, display: ScaleDisplay.off);
   return FixtureConfig.typed(
-    ChartConfig(
-      datasets: [
-        BarDataset(
-          backgroundColor: .constant(ChartPaint.solid(Color(0xCCFF6384))),
-          label: 'Dataset 1',
-          data: .values(<num?>[12, 19, 3, 5, 2, 3]),
-          stack: '0',
-          yAxis: yAxis,
-        ),
-        BarDataset(
-          backgroundColor: .constant(ChartPaint.solid(Color(0xCC36A2EB))),
-          label: 'Dataset 2',
-          data: .values(<num?>[13, 19, 3, 5, 8, 3]),
-          stack: '0',
-          yAxis: yAxis,
-        ),
-        BarDataset(
-          backgroundColor: .constant(ChartPaint.solid(Color(0xCC4BC0C0))),
-          label: 'Dataset 3',
-          data: .values(<num?>[13, 19, 3, 5, 8, 3]),
-          stack: '0',
-          yAxis: yAxis,
-        ),
-      ],
-      labels: <Object>['January', 'February', 'March', 'April', 'May', 'June'],
-      scales: [
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        yAxis,
-      ],
-      extra: <String, Object?>{'plugins': false},
+    raw(
+      ChartConfig(
+        datasets: [
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xCCFF6384))),
+            label: 'Dataset 1',
+            data: .values(<num?>[12, 19, 3, 5, 2, 3]),
+            stack: '0',
+            yAxis: yAxis,
+          ),
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xCC36A2EB))),
+            label: 'Dataset 2',
+            data: .values(<num?>[13, 19, 3, 5, 8, 3]),
+            stack: '0',
+            yAxis: yAxis,
+          ),
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xCC4BC0C0))),
+            label: 'Dataset 3',
+            data: .values(<num?>[13, 19, 3, 5, 8, 3]),
+            stack: '0',
+            yAxis: yAxis,
+          ),
+        ],
+        labels: <Object>[
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+        ],
+        scales: [
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          yAxis,
+        ],
+      ),
+      <String, Object?>{'plugins': false},
     ),
     description: 'https://github.com/chartjs/Chart.js/issues/9105',
     run: (chart) {

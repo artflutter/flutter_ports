@@ -15,10 +15,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        // option in dataset
-        data: .values(<num?>[0, 5, 10, null, -10, -5]),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          // option in dataset
+          data: .values(<num?>[0, 5, 10, null, -10, -5]),
+        ),
+        <String, Object?>{
           'borderWidth': (ScriptableContext ctx) {
             final value = jsOrZero(
               jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
@@ -34,10 +36,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      bar: BarElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderColor: ChartPaint.solid(Color(0xFF888888)),
-        extra: <String, Object?>{
+      bar: raw(
+        BarElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderColor: ChartPaint.solid(Color(0xFF888888)),
+        ),
+        <String, Object?>{
           'borderWidth': (ScriptableContext ctx) {
             return jsToNumber(ctx.dataIndex ?? undefined) * 2;
           },

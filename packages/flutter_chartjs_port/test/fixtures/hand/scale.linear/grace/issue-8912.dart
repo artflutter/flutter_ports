@@ -15,22 +15,24 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(data: .values(<num?>[10, -10])),
-    ],
-    labels: <Object>['Red', 'Blue'],
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-      LinearAxis(
-        CartesianAxis.y,
-        // DIVERGES(chartjs): adapt-length-objects, the length
-        // class.
-        grace: const PercentGrace(100),
-      ),
-    ],
-    extra: <String, Object?>{'plugins': false},
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(data: .values(<num?>[10, -10])),
+      ],
+      labels: <Object>['Red', 'Blue'],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        LinearAxis(
+          CartesianAxis.y,
+          // DIVERGES(chartjs): adapt-length-objects, the length
+          // class.
+          grace: const PercentGrace(100),
+        ),
+      ],
+    ),
+    <String, Object?>{'plugins': false},
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/8912',
 );

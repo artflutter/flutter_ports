@@ -57,12 +57,10 @@ Object? _rawRadius(ScriptableContext ctx) => contextRead(ctx, 'raw');
 ChartConfig _one(AnyObject extra, List<Object?> data) => ChartConfig(
   datasets: [
     // These cases deliberately give arrays, nulls and string radii.
-    BubbleDataset(
-      extra: {
-        'data': <Object?>[...data],
-        ...extra,
-      },
-    ),
+    raw(const BubbleDataset(), {
+      'data': <Object?>[...data],
+      ...extra,
+    }),
   ],
 );
 

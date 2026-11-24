@@ -23,29 +23,33 @@ FixtureConfig fixture() {
   }
 
   return FixtureConfig.typed(
-    ChartConfig(
-      datasets: [
-        ScatterDataset(
-          // DIVERGES(chartjs): adapt-chart-clip-option, the clip class.
-          clip: ChartClip.none,
-          borderWidth: 0,
-          backgroundColor: .resolver(
-            (ctx) =>
-                ctx.type != 'data' ||
-                    jsToNumber(jsGet(ctx.raw, 'x')) < 1 ||
-                    jsToNumber(jsGet(ctx.raw, 'x')) > 1.1
-                ? ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.7))
-                : ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.05)),
+    raw(
+      ChartConfig(
+        datasets: [
+          raw(
+            ScatterDataset(
+              // DIVERGES(chartjs): adapt-chart-clip-option, the clip class.
+              clip: ChartClip.none,
+              borderWidth: 0,
+              backgroundColor: .resolver(
+                (ctx) =>
+                    ctx.type != 'data' ||
+                        jsToNumber(jsGet(ctx.raw, 'x')) < 1 ||
+                        jsToNumber(jsGet(ctx.raw, 'x')) > 1.1
+                    ? ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.7))
+                    : ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.05)),
+              ),
+            ),
+            <String, Object?>{'radius': 8, 'data': data},
           ),
-          extra: <String, Object?>{'radius': 8, 'data': data},
-        ),
-      ],
-      scales: [
-        LinearAxis(CartesianAxis.x, min: 1, max: 1.1),
-        LinearAxis(CartesianAxis.y, min: 1, max: 1.1),
-      ],
-      padding: const EdgeInsets.all(32),
-      extra: <String, Object?>{'plugins': false},
+        ],
+        scales: [
+          LinearAxis(CartesianAxis.x, min: 1, max: 1.1),
+          LinearAxis(CartesianAxis.y, min: 1, max: 1.1),
+        ],
+        padding: const EdgeInsets.all(32),
+      ),
+      <String, Object?>{'plugins': false},
     ),
     options: AcquireOptions(canvas: HarnessCanvas(width: 320, height: 240)),
   );

@@ -151,12 +151,15 @@ ChartConfigurationScope _config(
   return lowerForTest(
     ChartConfig(
       datasets: [
-        RadarDataset(
-          data: values is List<num?> ? values : null,
-          pointRadius: pointRadius,
-          // The controller of the chart type: a RadarDataset alone gives
-          // the type `radar`.
-          extra: {
+        raw(
+          RadarDataset(
+            data: values is List<num?> ? values : null,
+            pointRadius: pointRadius,
+
+            // The controller of the chart type: a RadarDataset alone gives
+            // the type `radar`.
+          ),
+          {
             'type': type,
             if (values is! List<num?>) 'data': values,
             ...?datasetExtra?.call(),

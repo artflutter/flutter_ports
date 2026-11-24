@@ -59,53 +59,59 @@ FixtureConfig fixture() {
     offset: true,
   );
   return FixtureConfig.typed(
-    ChartConfig(
-      datasets: [
-        LineDataset(
-          data: .points([DataPoint(5, 1), DataPoint(10, 2), DataPoint(5, 3)]),
-          borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        ),
-        LineDataset(
-          data: .points([DataPoint(5, 1), DataPoint(10, 2), DataPoint(5, 3)]),
-          yAxis: y1Axis,
-          xAxis: x1Axis,
-          borderColor: .constant(ChartPaint.solid(Color(0xFF008000))),
-        ),
-        LineDataset(
-          data: .points([DataPoint(5, 1), DataPoint(10, 2), DataPoint(5, 3)]),
-          yAxis: y2Axis,
-          xAxis: x2Axis,
-          borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        ),
-      ],
-      labels: <Object>['tick1', 'tick2', 'tick3'],
-      scales: [
-        LinearAxis(
-          CartesianAxis.x,
-          position: ChartPosition.bottom,
-          bounds: ScaleBounds.data,
-          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
-          border: const AxisBorder(color: ChartPaint.solid(Color(0xFFFF0000))),
-          ticks: AxisTicks(autoSkip: false, maxRotation: 0, count: 3),
-          max: 7,
-          stack: '1',
-          offset: true,
-        ),
-        x1Axis,
-        x2Axis,
-        LinearAxis(
-          CartesianAxis.y,
-          position: ChartPosition.left,
-          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
-          border: const AxisBorder(color: ChartPaint.solid(Color(0xFFFF0000))),
-          ticks: AxisTicks(precision: 0),
-          stack: '1',
-          offset: true,
-        ),
-        y1Axis,
-        y2Axis,
-      ],
-      extra: <String, Object?>{'plugins': false},
+    raw(
+      ChartConfig(
+        datasets: [
+          LineDataset(
+            data: .points([DataPoint(5, 1), DataPoint(10, 2), DataPoint(5, 3)]),
+            borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          ),
+          LineDataset(
+            data: .points([DataPoint(5, 1), DataPoint(10, 2), DataPoint(5, 3)]),
+            yAxis: y1Axis,
+            xAxis: x1Axis,
+            borderColor: .constant(ChartPaint.solid(Color(0xFF008000))),
+          ),
+          LineDataset(
+            data: .points([DataPoint(5, 1), DataPoint(10, 2), DataPoint(5, 3)]),
+            yAxis: y2Axis,
+            xAxis: x2Axis,
+            borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          ),
+        ],
+        labels: <Object>['tick1', 'tick2', 'tick3'],
+        scales: [
+          LinearAxis(
+            CartesianAxis.x,
+            position: ChartPosition.bottom,
+            bounds: ScaleBounds.data,
+            // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+            border: const AxisBorder(
+              color: ChartPaint.solid(Color(0xFFFF0000)),
+            ),
+            ticks: AxisTicks(autoSkip: false, maxRotation: 0, count: 3),
+            max: 7,
+            stack: '1',
+            offset: true,
+          ),
+          x1Axis,
+          x2Axis,
+          LinearAxis(
+            CartesianAxis.y,
+            position: ChartPosition.left,
+            // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+            border: const AxisBorder(
+              color: ChartPaint.solid(Color(0xFFFF0000)),
+            ),
+            ticks: AxisTicks(precision: 0),
+            stack: '1',
+            offset: true,
+          ),
+          y1Axis,
+          y2Axis,
+        ],
+      ),
+      <String, Object?>{'plugins': false},
     ),
     options: AcquireOptions(canvas: HarnessCanvas(width: 384, height: 384)),
   );

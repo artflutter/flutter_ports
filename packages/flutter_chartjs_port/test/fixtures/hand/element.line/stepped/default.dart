@@ -17,18 +17,20 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        data: .points([
-          DataPoint(1, 10),
-          DataPoint(5, 0),
-          DataPoint(15, -10),
-          DataPoint(19, -5),
-        ]),
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.none,
-        tension: 0,
-        extra: <String, Object?>{'stepped': true},
+      raw(
+        LineDataset(
+          data: .points([
+            DataPoint(1, 10),
+            DataPoint(5, 0),
+            DataPoint(15, -10),
+            DataPoint(19, -5),
+          ]),
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.none,
+          tension: 0,
+        ),
+        <String, Object?>{'stepped': true},
       ),
     ],
     scales: [

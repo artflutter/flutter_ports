@@ -16,23 +16,27 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        data: .values(<num?>[100, 0]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-      ),
-      BarDataset(
-        data: .values(<num?>[0, 100]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{'xAxisID': 'x2'},
-      ),
-    ],
-    labels: <Object>['a', 'b'],
-    // DIVERGES(chartjs): adapt-axis-objects, the axis
-    // class.
-    indexAxis: const YAxis(),
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(
+          data: .values(<num?>[100, 0]),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+        ),
+        raw(
+          BarDataset(
+            data: .values(<num?>[0, 100]),
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          ),
+          <String, Object?>{'xAxisID': 'x2'},
+        ),
+      ],
+      labels: <Object>['a', 'b'],
+      // DIVERGES(chartjs): adapt-axis-objects, the axis
+      // class.
+      indexAxis: const YAxis(),
+    ),
+    <String, Object?>{
       'scales': <String, Object?>{
         // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
         'y': <String, Object?>{'display': ScaleDisplay.off},

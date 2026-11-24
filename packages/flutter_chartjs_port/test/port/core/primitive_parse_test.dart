@@ -82,21 +82,17 @@ ChartConfigurationScope _config({
   bool stacked = false,
 }) {
   Dataset dataset(List<Object?> data) => switch (type) {
-    'bar' => BarDataset(extra: {'data': data}),
-    'line' => LineDataset(extra: {'data': data}),
+    'bar' => raw(const BarDataset(), {'data': data}),
+    'line' => raw(const LineDataset(), {'data': data}),
     _ => throw ArgumentError.value(type, 'type'),
   };
   final mode = stacked ? StackMode.on : StackMode.off;
-  final index = CategoryAxis(
-    horizontal ? .y : .x,
-    stacked: mode,
-    extra: {'type': category},
-  );
-  final value = LinearAxis(
-    horizontal ? .x : .y,
-    stacked: mode,
-    extra: {'type': linear},
-  );
+  final index = raw(CategoryAxis(horizontal ? .y : .x, stacked: mode), {
+    'type': category,
+  });
+  final value = raw(LinearAxis(horizontal ? .x : .y, stacked: mode), {
+    'type': linear,
+  });
   final root = lowerForTest(
     ChartConfig(
       datasets: [

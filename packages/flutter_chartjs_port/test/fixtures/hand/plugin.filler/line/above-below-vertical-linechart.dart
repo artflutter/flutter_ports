@@ -17,45 +17,47 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(
-        data: .values(<num?>[200, 400, 200, 400]),
-        // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
-        // class.
-        cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
-        tension: 0.4,
-        spanGaps: true,
-        borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        pointRadius: .constant(0),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: const FillTarget.toDataset(1).split(
-          above: nativeFixturePaint('rgba(53, 221, 53, 0.4)'),
-          below: nativeFixturePaint('rgba(255, 0, 0, 0.4)'),
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          data: .values(<num?>[200, 400, 200, 400]),
+          // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+          // class.
+          cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
+          tension: 0.4,
+          spanGaps: true,
+          borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          pointRadius: .constant(0),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: const FillTarget.toDataset(1).split(
+            above: nativeFixturePaint('rgba(53, 221, 53, 0.4)'),
+            below: nativeFixturePaint('rgba(255, 0, 0, 0.4)'),
+          ),
         ),
-      ),
-      LineDataset(
-        data: .values(<num?>[400, 200, 400, 200]),
-        // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
-        // class.
-        cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
-        tension: 0.4,
-        spanGaps: true,
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFFA500))),
-        pointRadius: .constant(0),
-      ),
-    ],
-    labels: <Object>[1, 2, 3, 4],
-    // DIVERGES(chartjs): adapt-axis-objects, the axis
-    // class.
-    indexAxis: const YAxis(),
-    pluginOptions: [
-      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-      const FillerOptions(propagate: false),
-      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-      const LegendOptions(display: false),
-    ],
-    extra: <String, Object?>{
+        LineDataset(
+          data: .values(<num?>[400, 200, 400, 200]),
+          // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
+          // class.
+          cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
+          tension: 0.4,
+          spanGaps: true,
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFFA500))),
+          pointRadius: .constant(0),
+        ),
+      ],
+      labels: <Object>[1, 2, 3, 4],
+      // DIVERGES(chartjs): adapt-axis-objects, the axis
+      // class.
+      indexAxis: const YAxis(),
+      pluginOptions: [
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        const FillerOptions(propagate: false),
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        const LegendOptions(display: false),
+      ],
+    ),
+    <String, Object?>{
       'plugins': <String, Object?>{
         'datalabels': <String, Object?>{'display': false},
       },

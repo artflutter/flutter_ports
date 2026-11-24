@@ -3889,12 +3889,9 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd'],
       datasets: [
-        TestDataset(
-          const ChartKind('logValueTest'),
-          extra: <String, Object?>{
-            'data': <Object?>['10', '100', '1000', 'abc'],
-          },
-        ),
+        raw(TestDataset(const ChartKind('logValueTest')), <String, Object?>{
+          'data': <Object?>['10', '100', '1000', 'abc'],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -4868,21 +4865,18 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
     name: 'null, NaN, negative, string and boolean values',
     config: () => ChartConfig(
       datasets: [
-        TestDataset(
-          const ChartKind('logTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 1.0, 'y': null},
-              const <String, Object?>{'x': 2.0, 'y': double.nan},
-              const <String, Object?>{'x': null, 'y': 4.0},
-              const <String, Object?>{'x': 3.0, 'y': -5.0},
-              const <String, Object?>{'x': 'abc', 'y': 6.0},
-              const <String, Object?>{'x': '7', 'y': '8.5'},
-              const <String, Object?>{'x': 9.0, 'y': true},
-              const <String, Object?>{'x': 12.0, 'y': 40.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('logTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 1.0, 'y': null},
+            const <String, Object?>{'x': 2.0, 'y': double.nan},
+            const <String, Object?>{'x': null, 'y': 4.0},
+            const <String, Object?>{'x': 3.0, 'y': -5.0},
+            const <String, Object?>{'x': 'abc', 'y': 6.0},
+            const <String, Object?>{'x': '7', 'y': '8.5'},
+            const <String, Object?>{'x': 9.0, 'y': true},
+            const <String, Object?>{'x': 12.0, 'y': 40.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -12653,15 +12647,13 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
     config: () => ChartConfig(
       labels: ['category 1', 'category 2'],
       datasets: [
-        TestDataset(
-          const ChartKind('logValueTest'),
-          data: [1.0, 39.0],
-          extra: const <String, Object?>{'stack': 'stack'},
+        raw(
+          TestDataset(const ChartKind('logValueTest'), data: [1.0, 39.0]),
+          const <String, Object?>{'stack': 'stack'},
         ),
-        TestDataset(
-          const ChartKind('logValueTest'),
-          data: [1.0, 39.0],
-          extra: const <String, Object?>{'stack': 'stack'},
+        raw(
+          TestDataset(const ChartKind('logValueTest'), data: [1.0, 39.0]),
+          const <String, Object?>{'stack': 'stack'},
         ),
       ],
       scales: const [LogarithmicAxis(.y, stacked: StackMode.on)],
@@ -13532,15 +13524,13 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        TestDataset(
-          const ChartKind('logValueTest'),
-          data: [0.0, 10.0, 5.0],
-          extra: const <String, Object?>{'stack': 'stack'},
+        raw(
+          TestDataset(const ChartKind('logValueTest'), data: [0.0, 10.0, 5.0]),
+          const <String, Object?>{'stack': 'stack'},
         ),
-        TestDataset(
-          const ChartKind('logValueTest'),
-          data: [5.0, 0.0, 0.0],
-          extra: const <String, Object?>{'stack': 'stack'},
+        raw(
+          TestDataset(const ChartKind('logValueTest'), data: [5.0, 0.0, 0.0]),
+          const <String, Object?>{'stack': 'stack'},
         ),
       ],
       scales: const [LogarithmicAxis(.y, stacked: StackMode.on)],
@@ -14522,16 +14512,13 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
     name: 'parsing false with an absent x',
     config: () => ChartConfig(
       datasets: [
-        TestDataset(
-          const ChartKind('logTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'y': 5.0},
-              const <String, Object?>{'x': 10.0, 'y': 50.0},
-              const <String, Object?>{'x': 100.0, 'y': 500.0},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('logTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'y': 5.0},
+            const <String, Object?>{'x': 10.0, 'y': 50.0},
+            const <String, Object?>{'x': 100.0, 'y': 500.0},
+          ],
+        }),
       ],
       parsing: false,
     ),
@@ -16131,17 +16118,14 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
     name: 'parsing false with zero, negative and string values',
     config: () => ChartConfig(
       datasets: [
-        TestDataset(
-          const ChartKind('logTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': -5.0, 'y': -3.0},
-              const <String, Object?>{'x': 0.0, 'y': 0.0},
-              const <String, Object?>{'x': 100.0, 'y': 500.0},
-              const <String, Object?>{'x': '20', 'y': '7'},
-            ],
-          },
-        ),
+        raw(TestDataset(const ChartKind('logTest')), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': -5.0, 'y': -3.0},
+            const <String, Object?>{'x': 0.0, 'y': 0.0},
+            const <String, Object?>{'x': 100.0, 'y': 500.0},
+            const <String, Object?>{'x': '20', 'y': '7'},
+          ],
+        }),
       ],
       parsing: false,
     ),
@@ -19357,12 +19341,12 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
           ],
         ),
       ],
-      scales: const [
-        LogarithmicAxis(.x, extra: <String, Object?>{'min': '10'}),
-        LogarithmicAxis(
-          .y,
-          extra: <String, Object?>{'min': '10', 'max': '5000'},
-        ),
+      scales: [
+        raw(LogarithmicAxis(.x), const <String, Object?>{'min': '10'}),
+        raw(LogarithmicAxis(.y), const <String, Object?>{
+          'min': '10',
+          'max': '5000',
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -20847,9 +20831,11 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
           ],
         ),
       ],
-      scales: const [
-        LogarithmicAxis(.x, min: -10, extra: <String, Object?>{'max': 'abc'}),
-        LogarithmicAxis(.y, min: double.nan, max: -1000),
+      scales: [
+        raw(LogarithmicAxis(.x, min: -10), const <String, Object?>{
+          'max': 'abc',
+        }),
+        const LogarithmicAxis(.y, min: double.nan, max: -1000),
       ],
     ),
     options: const AcquireOptions(),
@@ -30452,8 +30438,8 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       datasets: [
         TestDataset(const ChartKind('logValueTest'), data: [5.0, 50.0]),
       ],
-      scales: const [
-        LogarithmicAxis(.y, extra: <String, Object?>{'beginAtZero': true}),
+      scales: [
+        raw(LogarithmicAxis(.y), const <String, Object?>{'beginAtZero': true}),
       ],
     ),
     options: const AcquireOptions(),
@@ -31192,12 +31178,10 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       datasets: [
         TestDataset(const ChartKind('logValueTest'), data: [10.0, 100.0]),
       ],
-      scales: const [
-        LogarithmicAxis(
-          .y,
-          suggestedMin: 10,
-          extra: <String, Object?>{'beginAtZero': true},
-        ),
+      scales: [
+        raw(LogarithmicAxis(.y, suggestedMin: 10), const <String, Object?>{
+          'beginAtZero': true,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -32096,12 +32080,10 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       datasets: [
         TestDataset(const ChartKind('logValueTest'), data: [5.0, 50.0]),
       ],
-      scales: const [
-        LogarithmicAxis(
-          .y,
-          min: 3,
-          extra: <String, Object?>{'beginAtZero': true},
-        ),
+      scales: [
+        raw(LogarithmicAxis(.y, min: 3), const <String, Object?>{
+          'beginAtZero': true,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -32777,8 +32759,8 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
     name: 'beginAtZero and empty data',
     config: () => ChartConfig(
       datasets: [TestDataset(const ChartKind('logTest'), data: [])],
-      scales: const [
-        LogarithmicAxis(.y, extra: <String, Object?>{'beginAtZero': true}),
+      scales: [
+        raw(LogarithmicAxis(.y), const <String, Object?>{'beginAtZero': true}),
       ],
     ),
     options: const AcquireOptions(),
@@ -39632,12 +39614,13 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
           ],
         ),
       ],
-      scales: const [
-        LogarithmicAxis(.x, extra: <String, Object?>{'grace': ValueGrace(3)}),
-        LogarithmicAxis(
-          .y,
-          extra: <String, Object?>{'grace': PercentGrace(50)},
-        ),
+      scales: [
+        raw(LogarithmicAxis(.x), const <String, Object?>{
+          'grace': ValueGrace(3),
+        }),
+        raw(LogarithmicAxis(.y), const <String, Object?>{
+          'grace': PercentGrace(50),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -53991,14 +53974,16 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
   ),
   (
     name: 'locale',
-    config: () => ChartConfig(
-      datasets: [
-        TestDataset(
-          const ChartKind('logTest'),
-          points: [DataPoint(0.5, 1.5), DataPoint(12345.0, 2750.0)],
-        ),
-      ],
-      extra: const <String, Object?>{'locale': Locale('de', 'DE')},
+    config: () => raw(
+      ChartConfig(
+        datasets: [
+          TestDataset(
+            const ChartKind('logTest'),
+            points: [DataPoint(0.5, 1.5), DataPoint(12345.0, 2750.0)],
+          ),
+        ],
+      ),
+      const <String, Object?>{'locale': Locale('de', 'DE')},
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -55228,13 +55213,11 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       scales: [
         LogarithmicAxis(
           .y,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'format': (NumberFormat.decimalPattern()
-                ..maximumFractionDigits = 1
-                ..minimumFractionDigits = 0),
-            },
-          ),
+          ticks: raw(AxisTicks(), <String, Object?>{
+            'format': (NumberFormat.decimalPattern()
+              ..maximumFractionDigits = 1
+              ..minimumFractionDigits = 0),
+          }),
         ),
       ],
     ),
@@ -60017,22 +60000,18 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
           ],
         ),
       ],
-      scales: const [
+      scales: [
         LogarithmicAxis(
           .x,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'major': <String, Object?>{'enabled': false},
-            },
-          ),
+          ticks: raw(AxisTicks(), const <String, Object?>{
+            'major': <String, Object?>{'enabled': false},
+          }),
         ),
         LogarithmicAxis(
           .y,
-          ticks: AxisTicks(
-            extra: <String, Object?>{
-              'major': <String, Object?>{'enabled': false},
-            },
-          ),
+          ticks: raw(AxisTicks(), const <String, Object?>{
+            'major': <String, Object?>{'enabled': false},
+          }),
         ),
       ],
     ),
@@ -62108,8 +62087,8 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       datasets: [
         TestDataset(const ChartKind('logValueTest'), data: [5.0, 50.0]),
       ],
-      scales: const [
-        LogarithmicAxis(.y, extra: <String, Object?>{'beginAtZero': true}),
+      scales: [
+        raw(LogarithmicAxis(.y), const <String, Object?>{'beginAtZero': true}),
       ],
     ),
     options: const AcquireOptions(),

@@ -16,24 +16,22 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BubbleDataset(
-        extra: <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'x': 0, 'y': 0},
-            <String, Object?>{'x': 1, 'y': 0},
-            <String, Object?>{'x': 2, 'y': 0},
-            <String, Object?>{'x': 3, 'y': 0},
-            <String, Object?>{'x': 4, 'y': 0},
-            <String, Object?>{'x': 5, 'y': 0},
-          ],
-          'radius': (ScriptableContext ctx) {
-            return jsToNumber(
-                  jsGet(jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex), 'x'),
-                ) *
-                4;
-          },
+      raw(BubbleDataset(), <String, Object?>{
+        'data': <Object?>[
+          <String, Object?>{'x': 0, 'y': 0},
+          <String, Object?>{'x': 1, 'y': 0},
+          <String, Object?>{'x': 2, 'y': 0},
+          <String, Object?>{'x': 3, 'y': 0},
+          <String, Object?>{'x': 4, 'y': 0},
+          <String, Object?>{'x': 5, 'y': 0},
+        ],
+        'radius': (ScriptableContext ctx) {
+          return jsToNumber(
+                jsGet(jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex), 'x'),
+              ) *
+              4;
         },
-      ),
+      }),
     ],
     scales: [
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

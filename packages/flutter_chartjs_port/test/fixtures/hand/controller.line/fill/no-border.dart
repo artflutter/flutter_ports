@@ -22,30 +22,32 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The runner pumps frames of 16 ms until the `Future` completes: the
 /// animation of 1 ms ends in the first frame.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(
-        data: .values(<num?>[12, 19, 3, 5, 2, 3]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        borderWidth: 0,
-        tension: 0.4,
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toOrigin,
-      ),
-    ],
-    labels: <Object>[0, 1, 2, 3, 4, 5],
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
-    ],
-    disabledPlugins: [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TitlePlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          data: .values(<num?>[12, 19, 3, 5, 2, 3]),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          borderWidth: 0,
+          tension: 0.4,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.toOrigin,
+        ),
+      ],
+      labels: <Object>[0, 1, 2, 3, 4, 5],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    <String, Object?>{
       'animation': <String, Object?>{'duration': 1},
       'plugins': <String, Object?>{'filler': true},
     },

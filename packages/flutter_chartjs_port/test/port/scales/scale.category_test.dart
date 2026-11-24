@@ -324,14 +324,11 @@ Chart _labelsChart(List<Object?> labels, Object? x) {
   final root = lowerForTest(
     ChartConfig(
       datasets: [
-        TestDataset(
-          const ChartKind('categoryTest'),
-          extra: {
-            'data': <Object?>[
-              <String, Object?>{'x': x, 'y': 1.0},
-            ],
-          },
-        ),
+        raw(const TestDataset(ChartKind('categoryTest')), {
+          'data': <Object?>[
+            <String, Object?>{'x': x, 'y': 1.0},
+          ],
+        }),
       ],
     ),
   );
@@ -514,13 +511,10 @@ void main() {
 
     testWidgets('a y axis at the position of a label', (tester) async {
       final chart = _abcChart([
-        const LinearAxis(
-          .y,
-          extra: {
-            'type': 'testLinear',
-            'position': ScaleValuePosition('x', 'B'),
-          },
-        ),
+        raw(const LinearAxis(.y), {
+          'type': 'testLinear',
+          'position': const ScaleValuePosition('x', 'B'),
+        }),
       ]);
       final pixel = _x(chart).getPixelForValue(scaleValueOf(_x(chart), 'B'));
       final items = chart.scales['y']!.getLabelItems();
@@ -532,13 +526,10 @@ void main() {
 
     testWidgets('a y axis at the position null', (tester) async {
       final chart = _abcChart([
-        const LinearAxis(
-          .y,
-          extra: {
-            'type': 'testLinear',
-            'position': ScaleValuePosition('x', null),
-          },
-        ),
+        raw(const LinearAxis(.y), {
+          'type': 'testLinear',
+          'position': const ScaleValuePosition('x', null),
+        }),
       ]);
       final items = chart.scales['y']!.getLabelItems();
       expect(items, isNotEmpty);

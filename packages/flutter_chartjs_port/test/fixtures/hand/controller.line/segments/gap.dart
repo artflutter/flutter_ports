@@ -22,16 +22,18 @@ bool _skipped(ScriptableLineSegmentContext ctx) =>
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-        segment: LineSegmentStyle(
-          borderColor: (ctx) => _skipped(ctx)
-              ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
-              : null,
-          borderDash: (ctx) => _skipped(ctx) ? <double>[5, 5] : null,
+      raw(
+        LineDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
+          segment: LineSegmentStyle(
+            borderColor: (ctx) => _skipped(ctx)
+                ? const ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1))
+                : null,
+            borderDash: (ctx) => _skipped(ctx) ? <double>[5, 5] : null,
+          ),
+          spanGaps: true,
         ),
-        spanGaps: true,
-        extra: <String, Object?>{
+        <String, Object?>{
           'data': <Object?>[1, 3, double.nan, double.nan, 2, 1],
         },
       ),

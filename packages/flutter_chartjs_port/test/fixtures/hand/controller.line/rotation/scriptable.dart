@@ -38,12 +38,14 @@ FixtureConfig fixture() => FixtureConfig.typed(
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
       line: LineElementStyle(fill: FillTarget.none),
-      point: PointElementStyle(
-        borderColor: ChartPaint.solid(Color(0xFFFF0000)),
-        // DIVERGES(chartjs): adapt-point-style-objects, the style class.
-        pointStyle: const LinePointStyle(),
-        radius: 10,
-        extra: <String, Object?>{
+      point: raw(
+        PointElementStyle(
+          borderColor: ChartPaint.solid(Color(0xFFFF0000)),
+          // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+          pointStyle: const LinePointStyle(),
+          radius: 10,
+        ),
+        <String, Object?>{
           'rotation': (ScriptableContext ctx) {
             final value = jsOrZero(
               jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),

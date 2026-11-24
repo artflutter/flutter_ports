@@ -15,11 +15,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        // option in dataset
-        data: .values(<num?>[0, 4, 2, 6, 4, 8]),
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{
+      raw(
+        LineDataset(
+          // option in dataset
+          data: .values(<num?>[0, 4, 2, 6, 4, 8]),
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
           'cubicInterpolationMode': (ScriptableContext ctx) {
@@ -36,13 +38,15 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      line: LineElementStyle(
-        borderColor: ChartPaint.solid(Color(0xFF00FF00)),
-        borderWidth: 20,
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.none,
-        tension: 0.4,
-        extra: <String, Object?>{
+      line: raw(
+        LineElementStyle(
+          borderColor: ChartPaint.solid(Color(0xFF00FF00)),
+          borderWidth: 20,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.none,
+          tension: 0.4,
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
           'cubicInterpolationMode': (ScriptableContext ctx) {

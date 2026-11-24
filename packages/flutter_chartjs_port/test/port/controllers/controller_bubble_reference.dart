@@ -69,27 +69,26 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd'],
       datasets: [
-        BubbleDataset(
-          label: 'one',
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 10.0, 'y': 10.0, 'r': 5.0},
-              const <String, Object?>{'x': -15.0, 'y': -10.0, 'r': 1.0},
-              const <String, Object?>{'x': 0.0, 'y': -9.0, 'r': 2.0},
-              const <String, Object?>{'x': -4.0, 'y': 10.0, 'r': 12.0},
-            ],
-          },
-        ),
-        BubbleDataset(
-          label: 'two',
-          backgroundColor: const ChartValue.constant(
-            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+        raw(BubbleDataset(label: 'one'), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 10.0, 'y': 10.0, 'r': 5.0},
+            const <String, Object?>{'x': -15.0, 'y': -10.0, 'r': 1.0},
+            const <String, Object?>{'x': 0.0, 'y': -9.0, 'r': 2.0},
+            const <String, Object?>{'x': -4.0, 'y': 10.0, 'r': 12.0},
+          ],
+        }),
+        raw(
+          BubbleDataset(
+            label: 'two',
+            backgroundColor: const ChartValue.constant(
+              ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+            ),
+            borderColor: const ChartValue.constant(
+              ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+            ),
+            borderWidth: 2,
           ),
-          borderColor: const ChartValue.constant(
-            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
-          ),
-          borderWidth: 2,
-          extra: <String, Object?>{
+          <String, Object?>{
             'data': <Object?>[
               const <String, Object?>{'x': 4.0, 'y': 2.0, 'r': 8.0},
               const <String, Object?>{'x': 12.0, 'y': -6.0},
@@ -6450,23 +6449,19 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     config: () => ChartConfig(
       labels: [0.0, 1.0, 2.0, 3.0],
       datasets: [
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 0.0, 'y': 1.0},
-              const <String, Object?>{'x': 1.0, 'y': 3.0},
-              const <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 9.0},
-              const <String, Object?>{'x': 3.0, 'y': 4.0},
-            ],
-            'radius': functions['radiusOfIndex'],
-          },
-        ),
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[4.0, 2.0, 5.0, 1.0],
-            'radius': functions['radiusOfIndex'],
-          },
-        ),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 0.0, 'y': 1.0},
+            const <String, Object?>{'x': 1.0, 'y': 3.0},
+            const <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 9.0},
+            const <String, Object?>{'x': 3.0, 'y': 4.0},
+          ],
+          'radius': functions['radiusOfIndex'],
+        }),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[4.0, 2.0, 5.0, 1.0],
+          'radius': functions['radiusOfIndex'],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -7657,15 +7652,12 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
           ),
           hoverBorderWidth: 3,
         ),
-        BubbleDataset(
-          radius: 5,
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 2.0, 'y': 4.0, 'r': 8.0},
-              const <String, Object?>{'x': 4.0, 'y': 3.0},
-            ],
-          },
-        ),
+        raw(BubbleDataset(radius: 5), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 2.0, 'y': 4.0, 'r': 8.0},
+            const <String, Object?>{'x': 4.0, 'y': 3.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -10301,39 +10293,32 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     name: 'custom parsing keys',
     config: () => ChartConfig(
       datasets: [
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'a': 1.0, 'b': 4.0, 'r': 6.0},
-              const <String, Object?>{'a': 2.0, 'b': 2.0},
-              const <String, Object?>{'a': 4.0, 'b': 5.0, 'r': 3.0},
-            ],
-            'parsing': const <String, Object?>{
-              'xAxisKey': 'a',
-              'yAxisKey': 'b',
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'a': 1.0, 'b': 4.0, 'r': 6.0},
+            const <String, Object?>{'a': 2.0, 'b': 2.0},
+            const <String, Object?>{'a': 4.0, 'b': 5.0, 'r': 3.0},
+          ],
+          'parsing': const <String, Object?>{'xAxisKey': 'a', 'yAxisKey': 'b'},
+        }),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{
+              'a': 3.0,
+              'n': <String, Object?>{'y': 1.0},
+              'r': 7.0,
             },
-          },
-        ),
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{
-                'a': 3.0,
-                'n': <String, Object?>{'y': 1.0},
-                'r': 7.0,
-              },
-              const <String, Object?>{
-                'a': 5.0,
-                'n': <String, Object?>{'y': 3.0},
-                'r': 2.0,
-              },
-            ],
-            'parsing': const <String, Object?>{
-              'xAxisKey': 'a',
-              'yAxisKey': 'n.y',
+            const <String, Object?>{
+              'a': 5.0,
+              'n': <String, Object?>{'y': 3.0},
+              'r': 2.0,
             },
+          ],
+          'parsing': const <String, Object?>{
+            'xAxisKey': 'a',
+            'yAxisKey': 'n.y',
           },
-        ),
+        }),
       ],
       indexAxis: const YAxis(),
     ),
@@ -11436,26 +11421,21 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     name: '[x, y, r] arrays',
     config: () => ChartConfig(
       datasets: [
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[1.0, 2.0, 5.0],
-              const <Object?>[2.0, 4.0],
-              const <Object?>[3.0, 1.0, null],
-              const <Object?>[4.0, 3.0, 0.0],
-              const <Object?>[5.0, 5.0, 7.0],
-            ],
-          },
-        ),
-        BubbleDataset(
-          radius: 6,
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[2.0, 3.0, 12.0],
-              const <Object?>[4.0, 1.0, 2.5],
-            ],
-          },
-        ),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[1.0, 2.0, 5.0],
+            const <Object?>[2.0, 4.0],
+            const <Object?>[3.0, 1.0, null],
+            const <Object?>[4.0, 3.0, 0.0],
+            const <Object?>[5.0, 5.0, 7.0],
+          ],
+        }),
+        raw(BubbleDataset(radius: 6), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[2.0, 3.0, 12.0],
+            const <Object?>[4.0, 1.0, 2.5],
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -19613,15 +19593,13 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     name: 'parsed: parsing false, [x, y, r] arrays',
     config: () => ChartConfig(
       datasets: [
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[1.0, 2.0, 5.0],
-              const <Object?>[3.0, 4.0, 6.0],
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[1.0, 2.0, 5.0],
+            const <Object?>[3.0, 4.0, 6.0],
+          ],
+          'parsing': false,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -20636,15 +20614,13 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     name: 'parsed: parsing false, a null item',
     config: () => ChartConfig(
       datasets: [
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0},
-              null,
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0},
+            null,
+          ],
+          'parsing': false,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -20656,14 +20632,12 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     name: 'parsed: object data with a null item',
     config: () => ChartConfig(
       datasets: [
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0},
-              null,
-            ],
-          },
-        ),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0},
+            null,
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -20675,21 +20649,18 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     name: 'parsed: the r values of object data',
     config: () => ChartConfig(
       datasets: [
-        BubbleDataset(
-          radius: 4,
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 1.0, 'y': 1.0, 'r': '5'},
-              const <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 0.0},
-              const <String, Object?>{'x': 3.0, 'y': 3.0, 'r': null},
-              const <String, Object?>{'x': 4.0, 'y': 4.0, 'r': true},
-              const <String, Object?>{'x': 5.0, 'y': 5.0, 'r': 'abc'},
-              const <String, Object?>{'x': 6.0, 'y': 6.0, 'r': -2.0},
-              const <String, Object?>{'x': 7.0, 'y': 7.0},
-              const <String, Object?>{'x': 8.0, 'y': 8.0, 'r': '0'},
-            ],
-          },
-        ),
+        raw(BubbleDataset(radius: 4), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 1.0, 'y': 1.0, 'r': '5'},
+            const <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 0.0},
+            const <String, Object?>{'x': 3.0, 'y': 3.0, 'r': null},
+            const <String, Object?>{'x': 4.0, 'y': 4.0, 'r': true},
+            const <String, Object?>{'x': 5.0, 'y': 5.0, 'r': 'abc'},
+            const <String, Object?>{'x': 6.0, 'y': 6.0, 'r': -2.0},
+            const <String, Object?>{'x': 7.0, 'y': 7.0},
+            const <String, Object?>{'x': 8.0, 'y': 8.0, 'r': '0'},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -24317,14 +24288,12 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     name: 'parsed: a string r of an array',
     config: () => ChartConfig(
       datasets: [
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[1.0, 2.0, 5.0],
-              const <Object?>[5.0, 5.0, '7'],
-            ],
-          },
-        ),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[1.0, 2.0, 5.0],
+            const <Object?>[5.0, 5.0, '7'],
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -25164,29 +25133,23 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     config: () => ChartConfig(
       labels: [1.0, 2.0, 3.0, 4.0],
       datasets: [
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 1.0, 'y': 1.0, 'r': 5.0},
-              const <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 6.0},
-              const <String, Object?>{'x': 3.0, 'y': 3.0, 'r': 7.0},
-            ],
-          },
-        ),
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[1.0, 4.0, 8.0],
-              const <Object?>[2.0, 3.0, 9.0],
-            ],
-          },
-        ),
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[3.0, 1.0, 2.0],
-            'radius': functions['rawRadius'],
-          },
-        ),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 1.0, 'y': 1.0, 'r': 5.0},
+            const <String, Object?>{'x': 2.0, 'y': 2.0, 'r': 6.0},
+            const <String, Object?>{'x': 3.0, 'y': 3.0, 'r': 7.0},
+          ],
+        }),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[1.0, 4.0, 8.0],
+            const <Object?>[2.0, 3.0, 9.0],
+          ],
+        }),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[3.0, 1.0, 2.0],
+          'radius': functions['rawRadius'],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -28792,17 +28755,15 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
     name: 'parsed: parsing false, object items with _custom',
     config: () => ChartConfig(
       datasets: [
-        BubbleDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 1.0, 'y': 2.0, '_custom': 7.0},
-              const <String, Object?>{'x': 2.0, 'y': 3.0, '_custom': 0.0},
-              const <String, Object?>{'x': 3.0, 'y': 1.0, '_custom': '2'},
-              const <String, Object?>{'x': 4.0, 'y': 4.0},
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(BubbleDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 1.0, 'y': 2.0, '_custom': 7.0},
+            const <String, Object?>{'x': 2.0, 'y': 3.0, '_custom': 0.0},
+            const <String, Object?>{'x': 3.0, 'y': 1.0, '_custom': '2'},
+            const <String, Object?>{'x': 4.0, 'y': 4.0},
+          ],
+          'parsing': false,
+        }),
       ],
     ),
     options: const AcquireOptions(),

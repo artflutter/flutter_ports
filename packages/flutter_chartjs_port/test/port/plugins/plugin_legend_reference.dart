@@ -61456,12 +61456,14 @@ List<PluginLegendReferenceCase> pluginLegendReference(
           ),
           borderWidth: 2,
         ),
-        BarDataset(
-          label: 'A longer dataset 3',
-          data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
-          pointStyle: const RectRotPointStyle(),
-          borderWidth: 2,
-          extra: const <String, Object?>{
+        raw(
+          BarDataset(
+            label: 'A longer dataset 3',
+            data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+            pointStyle: const RectRotPointStyle(),
+            borderWidth: 2,
+          ),
+          const <String, Object?>{
             'borderDash': <double>[4, 2],
           },
         ),

@@ -173,9 +173,7 @@ Chart _chart(
 }) => acquireChartRoot(
   lowerForTest(
     ChartConfig(
-      datasets: [
-        TestDataset(ChartKind(type), points: _points(), extra: dataset),
-      ],
+      datasets: [raw(TestDataset(ChartKind(type), points: _points()), dataset)],
       animation: animation,
     ),
   ),
@@ -462,14 +460,12 @@ void main() {
         ChartConfig(
           datasets: [
             // Keep the original data List.
-            TestDataset(const ChartKind('stacksPoint'), extra: {'data': data}),
+            raw(const TestDataset(ChartKind('stacksPoint')), {'data': data}),
           ],
-          scales: const [
-            LinearAxis(
-              .y,
-              stacked: StackMode.on,
-              extra: {'type': 'typedLinear'},
-            ),
+          scales: [
+            raw(const LinearAxis(.y, stacked: StackMode.on), {
+              'type': 'typedLinear',
+            }),
           ],
           parsing: false,
         ),

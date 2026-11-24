@@ -19,10 +19,12 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      ScatterDataset(
-        data: .points([DataPoint(0, 0), DataPoint(1, 1), DataPoint(2, 2)]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{'radius': 1, 'hoverRadius': 0},
+      raw(
+        ScatterDataset(
+          data: .points([DataPoint(0, 0), DataPoint(1, 1), DataPoint(2, 2)]),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        <String, Object?>{'radius': 1, 'hoverRadius': 0},
       ),
     ],
     scales: [

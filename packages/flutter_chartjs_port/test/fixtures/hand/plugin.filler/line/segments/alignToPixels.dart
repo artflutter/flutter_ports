@@ -21,25 +21,27 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        data: .points([
-          DataPoint(0, 0),
-          DataPoint(1, 20),
-          DataPoint(1.00001, 30),
-          DataPoint(2, 100),
-          DataPoint(2.00001, 100),
-        ]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0x70FF0000))),
-        borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-        segment: LineSegmentStyle(
-          borderDash: (ctx) =>
-              jsToNumber(jsGet((ctx.p0 as Element)['parsed'], 'x')) > 1
-              ? <double>[10, 5]
-              : null,
+      raw(
+        LineDataset(
+          data: .points([
+            DataPoint(0, 0),
+            DataPoint(1, 20),
+            DataPoint(1.00001, 30),
+            DataPoint(2, 100),
+            DataPoint(2.00001, 100),
+          ]),
+          backgroundColor: .constant(ChartPaint.solid(Color(0x70FF0000))),
+          borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
+          segment: LineSegmentStyle(
+            borderDash: (ctx) =>
+                jsToNumber(jsGet((ctx.p0 as Element)['parsed'], 'x')) > 1
+                ? <double>[10, 5]
+                : null,
+          ),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.toOrigin,
         ),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toOrigin,
-        extra: <String, Object?>{'radius': 0},
+        <String, Object?>{'radius': 0},
       ),
     ],
     scales: [

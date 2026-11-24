@@ -15,13 +15,15 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        data: .values(<num?>[0, -0.01, 0.01, 30, -30]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-        borderWidth: 4,
-        minBarLength: 20,
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          data: .values(<num?>[0, -0.01, 0.01, 30, -30]),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+          borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
+          borderWidth: 4,
+          minBarLength: 20,
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
           'borderSkipped': (ScriptableContext ctx) =>
               ctx.raw == 0 ? false : BorderSkippedEdge.start,

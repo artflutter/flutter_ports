@@ -30,9 +30,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
         // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
         fill: FillTarget.none,
       ),
-      point: PointElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0xFFFF0000)),
-        extra: <String, Object?>{
+      point: raw(
+        PointElementStyle(backgroundColor: ChartPaint.solid(Color(0xFFFF0000))),
+        <String, Object?>{
           'radius': <Object?>[6, 5, 4, 3, 2, 1],
         },
       ),

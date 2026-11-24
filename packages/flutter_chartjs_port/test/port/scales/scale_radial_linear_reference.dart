@@ -7353,12 +7353,10 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [10.0, 20.0, 30.0, 40.0, 50.0, 60.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(
-          extra: <String, Object?>{
-            'pointLabels': <String, Object?>{'centerPointLabels': true},
-          },
-        ),
+      scales: [
+        raw(RadialLinearAxis(), const <String, Object?>{
+          'pointLabels': <String, Object?>{'centerPointLabels': true},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -8043,15 +8041,13 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [65.0, 59.0, 90.0, 81.0, 56.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(
-          extra: <String, Object?>{
-            'pointLabels': <String, Object?>{
-              'backdropColor': ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.5)),
-              'backdropPadding': EdgeInsets.all(4),
-            },
+      scales: [
+        raw(RadialLinearAxis(), const <String, Object?>{
+          'pointLabels': <String, Object?>{
+            'backdropColor': ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.5)),
+            'backdropPadding': EdgeInsets.all(4),
           },
-        ),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -8617,16 +8613,14 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [65.0, 59.0, 90.0, 81.0, 56.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(
-          extra: <String, Object?>{
-            'pointLabels': <String, Object?>{
-              'backdropColor': ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
-              'backdropPadding': EdgeInsets.fromLTRB(2, 1, 3, 4),
-              'borderRadius': 4.0,
-            },
+      scales: [
+        raw(RadialLinearAxis(), const <String, Object?>{
+          'pointLabels': <String, Object?>{
+            'backdropColor': ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
+            'backdropPadding': EdgeInsets.fromLTRB(2, 1, 3, 4),
+            'borderRadius': 4.0,
           },
-        ),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -9237,18 +9231,16 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [65.0, 59.0, 90.0, 81.0, 56.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(
-          extra: <String, Object?>{
-            'pointLabels': <String, Object?>{
-              'backdropColor': ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
-              'borderRadius': BorderRadius.only(
-                topLeft: Radius.circular(3),
-                bottomRight: Radius.circular(6),
-              ),
-            },
+      scales: [
+        raw(RadialLinearAxis(), const <String, Object?>{
+          'pointLabels': <String, Object?>{
+            'backdropColor': ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
+            'borderRadius': BorderRadius.only(
+              topLeft: Radius.circular(3),
+              bottomRight: Radius.circular(6),
+            ),
           },
-        ),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -11458,10 +11450,10 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(
-          pointLabelsDisplay: ScaleDisplay.auto,
-          extra: <String, Object?>{
+      scales: [
+        raw(
+          RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.auto),
+          const <String, Object?>{
             'pointLabels': <String, Object?>{'centerPointLabels': true},
           },
         ),
@@ -13006,11 +12998,15 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [65.0, 59.0, 90.0, 81.0, 56.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(
-          angleLinesColor: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
-          angleLinesLineWidth: 2,
-          extra: <String, Object?>{
+      scales: [
+        raw(
+          RadialLinearAxis(
+            angleLinesColor: const ChartPaint.solid(
+              Color.fromRGBO(255, 0, 0, 1),
+            ),
+            angleLinesLineWidth: 2,
+          ),
+          const <String, Object?>{
             'angleLines': <String, Object?>{
               'borderDash': <double>[5, 5],
               'borderDashOffset': 2.0,
@@ -17348,11 +17344,15 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [65.0, 59.0, 90.0, 81.0, 56.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(
-          backgroundColor: ChartPaint.solid(Color.fromRGBO(255, 192, 203, 1)),
-          grid: AxisGrid(circular: true),
-          extra: <String, Object?>{'offset': true},
+      scales: [
+        raw(
+          RadialLinearAxis(
+            backgroundColor: const ChartPaint.solid(
+              Color.fromRGBO(255, 192, 203, 1),
+            ),
+            grid: const AxisGrid(circular: true),
+          ),
+          const <String, Object?>{'offset': true},
         ),
       ],
     ),
@@ -19088,8 +19088,8 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       datasets: [
         TestDataset(const ChartKind('radialTest'), data: [3.0, 1.0, 2.0, 4.0]),
       ],
-      scales: const [
-        RadialLinearAxis(extra: <String, Object?>{'startAngle': '30'}),
+      scales: [
+        raw(RadialLinearAxis(), const <String, Object?>{'startAngle': '30'}),
       ],
     ),
     options: const AcquireOptions(),
@@ -25747,9 +25747,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [65.0, 59.0, 90.0, 81.0, 56.0],
         ),
       ],
-      scales: const [
+      scales: [
         RadialLinearAxis(
-          ticks: AxisTicks(extra: <String, Object?>{'font': null}),
+          ticks: raw(AxisTicks(), const <String, Object?>{'font': null}),
         ),
       ],
     ),
@@ -27689,8 +27689,10 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [3.0, 41.0, 17.0, 29.0, 8.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(extra: <String, Object?>{'bounds': ScaleBounds.data}),
+      scales: [
+        raw(RadialLinearAxis(), const <String, Object?>{
+          'bounds': ScaleBounds.data,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -31314,12 +31316,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
     config: () => ChartConfig(
       labels: ['A', 'B', 'C', 'D', 'E', 'F'],
       datasets: [
-        TestDataset(
-          const ChartKind('radialTest'),
-          extra: <String, Object?>{
-            'data': <Object?>[65.0, null, 90.0, double.nan, undefined, '70'],
-          },
-        ),
+        raw(TestDataset(const ChartKind('radialTest')), <String, Object?>{
+          'data': <Object?>[65.0, null, 90.0, double.nan, undefined, '70'],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -33928,12 +33927,10 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [65.0, 59.0, 90.0, 81.0, 56.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(
-          extra: <String, Object?>{
-            'pointLabels': <String, Object?>{'padding': '5'},
-          },
-        ),
+      scales: [
+        raw(RadialLinearAxis(), const <String, Object?>{
+          'pointLabels': <String, Object?>{'padding': '5'},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -34480,14 +34477,12 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [65.0, 59.0, 90.0, 81.0, 56.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(
-          extra: <String, Object?>{
-            'pointLabels': <String, Object?>{
-              'padding': <Object?>[5.0, 15.0],
-            },
+      scales: [
+        raw(RadialLinearAxis(), const <String, Object?>{
+          'pointLabels': <String, Object?>{
+            'padding': <Object?>[5.0, 15.0],
           },
-        ),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -35044,13 +35039,11 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
       scales: [
-        RadialLinearAxis(
-          extra: <String, Object?>{
-            'pointLabels': <String, Object?>{
-              'font': functions['pointLabelFontByIndex'],
-            },
+        raw(RadialLinearAxis(), <String, Object?>{
+          'pointLabels': <String, Object?>{
+            'font': functions['pointLabelFontByIndex'],
           },
-        ),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -36209,9 +36202,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           backgroundColor: const ChartPaint.solid(
             Color.fromRGBO(255, 192, 203, 1),
           ),
-          grid: AxisGrid(
-            extra: <String, Object?>{'circular': functions['circularEven']},
-          ),
+          grid: raw(AxisGrid(), <String, Object?>{
+            'circular': functions['circularEven'],
+          }),
         ),
       ],
     ),
@@ -38937,12 +38930,10 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           data: [65.0, 59.0, 90.0, 81.0, 56.0],
         ),
       ],
-      scales: const [
-        RadialLinearAxis(
-          extra: <String, Object?>{
-            'pointLabels': <String, Object?>{'callback': null},
-          },
-        ),
+      scales: [
+        raw(RadialLinearAxis(), const <String, Object?>{
+          'pointLabels': <String, Object?>{'callback': null},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -41255,8 +41246,8 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       datasets: [
         TestDataset(const ChartKind('radialTest'), data: [1.0, 2.0, 3.0]),
       ],
-      scales: const [
-        RadialLinearAxis(extra: <String, Object?>{'startAngle': 'abc'}),
+      scales: [
+        raw(RadialLinearAxis(), const <String, Object?>{'startAngle': 'abc'}),
       ],
     ),
     options: const AcquireOptions(),

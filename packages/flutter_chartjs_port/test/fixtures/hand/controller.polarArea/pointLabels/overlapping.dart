@@ -15,16 +15,16 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      PolarAreaDataset(
-        backgroundColor: .indexed(<ChartPaint>[
-          ChartPaint.solid(Color(0x33FF0000)),
-          ChartPaint.solid(Color(0x3300FF00)),
-          ChartPaint.solid(Color(0x330000FF)),
-          ChartPaint.solid(Color(0x33000000)),
-        ]),
-        extra: <String, Object?>{
-          'data': List<Object?>.filled(50, 5, growable: true),
-        },
+      raw(
+        PolarAreaDataset(
+          backgroundColor: .indexed(<ChartPaint>[
+            ChartPaint.solid(Color(0x33FF0000)),
+            ChartPaint.solid(Color(0x3300FF00)),
+            ChartPaint.solid(Color(0x330000FF)),
+            ChartPaint.solid(Color(0x33000000)),
+          ]),
+        ),
+        <String, Object?>{'data': List<Object?>.filled(50, 5, growable: true)},
       ),
     ],
     labels: <Object>[

@@ -18,14 +18,16 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      RadarDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        data: <num?>[3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-        pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        pointBorderColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        pointBorderWidth: 0,
-        pointRadius: .constant(16),
-        extra: <String, Object?>{
+      raw(
+        RadarDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          data: <num?>[3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+          pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+          pointBorderColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          pointBorderWidth: 0,
+          pointRadius: .constant(16),
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-point-style-objects, the style
           // class.
           'pointStyle': <Object?>[
@@ -42,14 +44,16 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ],
         },
       ),
-      RadarDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        data: <num?>[2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-        pointBackgroundColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        pointBorderWidth: 1,
-        pointRadius: .constant(16),
-        extra: <String, Object?>{
+      raw(
+        RadarDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          data: <num?>[2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+          pointBackgroundColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          pointBorderWidth: 1,
+          pointRadius: .constant(16),
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-point-style-objects, the style
           // class.
           'pointStyle': <Object?>[
@@ -66,14 +70,16 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ],
         },
       ),
-      RadarDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        data: <num?>[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        pointBorderWidth: 1,
-        pointRadius: .constant(16),
-        extra: <String, Object?>{
+      raw(
+        RadarDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          data: <num?>[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+          pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          pointBorderWidth: 1,
+          pointRadius: .constant(16),
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-point-style-objects, the style
           // class.
           'pointStyle': <Object?>[

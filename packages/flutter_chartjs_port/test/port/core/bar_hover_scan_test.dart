@@ -361,18 +361,22 @@ Chart _barChart({
   ChartAnimation animation = ChartAnimation.none,
 }) => acquireChartRoot(
   lowerForTest(
-    ChartConfig(
-      labels: [for (var i = 0; i < count; i++) 'c$i'],
-      datasets: [
-        for (var k = 0; k < datasets; k++)
-          BarDataset(
-            label: 'series $k',
-            data: values == null ? .values(_values(count, k)) : null,
-            extra: values == null ? null : {'data': values(k)},
-          ),
-      ],
-      animation: animation,
-      extra: options,
+    raw(
+      ChartConfig(
+        labels: [for (var i = 0; i < count; i++) 'c$i'],
+        datasets: [
+          for (var k = 0; k < datasets; k++)
+            raw(
+              BarDataset(
+                label: 'series $k',
+                data: values == null ? .values(_values(count, k)) : null,
+              ),
+              values == null ? null : {'data': values(k)},
+            ),
+        ],
+        animation: animation,
+      ),
+      options,
     ),
   ),
 );

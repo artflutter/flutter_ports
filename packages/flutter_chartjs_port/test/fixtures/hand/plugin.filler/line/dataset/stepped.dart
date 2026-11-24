@@ -17,14 +17,16 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        backgroundColor: .constant(
-          ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.25)),
+      raw(
+        LineDataset(
+          backgroundColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.25)),
+          ),
+          data: .values(<num?>[null, null, 0, -1, 0, 1, 0, -1, 0]),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: const FillTarget.toDataset(1),
         ),
-        data: .values(<num?>[null, null, 0, -1, 0, 1, 0, -1, 0]),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: const FillTarget.toDataset(1),
-        extra: <String, Object?>{'stepped': true},
+        <String, Object?>{'stepped': true},
       ),
       LineDataset(
         backgroundColor: .constant(
@@ -55,15 +57,17 @@ FixtureConfig fixture() => FixtureConfig.typed(
         // value.
         fill: const FillTarget.toRelative(-2),
       ),
-      LineDataset(
-        backgroundColor: .constant(
-          ChartPaint.solid(Color.fromRGBO(255, 255, 0, 0.25)),
+      raw(
+        LineDataset(
+          backgroundColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(255, 255, 0, 0.25)),
+          ),
+          data: .values(<num?>[3, 1, -1, -3, -1, 1, 3, 1, -1]),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target
+          // value.
+          fill: FillTarget.toPrevious,
         ),
-        data: .values(<num?>[3, 1, -1, -3, -1, 1, 3, 1, -1]),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target
-        // value.
-        fill: FillTarget.toPrevious,
-        extra: <String, Object?>{'stepped': false},
+        <String, Object?>{'stepped': false},
       ),
     ],
     labels: <Object>['0', '1', '2', '3', '4', '5', '6', '7', '8'],

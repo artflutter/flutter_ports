@@ -16,75 +16,83 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(
-        backgroundColor: .constant(
-          ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.5)),
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          backgroundColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.5)),
+          ),
+          data: .values(<num?>[null, 1, 1, 1]),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.toStacked,
         ),
-        data: .values(<num?>[null, 1, 1, 1]),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toStacked,
-      ),
-      LineDataset(
-        backgroundColor: .constant(
-          ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.5)),
+        LineDataset(
+          backgroundColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.5)),
+          ),
+          data: .values(<num?>[null, 2, 2, 2]),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.toStacked,
         ),
-        data: .values(<num?>[null, 2, 2, 2]),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toStacked,
-      ),
-      LineDataset(
-        backgroundColor: .constant(
-          ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.5)),
+        LineDataset(
+          backgroundColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.5)),
+          ),
+          data: .values(<num?>[null, 3, 3, 3]),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.toStacked,
         ),
-        data: .values(<num?>[null, 3, 3, 3]),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toStacked,
-      ),
-      LineDataset(
-        backgroundColor: .constant(
-          ChartPaint.solid(Color.fromRGBO(255, 0, 255, 0.5)),
+        raw(
+          LineDataset(
+            backgroundColor: .constant(
+              ChartPaint.solid(Color.fromRGBO(255, 0, 255, 0.5)),
+            ),
+            data: .values(<num?>[0.5, 0.5, 0.5, null]),
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            fill: FillTarget.toStacked,
+          ),
+          <String, Object?>{'yAxisID': 'y2'},
         ),
-        data: .values(<num?>[0.5, 0.5, 0.5, null]),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toStacked,
-        extra: <String, Object?>{'yAxisID': 'y2'},
-      ),
-      LineDataset(
-        backgroundColor: .constant(
-          ChartPaint.solid(Color.fromRGBO(0, 0, 0, 0.5)),
+        raw(
+          LineDataset(
+            backgroundColor: .constant(
+              ChartPaint.solid(Color.fromRGBO(0, 0, 0, 0.5)),
+            ),
+            data: .values(<num?>[1.5, 1.5, 1.5, null]),
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            fill: FillTarget.toStacked,
+          ),
+          <String, Object?>{'yAxisID': 'y2'},
         ),
-        data: .values(<num?>[1.5, 1.5, 1.5, null]),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toStacked,
-        extra: <String, Object?>{'yAxisID': 'y2'},
-      ),
-      LineDataset(
-        backgroundColor: .constant(
-          ChartPaint.solid(Color.fromRGBO(255, 255, 0, 0.5)),
+        raw(
+          LineDataset(
+            backgroundColor: .constant(
+              ChartPaint.solid(Color.fromRGBO(255, 255, 0, 0.5)),
+            ),
+            data: .values(<num?>[2.5, 2.5, 2.5, null]),
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            fill: FillTarget.toStacked,
+          ),
+          <String, Object?>{'yAxisID': 'y2'},
         ),
-        data: .values(<num?>[2.5, 2.5, 2.5, null]),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toStacked,
-        extra: <String, Object?>{'yAxisID': 'y2'},
+      ],
+      labels: <Object>['0', '1', '2', '3'],
+      responsive: false,
+      elements: ChartElements(
+        point: PointElementStyle(radius: 0),
+        line: LineElementStyle(
+          borderColor: ChartPaint.solid(Color(0x00000000)),
+          tension: 0,
+        ),
       ),
-    ],
-    labels: <Object>['0', '1', '2', '3'],
-    responsive: false,
-    elements: ChartElements(
-      point: PointElementStyle(radius: 0),
-      line: LineElementStyle(
-        borderColor: ChartPaint.solid(Color(0x00000000)),
-        tension: 0,
-      ),
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
     ),
-    disabledPlugins: [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TitlePlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: <String, Object?>{
+    <String, Object?>{
       'spanGaps': false,
       'scales': <String, Object?>{
         // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

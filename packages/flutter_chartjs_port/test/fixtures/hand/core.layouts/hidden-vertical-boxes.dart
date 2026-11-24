@@ -13,13 +13,15 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(data: .values(<num?>[10, 5, 0, 25, 78, -10])),
-    ],
-    labels: <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5', ''],
-    disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(data: .values(<num?>[10, 5, 0, 25, 78, -10])),
+      ],
+      labels: <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5', ''],
+      disabledPlugins: [PluginOff<LegendPlugin>()],
+    ),
+    <String, Object?>{
       'scales': <String, Object?>{
         // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
         'x': <String, Object?>{'display': ScaleDisplay.off},

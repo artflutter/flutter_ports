@@ -17,11 +17,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        data: .values(<num?>[0, 5, 10, null, -10, -5, 0]),
-        pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        pointBorderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{
+      raw(
+        LineDataset(
+          data: .values(<num?>[0, 5, 10, null, -10, -5, 0]),
+          pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          pointBorderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-point-style-objects, the style
           // class.
           'pointStyle': <Object?>[
@@ -40,11 +42,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
     labels: <Object>[0, 1, 2, 3, 4, 5, 6],
     elements: ChartElements(
       line: LineElementStyle(fill: FillTarget.none),
-      point: PointElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0xFF00FF00)),
-        borderColor: ChartPaint.solid(Color(0xFF00FF00)),
-        radius: 10,
-        extra: <String, Object?>{
+      point: raw(
+        PointElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0xFF00FF00)),
+          borderColor: ChartPaint.solid(Color(0xFF00FF00)),
+          radius: 10,
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-point-style-objects, the style
           // class.
           'pointStyle': <Object?>[

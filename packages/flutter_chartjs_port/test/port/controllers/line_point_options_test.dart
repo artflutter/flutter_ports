@@ -53,36 +53,42 @@ ChartConfigurationScope _config({
   bool line = false,
   int datasets = 1,
 }) => lowerForTest(
-  ChartConfig(
-    datasets: [
-      for (var d = 0; d < datasets; d++)
-        LineDataset(
-          borderColor: const ChartValue.constant(blue),
-          borderWidth: 1,
-          showLine: line,
-          // Tests mutate these lists, raw points and the radius alias in place.
-          extra: {
-            'data': <Object?>[
-              for (var i = 0; i < 8; i++)
-                <String, Object?>{'x': i.toDouble(), 'y': (i - 3).toDouble()},
-            ],
-            'backgroundColor': <ChartPaint>[if (d == 0) red else green, blue],
-            'radius': 3.0,
-          },
-        ),
-    ],
-    responsive: false,
-    animation: ChartAnimation.none,
-    scales: const [
-      LinearAxis(.x, display: ScaleDisplay.off, min: 0, max: 8),
-      LinearAxis(.y, display: ScaleDisplay.off, min: -5, max: 10),
-    ],
-    events: const [],
-    disabledPlugins: const [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: const {'parsing': false},
+  raw(
+    ChartConfig(
+      datasets: [
+        for (var d = 0; d < datasets; d++)
+          raw(
+            LineDataset(
+              borderColor: const ChartValue.constant(blue),
+              borderWidth: 1,
+              showLine: line,
+
+              // Tests mutate these lists, raw points and the radius alias in
+              // place.
+            ),
+            {
+              'data': <Object?>[
+                for (var i = 0; i < 8; i++)
+                  <String, Object?>{'x': i.toDouble(), 'y': (i - 3).toDouble()},
+              ],
+              'backgroundColor': <ChartPaint>[if (d == 0) red else green, blue],
+              'radius': 3.0,
+            },
+          ),
+      ],
+      responsive: false,
+      animation: ChartAnimation.none,
+      scales: const [
+        LinearAxis(.x, display: ScaleDisplay.off, min: 0, max: 8),
+        LinearAxis(.y, display: ScaleDisplay.off, min: -5, max: 10),
+      ],
+      events: const [],
+      disabledPlugins: const [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    const {'parsing': false},
   ),
 );
 

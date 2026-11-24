@@ -13,56 +13,60 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      RadarDataset(
-        // option in dataset
-        data: <num?>[0, 5, 10, null, -10, -5],
-        backgroundColor: .resolver((ctx) {
-          final index = ctx.index;
-          return index == 0
-              ? ChartPaint.solid(Color(0xFFFF0000))
-              : index == 1
-              ? ChartPaint.solid(Color(0xFF00FF00))
-              : ChartPaint.solid(Color(0xFFFF00FF));
-        }),
-      ),
-      RadarDataset(
-        // option in element (fallback)
-        data: <num?>[4, -5, -10, null, 10, 5],
-      ),
-    ],
-    labels: <Object>[0, 1, 2, 3, 4, 5],
-    elements: ChartElements(
-      line: LineElementStyle(
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toOrigin,
-        extra: <String, Object?>{
-          'backgroundColor': (ScriptableContext ctx) {
+  raw(
+    ChartConfig(
+      datasets: [
+        RadarDataset(
+          // option in dataset
+          data: <num?>[0, 5, 10, null, -10, -5],
+          backgroundColor: .resolver((ctx) {
             final index = ctx.index;
             return index == 0
                 ? ChartPaint.solid(Color(0xFFFF0000))
                 : index == 1
                 ? ChartPaint.solid(Color(0xFF00FF00))
                 : ChartPaint.solid(Color(0xFFFF00FF));
+          }),
+        ),
+        RadarDataset(
+          // option in element (fallback)
+          data: <num?>[4, -5, -10, null, 10, 5],
+        ),
+      ],
+      labels: <Object>[0, 1, 2, 3, 4, 5],
+      elements: ChartElements(
+        line: raw(
+          LineElementStyle(
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            fill: FillTarget.toOrigin,
+          ),
+          <String, Object?>{
+            'backgroundColor': (ScriptableContext ctx) {
+              final index = ctx.index;
+              return index == 0
+                  ? ChartPaint.solid(Color(0xFFFF0000))
+                  : index == 1
+                  ? ChartPaint.solid(Color(0xFF00FF00))
+                  : ChartPaint.solid(Color(0xFFFF00FF));
+            },
           },
-        },
+        ),
+        point: PointElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0xFF0000FF)),
+          radius: 10,
+        ),
       ),
-      point: PointElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0xFF0000FF)),
-        radius: 10,
-      ),
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        RadialLinearAxis(display: ScaleDisplay.off, min: -15),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
     ),
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      RadialLinearAxis(display: ScaleDisplay.off, min: -15),
-    ],
-    disabledPlugins: [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TitlePlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: <String, Object?>{
+    <String, Object?>{
       'plugins': <String, Object?>{'filler': true},
     },
   ),

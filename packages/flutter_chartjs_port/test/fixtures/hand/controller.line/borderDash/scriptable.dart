@@ -15,10 +15,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        // option in dataset
-        data: .values(<num?>[4, 5, 10, null, -10, -5]),
-        extra: <String, Object?>{
+      raw(
+        LineDataset(
+          // option in dataset
+          data: .values(<num?>[4, 5, 10, null, -10, -5]),
+        ),
+        <String, Object?>{
           'borderDash': (ScriptableContext ctx) {
             return ctx.datasetIndex == 0 ? <Object?>[5] : <Object?>[10];
           },
@@ -31,9 +33,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      line: LineElementStyle(
-        borderColor: ChartPaint.solid(Color(0xFF00FF00)),
-        extra: <String, Object?>{
+      line: raw(
+        LineElementStyle(borderColor: ChartPaint.solid(Color(0xFF00FF00))),
+        <String, Object?>{
           'borderDash': (ScriptableContext ctx) {
             return ctx.datasetIndex == 0 ? <Object?>[5] : <Object?>[10];
           },

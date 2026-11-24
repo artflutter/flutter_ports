@@ -23,10 +23,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      arc: ArcElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderColor: ChartPaint.solid(Color(0xFF888888)),
-        extra: <String, Object?>{
+      arc: raw(
+        ArcElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderColor: ChartPaint.solid(Color(0xFF888888)),
+        ),
+        <String, Object?>{
           'borderWidth': (ScriptableContext ctx) {
             return jsToNumber(ctx.dataIndex ?? undefined) * 2;
           },

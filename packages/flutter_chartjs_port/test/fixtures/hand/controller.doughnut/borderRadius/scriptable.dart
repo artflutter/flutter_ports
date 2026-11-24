@@ -15,10 +15,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      DoughnutDataset(
-        // option in dataset
-        data: <num?>[0, 2, 4, null, 6, 8],
-        extra: <String, Object?>{'borderRadius': () => 4},
+      raw(
+        DoughnutDataset(
+          // option in dataset
+          data: <num?>[0, 2, 4, null, 6, 8],
+        ),
+        <String, Object?>{'borderRadius': () => 4},
       ),
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],

@@ -52,20 +52,20 @@ _Config _scatter({
       ChartConfig(
         datasets: [
           for (var d = 0; d < datasets; d++)
-            ScatterDataset(
-              extra: {
-                if (type != 'scatter') 'type': type,
-                'data': _data(1 + d * 4),
-                ...?dataset,
-              },
-            ),
+            raw(const ScatterDataset(), {
+              if (type != 'scatter') 'type': type,
+              'data': _data(1 + d * 4),
+              ...?dataset,
+            }),
         ],
-        animation: ChartAnimation(
-          onProgress: (event) =>
-              log.add('progress ${event.currentStep} of ${event.numSteps}'),
-          onComplete: (event) =>
-              log.add('complete ${event.currentStep} of ${event.numSteps}'),
-          extra: {if (twin) 'delay': _twinDelay, ...?animation},
+        animation: raw(
+          ChartAnimation(
+            onProgress: (event) =>
+                log.add('progress ${event.currentStep} of ${event.numSteps}'),
+            onComplete: (event) =>
+                log.add('complete ${event.currentStep} of ${event.numSteps}'),
+          ),
+          {if (twin) 'delay': _twinDelay, ...?animation},
         ),
         scales: const [
           LinearAxis(.x, min: 0, max: 100),

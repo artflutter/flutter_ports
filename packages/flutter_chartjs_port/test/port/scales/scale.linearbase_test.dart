@@ -204,10 +204,11 @@ void main() {
     ) async {
       final chart = _chart(
         _config([
-          const LinearAxis(
-            .y,
-            extra: {'type': 'testLinearBase', 'min': '-15', 'max': '110'},
-          ),
+          raw(const LinearAxis(.y), {
+            'type': 'testLinearBase',
+            'min': '-15',
+            'max': '110',
+          }),
         ]),
       );
       final scale = chart.scales['y']!;
@@ -236,15 +237,11 @@ void main() {
         // upstream gives.
         final chart = _chart(
           _config([
-            LinearAxis(
-              .y,
-              ticks: ticks,
-              extra: const {
-                'type': 'testLinearBase',
-                'min': '-15',
-                'max': '110',
-              },
-            ),
+            raw(LinearAxis(.y, ticks: ticks), const {
+              'type': 'testLinearBase',
+              'min': '-15',
+              'max': '110',
+            }),
           ]),
         );
         final scale = chart.scales['y']!;
@@ -265,12 +262,9 @@ void main() {
     testWidgets('number bounds give number tick values', (tester) async {
       final chart = _chart(
         _config([
-          const LinearAxis(
-            .y,
-            min: -15,
-            max: 110,
-            extra: {'type': 'testLinearBase'},
-          ),
+          raw(const LinearAxis(.y, min: -15, max: 110), {
+            'type': 'testLinearBase',
+          }),
         ]),
       );
       expect(

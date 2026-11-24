@@ -15,29 +15,36 @@ library;
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
-final Expando<Map<String, Object?>> _rawOptions = Expando('raw options');
+/// The raw options of each object, in the order of the calls of [raw] since
+/// the last lowering.
+final Expando<List<Map<String, Object?>>> _rawOptions = Expando('raw options');
+
+/// The count of the lowerings at the last attach of each object.
+final Expando<int> _attachedAt = Expando('raw options lowering');
+
+/// The count of the lowerings of [applyRawOptions].
+int _lowerings = 0;
 
 /// Attaches the raw options [options] to [object], a part of a typed config:
 /// a `ChartConfig`, a dataset, an axis, an axis part, `ChartElements` and
 /// its element styles, `ChartAnimation` or `ChartInteraction`. Gives
-/// [object].
+/// [object]. A null [options] attaches nothing.
 ///
 /// [lowerForTest] merges [options] into the lowered scope of [object]. A
-/// `const` object is shared: two calls for one object must give equal Maps.
-T raw<T extends Object>(T object, Map<String, Object?> options) {
-  final previous = _rawOptions[object];
-  assert(
-    previous == null ||
-        identical(previous, options) ||
-        _sameKeys(previous, options),
-    'raw: $object already has the raw options $previous.',
-  );
-  _rawOptions[object] = options;
+/// `const` object is shared: when one config holds it twice, each call of
+/// [raw] since the last lowering gives the Map of the next place of the
+/// object in the config, in the order of the config.
+T raw<T extends Object>(T object, Map<String, Object?>? options) {
+  if (options == null) return object;
+  final list = _rawOptions[object];
+  if (list == null || _attachedAt[object] != _lowerings) {
+    _rawOptions[object] = [options];
+  } else {
+    list.add(options);
+  }
+  _attachedAt[object] = _lowerings;
   return object;
 }
-
-bool _sameKeys(Map<String, Object?> a, Map<String, Object?> b) =>
-    a.length == b.length && a.keys.every(b.containsKey);
 
 /// The root scope of [config], with the raw options of [raw] merged into
 /// the scopes of their objects.
@@ -54,17 +61,44 @@ ChartConfigurationScope applyRawOptions(
   ChartConfigurationScope root,
   ChartConfig config,
 ) {
+  // A merge can throw, as the merge of `extra` did: the next config takes new
+  // raw options also then.
+  try {
+    return _applyRawOptions(root, config);
+  } finally {
+    _lowerings++;
+  }
+}
+
+ChartConfigurationScope _applyRawOptions(
+  ChartConfigurationScope root,
+  ChartConfig config,
+) {
+  // The next Map of each object: the k-th place of an object in the config
+  // takes its k-th Map (the last one for a later place).
+  final taken = Map<Object, int>.identity();
+  Map<String, Object?>? take(Object? object) {
+    if (object == null) return null;
+    final list = _rawOptions[object];
+    // Only the Maps of the calls since the last lowering: a const object of
+    // an earlier config keeps no raw options.
+    if (list == null || _attachedAt[object] != _lowerings) return null;
+    final k = taken[object] ?? 0;
+    taken[object] = k + 1;
+    return list[k < list.length ? k : list.length - 1];
+  }
+
   final options = jsGet(root, 'options')! as OptionScope;
   final datasets = jsGet(jsGet(root, 'data'), 'datasets');
   for (final (i, dataset) in config.datasets.indexed) {
-    if (_rawOptions[dataset] case final map?) {
+    if (take(dataset) case final map?) {
       scopeFromMap((datasets! as List<Object?>)[i]! as OptionScope, map);
     }
   }
   if (config.datasetDefaults case final defaults?) {
     final byType = jsGet(options, 'datasets');
     for (final dataset in defaults) {
-      if (_rawOptions[dataset] case final map?) {
+      if (take(dataset) case final map?) {
         // The one item of its type: find its scope by the type id.
         for (final key in jsObjectKeys(byType)) {
           final scope = jsGet(byType, key);
@@ -85,11 +119,11 @@ ChartConfigurationScope applyRawOptions(
         (axis.grid, 'grid'),
         (axis.title, 'title'),
       ]) {
-        if (part != null && _rawOptions[part] != null) {
-          scopeFromMap(jsGet(scope, key)! as OptionScope, _rawOptions[part]);
+        if (take(part) case final map?) {
+          scopeFromMap(jsGet(scope, key)! as OptionScope, map);
         }
       }
-      if (_rawOptions[axis] case final map?) scopeFromMap(scope, map);
+      if (take(axis) case final map?) scopeFromMap(scope, map);
     }
   }
   if (config.elements case final elements?) {
@@ -100,21 +134,21 @@ ChartConfigurationScope applyRawOptions(
       (elements.bar, 'bar'),
       (elements.arc, 'arc'),
     ]) {
-      if (style != null && _rawOptions[style] != null) {
-        scopeFromMap(jsGet(scope, key)! as OptionScope, _rawOptions[style]);
+      if (take(style) case final map?) {
+        scopeFromMap(jsGet(scope, key)! as OptionScope, map);
       }
     }
-    if (_rawOptions[elements] case final map?) scopeFromMap(scope, map);
+    if (take(elements) case final map?) scopeFromMap(scope, map);
   }
   for (final (group, key) in <(Object?, String)>[
     (config.animation, 'animation'),
     (config.interaction, 'interaction'),
   ]) {
-    if (group != null && _rawOptions[group] != null) {
-      scopeFromMap(jsGet(options, key)! as OptionScope, _rawOptions[group]);
+    if (take(group) case final map?) {
+      scopeFromMap(jsGet(options, key)! as OptionScope, map);
     }
   }
-  if (_rawOptions[config] case final map?) scopeFromMap(options, map);
+  if (take(config) case final map?) scopeFromMap(options, map);
   return root;
 }
 

@@ -18,13 +18,15 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        data: .values(<num?>[3, 3, 3, 3, 3, 3, 3, 3, 3, 3]),
-        pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        pointBorderColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        pointBorderWidth: 0,
-        extra: <String, Object?>{
+      raw(
+        LineDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          data: .values(<num?>[3, 3, 3, 3, 3, 3, 3, 3, 3, 3]),
+          pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+          pointBorderColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          pointBorderWidth: 0,
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-point-style-objects, the style
           // class.
           'pointStyle': <Object?>[
@@ -41,13 +43,15 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ],
         },
       ),
-      LineDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        data: .values(<num?>[2, 2, 2, 2, 2, 2, 2, 2, 2, 2]),
-        pointBackgroundColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        pointBorderWidth: 1,
-        extra: <String, Object?>{
+      raw(
+        LineDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          data: .values(<num?>[2, 2, 2, 2, 2, 2, 2, 2, 2, 2]),
+          pointBackgroundColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          pointBorderWidth: 1,
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-point-style-objects, the style
           // class.
           'pointStyle': <Object?>[
@@ -64,13 +68,15 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ],
         },
       ),
-      LineDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        data: .values(<num?>[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
-        pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        pointBorderWidth: 1,
-        extra: <String, Object?>{
+      raw(
+        LineDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          data: .values(<num?>[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
+          pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+          pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          pointBorderWidth: 1,
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-point-style-objects, the style
           // class.
           'pointStyle': <Object?>[

@@ -846,17 +846,19 @@ void main() {
       tester,
     ) async {
       final chart = _acquire(
-        const ChartConfig(
-          datasets: [
+        ChartConfig(
+          datasets: const [
             PolarAreaDataset(data: [10, 5, 0, 25, 78]),
           ],
-          labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+          labels: const ['label1', 'label2', 'label3', 'label4', 'label5'],
           scales: [
-            RadialLinearAxis(
-              pointLabelsDisplay: ScaleDisplay.on,
-              pointLabelsPadding: 5,
-              ticks: AxisTicks(display: false),
-              extra: {
+            raw(
+              const RadialLinearAxis(
+                pointLabelsDisplay: ScaleDisplay.on,
+                pointLabelsPadding: 5,
+                ticks: AxisTicks(display: false),
+              ),
+              {
                 'pointLabels': {'centerPointLabels': true},
               },
             ),

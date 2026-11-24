@@ -21,10 +21,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
         backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
         borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        <String, Object?>{
           'data': <Object?>[10, null, 1, undefined],
         },
       ),

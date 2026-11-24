@@ -73,10 +73,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'Orange',
     ],
     scales: [
-      RadialLinearAxis(
-        ticks: AxisTicks(display: false),
-        pointLabelsDisplay: ScaleDisplay.off,
-        extra: <String, Object?>{
+      raw(
+        RadialLinearAxis(
+          ticks: AxisTicks(display: false),
+          pointLabelsDisplay: ScaleDisplay.off,
+        ),
+        <String, Object?>{
           'angleLines': <String, Object?>{
             'color': (ScriptableScalePointLabelContext ctx) {
               return jsToNumber(ctx.index).remainder(2) == 0

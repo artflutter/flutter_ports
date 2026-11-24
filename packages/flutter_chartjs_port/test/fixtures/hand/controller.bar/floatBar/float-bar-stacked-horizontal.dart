@@ -18,9 +18,11 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             11,
             <Object?>[6, 2],
@@ -29,9 +31,11 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ],
         },
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <Object?>[1, 2],
             <Object?>[3, 4],
@@ -40,9 +44,11 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ],
         },
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <Object?>[0, 1],
             <Object?>[1, 2],

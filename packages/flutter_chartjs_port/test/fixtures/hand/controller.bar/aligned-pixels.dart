@@ -16,35 +16,35 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(data: .values(<num?>[-1])),
-      BarDataset(data: .values(<num?>[1])),
-    ],
-    labels: <Object>['a'],
-    // DIVERGES(chartjs): adapt-axis-objects, the axis
-    // class.
-    indexAxis: const YAxis(),
-    events: <String>[],
-    devicePixelRatio: 1.25,
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      LinearAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        alignToPixels: true,
-      ),
-      // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      CategoryAxis(
-        CartesianAxis.y,
-        display: ScaleDisplay.off,
-        stacked: StackMode.on,
-      ),
-    ],
-    extra: <String, Object?>{
-      'backgroundColor': ChartPaint.solid(Color(0xFF000080)),
-    },
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(data: .values(<num?>[-1])),
+        BarDataset(data: .values(<num?>[1])),
+      ],
+      labels: <Object>['a'],
+      // DIVERGES(chartjs): adapt-axis-objects, the axis
+      // class.
+      indexAxis: const YAxis(),
+      events: <String>[],
+      devicePixelRatio: 1.25,
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(
+          CartesianAxis.x,
+          display: ScaleDisplay.off,
+          alignToPixels: true,
+        ),
+        // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(
+          CartesianAxis.y,
+          display: ScaleDisplay.off,
+          stacked: StackMode.on,
+        ),
+      ],
+    ),
+    <String, Object?>{'backgroundColor': ChartPaint.solid(Color(0xFF000080))},
   ),
   options: AcquireOptions(canvas: HarnessCanvas(width: 100, height: 500)),
 );

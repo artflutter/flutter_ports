@@ -15,10 +15,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        // option in dataset
-        data: .values(<num?>[0, 5, 10, null, -10, -5]),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          // option in dataset
+          data: .values(<num?>[0, 5, 10, null, -10, -5]),
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
           'borderSkipped': (ScriptableContext ctx) {
             final value = jsOrZero(
@@ -41,11 +43,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      bar: BarElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderColor: ChartPaint.solid(Color(0xFF888888)),
-        borderWidth: 8,
-        extra: <String, Object?>{
+      bar: raw(
+        BarElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderColor: ChartPaint.solid(Color(0xFF888888)),
+          borderWidth: 8,
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
           'borderSkipped': (ScriptableContext ctx) {
             final index = jsToNumber(ctx.dataIndex ?? undefined);

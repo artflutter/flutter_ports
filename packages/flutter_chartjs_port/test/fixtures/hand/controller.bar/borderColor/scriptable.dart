@@ -38,10 +38,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      bar: BarElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderWidth: 8,
-        extra: <String, Object?>{
+      bar: raw(
+        BarElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderWidth: 8,
+        ),
+        <String, Object?>{
           'borderColor': (ScriptableContext ctx) {
             final value = jsOrZero(
               jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),

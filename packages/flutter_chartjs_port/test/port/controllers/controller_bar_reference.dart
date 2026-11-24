@@ -11510,26 +11510,22 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd'],
       datasets: [
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[1.0, 5.0],
-              const <Object?>[-2.0, 3.0],
-              const <Object?>[4.0, -1.0],
-              7.0,
-            ],
-          },
-        ),
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[0.0, 2.0],
-              3.0,
-              const <Object?>[-3.0, -1.0],
-              const <Object?>[2.0, 2.0],
-            ],
-          },
-        ),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[1.0, 5.0],
+            const <Object?>[-2.0, 3.0],
+            const <Object?>[4.0, -1.0],
+            7.0,
+          ],
+        }),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[0.0, 2.0],
+            3.0,
+            const <Object?>[-3.0, -1.0],
+            const <Object?>[2.0, 2.0],
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -12756,24 +12752,20 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[1.0, 3.0],
-              const <Object?>[-2.0, 2.0],
-              4.0,
-            ],
-          },
-        ),
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[2.0, 4.0],
-              5.0,
-              const <Object?>[-1.0, -3.0],
-            ],
-          },
-        ),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[1.0, 3.0],
+            const <Object?>[-2.0, 2.0],
+            4.0,
+          ],
+        }),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[2.0, 4.0],
+            5.0,
+            const <Object?>[-1.0, -3.0],
+          ],
+        }),
       ],
       scales: const [
         CategoryAxis(.x, stacked: StackMode.on),
@@ -18951,14 +18943,16 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
   ),
   (
     name: 'skipNull with null items',
-    config: () => ChartConfig(
-      labels: ['a', 'b', 'c', 'd'],
-      datasets: [
-        BarDataset(data: DatasetData.values([1.0, null, 3.0, 4.0])),
-        BarDataset(data: DatasetData.values([null, 2.0, 5.0, null])),
-        BarDataset(data: DatasetData.values([3.0, 4.0, null, 1.0])),
-      ],
-      extra: const <String, Object?>{'skipNull': true},
+    config: () => raw(
+      ChartConfig(
+        labels: ['a', 'b', 'c', 'd'],
+        datasets: [
+          BarDataset(data: DatasetData.values([1.0, null, 3.0, 4.0])),
+          BarDataset(data: DatasetData.values([null, 2.0, 5.0, null])),
+          BarDataset(data: DatasetData.values([3.0, 4.0, null, 1.0])),
+        ],
+      ),
+      const <String, Object?>{'skipNull': true},
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -24084,21 +24078,25 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        BarDataset(
-          data: DatasetData.values([3.0, -2.0, 5.0]),
-          borderRadius: 6,
-          borderWidth: 2,
-          extra: const <String, Object?>{'inflateAmount': undefined},
+        raw(
+          BarDataset(
+            data: DatasetData.values([3.0, -2.0, 5.0]),
+            borderRadius: 6,
+            borderWidth: 2,
+          ),
+          const <String, Object?>{'inflateAmount': undefined},
         ),
         BarDataset(
           data: DatasetData.values([2.0, 4.0, -1.0]),
           inflateAmount: 3,
         ),
-        BarDataset(
-          data: DatasetData.values([1.0, -3.0, 2.0]),
-          borderSkipped: BorderSkip.none,
-          borderWidth: 1,
-          extra: const <String, Object?>{
+        raw(
+          BarDataset(
+            data: DatasetData.values([1.0, -3.0, 2.0]),
+            borderSkipped: BorderSkip.none,
+            borderWidth: 1,
+          ),
+          const <String, Object?>{
             'borderRadius': BorderRadius.only(
               topLeft: Radius.circular(8),
               bottomRight: Radius.circular(4),
@@ -31162,36 +31160,29 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     name: 'object data with parsing keys',
     config: () => ChartConfig(
       datasets: [
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'k': 'a', 'v': 3.0},
-              const <String, Object?>{'k': 'b', 'v': 5.0},
-            ],
-            'parsing': const <String, Object?>{
-              'xAxisKey': 'k',
-              'yAxisKey': 'v',
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'k': 'a', 'v': 3.0},
+            const <String, Object?>{'k': 'b', 'v': 5.0},
+          ],
+          'parsing': const <String, Object?>{'xAxisKey': 'k', 'yAxisKey': 'v'},
+        }),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{
+              'k': 'b',
+              'nested': <String, Object?>{'v': 2.0},
             },
-          },
-        ),
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{
-                'k': 'b',
-                'nested': <String, Object?>{'v': 2.0},
-              },
-              const <String, Object?>{
-                'k': 'c',
-                'nested': <String, Object?>{'v': -1.0},
-              },
-            ],
-            'parsing': const <String, Object?>{
-              'xAxisKey': 'k',
-              'yAxisKey': 'nested.v',
+            const <String, Object?>{
+              'k': 'c',
+              'nested': <String, Object?>{'v': -1.0},
             },
+          ],
+          'parsing': const <String, Object?>{
+            'xAxisKey': 'k',
+            'yAxisKey': 'nested.v',
           },
-        ),
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -32009,34 +32000,34 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        BarDataset(
-          data: DatasetData.points([
-            DataPoint(0.0, 3.0),
-            DataPoint(1.0, 5.0),
-            DataPoint(2.0, -2.0),
-          ]),
-          extra: const <String, Object?>{'parsing': false},
+        raw(
+          BarDataset(
+            data: DatasetData.points([
+              DataPoint(0.0, 3.0),
+              DataPoint(1.0, 5.0),
+              DataPoint(2.0, -2.0),
+            ]),
+          ),
+          const <String, Object?>{'parsing': false},
         ),
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{
-                'x': 1.0,
-                'y': 4.0,
-                '_custom': <String, Object?>{
-                  'barStart': 1.0,
-                  'barEnd': 4.0,
-                  'start': 1.0,
-                  'end': 4.0,
-                  'min': 1.0,
-                  'max': 4.0,
-                },
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{
+              'x': 1.0,
+              'y': 4.0,
+              '_custom': <String, Object?>{
+                'barStart': 1.0,
+                'barEnd': 4.0,
+                'start': 1.0,
+                'end': 4.0,
+                'min': 1.0,
+                'max': 4.0,
               },
-              const <String, Object?>{'x': 2.0, 'y': 2.0},
-            ],
-            'parsing': false,
-          },
-        ),
+            },
+            const <String, Object?>{'x': 2.0, 'y': 2.0},
+          ],
+          'parsing': false,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -32943,16 +32934,12 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd'],
       datasets: [
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>['10', '-5', '7.5', 'abc'],
-          },
-        ),
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[null, double.nan, 4.0, '2'],
-          },
-        ),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>['10', '-5', '7.5', 'abc'],
+        }),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[null, double.nan, 4.0, '2'],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -34041,15 +34028,13 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'a'},
-              const <String, Object?>{'x': 'b', 'y': null},
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'a'},
+            const <String, Object?>{'x': 'b', 'y': null},
+          ],
+          'parsing': false,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -35601,10 +35586,12 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        BarDataset(
-          data: DatasetData.values([10.0, 5.0, -3.0]),
-          borderWidth: 1,
-          extra: const <String, Object?>{'inflateAmount': null},
+        raw(
+          BarDataset(
+            data: DatasetData.values([10.0, 5.0, -3.0]),
+            borderWidth: 1,
+          ),
+          const <String, Object?>{'inflateAmount': null},
         ),
       ],
     ),
@@ -45512,9 +45499,9 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        BarDataset(
-          data: DatasetData.values([10.0, 5.0, -3.0]),
-          extra: const <String, Object?>{'barThickness': '20'},
+        raw(
+          BarDataset(data: DatasetData.values([10.0, 5.0, -3.0])),
+          const <String, Object?>{'barThickness': '20'},
         ),
       ],
     ),
@@ -47035,9 +47022,9 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        BarDataset(
-          data: DatasetData.values([10.0, 5.0, -3.0]),
-          extra: const <String, Object?>{'maxBarThickness': null},
+        raw(
+          BarDataset(data: DatasetData.values([10.0, 5.0, -3.0])),
+          const <String, Object?>{'maxBarThickness': null},
         ),
       ],
     ),
@@ -49145,14 +49132,12 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a'],
       datasets: [
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'a', 'y': 1.0},
-            ],
-            'parsing': const <String, Object?>{'xAxisKey': null},
-          },
-        ),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'a', 'y': 1.0},
+          ],
+          'parsing': const <String, Object?>{'xAxisKey': null},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -49165,14 +49150,12 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a'],
       datasets: [
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'a', 'y': 1.0},
-            ],
-            'parsing': const <String, Object?>{'xAxisKey': 5.0},
-          },
-        ),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'a', 'y': 1.0},
+          ],
+          'parsing': const <String, Object?>{'xAxisKey': 5.0},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -49184,15 +49167,13 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     name: 'parsed: a bad yAxisKey on a category index axis',
     config: () => ChartConfig(
       datasets: [
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'q', 'y': 1.0},
-              const <String, Object?>{'x': 'r', 'y': 2.0},
-            ],
-            'parsing': const <String, Object?>{'yAxisKey': 5.0},
-          },
-        ),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'q', 'y': 1.0},
+            const <String, Object?>{'x': 'r', 'y': 2.0},
+          ],
+          'parsing': const <String, Object?>{'yAxisKey': 5.0},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -49205,15 +49186,13 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        BarDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[0.0, 1.0],
-              const <Object?>[1.0, 2.0],
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(BarDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[0.0, 1.0],
+            const <Object?>[1.0, 2.0],
+          ],
+          'parsing': false,
+        }),
       ],
       scales: const [
         CategoryAxis(.x, stacked: StackMode.on),
@@ -50027,9 +50006,9 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        BarDataset(
-          data: DatasetData.values([1.0, 2.0]),
-          extra: const <String, Object?>{'parsing': false},
+        raw(
+          BarDataset(data: DatasetData.values([1.0, 2.0])),
+          const <String, Object?>{'parsing': false},
         ),
       ],
       scales: const [

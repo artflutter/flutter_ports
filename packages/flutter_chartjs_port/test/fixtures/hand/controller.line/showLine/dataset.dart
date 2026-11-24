@@ -15,31 +15,33 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(
-        data: .values(<num?>[10, 15, 0, -4]),
-        label: 'dataset1',
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF008000))),
-        showLine: false,
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.none,
-      ),
-    ],
-    labels: <Object>['label1', 'label2', 'label3', 'label4'],
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
-    ],
-    disabledPlugins: [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TitlePlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          data: .values(<num?>[10, 15, 0, -4]),
+          label: 'dataset1',
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF008000))),
+          showLine: false,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.none,
+        ),
+      ],
+      labels: <Object>['label1', 'label2', 'label3', 'label4'],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    <String, Object?>{
       'showLine': true,
       'plugins': <String, Object?>{'filler': true},
     },

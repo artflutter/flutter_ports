@@ -38,15 +38,17 @@ FixtureConfig fixture() {
     false,
   ];
 
-  LineDataset newDataset(Object? pointStyle, int i) => LineDataset(
-    label: '',
-    data: .values(<num?>[for (final _ in pointStyles) i]),
-    // A PointStyle, or `false` (no point style) in extra.
-    pointStyle: pointStyle is PointStyle ? .constant(pointStyle) : null,
-    pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-    pointBorderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-    showLine: false,
-    extra: pointStyle is PointStyle
+  LineDataset newDataset(Object? pointStyle, int i) => raw(
+    LineDataset(
+      label: '',
+      data: .values(<num?>[for (final _ in pointStyles) i]),
+      // A PointStyle, or `false` (no point style) in the raw options.
+      pointStyle: pointStyle is PointStyle ? .constant(pointStyle) : null,
+      pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+      pointBorderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+      showLine: false,
+    ),
+    pointStyle is PointStyle
         ? null
         : <String, Object?>{'pointStyle': pointStyle},
   );

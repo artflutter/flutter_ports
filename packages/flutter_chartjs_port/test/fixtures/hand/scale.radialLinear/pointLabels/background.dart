@@ -31,11 +31,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'INNOVATION',
     ],
     scales: [
-      RadialLinearAxis(
-        min: 0,
-        max: 3,
-        ticks: AxisTicks(display: false, stepSize: 1, maxTicksLimit: 1),
-        extra: <String, Object?>{
+      raw(
+        RadialLinearAxis(
+          min: 0,
+          max: 3,
+          ticks: AxisTicks(display: false, stepSize: 1, maxTicksLimit: 1),
+        ),
+        <String, Object?>{
           'pointLabels': <String, Object?>{
             'backdropColor': ChartPaint.solid(Color(0xFF0000FF)),
             'backdropPadding': const EdgeInsets.fromLTRB(5, 2, 5, 2),

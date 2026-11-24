@@ -16,10 +16,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      PolarAreaDataset(
-        // option in dataset
-        data: <num?>[0, 2, 4, null, 6, 8],
-        extra: <String, Object?>{
+      raw(
+        PolarAreaDataset(
+          // option in dataset
+          data: <num?>[0, 2, 4, null, 6, 8],
+        ),
+        <String, Object?>{
           'borderWidth': (ScriptableContext ctx) {
             final value = jsOrZero(
               jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),

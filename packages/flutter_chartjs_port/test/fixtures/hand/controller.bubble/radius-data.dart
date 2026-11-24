@@ -16,22 +16,20 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BubbleDataset(
-        extra: <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'x': 0, 'y': 5, 'r': 1},
-            <String, Object?>{'x': 1, 'y': 4, 'r': 2},
-            <String, Object?>{'x': 2, 'y': 3, 'r': 6},
-            <String, Object?>{'x': 3, 'y': 2},
-            <String, Object?>{'x': 4, 'y': 1, 'r': 2},
-            <String, Object?>{'x': 5, 'y': 0, 'r': double.nan},
-            <String, Object?>{'x': 6, 'y': -1, 'r': undefined},
-            <String, Object?>{'x': 7, 'y': -2, 'r': null},
-            <String, Object?>{'x': 8, 'y': -3, 'r': '4'},
-            <String, Object?>{'x': 9, 'y': -4, 'r': '4px'},
-          ],
-        },
-      ),
+      raw(BubbleDataset(), <String, Object?>{
+        'data': <Object?>[
+          <String, Object?>{'x': 0, 'y': 5, 'r': 1},
+          <String, Object?>{'x': 1, 'y': 4, 'r': 2},
+          <String, Object?>{'x': 2, 'y': 3, 'r': 6},
+          <String, Object?>{'x': 3, 'y': 2},
+          <String, Object?>{'x': 4, 'y': 1, 'r': 2},
+          <String, Object?>{'x': 5, 'y': 0, 'r': double.nan},
+          <String, Object?>{'x': 6, 'y': -1, 'r': undefined},
+          <String, Object?>{'x': 7, 'y': -2, 'r': null},
+          <String, Object?>{'x': 8, 'y': -3, 'r': '4'},
+          <String, Object?>{'x': 9, 'y': -4, 'r': '4px'},
+        ],
+      }),
     ],
     scales: [
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

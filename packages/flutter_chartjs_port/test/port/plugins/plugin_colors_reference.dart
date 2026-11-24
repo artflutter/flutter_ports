@@ -8539,22 +8539,24 @@ final List<PluginColorsReferenceCase> pluginColorsReference = [
   ),
   (
     name: 'chart colors given',
-    config: () => ChartConfig(
-      labels: ['l0', 'l1', 'l2'],
-      datasets: [
-        LineDataset(label: 'd0', data: DatasetData.values([1.0, 4.0, 7.0])),
-        LineDataset(label: 'd1', data: DatasetData.values([8.0, 11.0, 3.0])),
-      ],
-      pluginOptions: const [ColorsPluginOptions(enabled: true)],
-      disabledPlugins: const [
-        PluginOff<DecimationPlugin>(),
-        PluginOff<FillerPlugin>(),
-        PluginOff<LegendPlugin>(),
-        PluginOff<SubtitlePlugin>(),
-        PluginOff<TitlePlugin>(),
-        PluginOff<TooltipPlugin>(),
-      ],
-      extra: const <String, Object?>{
+    config: () => raw(
+      ChartConfig(
+        labels: ['l0', 'l1', 'l2'],
+        datasets: [
+          LineDataset(label: 'd0', data: DatasetData.values([1.0, 4.0, 7.0])),
+          LineDataset(label: 'd1', data: DatasetData.values([8.0, 11.0, 3.0])),
+        ],
+        pluginOptions: const [ColorsPluginOptions(enabled: true)],
+        disabledPlugins: const [
+          PluginOff<DecimationPlugin>(),
+          PluginOff<FillerPlugin>(),
+          PluginOff<LegendPlugin>(),
+          PluginOff<SubtitlePlugin>(),
+          PluginOff<TitlePlugin>(),
+          PluginOff<TooltipPlugin>(),
+        ],
+      ),
+      const <String, Object?>{
         'backgroundColor': ChartPaint.solid(Color.fromRGBO(9, 8, 7, 1)),
       },
     ),

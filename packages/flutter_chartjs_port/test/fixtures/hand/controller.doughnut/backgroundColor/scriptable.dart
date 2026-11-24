@@ -38,22 +38,20 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      arc: ArcElementStyle(
-        extra: <String, Object?>{
-          'backgroundColor': (ScriptableContext ctx) {
-            final value = jsOrZero(
-              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
-            );
-            return value > 8
-                ? ChartPaint.solid(Color(0xFFFF0000))
-                : value > 6
-                ? ChartPaint.solid(Color(0xFF00FF00))
-                : value > 2
-                ? ChartPaint.solid(Color(0xFF0000FF))
-                : ChartPaint.solid(Color(0xFFFF00FF));
-          },
+      arc: raw(ArcElementStyle(), <String, Object?>{
+        'backgroundColor': (ScriptableContext ctx) {
+          final value = jsOrZero(
+            jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
+          );
+          return value > 8
+              ? ChartPaint.solid(Color(0xFFFF0000))
+              : value > 6
+              ? ChartPaint.solid(Color(0xFF00FF00))
+              : value > 2
+              ? ChartPaint.solid(Color(0xFF0000FF))
+              : ChartPaint.solid(Color(0xFFFF00FF));
         },
-      ),
+      }),
     ),
   ),
   options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),

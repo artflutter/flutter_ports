@@ -268,7 +268,7 @@ Chart _chart(
       labels: labels,
       datasets: [
         // Keep strings and undefined in the parser boundary cases.
-        TestDataset(const ChartKind('radialTest'), extra: {'data': data}),
+        raw(const TestDataset(ChartKind('radialTest')), {'data': data}),
       ],
       scales: [r],
     ),

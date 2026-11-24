@@ -1107,18 +1107,16 @@ FixtureConfig _controller_bar_backgroundcolor_indexable() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
-          bar: BarElementStyle(
-            extra: <String, Object?>{
-              'backgroundColor': <Object?>[
-                ChartPaint.solid(Color(0xFFFF88FF)),
-                ChartPaint.solid(Color(0xFF888888)),
-                ChartPaint.solid(Color(0xFFFF8800)),
-                ChartPaint.solid(Color(0xFF00FF88)),
-                ChartPaint.solid(Color(0xFF8800FF)),
-                ChartPaint.solid(Color(0xFFFFFF88)),
-              ],
-            },
-          ),
+          bar: raw(BarElementStyle(), <String, Object?>{
+            'backgroundColor': <Object?>[
+              ChartPaint.solid(Color(0xFFFF88FF)),
+              ChartPaint.solid(Color(0xFF888888)),
+              ChartPaint.solid(Color(0xFFFF8800)),
+              ChartPaint.solid(Color(0xFF00FF88)),
+              ChartPaint.solid(Color(0xFF8800FF)),
+              ChartPaint.solid(Color(0xFFFFFF88)),
+            ],
+          }),
         ),
         scales: [
           CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
@@ -1144,14 +1142,12 @@ FixtureConfig _controller_bar_backgroundcolor_loopable() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      bar: BarElementStyle(
-        extra: <String, Object?>{
-          'backgroundColor': <Object?>[
-            ChartPaint.solid(Color(0xFF000000)),
-            ChartPaint.solid(Color(0xFF888888)),
-          ],
-        },
-      ),
+      bar: raw(BarElementStyle(), <String, Object?>{
+        'backgroundColor': <Object?>[
+          ChartPaint.solid(Color(0xFF000000)),
+          ChartPaint.solid(Color(0xFF888888)),
+        ],
+      }),
     ),
     scales: [
       CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
@@ -1623,11 +1619,9 @@ _controller_bar_bar_thickness_min_interval_multi() => FixtureConfig.typed(
     ],
     responsive: false,
     scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        parser: 'YYYY',
-        extra: <String, Object?>{'min': '2000', 'max': '2100'},
+      raw(
+        TimeAxis(CartesianAxis.x, display: ScaleDisplay.off, parser: 'YYYY'),
+        <String, Object?>{'min': '2000', 'max': '2100'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1655,11 +1649,9 @@ _controller_bar_bar_thickness_min_interval_multi_icu() => FixtureConfig.typed(
     ],
     responsive: false,
     scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        parser: 'yyyy',
-        extra: <String, Object?>{'min': '2000', 'max': '2100'},
+      raw(
+        TimeAxis(CartesianAxis.x, display: ScaleDisplay.off, parser: 'yyyy'),
+        <String, Object?>{'min': '2000', 'max': '2100'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -1733,34 +1725,40 @@ FixtureConfig _controller_bar_bar_thickness_min_interval_icu() =>
 
 /// `controller.bar/bar-thickness-multiple.json`.
 FixtureConfig _controller_bar_bar_thickness_multiple() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        data: .values(<num?>[1, null, 3, 4, 5]),
-      ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-        data: .values(<num?>[5, 4, 3, null, 1]),
-      ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-        data: .values(<num?>[3, 5, 2, null, 4]),
-      ),
-    ],
-    labels: <Object>['2016', '2018', '2020', '2024', '2030'],
-    responsive: false,
-    scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        offset: false,
-        parser: 'YYYY',
-        ticks: AxisTicks(source: TickSource.labels),
-      ),
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+          data: .values(<num?>[1, null, 3, 4, 5]),
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+          data: .values(<num?>[5, 4, 3, null, 1]),
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+          data: .values(<num?>[3, 5, 2, null, 4]),
+        ),
+      ],
+      labels: <Object>['2016', '2018', '2020', '2024', '2030'],
+      responsive: false,
+      scales: [
+        TimeAxis(
+          CartesianAxis.x,
+          display: ScaleDisplay.off,
+          offset: false,
+          parser: 'YYYY',
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        LinearAxis(
+          CartesianAxis.y,
+          display: ScaleDisplay.off,
+          beginAtZero: true,
+        ),
+      ],
+    ),
+    <String, Object?>{
       'datasets': <String, Object?>{
         'bar': <String, Object?>{'barPercentage': 1, 'categoryPercentage': 1},
       },
@@ -1772,38 +1770,40 @@ FixtureConfig _controller_bar_bar_thickness_multiple() => FixtureConfig.typed(
 /// The ICU twin of `controller.bar/bar-thickness-multiple.json`.
 FixtureConfig _controller_bar_bar_thickness_multiple_icu() =>
     FixtureConfig.typed(
-      ChartConfig(
-        datasets: [
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-            data: .values(<num?>[1, null, 3, 4, 5]),
-          ),
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-            data: .values(<num?>[5, 4, 3, null, 1]),
-          ),
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-            data: .values(<num?>[3, 5, 2, null, 4]),
-          ),
-        ],
-        labels: <Object>['2016', '2018', '2020', '2024', '2030'],
-        responsive: false,
-        scales: [
-          TimeAxis(
-            CartesianAxis.x,
-            display: ScaleDisplay.off,
-            offset: false,
-            parser: 'yyyy',
-            ticks: AxisTicks(source: TickSource.labels),
-          ),
-          LinearAxis(
-            CartesianAxis.y,
-            display: ScaleDisplay.off,
-            beginAtZero: true,
-          ),
-        ],
-        extra: <String, Object?>{
+      raw(
+        ChartConfig(
+          datasets: [
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+              data: .values(<num?>[1, null, 3, 4, 5]),
+            ),
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+              data: .values(<num?>[5, 4, 3, null, 1]),
+            ),
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+              data: .values(<num?>[3, 5, 2, null, 4]),
+            ),
+          ],
+          labels: <Object>['2016', '2018', '2020', '2024', '2030'],
+          responsive: false,
+          scales: [
+            TimeAxis(
+              CartesianAxis.x,
+              display: ScaleDisplay.off,
+              offset: false,
+              parser: 'yyyy',
+              ticks: AxisTicks(source: TickSource.labels),
+            ),
+            LinearAxis(
+              CartesianAxis.y,
+              display: ScaleDisplay.off,
+              beginAtZero: true,
+            ),
+          ],
+        ),
+        <String, Object?>{
           'datasets': <String, Object?>{
             'bar': <String, Object?>{
               'barPercentage': 1,
@@ -1817,34 +1817,42 @@ FixtureConfig _controller_bar_bar_thickness_multiple_icu() =>
 
 /// `controller.bar/bar-thickness-no-overlap.json`.
 FixtureConfig _controller_bar_bar_thickness_no_overlap() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        extra: <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'y': '1', 'x': '2016'},
-            <String, Object?>{'y': '2', 'x': '2017'},
-            <String, Object?>{'y': '3', 'x': '2017-08'},
-            <String, Object?>{'y': '4', 'x': '2024'},
-            <String, Object?>{'y': '5', 'x': '2030'},
-          ],
-        },
-      ),
-    ],
-    labels: <Object>['2016', '2018', '2020', '2024', '2030'],
-    responsive: false,
-    scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        offset: false,
-        parser: 'YYYY-MM',
-        ticks: AxisTicks(source: TickSource.labels),
-      ),
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        raw(
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+          ),
+          <String, Object?>{
+            'data': <Object?>[
+              <String, Object?>{'y': '1', 'x': '2016'},
+              <String, Object?>{'y': '2', 'x': '2017'},
+              <String, Object?>{'y': '3', 'x': '2017-08'},
+              <String, Object?>{'y': '4', 'x': '2024'},
+              <String, Object?>{'y': '5', 'x': '2030'},
+            ],
+          },
+        ),
+      ],
+      labels: <Object>['2016', '2018', '2020', '2024', '2030'],
+      responsive: false,
+      scales: [
+        TimeAxis(
+          CartesianAxis.x,
+          display: ScaleDisplay.off,
+          offset: false,
+          parser: 'YYYY-MM',
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        LinearAxis(
+          CartesianAxis.y,
+          display: ScaleDisplay.off,
+          beginAtZero: true,
+        ),
+      ],
+    ),
+    <String, Object?>{
       'datasets': <String, Object?>{
         'bar': <String, Object?>{'barPercentage': 1, 'categoryPercentage': 1},
       },
@@ -1856,38 +1864,42 @@ FixtureConfig _controller_bar_bar_thickness_no_overlap() => FixtureConfig.typed(
 /// The ICU twin of `controller.bar/bar-thickness-no-overlap.json`.
 FixtureConfig _controller_bar_bar_thickness_no_overlap_icu() =>
     FixtureConfig.typed(
-      ChartConfig(
-        datasets: [
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-            extra: <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'y': '1', 'x': '2016'},
-                <String, Object?>{'y': '2', 'x': '2017'},
-                <String, Object?>{'y': '3', 'x': '2017-08'},
-                <String, Object?>{'y': '4', 'x': '2024'},
-                <String, Object?>{'y': '5', 'x': '2030'},
-              ],
-            },
-          ),
-        ],
-        labels: <Object>['2016', '2018', '2020', '2024', '2030'],
-        responsive: false,
-        scales: [
-          TimeAxis(
-            CartesianAxis.x,
-            display: ScaleDisplay.off,
-            offset: false,
-            parser: 'yyyy-MM',
-            ticks: AxisTicks(source: TickSource.labels),
-          ),
-          LinearAxis(
-            CartesianAxis.y,
-            display: ScaleDisplay.off,
-            beginAtZero: true,
-          ),
-        ],
-        extra: <String, Object?>{
+      raw(
+        ChartConfig(
+          datasets: [
+            raw(
+              BarDataset(
+                backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+              ),
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'y': '1', 'x': '2016'},
+                  <String, Object?>{'y': '2', 'x': '2017'},
+                  <String, Object?>{'y': '3', 'x': '2017-08'},
+                  <String, Object?>{'y': '4', 'x': '2024'},
+                  <String, Object?>{'y': '5', 'x': '2030'},
+                ],
+              },
+            ),
+          ],
+          labels: <Object>['2016', '2018', '2020', '2024', '2030'],
+          responsive: false,
+          scales: [
+            TimeAxis(
+              CartesianAxis.x,
+              display: ScaleDisplay.off,
+              offset: false,
+              parser: 'yyyy-MM',
+              ticks: AxisTicks(source: TickSource.labels),
+            ),
+            LinearAxis(
+              CartesianAxis.y,
+              display: ScaleDisplay.off,
+              beginAtZero: true,
+            ),
+          ],
+        ),
+        <String, Object?>{
           'datasets': <String, Object?>{
             'bar': <String, Object?>{
               'barPercentage': 1,
@@ -1901,34 +1913,40 @@ FixtureConfig _controller_bar_bar_thickness_no_overlap_icu() =>
 
 /// `controller.bar/bar-thickness-offset.json`.
 FixtureConfig _controller_bar_bar_thickness_offset() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        data: .values(<num?>[1, null, 3, 4, 5]),
-      ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-        data: .values(<num?>[5, 4, 3, null, 1]),
-      ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-        data: .values(<num?>[3, 5, 2, null, 4]),
-      ),
-    ],
-    labels: <Object>['2016', '2018', '2020', '2024', '2030'],
-    responsive: false,
-    scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        offset: true,
-        display: ScaleDisplay.off,
-        parser: 'YYYY',
-        ticks: AxisTicks(source: TickSource.labels),
-      ),
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+          data: .values(<num?>[1, null, 3, 4, 5]),
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+          data: .values(<num?>[5, 4, 3, null, 1]),
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+          data: .values(<num?>[3, 5, 2, null, 4]),
+        ),
+      ],
+      labels: <Object>['2016', '2018', '2020', '2024', '2030'],
+      responsive: false,
+      scales: [
+        TimeAxis(
+          CartesianAxis.x,
+          offset: true,
+          display: ScaleDisplay.off,
+          parser: 'YYYY',
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        LinearAxis(
+          CartesianAxis.y,
+          display: ScaleDisplay.off,
+          beginAtZero: true,
+        ),
+      ],
+    ),
+    <String, Object?>{
       'datasets': <String, Object?>{
         'bar': <String, Object?>{'barPercentage': 1, 'categoryPercentage': 1},
       },
@@ -1939,34 +1957,40 @@ FixtureConfig _controller_bar_bar_thickness_offset() => FixtureConfig.typed(
 
 /// The ICU twin of `controller.bar/bar-thickness-offset.json`.
 FixtureConfig _controller_bar_bar_thickness_offset_icu() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        data: .values(<num?>[1, null, 3, 4, 5]),
-      ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-        data: .values(<num?>[5, 4, 3, null, 1]),
-      ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-        data: .values(<num?>[3, 5, 2, null, 4]),
-      ),
-    ],
-    labels: <Object>['2016', '2018', '2020', '2024', '2030'],
-    responsive: false,
-    scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        offset: true,
-        display: ScaleDisplay.off,
-        parser: 'yyyy',
-        ticks: AxisTicks(source: TickSource.labels),
-      ),
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+          data: .values(<num?>[1, null, 3, 4, 5]),
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+          data: .values(<num?>[5, 4, 3, null, 1]),
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+          data: .values(<num?>[3, 5, 2, null, 4]),
+        ),
+      ],
+      labels: <Object>['2016', '2018', '2020', '2024', '2030'],
+      responsive: false,
+      scales: [
+        TimeAxis(
+          CartesianAxis.x,
+          offset: true,
+          display: ScaleDisplay.off,
+          parser: 'yyyy',
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        LinearAxis(
+          CartesianAxis.y,
+          display: ScaleDisplay.off,
+          beginAtZero: true,
+        ),
+      ],
+    ),
+    <String, Object?>{
       'datasets': <String, Object?>{
         'bar': <String, Object?>{'barPercentage': 1, 'categoryPercentage': 1},
       },
@@ -2147,35 +2171,41 @@ FixtureConfig _controller_bar_bar_thickness_per_dataset_icu() =>
 
 /// `controller.bar/bar-thickness-reverse.json`.
 FixtureConfig _controller_bar_bar_thickness_reverse() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        data: .values(<num?>[1, null, 3, 4, 5]),
-      ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-        data: .values(<num?>[5, 4, 3, null, 1]),
-      ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-        data: .values(<num?>[3, 5, 2, null, 4]),
-      ),
-    ],
-    labels: <Object>['2016', '2018', '2020', '2024', '2030'],
-    responsive: false,
-    scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        offset: false,
-        parser: 'YYYY',
-        reverse: true,
-        ticks: AxisTicks(source: TickSource.labels),
-      ),
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+          data: .values(<num?>[1, null, 3, 4, 5]),
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+          data: .values(<num?>[5, 4, 3, null, 1]),
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+          data: .values(<num?>[3, 5, 2, null, 4]),
+        ),
+      ],
+      labels: <Object>['2016', '2018', '2020', '2024', '2030'],
+      responsive: false,
+      scales: [
+        TimeAxis(
+          CartesianAxis.x,
+          display: ScaleDisplay.off,
+          offset: false,
+          parser: 'YYYY',
+          reverse: true,
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        LinearAxis(
+          CartesianAxis.y,
+          display: ScaleDisplay.off,
+          beginAtZero: true,
+        ),
+      ],
+    ),
+    <String, Object?>{
       'datasets': <String, Object?>{
         'bar': <String, Object?>{'barPercentage': 1, 'categoryPercentage': 1},
       },
@@ -2187,39 +2217,41 @@ FixtureConfig _controller_bar_bar_thickness_reverse() => FixtureConfig.typed(
 /// The ICU twin of `controller.bar/bar-thickness-reverse.json`.
 FixtureConfig _controller_bar_bar_thickness_reverse_icu() =>
     FixtureConfig.typed(
-      ChartConfig(
-        datasets: [
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-            data: .values(<num?>[1, null, 3, 4, 5]),
-          ),
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-            data: .values(<num?>[5, 4, 3, null, 1]),
-          ),
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-            data: .values(<num?>[3, 5, 2, null, 4]),
-          ),
-        ],
-        labels: <Object>['2016', '2018', '2020', '2024', '2030'],
-        responsive: false,
-        scales: [
-          TimeAxis(
-            CartesianAxis.x,
-            display: ScaleDisplay.off,
-            offset: false,
-            parser: 'yyyy',
-            reverse: true,
-            ticks: AxisTicks(source: TickSource.labels),
-          ),
-          LinearAxis(
-            CartesianAxis.y,
-            display: ScaleDisplay.off,
-            beginAtZero: true,
-          ),
-        ],
-        extra: <String, Object?>{
+      raw(
+        ChartConfig(
+          datasets: [
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+              data: .values(<num?>[1, null, 3, 4, 5]),
+            ),
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+              data: .values(<num?>[5, 4, 3, null, 1]),
+            ),
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+              data: .values(<num?>[3, 5, 2, null, 4]),
+            ),
+          ],
+          labels: <Object>['2016', '2018', '2020', '2024', '2030'],
+          responsive: false,
+          scales: [
+            TimeAxis(
+              CartesianAxis.x,
+              display: ScaleDisplay.off,
+              offset: false,
+              parser: 'yyyy',
+              reverse: true,
+              ticks: AxisTicks(source: TickSource.labels),
+            ),
+            LinearAxis(
+              CartesianAxis.y,
+              display: ScaleDisplay.off,
+              beginAtZero: true,
+            ),
+          ],
+        ),
+        <String, Object?>{
           'datasets': <String, Object?>{
             'bar': <String, Object?>{
               'barPercentage': 1,
@@ -2304,13 +2336,15 @@ FixtureConfig _controller_bar_bar_thickness_single() => FixtureConfig.typed(
     labels: <Object>['2016', '2018', '2020', '2024', '2030'],
     responsive: false,
     scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        offset: false,
-        parser: 'YYYY',
-        ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{'min': '2013'},
+      raw(
+        TimeAxis(
+          CartesianAxis.x,
+          display: ScaleDisplay.off,
+          offset: false,
+          parser: 'YYYY',
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        <String, Object?>{'min': '2013'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -2332,13 +2366,15 @@ FixtureConfig _controller_bar_bar_thickness_single_icu() => FixtureConfig.typed(
     labels: <Object>['2016', '2018', '2020', '2024', '2030'],
     responsive: false,
     scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        offset: false,
-        parser: 'yyyy',
-        ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{'min': '2013'},
+      raw(
+        TimeAxis(
+          CartesianAxis.x,
+          display: ScaleDisplay.off,
+          offset: false,
+          parser: 'yyyy',
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        <String, Object?>{'min': '2013'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
@@ -2348,40 +2384,42 @@ FixtureConfig _controller_bar_bar_thickness_single_icu() => FixtureConfig.typed(
 
 /// `controller.bar/bar-thickness-stacked.json`.
 FixtureConfig _controller_bar_bar_thickness_stacked() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        data: .values(<num?>[1, null, 3, 4, 5]),
-      ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-        data: .values(<num?>[5, 4, 3, null, 1]),
-      ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-        data: .values(<num?>[3, 5, 2, null, 4]),
-      ),
-    ],
-    labels: <Object>['2016', '2018', '2020', '2024', '2030'],
-    responsive: false,
-    scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        stacked: StackMode.on,
-        display: ScaleDisplay.off,
-        offset: false,
-        parser: 'YYYY',
-        ticks: AxisTicks(source: TickSource.labels),
-      ),
-      LinearAxis(
-        CartesianAxis.y,
-        display: ScaleDisplay.off,
-        stacked: StackMode.on,
-        beginAtZero: true,
-      ),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+          data: .values(<num?>[1, null, 3, 4, 5]),
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+          data: .values(<num?>[5, 4, 3, null, 1]),
+        ),
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+          data: .values(<num?>[3, 5, 2, null, 4]),
+        ),
+      ],
+      labels: <Object>['2016', '2018', '2020', '2024', '2030'],
+      responsive: false,
+      scales: [
+        TimeAxis(
+          CartesianAxis.x,
+          stacked: StackMode.on,
+          display: ScaleDisplay.off,
+          offset: false,
+          parser: 'YYYY',
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        LinearAxis(
+          CartesianAxis.y,
+          display: ScaleDisplay.off,
+          stacked: StackMode.on,
+          beginAtZero: true,
+        ),
+      ],
+    ),
+    <String, Object?>{
       'datasets': <String, Object?>{
         'bar': <String, Object?>{'barPercentage': 1, 'categoryPercentage': 1},
       },
@@ -2393,40 +2431,42 @@ FixtureConfig _controller_bar_bar_thickness_stacked() => FixtureConfig.typed(
 /// The ICU twin of `controller.bar/bar-thickness-stacked.json`.
 FixtureConfig _controller_bar_bar_thickness_stacked_icu() =>
     FixtureConfig.typed(
-      ChartConfig(
-        datasets: [
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-            data: .values(<num?>[1, null, 3, 4, 5]),
-          ),
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-            data: .values(<num?>[5, 4, 3, null, 1]),
-          ),
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-            data: .values(<num?>[3, 5, 2, null, 4]),
-          ),
-        ],
-        labels: <Object>['2016', '2018', '2020', '2024', '2030'],
-        responsive: false,
-        scales: [
-          TimeAxis(
-            CartesianAxis.x,
-            stacked: StackMode.on,
-            display: ScaleDisplay.off,
-            offset: false,
-            parser: 'yyyy',
-            ticks: AxisTicks(source: TickSource.labels),
-          ),
-          LinearAxis(
-            CartesianAxis.y,
-            display: ScaleDisplay.off,
-            stacked: StackMode.on,
-            beginAtZero: true,
-          ),
-        ],
-        extra: <String, Object?>{
+      raw(
+        ChartConfig(
+          datasets: [
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+              data: .values(<num?>[1, null, 3, 4, 5]),
+            ),
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+              data: .values(<num?>[5, 4, 3, null, 1]),
+            ),
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+              data: .values(<num?>[3, 5, 2, null, 4]),
+            ),
+          ],
+          labels: <Object>['2016', '2018', '2020', '2024', '2030'],
+          responsive: false,
+          scales: [
+            TimeAxis(
+              CartesianAxis.x,
+              stacked: StackMode.on,
+              display: ScaleDisplay.off,
+              offset: false,
+              parser: 'yyyy',
+              ticks: AxisTicks(source: TickSource.labels),
+            ),
+            LinearAxis(
+              CartesianAxis.y,
+              display: ScaleDisplay.off,
+              stacked: StackMode.on,
+              beginAtZero: true,
+            ),
+          ],
+        ),
+        <String, Object?>{
           'datasets': <String, Object?>{
             'bar': <String, Object?>{
               'barPercentage': 1,
@@ -2440,21 +2480,23 @@ FixtureConfig _controller_bar_bar_thickness_stacked_icu() =>
 
 /// `controller.bar/borderColor/border+dpr.js`.
 FixtureConfig _controller_bar_bordercolor_border_dpr() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(data: .values(<num?>[5, 4, 3, 2, 3, 4, 5])),
-    ],
-    labels: <Object>[0, 1, 2, 3, 4, 5, 6],
-    events: <String>[],
-    devicePixelRatio: 1.5,
-    scales: [
-      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
-    ],
-    datasetDefaults: [
-      BarDataset(barPercentage: 1, categoryPercentage: 1, borderWidth: 8),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(data: .values(<num?>[5, 4, 3, 2, 3, 4, 5])),
+      ],
+      labels: <Object>[0, 1, 2, 3, 4, 5, 6],
+      events: <String>[],
+      devicePixelRatio: 1.5,
+      scales: [
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+      datasetDefaults: [
+        BarDataset(barPercentage: 1, categoryPercentage: 1, borderWidth: 8),
+      ],
+    ),
+    <String, Object?>{
       'backgroundColor': ChartPaint.solid(Color(0xFF000000)),
       'borderColor': ChartPaint.solid(Color(0xFF000000)),
     },
@@ -2481,10 +2523,12 @@ FixtureConfig _controller_bar_bordercolor_indexable() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      bar: BarElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderWidth: 8,
-        extra: <String, Object?>{
+      bar: raw(
+        BarElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderWidth: 8,
+        ),
+        <String, Object?>{
           'borderColor': <Object?>[
             ChartPaint.solid(Color(0xFFFF88FF)),
             ChartPaint.solid(Color(0xFF888888)),
@@ -2699,9 +2743,9 @@ FixtureConfig _controller_bar_borderradius_no_spacing() => FixtureConfig.typed(
 FixtureConfig _controller_bar_borderskipped_indexable() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        data: .values(<num?>[0, 5, 10, null, -10, -5]),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(data: .values(<num?>[0, 5, 10, null, -10, -5])),
+        <String, Object?>{
           'borderSkipped': <Object?>[
             BorderSkippedEdge.top,
             BorderSkippedEdge.top,
@@ -2716,11 +2760,13 @@ FixtureConfig _controller_bar_borderskipped_indexable() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      bar: BarElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderColor: ChartPaint.solid(Color(0xFF888888)),
-        borderWidth: 8,
-        extra: <String, Object?>{
+      bar: raw(
+        BarElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderColor: ChartPaint.solid(Color(0xFF888888)),
+          borderWidth: 8,
+        ),
+        <String, Object?>{
           'borderSkipped': <Object?>[
             BorderSkippedEdge.bottom,
             BorderSkippedEdge.bottom,
@@ -2825,10 +2871,12 @@ FixtureConfig _controller_bar_borderwidth_indexable_object() =>
     FixtureConfig.typed(
       ChartConfig(
         datasets: [
-          BarDataset(
-            data: .values(<num?>[0, 5, 10, null, -10, -5]),
-            borderSkipped: BorderSkip.none,
-            extra: <String, Object?>{
+          raw(
+            BarDataset(
+              data: .values(<num?>[0, 5, 10, null, -10, -5]),
+              borderSkipped: BorderSkip.none,
+            ),
+            <String, Object?>{
               'borderWidth': <Object?>[
                 <String, Object?>{},
                 <String, Object?>{'bottom': 1, 'left': 1, 'top': 1, 'right': 1},
@@ -2843,11 +2891,13 @@ FixtureConfig _controller_bar_borderwidth_indexable_object() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
-          bar: BarElementStyle(
-            backgroundColor: ChartPaint.solid(Color(0x00000000)),
-            borderColor: ChartPaint.solid(Color(0x80808080)),
-            borderSkipped: BorderSkip.none,
-            extra: <String, Object?>{
+          bar: raw(
+            BarElementStyle(
+              backgroundColor: ChartPaint.solid(Color(0x00000000)),
+              borderColor: ChartPaint.solid(Color(0x80808080)),
+              borderSkipped: BorderSkip.none,
+            ),
+            <String, Object?>{
               'borderWidth': <Object?>[
                 <String, Object?>{'bottom': 1, 'left': 5, 'top': 1, 'right': 5},
                 <String, Object?>{'bottom': 1, 'left': 4, 'top': 1, 'right': 4},
@@ -2871,9 +2921,9 @@ FixtureConfig _controller_bar_borderwidth_indexable_object() =>
 FixtureConfig _controller_bar_borderwidth_indexable() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        data: .values(<num?>[0, 5, 10, null, -10, -5]),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(data: .values(<num?>[0, 5, 10, null, -10, -5])),
+        <String, Object?>{
           'borderWidth': <Object?>[0, 1, 2, 3, 4, 5],
         },
       ),
@@ -2881,10 +2931,12 @@ FixtureConfig _controller_bar_borderwidth_indexable() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      bar: BarElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderColor: ChartPaint.solid(Color(0xFF888888)),
-        extra: <String, Object?>{
+      bar: raw(
+        BarElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderColor: ChartPaint.solid(Color(0xFF888888)),
+        ),
+        <String, Object?>{
           'borderWidth': <Object?>[5, 4, 3, 2, 1, 0],
         },
       ),
@@ -2906,10 +2958,12 @@ FixtureConfig _controller_bar_borderwidth_negative() => FixtureConfig.typed(
         borderWidth: -2,
       ),
       BarDataset(data: .values(<num?>[0, 5, 10, null, -10, -5])),
-      BarDataset(
-        data: .values(<num?>[0, 5, 10, null, -10, -5]),
-        borderSkipped: BorderSkip.none,
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          data: .values(<num?>[0, 5, 10, null, -10, -5]),
+          borderSkipped: BorderSkip.none,
+        ),
+        <String, Object?>{
           'borderWidth': <String, Object?>{
             'left': -5,
             'top': -5,
@@ -2918,9 +2972,9 @@ FixtureConfig _controller_bar_borderwidth_negative() => FixtureConfig.typed(
           },
         },
       ),
-      BarDataset(
-        data: .values(<num?>[0, 5, 10, null, -10, -5]),
-        extra: <String, Object?>{'borderWidth': <String, Object?>{}},
+      raw(
+        BarDataset(data: .values(<num?>[0, 5, 10, null, -10, -5])),
+        <String, Object?>{'borderWidth': <String, Object?>{}},
       ),
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
@@ -2943,10 +2997,12 @@ FixtureConfig _controller_bar_borderwidth_negative() => FixtureConfig.typed(
 FixtureConfig _controller_bar_borderwidth_object() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        data: .values(<num?>[0, 5, 10, null, -10, -5]),
-        borderSkipped: BorderSkip.none,
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          data: .values(<num?>[0, 5, 10, null, -10, -5]),
+          borderSkipped: BorderSkip.none,
+        ),
+        <String, Object?>{
           'borderWidth': <String, Object?>{
             'bottom': 1,
             'left': 2,
@@ -2959,11 +3015,13 @@ FixtureConfig _controller_bar_borderwidth_object() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      bar: BarElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderColor: ChartPaint.solid(Color(0xFF888888)),
-        borderSkipped: BorderSkip.none,
-        extra: <String, Object?>{
+      bar: raw(
+        BarElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderColor: ChartPaint.solid(Color(0xFF888888)),
+          borderSkipped: BorderSkip.none,
+        ),
+        <String, Object?>{
           'borderWidth': <String, Object?>{
             'bottom': 4,
             'left': 3,
@@ -3011,15 +3069,19 @@ FixtureConfig _controller_bar_borderwidth_value() => FixtureConfig.typed(
 FixtureConfig _controller_bar_data_object() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        <String, Object?>{
           'data': <String, Object?>{'a': 10, 'b': 2, 'c': -5},
         },
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+        ),
+        <String, Object?>{
           'data': <String, Object?>{'a': 8, 'b': 12, 'c': 5},
         },
       ),
@@ -3037,10 +3099,12 @@ FixtureConfig _controller_bar_data_object() => FixtureConfig.typed(
 FixtureConfig _controller_bar_data_parsing() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        label: 'Net sales',
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          label: 'Net sales',
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': 'Jan', 'net': 100, 'cogs': 50, 'gm': 50},
             <String, Object?>{'x': 'Feb', 'net': 120, 'cogs': 55, 'gm': 75},
@@ -3048,10 +3112,12 @@ FixtureConfig _controller_bar_data_parsing() => FixtureConfig.typed(
           'parsing': <String, Object?>{'yAxisKey': 'net'},
         },
       ),
-      BarDataset(
-        label: 'Cost of goods sold',
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          label: 'Cost of goods sold',
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': 'Jan', 'net': 100, 'cogs': 50, 'gm': 50},
             <String, Object?>{'x': 'Feb', 'net': 120, 'cogs': 55, 'gm': 75},
@@ -3059,10 +3125,12 @@ FixtureConfig _controller_bar_data_parsing() => FixtureConfig.typed(
           'parsing': <String, Object?>{'yAxisKey': 'cogs'},
         },
       ),
-      BarDataset(
-        label: 'Gross margin',
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF008000))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          label: 'Gross margin',
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF008000))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': 'Jan', 'net': 100, 'cogs': 50, 'gm': 50},
             <String, Object?>{'x': 'Feb', 'net': 120, 'cogs': 55, 'gm': 75},
@@ -3084,9 +3152,11 @@ FixtureConfig _controller_bar_data_parsing() => FixtureConfig.typed(
 FixtureConfig _controller_bar_floatbar_data_as_objects() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <String, Object?>{
               'x': 'b',
@@ -3099,9 +3169,11 @@ FixtureConfig _controller_bar_floatbar_data_as_objects() => FixtureConfig.typed(
           ],
         },
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': 'a', 'y': 10},
             <String, Object?>{
@@ -3130,9 +3202,11 @@ FixtureConfig _controller_bar_floatbar_float_bar_stacked() =>
     FixtureConfig.typed(
       ChartConfig(
         datasets: [
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-            extra: <String, Object?>{
+          raw(
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+            ),
+            <String, Object?>{
               'data': <Object?>[
                 11,
                 <Object?>[6, 2],
@@ -3141,9 +3215,11 @@ FixtureConfig _controller_bar_floatbar_float_bar_stacked() =>
               ],
             },
           ),
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-            extra: <String, Object?>{
+          raw(
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+            ),
+            <String, Object?>{
               'data': <Object?>[
                 <Object?>[1, 2],
                 <Object?>[3, 4],
@@ -3152,9 +3228,11 @@ FixtureConfig _controller_bar_floatbar_float_bar_stacked() =>
               ],
             },
           ),
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-            extra: <String, Object?>{
+          raw(
+            BarDataset(
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+            ),
+            <String, Object?>{
               'data': <Object?>[
                 <Object?>[0, 1],
                 <Object?>[1, 2],
@@ -3185,9 +3263,11 @@ FixtureConfig _controller_bar_floatbar_float_bar_stacked() =>
 FixtureConfig _controller_bar_floatbar_float_bar() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             11,
             <Object?>[6, 2],
@@ -3196,9 +3276,11 @@ FixtureConfig _controller_bar_floatbar_float_bar() => FixtureConfig.typed(
           ],
         },
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF36A2EB))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <Object?>[1, 2],
             <Object?>[3, 4],
@@ -3207,9 +3289,11 @@ FixtureConfig _controller_bar_floatbar_float_bar() => FixtureConfig.typed(
           ],
         },
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFCE56))),
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <Object?>[0, 1],
             <Object?>[1, 2],
@@ -3319,19 +3403,23 @@ FixtureConfig _controller_bar_minbarlength_vertical_stacked_no_overlap() =>
 /// `controller.bar/minBarLength/vertical-stacked.js`.
 FixtureConfig _controller_bar_minbarlength_vertical_stacked() =>
     FixtureConfig.typed(
-      ChartConfig(
-        datasets: [
-          BarDataset(
-            data: .values(<num?>[0, 0.01, 30]),
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-            borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-            borderWidth: 4,
-            minBarLength: 20,
-            extra: <String, Object?>{'yAxisID': 'y2'},
-          ),
-        ],
-        labels: <Object>[0, 1, 2, 3, 4],
-        extra: <String, Object?>{
+      raw(
+        ChartConfig(
+          datasets: [
+            raw(
+              BarDataset(
+                data: .values(<num?>[0, 0.01, 30]),
+                backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+                borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
+                borderWidth: 4,
+                minBarLength: 20,
+              ),
+              <String, Object?>{'yAxisID': 'y2'},
+            ),
+          ],
+          labels: <Object>[0, 1, 2, 3, 4],
+        ),
+        <String, Object?>{
           'scales': <String, Object?>{
             'x': <String, Object?>{'display': ScaleDisplay.off},
             'y': <String, Object?>{
@@ -3481,35 +3569,41 @@ FixtureConfig _controller_bar_skipnull_combinations() => FixtureConfig.typed(
 /// `controller.bar/stacking/logarithmic-strings.js`.
 FixtureConfig _controller_bar_stacking_logarithmic_strings() =>
     FixtureConfig.typed(
-      ChartConfig(
-        datasets: [
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-            extra: <String, Object?>{
-              'data': <Object?>['10', '100', '10', '100'],
-            },
-          ),
-          BarDataset(
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-            extra: <String, Object?>{
-              'data': <Object?>['100', '10', '0', '100'],
-            },
-          ),
-        ],
-        labels: <Object>['label1', 'label2', 'label3', 'label4'],
-        scales: [
-          CategoryAxis(
-            CartesianAxis.x,
-            display: ScaleDisplay.off,
-            stacked: StackMode.on,
-          ),
-          LogarithmicAxis(
-            CartesianAxis.y,
-            display: ScaleDisplay.off,
-            stacked: StackMode.on,
-          ),
-        ],
-        extra: <String, Object?>{
+      raw(
+        ChartConfig(
+          datasets: [
+            raw(
+              BarDataset(
+                backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+              ),
+              <String, Object?>{
+                'data': <Object?>['10', '100', '10', '100'],
+              },
+            ),
+            raw(
+              BarDataset(
+                backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+              ),
+              <String, Object?>{
+                'data': <Object?>['100', '10', '0', '100'],
+              },
+            ),
+          ],
+          labels: <Object>['label1', 'label2', 'label3', 'label4'],
+          scales: [
+            CategoryAxis(
+              CartesianAxis.x,
+              display: ScaleDisplay.off,
+              stacked: StackMode.on,
+            ),
+            LogarithmicAxis(
+              CartesianAxis.y,
+              display: ScaleDisplay.off,
+              stacked: StackMode.on,
+            ),
+          ],
+        ),
+        <String, Object?>{
           'datasets': <String, Object?>{
             'bar': <String, Object?>{'barPercentage': 1},
           },
@@ -3519,31 +3613,33 @@ FixtureConfig _controller_bar_stacking_logarithmic_strings() =>
 
 /// `controller.bar/stacking/logarithmic.js`.
 FixtureConfig _controller_bar_stacking_logarithmic() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        data: .values(<num?>[10, 100, 10, 100]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-      ),
-      BarDataset(
-        data: .values(<num?>[100, 10, 0, 100]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-      ),
-    ],
-    labels: <Object>['label1', 'label2', 'label3', 'label4'],
-    scales: [
-      CategoryAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        stacked: StackMode.on,
-      ),
-      LogarithmicAxis(
-        CartesianAxis.y,
-        display: ScaleDisplay.off,
-        stacked: StackMode.on,
-      ),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        BarDataset(
+          data: .values(<num?>[10, 100, 10, 100]),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        BarDataset(
+          data: .values(<num?>[100, 10, 0, 100]),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+        ),
+      ],
+      labels: <Object>['label1', 'label2', 'label3', 'label4'],
+      scales: [
+        CategoryAxis(
+          CartesianAxis.x,
+          display: ScaleDisplay.off,
+          stacked: StackMode.on,
+        ),
+        LogarithmicAxis(
+          CartesianAxis.y,
+          display: ScaleDisplay.off,
+          stacked: StackMode.on,
+        ),
+      ],
+    ),
+    <String, Object?>{
       'datasets': <String, Object?>{
         'bar': <String, Object?>{'barPercentage': 1},
       },
@@ -3629,48 +3725,58 @@ FixtureConfig _controller_bar_stacking_order_specified() => FixtureConfig.typed(
 /// `controller.bar/stacking/stacked-and-multiple-axis.js`.
 FixtureConfig _controller_bar_stacking_stacked_and_multiple_axis() =>
     FixtureConfig.typed(
-      ChartConfig(
-        datasets: [
-          BarDataset(
-            label: 'Dataset 1',
-            data: .values(<num?>[100, 90, 100, 50, 99, 87, 34]),
-            backgroundColor: .constant(ChartPaint.solid(Color(0xCCFF6384))),
-            stack: 'a',
-            extra: <String, Object?>{'xAxisID': 'x'},
-          ),
-          BarDataset(
-            label: 'Dataset 2',
-            data: .values(<num?>[20, 25, 30, 32, 58, 14, 12]),
-            backgroundColor: .constant(ChartPaint.solid(Color(0xCC36A2EB))),
-            stack: 'b',
-            extra: <String, Object?>{'xAxisID': 'x2'},
-          ),
-          BarDataset(
-            label: 'Dataset 3',
-            data: .values(<num?>[80, 30, 40, 60, 70, 80, 47]),
-            backgroundColor: .constant(ChartPaint.solid(Color(0xCC4BC0C0))),
-            stack: 'a',
-            extra: <String, Object?>{'xAxisID': 'x3'},
-          ),
-          BarDataset(
-            label: 'Dataset 4',
-            data: .values(<num?>[80, 30, 40, 60, 70, 80, 47]),
-            backgroundColor: .constant(ChartPaint.solid(Color(0xCC36A2EB))),
-            stack: 'a',
-            extra: <String, Object?>{'xAxisID': 'x3'},
-          ),
-        ],
-        labels: <Object>[
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-        ],
-        datasetDefaults: [BarDataset(barThickness: BarThickness.flex)],
-        extra: <String, Object?>{
+      raw(
+        ChartConfig(
+          datasets: [
+            raw(
+              BarDataset(
+                label: 'Dataset 1',
+                data: .values(<num?>[100, 90, 100, 50, 99, 87, 34]),
+                backgroundColor: .constant(ChartPaint.solid(Color(0xCCFF6384))),
+                stack: 'a',
+              ),
+              <String, Object?>{'xAxisID': 'x'},
+            ),
+            raw(
+              BarDataset(
+                label: 'Dataset 2',
+                data: .values(<num?>[20, 25, 30, 32, 58, 14, 12]),
+                backgroundColor: .constant(ChartPaint.solid(Color(0xCC36A2EB))),
+                stack: 'b',
+              ),
+              <String, Object?>{'xAxisID': 'x2'},
+            ),
+            raw(
+              BarDataset(
+                label: 'Dataset 3',
+                data: .values(<num?>[80, 30, 40, 60, 70, 80, 47]),
+                backgroundColor: .constant(ChartPaint.solid(Color(0xCC4BC0C0))),
+                stack: 'a',
+              ),
+              <String, Object?>{'xAxisID': 'x3'},
+            ),
+            raw(
+              BarDataset(
+                label: 'Dataset 4',
+                data: .values(<num?>[80, 30, 40, 60, 70, 80, 47]),
+                backgroundColor: .constant(ChartPaint.solid(Color(0xCC36A2EB))),
+                stack: 'a',
+              ),
+              <String, Object?>{'xAxisID': 'x3'},
+            ),
+          ],
+          labels: <Object>[
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+          ],
+          datasetDefaults: [BarDataset(barThickness: BarThickness.flex)],
+        ),
+        <String, Object?>{
           'plugins': false,
           'scales': <String, Object?>{
             'x': <String, Object?>{
@@ -3714,18 +3820,20 @@ FixtureConfig _controller_bar_stacking_stacked_and_multiple_axis() =>
 
 /// `controller.bubble/autoPadding-disabled.js`.
 FixtureConfig _controller_bubble_autopadding_disabled() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BubbleDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        data: [DataPoint.bubble(12, 54, 22.4)],
-      ),
-      BubbleDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        data: [DataPoint.bubble(18, 38, 25)],
-      ),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        BubbleDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          data: [DataPoint.bubble(12, 54, 22.4)],
+        ),
+        BubbleDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          data: [DataPoint.bubble(18, 38, 25)],
+        ),
+      ],
+    ),
+    <String, Object?>{
       'layout': <String, Object?>{'autoPadding': false},
     },
   ),
@@ -3769,18 +3877,16 @@ FixtureConfig _controller_doughnut_backgroundcolor_indexable() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
-          arc: ArcElementStyle(
-            extra: <String, Object?>{
-              'backgroundColor': <Object?>[
-                ChartPaint.solid(Color(0xFFFF88FF)),
-                ChartPaint.solid(Color(0xFF888888)),
-                ChartPaint.solid(Color(0xFFFF8800)),
-                ChartPaint.solid(Color(0xFF00FF88)),
-                ChartPaint.solid(Color(0xFF8800FF)),
-                ChartPaint.solid(Color(0xFFFFFF88)),
-              ],
-            },
-          ),
+          arc: raw(ArcElementStyle(), <String, Object?>{
+            'backgroundColor': <Object?>[
+              ChartPaint.solid(Color(0xFFFF88FF)),
+              ChartPaint.solid(Color(0xFF888888)),
+              ChartPaint.solid(Color(0xFFFF8800)),
+              ChartPaint.solid(Color(0xFF00FF88)),
+              ChartPaint.solid(Color(0xFF8800FF)),
+              ChartPaint.solid(Color(0xFFFFFF88)),
+            ],
+          }),
         ),
       ),
       options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
@@ -3812,10 +3918,12 @@ FixtureConfig _controller_doughnut_borderalign_indexable() =>
     FixtureConfig.typed(
       ChartConfig(
         datasets: [
-          DoughnutDataset(
-            data: <num?>[0, 2, 4, null, 6, 8],
-            borderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-            extra: <String, Object?>{
+          raw(
+            DoughnutDataset(
+              data: <num?>[0, 2, 4, null, 6, 8],
+              borderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+            ),
+            <String, Object?>{
               'borderAlign': <Object?>[
                 ArcBorderAlign.center,
                 ArcBorderAlign.inner,
@@ -3830,11 +3938,13 @@ FixtureConfig _controller_doughnut_borderalign_indexable() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
-          arc: ArcElementStyle(
-            backgroundColor: ChartPaint.solid(Color(0x00000000)),
-            borderColor: ChartPaint.solid(Color(0xFFFF0000)),
-            borderWidth: 5,
-            extra: <String, Object?>{
+          arc: raw(
+            ArcElementStyle(
+              backgroundColor: ChartPaint.solid(Color(0x00000000)),
+              borderColor: ChartPaint.solid(Color(0xFFFF0000)),
+              borderWidth: 5,
+            ),
+            <String, Object?>{
               'borderAlign': <Object?>[
                 ArcBorderAlign.center,
                 ArcBorderAlign.inner,
@@ -3894,10 +4004,12 @@ FixtureConfig _controller_doughnut_bordercolor_indexable() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
-          arc: ArcElementStyle(
-            backgroundColor: ChartPaint.solid(Color(0x00000000)),
-            borderWidth: 8,
-            extra: <String, Object?>{
+          arc: raw(
+            ArcElementStyle(
+              backgroundColor: ChartPaint.solid(Color(0x00000000)),
+              borderWidth: 8,
+            ),
+            <String, Object?>{
               'borderColor': <Object?>[
                 ChartPaint.solid(Color(0xFFFF88FF)),
                 ChartPaint.solid(Color(0xFF888888)),
@@ -4019,9 +4131,9 @@ FixtureConfig _controller_doughnut_borderradius_value_corners() =>
     FixtureConfig.typed(
       ChartConfig(
         datasets: [
-          DoughnutDataset(
-            data: <num?>[0, 2, 4, null, 6, 8],
-            extra: <String, Object?>{
+          raw(
+            DoughnutDataset(data: <num?>[0, 2, 4, null, 6, 8]),
+            <String, Object?>{
               'borderRadius': <String, Object?>{
                 'outerStart': 20,
                 'outerEnd': 40,
@@ -4085,9 +4197,9 @@ FixtureConfig _controller_doughnut_borderwidth_indexable() =>
     FixtureConfig.typed(
       ChartConfig(
         datasets: [
-          DoughnutDataset(
-            data: <num?>[0, 2, 4, null, 6, 8],
-            extra: <String, Object?>{
+          raw(
+            DoughnutDataset(data: <num?>[0, 2, 4, null, 6, 8]),
+            <String, Object?>{
               'borderWidth': <Object?>[0, 1, 2, 3, 4, 5],
             },
           ),
@@ -4095,10 +4207,12 @@ FixtureConfig _controller_doughnut_borderwidth_indexable() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
-          arc: ArcElementStyle(
-            backgroundColor: ChartPaint.solid(Color(0x00000000)),
-            borderColor: ChartPaint.solid(Color(0xFF888888)),
-            extra: <String, Object?>{
+          arc: raw(
+            ArcElementStyle(
+              backgroundColor: ChartPaint.solid(Color(0x00000000)),
+              borderColor: ChartPaint.solid(Color(0xFF888888)),
+            ),
+            <String, Object?>{
               'borderWidth': <Object?>[5, 4, 3, 2, 1, 0],
             },
           ),
@@ -4270,25 +4384,29 @@ FixtureConfig _controller_doughnut_doughnut_circumference() =>
 
 /// `controller.doughnut/doughnut-parsing.js`.
 FixtureConfig _controller_doughnut_doughnut_parsing() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      DoughnutDataset(
-        backgroundColor: .indexed(<ChartPaint>[
-          ChartPaint.solid(Color(0xFFFF0000)),
-          ChartPaint.solid(Color(0xFF0000FF)),
-          ChartPaint.solid(Color(0xFFFFFF00)),
-        ]),
-        extra: <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'foo': 12},
-            <String, Object?>{'foo': 4},
-            <String, Object?>{'foo': 6},
-          ],
-        },
-      ),
-    ],
-    labels: <Object>['Red', 'Blue', 'Yellow'],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        raw(
+          DoughnutDataset(
+            backgroundColor: .indexed(<ChartPaint>[
+              ChartPaint.solid(Color(0xFFFF0000)),
+              ChartPaint.solid(Color(0xFF0000FF)),
+              ChartPaint.solid(Color(0xFFFFFF00)),
+            ]),
+          ),
+          <String, Object?>{
+            'data': <Object?>[
+              <String, Object?>{'foo': 12},
+              <String, Object?>{'foo': 4},
+              <String, Object?>{'foo': 6},
+            ],
+          },
+        ),
+      ],
+      labels: <Object>['Red', 'Blue', 'Yellow'],
+    ),
+    <String, Object?>{
       'parsing': <String, Object?>{'key': 'foo'},
     },
   ),
@@ -4375,23 +4493,25 @@ FixtureConfig _controller_doughnut_doughnut_rotation_per_dataset() =>
 /// `controller.doughnut/doughnut-spacing-and-offset.js`.
 FixtureConfig _controller_doughnut_doughnut_spacing_and_offset() =>
     FixtureConfig.typed(
-      ChartConfig(
-        datasets: [
-          DoughnutDataset(
-            data: <num?>[10, 20, 40, 50, 5],
-            label: 'Dataset 1',
-            backgroundColor: .indexed(<ChartPaint>[
-              ChartPaint.solid(Color(0xFFFF0000)),
-              ChartPaint.solid(Color(0xFFFFA500)),
-              ChartPaint.solid(Color(0xFFFFFF00)),
-              ChartPaint.solid(Color(0xFF008000)),
-              ChartPaint.solid(Color(0xFF0000FF)),
-            ]),
-          ),
-        ],
-        labels: <Object>['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'],
-        datasetDefaults: [DoughnutDataset(spacing: 20)],
-        extra: <String, Object?>{
+      raw(
+        ChartConfig(
+          datasets: [
+            DoughnutDataset(
+              data: <num?>[10, 20, 40, 50, 5],
+              label: 'Dataset 1',
+              backgroundColor: .indexed(<ChartPaint>[
+                ChartPaint.solid(Color(0xFFFF0000)),
+                ChartPaint.solid(Color(0xFFFFA500)),
+                ChartPaint.solid(Color(0xFFFFFF00)),
+                ChartPaint.solid(Color(0xFF008000)),
+                ChartPaint.solid(Color(0xFF0000FF)),
+              ]),
+            ),
+          ],
+          labels: <Object>['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'],
+          datasetDefaults: [DoughnutDataset(spacing: 20)],
+        ),
+        <String, Object?>{
           'offset': <Object?>[0, 50, 0, 0, 0],
         },
       ),
@@ -4756,55 +4876,57 @@ FixtureConfig _controller_line_stacking_bounds_data() => FixtureConfig.typed(
 /// `controller.line/stacking/stacked-scatter.js`.
 FixtureConfig _controller_line_stacking_stacked_scatter() =>
     FixtureConfig.typed(
-      ChartConfig(
-        datasets: [
-          ScatterDataset(
-            label: 'label1',
-            data: .points([
-              DataPoint(0, 30),
-              DataPoint(5, 35),
-              DataPoint(10, 20),
-            ]),
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFF42A8E4))),
-          ),
-          ScatterDataset(
-            label: 'label2',
-            data: .points([
-              DataPoint(0, 10),
-              DataPoint(5, 15),
-              DataPoint(10, 15),
-            ]),
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFC3F55))),
-          ),
-          ScatterDataset(
-            label: 'label3',
-            data: .points([
-              DataPoint(0, -15),
-              DataPoint(5, -10),
-              DataPoint(10, -20),
-            ]),
-            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFBE3F))),
-          ),
-        ],
-        scales: [
-          LinearAxis(
-            CartesianAxis.x,
-            display: ScaleDisplay.off,
-            position: ChartPosition.bottom,
-          ),
-          LinearAxis(
-            CartesianAxis.y,
-            stacked: StackMode.on,
-            display: ScaleDisplay.off,
-            position: ChartPosition.left,
-          ),
-        ],
-        disabledPlugins: [
-          PluginOff<LegendPlugin>(),
-          PluginOff<TitlePlugin>(),
-          PluginOff<TooltipPlugin>(),
-        ],
-        extra: <String, Object?>{
+      raw(
+        ChartConfig(
+          datasets: [
+            ScatterDataset(
+              label: 'label1',
+              data: .points([
+                DataPoint(0, 30),
+                DataPoint(5, 35),
+                DataPoint(10, 20),
+              ]),
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFF42A8E4))),
+            ),
+            ScatterDataset(
+              label: 'label2',
+              data: .points([
+                DataPoint(0, 10),
+                DataPoint(5, 15),
+                DataPoint(10, 15),
+              ]),
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFFFC3F55))),
+            ),
+            ScatterDataset(
+              label: 'label3',
+              data: .points([
+                DataPoint(0, -15),
+                DataPoint(5, -10),
+                DataPoint(10, -20),
+              ]),
+              backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFBE3F))),
+            ),
+          ],
+          scales: [
+            LinearAxis(
+              CartesianAxis.x,
+              display: ScaleDisplay.off,
+              position: ChartPosition.bottom,
+            ),
+            LinearAxis(
+              CartesianAxis.y,
+              stacked: StackMode.on,
+              display: ScaleDisplay.off,
+              position: ChartPosition.left,
+            ),
+          ],
+          disabledPlugins: [
+            PluginOff<LegendPlugin>(),
+            PluginOff<TitlePlugin>(),
+            PluginOff<TooltipPlugin>(),
+          ],
+        ),
+        <String, Object?>{
           'plugins': <String, Object?>{'filler': true},
         },
       ),
@@ -4829,11 +4951,9 @@ FixtureConfig _controller_polararea_angle_array() => FixtureConfig.typed(
     ],
     labels: <Object>['A', 'B', 'C', 'D', 'E'],
     elements: ChartElements(
-      arc: ArcElementStyle(
-        extra: <String, Object?>{
-          'angle': <Object?>[60.5387, 100.6457, 60.5387, 123.5641, 14.7021],
-        },
-      ),
+      arc: raw(ArcElementStyle(), <String, Object?>{
+        'angle': <Object?>[60.5387, 100.6457, 60.5387, 123.5641, 14.7021],
+      }),
     ),
     responsive: false,
     scales: [RadialLinearAxis(display: ScaleDisplay.off)],
@@ -4924,18 +5044,16 @@ _controller_polararea_backgroundcolor_indexable_element_options() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
-          arc: ArcElementStyle(
-            extra: <String, Object?>{
-              'backgroundColor': <Object?>[
-                ChartPaint.solid(Color(0xFFFF88FF)),
-                ChartPaint.solid(Color(0xFF888888)),
-                ChartPaint.solid(Color(0xFFFF8800)),
-                ChartPaint.solid(Color(0xFF00FF88)),
-                ChartPaint.solid(Color(0xFF8800FF)),
-                ChartPaint.solid(Color(0xFFFFFF88)),
-              ],
-            },
-          ),
+          arc: raw(ArcElementStyle(), <String, Object?>{
+            'backgroundColor': <Object?>[
+              ChartPaint.solid(Color(0xFFFF88FF)),
+              ChartPaint.solid(Color(0xFF888888)),
+              ChartPaint.solid(Color(0xFFFF8800)),
+              ChartPaint.solid(Color(0xFF00FF88)),
+              ChartPaint.solid(Color(0xFF8800FF)),
+              ChartPaint.solid(Color(0xFFFFFF88)),
+            ],
+          }),
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
@@ -5002,11 +5120,9 @@ FixtureConfig _controller_polararea_border_align_center() =>
         ],
         labels: <Object>['A', 'B', 'C', 'D', 'E'],
         elements: ChartElements(
-          arc: ArcElementStyle(
-            extra: <String, Object?>{
-              'angle': <Object?>[2.1658, 10.8404, 21.6922, 108.4323, 216.8588],
-            },
-          ),
+          arc: raw(ArcElementStyle(), <String, Object?>{
+            'angle': <Object?>[2.1658, 10.8404, 21.6922, 108.4323, 216.8588],
+          }),
         ),
         responsive: false,
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
@@ -5039,11 +5155,9 @@ FixtureConfig _controller_polararea_border_align_inner() => FixtureConfig.typed(
     ],
     labels: <Object>['A', 'B', 'C', 'D', 'E'],
     elements: ChartElements(
-      arc: ArcElementStyle(
-        extra: <String, Object?>{
-          'angle': <Object?>[2.1658, 10.8404, 21.6922, 108.4323, 216.8588],
-        },
-      ),
+      arc: raw(ArcElementStyle(), <String, Object?>{
+        'angle': <Object?>[2.1658, 10.8404, 21.6922, 108.4323, 216.8588],
+      }),
     ),
     responsive: false,
     scales: [RadialLinearAxis(display: ScaleDisplay.off)],
@@ -5055,10 +5169,12 @@ FixtureConfig _controller_polararea_borderalign_indexable_dataset() =>
     FixtureConfig.typed(
       ChartConfig(
         datasets: [
-          PolarAreaDataset(
-            data: <num?>[0, 2, 4, null, 6, 8],
-            borderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-            extra: <String, Object?>{
+          raw(
+            PolarAreaDataset(
+              data: <num?>[0, 2, 4, null, 6, 8],
+              borderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+            ),
+            <String, Object?>{
               'borderAlign': <Object?>[
                 ArcBorderAlign.center,
                 ArcBorderAlign.inner,
@@ -5092,11 +5208,13 @@ FixtureConfig _controller_polararea_borderalign_indexable_element_options() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
-          arc: ArcElementStyle(
-            backgroundColor: ChartPaint.solid(Color(0x00000000)),
-            borderColor: ChartPaint.solid(Color(0xFFFF0000)),
-            borderWidth: 5,
-            extra: <String, Object?>{
+          arc: raw(
+            ArcElementStyle(
+              backgroundColor: ChartPaint.solid(Color(0x00000000)),
+              borderColor: ChartPaint.solid(Color(0xFFFF0000)),
+              borderWidth: 5,
+            ),
+            <String, Object?>{
               'borderAlign': <Object?>[
                 ArcBorderAlign.center,
                 ArcBorderAlign.inner,
@@ -5196,10 +5314,12 @@ FixtureConfig _controller_polararea_bordercolor_indexable_element_options() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
-          arc: ArcElementStyle(
-            backgroundColor: ChartPaint.solid(Color(0x00000000)),
-            borderWidth: 8,
-            extra: <String, Object?>{
+          arc: raw(
+            ArcElementStyle(
+              backgroundColor: ChartPaint.solid(Color(0x00000000)),
+              borderWidth: 8,
+            ),
+            <String, Object?>{
               'borderColor': <Object?>[
                 ChartPaint.solid(Color(0xFFFF88FF)),
                 ChartPaint.solid(Color(0xFF888888)),
@@ -5286,9 +5406,9 @@ FixtureConfig _controller_polararea_borderwidth_indexable_dataset() =>
     FixtureConfig.typed(
       ChartConfig(
         datasets: [
-          PolarAreaDataset(
-            data: <num?>[0, 2, 4, null, 6, 8],
-            extra: <String, Object?>{
+          raw(
+            PolarAreaDataset(data: <num?>[0, 2, 4, null, 6, 8]),
+            <String, Object?>{
               'borderWidth': <Object?>[0, 1, 2, 3, 4, 5],
             },
           ),
@@ -5314,10 +5434,12 @@ FixtureConfig _controller_polararea_borderwidth_indexable_element_options() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
-          arc: ArcElementStyle(
-            backgroundColor: ChartPaint.solid(Color(0x00000000)),
-            borderColor: ChartPaint.solid(Color(0xFF888888)),
-            extra: <String, Object?>{
+          arc: raw(
+            ArcElementStyle(
+              backgroundColor: ChartPaint.solid(Color(0x00000000)),
+              borderColor: ChartPaint.solid(Color(0xFF888888)),
+            ),
+            <String, Object?>{
               'borderWidth': <Object?>[5, 4, 3, 2, 1, 0],
             },
           ),
@@ -5368,31 +5490,35 @@ FixtureConfig _controller_polararea_borderwidth_value_element_options() =>
 
 /// `controller.polarArea/parse-object-data.json`.
 FixtureConfig _controller_polararea_parse_object_data() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      PolarAreaDataset(
-        backgroundColor: .indexed(<ChartPaint>[
-          ChartPaint.solid(Color(0xFFFF0000)),
-          ChartPaint.solid(Color(0xFF0000FF)),
-        ]),
-        extra: <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{
-              'id': 'Sales',
-              'nested': <String, Object?>{'value': 10},
-            },
-            <String, Object?>{
-              'id': 'Purchases',
-              'nested': <String, Object?>{'value': 20},
-            },
-          ],
-        },
-      ),
-    ],
-    responsive: false,
-    scales: [RadialLinearAxis(display: ScaleDisplay.off)],
-    disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        raw(
+          PolarAreaDataset(
+            backgroundColor: .indexed(<ChartPaint>[
+              ChartPaint.solid(Color(0xFFFF0000)),
+              ChartPaint.solid(Color(0xFF0000FF)),
+            ]),
+          ),
+          <String, Object?>{
+            'data': <Object?>[
+              <String, Object?>{
+                'id': 'Sales',
+                'nested': <String, Object?>{'value': 10},
+              },
+              <String, Object?>{
+                'id': 'Purchases',
+                'nested': <String, Object?>{'value': 20},
+              },
+            ],
+          },
+        ),
+      ],
+      responsive: false,
+      scales: [RadialLinearAxis(display: ScaleDisplay.off)],
+      disabledPlugins: [PluginOff<LegendPlugin>()],
+    ),
+    <String, Object?>{
       'parsing': <String, Object?>{'key': 'nested.value'},
     },
   ),
@@ -5420,15 +5546,12 @@ FixtureConfig _controller_polararea_pointlabels_centered_180() =>
           <Object?>['label 4', 'line 2'],
         ],
         scales: [
-          RadialLinearAxis(
-            startAngle: 180,
-            extra: <String, Object?>{
-              'pointLabels': <String, Object?>{
-                'display': ScaleDisplay.on,
-                'centerPointLabels': true,
-              },
+          raw(RadialLinearAxis(startAngle: 180), <String, Object?>{
+            'pointLabels': <String, Object?>{
+              'display': ScaleDisplay.on,
+              'centerPointLabels': true,
             },
-          ),
+          }),
         ],
       ),
     );
@@ -5455,15 +5578,12 @@ FixtureConfig _controller_polararea_pointlabels_centered_45() =>
           <Object?>['label 4', 'line 2'],
         ],
         scales: [
-          RadialLinearAxis(
-            startAngle: 45,
-            extra: <String, Object?>{
-              'pointLabels': <String, Object?>{
-                'display': ScaleDisplay.on,
-                'centerPointLabels': true,
-              },
+          raw(RadialLinearAxis(startAngle: 45), <String, Object?>{
+            'pointLabels': <String, Object?>{
+              'display': ScaleDisplay.on,
+              'centerPointLabels': true,
             },
-          ),
+          }),
         ],
       ),
     );
@@ -5490,14 +5610,12 @@ FixtureConfig _controller_polararea_pointlabels_centered() =>
           <Object?>['label 4', 'line 2'],
         ],
         scales: [
-          RadialLinearAxis(
-            extra: <String, Object?>{
-              'pointLabels': <String, Object?>{
-                'display': ScaleDisplay.on,
-                'centerPointLabels': true,
-              },
+          raw(RadialLinearAxis(), <String, Object?>{
+            'pointLabels': <String, Object?>{
+              'display': ScaleDisplay.on,
+              'centerPointLabels': true,
             },
-          ),
+          }),
         ],
       ),
     );
@@ -7726,33 +7844,35 @@ FixtureConfig _scale_radiallinear_gridlines_disable() =>
 
 /// `scale.radialLinear/gridlines-no-z.json`.
 FixtureConfig _scale_radiallinear_gridlines_no_z() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      RadarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        data: <num?>[1, 2, 3, 3, 3],
-      ),
-    ],
-    labels: <Object>['A', 'B', 'C', 'D', 'E'],
-    responsive: false,
-    scales: [
-      RadialLinearAxis(
-        grid: AxisGrid(
-          color: .constant(ChartPaint.solid(Color(0xFF000000))),
-          lineWidth: .constant(1),
+  raw(
+    ChartConfig(
+      datasets: [
+        RadarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          data: <num?>[1, 2, 3, 3, 3],
         ),
-        angleLinesColor: ChartPaint.solid(Color(0xFF0000FF)),
-        angleLinesLineWidth: 1,
-        pointLabelsDisplay: ScaleDisplay.off,
-        ticks: AxisTicks(display: false),
-      ),
-    ],
-    disabledPlugins: [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TitlePlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: <String, Object?>{
+      ],
+      labels: <Object>['A', 'B', 'C', 'D', 'E'],
+      responsive: false,
+      scales: [
+        RadialLinearAxis(
+          grid: AxisGrid(
+            color: .constant(ChartPaint.solid(Color(0xFF000000))),
+            lineWidth: .constant(1),
+          ),
+          angleLinesColor: ChartPaint.solid(Color(0xFF0000FF)),
+          angleLinesLineWidth: 1,
+          pointLabelsDisplay: ScaleDisplay.off,
+          ticks: AxisTicks(display: false),
+        ),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    <String, Object?>{
       'plugins': <String, Object?>{'filler': true},
     },
   ),
@@ -7760,34 +7880,36 @@ FixtureConfig _scale_radiallinear_gridlines_no_z() => FixtureConfig.typed(
 
 /// `scale.radialLinear/gridlines-z.json`.
 FixtureConfig _scale_radiallinear_gridlines_z() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      RadarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        data: <num?>[1, 2, 3, 3, 3],
-      ),
-    ],
-    labels: <Object>['A', 'B', 'C', 'D', 'E'],
-    responsive: false,
-    scales: [
-      RadialLinearAxis(
-        grid: AxisGrid(
-          color: .constant(ChartPaint.solid(Color(0xFF000000))),
-          lineWidth: .constant(1),
-          z: 1,
+  raw(
+    ChartConfig(
+      datasets: [
+        RadarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          data: <num?>[1, 2, 3, 3, 3],
         ),
-        angleLinesColor: ChartPaint.solid(Color(0xFF0000FF)),
-        angleLinesLineWidth: 1,
-        pointLabelsDisplay: ScaleDisplay.off,
-        ticks: AxisTicks(display: false),
-      ),
-    ],
-    disabledPlugins: [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TitlePlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: <String, Object?>{
+      ],
+      labels: <Object>['A', 'B', 'C', 'D', 'E'],
+      responsive: false,
+      scales: [
+        RadialLinearAxis(
+          grid: AxisGrid(
+            color: .constant(ChartPaint.solid(Color(0xFF000000))),
+            lineWidth: .constant(1),
+            z: 1,
+          ),
+          angleLinesColor: ChartPaint.solid(Color(0xFF0000FF)),
+          angleLinesLineWidth: 1,
+          pointLabelsDisplay: ScaleDisplay.off,
+          ticks: AxisTicks(display: false),
+        ),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    <String, Object?>{
       'plugins': <String, Object?>{'filler': true},
     },
   ),
@@ -7864,11 +7986,13 @@ FixtureConfig _scale_radiallinear_pointlabels_no_more_than_half_radius() =>
 FixtureConfig _scale_radiallinear_pointlabels_padding() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      RadarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFE43E51))),
-        label: 'Compétences entrepreunariales',
-        data: <num?>[3, 2, 2, 1, 3, 1],
-        extra: <String, Object?>{'radius': 12},
+      raw(
+        RadarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFE43E51))),
+          label: 'Compétences entrepreunariales',
+          data: <num?>[3, 2, 2, 1, 3, 1],
+        ),
+        <String, Object?>{'radius': 12},
       ),
     ],
     labels: <Object>[
@@ -8032,20 +8156,26 @@ FixtureConfig _scale_time_labels_icu() => FixtureConfig.map(<String, Object?>{
 FixtureConfig _scale_time_offset_with_1_tick() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        data: .points([DataPoint.label('2021-03-24', 464)]),
-        extra: <String, Object?>{'label': 6},
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          data: .points([DataPoint.label('2021-03-24', 464)]),
+        ),
+        <String, Object?>{'label': 6},
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        data: .points([DataPoint.label('2021-03-24', 464)]),
-        extra: <String, Object?>{'label': 1},
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          data: .points([DataPoint.label('2021-03-24', 464)]),
+        ),
+        <String, Object?>{'label': 1},
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        data: .points([DataPoint.label('2021-03-24', 390)]),
-        extra: <String, Object?>{'label': 17},
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          data: .points([DataPoint.label('2021-03-24', 390)]),
+        ),
+        <String, Object?>{'label': 17},
       ),
     ],
     scales: [
@@ -8061,35 +8191,47 @@ FixtureConfig _scale_time_offset_with_1_tick() => FixtureConfig.typed(
 FixtureConfig _scale_time_offset_with_2_ticks() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFA500))),
-        data: .points([DataPoint.label('2021-03-24', 464)]),
-        extra: <String, Object?>{'label': 1},
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFA500))),
+          data: .points([DataPoint.label('2021-03-24', 464)]),
+        ),
+        <String, Object?>{'label': 1},
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        data: .points([DataPoint.label('2021-03-24', 464)]),
-        extra: <String, Object?>{'label': 2},
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          data: .points([DataPoint.label('2021-03-24', 464)]),
+        ),
+        <String, Object?>{'label': 2},
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        data: .points([DataPoint.label('2021-03-24', 390)]),
-        extra: <String, Object?>{'label': 3},
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          data: .points([DataPoint.label('2021-03-24', 390)]),
+        ),
+        <String, Object?>{'label': 3},
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF800080))),
-        data: .points([DataPoint.label('2021-03-25', 464)]),
-        extra: <String, Object?>{'label': 4},
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF800080))),
+          data: .points([DataPoint.label('2021-03-25', 464)]),
+        ),
+        <String, Object?>{'label': 4},
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-        data: .points([DataPoint.label('2021-03-25', 464)]),
-        extra: <String, Object?>{'label': 5},
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF000000))),
+          data: .points([DataPoint.label('2021-03-25', 464)]),
+        ),
+        <String, Object?>{'label': 5},
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FFFF))),
-        data: .points([DataPoint.label('2021-03-25', 390)]),
-        extra: <String, Object?>{'label': 6},
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FFFF))),
+          data: .points([DataPoint.label('2021-03-25', 390)]),
+        ),
+        <String, Object?>{'label': 6},
       ),
     ],
     scales: [
@@ -8189,12 +8331,14 @@ FixtureConfig _scale_time_source_labels_linear_offset_min_max() =>
         ],
         labels: <Object>['2017', '2019', '2020', '2025', '2042'],
         scales: [
-          TimeAxis(
-            CartesianAxis.x,
-            offset: true,
-            parser: 'YYYY',
-            ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{'min': '2012', 'max': '2051'},
+          raw(
+            TimeAxis(
+              CartesianAxis.x,
+              offset: true,
+              parser: 'YYYY',
+              ticks: AxisTicks(source: TickSource.labels),
+            ),
+            <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8213,12 +8357,14 @@ FixtureConfig _scale_time_source_labels_linear_offset_min_max_icu() =>
         ],
         labels: <Object>['2017', '2019', '2020', '2025', '2042'],
         scales: [
-          TimeAxis(
-            CartesianAxis.x,
-            offset: true,
-            parser: 'yyyy',
-            ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{'min': '2012', 'max': '2051'},
+          raw(
+            TimeAxis(
+              CartesianAxis.x,
+              offset: true,
+              parser: 'yyyy',
+              ticks: AxisTicks(source: TickSource.labels),
+            ),
+            <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8324,12 +8470,14 @@ FixtureConfig _scale_time_ticks_reverse_linear_min_max() => FixtureConfig.typed(
     ],
     labels: <Object>['2017', '2019', '2020', '2025', '2042'],
     scales: [
-      TimeAxis(
-        CartesianAxis.x,
-        parser: 'YYYY',
-        reverse: true,
-        ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{'min': '2012', 'max': '2050'},
+      raw(
+        TimeAxis(
+          CartesianAxis.x,
+          parser: 'YYYY',
+          reverse: true,
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        <String, Object?>{'min': '2012', 'max': '2050'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8348,12 +8496,14 @@ FixtureConfig _scale_time_ticks_reverse_linear_min_max_icu() =>
         ],
         labels: <Object>['2017', '2019', '2020', '2025', '2042'],
         scales: [
-          TimeAxis(
-            CartesianAxis.x,
-            parser: 'yyyy',
-            reverse: true,
-            ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{'min': '2012', 'max': '2050'},
+          raw(
+            TimeAxis(
+              CartesianAxis.x,
+              parser: 'yyyy',
+              reverse: true,
+              ticks: AxisTicks(source: TickSource.labels),
+            ),
+            <String, Object?>{'min': '2012', 'max': '2050'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8649,12 +8799,14 @@ FixtureConfig _scale_timeseries_source_data_offset_min_max() =>
         ],
         labels: <Object>['2017', '2019', '2020', '2025', '2042'],
         scales: [
-          TimeSeriesAxis(
-            CartesianAxis.x,
-            offset: true,
-            parser: 'YYYY',
-            ticks: AxisTicks(source: TickSource.data),
-            extra: <String, Object?>{'min': '2012', 'max': '2051'},
+          raw(
+            TimeSeriesAxis(
+              CartesianAxis.x,
+              offset: true,
+              parser: 'YYYY',
+              ticks: AxisTicks(source: TickSource.data),
+            ),
+            <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8673,12 +8825,14 @@ FixtureConfig _scale_timeseries_source_data_offset_min_max_icu() =>
         ],
         labels: <Object>['2017', '2019', '2020', '2025', '2042'],
         scales: [
-          TimeSeriesAxis(
-            CartesianAxis.x,
-            offset: true,
-            parser: 'yyyy',
-            ticks: AxisTicks(source: TickSource.data),
-            extra: <String, Object?>{'min': '2012', 'max': '2051'},
+          raw(
+            TimeSeriesAxis(
+              CartesianAxis.x,
+              offset: true,
+              parser: 'yyyy',
+              ticks: AxisTicks(source: TickSource.data),
+            ),
+            <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8735,12 +8889,14 @@ FixtureConfig _scale_timeseries_source_labels_offset_min_max() =>
         ],
         labels: <Object>['2017', '2019', '2020', '2025', '2042'],
         scales: [
-          TimeSeriesAxis(
-            CartesianAxis.x,
-            offset: true,
-            parser: 'YYYY',
-            ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{'min': '2012', 'max': '2051'},
+          raw(
+            TimeSeriesAxis(
+              CartesianAxis.x,
+              offset: true,
+              parser: 'YYYY',
+              ticks: AxisTicks(source: TickSource.labels),
+            ),
+            <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8759,12 +8915,14 @@ FixtureConfig _scale_timeseries_source_labels_offset_min_max_icu() =>
         ],
         labels: <Object>['2017', '2019', '2020', '2025', '2042'],
         scales: [
-          TimeSeriesAxis(
-            CartesianAxis.x,
-            offset: true,
-            parser: 'yyyy',
-            ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{'min': '2012', 'max': '2051'},
+          raw(
+            TimeSeriesAxis(
+              CartesianAxis.x,
+              offset: true,
+              parser: 'yyyy',
+              ticks: AxisTicks(source: TickSource.labels),
+            ),
+            <String, Object?>{'min': '2012', 'max': '2051'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8817,12 +8975,14 @@ FixtureConfig _scale_timeseries_ticks_reverse_max() => FixtureConfig.typed(
     ],
     labels: <Object>['2017', '2019', '2020', '2025', '2042'],
     scales: [
-      TimeSeriesAxis(
-        CartesianAxis.x,
-        parser: 'YYYY',
-        reverse: true,
-        ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{'max': '2050'},
+      raw(
+        TimeSeriesAxis(
+          CartesianAxis.x,
+          parser: 'YYYY',
+          reverse: true,
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        <String, Object?>{'max': '2050'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8837,12 +8997,14 @@ FixtureConfig _scale_timeseries_ticks_reverse_max_icu() => FixtureConfig.typed(
     ],
     labels: <Object>['2017', '2019', '2020', '2025', '2042'],
     scales: [
-      TimeSeriesAxis(
-        CartesianAxis.x,
-        parser: 'yyyy',
-        reverse: true,
-        ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{'max': '2050'},
+      raw(
+        TimeSeriesAxis(
+          CartesianAxis.x,
+          parser: 'yyyy',
+          reverse: true,
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        <String, Object?>{'max': '2050'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8857,12 +9019,14 @@ FixtureConfig _scale_timeseries_ticks_reverse_min_max() => FixtureConfig.typed(
     ],
     labels: <Object>['2017', '2019', '2020', '2025', '2042'],
     scales: [
-      TimeSeriesAxis(
-        CartesianAxis.x,
-        parser: 'YYYY',
-        reverse: true,
-        ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{'min': '2012', 'max': '2050'},
+      raw(
+        TimeSeriesAxis(
+          CartesianAxis.x,
+          parser: 'YYYY',
+          reverse: true,
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        <String, Object?>{'min': '2012', 'max': '2050'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8881,12 +9045,14 @@ FixtureConfig _scale_timeseries_ticks_reverse_min_max_icu() =>
         ],
         labels: <Object>['2017', '2019', '2020', '2025', '2042'],
         scales: [
-          TimeSeriesAxis(
-            CartesianAxis.x,
-            parser: 'yyyy',
-            reverse: true,
-            ticks: AxisTicks(source: TickSource.labels),
-            extra: <String, Object?>{'min': '2012', 'max': '2050'},
+          raw(
+            TimeSeriesAxis(
+              CartesianAxis.x,
+              parser: 'yyyy',
+              reverse: true,
+              ticks: AxisTicks(source: TickSource.labels),
+            ),
+            <String, Object?>{'min': '2012', 'max': '2050'},
           ),
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
@@ -8901,12 +9067,14 @@ FixtureConfig _scale_timeseries_ticks_reverse_min() => FixtureConfig.typed(
     ],
     labels: <Object>['2017', '2019', '2020', '2025', '2042'],
     scales: [
-      TimeSeriesAxis(
-        CartesianAxis.x,
-        parser: 'YYYY',
-        reverse: true,
-        ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{'min': '2012'},
+      raw(
+        TimeSeriesAxis(
+          CartesianAxis.x,
+          parser: 'YYYY',
+          reverse: true,
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        <String, Object?>{'min': '2012'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
@@ -8921,12 +9089,14 @@ FixtureConfig _scale_timeseries_ticks_reverse_min_icu() => FixtureConfig.typed(
     ],
     labels: <Object>['2017', '2019', '2020', '2025', '2042'],
     scales: [
-      TimeSeriesAxis(
-        CartesianAxis.x,
-        parser: 'yyyy',
-        reverse: true,
-        ticks: AxisTicks(source: TickSource.labels),
-        extra: <String, Object?>{'min': '2012'},
+      raw(
+        TimeSeriesAxis(
+          CartesianAxis.x,
+          parser: 'yyyy',
+          reverse: true,
+          ticks: AxisTicks(source: TickSource.labels),
+        ),
+        <String, Object?>{'min': '2012'},
       ),
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],

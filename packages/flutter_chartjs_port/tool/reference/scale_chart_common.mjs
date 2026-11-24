@@ -2644,9 +2644,18 @@ function inner(n, parentConst) {
 
 /** A constructor call of [name] with the named or positional [args] (`[label, node]`). */
 function call(name, args) {
-  const present = args.filter(([, n]) => n !== undefined);
+  const present = args.filter(([k, n]) => n !== undefined && k !== 'extra');
   const c = present.every(([, n]) => n.c);
   const text = present.map(([k, n]) => `${k === null ? '' : `${k}: `}${inner(n, c)}`).join(', ');
+  const extra = args.find(([k, n]) => k === 'extra' && n !== undefined);
+  // The typed API has no `extra`: the rest of the keys are the raw options of
+  // the object, `raw(object, map)` of chartjs_test_utils.
+  // The object is never const: a const object is shared, and each object of
+  // a config takes its own raw options.
+  if (extra) {
+    const own = present.map(([k, n]) => `${k === null ? '' : `${k}: `}${inner(n, false)}`).join(', ');
+    return node(`raw(${name}(${own}), ${inner(extra[1], false)})`, false, true);
+  }
   return node(`${name}(${text})`, c, true);
 }
 

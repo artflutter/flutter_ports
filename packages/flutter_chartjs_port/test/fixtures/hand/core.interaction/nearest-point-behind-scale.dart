@@ -18,23 +18,25 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 /// The point is a Map with the upstream keys. `chart.chartArea` is set
 /// after the first layout of the chart, before the hook runs.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      ScatterDataset(data: .points([DataPoint(1, 1), DataPoint(48, 1)])),
-    ],
-    events: <String>['click'],
-    interaction: ChartInteraction(
-      // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
-      mode: const NearestInteractionMode(),
-      intersect: false,
+  raw(
+    ChartConfig(
+      datasets: [
+        ScatterDataset(data: .points([DataPoint(1, 1), DataPoint(48, 1)])),
+      ],
+      events: <String>['click'],
+      interaction: ChartInteraction(
+        // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
+        mode: const NearestInteractionMode(),
+        intersect: false,
+      ),
+      scales: [
+        LinearAxis(CartesianAxis.x, min: 5, max: 50),
+        LinearAxis(CartesianAxis.y, min: 0, max: 2),
+      ],
+      padding: const EdgeInsets.all(50),
+      disabledPlugins: [PluginOff<LegendPlugin>()],
     ),
-    scales: [
-      LinearAxis(CartesianAxis.x, min: 5, max: 50),
-      LinearAxis(CartesianAxis.y, min: 0, max: 2),
-    ],
-    padding: const EdgeInsets.all(50),
-    disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
+    <String, Object?>{
       'plugins': <String, Object?>{'tooltip': true},
     },
   ),

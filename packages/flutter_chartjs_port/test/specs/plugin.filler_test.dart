@@ -71,7 +71,7 @@ ChartConfigurationScope _line(
 
 /// A dataset with the fill option [fill], including an explicit null.
 LineDataset _fill(FillTarget? fill) => fill == null
-    ? const LineDataset(extra: {'fill': null})
+    ? raw(const LineDataset(), {'fill': null})
     : LineDataset(fill: fill);
 
 /// A hidden dataset with the fill option [fill].

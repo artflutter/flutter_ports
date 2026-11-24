@@ -32,15 +32,17 @@ FixtureConfig fixture() => FixtureConfig.typed(
       LinearAxis(
         CartesianAxis.y,
         ticks: AxisTicks(display: false),
-        grid: AxisGrid(
-          lineWidth: .constant(5),
-          tickLength: 0,
-          color: .resolver((context) {
-            return context.tick!.value == 0
-                ? ChartPaint.solid(Color(0xFFFF0000))
-                : ChartPaint.solid(Color(0x00000000));
-          }),
-          extra: <String, Object?>{'borderWidth': 0},
+        grid: raw(
+          AxisGrid(
+            lineWidth: .constant(5),
+            tickLength: 0,
+            color: .resolver((context) {
+              return context.tick!.value == 0
+                  ? ChartPaint.solid(Color(0xFFFF0000))
+                  : ChartPaint.solid(Color(0x00000000));
+            }),
+          ),
+          <String, Object?>{'borderWidth': 0},
         ),
       ),
     ],

@@ -22,10 +22,12 @@ FixtureConfig fixture() {
   return FixtureConfig.typed(
     ChartConfig(
       datasets: [
-        LineDataset(
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          fill: FillTarget.none,
-          extra: <String, Object?>{
+        raw(
+          LineDataset(
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            fill: FillTarget.none,
+          ),
+          <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'x': newDateFromRef(0), 'y': 1},
               <String, Object?>{'x': newDateFromRef(1), 'y': 10},

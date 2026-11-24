@@ -411,16 +411,16 @@ void main() {
 
       testWidgets('should not exceed limits', (tester) async {
         final chart = _acquire(
-          const ChartConfig(
-            labels: ['0', '1', '2', '3', '4', '5', '6'],
-            datasets: [
+          ChartConfig(
+            labels: const ['0', '1', '2', '3', '4', '5', '6'],
+            datasets: const [
               BarDataset(data: .values([1, 2, 3, 2, 1, 0, 1])),
             ],
-            indexAxis: YAxis(),
+            indexAxis: const YAxis(),
             scales: [
-              CategoryAxis(.y, extra: {'min': 2, 'max': 4}),
+              raw(const CategoryAxis(.y), {'min': 2, 'max': 4}),
             ],
-            pluginOptions: [
+            pluginOptions: const [
               ZoomPluginOptions(
                 limits: LimitOptions(
                   y: ScaleLimits(

@@ -1541,17 +1541,19 @@ void main() {
           // :1465 the beforeEach acquires a chart: each test calls it first.
           void beforeEach() {
             chart = _acquire(
-              ChartConfig(
-                datasets: const [
-                  BarDataset(data: .values([1, 2])),
-                  BarDataset(data: .values([1, 2])),
-                ],
-                labels: const ['label1', 'label2', 'label3'],
-                scales: const [
-                  CategoryAxis(.x, extra: {'id': 'x'}),
-                  LinearAxis(.y),
-                ],
-                extra: {
+              raw(
+                ChartConfig(
+                  datasets: const [
+                    BarDataset(data: .values([1, 2])),
+                    BarDataset(data: .values([1, 2])),
+                  ],
+                  labels: const ['label1', 'label2', 'label3'],
+                  scales: [
+                    raw(const CategoryAxis(.x), {'id': 'x'}),
+                    const LinearAxis(.y),
+                  ],
+                ),
+                {
                   'legend': false,
                   'title': false,
                   'datasets': {

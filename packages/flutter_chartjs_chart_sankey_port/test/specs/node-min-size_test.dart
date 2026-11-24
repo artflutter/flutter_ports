@@ -24,11 +24,9 @@ Chart _buildSankeyWithMinSize(Object? nodeMinSize) => acquireChartRoot(
   lowerForTest(
     ChartConfig(
       datasets: [
-        SankeyDataset(
-          data: _data(),
-          nodeWidth: _nodeWidth,
-          extra: {'nodeMinSize': nodeMinSize},
-        ),
+        raw(SankeyDataset(data: _data(), nodeWidth: _nodeWidth), {
+          'nodeMinSize': nodeMinSize,
+        }),
       ],
       animation: ChartAnimation.none,
       maintainAspectRatio: false,

@@ -13,24 +13,26 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(data: .values(<num?>[10, 5, 0, 25, 78, -10])),
-    ],
-    labels: <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5', 'tick6'],
-    scales: [
-      CategoryAxis(
-        CartesianAxis.x,
-        ticks: AxisTicks(maxRotation: 0, autoSkip: false),
-      ),
-      LinearAxis(
-        CartesianAxis.y,
-        // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-        position: ChartPosition.right,
-      ),
-    ],
-    disabledPlugins: [PluginOff<LegendPlugin>()],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(data: .values(<num?>[10, 5, 0, 25, 78, -10])),
+      ],
+      labels: <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5', 'tick6'],
+      scales: [
+        CategoryAxis(
+          CartesianAxis.x,
+          ticks: AxisTicks(maxRotation: 0, autoSkip: false),
+        ),
+        LinearAxis(
+          CartesianAxis.y,
+          // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
+          position: ChartPosition.right,
+        ),
+      ],
+      disabledPlugins: [PluginOff<LegendPlugin>()],
+    ),
+    <String, Object?>{
       'layout': <String, Object?>{
         'padding': (ContextObject ctx) {
           // 10% padding

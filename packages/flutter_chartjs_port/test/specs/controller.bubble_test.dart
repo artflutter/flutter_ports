@@ -116,13 +116,11 @@ void main() {
       (tester) async {
         final chart = acquireChartRoot(
           lowerForTest(
-            const ChartConfig(
+            ChartConfig(
               datasets: [
-                BubbleDataset(
-                  extra: {
-                    'data': <Object?>[10, 15, 0, -4],
-                  },
-                ),
+                raw(const BubbleDataset(), {
+                  'data': <Object?>[10, 15, 0, -4],
+                }),
               ],
             ),
           ),
@@ -141,16 +139,16 @@ void main() {
     testWidgets('should draw all elements', (tester) async {
       final chart = acquireChartRoot(
         lowerForTest(
-          const ChartConfig(
-            datasets: [
-              BubbleDataset(
-                extra: {
+          raw(
+            ChartConfig(
+              datasets: [
+                raw(const BubbleDataset(), {
                   'data': <Object?>[10, 15, 0, -4],
-                },
-              ),
-            ],
-            animation: ChartAnimation.none,
-            extra: {'showLine': true},
+                }),
+              ],
+              animation: ChartAnimation.none,
+            ),
+            {'showLine': true},
           ),
         ),
       );
@@ -324,19 +322,21 @@ void main() {
       void beforeEach() {
         chart = acquireChartRoot(
           lowerForTest(
-            ChartConfig(
-              datasets: [
-                BubbleDataset(
-                  data: [
-                    DataPoint.bubble(5, 5, 20),
-                    DataPoint.bubble(-15, -10, 15),
-                    DataPoint.bubble(15, 10, 10),
-                    DataPoint.bubble(-15, 10, 5),
-                  ],
-                ),
-              ],
-              labels: const ['label1', 'label2', 'label3', 'label4'],
-              extra: const {
+            raw(
+              ChartConfig(
+                datasets: [
+                  BubbleDataset(
+                    data: [
+                      DataPoint.bubble(5, 5, 20),
+                      DataPoint.bubble(-15, -10, 15),
+                      DataPoint.bubble(15, 10, 10),
+                      DataPoint.bubble(-15, 10, 5),
+                    ],
+                  ),
+                ],
+                labels: const ['label1', 'label2', 'label3', 'label4'],
+              ),
+              const {
                 'elements': <String, Object?>{
                   'point': <String, Object?>{
                     'backgroundColor': ChartPaint.solid(

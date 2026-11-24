@@ -58,11 +58,11 @@ ChartConfig _config(List<Object?> data, String? scaleType) => ChartConfig(
   labels: [for (var i = 0; i < data.length; i++) 'L$i'],
   datasets: [
     // The guard cases need undefined, strings and the original List type.
-    RadarDataset(extra: {'data': data}),
+    raw(const RadarDataset(), {'data': data}),
   ],
   responsive: false,
   scales: [
-    RadialLinearAxis(extra: {'type': ?scaleType}),
+    raw(const RadialLinearAxis(), {'type': ?scaleType}),
   ],
 );
 

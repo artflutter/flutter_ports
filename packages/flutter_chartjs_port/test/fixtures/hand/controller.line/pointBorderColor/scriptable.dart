@@ -39,23 +39,20 @@ FixtureConfig fixture() => FixtureConfig.typed(
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
       line: LineElementStyle(fill: FillTarget.none),
-      point: PointElementStyle(
-        radius: 10,
-        extra: <String, Object?>{
-          'borderColor': (ScriptableContext ctx) {
-            final value = jsOrZero(
-              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
-            );
-            return value > 8
-                ? ChartPaint.solid(Color(0xFFFF00FF))
-                : value > 0
-                ? ChartPaint.solid(Color(0xFF0000FF))
-                : value > -8
-                ? ChartPaint.solid(Color(0xFFFF0000))
-                : ChartPaint.solid(Color(0xFF00FF00));
-          },
+      point: raw(PointElementStyle(radius: 10), <String, Object?>{
+        'borderColor': (ScriptableContext ctx) {
+          final value = jsOrZero(
+            jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
+          );
+          return value > 8
+              ? ChartPaint.solid(Color(0xFFFF00FF))
+              : value > 0
+              ? ChartPaint.solid(Color(0xFF0000FF))
+              : value > -8
+              ? ChartPaint.solid(Color(0xFFFF0000))
+              : ChartPaint.solid(Color(0xFF00FF00));
         },
-      ),
+      }),
     ),
     scales: [
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

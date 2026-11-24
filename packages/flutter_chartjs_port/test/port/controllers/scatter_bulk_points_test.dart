@@ -81,33 +81,39 @@ ChartConfigurationScope _config({
   Map<String, Object?> x = const {},
   Map<String, Object?> y = const {},
 }) => lowerForTest(
-  ChartConfig(
-    datasets: [
-      ScatterDataset(
-        pointRadius: pointRadius,
-        pointBackgroundColor: const ChartValue.constant(_red),
-        pointHoverBackgroundColor: const ChartValue.constant(_blue),
-        // Preserve the raw data containers and the guard-specific overrides.
-        extra: {
-          if (type != 'scatter') 'type': type,
-          'data': _data(form),
-          'spanGaps': ?spanGaps,
-          ...dataset,
-        },
-      ),
-    ],
-    responsive: false,
-    animation: animation,
-    scales: [
-      LinearAxis(.x, min: -1, max: 18, extra: x),
-      LinearAxis(.y, min: -1, max: 10, extra: y),
-    ],
-    events: const [],
-    disabledPlugins: const [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: {if (form != 'parsed') 'parsing': false},
+  raw(
+    ChartConfig(
+      datasets: [
+        raw(
+          ScatterDataset(
+            pointRadius: pointRadius,
+            pointBackgroundColor: const ChartValue.constant(_red),
+            pointHoverBackgroundColor: const ChartValue.constant(_blue),
+
+            // Preserve the raw data containers and the guard-specific
+            // overrides.
+          ),
+          {
+            if (type != 'scatter') 'type': type,
+            'data': _data(form),
+            'spanGaps': ?spanGaps,
+            ...dataset,
+          },
+        ),
+      ],
+      responsive: false,
+      animation: animation,
+      scales: [
+        raw(const LinearAxis(.x, min: -1, max: 18), x),
+        raw(const LinearAxis(.y, min: -1, max: 10), y),
+      ],
+      events: const [],
+      disabledPlugins: const [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+    ),
+    {if (form != 'parsed') 'parsing': false},
   ),
 );
 

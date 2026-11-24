@@ -16,13 +16,15 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.toOrigin,
-        spanGaps: true,
-        tension: 0,
-        extra: <String, Object?>{
+      raw(
+        LineDataset(
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.toOrigin,
+          spanGaps: true,
+          tension: 0,
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': double.nan, 'y': 10},
             <String, Object?>{'x': 5, 'y': 0},

@@ -36,9 +36,11 @@ FixtureConfig fixture() {
   return FixtureConfig.typed(
     ChartConfig(
       datasets: [
-        ScatterDataset(
-          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-          extra: <String, Object?>{'data': data, 'radius': 8, 'hoverRadius': 0},
+        raw(
+          ScatterDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          ),
+          <String, Object?>{'data': data, 'radius': 8, 'hoverRadius': 0},
         ),
       ],
       scales: [

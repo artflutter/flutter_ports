@@ -33,9 +33,9 @@ List<SankeyDataPoint> _nodePaddingModeData() => [
 Chart _buildChart(Map<String, Object?> chartOptionOverrides) =>
     acquireChartRoot(
       lowerForTest(
-        ChartConfig(
-          datasets: [SankeyDataset(data: _nodePaddingModeData())],
-          extra: <String, Object?>{
+        raw(
+          ChartConfig(datasets: [SankeyDataset(data: _nodePaddingModeData())]),
+          <String, Object?>{
             'animation': false,
             'devicePixelRatio': 1,
             'nodePadding': 20,

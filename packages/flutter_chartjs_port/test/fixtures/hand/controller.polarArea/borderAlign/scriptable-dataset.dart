@@ -16,11 +16,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      PolarAreaDataset(
-        // option in dataset
-        data: <num?>[0, 2, 4, null, 6, 8],
-        borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        extra: <String, Object?>{
+      raw(
+        PolarAreaDataset(
+          // option in dataset
+          data: <num?>[0, 2, 4, null, 6, 8],
+          borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
           'borderAlign': (ScriptableContext ctx) {
             final value = jsOrZero(

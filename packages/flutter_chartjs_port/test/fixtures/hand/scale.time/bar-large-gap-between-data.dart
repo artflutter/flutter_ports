@@ -4,7 +4,6 @@
 // (fixture.js:24): the chart keeps the Lists of its config and writes
 // into some of them.
 // ignore_for_file: prefer_const_constructors
-// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
@@ -21,11 +20,13 @@ FixtureConfig fixture() {
   return FixtureConfig.typed(
     ChartConfig(
       datasets: [
-        BarDataset(
-          backgroundColor: .constant(
-            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.5)),
+        raw(
+          BarDataset(
+            backgroundColor: .constant(
+              ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.5)),
+            ),
           ),
-          extra: <String, Object?>{
+          <String, Object?>{
             // date.clone().add(n, 'day') for each x except the third.
             // DIVERGES(chartjs): harness-fixture-sources, a moment value.
             'data': <Object?>[
@@ -39,15 +40,17 @@ FixtureConfig fixture() {
         ),
       ],
       scales: [
-        TimeAxis(
-          CartesianAxis.x,
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          display: ScaleDisplay.off,
-          ticks: AxisTicks(
-            // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
-            source: TickSource.auto,
+        raw(
+          TimeAxis(
+            CartesianAxis.x,
+            // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+            display: ScaleDisplay.off,
+            ticks: AxisTicks(
+              // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+              source: TickSource.auto,
+            ),
           ),
-          extra: <String, Object?>{
+          <String, Object?>{
             'time': <String, Object?>{
               // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
               'unit': TimeUnit.day,

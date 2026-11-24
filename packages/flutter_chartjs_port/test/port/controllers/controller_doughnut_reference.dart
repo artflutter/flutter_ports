@@ -7459,12 +7459,14 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'cutout a number',
-    config: () => ChartConfig(
-      labels: ['a', 'b', 'c', 'd'],
-      datasets: [
-        DoughnutDataset(data: [10.0, 20.0, 30.0, 15.0]),
-      ],
-      extra: const <String, Object?>{'cutout': PixelRadius(60)},
+    config: () => raw(
+      ChartConfig(
+        labels: ['a', 'b', 'c', 'd'],
+        datasets: [
+          DoughnutDataset(data: [10.0, 20.0, 30.0, 15.0]),
+        ],
+      ),
+      const <String, Object?>{'cutout': PixelRadius(60)},
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -8041,13 +8043,15 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
   ),
   (
     name: 'partial rotation and circumference',
-    config: () => ChartConfig(
-      labels: ['a', 'b', 'c', 'd'],
-      datasets: [
-        DoughnutDataset(data: [10.0, 20.0, 30.0, 15.0]),
-        DoughnutDataset(data: [5.0, 15.0, 10.0, 20.0], borderWidth: 4),
-      ],
-      extra: const <String, Object?>{'rotation': 45.0, 'circumference': 180.0},
+    config: () => raw(
+      ChartConfig(
+        labels: ['a', 'b', 'c', 'd'],
+        datasets: [
+          DoughnutDataset(data: [10.0, 20.0, 30.0, 15.0]),
+          DoughnutDataset(data: [5.0, 15.0, 10.0, 20.0], borderWidth: 4),
+        ],
+      ),
+      const <String, Object?>{'rotation': 45.0, 'circumference': 180.0},
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{
@@ -16381,10 +16385,9 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        DoughnutDataset(
-          data: [10.0, 20.0, 30.0],
-          hoverOffset: 20,
-          extra: const <String, Object?>{
+        raw(
+          DoughnutDataset(data: [10.0, 20.0, 30.0], hoverOffset: 20),
+          const <String, Object?>{
             'offset': <Object?>[0.0, 10.0, 0.0],
           },
         ),
@@ -25967,14 +25970,12 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
     config: () => ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        DoughnutDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'value': 1.0},
-              const <String, Object?>{'value': '3'},
-            ],
-          },
-        ),
+        raw(DoughnutDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'value': 1.0},
+            const <String, Object?>{'value': '3'},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -26347,20 +26348,18 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        DoughnutDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{
-                'n': <String, Object?>{'v': 2.0},
-              },
-              const <String, Object?>{
-                'n': <String, Object?>{'v': 4.0},
-              },
-              const <String, Object?>{'n': <String, Object?>{}},
-            ],
-            'parsing': const <String, Object?>{'key': 'n.v'},
-          },
-        ),
+        raw(DoughnutDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{
+              'n': <String, Object?>{'v': 2.0},
+            },
+            const <String, Object?>{
+              'n': <String, Object?>{'v': 4.0},
+            },
+            const <String, Object?>{'n': <String, Object?>{}},
+          ],
+          'parsing': const <String, Object?>{'key': 'n.v'},
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -26808,14 +26807,12 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
     config: () => ChartConfig(
       labels: ['a'],
       datasets: [
-        DoughnutDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'value': 1.0},
-            ],
-            'parsing': const <String, Object?>{'key': 5.0},
-          },
-        ),
+        raw(DoughnutDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'value': 1.0},
+          ],
+          'parsing': const <String, Object?>{'key': 5.0},
+        }),
       ],
     ),
     options: const AcquireOptions(),

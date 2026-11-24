@@ -33,14 +33,14 @@ FixtureConfig fixture() {
       TrianglePointStyle(),
       false,
     ].indexed)
-      BubbleDataset(
-        // Upstream: Array.apply(null, Array(17)).map(function(v, x) {...}).
-        data: [for (var x = 0; x < 17; x++) DataPoint(x, 11 - y)],
-        // A PointStyle, or `false` (no point style) in extra.
-        pointStyle: style is PointStyle ? style : null,
-        extra: style is PointStyle
-            ? null
-            : <String, Object?>{'pointStyle': style},
+      raw(
+        BubbleDataset(
+          // Upstream: Array.apply(null, Array(17)).map(function(v, x) {...}).
+          data: [for (var x = 0; x < 17; x++) DataPoint(x, 11 - y)],
+          // A PointStyle, or `false` (no point style) in the raw options.
+          pointStyle: style is PointStyle ? style : null,
+        ),
+        style is PointStyle ? null : <String, Object?>{'pointStyle': style},
       ),
   ];
 
@@ -54,10 +54,12 @@ FixtureConfig fixture() {
       datasets: datasets,
       responsive: false,
       elements: ChartElements(
-        point: PointElementStyle(
-          radius: 10,
-          borderColor: ChartPaint.solid(Color(0xFFCCCCCC)),
-          extra: <String, Object?>{
+        point: raw(
+          PointElementStyle(
+            radius: 10,
+            borderColor: ChartPaint.solid(Color(0xFFCCCCCC)),
+          ),
+          <String, Object?>{
             'rotation': angles,
             'backgroundColor': (Object? context) {
               return gradient ??= const ChartGradient.linear(

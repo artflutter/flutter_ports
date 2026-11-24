@@ -70,12 +70,16 @@ Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
 /// The typed config of a scatter chart with the two datasets of the
 /// overrides specs and the scales [scales] by id in `extra`: the specs of
 /// the scale ids (Chart.js ADR 0191 gives the typed axes no custom id).
-ChartConfig _scatter(Map<String, Object?> scales) => ChartConfig(
-  datasets: [
-    ScatterDataset(data: .points([DataPoint(100, 100), DataPoint(-100, -100)])),
-    ScatterDataset(data: .points([DataPoint(10, 10), DataPoint(-10, -10)])),
-  ],
-  extra: {'scales': scales},
+ChartConfig _scatter(Map<String, Object?> scales) => raw(
+  ChartConfig(
+    datasets: [
+      ScatterDataset(
+        data: .points([DataPoint(100, 100), DataPoint(-100, -100)]),
+      ),
+      ScatterDataset(data: .points([DataPoint(10, 10), DataPoint(-10, -10)])),
+    ],
+  ),
+  {'scales': scales},
 );
 
 /// The member read `object.key` of the option object [object]: a resolver,
@@ -379,25 +383,24 @@ void main() {
           'visible',
           (tester) async {
             final chart = _acquire(
-              const ChartConfig(
+              ChartConfig(
                 datasets: [
-                  LineDataset(
-                    data: .values([100, 200, 100, 50]),
-                    hidden: true,
-                    extra: {
+                  raw(
+                    const LineDataset(
+                      data: .values([100, 200, 100, 50]),
+                      hidden: true,
+                    ),
+                    {
                       'xAxisId': 'foo',
                       'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
                     },
                   ),
-                  LineDataset(
-                    data: .values([100, 200, 100, 50]),
-                    extra: {
-                      'xAxisId': 'foo',
-                      'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
-                    },
-                  ),
+                  raw(const LineDataset(data: .values([100, 200, 100, 50])), {
+                    'xAxisId': 'foo',
+                    'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
+                  }),
                 ],
-                scales: [
+                scales: const [
                   CategoryAxis(.x, display: ScaleDisplay.auto),
                   CategoryAxis(.y),
                 ],
@@ -418,18 +421,20 @@ void main() {
           'should not draw the axes if no associated datasets are visible',
           (tester) async {
             final chart = _acquire(
-              const ChartConfig(
+              ChartConfig(
                 datasets: [
-                  LineDataset(
-                    data: .values([100, 200, 100, 50]),
-                    hidden: true,
-                    extra: {
+                  raw(
+                    const LineDataset(
+                      data: .values([100, 200, 100, 50]),
+                      hidden: true,
+                    ),
+                    {
                       'xAxisId': 'foo',
                       'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
                     },
                   ),
                 ],
-                scales: [CategoryAxis(.x, display: ScaleDisplay.auto)],
+                scales: const [CategoryAxis(.x, display: ScaleDisplay.auto)],
               ),
             );
 
@@ -450,25 +455,24 @@ void main() {
           'visible',
           (tester) async {
             final chart = _acquire(
-              const ChartConfig(
+              ChartConfig(
                 datasets: [
-                  LineDataset(
-                    data: .values([100, 200, 100, 50]),
-                    hidden: true,
-                    extra: {
+                  raw(
+                    const LineDataset(
+                      data: .values([100, 200, 100, 50]),
+                      hidden: true,
+                    ),
+                    {
                       'yAxisId': 'foo',
                       'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
                     },
                   ),
-                  LineDataset(
-                    data: .values([100, 200, 100, 50]),
-                    extra: {
-                      'yAxisId': 'foo',
-                      'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
-                    },
-                  ),
+                  raw(const LineDataset(data: .values([100, 200, 100, 50])), {
+                    'yAxisId': 'foo',
+                    'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
+                  }),
                 ],
-                scales: [LinearAxis(.y, display: ScaleDisplay.auto)],
+                scales: const [LinearAxis(.y, display: ScaleDisplay.auto)],
               ),
             );
 
@@ -486,18 +490,20 @@ void main() {
           'should not draw the axes if no associated datasets are visible',
           (tester) async {
             final chart = _acquire(
-              const ChartConfig(
+              ChartConfig(
                 datasets: [
-                  LineDataset(
-                    data: .values([100, 200, 100, 50]),
-                    hidden: true,
-                    extra: {
+                  raw(
+                    const LineDataset(
+                      data: .values([100, 200, 100, 50]),
+                      hidden: true,
+                    ),
+                    {
                       'yAxisId': 'foo',
                       'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
                     },
                   ),
                 ],
-                scales: [LinearAxis(.y, display: ScaleDisplay.auto)],
+                scales: const [LinearAxis(.y, display: ScaleDisplay.auto)],
               ),
             );
 
@@ -589,21 +595,22 @@ void main() {
         (tester) async {
           Chart createChart() {
             return _acquire(
-              ChartConfig(
-                datasets: [
-                  ScatterDataset(
-                    data: .points([
-                      DataPoint(0, 0),
-                      DataPoint(1, 1),
-                      DataPoint(2, 2),
-                    ]),
-                    extra: const {
-                      'xAxisID': 'customIDx',
-                      'yAxisID': 'customIDy',
-                    },
-                  ),
-                ],
-                extra: const {
+              raw(
+                ChartConfig(
+                  datasets: [
+                    raw(
+                      ScatterDataset(
+                        data: .points([
+                          DataPoint(0, 0),
+                          DataPoint(1, 1),
+                          DataPoint(2, 2),
+                        ]),
+                      ),
+                      const {'xAxisID': 'customIDx', 'yAxisID': 'customIDy'},
+                    ),
+                  ],
+                ),
+                const {
                   'scales': {
                     'customIDx': {
                       'type': 'linear',
@@ -773,9 +780,9 @@ void main() {
                 data: .points([DataPoint(10, 10), DataPoint(-10, -10)]),
               ),
             ],
-            scales: const [
-              LinearAxis(.x, min: -20, max: 20, extra: {'id': 'x'}),
-              LinearAxis(.y, extra: {'id': 'y'}),
+            scales: [
+              raw(const LinearAxis(.x, min: -20, max: 20), {'id': 'x'}),
+              raw(const LinearAxis(.y), {'id': 'y'}),
             ],
           ),
         );

@@ -18,11 +18,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BubbleDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        borderWidth: 0,
-        extra: <String, Object?>{
+      raw(
+        BubbleDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+          borderColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          borderWidth: 0,
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': 0, 'y': 3},
             <String, Object?>{'x': 1, 'y': 3},
@@ -51,11 +53,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ],
         },
       ),
-      BubbleDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0x00000000))),
-        borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        borderWidth: 1,
-        extra: <String, Object?>{
+      raw(
+        BubbleDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0x00000000))),
+          borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          borderWidth: 1,
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': 0, 'y': 2},
             <String, Object?>{'x': 1, 'y': 2},
@@ -84,11 +88,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
           ],
         },
       ),
-      BubbleDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        borderWidth: 1,
-        extra: <String, Object?>{
+      raw(
+        BubbleDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+          borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          borderWidth: 1,
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': 0, 'y': 1},
             <String, Object?>{'x': 1, 'y': 1},

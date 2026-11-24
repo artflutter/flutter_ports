@@ -51,12 +51,15 @@ ChartConfigurationScope _config({
 }) => lowerForTest(
   ChartConfig(
     datasets: [
-      ScatterDataset(
-        pointRadius: pointRadius,
-        pointBackgroundColor: const ChartValue.constant(_red),
-        pointHoverBackgroundColor: const ChartValue.constant(_blue),
-        // Preserve the raw data containers and the guard-specific overrides.
-        extra: {
+      raw(
+        ScatterDataset(
+          pointRadius: pointRadius,
+          pointBackgroundColor: const ChartValue.constant(_red),
+          pointHoverBackgroundColor: const ChartValue.constant(_blue),
+
+          // Preserve the raw data containers and the guard-specific overrides.
+        ),
+        {
           if (type != 'scatter') 'type': type,
           'data': _data(n),
           'spanGaps': ?spanGaps,

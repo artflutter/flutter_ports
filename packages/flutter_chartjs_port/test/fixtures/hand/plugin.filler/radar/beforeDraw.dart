@@ -40,10 +40,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
           lineWidth: .constant(2),
         ),
         pointLabelsDisplay: ScaleDisplay.off,
-        ticks: AxisTicks(
-          display: false,
-          extra: <String, Object?>{'beginAtZero': true},
-        ),
+        ticks: raw(AxisTicks(display: false), <String, Object?>{
+          'beginAtZero': true,
+        }),
       ),
     ],
     pluginOptions: [

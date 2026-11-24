@@ -16,39 +16,41 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(data: .values(<num?>[12, 19, 3, 5, 2, 3])),
-    ],
-    labels: <Object>[
-      'Red Red Red Red',
-      'Blue Blue Blue Blue',
-      'Black Black Black Black',
-      'Green Green Green Green',
-      'Purple Purple Purple Purple',
-      'Orange Orange Orange Orange Orange Orange',
-    ],
-    disabledPlugins: [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TooltipPlugin>(),
-      PluginOff<FillerPlugin>(),
-      PluginOff<TitlePlugin>(),
-    ],
-    plugins: [
-      // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
-      Plugin<Object?>(
-        id: 'inline',
-        afterDraw: (chart, _, _) {
-          // const ctx = chart.ctx; ctx.save(); ...
-          chart.ctx!
-            ..save()
-            ..strokeStyle = const native_ui.Color(0xffff0000)
-            ..strokeRect(0, 0, chart.width, chart.height)
-            ..restore();
-        },
-      ),
-    ],
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(data: .values(<num?>[12, 19, 3, 5, 2, 3])),
+      ],
+      labels: <Object>[
+        'Red Red Red Red',
+        'Blue Blue Blue Blue',
+        'Black Black Black Black',
+        'Green Green Green Green',
+        'Purple Purple Purple Purple',
+        'Orange Orange Orange Orange Orange Orange',
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TooltipPlugin>(),
+        PluginOff<FillerPlugin>(),
+        PluginOff<TitlePlugin>(),
+      ],
+      plugins: [
+        // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
+        Plugin<Object?>(
+          id: 'inline',
+          afterDraw: (chart, _, _) {
+            // const ctx = chart.ctx; ctx.save(); ...
+            chart.ctx!
+              ..save()
+              ..strokeStyle = const native_ui.Color(0xffff0000)
+              ..strokeRect(0, 0, chart.width, chart.height)
+              ..restore();
+          },
+        ),
+      ],
+    ),
+    <String, Object?>{
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'category',

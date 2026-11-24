@@ -15,11 +15,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      DoughnutDataset(
-        // option in dataset
-        data: <num?>[0, 2, 4, null, 6, 8],
-        borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        extra: <String, Object?>{
+      raw(
+        DoughnutDataset(
+          // option in dataset
+          data: <num?>[0, 2, 4, null, 6, 8],
+          borderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
           'borderAlign': (ScriptableContext ctx) {
             final value = jsOrZero(
@@ -36,11 +38,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      arc: ArcElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderColor: ChartPaint.solid(Color(0xFFFF00FF)),
-        borderWidth: 8,
-        extra: <String, Object?>{
+      arc: raw(
+        ArcElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderColor: ChartPaint.solid(Color(0xFFFF00FF)),
+          borderWidth: 8,
+        ),
+        <String, Object?>{
           // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
           'borderAlign': (ScriptableContext ctx) {
             final value = jsOrZero(

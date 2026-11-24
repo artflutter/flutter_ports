@@ -873,7 +873,7 @@ final class FixtureEmitter(
     if (options != null && options.comments.isNotEmpty) {
       args.first = '${_commentLines(options.comments)}${args.first}';
     }
-    return 'ChartConfig(${args.map(_comma).join()})';
+    return _rawCall('ChartConfig', args);
   }
 
   /// The source of the inline plugins [plugins].
@@ -915,7 +915,7 @@ final class FixtureEmitter(
     if (extra.isNotEmpty) {
       args.add('extra: <String, Object?>{${extra.map(_comma).join()}}');
     }
-    return '${_commentLines(value.comments)}$type(${args.map(_comma).join()})';
+    return '${_commentLines(value.comments)}${_rawCall(type, args)}';
   }
 
   static String _paramName(String key) => key;
@@ -948,7 +948,7 @@ final class FixtureEmitter(
     if (extra.isNotEmpty) {
       args.add('extra: <String, Object?>{${extra.map(_comma).join()}}');
     }
-    return '${_commentLines(elements.comments)}ChartElements(${args.map(_comma).join()})';
+    return '${_commentLines(elements.comments)}${_rawCall('ChartElements', args)}';
   }
 
   /// The source of the dataset [item] of the type [kind], or Dart `null`
@@ -1010,7 +1010,7 @@ final class FixtureEmitter(
     if (extra.isNotEmpty) {
       args.add('extra: <String, Object?>{${extra.map(_comma).join()}}');
     }
-    return '${_commentLines(item.comments)}$type(${args.map(_comma).join()})';
+    return '${_commentLines(item.comments)}${_rawCall(type, args)}';
   }
 
   /// The typed data of a dataset of [kind], or Dart `null`.
@@ -1647,7 +1647,7 @@ final class _Scales(
     if (extra.isNotEmpty) {
       args.add('extra: <String, Object?>{${extra.map(_comma).join()}}');
     }
-    return '$className(${args.map(_comma).join()})';
+    return _rawCall(className, args);
   }
 }
 
@@ -1806,6 +1806,16 @@ String? _grace(FixtureEmitter e, FixtureValue v, String k, String? o) =>
         source,
       _ => null,
     };
+
+/// The source of the typed call [head] with [args]: an `extra:` argument
+/// becomes the raw options of the call, `raw(call, map)` of
+/// chartjs_test_utils (the typed API has no `extra`).
+String _rawCall(String head, List<String> args) {
+  final i = args.indexWhere((a) => a.startsWith('extra: '));
+  if (i < 0) return '$head(${args.map(_comma).join()})';
+  final map = args.removeAt(i).substring('extra: '.length);
+  return 'raw($head(${args.map(_comma).join()}), $map)';
+}
 
 /// The `time` options of a time axis: typed parameters of the axis when
 /// each key has one, else Dart `null` (the object goes to `extra`).

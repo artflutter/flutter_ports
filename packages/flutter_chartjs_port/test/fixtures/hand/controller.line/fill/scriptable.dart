@@ -16,53 +16,59 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// `ctx.datasetIndex === 0 ? true : false` (:12, :26) is the comparison
 /// itself: the result is the same boolean.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(
-        // option in dataset
-        data: .values(<num?>[-2, -6, -4, -8, -6, -10]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': (ScriptableContext ctx) {
-            return ctx.datasetIndex == 0
-                ? FillTarget.toOrigin
-                : FillTarget.none;
+  raw(
+    ChartConfig(
+      datasets: [
+        raw(
+          LineDataset(
+            // option in dataset
+            data: .values(<num?>[-2, -6, -4, -8, -6, -10]),
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          ),
+          <String, Object?>{
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            'fill': (ScriptableContext ctx) {
+              return ctx.datasetIndex == 0
+                  ? FillTarget.toOrigin
+                  : FillTarget.none;
+            },
           },
-        },
-      ),
-      LineDataset(
-        // option in element (fallback)
-        data: .values(<num?>[0, 4, 2, 6, 4, 8]),
-      ),
-    ],
-    labels: <Object>[0, 1, 2, 3, 4, 5],
-    elements: ChartElements(
-      line: LineElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0xFF00FF00)),
-        extra: <String, Object?>{
-          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': (ScriptableContext ctx) {
-            return ctx.datasetIndex == 0
-                ? FillTarget.toOrigin
-                : FillTarget.none;
+        ),
+        LineDataset(
+          // option in element (fallback)
+          data: .values(<num?>[0, 4, 2, 6, 4, 8]),
+        ),
+      ],
+      labels: <Object>[0, 1, 2, 3, 4, 5],
+      elements: ChartElements(
+        line: raw(
+          LineElementStyle(
+            backgroundColor: ChartPaint.solid(Color(0xFF00FF00)),
+          ),
+          <String, Object?>{
+            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+            'fill': (ScriptableContext ctx) {
+              return ctx.datasetIndex == 0
+                  ? FillTarget.toOrigin
+                  : FillTarget.none;
+            },
           },
-        },
+        ),
       ),
+      padding: const EdgeInsets.all(32),
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
     ),
-    padding: const EdgeInsets.all(32),
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
-    ],
-    disabledPlugins: [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TitlePlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: <String, Object?>{
+    <String, Object?>{
       'plugins': <String, Object?>{'filler': true},
     },
   ),

@@ -4,7 +4,6 @@
 // (fixture.js:24): the chart keeps the Lists of its config and writes
 // into some of them.
 // ignore_for_file: prefer_const_constructors
-// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4), the
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
@@ -29,18 +28,20 @@ FixtureConfig fixture() => FixtureConfig.typed(
       ),
     ],
     scales: [
-      LinearAxis(
-        CartesianAxis.x,
-        min: -100,
-        max: 100,
-        // DIVERGES(chartjs): adapt-native-scale-border, the border object.
-        border: const AxisBorder(color: ChartPaint.solid(Color(0xFFFF0000))),
-        grid: AxisGrid(
-          color: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-          drawOnChartArea: false,
+      raw(
+        LinearAxis(
+          CartesianAxis.x,
+          min: -100,
+          max: 100,
+          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+          border: const AxisBorder(color: ChartPaint.solid(Color(0xFFFF0000))),
+          grid: AxisGrid(
+            color: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+            drawOnChartArea: false,
+          ),
+          ticks: AxisTicks(display: true),
         ),
-        ticks: AxisTicks(display: true),
-        extra: <String, Object?>{'position': ScaleValuePosition('y', 30)},
+        <String, Object?>{'position': ScaleValuePosition('y', 30)},
       ),
       LinearAxis(
         CartesianAxis.y,

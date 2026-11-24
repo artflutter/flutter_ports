@@ -16,22 +16,26 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        data: .values(<num?>[0, 0.01, 30]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-        borderWidth: 4,
-        minBarLength: 20,
-        extra: <String, Object?>{'xAxisID': 'x2'},
-      ),
-    ],
-    labels: <Object>[0, 1, 2, 3, 4],
-    // DIVERGES(chartjs): adapt-axis-objects, the axis
-    // class.
-    indexAxis: const YAxis(),
-    extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        raw(
+          BarDataset(
+            data: .values(<num?>[0, 0.01, 30]),
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+            borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
+            borderWidth: 4,
+            minBarLength: 20,
+          ),
+          <String, Object?>{'xAxisID': 'x2'},
+        ),
+      ],
+      labels: <Object>[0, 1, 2, 3, 4],
+      // DIVERGES(chartjs): adapt-axis-objects, the axis
+      // class.
+      indexAxis: const YAxis(),
+    ),
+    <String, Object?>{
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'stack': 'demo',

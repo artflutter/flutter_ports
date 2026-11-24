@@ -422,12 +422,9 @@ void main() {
       expect(
         () => _chart(
           _xy(times),
-          const TimeAxis(
-            .x,
-            extra: {
-              'time': {'minUnit': 7.0},
-            },
-          ),
+          raw(const TimeAxis(.x), {
+            'time': {'minUnit': 7.0},
+          }),
         ),
         throwsA(isA<TypeError>()),
       );
@@ -439,7 +436,7 @@ void main() {
         // object has no displayFormats: "Cannot read properties of
         // undefined (reading 'undefined')" (scale.time.js:615).
         expect(
-          () => _chart(_xy(times), TimeAxis(.x, extra: {'time': time})),
+          () => _chart(_xy(times), raw(const TimeAxis(.x), {'time': time})),
           throwsA(isA<TypeError>()),
         );
       });
@@ -1453,18 +1450,22 @@ void main() {
                   labels: const ['2017', '2019', '2020', '2025', '2042'],
                   scales: [
                     if (type == 'time')
-                      TimeAxis(
-                        .x,
-                        ticks: AxisTicks(source: source),
-                        parser: 'yyyy',
-                        extra: const {'id': 'x'},
+                      raw(
+                        TimeAxis(
+                          .x,
+                          ticks: AxisTicks(source: source),
+                          parser: 'yyyy',
+                        ),
+                        const {'id': 'x'},
                       )
                     else
-                      TimeSeriesAxis(
-                        .x,
-                        ticks: AxisTicks(source: source),
-                        parser: 'yyyy',
-                        extra: const {'id': 'x'},
+                      raw(
+                        TimeSeriesAxis(
+                          .x,
+                          ticks: AxisTicks(source: source),
+                          parser: 'yyyy',
+                        ),
+                        const {'id': 'x'},
                       ),
                   ],
                 ),

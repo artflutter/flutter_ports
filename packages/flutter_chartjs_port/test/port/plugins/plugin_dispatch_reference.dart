@@ -525,26 +525,28 @@ final List<PluginDispatchReferenceCase> pluginDispatchReference = [
   ),
   (
     name: 'plugins false',
-    config: () => ChartConfig(
-      labels: ['a', 'b', 'c', 'd', 'e'],
-      datasets: [
-        LineDataset(
-          label: 'd0',
-          data: DatasetData.values([1.0, 3.0, 2.0, 5.0, 4.0]),
-          fill: FillTarget.toOrigin,
-        ),
-        LineDataset(
-          label: 'd1',
-          data: DatasetData.values([2.0, 3.0, 2.0, 5.0, 4.0]),
-          fill: FillTarget.none,
-        ),
-        LineDataset(
-          label: 'd2',
-          data: DatasetData.values([3.0, 3.0, 2.0, 5.0, 4.0]),
-          fill: FillTarget.none,
-        ),
-      ],
-      extra: const <String, Object?>{'plugins': false},
+    config: () => raw(
+      ChartConfig(
+        labels: ['a', 'b', 'c', 'd', 'e'],
+        datasets: [
+          LineDataset(
+            label: 'd0',
+            data: DatasetData.values([1.0, 3.0, 2.0, 5.0, 4.0]),
+            fill: FillTarget.toOrigin,
+          ),
+          LineDataset(
+            label: 'd1',
+            data: DatasetData.values([2.0, 3.0, 2.0, 5.0, 4.0]),
+            fill: FillTarget.none,
+          ),
+          LineDataset(
+            label: 'd2',
+            data: DatasetData.values([3.0, 3.0, 2.0, 5.0, 4.0]),
+            fill: FillTarget.none,
+          ),
+        ],
+      ),
+      const <String, Object?>{'plugins': false},
     ),
     options: const AcquireOptions(),
     expected: const <String, Object?>{

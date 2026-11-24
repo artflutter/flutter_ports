@@ -7151,29 +7151,33 @@ List<ControllerLineReferenceCase> controllerLineReference(
     name: 'spanGaps a number',
     config: () => ChartConfig(
       datasets: [
-        LineDataset(
-          data: DatasetData.points([
-            DataPoint(0.0, 3.0),
-            DataPoint(1.0, 5.0),
-            DataPoint(4.0, 2.0),
-            DataPoint(5.0, null),
-            DataPoint(6.0, 4.0),
-            DataPoint(9.0, 1.0),
-            DataPoint(10.0, 6.0),
-          ]),
-          extra: const <String, Object?>{'spanGaps': 2.0},
+        raw(
+          LineDataset(
+            data: DatasetData.points([
+              DataPoint(0.0, 3.0),
+              DataPoint(1.0, 5.0),
+              DataPoint(4.0, 2.0),
+              DataPoint(5.0, null),
+              DataPoint(6.0, 4.0),
+              DataPoint(9.0, 1.0),
+              DataPoint(10.0, 6.0),
+            ]),
+          ),
+          const <String, Object?>{'spanGaps': 2.0},
         ),
-        LineDataset(
-          data: DatasetData.points([
-            DataPoint(0.0, 3.0),
-            DataPoint(1.0, 5.0),
-            DataPoint(4.0, 2.0),
-            DataPoint(5.0, null),
-            DataPoint(6.0, 4.0),
-            DataPoint(9.0, 1.0),
-            DataPoint(10.0, 6.0),
-          ]),
-          extra: const <String, Object?>{'spanGaps': 3.5},
+        raw(
+          LineDataset(
+            data: DatasetData.points([
+              DataPoint(0.0, 3.0),
+              DataPoint(1.0, 5.0),
+              DataPoint(4.0, 2.0),
+              DataPoint(5.0, null),
+              DataPoint(6.0, 4.0),
+              DataPoint(9.0, 1.0),
+              DataPoint(10.0, 6.0),
+            ]),
+          ),
+          const <String, Object?>{'spanGaps': 3.5},
         ),
       ],
       scales: const [LinearAxis(.x)],
@@ -14171,11 +14175,9 @@ List<ControllerLineReferenceCase> controllerLineReference(
       datasets: [
         LineDataset(data: DatasetData.values([10.0, -10.0, 10.0, -10.0, 5.0])),
         LineDataset(data: DatasetData.values([10.0, 15.0, 0.0, -4.0, 2.0])),
-        LineDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[1.0, 2.0, null, 3.0, '4'],
-          },
-        ),
+        raw(LineDataset(), <String, Object?>{
+          'data': <Object?>[1.0, 2.0, null, 3.0, '4'],
+        }),
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],
     ),
@@ -24889,14 +24891,16 @@ List<ControllerLineReferenceCase> controllerLineReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd', 'e'],
       datasets: [
-        LineDataset(
-          data: DatasetData.points([
-            DataPoint(0.0, 3.0),
-            DataPoint(1.0, 5.0),
-            DataPoint(2.0, -2.0),
-            DataPoint(3.0, 1.0),
-          ]),
-          extra: const <String, Object?>{'parsing': false},
+        raw(
+          LineDataset(
+            data: DatasetData.points([
+              DataPoint(0.0, 3.0),
+              DataPoint(1.0, 5.0),
+              DataPoint(2.0, -2.0),
+              DataPoint(3.0, 1.0),
+            ]),
+          ),
+          const <String, Object?>{'parsing': false},
         ),
       ],
     ),
@@ -25785,16 +25789,14 @@ List<ControllerLineReferenceCase> controllerLineReference(
         LineDataset(
           data: DatasetData.values([1.0, null, 3.0, double.nan, 5.0]),
         ),
-        LineDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 'a', 'y': 2.0},
-              const <String, Object?>{'x': 'b', 'y': null},
-              const <String, Object?>{'x': 'c'},
-              const <String, Object?>{'x': 'd', 'y': 4.0},
-            ],
-          },
-        ),
+        raw(LineDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 'a', 'y': 2.0},
+            const <String, Object?>{'x': 'b', 'y': null},
+            const <String, Object?>{'x': 'c'},
+            const <String, Object?>{'x': 'd', 'y': 4.0},
+          ],
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -31752,16 +31754,14 @@ List<ControllerLineReferenceCase> controllerLineReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        LineDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 0.0, 'y': 1.0},
-              null,
-              const <String, Object?>{'x': 2.0, 'y': 3.0},
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(LineDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 0.0, 'y': 1.0},
+            null,
+            const <String, Object?>{'x': 2.0, 'y': 3.0},
+          ],
+          'parsing': false,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -31774,16 +31774,18 @@ List<ControllerLineReferenceCase> controllerLineReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        LineDataset(
-          segment: LineSegmentStyle(
-            borderColor:
-                functions['segColor']!
-                    as ChartPaint? Function(ScriptableLineSegmentContext),
-            borderWidth:
-                functions['segWidth']!
-                    as double? Function(ScriptableLineSegmentContext),
+        raw(
+          LineDataset(
+            segment: LineSegmentStyle(
+              borderColor:
+                  functions['segColor']!
+                      as ChartPaint? Function(ScriptableLineSegmentContext),
+              borderWidth:
+                  functions['segWidth']!
+                      as double? Function(ScriptableLineSegmentContext),
+            ),
           ),
-          extra: <String, Object?>{
+          <String, Object?>{
             'data': <Object?>[
               const <String, Object?>{'x': 0.0, 'y': 1.0},
               null,
@@ -31804,17 +31806,14 @@ List<ControllerLineReferenceCase> controllerLineReference(
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        LineDataset(
-          hidden: true,
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 0.0, 'y': 1.0},
-              null,
-              const <String, Object?>{'x': 2.0, 'y': 3.0},
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(LineDataset(hidden: true), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 0.0, 'y': 1.0},
+            null,
+            const <String, Object?>{'x': 2.0, 'y': 3.0},
+          ],
+          'parsing': false,
+        }),
       ],
     ),
     options: const AcquireOptions(),
@@ -31826,16 +31825,14 @@ List<ControllerLineReferenceCase> controllerLineReference(
     name: 'parsed: parsing false, a null item, a user min and max',
     config: () => ChartConfig(
       datasets: [
-        LineDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': 0.0, 'y': 1.0},
-              null,
-              const <String, Object?>{'x': 2.0, 'y': 3.0},
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(LineDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': 0.0, 'y': 1.0},
+            null,
+            const <String, Object?>{'x': 2.0, 'y': 3.0},
+          ],
+          'parsing': false,
+        }),
       ],
       scales: const [LinearAxis(.x, min: 0.5, max: 1.5)],
     ),
@@ -31849,16 +31846,18 @@ List<ControllerLineReferenceCase> controllerLineReference(
     config: () => ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        LineDataset(
-          segment: LineSegmentStyle(
-            borderColor:
-                functions['segColor']!
-                    as ChartPaint? Function(ScriptableLineSegmentContext),
-            borderWidth:
-                functions['segWidth']!
-                    as double? Function(ScriptableLineSegmentContext),
+        raw(
+          LineDataset(
+            segment: LineSegmentStyle(
+              borderColor:
+                  functions['segColor']!
+                      as ChartPaint? Function(ScriptableLineSegmentContext),
+              borderWidth:
+                  functions['segWidth']!
+                      as double? Function(ScriptableLineSegmentContext),
+            ),
           ),
-          extra: <String, Object?>{
+          <String, Object?>{
             'data': <Object?>[
               5.0,
               const <String, Object?>{'x': 1.0, 'y': 2.0},
@@ -32493,16 +32492,14 @@ List<ControllerLineReferenceCase> controllerLineReference(
     name: 'parsed: parsing false, x.min 1, an item without x',
     config: () => ChartConfig(
       datasets: [
-        LineDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'y': 50.0},
-              const <String, Object?>{'x': 2.0, 'y': 10.0},
-              const <String, Object?>{'x': 3.0, 'y': 20.0},
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(LineDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'y': 50.0},
+            const <String, Object?>{'x': 2.0, 'y': 10.0},
+            const <String, Object?>{'x': 3.0, 'y': 20.0},
+          ],
+          'parsing': false,
+        }),
       ],
       scales: const [LinearAxis(.x, min: 1)],
     ),
@@ -33550,16 +33547,14 @@ List<ControllerLineReferenceCase> controllerLineReference(
     name: 'parsed: parsing false, x.min 1, an item with x null',
     config: () => ChartConfig(
       datasets: [
-        LineDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <String, Object?>{'x': null, 'y': 50.0},
-              const <String, Object?>{'x': 2.0, 'y': 10.0},
-              const <String, Object?>{'x': 3.0, 'y': 20.0},
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(LineDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <String, Object?>{'x': null, 'y': 50.0},
+            const <String, Object?>{'x': 2.0, 'y': 10.0},
+            const <String, Object?>{'x': 3.0, 'y': 20.0},
+          ],
+          'parsing': false,
+        }),
       ],
       scales: const [LinearAxis(.x, min: 1)],
     ),
@@ -34666,16 +34661,18 @@ List<ControllerLineReferenceCase> controllerLineReference(
     name: 'parsed: the one-read rule with segment, spanGaps 2 and start > 0',
     config: () => ChartConfig(
       datasets: [
-        LineDataset(
-          segment: LineSegmentStyle(
-            borderColor:
-                functions['segColor']!
-                    as ChartPaint? Function(ScriptableLineSegmentContext),
-            borderWidth:
-                functions['segWidth']!
-                    as double? Function(ScriptableLineSegmentContext),
+        raw(
+          LineDataset(
+            segment: LineSegmentStyle(
+              borderColor:
+                  functions['segColor']!
+                      as ChartPaint? Function(ScriptableLineSegmentContext),
+              borderWidth:
+                  functions['segWidth']!
+                      as double? Function(ScriptableLineSegmentContext),
+            ),
           ),
-          extra: <String, Object?>{
+          <String, Object?>{
             'data': <Object?>[
               const <String, Object?>{'x': 0.0, 'y': 3.0},
               const <String, Object?>{'x': 1.0, 'y': 5.0},
@@ -37814,17 +37811,19 @@ List<ControllerLineReferenceCase> controllerLineReference(
     name: "parsed: spanGaps '2'",
     config: () => ChartConfig(
       datasets: [
-        LineDataset(
-          data: DatasetData.points([
-            DataPoint(0.0, 3.0),
-            DataPoint(1.0, 5.0),
-            DataPoint(4.0, 2.0),
-            DataPoint(5.0, null),
-            DataPoint(6.0, 4.0),
-            DataPoint(9.0, 1.0),
-            DataPoint(10.0, 6.0),
-          ]),
-          extra: const <String, Object?>{'spanGaps': '2'},
+        raw(
+          LineDataset(
+            data: DatasetData.points([
+              DataPoint(0.0, 3.0),
+              DataPoint(1.0, 5.0),
+              DataPoint(4.0, 2.0),
+              DataPoint(5.0, null),
+              DataPoint(6.0, 4.0),
+              DataPoint(9.0, 1.0),
+              DataPoint(10.0, 6.0),
+            ]),
+          ),
+          const <String, Object?>{'spanGaps': '2'},
         ),
       ],
       scales: const [LinearAxis(.x)],
@@ -39124,14 +39123,16 @@ List<ControllerLineReferenceCase> controllerLineReference(
     name: 'parsed: a scriptable option writes ctx.parsed',
     config: () => ChartConfig(
       datasets: [
-        LineDataset(
-          data: DatasetData.points([
-            DataPoint(0.0, 1.0),
-            DataPoint(1.0, 2.0),
-            DataPoint(2.0, 3.0),
-            DataPoint(3.0, 4.0),
-          ]),
-          extra: <String, Object?>{
+        raw(
+          LineDataset(
+            data: DatasetData.points([
+              DataPoint(0.0, 1.0),
+              DataPoint(1.0, 2.0),
+              DataPoint(2.0, 3.0),
+              DataPoint(3.0, 4.0),
+            ]),
+          ),
+          <String, Object?>{
             'spanGaps': 1.5,
             'pointRadius': functions['radiusWrite'],
           },
@@ -40050,15 +40051,13 @@ List<ControllerLineReferenceCase> controllerLineReference(
     config: () => ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        LineDataset(
-          extra: <String, Object?>{
-            'data': <Object?>[
-              const <Object?>[0.0, 1.0],
-              const <Object?>[1.0, 2.0],
-            ],
-            'parsing': false,
-          },
-        ),
+        raw(LineDataset(), <String, Object?>{
+          'data': <Object?>[
+            const <Object?>[0.0, 1.0],
+            const <Object?>[1.0, 2.0],
+          ],
+          'parsing': false,
+        }),
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],
     ),
@@ -40847,9 +40846,9 @@ List<ControllerLineReferenceCase> controllerLineReference(
     config: () => ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        LineDataset(
-          data: DatasetData.values([1.0, 2.0]),
-          extra: const <String, Object?>{'parsing': false},
+        raw(
+          LineDataset(data: DatasetData.values([1.0, 2.0])),
+          const <String, Object?>{'parsing': false},
         ),
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],

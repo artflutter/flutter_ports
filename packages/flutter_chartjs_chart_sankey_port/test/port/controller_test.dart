@@ -17,14 +17,17 @@ Chart _chart(Map<String, Object?> dataset) => acquireChartRoot(
   lowerForTest(
     ChartConfig(
       datasets: [
-        SankeyDataset(
-          data: const [
-            SankeyDataPoint(from: 'a', to: 'b', flow: 10),
-            SankeyDataPoint(from: 'a', to: 'c', flow: 5),
-            SankeyDataPoint(from: 'b', to: 'c', flow: 10),
-          ],
-          // Keep the original callbacks for the resolver invocation probes.
-          extra: dataset,
+        raw(
+          const SankeyDataset(
+            data: [
+              SankeyDataPoint(from: 'a', to: 'b', flow: 10),
+              SankeyDataPoint(from: 'a', to: 'c', flow: 5),
+              SankeyDataPoint(from: 'b', to: 'c', flow: 10),
+            ],
+
+            // Keep the original callbacks for the resolver invocation probes.
+          ),
+          dataset,
         ),
       ],
       animation: ChartAnimation.none,

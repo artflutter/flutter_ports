@@ -148,11 +148,14 @@ void main() {
 
       // No tick mark: each dash of the x scale is the dash of a grid line.
       final chart = _cartesian(
-        CategoryAxis(
-          .x,
-          grid: const AxisGrid(drawTicks: false),
-          // The border parameter accepts a value; this case needs a callback.
-          extra: {'border': border},
+        raw(
+          const CategoryAxis(
+            .x,
+            grid: AxisGrid(drawTicks: false),
+
+            // The border parameter accepts a value; this case needs a callback.
+          ),
+          {'border': border},
         ),
       );
       // The first draw computes the grid line items (core.scale.js:1460):

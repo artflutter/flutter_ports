@@ -36,15 +36,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
       <Object?>['label 4', 'line 2'],
     ],
     scales: [
-      RadialLinearAxis(
-        startAngle: 45,
-        extra: <String, Object?>{
-          'pointLabels': <String, Object?>{
-            'display': ScaleDisplay.on,
-            'centerPointLabels': true,
-          },
+      raw(RadialLinearAxis(startAngle: 45), <String, Object?>{
+        'pointLabels': <String, Object?>{
+          'display': ScaleDisplay.on,
+          'centerPointLabels': true,
         },
-      ),
+      }),
     ],
     pluginOptions: [
       // DIVERGES(chartjs): adapt-native-plugin-options, one options object.

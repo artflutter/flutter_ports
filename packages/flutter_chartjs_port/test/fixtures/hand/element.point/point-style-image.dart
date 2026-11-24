@@ -54,14 +54,16 @@ FixtureConfig fixture() {
       labels: <Object>[0, 1, 2, 3, 4, 5, 6, 7],
       responsive: false,
       elements: ChartElements(
-        point: PointElementStyle(
-          // Upstream: pointStyle: imageCanvas. The DOM draws the bitmap of
-          // the canvas element. The canvas layer draws an image source:
-          // the snapshot of the bitmap, which does not change after this
-          // line (FR section 4.1 rule 7).
-          // DIVERGES(chartjs): adapt-point-style-objects, the image style.
-          pointStyle: ImagePointStyle(imageCanvas.toImageSource()),
-          extra: <String, Object?>{
+        point: raw(
+          PointElementStyle(
+            // Upstream: pointStyle: imageCanvas. The DOM draws the bitmap of
+            // the canvas element. The canvas layer draws an image source:
+            // the snapshot of the bitmap, which does not change after this
+            // line (FR section 4.1 rule 7).
+            // DIVERGES(chartjs): adapt-point-style-objects, the image style.
+            pointStyle: ImagePointStyle(imageCanvas.toImageSource()),
+          ),
+          <String, Object?>{
             'rotation': <Object?>[0, 45, 90, 135, 180, 225, 270, 315],
           },
         ),

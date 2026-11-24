@@ -28,36 +28,38 @@ FixtureConfig fixture() {
   final ctx = canvas.getContext('2d')!;
 
   return FixtureConfig.typed(
-    ChartConfig(
-      datasets: [
-        BarDataset(
-          data: .values(<num?>[1]),
-          backgroundColor: .constant(
-            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.5)),
+    raw(
+      ChartConfig(
+        datasets: [
+          BarDataset(
+            data: .values(<num?>[1]),
+            backgroundColor: .constant(
+              ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.5)),
+            ),
           ),
-        ),
-        BarDataset(
-          data: .values(<num?>[2]),
-          backgroundColor: .constant(
-            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.5)),
+          BarDataset(
+            data: .values(<num?>[2]),
+            backgroundColor: .constant(
+              ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.5)),
+            ),
           ),
-        ),
-        BarDataset(
-          data: .values(<num?>[3]),
-          backgroundColor: .constant(
-            ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.5)),
+          BarDataset(
+            data: .values(<num?>[3]),
+            backgroundColor: .constant(
+              ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.5)),
+            ),
           ),
-        ),
-      ],
-      labels: <Object>[0],
-      events: <String>[],
-      scales: [
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, max: 4),
-      ],
-      extra: <String, Object?>{
+        ],
+        labels: <Object>[0],
+        events: <String>[],
+        scales: [
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, max: 4),
+        ],
+      ),
+      <String, Object?>{
         'animation': <String, Object?>{
           'duration': 14000,
           // DIVERGES(chartjs): adapt-flutter-curves, the curve.

@@ -346,18 +346,22 @@ Chart _scatterChart({
       datasets: [
         for (var k = 0; k < datasets; k++)
           if (type == ChartKind.line)
-            LineDataset(
-              label: 'series $k',
-              data: .points(values?.call(k) ?? _values(count, k)),
-              pointRadius: pointRadius?.call(k),
-              extra: datasetExtra?.call(k),
+            raw(
+              LineDataset(
+                label: 'series $k',
+                data: .points(values?.call(k) ?? _values(count, k)),
+                pointRadius: pointRadius?.call(k),
+              ),
+              datasetExtra?.call(k),
             )
           else
-            ScatterDataset(
-              label: 'series $k',
-              data: .points(values?.call(k) ?? _values(count, k)),
-              pointRadius: pointRadius?.call(k),
-              extra: datasetExtra?.call(k),
+            raw(
+              ScatterDataset(
+                label: 'series $k',
+                data: .points(values?.call(k) ?? _values(count, k)),
+                pointRadius: pointRadius?.call(k),
+              ),
+              datasetExtra?.call(k),
             ),
       ],
       interaction: interaction,

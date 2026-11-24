@@ -17,35 +17,37 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it, with the
 /// title options as one object. Each call makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(
-        backgroundColor: .constant(
-          ChartPaint.solid(Color.fromRGBO(252, 233, 79, 0.5)),
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          backgroundColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(252, 233, 79, 0.5)),
+          ),
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFCE94F))),
+          borderWidth: 1,
+          data: .values(<num?>[101, 185, 24, 311, 17, 21, 462, 340, 140, 24]),
         ),
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFCE94F))),
-        borderWidth: 1,
-        data: .values(<num?>[101, 185, 24, 311, 17, 21, 462, 340, 140, 24]),
-      ),
-    ],
-    labels: <Object>[
-      'Aaron',
-      'Adam',
-      'Albert',
-      'Alex',
-      'Allan',
-      'Aman',
-      'Anthony',
-      'Autoenrolment',
-      'Avril',
-      'Bernard',
-    ],
-    maintainAspectRatio: false,
-    pluginOptions: [
-      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-      const TitleOptions(display: true, text: ['test']),
-    ],
-    extra: <String, Object?>{
+      ],
+      labels: <Object>[
+        'Aaron',
+        'Adam',
+        'Albert',
+        'Alex',
+        'Allan',
+        'Aman',
+        'Anthony',
+        'Autoenrolment',
+        'Avril',
+        'Bernard',
+      ],
+      maintainAspectRatio: false,
+      pluginOptions: [
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        const TitleOptions(display: true, text: ['test']),
+      ],
+    ),
+    <String, Object?>{
       'plugins': <String, Object?>{'legend': true},
     },
   ),

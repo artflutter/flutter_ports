@@ -4,7 +4,6 @@
 // (fixture.js:24): the chart keeps the Lists of its config and writes
 // into some of them.
 // ignore_for_file: prefer_const_constructors
-// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
@@ -24,9 +23,11 @@ FixtureConfig fixture() {
   return FixtureConfig.typed(
     ChartConfig(
       datasets: [
-        BarDataset(
-          backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-          extra: <String, Object?>{
+        raw(
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+          ),
+          <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'x': day(15), 'y': 55},
               <String, Object?>{'x': day(18), 'y': 10},
@@ -34,9 +35,11 @@ FixtureConfig fixture() {
             ],
           },
         ),
-        BarDataset(
-          backgroundColor: .constant(ChartPaint.solid(Color(0xFF008000))),
-          extra: <String, Object?>{
+        raw(
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFF008000))),
+          ),
+          <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'x': day(15), 'y': 6},
               <String, Object?>{'x': day(18), 'y': 11},
@@ -44,9 +47,11 @@ FixtureConfig fixture() {
             ],
           },
         ),
-        BarDataset(
-          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-          extra: <String, Object?>{
+        raw(
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          ),
+          <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'x': day(15), 'y': 7},
               <String, Object?>{'x': day(18), 'y': 12},
@@ -56,15 +61,12 @@ FixtureConfig fixture() {
         ),
       ],
       scales: [
-        TimeAxis(
-          CartesianAxis.x,
-          extra: <String, Object?>{
-            'time': <String, Object?>{
-              // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
-              'unit': TimeUnit.month,
-            },
+        raw(TimeAxis(CartesianAxis.x), <String, Object?>{
+          'time': <String, Object?>{
+            // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
+            'unit': TimeUnit.month,
           },
-        ),
+        }),
         // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
         LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
       ],

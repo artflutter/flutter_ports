@@ -22,11 +22,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      arc: ArcElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderColor: ChartPaint.solid(Color(0xFF000000)),
-        borderWidth: 1,
-        extra: <String, Object?>{
+      arc: raw(
+        ArcElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderColor: ChartPaint.solid(Color(0xFF000000)),
+          borderWidth: 1,
+        ),
+        <String, Object?>{
           'borderDash': (ScriptableContext ctx) {
             final value = jsOrZero(ctx.dataIndex ?? undefined).remainder(2);
             return value == 0 ? <Object?>[3, 3] : <Object?>[];

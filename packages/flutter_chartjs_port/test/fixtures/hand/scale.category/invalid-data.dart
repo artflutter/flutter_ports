@@ -16,11 +16,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        borderWidth: 5,
-        extra: <String, Object?>{
+      raw(
+        LineDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          borderWidth: 5,
+        ),
+        <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': 'a', 'y': 1},
             <String, Object?>{'x': null, 'y': 1},

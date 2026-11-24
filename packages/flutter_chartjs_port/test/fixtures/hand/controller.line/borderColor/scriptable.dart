@@ -34,11 +34,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      line: LineElementStyle(
-        borderWidth: 10,
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-        fill: FillTarget.none,
-        extra: <String, Object?>{
+      line: raw(
+        LineElementStyle(
+          borderWidth: 10,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.none,
+        ),
+        <String, Object?>{
           'borderColor': (ScriptableContext ctx) {
             final index = ctx.index;
             return index == 0

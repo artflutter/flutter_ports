@@ -14,49 +14,45 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BubbleDataset(
-        extra: <String, Object?>{
+  raw(
+    ChartConfig(
+      datasets: [
+        raw(BubbleDataset(), <String, Object?>{
           'data': <Object?>[
             <Object?>[1, 1],
             <Object?>[1, 2],
             <Object?>[1, 3, 20],
             <Object?>[1, 4, 20],
           ],
-        },
-      ),
-      BubbleDataset(
-        extra: <String, Object?>{
+        }),
+        raw(BubbleDataset(), <String, Object?>{
           'data': <Object?>[1, 2, 3, 4],
-        },
-      ),
-      BubbleDataset(
-        extra: <String, Object?>{
+        }),
+        raw(BubbleDataset(), <String, Object?>{
           'data': <Object?>[
             <String, Object?>{'x': 3, 'y': 1},
             <String, Object?>{'x': 3, 'y': 2},
             <String, Object?>{'x': 3, 'y': 3, 'r': 15},
             <String, Object?>{'x': 3, 'y': 4, 'r': 15},
           ],
-        },
-      ),
-    ],
-    labels: <Object>[2, 2, 2, 2],
-    events: <String>[],
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      LinearAxis(
-        CartesianAxis.x,
-        display: ScaleDisplay.off,
-        bounds: ScaleBounds.data,
-      ),
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
-    ],
-    padding: const EdgeInsets.all(24),
-    datasetDefaults: [BubbleDataset(radius: 10, hoverRadius: 0)],
-    extra: <String, Object?>{
+        }),
+      ],
+      labels: <Object>[2, 2, 2, 2],
+      events: <String>[],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(
+          CartesianAxis.x,
+          display: ScaleDisplay.off,
+          bounds: ScaleBounds.data,
+        ),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+      padding: const EdgeInsets.all(24),
+      datasetDefaults: [BubbleDataset(radius: 10, hoverRadius: 0)],
+    ),
+    <String, Object?>{
       'backgroundColor': ChartPaint.solid(Color(0xFF0000FF)),
       'hoverBackgroundColor': ChartPaint.solid(Color(0xFFFF0000)),
     },

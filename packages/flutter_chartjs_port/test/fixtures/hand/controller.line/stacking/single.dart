@@ -15,48 +15,50 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      LineDataset(
-        data: .values(<num?>[0, -1, -1]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+  raw(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          data: .values(<num?>[0, -1, -1]),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        LineDataset(
+          data: .values(<num?>[0, 2, 2]),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+        ),
+        LineDataset(
+          data: .values(<num?>[0, 0, 1]),
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+        ),
+      ],
+      labels: <Object>[0, 1, 2],
+      elements: ChartElements(
+        line: LineElementStyle(
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target
+          // value.
+          fill: FillTarget.toPrevious,
+        ),
+        point: PointElementStyle(radius: 0),
       ),
-      LineDataset(
-        data: .values(<num?>[0, 2, 2]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-      ),
-      LineDataset(
-        data: .values(<num?>[0, 0, 1]),
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-      ),
-    ],
-    labels: <Object>[0, 1, 2],
-    elements: ChartElements(
-      line: LineElementStyle(
-        // DIVERGES(chartjs): adapt-fill-target-objects, the target
-        // value.
-        fill: FillTarget.toPrevious,
-      ),
-      point: PointElementStyle(radius: 0),
+      padding: const EdgeInsets.all(32),
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(
+          CartesianAxis.y,
+          display: ScaleDisplay.off,
+          stacked: StackMode.single,
+        ),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
     ),
-    padding: const EdgeInsets.all(32),
-    scales: [
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
-      // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
-      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-      LinearAxis(
-        CartesianAxis.y,
-        display: ScaleDisplay.off,
-        stacked: StackMode.single,
-      ),
-    ],
-    disabledPlugins: [
-      PluginOff<LegendPlugin>(),
-      PluginOff<TitlePlugin>(),
-      PluginOff<TooltipPlugin>(),
-    ],
-    extra: <String, Object?>{
+    <String, Object?>{
       'plugins': <String, Object?>{'filler': true},
     },
   ),

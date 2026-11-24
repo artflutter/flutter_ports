@@ -77,27 +77,24 @@ AnyObject _center(LegendHitBox hb) => <String, Object?>{
 /// `should filter items` gives [legendHidden] to dataset 2 and
 /// [borderRadius] to dataset 3.
 List<Dataset> _barDatasets({bool? legendHidden, double? borderRadius}) => [
-  const BarDataset(
-    label: 'dataset1',
-    backgroundColor: ChartValue.constant(
-      ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
+  raw(
+    const BarDataset(
+      label: 'dataset1',
+      backgroundColor: ChartValue.constant(
+        ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
+      ),
+      data: .values([]),
     ),
-    data: .values([]),
-    extra: {
+    {
       'borderCapStyle': native_ui.StrokeCap.butt,
       'borderDash': <double>[2, 2],
       'borderDashOffset': 5.5,
     },
   ),
-  BarDataset(
-    label: 'dataset2',
-    hidden: true,
-    data: const .values([]),
-    extra: {
-      'borderJoinStyle': native_ui.StrokeJoin.miter,
-      'legendHidden': ?legendHidden,
-    },
-  ),
+  raw(const BarDataset(label: 'dataset2', hidden: true, data: .values([])), {
+    'borderJoinStyle': native_ui.StrokeJoin.miter,
+    'legendHidden': ?legendHidden,
+  }),
   BarDataset(
     label: 'dataset3',
     borderWidth: 10,
@@ -580,29 +577,32 @@ void main() {
       tester,
     ) async {
       final chart = _acquire(
-        const ChartConfig(
+        ChartConfig(
           datasets: [
-            BarDataset(
-              label: 'dataset1',
-              backgroundColor: ChartValue.indexed([
-                ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
-                ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
-                ChartPaint.solid(native_ui.Color.fromRGBO(17, 68, 238, 1)),
-              ]),
-              borderColor: ChartValue.indexed([
-                ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
-                ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
-                ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
-              ]),
-              data: .values([]),
-              // The typed borderWidth is one number: an array goes through
-              // `extra`.
-              extra: {
+            raw(
+              const BarDataset(
+                label: 'dataset1',
+                backgroundColor: ChartValue.indexed([
+                  ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
+                  ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
+                  ChartPaint.solid(native_ui.Color.fromRGBO(17, 68, 238, 1)),
+                ]),
+                borderColor: ChartValue.indexed([
+                  ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+                  ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+                  ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
+                ]),
+                data: .values([]),
+
+                // The typed borderWidth is one number: an array goes through
+                // `extra`.
+              ),
+              {
                 'borderWidth': <Object?>[5, 10, 15],
               },
             ),
           ],
-          labels: [],
+          labels: const [],
         ),
       );
 
@@ -627,31 +627,34 @@ void main() {
 
     testWidgets('should use the borderRadius in the legend', (tester) async {
       final chart = _acquire(
-        const ChartConfig(
+        ChartConfig(
           datasets: [
-            BarDataset(
-              label: 'dataset1',
-              backgroundColor: ChartValue.indexed([
-                ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
-                ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
-                ChartPaint.solid(native_ui.Color.fromRGBO(17, 68, 238, 1)),
-              ]),
-              borderColor: ChartValue.indexed([
-                ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
-                ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
-                ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
-              ]),
-              borderRadius: 10,
-              data: .values([]),
-              // The typed borderWidth is one number: an array goes through
-              // `extra`.
-              extra: {
+            raw(
+              const BarDataset(
+                label: 'dataset1',
+                backgroundColor: ChartValue.indexed([
+                  ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
+                  ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
+                  ChartPaint.solid(native_ui.Color.fromRGBO(17, 68, 238, 1)),
+                ]),
+                borderColor: ChartValue.indexed([
+                  ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+                  ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+                  ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
+                ]),
+                borderRadius: 10,
+                data: .values([]),
+
+                // The typed borderWidth is one number: an array goes through
+                // `extra`.
+              ),
+              {
                 'borderWidth': <Object?>[5, 10, 15],
               },
             ),
           ],
-          labels: [],
-          pluginOptions: [
+          labels: const [],
+          pluginOptions: const [
             LegendOptions(labels: LegendLabelOptions(useBorderRadius: true)),
           ],
         ),
@@ -683,34 +686,37 @@ void main() {
         final chart = _acquire(
           ChartConfig(
             datasets: [
-              BarDataset(
-                label: 'dataset1',
-                backgroundColor: ChartValue.resolver((ctx) {
-                  final value = _dataValue(ctx);
-                  return ChartPaint.solid(
-                    native_ui.Color.fromRGBO(
-                      (value * 10).toInt().clamp(0, 255),
-                      0,
-                      0,
-                      1,
-                    ),
-                  );
-                }),
-                borderColor: ChartValue.resolver((ctx) {
-                  final value = _dataValue(ctx);
-                  return ChartPaint.solid(
-                    native_ui.Color.fromRGBO(
-                      (255 - value * 10).toInt().clamp(0, 255),
-                      0,
-                      0,
-                      1,
-                    ),
-                  );
-                }),
-                data: const .values([5, 10, 15, 20]),
-                // The typed borderWidth is one number: a function goes
-                // through `extra`.
-                extra: const {'borderWidth': _dataValue},
+              raw(
+                BarDataset(
+                  label: 'dataset1',
+                  backgroundColor: ChartValue.resolver((ctx) {
+                    final value = _dataValue(ctx);
+                    return ChartPaint.solid(
+                      native_ui.Color.fromRGBO(
+                        (value * 10).toInt().clamp(0, 255),
+                        0,
+                        0,
+                        1,
+                      ),
+                    );
+                  }),
+                  borderColor: ChartValue.resolver((ctx) {
+                    final value = _dataValue(ctx);
+                    return ChartPaint.solid(
+                      native_ui.Color.fromRGBO(
+                        (255 - value * 10).toInt().clamp(0, 255),
+                        0,
+                        0,
+                        1,
+                      ),
+                    );
+                  }),
+                  data: const .values([5, 10, 15, 20]),
+
+                  // The typed borderWidth is one number: a function goes
+                  // through `extra`.
+                ),
+                const {'borderWidth': _dataValue},
               ),
             ],
             labels: const ['A', 'B', 'C', 'D'],

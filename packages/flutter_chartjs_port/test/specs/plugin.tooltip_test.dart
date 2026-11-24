@@ -761,19 +761,16 @@ void main() {
     ) async {
       final chart = _acquire(
         ChartConfig(
-          datasets: const [
+          datasets: [
             // The data items are the objects `{x, y}` of upstream, which
             // the chart parses.
-            LineDataset(
-              label: 'Dataset 1',
-              extra: <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 1, 'y': 10},
-                  <String, Object?>{'x': 2, 'y': 20},
-                  <String, Object?>{'x': 3, 'y': 30},
-                ],
-              },
-            ),
+            raw(const LineDataset(label: 'Dataset 1'), <String, Object?>{
+              'data': <Object?>[
+                <String, Object?>{'x': 1, 'y': 10},
+                <String, Object?>{'x': 2, 'y': 20},
+                <String, Object?>{'x': 3, 'y': 30},
+              ],
+            }),
           ],
           scales: const [LinearAxis(.x)],
           pluginOptions: [
@@ -998,18 +995,22 @@ void main() {
         final datasets = type == 'line'
             ? <Dataset>[_dataset1(), _dataset2()]
             : <Dataset>[
-                const BarDataset(
-                  label: 'Dataset 1',
-                  data: .values([10, 20, 30]),
-                  extra: {
+                raw(
+                  const BarDataset(
+                    label: 'Dataset 1',
+                    data: .values([10, 20, 30]),
+                  ),
+                  {
                     'pointHoverBorderColor': _red,
                     'pointHoverBackgroundColor': _green,
                   },
                 ),
-                const BarDataset(
-                  label: 'Dataset 2',
-                  data: .values([40, 40, 40]),
-                  extra: {
+                raw(
+                  const BarDataset(
+                    label: 'Dataset 2',
+                    data: .values([40, 40, 40]),
+                  ),
+                  {
                     'pointHoverBorderColor': _blue,
                     'pointHoverBackgroundColor': _cyan,
                   },

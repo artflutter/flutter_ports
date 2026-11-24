@@ -17,10 +17,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      LineDataset(
-        data: .values(<num?>[0, 5, 10, null, -10, -5]),
-        pointBorderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        extra: <String, Object?>{
+      raw(
+        LineDataset(
+          data: .values(<num?>[0, 5, 10, null, -10, -5]),
+          pointBorderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+        ),
+        <String, Object?>{
           'pointBorderWidth': <Object?>[1, 2, 3, 4, 5, 6],
         },
       ),
@@ -32,10 +34,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
         // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
         fill: FillTarget.none,
       ),
-      point: PointElementStyle(
-        borderColor: ChartPaint.solid(Color(0xFFFF0000)),
-        radius: 10,
-        extra: <String, Object?>{
+      point: raw(
+        PointElementStyle(
+          borderColor: ChartPaint.solid(Color(0xFFFF0000)),
+          radius: 10,
+        ),
+        <String, Object?>{
           'borderWidth': <Object?>[6, 5, 4, 3, 2, 1],
         },
       ),

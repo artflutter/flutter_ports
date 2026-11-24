@@ -27,24 +27,26 @@ FixtureConfig fixture() {
   final ctx = canvas.getContext('2d')!;
 
   return FixtureConfig.typed(
-    ChartConfig(
-      datasets: [
-        DoughnutDataset(
-          data: <num?>[1],
-          backgroundColor: .constant(ChartPaint.solid(Color(0xCCFF6384))),
-          borderWidth: 4,
-          borderColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        ),
-      ],
-      labels: <Object>['A', 'B', 'C', 'D', 'E'],
-      responsive: false,
-      disabledPlugins: [
-        PluginOff<LegendPlugin>(),
-        PluginOff<TitlePlugin>(),
-        PluginOff<TooltipPlugin>(),
-        PluginOff<FillerPlugin>(),
-      ],
-      extra: <String, Object?>{
+    raw(
+      ChartConfig(
+        datasets: [
+          DoughnutDataset(
+            data: <num?>[1],
+            backgroundColor: .constant(ChartPaint.solid(Color(0xCCFF6384))),
+            borderWidth: 4,
+            borderColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+          ),
+        ],
+        labels: <Object>['A', 'B', 'C', 'D', 'E'],
+        responsive: false,
+        disabledPlugins: [
+          PluginOff<LegendPlugin>(),
+          PluginOff<TitlePlugin>(),
+          PluginOff<TooltipPlugin>(),
+          PluginOff<FillerPlugin>(),
+        ],
+      ),
+      <String, Object?>{
         'animation': <String, Object?>{
           'duration': 0,
           // DIVERGES(chartjs): adapt-flutter-curves, the curve.

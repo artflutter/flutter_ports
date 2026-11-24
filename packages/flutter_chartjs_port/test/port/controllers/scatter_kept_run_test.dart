@@ -29,17 +29,20 @@ ChartConfig _config(
   List<double>? radii,
 }) => ChartConfig(
   datasets: [
-    ScatterDataset(
-      data: .points([
-        for (var i = 0; i < count; i++) DataPoint(i * 37 % 101, i * 53 % 97),
-      ]),
-      pointRadius: radii == null ? const .constant(3) : null,
-      borderWidth: borderWidth,
-      backgroundColor: backgroundColor,
-      borderColor: borderColor,
-      hoverBackgroundColor: hoverBackgroundColor,
-      // The typed scalar radius cannot express the indexable radius case.
-      extra: {'radius': ?radii},
+    raw(
+      ScatterDataset(
+        data: .points([
+          for (var i = 0; i < count; i++) DataPoint(i * 37 % 101, i * 53 % 97),
+        ]),
+        pointRadius: radii == null ? const .constant(3) : null,
+        borderWidth: borderWidth,
+        backgroundColor: backgroundColor,
+        borderColor: borderColor,
+        hoverBackgroundColor: hoverBackgroundColor,
+
+        // The typed scalar radius cannot express the indexable radius case.
+      ),
+      {'radius': ?radii},
     ),
   ],
   responsive: false,

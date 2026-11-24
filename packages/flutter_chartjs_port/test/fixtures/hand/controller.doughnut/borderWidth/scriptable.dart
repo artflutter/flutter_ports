@@ -15,10 +15,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      DoughnutDataset(
-        // option in dataset
-        data: <num?>[0, 2, 4, null, 6, 8],
-        extra: <String, Object?>{
+      raw(
+        DoughnutDataset(
+          // option in dataset
+          data: <num?>[0, 2, 4, null, 6, 8],
+        ),
+        <String, Object?>{
           'borderWidth': (ScriptableContext ctx) {
             final value = jsOrZero(
               jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
@@ -34,10 +36,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
     elements: ChartElements(
-      arc: ArcElementStyle(
-        backgroundColor: ChartPaint.solid(Color(0x00000000)),
-        borderColor: ChartPaint.solid(Color(0xFF888888)),
-        extra: <String, Object?>{
+      arc: raw(
+        ArcElementStyle(
+          backgroundColor: ChartPaint.solid(Color(0x00000000)),
+          borderColor: ChartPaint.solid(Color(0xFF888888)),
+        ),
+        <String, Object?>{
           'borderWidth': (ScriptableContext ctx) {
             return jsToNumber(ctx.dataIndex ?? undefined) * 2;
           },

@@ -19,17 +19,21 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 FixtureConfig fixture() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        <String, Object?>{
           'data': <String, Object?>{'0': 5, '1': 20, '2': 1, '3': 10},
         },
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-        extra: <String, Object?>{
+      raw(
+        BarDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        ),
+        <String, Object?>{
           'data': <String, Object?>{
             '0': 10,
             '1': null,

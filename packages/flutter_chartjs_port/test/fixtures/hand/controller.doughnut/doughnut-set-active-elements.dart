@@ -14,31 +14,31 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      DoughnutDataset(
-        data: <num?>[34, 33, 17, 16],
-        backgroundColor: .indexed(<ChartPaint>[
-          ChartPaint.solid(Color(0xFFD92323)),
-          ChartPaint.solid(Color(0xFFE45757)),
-          ChartPaint.solid(Color(0xFFED8D8D)),
-          ChartPaint.solid(Color(0xFFF5C4C4)),
-        ]),
-      ),
-    ],
-    events: <String>[],
-    datasetDefaults: [
-      DoughnutDataset(
-        // for easier saving of the fixture only
-        borderWidth: 0,
-        hoverBorderWidth: 4,
-        // DIVERGES(chartjs): adapt-length-objects, the length class.
-        cutout: const PercentRadius(80),
-      ),
-    ],
-    extra: <String, Object?>{
-      'hoverBorderColor': ChartPaint.solid(Color(0xFF000000)),
-    },
+  raw(
+    ChartConfig(
+      datasets: [
+        DoughnutDataset(
+          data: <num?>[34, 33, 17, 16],
+          backgroundColor: .indexed(<ChartPaint>[
+            ChartPaint.solid(Color(0xFFD92323)),
+            ChartPaint.solid(Color(0xFFE45757)),
+            ChartPaint.solid(Color(0xFFED8D8D)),
+            ChartPaint.solid(Color(0xFFF5C4C4)),
+          ]),
+        ),
+      ],
+      events: <String>[],
+      datasetDefaults: [
+        DoughnutDataset(
+          // for easier saving of the fixture only
+          borderWidth: 0,
+          hoverBorderWidth: 4,
+          // DIVERGES(chartjs): adapt-length-objects, the length class.
+          cutout: const PercentRadius(80),
+        ),
+      ],
+    ),
+    <String, Object?>{'hoverBorderColor': ChartPaint.solid(Color(0xFF000000))},
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9248',
   run: (chart) {
