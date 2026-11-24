@@ -548,7 +548,9 @@ void main() {
                       angleLinesColor: ChartPaint.solid(ui.Color(0x33888888)),
                       angleLinesLineWidth: 1,
                       grid: AxisGrid(
-                        color: ChartPaint.solid(ui.Color(0x33888888)),
+                        color: .constant(
+                          ChartPaint.solid(ui.Color(0x33888888)),
+                        ),
                         drawTicks: false,
                       ),
                     ),

@@ -334,7 +334,9 @@ ChartConfigurationScope _config({
         RadialLinearAxis(
           min: 0,
           max: 100,
-          grid: const AxisGrid(color: ChartPaint.solid(ui.Color(0x33000000))),
+          grid: const AxisGrid(
+            color: .constant(ChartPaint.solid(ui.Color(0x33000000))),
+          ),
           angleLinesDisplay: baseLines ? true : null,
           angleLinesColor: baseLines
               ? const ChartPaint.solid(ui.Color(0xFF336699))
@@ -1341,13 +1343,13 @@ void main() {
                     angleLinesColor: ChartPaint.solid(grid),
                     angleLinesLineWidth: 1,
                     grid: AxisGrid(
-                      color: ChartPaint.solid(grid),
+                      color: .constant(ChartPaint.solid(grid)),
                       drawTicks: false,
                       circular: true,
                     ),
                     ticks: AxisTicks(
                       stepSize: 25,
-                      font: TextStyle(fontSize: 10),
+                      font: .constant(TextStyle(fontSize: 10)),
                     ),
                     extra: {
                       'pointLabels': {'callback': _everyFourth},

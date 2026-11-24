@@ -182,7 +182,7 @@ LinearAxis shadcnValueAxis(
     stacked: stacked ? StackMode.on : StackMode.off,
     grid: AxisGrid(
       display: grid,
-      color: const .solid(Shadcn.grid),
+      color: const .constant(.solid(Shadcn.grid)),
       drawTicks: false,
     ),
     ticks: AxisTicks(display: false, stepSize: step),
@@ -231,8 +231,8 @@ CategoryAxis shadcnCategoryAxis({
   stacked: stacked ? StackMode.on : StackMode.off,
   grid: const AxisGrid(display: false, drawTicks: false),
   ticks: AxisTicks(
-    color: const .solid(Shadcn.mutedForeground),
-    font: shadcnTextXs,
+    color: const .constant(.solid(Shadcn.mutedForeground)),
+    font: const .constant(shadcnTextXs),
     // The tick size of Recharts, 6 px, and the tick margin, less the space
     // above the text.
     padding: tickMargin + 4,
@@ -261,8 +261,8 @@ CategoryAxis shadcnCategoryYAxis({
   display: display ? ScaleDisplay.on : ScaleDisplay.off,
   grid: const AxisGrid(display: false, drawTicks: false),
   ticks: AxisTicks(
-    color: const .solid(Shadcn.mutedForeground),
-    font: shadcnTextXs,
+    color: const .constant(.solid(Shadcn.mutedForeground)),
+    font: const .constant(shadcnTextXs),
     padding: tickMargin + 6,
     callback: callback,
   ),

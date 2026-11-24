@@ -150,7 +150,9 @@ class _Sample13State() extends State<Sample13> {
             stepSize: 1,
             autoSkip: false,
             maxRotation: 0,
-            font: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            font: const .constant(
+              TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
             callback: (scale, value, index, ticks) {
               if (value == 31) return [''];
               final day = value.toInt() + 1;
@@ -161,11 +163,11 @@ class _Sample13State() extends State<Sample13> {
                   '',
               ];
             },
-            extra: {
-              'color': (Object? c) => ChartPaint.solid(
+            color: .resolver(
+              (c) => ChartPaint.solid(
                 tickOf(c) == _hovered ? Colors.white : Fl.green,
               ),
-            },
+            ),
           ),
         ),
         LinearAxis(
@@ -174,11 +176,11 @@ class _Sample13State() extends State<Sample13> {
           max: _maxTemp + 5,
           grid: AxisGrid(
             drawTicks: false,
-            extra: {
-              'color': (Object? c) =>
+            color: .resolver(
+              (c) =>
                   ChartPaint.solid(tickOf(c) == 0 ? Fl.white38 : Fl.blueGrey),
-              'lineWidth': (Object? c) => tickOf(c) == 0 ? 0.8 : 0.4,
-            },
+            ),
+            lineWidth: .resolver((c) => tickOf(c) == 0 ? 0.8 : 0.4),
           ),
           // The dash of each grid line follows its tick: a function of the
           // context gives the border.
@@ -190,7 +192,7 @@ class _Sample13State() extends State<Sample13> {
           },
           ticks: AxisTicks(
             stepSize: 5,
-            color: const ChartPaint.solid(Colors.white),
+            color: const .constant(ChartPaint.solid(Colors.white)),
             callback: (scale, value, index, ticks) => ['${value.toInt()}°'],
           ),
         ),

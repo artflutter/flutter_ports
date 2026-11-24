@@ -31682,7 +31682,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           .y,
           ticks: AxisTicks(
             maxTicksLimit: 1000,
-            font: ChartTextStyle(fontSize: 40),
+            font: ScaleValue.constant(ChartTextStyle(fontSize: 40)),
           ),
         ),
       ],
@@ -32139,7 +32139,9 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           .y,
           ticks: AxisTicks(
             maxTicksLimit: 1000,
-            font: ChartTextStyle(fontSize: 12, height: 1.6666666666666667),
+            font: ScaleValue.constant(
+              ChartTextStyle(fontSize: 12, height: 1.6666666666666667),
+            ),
           ),
         ),
       ],
@@ -34568,7 +34570,12 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
       ],
       scales: const [
-        LinearAxis(.y, ticks: AxisTicks(font: ChartTextStyle(height: 0))),
+        LinearAxis(
+          .y,
+          ticks: AxisTicks(
+            font: ScaleValue.constant(ChartTextStyle(height: 0)),
+          ),
+        ),
       ],
     ),
     options: const AcquireOptions(),
@@ -37939,7 +37946,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           .x,
           ticks: AxisTicks(
             maxTicksLimit: 1000,
-            font: ChartTextStyle(height: 0.002),
+            font: ScaleValue.constant(ChartTextStyle(height: 0.002)),
           ),
         ),
       ],
@@ -38877,7 +38884,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
           ticks: AxisTicks(
             maxTicksLimit: 1000,
             minRotation: 45,
-            font: ChartTextStyle(fontSize: 30),
+            font: ScaleValue.constant(ChartTextStyle(fontSize: 30)),
           ),
         ),
       ],

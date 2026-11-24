@@ -20,7 +20,7 @@ const _shadowColor = Color(0xFFCCCCCC);
 const _width = 6.0;
 const _line = AxisGrid(
   drawTicks: false,
-  color: ChartPaint.solid(Color(0x33FFFFFF)),
+  color: .constant(ChartPaint.solid(Color(0x33FFFFFF))),
 );
 
 class const BarSample7({super.key}) extends StatefulWidget {
@@ -105,11 +105,13 @@ class _BarSample7State() extends State<BarSample7> {
         autoSkip: false,
         maxRotation: 0,
         // Chart.js clips the labels to the axis: the icon keeps its size.
-        font: const TextStyle(fontFamily: 'MaterialIcons', fontSize: 28),
+        font: const .constant(
+          TextStyle(fontFamily: 'MaterialIcons', fontSize: 28),
+        ),
         callback: _icon,
-        extra: {
-          'color': (Object? c) => ChartPaint.solid(_colors[tickOf(c).toInt()]),
-        },
+        color: .resolver(
+          (c) => ChartPaint.solid(_colors[tickOf(c).toInt()]),
+        ),
       ),
     );
     final values = valueAxis(
@@ -130,8 +132,8 @@ class _BarSample7State() extends State<BarSample7> {
         padding: 8,
         autoSkip: false,
         maxRotation: 0,
-        color: const .solid(Fl.white38),
-        font: const TextStyle(fontSize: 14),
+        color: const .constant(.solid(Fl.white38)),
+        font: const .constant(TextStyle(fontSize: 14)),
         callback: flTitles(),
       ),
     );

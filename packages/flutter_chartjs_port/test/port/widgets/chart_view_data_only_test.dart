@@ -1779,14 +1779,20 @@ void main() {
           .x,
           min: 0,
           max: 100,
-          grid: const AxisGrid(color: ChartPaint.solid(_red), lineWidth: 3),
+          grid: const AxisGrid(
+            color: .constant(ChartPaint.solid(_red)),
+            lineWidth: .constant(3),
+          ),
           extra: xExtra,
         ),
         const LinearAxis(
           .y,
           min: 0,
           max: 100,
-          grid: AxisGrid(color: ChartPaint.solid(_green), lineWidth: 3),
+          grid: AxisGrid(
+            color: .constant(ChartPaint.solid(_green)),
+            lineWidth: .constant(3),
+          ),
         ),
       ],
       animation: ChartAnimation.none,

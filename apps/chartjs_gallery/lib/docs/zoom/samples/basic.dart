@@ -250,7 +250,7 @@ List<ChartAxis> zoomSampleScales() {
         index == 0 || index == ticks.length - 1 ? null : [jsNumberText(val)],
   );
   const grid = AxisGrid(
-    color: ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
+    color: .constant(ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1))),
   );
   return [
     LinearAxis(

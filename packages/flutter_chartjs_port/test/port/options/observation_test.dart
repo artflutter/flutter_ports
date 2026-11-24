@@ -300,6 +300,31 @@ String _run(_Case c, {required bool wrap}) {
           }
         }
       }
+      // The same for the ScaleValue.resolver of an axis part
+      // (`ScaleResolver.toOptionCell`), at the scale id of the lowering.
+      final counts = <String, int>{};
+      for (final axis in typed.scales ?? const <ChartAxis>[]) {
+        final letter = switch (axis.axis) {
+          XAxis() => 'x',
+          YAxis() => 'y',
+          _ => 'r',
+        };
+        final n = counts[letter] ?? 0;
+        counts[letter] = n + 1;
+        final path = 'config.options.scales.${n == 0 ? letter : '$letter$n'}';
+        for (final (key, value) in [
+          ('grid.color', axis.grid?.color),
+          ('grid.lineWidth', axis.grid?.lineWidth),
+          ('grid.tickColor', axis.grid?.tickColor),
+          ('grid.tickWidth', axis.grid?.tickWidth),
+          ('ticks.color', axis.ticks?.color),
+          ('ticks.font', axis.ticks?.font),
+          ('ticks.backdropColor', axis.ticks?.backdropColor),
+          ('ticks.textStrokeColor', axis.ticks?.textStrokeColor),
+        ]) {
+          if (value is ScaleResolver) resolvers.add('$path.$key');
+        }
+      }
     }
     final fixtureInputs = fixtureInput(
       path,
@@ -735,15 +760,25 @@ void _wrapFunctions(
   }
 }
 
-/// The recorder of the bridge [bridge] of a typed `ChartValue.resolver`: it
+/// The recorder of the bridge [bridge] of a typed `ChartValue.resolver` or
+/// `ScaleValue.resolver`: it
 /// writes the line of the context only, the argument of the function of the
 /// config, and calls the bridge.
 Object? _resolverRecorder(Object? bridge, String path, List<String> trace) {
-  if (bridge is! Object? Function(ScriptableContext, Object?)) return null;
-  return (ScriptableContext context, Object? options) {
-    trace.add(_traceLine(path, [context]));
-    return bridge(context, options);
-  };
+  if (bridge is Object? Function(ScriptableContext, Object?)) {
+    return (ScriptableContext context, Object? options) {
+      trace.add(_traceLine(path, [context]));
+      return bridge(context, options);
+    };
+  }
+  // The bridge of a typed ScaleValue.resolver of an axis part.
+  if (bridge is Object? Function(ScriptableScaleContext, Object?)) {
+    return (ScriptableScaleContext context, Object? options) {
+      trace.add(_traceLine(path, [context]));
+      return bridge(context, options);
+    };
+  }
+  return null;
 }
 
 /// The recorder of [value] when it is a function with an exact arity, else

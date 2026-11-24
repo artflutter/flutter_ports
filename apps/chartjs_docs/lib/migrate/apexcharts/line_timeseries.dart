@@ -52,8 +52,8 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       displayFormats: TimeDisplayFormats(day: 'dd MMM'),
       grid: AxisGrid(display: false, drawTicks: false),
       ticks: AxisTicks(
-        color: .solid(Apex.label),
-        font: apexLabelFont,
+        color: .constant(.solid(Apex.label)),
+        font: .constant(apexLabelFont),
         padding: 8,
         maxRotation: 0,
       ),

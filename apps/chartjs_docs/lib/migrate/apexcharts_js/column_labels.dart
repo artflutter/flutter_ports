@@ -65,8 +65,8 @@ final ChartConfig _config = ChartConfig(
       position: .top,
       grid: AxisGrid(display: false),
       ticks: AxisTicks(
-        color: .solid(Apex.text),
-        font: TextStyle(fontSize: 12),
+        color: .constant(.solid(Apex.text)),
+        font: .constant(TextStyle(fontSize: 12)),
         maxRotation: 0,
         autoSkip: false,
       ),

@@ -74,12 +74,12 @@ const AxisBorder flGridDash = AxisBorder(dash: [8, 4], display: false);
 
 AxisGrid flGrid({bool Function(double value)? show}) => AxisGrid(
   drawTicks: false,
-  lineWidth: 0.4,
-  extra: {
-    'color': (Object? c) => ChartPaint.solid(
+  lineWidth: const .constant(0.4),
+  color: .resolver(
+    (c) => ChartPaint.solid(
       show == null || show(tickOf(c)) ? Fl.blueGrey : Colors.transparent,
     ),
-  },
+  ),
 );
 
 /// The frame around the chart area that fl_chart calls the border data.

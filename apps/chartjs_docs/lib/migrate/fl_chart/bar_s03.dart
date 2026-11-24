@@ -77,8 +77,10 @@ class _BarSample3State() extends State<BarSample3> {
           border: const AxisBorder(display: false),
           ticks: const AxisTicks(
             padding: 4,
-            color: .solid(_darkBlue),
-            font: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            color: .constant(.solid(_darkBlue)),
+            font: .constant(
+              TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
           ),
           afterFit: reserve(30),
         ),

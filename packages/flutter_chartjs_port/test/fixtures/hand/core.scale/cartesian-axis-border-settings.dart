@@ -34,7 +34,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
         min: -100,
         max: 100,
         grid: AxisGrid(
-          color: ChartPaint.solid(Color(0xFFFF0000)),
+          color: .constant(ChartPaint.solid(Color(0xFFFF0000))),
           drawOnChartArea: false,
         ),
         // DIVERGES(chartjs): adapt-native-scale-border, the border object.
@@ -52,7 +52,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
         // DIVERGES(chartjs): adapt-native-scale-border, the border object.
         border: const AxisBorder(color: ChartPaint.solid(Color(0xFFFF0000))),
         grid: AxisGrid(
-          color: ChartPaint.solid(Color(0xFFFF0000)),
+          color: .constant(ChartPaint.solid(Color(0xFFFF0000))),
           drawOnChartArea: false,
         ),
         ticks: AxisTicks(display: false),

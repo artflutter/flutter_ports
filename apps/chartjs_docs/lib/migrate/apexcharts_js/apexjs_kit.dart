@@ -80,15 +80,15 @@ CategoryAxis apexJsCategoryAxis({
   horizontal ? .y : .x,
   position: position,
   grid: horizontal
-      ? const AxisGrid(color: .solid(apexJsGrid), drawTicks: false)
+      ? const AxisGrid(color: .constant(.solid(apexJsGrid)), drawTicks: false)
       : const AxisGrid(
-          color: .solid(apexJsGrid),
+          color: .constant(.solid(apexJsGrid)),
           drawOnChartArea: false,
           tickLength: 6,
         ),
   ticks: AxisTicks(
-    color: labelColor,
-    font: TextStyle(fontSize: horizontal ? 11 : 12),
+    color: .constant(labelColor),
+    font: .constant(TextStyle(fontSize: horizontal ? 11 : 12)),
     padding: horizontal ? 10 : 4,
     maxRotation: maxRotation,
     autoSkip: false,
@@ -125,13 +125,13 @@ LinearAxis apexJsValueAxis({
   stacked: stacked ? StackMode.on : StackMode.off,
   grid: AxisGrid(
     display: grid && !horizontal,
-    color: const .solid(apexJsGrid),
+    color: const .constant(.solid(apexJsGrid)),
     drawTicks: false,
   ),
   ticks: AxisTicks(
     stepSize: stepSize,
-    color: const .solid(Apex.text),
-    font: TextStyle(fontSize: horizontal ? 12 : 11),
+    color: const .constant(.solid(Apex.text)),
+    font: .constant(TextStyle(fontSize: horizontal ? 12 : 11)),
     padding: horizontal ? 6 : 12,
     maxRotation: 0,
     callback: callback ?? apexNumberTick,

@@ -115,14 +115,14 @@ final ChartConfig _config = ChartConfig(
       tooltipFormat: 'yyyy',
       grid: AxisGrid(
         drawOnChartArea: false,
-        color: ChartPaint.solid(_axisLine),
+        color: .constant(ChartPaint.solid(_axisLine)),
         tickLength: 6,
       ),
       ticks: AxisTicks(
         stepSize: 5,
         maxRotation: 0,
-        color: ChartPaint.solid(_text),
-        font: TextStyle(fontSize: 12),
+        color: .constant(ChartPaint.solid(_text)),
+        font: .constant(TextStyle(fontSize: 12)),
       ),
       title: AxisTitle(
         display: true,
@@ -137,15 +137,15 @@ final ChartConfig _config = ChartConfig(
       min: 200,
       max: 600,
       grid: AxisGrid(
-        color: ChartPaint.solid(_grid),
-        lineWidth: 0.7,
+        color: .constant(ChartPaint.solid(_grid)),
+        lineWidth: .constant(0.7),
         drawTicks: false,
       ),
       ticks: AxisTicks(
         stepSize: 100,
         padding: 8,
-        color: ChartPaint.solid(_text),
-        font: TextStyle(fontSize: 12),
+        color: .constant(ChartPaint.solid(_text)),
+        font: .constant(TextStyle(fontSize: 12)),
         callback: _mm,
       ),
       border: AxisBorder(display: false),

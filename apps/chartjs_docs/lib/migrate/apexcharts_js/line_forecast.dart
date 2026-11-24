@@ -73,14 +73,14 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       tooltipFormat: 'dd MMM yyyy',
       displayFormats: TimeDisplayFormats(day: 'dd MMM'),
       grid: AxisGrid(
-        color: .solid(apexJsGrid),
+        color: .constant(.solid(apexJsGrid)),
         drawOnChartArea: false,
         tickLength: 6,
       ),
       ticks: AxisTicks(
         source: .data,
-        color: .solid(Apex.text),
-        font: TextStyle(fontSize: 12),
+        color: .constant(.solid(Apex.text)),
+        font: .constant(TextStyle(fontSize: 12)),
         padding: 4,
         maxRotation: 0,
       ),

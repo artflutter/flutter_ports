@@ -327,7 +327,7 @@ class AxesDemoState() extends State<AxesDemo> {
       autoSkip: _autoSkip,
       maxRotation: _maxRotation,
       align: _align,
-      font: ChartTextStyle(fontSize: _fontSize),
+      font: .constant(ChartTextStyle(fontSize: _fontSize)),
       extra: {
         'minRotation': _minRotation,
         if (_maxTicksLimit > 0) 'maxTicksLimit': _maxTicksLimit,

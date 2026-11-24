@@ -197,8 +197,10 @@ class _BarSample1State() extends State<BarSample1> {
             reservedSize: 38,
             ticks: AxisTicks(
               padding: 16,
-              color: const .solid(Colors.white),
-              font: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              color: const .constant(.solid(Colors.white)),
+              font: const .constant(
+                TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
               callback: (scale, value, index, ticks) => [_letters[index]],
             ),
           ),

@@ -106,8 +106,8 @@ final ChartConfig _config = fills(
         border: Fl.noBorder,
         ticks: AxisTicks(
           stepSize: 4,
-          color: ChartPaint.solid(Colors.white),
-          font: TextStyle(fontSize: 10),
+          color: .constant(ChartPaint.solid(Colors.white)),
+          font: .constant(TextStyle(fontSize: 10)),
         ),
       ),
       LinearAxis(
@@ -119,14 +119,15 @@ final ChartConfig _config = fills(
         ticks: AxisTicks(
           stepSize: 2,
           autoSkip: false,
-          font: const TextStyle(fontFamily: 'MaterialIcons', fontSize: 32),
+          font: const .constant(
+            TextStyle(fontFamily: 'MaterialIcons', fontSize: 32),
+          ),
           callback: (scale, value, index, ticks) => [
             String.fromCharCode(_icons[value.toInt()]!.$1.codePoint),
           ],
-          extra: {
-            'color': (Object? c) =>
-                ChartPaint.solid(_icons[tickOf(c).toInt()]!.$2),
-          },
+          color: .resolver(
+            (c) => ChartPaint.solid(_icons[tickOf(c).toInt()]!.$2),
+          ),
         ),
       ),
     ],

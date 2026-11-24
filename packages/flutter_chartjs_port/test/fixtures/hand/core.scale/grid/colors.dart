@@ -35,7 +35,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
           width: 2,
         ),
         grid: AxisGrid(
-          color: ChartPaint.solid(Color(0xFF008000)),
+          color: .constant(ChartPaint.solid(Color(0xFF008000))),
           drawTicks: false,
         ),
       ),
@@ -48,7 +48,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
           width: 2,
         ),
         grid: AxisGrid(
-          color: ChartPaint.solid(Color(0xFFFF0000)),
+          color: .constant(ChartPaint.solid(Color(0xFFFF0000))),
           drawTicks: false,
         ),
       ),

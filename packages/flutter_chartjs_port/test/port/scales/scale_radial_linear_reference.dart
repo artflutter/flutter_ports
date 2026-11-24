@@ -13572,7 +13572,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       scales: const [
         RadialLinearAxis(
           angleLinesDisplay: false,
-          grid: AxisGrid(lineWidth: 0),
+          grid: AxisGrid(lineWidth: ScaleValue.constant(0)),
         ),
       ],
     ),
@@ -14862,8 +14862,10 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         RadialLinearAxis(
           grid: AxisGrid(
             circular: true,
-            color: ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
-            lineWidth: 2,
+            color: ScaleValue.constant(
+              ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+            ),
+            lineWidth: ScaleValue.constant(2),
           ),
         ),
       ],
@@ -15396,8 +15398,10 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       scales: const [
         RadialLinearAxis(
           grid: AxisGrid(
-            color: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
-            lineWidth: 3,
+            color: ScaleValue.constant(
+              ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+            ),
+            lineWidth: ScaleValue.constant(3),
           ),
           border: RadialAxisBorder(dash: <double>[4, 2], dashOffset: 1),
         ),
@@ -24130,12 +24134,20 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       scales: const [
         RadialLinearAxis(
           ticks: AxisTicks(
-            backdropColor: ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
+            backdropColor: ScaleValue.constant(
+              ChartPaint.solid(Color.fromRGBO(255, 255, 0, 1)),
+            ),
             backdropPadding: EdgeInsets.fromLTRB(4, 1, 4, 1),
-            color: ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
-            textStrokeColor: ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+            color: ScaleValue.constant(
+              ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
+            ),
+            textStrokeColor: ScaleValue.constant(
+              ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
+            ),
             textStrokeWidth: 2,
-            font: ChartTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            font: ScaleValue.constant(
+              ChartTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ],
@@ -24719,7 +24731,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
           ticks: AxisTicks(
             showLabelBackdrop: false,
             callback: functions['tickUnit']! as TickCallback,
-            font: const ChartTextStyle(fontSize: 9),
+            font: const ScaleValue.constant(ChartTextStyle(fontSize: 9)),
           ),
         ),
       ],

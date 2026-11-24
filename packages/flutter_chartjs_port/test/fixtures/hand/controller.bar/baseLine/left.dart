@@ -36,15 +36,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
         CartesianAxis.x,
         ticks: AxisTicks(display: false),
         grid: AxisGrid(
-          lineWidth: 5,
+          lineWidth: .constant(5),
           tickLength: 0,
-          extra: <String, Object?>{
-            'color': (ScriptableScaleContext context) {
-              return context.tick!.value == 0
-                  ? ChartPaint.solid(Color(0xFFFF0000))
-                  : ChartPaint.solid(Color(0x00000000));
-            },
-          },
+          color: .resolver((context) {
+            return context.tick!.value == 0
+                ? ChartPaint.solid(Color(0xFFFF0000))
+                : ChartPaint.solid(Color(0x00000000));
+          }),
         ),
       ),
     ],

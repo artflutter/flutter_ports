@@ -162,17 +162,17 @@ void _onAnimation(IAnimationEvent event) {}
 
 const AxisTicks _ticks = AxisTicks(
   display: true,
-  color: ChartPaint.solid(_red),
-  font: _font,
+  color: .constant(ChartPaint.solid(_red)),
+  font: .constant(_font),
   padding: 3,
   stepSize: 1,
   maxRotation: 0,
   autoSkip: true,
   callback: _format,
-  backdropColor: ChartPaint.solid(_red),
+  backdropColor: .constant(ChartPaint.solid(_red)),
   backdropPadding: _padding,
   showLabelBackdrop: true,
-  textStrokeColor: ChartPaint.solid(_red),
+  textStrokeColor: .constant(ChartPaint.solid(_red)),
   textStrokeWidth: 1,
   z: 1,
   sampleSize: 4,
@@ -187,8 +187,8 @@ const AxisTicks _ticks = AxisTicks(
 );
 const AxisGrid _grid = AxisGrid(
   display: true,
-  color: ChartPaint.solid(_red),
-  lineWidth: 1,
+  color: .constant(ChartPaint.solid(_red)),
+  lineWidth: .constant(1),
   drawOnChartArea: true,
   drawTicks: true,
   offset: false,
@@ -196,8 +196,8 @@ const AxisGrid _grid = AxisGrid(
   circular: false,
   tickBorderDash: [2, 2],
   tickBorderDashOffset: 0,
-  tickColor: ChartPaint.solid(_red),
-  tickWidth: 1,
+  tickColor: .constant(ChartPaint.solid(_red)),
+  tickWidth: .constant(1),
   z: 0,
 );
 const AxisTitle _axisTitle = AxisTitle(

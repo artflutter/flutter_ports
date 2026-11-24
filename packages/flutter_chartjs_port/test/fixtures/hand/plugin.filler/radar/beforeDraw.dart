@@ -36,8 +36,8 @@ FixtureConfig fixture() => FixtureConfig.typed(
         angleLinesColor: ChartPaint.solid(Color.fromRGBO(0, 0, 0, 0.5)),
         angleLinesLineWidth: 2,
         grid: AxisGrid(
-          color: ChartPaint.solid(Color.fromRGBO(0, 0, 0, 0.5)),
-          lineWidth: 2,
+          color: .constant(ChartPaint.solid(Color.fromRGBO(0, 0, 0, 0.5))),
+          lineWidth: .constant(2),
         ),
         pointLabelsDisplay: ScaleDisplay.off,
         ticks: AxisTicks(

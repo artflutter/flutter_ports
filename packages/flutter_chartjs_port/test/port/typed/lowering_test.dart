@@ -954,14 +954,17 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
 /// The cases of the parameters of [AxisTicks] and the twin `ticks` Map.
 const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
   'display': (AxisTicks(display: false), {'display': false}),
-  'color': (AxisTicks(color: ChartPaint.solid(_red)), {'color': _redValue}),
-  'font': (AxisTicks(font: _font), {'font': _fontValue}),
+  'color': (
+    AxisTicks(color: .constant(ChartPaint.solid(_red))),
+    {'color': _redValue},
+  ),
+  'font': (AxisTicks(font: .constant(_font)), {'font': _fontValue}),
   'padding': (AxisTicks(padding: 6), {'padding': 6}),
   'stepSize': (AxisTicks(stepSize: 5), {'stepSize': 5}),
   'maxRotation': (AxisTicks(maxRotation: 0), {'maxRotation': 0}),
   'autoSkip': (AxisTicks(autoSkip: false), {'autoSkip': false}),
   'backdropColor': (
-    AxisTicks(backdropColor: ChartPaint.solid(_red)),
+    AxisTicks(backdropColor: .constant(ChartPaint.solid(_red))),
     {'backdropColor': _redValue},
   ),
   'backdropPadding': (
@@ -973,7 +976,7 @@ const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
     {'showLabelBackdrop': true},
   ),
   'textStrokeColor': (
-    AxisTicks(textStrokeColor: ChartPaint.solid(_red)),
+    AxisTicks(textStrokeColor: .constant(ChartPaint.solid(_red))),
     {'textStrokeColor': _redValue},
   ),
   'textStrokeWidth': (AxisTicks(textStrokeWidth: 2), {'textStrokeWidth': 2}),
@@ -1002,8 +1005,11 @@ const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
 /// The cases of the parameters of [AxisGrid] and the twin `grid` Map.
 const Map<String, (AxisGrid, Map<String, Object?>)> _grid = {
   'display': (AxisGrid(display: false), {'display': false}),
-  'color': (AxisGrid(color: ChartPaint.solid(_blue)), {'color': _blueValue}),
-  'lineWidth': (AxisGrid(lineWidth: 2), {'lineWidth': 2}),
+  'color': (
+    AxisGrid(color: .constant(ChartPaint.solid(_blue))),
+    {'color': _blueValue},
+  ),
+  'lineWidth': (AxisGrid(lineWidth: .constant(2)), {'lineWidth': 2}),
   'drawOnChartArea': (
     AxisGrid(drawOnChartArea: false),
     {'drawOnChartArea': false},
@@ -1023,10 +1029,10 @@ const Map<String, (AxisGrid, Map<String, Object?>)> _grid = {
     {'tickBorderDashOffset': 1},
   ),
   'tickColor': (
-    AxisGrid(tickColor: ChartPaint.solid(_red)),
+    AxisGrid(tickColor: .constant(ChartPaint.solid(_red))),
     {'tickColor': _redValue},
   ),
-  'tickWidth': (AxisGrid(tickWidth: 2), {'tickWidth': 2}),
+  'tickWidth': (AxisGrid(tickWidth: .constant(2)), {'tickWidth': 2}),
   'z': (AxisGrid(z: 1), {'z': 1}),
 };
 
@@ -2323,7 +2329,7 @@ void main() {
         lowerAxis(
           const LinearAxis(
             .y,
-            grid: AxisGrid(color: ChartPaint.solid(_red)),
+            grid: AxisGrid(color: .constant(ChartPaint.solid(_red))),
             extra: {
               'grid': {'tickWidth': 2},
               'grace': PercentGrace(5),
@@ -2339,7 +2345,10 @@ void main() {
     });
 
     test('each axis class with all its parameters, in parameter order', () {
-      const ticks = AxisTicks(display: true, color: ChartPaint.solid(_red));
+      const ticks = AxisTicks(
+        display: true,
+        color: .constant(ChartPaint.solid(_red)),
+      );
       const grid = AxisGrid(display: false);
       const title = AxisTitle(display: true, text: ['T']);
       const tail = <String, Object?>{

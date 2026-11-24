@@ -24,7 +24,7 @@ const gridBorder = ChartConfig(
     ),
     LinearAxis(
       .y,
-      grid: AxisGrid(color: .solid(Color(0x14000000))),
+      grid: AxisGrid(color: .constant(.solid(Color(0x14000000)))),
       border: AxisBorder(display: false),
     ),
   ],

@@ -197,8 +197,8 @@ class _BarSample5State() extends State<BarSample5> {
   AxisTicks _titles({double padding = 8, double rotation = 0}) => AxisTicks(
     padding: padding,
     autoSkip: false,
-    color: const .solid(Colors.white),
-    font: _white,
+    color: const .constant(.solid(Colors.white)),
+    font: const .constant(_white),
     crossAlign: rotation == 0 ? null : TickCrossAlign.center,
     callback: _label,
     extra: rotation == 0 ? null : {'minRotation': -rotation},
@@ -207,8 +207,8 @@ class _BarSample5State() extends State<BarSample5> {
   ChartConfig _config() {
     final days = AxisTicks(
       padding: 8,
-      color: const .solid(Colors.white),
-      font: _white,
+      color: const .constant(.solid(Colors.white)),
+      font: const .constant(_white),
       callback: (scale, value, index, ticks) => [_days[index]],
     );
     return flBars(
@@ -271,16 +271,16 @@ class _BarSample5State() extends State<BarSample5> {
             stacked: true,
             grid: AxisGrid(
               drawTicks: false,
-              extra: {
-                'color': (Object? c) => ChartPaint.solid(
+              color: .resolver(
+                (c) => ChartPaint.solid(
                   !_gridAt(c)
                       ? Colors.transparent
                       : Colors.white.withValues(
                           alpha: tickOf(c) == 0 ? 0.1 : 0.05,
                         ),
                 ),
-                'lineWidth': (Object? c) => tickOf(c) == 0 ? 3.0 : 0.8,
-              },
+              ),
+              lineWidth: .resolver((c) => tickOf(c) == 0 ? 3.0 : 0.8),
             ),
             // Chart.js turns all the labels of an axis by one angle.
             ticks: _titles(padding: 4, rotation: 45),

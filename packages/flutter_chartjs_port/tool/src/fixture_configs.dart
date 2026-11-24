@@ -1105,6 +1105,15 @@ String? _paintValue(FixtureEmitter e, FixtureValue v, String k, String? o) {
   }
 }
 
+/// A `ScaleValue<TextStyle>` of an axis font: an expression of the port.
+String? _fontValue(FixtureEmitter e, FixtureValue v, String k, String? o) =>
+    switch (v) {
+      FixtureCode(:final source) when v.isFunction => '.resolver($source)',
+      FixtureCode(:final source) when !source.startsWith('<') =>
+        '.constant($source)',
+      _ => null,
+    };
+
 /// A `ChartValue<double>`.
 String? _doubleValue(FixtureEmitter e, FixtureValue v, String k, String? o) {
   switch (v) {
@@ -1658,8 +1667,8 @@ String? _ticks(FixtureEmitter e, FixtureValue v, String k, String? o) =>
         v,
         {
           'display': _bool,
-          'color': _paint,
-          'font': _object,
+          'color': _paintValue,
+          'font': _fontValue,
           'padding': _double,
           'stepSize': _double,
           'maxRotation': _double,
@@ -1668,10 +1677,10 @@ String? _ticks(FixtureEmitter e, FixtureValue v, String k, String? o) =>
           'crossAlign': _enum('TickCrossAlign'),
           'source': _enum('TickSource'),
           'callback': _function,
-          'backdropColor': _paint,
+          'backdropColor': _paintValue,
           'backdropPadding': _object,
           'showLabelBackdrop': _bool,
-          'textStrokeColor': _paint,
+          'textStrokeColor': _paintValue,
           'textStrokeWidth': _double,
           'z': _double,
           'sampleSize': _double,
@@ -1697,8 +1706,8 @@ String? _grid(FixtureEmitter e, FixtureValue v, String k, String? o) =>
         v,
         {
           'display': _bool,
-          'color': _paint,
-          'lineWidth': _double,
+          'color': _paintValue,
+          'lineWidth': _doubleValue,
           'drawOnChartArea': _bool,
           'drawTicks': _bool,
           'offset': _bool,
@@ -1706,8 +1715,8 @@ String? _grid(FixtureEmitter e, FixtureValue v, String k, String? o) =>
           'circular': _bool,
           'tickBorderDash': _doubles,
           'tickBorderDashOffset': _double,
-          'tickColor': _paint,
-          'tickWidth': _double,
+          'tickColor': _paintValue,
+          'tickWidth': _doubleValue,
           'z': _double,
         },
         key: 'grid',

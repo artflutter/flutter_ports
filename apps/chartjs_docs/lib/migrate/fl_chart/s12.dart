@@ -148,8 +148,10 @@ class _Sample12State() extends State<Sample12> {
           border: Fl.noBorder,
           ticks: AxisTicks(
             maxRotation: 45,
-            color: const ChartPaint.solid(Fl.green),
-            font: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            color: const .constant(ChartPaint.solid(Fl.green)),
+            font: const .constant(
+              TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
             callback: (scale, value, _, ticks) {
               final index = value.toInt();
               if (_history == null || index >= _history!.length) return [''];
@@ -163,7 +165,9 @@ class _Sample12State() extends State<Sample12> {
           .y,
           grid: flGrid(),
           border: flGridDash,
-          ticks: const AxisTicks(color: ChartPaint.solid(Colors.white)),
+          ticks: const AxisTicks(
+            color: .constant(ChartPaint.solid(Colors.white)),
+          ),
         ),
       ],
     ),

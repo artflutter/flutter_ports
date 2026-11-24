@@ -63,15 +63,15 @@ final ChartConfig _config = fills(
         max: 5,
         grid: AxisGrid(
           drawTicks: false,
-          lineWidth: 0.8,
-          extra: {'color': (Object? c) => _zero(c, Fl.yellow)},
+          lineWidth: const .constant(0.8),
+          color: .resolver((c) => _zero(c, Fl.yellow)),
         ),
         border: _border,
         ticks: const AxisTicks(
           stepSize: 1,
-          color: ChartPaint.solid(Fl.blue),
+          color: .constant(ChartPaint.solid(Fl.blue)),
           maxRotation: 0,
-          font: _font,
+          font: .constant(_font),
           padding: 16,
         ),
       ),
@@ -81,14 +81,14 @@ final ChartConfig _config = fills(
         max: 1.5,
         grid: AxisGrid(
           drawTicks: false,
-          lineWidth: 0.8,
-          extra: {'color': (Object? c) => _zero(c, Fl.blue)},
+          lineWidth: const .constant(0.8),
+          color: .resolver((c) => _zero(c, Fl.blue)),
         ),
         border: _border,
         ticks: AxisTicks(
           stepSize: 0.5,
-          color: const ChartPaint.solid(Fl.yellow),
-          font: _font,
+          color: const .constant(ChartPaint.solid(Fl.yellow)),
+          font: const .constant(_font),
           padding: 16,
           callback: (scale, value, index, ticks) => [
             if (value % 1 == 0) '${value.toInt()}' else '$value',

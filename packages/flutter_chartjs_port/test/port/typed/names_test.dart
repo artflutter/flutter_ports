@@ -61,6 +61,7 @@ const List<String> _typedNames = [
   'ArcElementStyle', 'BorderSkip',
   // Values.
   'ChartValue', 'ChartConstant', 'ChartIndexed', 'ChartResolver',
+  'ScaleValue', 'ScaleConstant', 'ScaleIndexed', 'ScaleResolver',
   // Property animations.
   'PropertyAnimation',
   'XAnimation',
@@ -89,6 +90,7 @@ const List<String> _typedNames = [
   'ChartEventDetails', 'ChartLegendEventDetails', 'ChartAnimationDetails',
   'AxisTickInfo', 'ChartHit', 'ChartContext',
   'ChartScript',
+  'ScaleScript',
 ];
 
 /// The Flutter libraries of rule 2.
@@ -148,8 +150,8 @@ void main() {
 
   tearDownAll(() => _collection.dispose());
 
-  test('the list has 76 distinct names', () {
-    expect(_typedNames.toSet(), hasLength(76));
+  test('the list has 81 distinct names', () {
+    expect(_typedNames.toSet(), hasLength(81));
   });
 
   test(

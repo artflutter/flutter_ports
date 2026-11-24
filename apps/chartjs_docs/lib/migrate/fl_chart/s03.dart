@@ -138,19 +138,19 @@ class _Sample3State() extends State<Sample3> {
           .x,
           grid: AxisGrid(
             drawTicks: false,
-            lineWidth: 0.5,
-            extra: {
-              'color': (Object? c) => ChartPaint.solid(
+            lineWidth: const .constant(0.5),
+            color: .resolver(
+              (c) => ChartPaint.solid(
                 tickOf(c) == 0 ? Colors.transparent : Fl.white10,
               ),
-            },
+            ),
           ),
           border: Fl.noBorder,
           ticks: AxisTicks(
             maxRotation: 0,
-            font: const TextStyle(fontWeight: FontWeight.bold),
+            font: const .constant(TextStyle(fontWeight: FontWeight.bold)),
             align: _fitBottom ? TickAlign.inner : TickAlign.center,
-            extra: {'color': _bottomColor},
+            color: .resolver(_bottomColor),
           ),
         ),
         LinearAxis(
@@ -158,18 +158,20 @@ class _Sample3State() extends State<Sample3> {
           min: 0,
           grid: AxisGrid(
             drawTicks: false,
-            lineWidth: 0.5,
-            extra: {
-              'color': (Object? c) => ChartPaint.solid(
+            lineWidth: const .constant(0.5),
+            color: .resolver(
+              (c) => ChartPaint.solid(
                 tickOf(c) == 0 ? Colors.transparent : Fl.white10,
               ),
-            },
+            ),
           ),
           border: Fl.noBorder,
           ticks: AxisTicks(
             stepSize: 1,
-            color: ChartPaint.solid(Fl.white54.withValues(alpha: 0.5)),
-            font: const TextStyle(fontSize: 10),
+            color: .constant(
+              ChartPaint.solid(Fl.white54.withValues(alpha: 0.5)),
+            ),
+            font: const .constant(TextStyle(fontSize: 10)),
             callback: (scale, value, index, ticks) => [
               if (value == 0) '' else '${value.toInt()}k calories',
             ],

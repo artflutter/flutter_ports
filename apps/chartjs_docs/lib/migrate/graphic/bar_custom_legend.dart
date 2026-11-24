@@ -54,7 +54,7 @@ final ChartConfig _config = ChartConfig(
       .x,
       // `tickLine = TickLine()`: a line of 5 px under each label.
       grid: const AxisGrid(
-        color: .solid(Gx.stroke),
+        color: .constant(.solid(Gx.stroke)),
         drawOnChartArea: false,
         offset: false,
         tickLength: 5,

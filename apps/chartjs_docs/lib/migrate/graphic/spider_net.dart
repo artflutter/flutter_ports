@@ -83,7 +83,10 @@ final ChartConfig _config = ChartConfig(
       // An ordinal scale of Graphic puts each index in the middle of a band
       // of 360 / 7 degrees.
       startAngle: 360 / 7 / 2,
-      grid: const AxisGrid(color: ChartPaint.solid(Gx.stroke), circular: true),
+      grid: const AxisGrid(
+        color: .constant(ChartPaint.solid(Gx.stroke)),
+        circular: true,
+      ),
       angleLinesColor: const ChartPaint.solid(Gx.stroke),
       pointLabelsColor: const ChartPaint.solid(Gx.text),
       pointLabelsFont: const TextStyle(fontSize: 10),

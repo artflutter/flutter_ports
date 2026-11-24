@@ -90,9 +90,9 @@ final ChartConfig _config = fills(
         border: _visibleBorder,
         ticks: const AxisTicks(
           stepSize: 1,
-          color: ChartPaint.solid(Fl.white70),
+          color: .constant(ChartPaint.solid(Fl.white70)),
           maxRotation: 0,
-          font: TextStyle(fontWeight: FontWeight.bold),
+          font: .constant(TextStyle(fontWeight: FontWeight.bold)),
         ),
       ),
       LinearAxis(
@@ -104,8 +104,8 @@ final ChartConfig _config = fills(
         border: _visibleBorder,
         ticks: const AxisTicks(
           stepSize: 1,
-          color: ChartPaint.solid(_orange),
-          font: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          color: .constant(ChartPaint.solid(_orange)),
+          font: .constant(TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           callback: _hideBottom,
         ),
       ),
@@ -119,8 +119,8 @@ final ChartConfig _config = fills(
         border: Fl.noBorder,
         ticks: AxisTicks(
           stepSize: 1,
-          color: ChartPaint.solid(Fl.blue),
-          font: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          color: .constant(ChartPaint.solid(Fl.blue)),
+          font: .constant(TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           callback: _hideBottom,
         ),
       ),

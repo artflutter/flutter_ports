@@ -78,3 +78,5 @@ export 'package:flutter_chartjs_port/src/typed/elements.dart'
         PointElementStyle;
 export 'package:flutter_chartjs_port/src/typed/groups.dart'
     show ChartAnimation, ChartInteraction;
+export 'package:flutter_chartjs_port/src/typed/scale_value.dart'
+    show ScaleConstant, ScaleIndexed, ScaleResolver, ScaleScript, ScaleValue;

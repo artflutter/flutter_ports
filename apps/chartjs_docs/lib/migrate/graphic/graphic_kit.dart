@@ -50,8 +50,8 @@ AxisTicks graphicTicks({
   TickSource? source,
   Map<String, Object?> extra = const {},
 }) => AxisTicks(
-  color: const ChartPaint.solid(Gx.text),
-  font: const TextStyle(fontSize: 10),
+  color: const .constant(ChartPaint.solid(Gx.text)),
+  font: const .constant(TextStyle(fontSize: 10)),
   padding: 7.5,
   maxRotation: 0,
   autoSkip: false,
@@ -97,7 +97,7 @@ void _fitLeft(Scale scale) => scale
 const AxisGrid noGrid = AxisGrid(display: false, drawTicks: false);
 
 const AxisGrid lineGrid = AxisGrid(
-  color: ChartPaint.solid(Gx.stroke),
+  color: .constant(ChartPaint.solid(Gx.stroke)),
   drawTicks: false,
 );
 

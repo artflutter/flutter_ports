@@ -42,14 +42,16 @@ class _Sample11State() extends State<Sample11> {
     position: position,
     grid: AxisGrid(
       drawTicks: false,
-      extra: {
-        'color': (Object? c) => ChartPaint.solid(
+      color: .resolver(
+        (c) => ChartPaint.solid(
           (tickOf(c) - base).abs() <= 0.1
               ? const Color(0xB3FFFFFF)
               : Fl.blueGrey,
         ),
-        'lineWidth': (Object? c) => (tickOf(c) - base).abs() <= 0.1 ? 1.0 : 0.4,
-      },
+      ),
+      lineWidth: .resolver(
+        (c) => (tickOf(c) - base).abs() <= 0.1 ? 1.0 : 0.4,
+      ),
     ),
     ticks: AxisTicks(
       autoSkip: false,
@@ -57,12 +59,14 @@ class _Sample11State() extends State<Sample11> {
       callback: (scale, value, index, ticks) => [
         value.toStringAsFixed(value % 1 == 0 ? 0 : 1),
       ],
-      extra: {
-        'color': (Object? c) => ChartPaint.solid(
+      color: .resolver(
+        (c) => ChartPaint.solid(
           (tickOf(c) - base).abs() <= 0.1 ? Colors.white : Colors.white60,
         ),
-        'font': (Object? c) => (tickOf(c) - base).abs() <= 0.1 ? _bold : _plain,
-      },
+      ),
+      font: .resolver(
+        (c) => (tickOf(c) - base).abs() <= 0.1 ? _bold : _plain,
+      ),
     ),
     border: flGridDash,
     afterBuildTicks: (s) => _ticksFrom(s, base),

@@ -380,13 +380,13 @@ class const BenchmarkChart({
     };
     final grid = cj.AxisGrid(
       display: config.grid,
-      color: const ChartPaint.solid(chartGrid),
+      color: const .constant(ChartPaint.solid(chartGrid)),
       drawTicks: false,
     );
     final ticks = cj.AxisTicks(
       display: config.axes,
       stepSize: 25,
-      font: const TextStyle(fontSize: 10),
+      font: const .constant(TextStyle(fontSize: 10)),
       maxRotation: 0,
       autoSkip: true,
       maxTicksLimit: 5,

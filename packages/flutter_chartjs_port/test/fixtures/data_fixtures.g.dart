@@ -6530,18 +6530,18 @@ FixtureConfig _core_scale_tick_backdrop_alignment_inner() =>
           LinearAxis(
             CartesianAxis.y,
             ticks: AxisTicks(display: false),
-            grid: AxisGrid(lineWidth: 0),
+            grid: AxisGrid(lineWidth: .constant(0)),
           ),
           CategoryAxis(
             CartesianAxis.x,
             position: ChartPosition.top,
             ticks: AxisTicks(
-              color: ChartPaint.solid(Color(0x00000000)),
-              backdropColor: ChartPaint.solid(Color(0xFFFF0000)),
+              color: .constant(ChartPaint.solid(Color(0x00000000))),
+              backdropColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
               showLabelBackdrop: true,
               align: TickAlign.inner,
             ),
-            grid: AxisGrid(lineWidth: 0),
+            grid: AxisGrid(lineWidth: .constant(0)),
           ),
         ],
       ),
@@ -7738,8 +7738,8 @@ FixtureConfig _scale_radiallinear_gridlines_no_z() => FixtureConfig.typed(
     scales: [
       RadialLinearAxis(
         grid: AxisGrid(
-          color: ChartPaint.solid(Color(0xFF000000)),
-          lineWidth: 1,
+          color: .constant(ChartPaint.solid(Color(0xFF000000))),
+          lineWidth: .constant(1),
         ),
         angleLinesColor: ChartPaint.solid(Color(0xFF0000FF)),
         angleLinesLineWidth: 1,
@@ -7772,8 +7772,8 @@ FixtureConfig _scale_radiallinear_gridlines_z() => FixtureConfig.typed(
     scales: [
       RadialLinearAxis(
         grid: AxisGrid(
-          color: ChartPaint.solid(Color(0xFF000000)),
-          lineWidth: 1,
+          color: .constant(ChartPaint.solid(Color(0xFF000000))),
+          lineWidth: .constant(1),
           z: 1,
         ),
         angleLinesColor: ChartPaint.solid(Color(0xFF0000FF)),

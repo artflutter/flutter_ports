@@ -47,10 +47,13 @@ List<double> _ys(int count, int seed) {
 /// `noBorder` (a fill with `borderWidth: 0`), `dash`, or `anim` (the values
 /// at the fraction [t] between two data sets).
 ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
-  const grid = AxisGrid(color: ChartPaint.solid(_grid), drawTicks: false);
+  const grid = AxisGrid(
+    color: .constant(ChartPaint.solid(_grid)),
+    drawTicks: false,
+  );
   const ticks = AxisTicks(
     stepSize: 25,
-    font: TextStyle(fontSize: 10),
+    font: .constant(TextStyle(fontSize: 10)),
     maxRotation: 0,
     autoSkip: true,
     maxTicksLimit: 5,

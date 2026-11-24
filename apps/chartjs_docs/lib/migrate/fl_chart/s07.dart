@@ -50,8 +50,8 @@ final ChartConfig _config = fills(
         ticks: AxisTicks(
           maxRotation: 0,
           autoSkip: false,
-          color: ChartPaint.solid(Colors.white),
-          font: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          color: .constant(ChartPaint.solid(Colors.white)),
+          font: .constant(TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
         ),
       ),
       LinearAxis(
@@ -62,8 +62,8 @@ final ChartConfig _config = fills(
         ticks: AxisTicks(
           stepSize: 1,
           autoSkip: false,
-          color: const ChartPaint.solid(Colors.white),
-          font: const TextStyle(fontSize: 10),
+          color: const .constant(ChartPaint.solid(Colors.white)),
+          font: const .constant(TextStyle(fontSize: 10)),
           callback: (scale, value, index, ticks) => ['\$ ${value + 0.5}'],
         ),
       ),

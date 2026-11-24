@@ -14,13 +14,13 @@ import 'package:flutter_test/flutter_test.dart';
 ChartConfig _config(int count, {required bool shown}) {
   final grid = AxisGrid(
     display: shown,
-    color: const ChartPaint.solid(ui.Color(0xffe5e9f1)),
+    color: const .constant(ChartPaint.solid(ui.Color(0xffe5e9f1))),
     drawTicks: false,
   );
   final ticks = AxisTicks(
     display: shown,
     stepSize: 25,
-    font: const TextStyle(fontSize: 10),
+    font: const .constant(TextStyle(fontSize: 10)),
     maxRotation: 0,
     autoSkip: true,
     maxTicksLimit: 5,

@@ -2857,6 +2857,21 @@ function paddingNode(v, state) {
 }
 
 /** The ChartValue node of a paint option: a constant or an indexed paint. */
+/**
+ * The node of a `ScaleValue` of an axis option: `.constant` of the node of
+ * [v], or `.indexed` of the nodes of the items of a non-empty Array.
+ */
+function scaleValueNode(v, item) {
+  if (Array.isArray(v)) {
+    if (v.length === 0) return undefined;
+    const items = v.map(item);
+    if (items.some((x) => x === undefined)) return undefined;
+    return call('ScaleValue.indexed', [[null, listNode(items)]]);
+  }
+  const n = item(v);
+  return n && call('ScaleValue.constant', [[null, n]]);
+}
+
 function paintValueNode(v, state) {
   if (typeof v === 'string') {
     const paint = paintNode(v, state);
@@ -3304,8 +3319,8 @@ function axisSpec(cls, state) {
     if (v === null || typeof v !== 'object' || v.constructor !== Object) return undefined;
     return typedObject('AxisTicks', [], v, {
       display: boolNode,
-      color: (x) => paintNode(x, state),
-      font: (x) => fontNode(x, state),
+      color: (x) => scaleValueNode(x, (y) => paintNode(y, state)),
+      font: (x) => scaleValueNode(x, (y) => fontNode(y, state)),
       padding: number,
       stepSize: number,
       maxRotation: number,
@@ -3314,10 +3329,10 @@ function axisSpec(cls, state) {
       crossAlign: (x) => enumNode('TickCrossAlign', ['near', 'center', 'far'], x, state, 'scaleEnums'),
       source: (x) => enumNode('TickSource', ['auto', 'data', 'labels'], x, state, 'scaleEnums'),
       callback: (x) => (functionName(x) === null ? undefined : node(functionCode(x, state, 'TickCallback').code, false)),
-      backdropColor: (x) => paintNode(x, state),
+      backdropColor: (x) => scaleValueNode(x, (y) => paintNode(y, state)),
       backdropPadding: (x) => paddingNode(x, state),
       showLabelBackdrop: boolNode,
-      textStrokeColor: (x) => paintNode(x, state),
+      textStrokeColor: (x) => scaleValueNode(x, (y) => paintNode(y, state)),
       textStrokeWidth: number,
       z: number,
       sampleSize: number,
@@ -3335,8 +3350,8 @@ function axisSpec(cls, state) {
     if (v === null || typeof v !== 'object' || v.constructor !== Object) return undefined;
     return typedObject('AxisGrid', [], v, {
       display: boolNode,
-      color: (x) => paintNode(x, state),
-      lineWidth: number,
+      color: (x) => scaleValueNode(x, (y) => paintNode(y, state)),
+      lineWidth: (x) => scaleValueNode(x, number),
       drawOnChartArea: boolNode,
       drawTicks: boolNode,
       offset: boolNode,
@@ -3344,8 +3359,8 @@ function axisSpec(cls, state) {
       circular: boolNode,
       tickBorderDash: dashNode,
       tickBorderDashOffset: number,
-      tickColor: (x) => paintNode(x, state),
-      tickWidth: number,
+      tickColor: (x) => scaleValueNode(x, (y) => paintNode(y, state)),
+      tickWidth: (x) => scaleValueNode(x, number),
       z: number,
     }, state, 'grid', 'options.scales.<id>.grid');
   };

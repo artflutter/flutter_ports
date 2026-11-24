@@ -84,8 +84,10 @@ class _BarSample2State() extends State<BarSample2> {
           reservedSize: 42,
           ticks: AxisTicks(
             padding: 16,
-            color: const .solid(_titleColor),
-            font: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            color: const .constant(.solid(_titleColor)),
+            font: const .constant(
+              TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
             callback: (scale, value, index, ticks) => [_days[index]],
           ),
         ),
@@ -97,8 +99,10 @@ class _BarSample2State() extends State<BarSample2> {
           ticks: AxisTicks(
             padding: 0,
             autoSkip: false,
-            color: const .solid(_titleColor),
-            font: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            color: const .constant(.solid(_titleColor)),
+            font: const .constant(
+              TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
             callback: (scale, value, index, ticks) => [
               switch (value) {
                 0 => '1K',

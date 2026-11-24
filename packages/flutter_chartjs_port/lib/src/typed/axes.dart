@@ -1745,12 +1745,13 @@ final class const AxisTicks({
   /// Whether the chart shows the tick labels: `display`.
   final bool? display,
 
-  /// The color of the tick labels: `color`.
-  final ChartPaint? color,
+  /// The color of the tick labels: `color`, a [ScaleValue], for example
+  /// `.constant(.solid(Colors.grey))` or `.resolver(colorOfTick)`.
+  final ScaleValue<ChartPaint>? color,
 
-  /// The font of the tick labels: `font`. The color of the font is not
-  /// read: set [color].
-  final TextStyle? font,
+  /// The font of the tick labels: `font`, a [ScaleValue]. The color of the
+  /// font is not read: set [color].
+  final ScaleValue<TextStyle>? font,
 
   /// The space between the tick labels and the axis, in pixels: `padding`.
   final double? padding,
@@ -1791,7 +1792,7 @@ final class const AxisTicks({
 
   /// The color of the box behind a tick label: `backdropColor`. The box shows
   /// when [showLabelBackdrop] is `true`.
-  final ChartPaint? backdropColor,
+  final ScaleValue<ChartPaint>? backdropColor,
 
   /// The space between a tick label and its box: `backdropPadding`.
   final EdgeInsets? backdropPadding,
@@ -1801,7 +1802,7 @@ final class const AxisTicks({
   final bool? showLabelBackdrop,
 
   /// The color of the outline of the tick labels: `textStrokeColor`.
-  final ChartPaint? textStrokeColor,
+  final ScaleValue<ChartPaint>? textStrokeColor,
 
   /// The width of the outline of the tick labels in pixels: `textStrokeWidth`.
   final double? textStrokeWidth,
@@ -1859,8 +1860,8 @@ final class const AxisTicks({
   /// that is `null` keeps its value.
   AxisTicks copyWith({
     bool? display,
-    ChartPaint? color,
-    TextStyle? font,
+    ScaleValue<ChartPaint>? color,
+    ScaleValue<TextStyle>? font,
     double? padding,
     double? stepSize,
     double? maxRotation,
@@ -1869,10 +1870,10 @@ final class const AxisTicks({
     TickCrossAlign? crossAlign,
     TickSource? source,
     TickCallback? callback,
-    ChartPaint? backdropColor,
+    ScaleValue<ChartPaint>? backdropColor,
     EdgeInsets? backdropPadding,
     bool? showLabelBackdrop,
-    ChartPaint? textStrokeColor,
+    ScaleValue<ChartPaint>? textStrokeColor,
     double? textStrokeWidth,
     double? z,
     double? sampleSize,
@@ -1968,8 +1969,12 @@ TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   if (ticks == null) return null;
   final scope = TickOptionsScope();
   put(scope, OptionKey.display, ticks.display);
-  put(scope, OptionKey.color, ticks.color);
-  put(scope, OptionKey.font, ticks.font);
+  if (ticks.color case final value?) {
+    scope.store(OptionKey.color, value.toOptionCell());
+  }
+  if (ticks.font case final value?) {
+    scope.store(OptionKey.font, value.toOptionCell());
+  }
   put(scope, OptionKey.padding, ticks.padding);
   put(scope, OptionKey.stepSize, ticks.stepSize);
   put(scope, OptionKey.maxRotation, ticks.maxRotation);
@@ -1978,10 +1983,14 @@ TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   put(scope, OptionKey.crossAlign, ticks.crossAlign);
   put(scope, OptionKey.source, ticks.source);
   put(scope, OptionKey.callback, ticks.callback);
-  put(scope, OptionKey.backdropColor, ticks.backdropColor);
+  if (ticks.backdropColor case final value?) {
+    scope.store(OptionKey.backdropColor, value.toOptionCell());
+  }
   put(scope, OptionKey.backdropPadding, ticks.backdropPadding);
   put(scope, OptionKey.showLabelBackdrop, ticks.showLabelBackdrop);
-  put(scope, OptionKey.textStrokeColor, ticks.textStrokeColor);
+  if (ticks.textStrokeColor case final value?) {
+    scope.store(OptionKey.textStrokeColor, value.toOptionCell());
+  }
   put(scope, OptionKey.textStrokeWidth, ticks.textStrokeWidth);
   put(scope, OptionKey.z, ticks.z);
   put(scope, OptionKey.sampleSize, ticks.sampleSize);
@@ -2004,11 +2013,12 @@ final class const AxisGrid({
   /// Whether the chart draws the grid lines: `display`.
   final bool? display,
 
-  /// The color of the grid lines: `color`.
-  final ChartPaint? color,
+  /// The color of the grid lines: `color`, a [ScaleValue], for example
+  /// `.constant(.solid(Colors.grey))` or `.resolver(colorOfTick)`.
+  final ScaleValue<ChartPaint>? color,
 
-  /// The width of the grid lines in pixels: `lineWidth`.
-  final double? lineWidth,
+  /// The width of the grid lines in pixels: `lineWidth`, a [ScaleValue].
+  final ScaleValue<double>? lineWidth,
 
   /// Whether the grid lines go across the chart area: `drawOnChartArea`.
   /// With `false`, the chart draws only the tick marks.
@@ -2038,11 +2048,11 @@ final class const AxisGrid({
   final double? tickBorderDashOffset,
 
   /// The color of the tick marks: `tickColor`. The default is [color].
-  final ChartPaint? tickColor,
+  final ScaleValue<ChartPaint>? tickColor,
 
   /// The width of the tick marks in pixels: `tickWidth`. The default is
   /// [lineWidth].
-  final double? tickWidth,
+  final ScaleValue<double>? tickWidth,
 
   /// The drawing order of the grid lines: `z`. A value above 0 draws the lines
   /// over the datasets.
@@ -2059,8 +2069,8 @@ final class const AxisGrid({
   /// that is `null` keeps its value.
   AxisGrid copyWith({
     bool? display,
-    ChartPaint? color,
-    double? lineWidth,
+    ScaleValue<ChartPaint>? color,
+    ScaleValue<double>? lineWidth,
     bool? drawOnChartArea,
     bool? drawTicks,
     bool? offset,
@@ -2068,8 +2078,8 @@ final class const AxisGrid({
     bool? circular,
     List<double>? tickBorderDash,
     double? tickBorderDashOffset,
-    ChartPaint? tickColor,
-    double? tickWidth,
+    ScaleValue<ChartPaint>? tickColor,
+    ScaleValue<double>? tickWidth,
     double? z,
     Map<String, Object?>? extra,
   }) => AxisGrid(
@@ -2126,8 +2136,12 @@ GridLineOptionsScope? _lowerGrid(AxisGrid? grid) {
   if (grid == null) return null;
   final scope = GridLineOptionsScope();
   put(scope, OptionKey.display, grid.display);
-  put(scope, OptionKey.color, grid.color);
-  put(scope, OptionKey.lineWidth, grid.lineWidth);
+  if (grid.color case final value?) {
+    scope.store(OptionKey.color, value.toOptionCell());
+  }
+  if (grid.lineWidth case final value?) {
+    scope.store(OptionKey.lineWidth, value.toOptionCell());
+  }
   put(scope, OptionKey.drawOnChartArea, grid.drawOnChartArea);
   put(scope, OptionKey.drawTicks, grid.drawTicks);
   put(scope, OptionKey.offset, grid.offset);
@@ -2135,8 +2149,12 @@ GridLineOptionsScope? _lowerGrid(AxisGrid? grid) {
   put(scope, OptionKey.circular, grid.circular);
   put(scope, OptionKey.tickBorderDash, grid.tickBorderDash);
   put(scope, OptionKey.tickBorderDashOffset, grid.tickBorderDashOffset);
-  put(scope, OptionKey.tickColor, grid.tickColor);
-  put(scope, OptionKey.tickWidth, grid.tickWidth);
+  if (grid.tickColor case final value?) {
+    scope.store(OptionKey.tickColor, value.toOptionCell());
+  }
+  if (grid.tickWidth case final value?) {
+    scope.store(OptionKey.tickWidth, value.toOptionCell());
+  }
   put(scope, OptionKey.z, grid.z);
   return mergeExtra(scope, grid.extra);
 }

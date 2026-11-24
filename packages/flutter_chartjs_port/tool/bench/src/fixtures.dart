@@ -92,7 +92,7 @@ ChartConfig barChart([List<BarDataset>? datasets]) => ChartConfig(
       beginAtZero: true,
       ticks: AxisTicks(
         stepSize: 10,
-        font: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        font: .constant(TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
       ),
       title: AxisTitle(display: true, text: ['Value']),
     ),

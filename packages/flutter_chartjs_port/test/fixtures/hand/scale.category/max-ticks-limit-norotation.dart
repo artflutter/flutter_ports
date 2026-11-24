@@ -113,7 +113,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
       CategoryAxis(
         CartesianAxis.x,
         ticks: AxisTicks(display: true, maxTicksLimit: 6),
-        grid: AxisGrid(color: ChartPaint.solid(Color(0xFFFF0000))),
+        grid: AxisGrid(color: .constant(ChartPaint.solid(Color(0xFFFF0000)))),
       ),
       // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),

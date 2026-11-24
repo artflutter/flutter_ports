@@ -99,8 +99,10 @@ class _Sample5State() extends State<Sample5> {
           ticks: AxisTicks(
             maxRotation: 0,
             autoSkip: false,
-            color: ChartPaint.solid(Fl.pink),
-            font: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            color: .constant(ChartPaint.solid(Fl.pink)),
+            font: .constant(
+              TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
         LinearAxis(

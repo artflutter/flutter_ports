@@ -143,7 +143,7 @@ ZoomDocsSample zoomWheelCategorySample(ZoomDocsLog log) {
 
   // <block:scales:2>
   const grid = AxisGrid(
-    color: ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
+    color: .constant(ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1))),
   );
   final scales = <ChartAxis>[
     CategoryAxis(
