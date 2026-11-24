@@ -82,4 +82,75 @@ void main() {
     final y = jsGet(jsGet(jsGet(root, 'options'), 'scales'), 'y');
     expect(jsGet(y, 'beginAtZero'), isTrue);
   });
+
+  test('a dataset writes parsing, normalized and animation', () {
+    final root = _root(
+      const ChartConfig(
+        datasets: [
+          LineDataset(
+            parsing: false,
+            normalized: true,
+            animation: ChartAnimation.none,
+          ),
+        ],
+      ),
+    );
+    final dataset = _dataset0(root);
+    expect(jsGet(dataset, 'parsing'), isFalse);
+    expect(jsGet(dataset, 'normalized'), isTrue);
+    expect(jsGet(dataset, 'animation'), isFalse);
+  });
+
+  test('borderWidths and borderWidthSides write the other border widths', () {
+    final indexed = _root(
+      const ChartConfig(
+        datasets: [
+          BarDataset(borderWidths: .indexed([2, 0])),
+        ],
+      ),
+    );
+    expect(jsGet(_dataset0(indexed), 'borderWidth'), [2.0, 0.0]);
+    final sides = _root(
+      const ChartConfig(
+        datasets: [
+          BarDataset(borderWidthSides: EdgeInsets.only(top: 6, left: 1)),
+        ],
+      ),
+    );
+    final width = jsGet(_dataset0(sides), 'borderWidth');
+    expect(jsGet(width, 'top'), 6);
+    expect(jsGet(width, 'left'), 1);
+    expect(jsGet(width, 'bottom'), 0);
+    expect(
+      () => _root(
+        const ChartConfig(
+          datasets: [BarDataset(borderWidth: 1, borderWidths: .constant(2))],
+        ),
+      ),
+      throwsAssertionError,
+    );
+  });
+
+  test('autoPadding writes options.layout.autoPadding', () {
+    final root = _root(
+      const ChartConfig(datasets: [LineDataset()], autoPadding: false),
+    );
+    expect(
+      jsGet(jsGet(jsGet(root, 'options'), 'layout'), 'autoPadding'),
+      isFalse,
+    );
+  });
+
+  test('borderFunction writes the function form of border', () {
+    AxisBorder border(ScriptableScaleContext context) =>
+        const AxisBorder(display: false);
+    final root = _root(
+      ChartConfig(
+        datasets: const [LineDataset()],
+        scales: [LinearAxis(.y, borderFunction: border)],
+      ),
+    );
+    final y = jsGet(jsGet(jsGet(root, 'options'), 'scales'), 'y');
+    expect(jsGet(y, 'border'), isA<Function>());
+  });
 }

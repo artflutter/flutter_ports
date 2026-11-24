@@ -204,8 +204,7 @@ ChartAxis _stressAxis(
 /// data List of [scene] by reference.
 ///
 /// The point radius is the dataset option `pointRadius`, the typed form of
-/// the dataset option `radius`. `layout.autoPadding: false` goes through
-/// `extra` ([stressNoAutoPadding]).
+/// the dataset option `radius`, with `autoPadding: false`.
 ChartConfig stressAxesTypedConfig({
   required StressAxesScene scene,
   required bool autoSkip,
@@ -234,7 +233,7 @@ ChartConfig stressAxesTypedConfig({
   events: const [],
   disabledPlugins: stressDisabledPlugins,
   plugins: [...plugins],
-  extra: stressNoAutoPadding,
+  autoPadding: false,
 );
 
 /// The tick count after the auto skip and the `labelRotation` of the x scale

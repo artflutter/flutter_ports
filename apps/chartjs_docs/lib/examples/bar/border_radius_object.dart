@@ -28,9 +28,10 @@ const cornerBars = BarDataset(
   label: 'A radius for each corner',
   data: .values(mixedSigns),
   backgroundColor: .constant(.solid(teal)),
-  extra: {
-    'borderRadius': {'topLeft': 16, 'topRight': 2},
-  },
+  borderRadiusCorners: BorderRadius.only(
+    topLeft: Radius.circular(16),
+    topRight: Radius.circular(2),
+  ),
 );
 // #enddocregion bar-border-radius-object
 

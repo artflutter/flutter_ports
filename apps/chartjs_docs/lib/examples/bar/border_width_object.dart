@@ -33,9 +33,7 @@ const sideBorders = BarDataset(
   backgroundColor: .constant(.solid(tealFill)),
   borderColor: .constant(.solid(teal)),
   // No bottom border: an omitted side has no border.
-  extra: {
-    'borderWidth': {'top': 6, 'left': 1, 'right': 1},
-  },
+  borderWidthSides: EdgeInsets.only(top: 6, left: 1, right: 1),
 );
 // #enddocregion bar-border-width-object
 

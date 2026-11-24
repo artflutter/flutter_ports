@@ -380,6 +380,31 @@ final class const BarDataset({
   /// gives them no radius. Give this or [borderRadius].
   final BorderRadius? borderRadiusCorners,
 
+  /// Whether the chart parses the data of the dataset: `parsing`. With `false`,
+  /// the data are in the internal form of Chart.js, and the chart reads them
+  /// with no parse (`docs/general/performance.md`).
+  final bool? parsing,
+
+  /// Whether the data of the dataset is sorted by its index value and unique:
+  /// `normalized`. Then the chart skips the sort and the search for the unique
+  /// values.
+  final bool? normalized,
+
+  /// The animation of the dataset: `animation`, for example
+  /// [ChartAnimation.none]. The callbacks are options of
+  /// `ChartConfig.animation`.
+  final ChartAnimation? animation,
+
+  /// The border width of each bar as a [ChartValue], for example `.indexed([2,
+  /// 0, 0])`: the indexed and scriptable forms of `borderWidth`. Give this,
+  /// [borderWidth] or [borderWidthSides].
+  final ChartValue<double>? borderWidths,
+
+  /// The border width of each side of a bar: the object form of `borderWidth`,
+  /// for example `EdgeInsets.only(top: 6)`. Give this, [borderWidth] or
+  /// [borderWidths].
+  final EdgeInsets? borderWidthSides,
+
   super.extra,
 }) extends Dataset {
   /// A bar dataset.
@@ -420,6 +445,11 @@ final class const BarDataset({
     double? hoverBorderRadius,
     PointStyle? pointStyle,
     BorderRadius? borderRadiusCorners,
+    bool? parsing,
+    bool? normalized,
+    ChartAnimation? animation,
+    ChartValue<double>? borderWidths,
+    EdgeInsets? borderWidthSides,
     Map<String, Object?>? extra,
   }) => BarDataset(
     key: key ?? this.key,
@@ -454,6 +484,11 @@ final class const BarDataset({
     hoverBorderRadius: hoverBorderRadius ?? this.hoverBorderRadius,
     pointStyle: pointStyle ?? this.pointStyle,
     borderRadiusCorners: borderRadiusCorners ?? this.borderRadiusCorners,
+    parsing: parsing ?? this.parsing,
+    normalized: normalized ?? this.normalized,
+    animation: animation ?? this.animation,
+    borderWidths: borderWidths ?? this.borderWidths,
+    borderWidthSides: borderWidthSides ?? this.borderWidthSides,
     extra: extra ?? this.extra,
   );
 
@@ -491,6 +526,30 @@ final class const BarDataset({
     put(scope, OptionKey.skipNull, skipNull);
     put(scope, OptionKey.hoverBorderRadius, hoverBorderRadius);
     put(scope, OptionKey.pointStyle, pointStyle);
+    put(scope, OptionKey.parsing, parsing);
+    put(scope, OptionKey.normalized, normalized);
+    if (animation case final animation?) {
+      scope.store(
+        OptionKey.animation,
+        scope.classify(OptionKey.animation, lowerDatasetAnimation(animation)),
+      );
+    }
+    assert(
+      [borderWidth, borderWidths, borderWidthSides].nonNulls.length < 2,
+      'Give borderWidth, borderWidths or borderWidthSides, not two.',
+    );
+    if (borderWidths case final value?) {
+      scope.store(OptionKey.borderWidth, value.toOptionCell());
+    }
+    if (borderWidthSides case final sides?) {
+      // The object form `{top, right, bottom, left}` that toTRBL reads.
+      put(scope, OptionKey.borderWidth, <String, Object?>{
+        'top': sides.top,
+        'right': sides.right,
+        'bottom': sides.bottom,
+        'left': sides.left,
+      });
+    }
   }
 
   @override
@@ -517,6 +576,11 @@ final class const BarDataset({
     ('hoverBorderRadius', hoverBorderRadius),
     ('pointStyle', pointStyle),
     ('borderRadiusCorners', borderRadiusCorners),
+    ('parsing', parsing),
+    ('normalized', normalized),
+    ('animation', animation),
+    ('borderWidths', borderWidths),
+    ('borderWidthSides', borderWidthSides),
     ('extra', byEntries(extra)),
   ];
 }
@@ -798,6 +862,21 @@ final class const LineDataset({
   /// [ChartValue], as `pointRadius`.
   @override final ChartValue<double>? pointRotation,
 
+  /// Whether the chart parses the data of the dataset: `parsing`. With `false`,
+  /// the data are in the internal form of Chart.js, and the chart reads them
+  /// with no parse (`docs/general/performance.md`).
+  final bool? parsing,
+
+  /// Whether the data of the dataset is sorted by its index value and unique:
+  /// `normalized`. Then the chart skips the sort and the search for the unique
+  /// values.
+  final bool? normalized,
+
+  /// The animation of the dataset: `animation`, for example
+  /// [ChartAnimation.none]. The callbacks are options of
+  /// `ChartConfig.animation`.
+  final ChartAnimation? animation,
+
   super.extra,
 }) extends Dataset with _LineStyle {
   /// A line dataset.
@@ -848,6 +927,9 @@ final class const LineDataset({
     ChartValue<double>? pointHitRadius,
     ChartValue<double>? pointHoverBorderWidth,
     ChartValue<double>? pointRotation,
+    bool? parsing,
+    bool? normalized,
+    ChartAnimation? animation,
     Map<String, Object?>? extra,
   }) => LineDataset(
     key: key ?? this.key,
@@ -895,6 +977,9 @@ final class const LineDataset({
     pointHitRadius: pointHitRadius ?? this.pointHitRadius,
     pointHoverBorderWidth: pointHoverBorderWidth ?? this.pointHoverBorderWidth,
     pointRotation: pointRotation ?? this.pointRotation,
+    parsing: parsing ?? this.parsing,
+    normalized: normalized ?? this.normalized,
+    animation: animation ?? this.animation,
     extra: extra ?? this.extra,
   );
 
@@ -916,6 +1001,14 @@ final class const LineDataset({
     put(scope, OptionKey.stack, stack);
     put(scope, OptionKey.indexAxis, indexAxis);
     _lowerLine(scope);
+    put(scope, OptionKey.parsing, parsing);
+    put(scope, OptionKey.normalized, normalized);
+    if (animation case final animation?) {
+      scope.store(
+        OptionKey.animation,
+        scope.classify(OptionKey.animation, lowerDatasetAnimation(animation)),
+      );
+    }
   }
 
   @override
@@ -929,6 +1022,9 @@ final class const LineDataset({
     ('stack', stack),
     ('indexAxis', indexAxis),
     ..._lineProps,
+    ('parsing', parsing),
+    ('normalized', normalized),
+    ('animation', animation),
     ('extra', byEntries(extra)),
   ];
 }
@@ -1045,6 +1141,21 @@ final class const ScatterDataset({
   /// [ChartValue], as `pointRadius`.
   @override final ChartValue<double>? pointRotation,
 
+  /// Whether the chart parses the data of the dataset: `parsing`. With `false`,
+  /// the data are in the internal form of Chart.js, and the chart reads them
+  /// with no parse (`docs/general/performance.md`).
+  final bool? parsing,
+
+  /// Whether the data of the dataset is sorted by its index value and unique:
+  /// `normalized`. Then the chart skips the sort and the search for the unique
+  /// values.
+  final bool? normalized,
+
+  /// The animation of the dataset: `animation`, for example
+  /// [ChartAnimation.none]. The callbacks are options of
+  /// `ChartConfig.animation`.
+  final ChartAnimation? animation,
+
   super.extra,
 }) extends Dataset with _LineStyle {
   /// A scatter dataset.
@@ -1094,6 +1205,9 @@ final class const ScatterDataset({
     ChartValue<double>? pointHitRadius,
     ChartValue<double>? pointHoverBorderWidth,
     ChartValue<double>? pointRotation,
+    bool? parsing,
+    bool? normalized,
+    ChartAnimation? animation,
     Map<String, Object?>? extra,
   }) => ScatterDataset(
     key: key ?? this.key,
@@ -1140,6 +1254,9 @@ final class const ScatterDataset({
     pointHitRadius: pointHitRadius ?? this.pointHitRadius,
     pointHoverBorderWidth: pointHoverBorderWidth ?? this.pointHoverBorderWidth,
     pointRotation: pointRotation ?? this.pointRotation,
+    parsing: parsing ?? this.parsing,
+    normalized: normalized ?? this.normalized,
+    animation: animation ?? this.animation,
     extra: extra ?? this.extra,
   );
 
@@ -1160,6 +1277,14 @@ final class const ScatterDataset({
     put(scope, OptionKey.yAxisID, scaleIdOfAxis(yAxis));
     put(scope, OptionKey.stack, stack);
     _lowerLine(scope);
+    put(scope, OptionKey.parsing, parsing);
+    put(scope, OptionKey.normalized, normalized);
+    if (animation case final animation?) {
+      scope.store(
+        OptionKey.animation,
+        scope.classify(OptionKey.animation, lowerDatasetAnimation(animation)),
+      );
+    }
   }
 
   @override
@@ -1172,6 +1297,9 @@ final class const ScatterDataset({
     ('yAxis', yAxis),
     ('stack', stack),
     ..._lineProps,
+    ('parsing', parsing),
+    ('normalized', normalized),
+    ('animation', animation),
     ('extra', byEntries(extra)),
   ];
 }

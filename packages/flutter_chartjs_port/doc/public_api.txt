@@ -852,6 +852,7 @@ lookupByKey
 lowerAnimation
 lowerAxis
 lowerDataset
+lowerDatasetAnimation
 lowerElements
 lowerInteraction
 lowerTransitions
@@ -1919,6 +1920,7 @@ lookupByKey
 lowerAnimation
 lowerAxis
 lowerDataset
+lowerDatasetAnimation
 lowerElements
 lowerInteraction
 lowerTransitions

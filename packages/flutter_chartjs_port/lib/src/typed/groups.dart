@@ -265,6 +265,27 @@ TransitionsSpecScope? lowerTransitions(List<ChartTransition> transitions) {
   return spec;
 }
 
+/// The `animation` option of a dataset: `false` for [ChartAnimation.none],
+/// else an `AnimationOptionsScope` with the settings of [animation].
+/// `onProgress` and `onComplete` are options of the chart: a dataset gives
+/// none.
+Object lowerDatasetAnimation(ChartAnimation animation) {
+  assert(
+    animation.onProgress == null && animation.onComplete == null,
+    'onProgress and onComplete are options of ChartConfig.animation.',
+  );
+  if (animation._none) return false;
+  final scope = AnimationOptionsScope();
+  _putSettings(scope, animation);
+  if (animation.animateScale case final animateScale?) {
+    scope.animateScale = animateScale;
+  }
+  if (animation.animateRotate case final animateRotate?) {
+    scope.animateRotate = animateRotate;
+  }
+  return mergeExtra(scope, animation.extra);
+}
+
 /// The `animation` option of [animation]: `false` for
 /// [ChartAnimation.none], else an `AnimationOptionsScope`. The scope has no
 /// copy of `duration`, `delay`, `easing` and `loop`: each of these cells

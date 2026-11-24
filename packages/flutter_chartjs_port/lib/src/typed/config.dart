@@ -123,6 +123,11 @@ final class const ChartConfig({
   /// an item have no effect. A dataset option of a dataset wins.
   final List<Dataset>? datasetDefaults,
 
+  /// Whether the layout adds the space that the points of the datasets need
+  /// at the edges of the chart area: `options.layout.autoPadding`. The
+  /// default is `true`.
+  final bool? autoPadding,
+
   /// The space around the chart: `options.layout.padding`.
   final EdgeInsets? padding,
 
@@ -255,6 +260,7 @@ final class const ChartConfig({
     bool? normalized,
     ChartPaint? color,
     List<Dataset>? datasetDefaults,
+    bool? autoPadding,
     EdgeInsets? padding,
     ChartInteraction? interaction,
     ChartAnimation? animation,
@@ -282,6 +288,7 @@ final class const ChartConfig({
     normalized: normalized ?? this.normalized,
     color: color ?? this.color,
     datasetDefaults: datasetDefaults ?? this.datasetDefaults,
+    autoPadding: autoPadding ?? this.autoPadding,
     padding: padding ?? this.padding,
     interaction: interaction ?? this.interaction,
     animation: animation ?? this.animation,
@@ -320,6 +327,7 @@ final class const ChartConfig({
     ('normalized', normalized),
     ('color', color),
     ('datasetDefaults', byItems(datasetDefaults)),
+    ('autoPadding', autoPadding),
     ('padding', padding),
     ('interaction', interaction),
     ('animation', animation),

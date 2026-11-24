@@ -200,7 +200,7 @@ cj.ChartConfig _config({
     animation: animated ? null : cj.ChartAnimation.none,
     responsive: true,
     maintainAspectRatio: false,
-    extra: xy || time ? const {'parsing': false} : null,
+    parsing: xy || time ? false : null,
   );
 }
 

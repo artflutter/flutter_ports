@@ -184,12 +184,10 @@ class _Sample13State() extends State<Sample13> {
           ),
           // The dash of each grid line follows its tick: a function of the
           // context gives the border.
-          extra: {
-            'border': (Object? c) => AxisBorder(
-              display: false,
-              dash: tickOf(c) == 0 ? const [] : const [8, 4],
-            ),
-          },
+          borderFunction: (c) => AxisBorder(
+            display: false,
+            dash: tickOf(c) == 0 ? const [] : const [8, 4],
+          ),
           ticks: AxisTicks(
             stepSize: 5,
             color: const .constant(ChartPaint.solid(Colors.white)),

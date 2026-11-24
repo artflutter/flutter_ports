@@ -347,8 +347,11 @@ final class ChartConfigLowering(
       }
       options.datasets = byType;
     }
-    if (config.padding case final padding?) {
-      options.layout = LayoutOptionsScope()..padding = padding;
+    if (config.padding != null || config.autoPadding != null) {
+      final layout = LayoutOptionsScope();
+      if (config.padding case final padding?) layout.padding = padding;
+      put(layout, OptionKey.autoPadding, config.autoPadding);
+      options.layout = layout;
     }
     if (plugins.ownKeyCount != 0) options.plugins = plugins;
     if (config.interaction case final interaction?) {

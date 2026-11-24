@@ -186,12 +186,10 @@ class _BarSample5State() extends State<BarSample5> {
     hoverBackgroundColor: .resolver(_fill),
     borderColor: const .constant(.solid(Colors.white)),
     hoverBorderColor: const .constant(.solid(Colors.white)),
-    extra: {
-      'borderWidth': [
-        for (var day = 0; day < 7; day++)
-          if (day == _touched && !mirror) 2.0 else 0.0,
-      ],
-    },
+    borderWidths: .indexed([
+      for (var day = 0; day < 7; day++)
+        if (day == _touched && !mirror) 2.0 else 0.0,
+    ]),
   );
 
   AxisTicks _titles({double padding = 8, double rotation = 0}) => AxisTicks(

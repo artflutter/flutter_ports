@@ -407,12 +407,6 @@ const List<PluginOff<Plugin<Object?>>> stressDisabledPlugins = [
   PluginOff<LegendPlugin>(),
 ];
 
-/// The options of a typed stress config with no parameter of `ChartConfig`:
-/// `layout.autoPadding: false`.
-const Map<String, Object?> stressNoAutoPadding = {
-  'layout': {'autoPadding': false},
-};
-
 /// The hidden category axis of [stressHiddenScale] for a typed config.
 const CategoryAxis stressHiddenCategoryAxis = CategoryAxis(
   .x,
@@ -587,6 +581,6 @@ ChartConfig stressChartTypedConfig({
     events: const [],
     disabledPlugins: stressDisabledPlugins,
     plugins: [...plugins],
-    extra: type.points ? stressNoAutoPadding : null,
+    autoPadding: type.points ? false : null,
   );
 }

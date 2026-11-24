@@ -790,7 +790,8 @@ class _LiveChartState()
           cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
           // The points are in the internal form of Chart.js, in the order
           // of x: an update reads no row (Chart.js performance docs).
-          extra: const {'parsing': false, 'normalized': true},
+          parsing: false,
+          normalized: true,
         ),
       ],
     );

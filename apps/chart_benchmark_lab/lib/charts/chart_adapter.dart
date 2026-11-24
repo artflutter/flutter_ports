@@ -424,7 +424,7 @@ class const BenchmarkChart({
               angleLinesDisplay: config.grid,
               angleLinesColor: const ChartPaint.solid(chartGrid),
               angleLinesLineWidth: 1,
-              grid: grid.copyWith(extra: const {'circular': true}),
+              grid: grid.copyWith(circular: true),
               ticks: ticks,
             ),
           ],
@@ -493,14 +493,14 @@ class const BenchmarkChart({
                 'touchmove',
               ]
             : const [],
-        extra: {
-          // The generator supplies sorted, finite numeric XY points, and a
-          // DataPoint.bubble gives its radius with no parse step.
-          if (config.type == ChartType.line ||
-              config.type == ChartType.scatter ||
-              config.type == ChartType.bubble)
-            'parsing': false,
-        },
+        // The generator supplies sorted, finite numeric XY points, and a
+        // DataPoint.bubble gives its radius with no parse step.
+        parsing:
+            config.type == ChartType.line ||
+                config.type == ChartType.scatter ||
+                config.type == ChartType.bubble
+            ? false
+            : null,
       ),
       updateMode: UpdateMode.none,
       dataOnlyUpdates: chartJsDataOnlyUpdates,

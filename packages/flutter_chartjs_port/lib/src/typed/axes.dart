@@ -126,6 +126,10 @@ abstract final class const ChartAxis({
   /// (`docs/axes/index.md`, "Callbacks").
   final ScaleHook? afterUpdate,
 
+  /// The border of the axis as a function of the tick context: the function
+  /// form of `border`. Give this or `border`.
+  final ScaleScript<ScaleBorder>? borderFunction,
+
   /// The tick marks and the tick labels: `ticks`.
   final AxisTicks? ticks,
 
@@ -181,6 +185,7 @@ abstract final class const ChartAxis({
     ScaleHook? beforeFit,
     ScaleHook? afterFit,
     ScaleHook? afterUpdate,
+    ScaleScript<ScaleBorder>? borderFunction,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisTitle? title,
@@ -226,6 +231,7 @@ abstract final class const ChartAxis({
     ('beforeFit', beforeFit),
     ('afterFit', afterFit),
     ('afterUpdate', afterUpdate),
+    ('borderFunction', borderFunction),
     ('ticks', ticks),
     ('grid', grid),
     ('border', border),
@@ -301,6 +307,16 @@ ScaleOptionsScope lowerAxis(ChartAxis axis, {bool writeAxis = false}) {
   if (_lowerGrid(axis.grid) case final grid?) scope.grid = grid;
   // The object itself, with the typed setter (Chart.js ADR 0141).
   if (axis.border case final border?) scope.border = border;
+  assert(
+    axis.border == null || axis.borderFunction == null,
+    'Give border or borderFunction, not both.',
+  );
+  if (axis.borderFunction case final function?) {
+    scope.store(
+      OptionKey.border,
+      ScaleValue<ScaleBorder>.resolver(function).toOptionCell(),
+    );
+  }
   if (_lowerTitle(axis.title) case final title?) scope.title = title;
   return mergeExtra(scope, axis.extra);
 }
@@ -374,6 +390,7 @@ final class const CategoryAxis(
   super.beforeFit,
   super.afterFit,
   super.afterUpdate,
+  super.borderFunction,
   super.ticks,
   super.grid,
 
@@ -421,6 +438,7 @@ final class const CategoryAxis(
     ScaleHook? beforeFit,
     ScaleHook? afterFit,
     ScaleHook? afterUpdate,
+    ScaleScript<ScaleBorder>? borderFunction,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisBorder? border,
@@ -463,6 +481,7 @@ final class const CategoryAxis(
     beforeFit: beforeFit ?? this.beforeFit,
     afterFit: afterFit ?? this.afterFit,
     afterUpdate: afterUpdate ?? this.afterUpdate,
+    borderFunction: borderFunction ?? this.borderFunction,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -577,6 +596,7 @@ final class const LinearAxis(
   super.beforeFit,
   super.afterFit,
   super.afterUpdate,
+  super.borderFunction,
   super.ticks,
   super.grid,
 
@@ -625,6 +645,7 @@ final class const LinearAxis(
     ScaleHook? beforeFit,
     ScaleHook? afterFit,
     ScaleHook? afterUpdate,
+    ScaleScript<ScaleBorder>? borderFunction,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisBorder? border,
@@ -668,6 +689,7 @@ final class const LinearAxis(
     beforeFit: beforeFit ?? this.beforeFit,
     afterFit: afterFit ?? this.afterFit,
     afterUpdate: afterUpdate ?? this.afterUpdate,
+    borderFunction: borderFunction ?? this.borderFunction,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -767,6 +789,7 @@ final class const LogarithmicAxis(
   super.beforeFit,
   super.afterFit,
   super.afterUpdate,
+  super.borderFunction,
   super.ticks,
   super.grid,
 
@@ -814,6 +837,7 @@ final class const LogarithmicAxis(
     ScaleHook? beforeFit,
     ScaleHook? afterFit,
     ScaleHook? afterUpdate,
+    ScaleScript<ScaleBorder>? borderFunction,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisBorder? border,
@@ -856,6 +880,7 @@ final class const LogarithmicAxis(
     beforeFit: beforeFit ?? this.beforeFit,
     afterFit: afterFit ?? this.afterFit,
     afterUpdate: afterUpdate ?? this.afterUpdate,
+    borderFunction: borderFunction ?? this.borderFunction,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -1051,6 +1076,7 @@ final class const TimeAxis(
   super.beforeFit,
   super.afterFit,
   super.afterUpdate,
+  super.borderFunction,
   super.ticks,
   super.grid,
 
@@ -1104,6 +1130,7 @@ final class const TimeAxis(
     ScaleHook? beforeFit,
     ScaleHook? afterFit,
     ScaleHook? afterUpdate,
+    ScaleScript<ScaleBorder>? borderFunction,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisBorder? border,
@@ -1152,6 +1179,7 @@ final class const TimeAxis(
     beforeFit: beforeFit ?? this.beforeFit,
     afterFit: afterFit ?? this.afterFit,
     afterUpdate: afterUpdate ?? this.afterUpdate,
+    borderFunction: borderFunction ?? this.borderFunction,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -1268,6 +1296,7 @@ final class const TimeSeriesAxis(
   super.beforeFit,
   super.afterFit,
   super.afterUpdate,
+  super.borderFunction,
   super.ticks,
   super.grid,
 
@@ -1321,6 +1350,7 @@ final class const TimeSeriesAxis(
     ScaleHook? beforeFit,
     ScaleHook? afterFit,
     ScaleHook? afterUpdate,
+    ScaleScript<ScaleBorder>? borderFunction,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisBorder? border,
@@ -1369,6 +1399,7 @@ final class const TimeSeriesAxis(
     beforeFit: beforeFit ?? this.beforeFit,
     afterFit: afterFit ?? this.afterFit,
     afterUpdate: afterUpdate ?? this.afterUpdate,
+    borderFunction: borderFunction ?? this.borderFunction,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
@@ -1607,6 +1638,7 @@ final class const RadialLinearAxis({
   super.beforeFit,
   super.afterFit,
   super.afterUpdate,
+  super.borderFunction,
   super.ticks,
   super.grid,
 
@@ -1658,6 +1690,7 @@ final class const RadialLinearAxis({
     ScaleHook? beforeFit,
     ScaleHook? afterFit,
     ScaleHook? afterUpdate,
+    ScaleScript<ScaleBorder>? borderFunction,
     AxisTicks? ticks,
     AxisGrid? grid,
     RadialAxisBorder? border,
@@ -1705,6 +1738,7 @@ final class const RadialLinearAxis({
     beforeFit: beforeFit ?? this.beforeFit,
     afterFit: afterFit ?? this.afterFit,
     afterUpdate: afterUpdate ?? this.afterUpdate,
+    borderFunction: borderFunction ?? this.borderFunction,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     border: border ?? this.border,
