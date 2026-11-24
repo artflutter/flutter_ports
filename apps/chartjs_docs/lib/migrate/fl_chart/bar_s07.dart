@@ -109,9 +109,7 @@ class _BarSample7State() extends State<BarSample7> {
           TextStyle(fontFamily: 'MaterialIcons', fontSize: 28),
         ),
         callback: _icon,
-        color: .resolver(
-          (c) => ChartPaint.solid(_colors[tickOf(c).toInt()]),
-        ),
+        color: .resolver((c) => ChartPaint.solid(_colors[tickOf(c).toInt()])),
       ),
     );
     final values = valueAxis(

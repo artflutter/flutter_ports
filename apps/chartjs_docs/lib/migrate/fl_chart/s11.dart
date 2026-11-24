@@ -49,9 +49,7 @@ class _Sample11State() extends State<Sample11> {
               : Fl.blueGrey,
         ),
       ),
-      lineWidth: .resolver(
-        (c) => (tickOf(c) - base).abs() <= 0.1 ? 1.0 : 0.4,
-      ),
+      lineWidth: .resolver((c) => (tickOf(c) - base).abs() <= 0.1 ? 1.0 : 0.4),
     ),
     ticks: AxisTicks(
       autoSkip: false,
@@ -64,9 +62,7 @@ class _Sample11State() extends State<Sample11> {
           (tickOf(c) - base).abs() <= 0.1 ? Colors.white : Colors.white60,
         ),
       ),
-      font: .resolver(
-        (c) => (tickOf(c) - base).abs() <= 0.1 ? _bold : _plain,
-      ),
+      font: .resolver((c) => (tickOf(c) - base).abs() <= 0.1 ? _bold : _plain),
     ),
     border: flGridDash,
     afterBuildTicks: (s) => _ticksFrom(s, base),
