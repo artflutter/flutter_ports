@@ -1,12 +1,16 @@
 // Ported from Chart.js v4.6.1 test/fixtures/element.point/rotation.js (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-direct-colors, native paint inputs.
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
@@ -15,45 +19,46 @@ FixtureConfig fixture() {
   ChartGradient? gradient;
 
   // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
-  final datasets =
-      const <Object?>[
-        CirclePointStyle(),
-        CrossPointStyle(),
-        CrossRotPointStyle(),
-        DashPointStyle(),
-        LinePointStyle(),
-        RectPointStyle(),
-        RectRoundedPointStyle(),
-        RectRotPointStyle(),
-        StarPointStyle(),
-        TrianglePointStyle(),
-        false,
-      ].indexed.map((entry) {
-        final (y, style) = entry;
-        return <String, Object?>{
-          'pointStyle': style,
-          // Upstream: Array.apply(null, Array(17)).map(function(v, x) {...}).
-          'data': List<Object?>.generate(17, (x) {
-            return <String, Object?>{'x': x, 'y': 11 - y};
-          }),
-        };
-      }).toList();
+  final datasets = [
+    for (final (y, style) in const <Object?>[
+      CirclePointStyle(),
+      CrossPointStyle(),
+      CrossRotPointStyle(),
+      DashPointStyle(),
+      LinePointStyle(),
+      RectPointStyle(),
+      RectRoundedPointStyle(),
+      RectRotPointStyle(),
+      StarPointStyle(),
+      TrianglePointStyle(),
+      false,
+    ].indexed)
+      BubbleDataset(
+        // Upstream: Array.apply(null, Array(17)).map(function(v, x) {...}).
+        data: [for (var x = 0; x < 17; x++) DataPoint(x, 11 - y)],
+        // A PointStyle, or `false` (no point style) in extra.
+        pointStyle: style is PointStyle ? style : null,
+        extra: style is PointStyle
+            ? null
+            : <String, Object?>{'pointStyle': style},
+      ),
+  ];
 
   // Upstream: Array.apply(null, Array(17)).map(function(v, i) {...}).
   final angles = List<Object?>.generate(17, (i) {
     return -180 + i * 22.5;
   });
 
-  return FixtureConfig.map(<String, Object?>{
-    'config': <String, Object?>{
-      'type': 'bubble',
-      'data': <String, Object?>{'datasets': datasets},
-      'options': <String, Object?>{
-        'responsive': false,
-        'elements': <String, Object?>{
-          'point': <String, Object?>{
+  return FixtureConfig.typed(
+    ChartConfig(
+      datasets: datasets,
+      responsive: false,
+      elements: ChartElements(
+        point: PointElementStyle(
+          radius: 10,
+          borderColor: ChartPaint.solid(Color(0xFFCCCCCC)),
+          extra: <String, Object?>{
             'rotation': angles,
-            'radius': 10,
             'backgroundColor': (Object? context) {
               return gradient ??= const ChartGradient.linear(
                 native_ui.Offset.zero,
@@ -61,20 +66,19 @@ FixtureConfig fixture() {
                 [native_ui.Color(0xffff0000), native_ui.Color(0xff0000ff)],
               );
             },
-            'borderColor': '#cccccc',
           },
-        },
-        'layout': <String, Object?>{'padding': const EdgeInsets.all(20)},
-        'scales': <String, Object?>{
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'x': <String, Object?>{'display': ScaleDisplay.off},
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'y': <String, Object?>{'display': ScaleDisplay.off},
-        },
-      },
-    },
-    'options': <String, Object?>{
+        ),
+      ),
+      padding: const EdgeInsets.all(20),
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+    ),
+    options: <String, Object?>{
       'canvas': <String, Object?>{'height': 256, 'width': 512},
     },
-  });
+  );
 }
