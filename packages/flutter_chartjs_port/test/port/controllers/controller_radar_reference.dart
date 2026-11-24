@@ -18,6 +18,7 @@
 
 import 'dart:ui' show Color, FontStyle, FontWeight, StrokeCap, StrokeJoin;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -44,14 +45,15 @@ const String controllerRadarReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerRadarReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -86,7 +88,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -8170,7 +8172,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         RadarDataset(data: [null, 8.0, 16.0, null, 3.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -9656,7 +9658,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -10839,7 +10841,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         RadarDataset(data: [7.0, 3.0, 9.0, 11.0, 2.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -14721,7 +14723,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         RadarDataset(data: [null, null, null, 6.0, 14.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -15880,7 +15882,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         RadarDataset(data: [4.0, 12.0, 18.0, 6.0, 14.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -17067,7 +17069,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -18228,7 +18230,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -21031,7 +21033,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -21736,7 +21738,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -21749,7 +21751,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         RadarDataset(data: [1.0, 2.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -22376,7 +22378,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -23298,7 +23300,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -24234,7 +24236,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -25162,7 +25164,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -25741,7 +25743,7 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },

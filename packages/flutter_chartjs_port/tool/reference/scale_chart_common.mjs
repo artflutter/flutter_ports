@@ -2347,6 +2347,33 @@ function inputDart(v, state) {
 /** Whether the writer marks each object and array without a NumberFormat const. */
 let constLeaves = false;
 
+/**
+ * The Dart `AcquireOptions` of the acquireChart [options] of a case
+ * (Chart.js ADR 0200): only `canvas` with a whole `width` and `height`
+ * has a form here; another key stops the generator.
+ */
+function acquireOptionsDart(options = {}) {
+  const {canvas, ...rest} = options;
+  if (Object.keys(rest).length) {
+    throw new Error(`The acquireChart options ${Object.keys(rest).join(', ')} have no AcquireOptions form here.`);
+  }
+  let args = '';
+  if (canvas !== undefined) {
+    const {width, height, ...more} = canvas;
+    if (Object.keys(more).length) {
+      throw new Error(`The canvas options ${Object.keys(more).join(', ')} have no HarnessCanvas form here.`);
+    }
+    const parts = [];
+    for (const [key, value] of [['width', width], ['height', height]]) {
+      if (value === undefined) continue;
+      if (!Number.isInteger(value)) throw new Error(`The canvas ${key} ${value} is not a whole number.`);
+      parts.push(`${key}: ${value}`);
+    }
+    args = `canvas: HarnessCanvas(${parts.join(', ')})`;
+  }
+  return `${constLeaves ? 'const ' : ''}AcquireOptions(${args})`;
+}
+
 /** Whether the writer is inside a const object or array. */
 let inConst = false;
 
@@ -2427,7 +2454,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = [], 
       .map(
         (c) =>
           `  (name: ${dart(c.name, state)}, config: ${typed ? typedConfigCode(c, state, name) ?? inputDart(c.config, state) : inputDart(c.config, state)}, ` +
-          `options: ${inputDart(c.options, state)}, expected: ${dart(c.expected, state)}),\n`,
+          `options: ${acquireOptionsDart(c.options)}, expected: ${dart(c.expected, state)}),\n`,
       )
       .join('');
   };
@@ -2454,7 +2481,9 @@ export function writeReference(outPath, name, cases, {title = name, notes = [], 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.closures ? '\n// The typed configs make new data Lists at each call, as the Map form.\n// ignore_for_file: prefer_const_constructors\n// ignore_for_file: prefer_const_literals_to_create_immutables\n' : ''}${state.strokes && !state.borderRadii ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats || state.clips || state.stackModes || state.borders || state.fixturePaints || state.typedConfigs ? '\n' : ''}${state.fixturePaints ? "import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;\n" : ''}${state.borderRadii ? "import 'package:flutter/painting.dart';\n" : state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.algorithms || state.aligns || state.arcEnums || state.borderSkips || state.borders || state.clips || state.cubicModes || state.fillTargets || state.fillerEnums || state.graceLengths || state.modes || state.pointStyles || state.positioners || state.positions || state.radiusLengths || state.scaleAxes || state.scaleEnums || state.stackModes || state.steppedLines || state.textStyles || state.timeUnits || state.tooltipCallbacks || state.tooltipValues || state.pluginOptions || state.undefined || state.typedConfigs ? `import 'package:flutter_chartjs_port/${state.positioners || state.typedConfigs ? 'chartjs' : 'chartjs_core'}.dart';\n` : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}${supportImports(outPath, state)}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.closures ? '\n// The typed configs make new data Lists at each call, as the Map form.\n// ignore_for_file: prefer_const_constructors\n// ignore_for_file: prefer_const_literals_to_create_immutables\n' : ''}${state.strokes && !state.borderRadii ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}
+import 'package:chartjs_test_utils/flutter.dart';
+${state.fixturePaints ? "import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;\n" : ''}${state.borderRadii ? "import 'package:flutter/painting.dart';\n" : state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.algorithms || state.aligns || state.arcEnums || state.borderSkips || state.borders || state.clips || state.cubicModes || state.fillTargets || state.fillerEnums || state.graceLengths || state.modes || state.pointStyles || state.positioners || state.positions || state.radiusLengths || state.scaleAxes || state.scaleEnums || state.stackModes || state.steppedLines || state.textStyles || state.timeUnits || state.tooltipCallbacks || state.tooltipValues || state.pluginOptions || state.undefined || state.typedConfigs ? `import 'package:flutter_chartjs_port/${state.positioners || state.typedConfigs ? 'chartjs' : 'chartjs_core'}.dart';\n` : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}${supportImports(outPath, state)}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 
@@ -2477,14 +2506,15 @@ const String ${name}ReferenceCommit = '${buildCommit}';
 ///   function that gives a new typed \`ChartConfig\` at each call, or the
 ///   Map of a config with no typed form. \`'fn:<name>'\` is a named
 ///   function of the Dart test.
-/// - \`options\`: the options of acquireChart (the canvas size).
+/// - \`options\`: the options of acquireChart (the canvas size), an
+///   \`AcquireOptions\` (Chart.js ADR 0200).
 /// - \`expected\`: the observations of \`observe\` (\`chartArea\`,
 ///   \`scales\` by id and \`points\`), and \`drawCalls\`, the calls of one
 ///   \`chart.draw()\` as JSON lines \`[name, ...args]\`.
 typedef ${type}ReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 

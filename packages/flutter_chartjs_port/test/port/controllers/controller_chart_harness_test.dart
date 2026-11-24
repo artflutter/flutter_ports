@@ -623,7 +623,7 @@ void main() {
             'datasets': <Object?>[null],
           },
         },
-        options: <String, Object?>{},
+        options: const AcquireOptions(),
         expected: <String, Object?>{
           'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
         },

@@ -185,7 +185,7 @@ void main() {
       expectNoStaleScaleKeys(
         acquireReferenceChart(
           controllerBarReference.first.config,
-          const {},
+          const AcquireOptions(),
           theme: compileLightTheme(),
         ),
         snapshot,

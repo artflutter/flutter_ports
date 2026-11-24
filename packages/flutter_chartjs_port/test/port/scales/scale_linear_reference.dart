@@ -12,6 +12,7 @@
 
 import 'dart:ui' show FontStyle, Locale;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -40,14 +41,15 @@ const String scaleLinearReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ScaleLinearReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -75,7 +77,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -780,7 +782,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -1509,7 +1511,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 463.974609375, 483.6],
       'scales': <String, Object?>{
@@ -2693,7 +2695,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, beginAtZero: false)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -3360,7 +3362,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -3994,7 +3996,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[100.068359375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -4643,7 +4645,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       labels: ['a', 'b', 'c'],
       datasets: [TestDataset(const ChartKind('scaleTest'), data: [])],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -5214,7 +5216,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       'type': 'scaleTest',
       'data': <String, Object?>{'labels': <Object?>[], 'datasets': <Object?>[]},
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 10.0, 512.0, 512.0],
       'scales': <String, Object?>{},
@@ -5243,7 +5245,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       datasets: [TestDataset(const ChartKind('scaleTest'), data: [])],
       scales: const [LinearAxis(.y, suggestedMin: -10, suggestedMax: 15)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[31.34375, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -5761,7 +5763,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[31.34375, 10.2, 512.0, 501.8],
       'scales': <String, Object?>{
@@ -6202,7 +6204,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 498.9892578125, 483.6],
       'scales': <String, Object?>{
@@ -6985,7 +6987,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -7765,7 +7767,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.x, min: -5, max: 20)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -8501,7 +8503,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -9261,7 +9263,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[24.669921875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -9961,7 +9963,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -10764,7 +10766,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -11525,7 +11527,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -12329,7 +12331,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -13129,7 +13131,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.off)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -13789,7 +13791,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.single)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -14517,7 +14519,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[28.677734375, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
@@ -15145,7 +15147,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       scales: const [LinearAxis(.x, min: 20)],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[28.677734375, 32.0, 493.9853515625, 483.6],
       'scales': <String, Object?>{
@@ -15735,7 +15737,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         TestDataset(const ChartKind('scaleTest'), data: [10000.0, 10000.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[50.703125, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -16299,7 +16301,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         TestDataset(const ChartKind('scaleTest'), data: [-10000.0, -10000.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[54.69921875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -16868,7 +16870,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, beginAtZero: true)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -17436,7 +17438,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         TestDataset(const ChartKind('scaleTest'), data: [0.0, 0.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.677734375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -18008,7 +18010,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, suggestedMin: -10, suggestedMax: 10)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[31.34375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -18699,7 +18701,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, min: -1010, max: 1010)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[48.025390625, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -19252,7 +19254,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[28.677734375, 32.0, 493.9853515625, 483.6],
       'scales': <String, Object?>{
@@ -19740,7 +19742,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       scales: const [LinearAxis(.x, min: -3000, max: 0)],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[28.677734375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -20224,7 +20226,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, min: 250)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -20649,7 +20651,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, max: 150)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -21112,7 +21114,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -21427,7 +21429,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 480.65625, 483.6],
       'scales': <String, Object?>{
@@ -22361,7 +22363,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(.y, extra: <String, Object?>{'grace': PercentGrace(10)}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -22847,7 +22849,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -23425,7 +23427,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(.y, min: 1, max: 11, ticks: AxisTicks(stepSize: 2)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[26.45703125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -23970,7 +23972,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, max: 2.6, ticks: AxisTicks(stepSize: 0.4))],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -24469,7 +24471,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 474.64453125, 483.6],
       'scales': <String, Object?>{
@@ -25180,7 +25182,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -25769,7 +25771,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -26343,7 +26345,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -27222,7 +27224,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, bounds: ScaleBounds.data)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -27794,7 +27796,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, reverse: true)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -28500,7 +28502,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(.y, extra: <String, Object?>{'offset': true}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -29209,7 +29211,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -29847,7 +29849,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.015625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -30475,7 +30477,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       extra: const <String, Object?>{'locale': Locale('de', 'DE')},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         57.376953125,
@@ -31253,9 +31255,9 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 300.0, 'height': 150.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 300, height: 150),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 294.0, 121.6],
       'scales': <String, Object?>{
@@ -31712,7 +31714,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[114.09765625, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -32169,7 +32171,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -32783,7 +32785,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[41.48541425199592, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -33397,7 +33399,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[28.4, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -34011,7 +34013,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -34617,7 +34619,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(.y, ticks: AxisTicks(font: ChartTextStyle(height: 0))),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -35220,7 +35222,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         TestDataset(const ChartKind('scaleTest'), data: [0.0, 500.0, 1000.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -35830,7 +35832,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 493.9853515625, 483.6],
       'scales': <String, Object?>{
@@ -36449,7 +36451,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 501.8, 470.5145857480041],
       'scales': <String, Object?>{
@@ -37064,7 +37066,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         20.673828125,
@@ -38006,7 +38008,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         20.673828125,
@@ -38946,7 +38948,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         20.673828125,
@@ -39421,9 +39423,9 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 200.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 200, height: 300),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 166.970703125, 271.6],
       'scales': <String, Object?>{
@@ -40061,9 +40063,9 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 200.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 200, height: 300),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         37.35546875,
@@ -40723,7 +40725,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(.y, position: ChartPosition.right),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         11.671875,
@@ -41517,7 +41519,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[11.671875, 32.0, 498.9892578125, 483.6],
       'scales': <String, Object?>{
@@ -42297,7 +42299,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[11.671875, 32.0, 498.9892578125, 483.6],
       'scales': <String, Object?>{
@@ -43077,7 +43079,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 498.9892578125, 501.8],
       'scales': <String, Object?>{
@@ -43859,7 +43861,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(.y, position: ChartPosition.center),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[11.671875, 32.0, 498.9892578125, 501.8],
       'scales': <String, Object?>{
@@ -44632,7 +44634,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(.y, display: ScaleDisplay.off),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -44863,7 +44865,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
         LinearAxis(.y, title: AxisTitle(display: true)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[56.421484375, 32.0, 498.9892578125, 461.2],
       'scales': <String, Object?>{
@@ -45661,9 +45663,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       padding: const EdgeInsets.fromLTRB(1, 30, 1, 1),
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 0.0, 'height': 0.0},
-    },
+    options: const AcquireOptions(canvas: HarnessCanvas(width: 0, height: 0)),
     expected: const <String, Object?>{
       'chartArea': <Object?>[1.0, 30.0, 1.0, 30.0],
       'scales': <String, Object?>{
@@ -45791,7 +45791,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, beginAtZero: false)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -46554,7 +46554,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.017578125, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -47290,7 +47290,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       scales: const [LinearAxis(.y, beginAtZero: false)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -47707,7 +47707,7 @@ List<ScaleLinearReferenceCase> scaleLinearReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 500.328125, 483.6],
       'scales': <String, Object?>{

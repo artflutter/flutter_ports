@@ -26,6 +26,7 @@ import 'dart:ui'
         TextAlign,
         TextDirection;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -52,14 +53,15 @@ const String pluginTooltipReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginTooltipReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -117,9 +119,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -2462,9 +2464,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -4735,9 +4737,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -7008,9 +7010,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -9389,9 +9391,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -11734,9 +11736,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -14011,9 +14013,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -16360,9 +16362,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -18726,9 +18728,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -21097,9 +21099,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -23370,9 +23372,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -25715,9 +25717,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -28061,9 +28063,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[
@@ -30277,9 +30279,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[
@@ -32495,9 +32497,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -34848,9 +34850,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -37197,9 +37199,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -39521,9 +39523,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -41896,9 +41898,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -44245,9 +44247,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -46559,9 +46561,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -48913,9 +48915,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -51267,9 +51269,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -55276,9 +55278,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -57477,9 +57479,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
@@ -60516,9 +60518,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 400.0, 271.6],
@@ -62597,9 +62599,9 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
         PluginOff<TitlePlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 300),
+    ),
     expected: <String, Object?>{
       'initial': const <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],

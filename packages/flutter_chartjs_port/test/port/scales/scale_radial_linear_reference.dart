@@ -10,6 +10,7 @@
 // ignore_for_file: prefer_const_constructors
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -39,14 +40,15 @@ const String scaleRadialLinearReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ScaleRadialLinearReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -71,7 +73,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         TestDataset(const ChartKind('radialTest'), data: [38.0, 75.0, 22.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -493,7 +495,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -957,7 +959,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -1565,7 +1567,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -2224,7 +2226,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -2918,7 +2920,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -3705,7 +3707,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -4530,7 +4532,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -5415,7 +5417,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -6388,7 +6390,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -7359,7 +7361,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -8052,7 +8054,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -8627,7 +8629,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -9249,7 +9251,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -9864,7 +9866,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -10463,9 +10465,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 300.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 300, height: 300),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 300.0, 300.0],
       'scales': <String, Object?>{
@@ -11465,9 +11467,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 250.0, 'height': 250.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 250, height: 250),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 250.0, 250.0],
       'scales': <String, Object?>{
@@ -12339,7 +12341,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.off)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -12777,7 +12779,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(display: ScaleDisplay.off)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -13017,7 +13019,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -13574,7 +13576,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -13925,7 +13927,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -14502,7 +14504,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -14866,7 +14868,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -15401,7 +15403,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -15957,7 +15959,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -16321,7 +16323,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(grid: AxisGrid(display: false))],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -16786,7 +16788,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -17362,7 +17364,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -17896,7 +17898,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(startAngle: 45)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -18571,7 +18573,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(startAngle: -100)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -19098,7 +19100,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         RadialLinearAxis(extra: <String, Object?>{'startAngle': '30'}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -19576,7 +19578,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(reverse: true)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -20144,7 +20146,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(reverse: true)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -20721,7 +20723,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -21299,7 +21301,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(min: 20, max: 100)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -21875,7 +21877,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(beginAtZero: true, suggestedMax: 120)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -22407,7 +22409,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -22893,7 +22895,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -23309,7 +23311,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -23681,7 +23683,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         TestDataset(const ChartKind('radialTest'), data: [7.0, 7.0, 7.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -24163,7 +24165,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -24747,7 +24749,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -25274,7 +25276,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(ticks: AxisTicks(display: false))],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -25764,7 +25766,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -26319,9 +26321,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(ticks: AxisTicks(stepSize: 1))],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 200.0, 'height': 200.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 200, height: 200),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 200.0, 200.0],
       'scales': <String, Object?>{
@@ -26874,9 +26876,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         RadialLinearAxis(ticks: AxisTicks(stepSize: 1, autoSkip: false)),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 200.0, 'height': 200.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 200, height: 200),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 200.0, 200.0],
       'scales': <String, Object?>{
@@ -27704,7 +27706,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         RadialLinearAxis(extra: <String, Object?>{'bounds': ScaleBounds.data}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -28289,7 +28291,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -28849,7 +28851,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -29533,7 +29535,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -30002,7 +30004,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         TestDataset(const ChartKind('radialTest'), data: [3.0, 9.0, 6.0, 12.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -30551,7 +30553,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       labels: [],
       datasets: [TestDataset(const ChartKind('radialTest'), data: [])],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -30818,7 +30820,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       labels: ['A', 'B', 'C'],
       datasets: [TestDataset(const ChartKind('radialTest'), data: [])],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -31333,7 +31335,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -31861,7 +31863,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -32313,7 +32315,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -32827,9 +32829,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 400.0, 'height': 250.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 400, height: 250),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 400.0, 250.0],
       'scales': <String, Object?>{
@@ -33307,9 +33309,9 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 220.0, 'height': 400.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 220, height: 400),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 220.0, 400.0],
       'scales': <String, Object?>{
@@ -33947,7 +33949,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -34501,7 +34503,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -35064,7 +35066,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -35623,7 +35625,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -36228,7 +36230,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -36787,7 +36789,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -37060,9 +37062,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         RadialLinearAxis(ticks: AxisTicks(stepSize: 10, autoSkip: false)),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 12.0, 'height': 12.0},
-    },
+    options: const AcquireOptions(canvas: HarnessCanvas(width: 12, height: 12)),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 6.0, 12.0, 12.0],
       'scales': <String, Object?>{
@@ -37493,7 +37493,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(display: ScaleDisplay.auto)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -38049,7 +38049,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(display: ScaleDisplay.auto)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -38339,7 +38339,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       },
       'options': <String, Object?>{},
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -38964,7 +38964,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -39504,7 +39504,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         TestDataset(const ChartKind('radialTest'), data: [5.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -39904,7 +39904,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         TestDataset(const ChartKind('radialTest'), data: [5.0, 9.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -40313,7 +40313,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(startAngle: -0.0001)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -40793,7 +40793,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         RadialLinearAxis(startAngle: 750, ticks: AxisTicks(display: false)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -41278,7 +41278,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         RadialLinearAxis(extra: <String, Object?>{'startAngle': 'abc'}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -41819,7 +41819,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
       ],
       scales: const [RadialLinearAxis(position: ChartPosition.left)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[240.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -42213,7 +42213,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -42642,7 +42642,7 @@ List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference(
         'scales': <String, Object?>{'rScale': <String, Object?>{}},
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 10.0, 512.0, 512.0],
       'scales': <String, Object?>{

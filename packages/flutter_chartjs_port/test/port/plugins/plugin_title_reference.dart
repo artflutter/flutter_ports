@@ -12,6 +12,7 @@
 
 import 'dart:ui' show Color, FontStyle, FontWeight, StrokeCap, StrokeJoin;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -38,14 +39,15 @@ const String pluginTitleReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginTitleReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -91,7 +93,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -2302,7 +2304,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -5058,7 +5060,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 496.9970703125, 449.2],
@@ -6121,7 +6123,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -7202,7 +7204,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -8854,7 +8856,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 477.6, 483.59999999999997],
@@ -9926,7 +9928,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 477.6, 483.59999999999997],
@@ -10997,7 +10999,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -12634,7 +12636,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -14271,7 +14273,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -15916,7 +15918,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 64.4, 496.9970703125, 483.6],
@@ -16973,7 +16975,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -18618,7 +18620,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 74.0, 496.9970703125, 483.6],
@@ -20252,7 +20254,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -21329,7 +21331,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -22395,7 +22397,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -23453,7 +23455,7 @@ List<PluginTitleReferenceCase> pluginTitleReference(
         TitleOptions(display: true, text: <String>['Chart title']),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 66.4, 496.9970703125, 483.6],

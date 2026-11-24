@@ -881,7 +881,7 @@ void main() {
       expectNoStaleScaleKeys(
         acquireReferenceChart(
           pluginTooltipReference(_functions).first.config,
-          const {},
+          const AcquireOptions(),
           functions: _functions,
           theme: compileLightTheme(),
         ),

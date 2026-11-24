@@ -259,7 +259,7 @@ void main() {
       expectNoStaleScaleKeys(
         acquireReferenceChart(
           controllerPolarAreaReference(_functions).first.config,
-          const {},
+          const AcquireOptions(),
           functions: _functions,
           theme: compileLightTheme(),
         ),

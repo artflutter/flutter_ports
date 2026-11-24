@@ -12,6 +12,7 @@
 
 import 'dart:ui' show FontStyle, Locale;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:intl/intl.dart';
 
@@ -40,14 +41,15 @@ const String scaleLogarithmicReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ScaleLogarithmicReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -81,7 +83,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
@@ -1591,7 +1593,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
@@ -3066,7 +3068,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -3895,7 +3897,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -4883,7 +4885,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -5976,7 +5978,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         TestDataset(const ChartKind('logValueTest'), data: [0.0, 10.0, 100.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -6908,7 +6910,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         TestDataset(const ChartKind('logValueTest'), data: [0.0, 25.0, 300.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -7626,7 +7628,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -8727,7 +8729,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         TestDataset(const ChartKind('logValueTest'), data: [0.0, 0.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -9621,7 +9623,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
     config: () => ChartConfig(
       datasets: [TestDataset(const ChartKind('logTest'), data: [])],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         44.029296875,
@@ -11165,7 +11167,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         44.029296875,
@@ -12664,7 +12666,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       ],
       scales: const [LogarithmicAxis(.y, stacked: StackMode.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[31.0166015625, 32.0, 480.9833984375, 483.6],
       'scales': <String, Object?>{
@@ -13543,7 +13545,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       ],
       scales: const [LogarithmicAxis(.y, stacked: StackMode.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -14533,7 +14535,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       ],
       parsing: false,
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         34.021484375,
@@ -16143,7 +16145,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       ],
       parsing: false,
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         34.021484375,
@@ -17557,7 +17559,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, min: 1, max: 1000),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 452.96120431576094],
       'scales': <String, Object?>{
@@ -18754,7 +18756,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
@@ -19363,7 +19365,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -20850,7 +20852,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, min: double.nan, max: -1000),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
@@ -22329,7 +22331,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       ],
       scales: const [LogarithmicAxis(.x, min: 0), LogarithmicAxis(.y, max: 0)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
@@ -23706,7 +23708,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, min: 0, max: 0.8),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -25114,7 +25116,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       ],
       scales: const [LogarithmicAxis(.x, min: 0), LogarithmicAxis(.y, min: 0)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -26563,7 +26565,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, suggestedMin: 50, suggestedMax: 60),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
@@ -27976,7 +27978,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, suggestedMin: 10, suggestedMax: 100),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         34.021484375,
@@ -29508,7 +29510,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       datasets: [TestDataset(const ChartKind('logTest'), data: [])],
       scales: const [LogarithmicAxis(.y, suggestedMin: 0)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         18.01260593092117,
@@ -30454,7 +30456,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, extra: <String, Object?>{'beginAtZero': true}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -31198,7 +31200,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -32102,7 +32104,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -32779,7 +32781,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, extra: <String, Object?>{'beginAtZero': true}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         44.029296875,
@@ -34315,7 +34317,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         44.029296875,
@@ -35876,7 +35878,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, max: 100),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
@@ -37293,7 +37295,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, max: 0.8),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -38695,7 +38697,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       ],
       scales: const [LogarithmicAxis(.y, min: 100, max: 10)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         27.34765625,
@@ -39638,7 +39640,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
@@ -41116,7 +41118,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, bounds: ScaleBounds.data),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         44.029296875,
@@ -42293,7 +42295,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, ticks: AxisTicks(autoSkip: false)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
@@ -42924,7 +42926,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, ticks: AxisTicks(autoSkip: false)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
@@ -43495,7 +43497,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, ticks: AxisTicks(autoSkip: false)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
@@ -44554,7 +44556,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, ticks: AxisTicks(autoSkip: false)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[74.05859375, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
@@ -45257,7 +45259,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, display: ScaleDisplay.off),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
@@ -45619,7 +45621,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
@@ -46975,7 +46977,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         TestDataset(const ChartKind('logValueTest'), data: [5000.0, 6000.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -47588,7 +47590,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         TestDataset(const ChartKind('logValueTest'), data: [1000.0, 10000.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[50.703125, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -48491,7 +48493,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, reverse: true),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         30.681640625,
@@ -49717,7 +49719,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, position: ChartPosition.right),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         14.031039980913285,
@@ -51231,7 +51233,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, extra: <String, Object?>{'offset': true}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
@@ -52523,7 +52525,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         60.037109375,
@@ -53998,7 +54000,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
       ],
       extra: const <String, Object?>{'locale': Locale('de', 'DE')},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 452.96120431576094],
       'scales': <String, Object?>{
@@ -55236,7 +55238,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 452.96120431576094],
       'scales': <String, Object?>{
@@ -56479,7 +56481,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
@@ -57953,7 +57955,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         89.3984375,
@@ -59485,9 +59487,9 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 150.0, 'height': 200.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 150, height: 200),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         67.384765625,
@@ -60036,9 +60038,9 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 150.0, 'height': 200.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 150, height: 200),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[57.376953125, 32.0, 150.0, 161.40651157205164],
       'scales': <String, Object?>{
@@ -60724,9 +60726,9 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 300.0, 'height': 250.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 300, height: 250),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[57.376953125, 32.0, 270.3076171875, 221.6],
       'scales': <String, Object?>{
@@ -61183,7 +61185,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         TestDataset(const ChartKind('logValueTest'), data: [0.0, 10.0, 100.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -62118,7 +62120,7 @@ List<ScaleLogarithmicReferenceCase> scaleLogarithmicReference(
         LogarithmicAxis(.y, extra: <String, Object?>{'beginAtZero': true}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[34.021484375, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{

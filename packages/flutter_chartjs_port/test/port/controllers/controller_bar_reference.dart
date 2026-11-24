@@ -25,6 +25,7 @@
 // ignore_for_file: prefer_const_constructors
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -51,14 +52,15 @@ const String controllerBarReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerBarReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -95,7 +97,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 512.0, 483.6],
@@ -6641,7 +6643,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
@@ -7681,7 +7683,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         LinearAxis(.y, stacked: StackMode.on),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 512.0, 483.6],
@@ -8867,7 +8869,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         LinearAxis(.y, stacked: StackMode.single),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
@@ -10097,7 +10099,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         LinearAxis(.y, stacked: StackMode.on),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
@@ -11530,7 +11532,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
@@ -12778,7 +12780,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         LinearAxis(.y, stacked: StackMode.on),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
@@ -13896,7 +13898,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         BarDataset(data: DatasetData.values([2.0, 4.0, -1.0])),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[34.677734375, 32.0, 512.0, 483.6],
@@ -16629,7 +16631,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
@@ -18043,7 +18045,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
@@ -18958,7 +18960,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
       ],
       extra: const <String, Object?>{'skipNull': true},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
@@ -20344,7 +20346,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
@@ -21562,7 +21564,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
@@ -22722,7 +22724,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 54.0, 512.0, 483.6],
@@ -24111,7 +24113,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
@@ -25514,7 +25516,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
       ],
       scales: const [LinearAxis(.x)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
@@ -26642,7 +26644,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
       ],
       scales: const [TimeSeriesAxis(.x)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
@@ -27670,7 +27672,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
       ],
       scales: const [LogarithmicAxis(.y)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[54.037109375, 32.0, 512.0, 483.6],
@@ -29159,7 +29161,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         LinearAxis(.y, reverse: true),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
@@ -30145,7 +30147,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
       ],
       scales: const [LinearAxis(.y, min: 0, max: 2)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
@@ -31198,7 +31200,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
@@ -32043,7 +32045,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 512.0, 483.6],
@@ -32959,7 +32961,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -34056,7 +34058,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
@@ -34820,7 +34822,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -35612,7 +35614,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -36407,7 +36409,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -37202,7 +37204,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -37993,7 +37995,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -38747,7 +38749,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -39499,7 +39501,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
@@ -40227,7 +40229,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
@@ -40955,7 +40957,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
@@ -41677,7 +41679,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
@@ -42401,7 +42403,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -43155,7 +43157,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -43926,7 +43928,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -44680,7 +44682,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[48.025390625, 32.0, 512.0, 483.6],
@@ -45525,7 +45527,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -46278,7 +46280,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -47048,7 +47050,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -47803,7 +47805,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
@@ -48566,7 +48568,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
@@ -49162,7 +49164,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -49182,7 +49184,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -49202,7 +49204,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -49227,7 +49229,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         LinearAxis(.y, stacked: StackMode.on),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 512.0, 483.6],
@@ -50044,7 +50046,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         LinearAxis(.y, stacked: StackMode.on),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -50068,7 +50070,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 469.2],
@@ -50983,7 +50985,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 512.0, 469.2],

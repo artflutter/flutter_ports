@@ -26,7 +26,7 @@ import '../support/tick_label.dart';
 // - `toEqual` of an array of strings is `equals`.
 
 /// The chart of the typed [config] (Chart.js ADR 0052).
-Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// core.ticks.tests.js:1-3 `getLabels(scale)`.

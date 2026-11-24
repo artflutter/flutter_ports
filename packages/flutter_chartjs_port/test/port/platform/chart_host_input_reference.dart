@@ -150,6 +150,7 @@
 
 import 'dart:ui' show FontStyle, FontWeight;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../support/native_plugin.dart';
@@ -177,14 +178,15 @@ const String chartHostInputReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ChartHostInputReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -229,7 +231,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -323,7 +325,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -450,7 +452,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -590,7 +592,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -677,7 +679,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -800,7 +802,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -897,7 +899,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -994,7 +996,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -1090,7 +1092,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -1185,7 +1187,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -1281,7 +1283,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -1372,7 +1374,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -1546,7 +1548,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -1648,7 +1650,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -1714,7 +1716,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -1802,7 +1804,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -1875,7 +1877,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -1955,7 +1957,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -2068,7 +2070,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -2174,7 +2176,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -2285,7 +2287,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -2380,7 +2382,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -2467,7 +2469,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -2576,7 +2578,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -2675,7 +2677,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -2832,7 +2834,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -2976,7 +2978,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[
@@ -3098,7 +3100,7 @@ List<ChartHostInputReferenceCase> chartHostInputReference(
         }),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'steps': <Object?>[
         <Object?>[

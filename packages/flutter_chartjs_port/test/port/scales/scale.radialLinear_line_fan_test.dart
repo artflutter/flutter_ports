@@ -468,13 +468,13 @@ void main() {
     testWidgets('a canvas with no radius: the lines have no length', (
       tester,
     ) async {
-      Map<String, Object?> options() => <String, Object?>{
-        'canvas': <String, Object?>{'width': 8, 'height': 8},
-      };
-      final fan = acquireChartRoot(_config(), options());
+      const options = AcquireOptions(
+        canvas: HarnessCanvas(width: 8, height: 8),
+      );
+      final fan = acquireChartRoot(_config(), options);
       final ordinary = acquireChartRoot(
         _config(scaleType: 'fanOrdinaryRadial'),
-        options(),
+        options,
       );
       expect(_scaleOf(fan).drawingArea, _scaleOf(ordinary).drawingArea);
       expect(await _pixels(tester, fan), await _pixels(tester, ordinary));

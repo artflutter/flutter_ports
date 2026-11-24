@@ -2719,11 +2719,9 @@ void main() {
         };
         final chart = acquireChartRoot(
           _config(type, dataset: _indexedColors, options: options()),
-          <String, Object?>{'animation': true},
         );
         final twin = acquireChartRoot(
           _eager(type, dataset: _indexedColors, options: options()),
-          <String, Object?>{'animation': true},
         );
         for (final each in [chart, twin]) {
           _dataset0(each)['data'] = <Object?>[7.0, 8.0, 9.0];

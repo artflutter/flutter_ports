@@ -21,6 +21,7 @@
 
 import 'dart:ui' show Color, FontStyle, StrokeCap, StrokeJoin;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -47,14 +48,15 @@ const String controllerLineReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerLineReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -93,7 +95,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 505.6630859375, 483.6],
@@ -4924,7 +4926,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 504.0, 483.6],
@@ -5876,7 +5878,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         LineDataset(data: DatasetData.values([1.0, 2.0, null, 2.0, 1.0])),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
@@ -7176,7 +7178,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.x)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 502.326171875, 483.6],
@@ -8885,7 +8887,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
@@ -10482,7 +10484,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
@@ -11791,7 +11793,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
@@ -13094,7 +13096,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
@@ -14177,7 +14179,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 505.6630859375, 483.6],
@@ -15930,7 +15932,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
@@ -17279,7 +17281,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.x, min: 2, max: 7)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -19851,7 +19853,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
@@ -21051,7 +21053,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         LineDataset(data: DatasetData.values([2.0, 4.0, 1.0, 3.0, 5.0])),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
@@ -24898,7 +24900,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 505.6630859375, 483.6],
@@ -25795,7 +25797,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
@@ -27018,7 +27020,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.0, 483.6],
@@ -29025,7 +29027,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         LineDataset(data: DatasetData.values([4.0, 2.0, 3.0])),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
@@ -31762,7 +31764,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -31792,7 +31794,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -31815,7 +31817,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -31837,7 +31839,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.x, min: 0.5, max: 1.5)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -31866,7 +31868,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
@@ -32504,7 +32506,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.x, min: 1)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 500.6591796875, 483.6],
@@ -33561,7 +33563,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.x, min: 1)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 500.6591796875, 483.6],
@@ -34689,7 +34691,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.x, min: 4.5, max: 9.5)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -37827,7 +37829,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.x)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 502.326171875, 483.6],
@@ -39137,7 +39139,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.x)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -40060,7 +40062,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
@@ -40852,7 +40854,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -40876,7 +40878,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 507.0, 469.2],
@@ -41916,7 +41918,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 469.2],
@@ -42951,7 +42953,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         LineDataset(data: DatasetData.values([1.0, 2.0, 3.0])),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },

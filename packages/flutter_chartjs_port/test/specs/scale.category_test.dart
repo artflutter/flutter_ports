@@ -51,7 +51,7 @@ import '../support/tick_label.dart';
 //   object by label, which the typed config cannot hold.
 
 /// The chart of the typed [config] (Chart.js ADR 0052).
-Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// `toEqual(expected)` of a number: the value and the sign of a zero.

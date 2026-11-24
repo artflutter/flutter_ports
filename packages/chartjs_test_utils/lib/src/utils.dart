@@ -109,53 +109,6 @@ final class const AcquireOptions({
 }) {
   /// The options of one [acquireChart] call.
   this;
-
-  /// The options of a Map of the fixture runner and of the reference
-  /// harnesses: `canvas` with the numbers `width` and `height`,
-  /// `useOffscreenCanvas`, `useShadowDOM` and `persistent`. A wait of
-  /// Chart.js ADR 0200, item 8: it goes when no caller gives a Map. A
-  /// `style` of the canvas and a `wrapper` throw an [ArgumentError]: the
-  /// harness has no CSS. The keys `spriteText` and `run` have no effect.
-  factory fromMap(Map<Object?, Object?> options) {
-    if (options.containsKey('wrapper')) {
-      throw ArgumentError.value(
-        options,
-        'options',
-        'The harness has no CSS: give AcquireOptions(wrapper: HarnessBox(...))',
-      );
-    }
-    final canvas = options['canvas'];
-    int? size(Map<Object?, Object?> map, String key) {
-      final value = map[key];
-      return value == null ? null : jsToNumber(value).truncate();
-    }
-
-    return AcquireOptions(
-      canvas: switch (canvas) {
-        null => null,
-        final Map<Object?, Object?> map when !map.containsKey('style') =>
-          HarnessCanvas(width: size(map, 'width'), height: size(map, 'height')),
-        _ => throw ArgumentError.value(
-          canvas,
-          'options.canvas',
-          'The harness has no CSS: give AcquireOptions(canvas: '
-              'HarnessCanvas(...))',
-        ),
-      },
-      useOffscreenCanvas: jsTruthy(options['useOffscreenCanvas']),
-      useShadowDOM: jsTruthy(options['useShadowDOM']),
-      persistent: jsTruthy(options['persistent']),
-    );
-  }
-
-  /// [options] as [AcquireOptions]: an [AcquireOptions] itself, a Map
-  /// ([AcquireOptions.fromMap]) or `null` (the defaults).
-  static AcquireOptions of(Object? options) => switch (options) {
-    null => const AcquireOptions(),
-    final AcquireOptions options => options,
-    final Map<Object?, Object?> map => AcquireOptions.fromMap(map),
-    _ => throw ArgumentError.value(options, 'options', 'Not AcquireOptions'),
-  };
 }
 
 /// The data items of `parsing: false` of the spec config [config] as
@@ -231,7 +184,6 @@ Object? _parsedItemOf(Object? item) {
 ///     HTMLCanvasElement.
 ///   - `useShadowDOM`: use shadowDom.
 ///   - `persistent`: If true, the chart will not be released after the spec.
-///   A Map of numbers is the wait of [AcquireOptions.fromMap].
 ///
 /// [config] is a JS object: a Map, or the typed root scope of a typed config
 /// (Chart.js ADR 0054 §7, `acquireChartRoot` of `index.dart`). As upstream,
@@ -259,7 +211,7 @@ Object? _parsedItemOf(Object? item) {
 /// - `useShadowDOM: true` throws an [UnsupportedError], in place of the
 ///   `pending()` of a browser without the shadow DOM (:64-68).
 /// - `spriteText` (:90-92) has no port: the port compares no image.
-Chart acquireChart([Object? config, Object? options]) {
+Chart acquireChart([Object? config, AcquireOptions? options]) {
   // DIVERGES(chartjs): harness-acquire-chart, only in a testWidgets body.
   if (!TestWidgetsFlutterBinding.ensureInitialized().inTest) {
     throw StateError(
@@ -274,7 +226,7 @@ Chart acquireChart([Object? config, Object? options]) {
   // `config || {}` and `options || {}`: a Map is truthy.
   config ??= <String, Object?>{};
   // DIVERGES(chartjs): harness-acquire-options, typed options.
-  final acquire = AcquireOptions.of(options);
+  final acquire = options ?? const AcquireOptions();
   // utils.js:43-44 the defaults: the attributes 512 x 512, and the class
   // `chartjs-wrapper`, whose rule of `injectWrapperCSS` makes the wrapper
   // an absolute box.

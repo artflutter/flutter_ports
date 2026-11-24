@@ -48,7 +48,7 @@ ChartConfig _config({
 );
 
 /// The chart of the typed [config] with the acquisition options [options].
-Chart _acquire(ChartConfig config, [Object? options]) =>
+Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// A dataset of the controller id [kind], which no test registers.
@@ -262,34 +262,6 @@ void main() {
         chart,
         toBeChartOfSize({'dw': 150, 'dh': 245, 'rw': 150, 'rh': 245}),
       );
-    });
-
-    testWidgets('the Map options of the fixture runner', (tester) async {
-      // Chart.js ADR 0200, item 8: the numbers of a canvas Map.
-      final chart = _acquire(_config(), <String, Object?>{
-        'canvas': <String, Object?>{'width': 300.0, 'height': '150'},
-        'persistent': true,
-      });
-      expect(chart.canvas!.getAttribute('width'), '300');
-      expect(chart.canvas!.getAttribute('height'), '150');
-      expect($test[chart]!.persistent, isTrue);
-    });
-
-    test('a Map with CSS text throws an ArgumentError', () {
-      expect(
-        () => AcquireOptions.of(<String, Object?>{
-          'canvas': <String, Object?>{'style': 'width: 150px'},
-        }),
-        throwsArgumentError,
-      );
-      expect(
-        () => AcquireOptions.of(<String, Object?>{
-          'wrapper': <String, Object?>{'style': 'width: 150px'},
-        }),
-        throwsArgumentError,
-      );
-      expect(() => AcquireOptions.of(3), throwsArgumentError);
-      expect(AcquireOptions.of(null).canvas, isNull);
     });
 
     testWidgets('the defaults of animation, responsive and locale', (

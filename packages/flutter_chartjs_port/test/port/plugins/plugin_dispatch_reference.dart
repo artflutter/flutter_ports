@@ -17,6 +17,7 @@
 
 import 'dart:ui' show FontStyle, FontWeight;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
@@ -42,14 +43,15 @@ const String pluginDispatchReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginDispatchReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -90,7 +92,7 @@ final List<PluginDispatchReferenceCase> pluginDispatchReference = [
         ColorsPluginOptions(enabled: false),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'plugins': <Object?>[
         <String, Object?>{
@@ -544,7 +546,7 @@ final List<PluginDispatchReferenceCase> pluginDispatchReference = [
       ],
       extra: const <String, Object?>{'plugins': false},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'plugins': <Object?>[
         <String, Object?>{

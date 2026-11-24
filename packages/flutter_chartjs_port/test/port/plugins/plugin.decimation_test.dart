@@ -807,9 +807,9 @@ void main() {
 
 /// The acquireChart options of a canvas of [width] x [height] (the second
 /// argument of `acquireChart`, not a chart config).
-AnyObject _canvas(int width, int height) => <String, Object?>{
-  'canvas': <String, Object?>{'width': width, 'height': height},
-};
+AcquireOptions _canvas(int width, int height) => AcquireOptions(
+  canvas: HarnessCanvas(width: width, height: height),
+);
 
 /// An algorithm of a program: each [n]-th item.
 final class const _EveryNth(final int n) extends DecimationAlgorithm {

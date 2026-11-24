@@ -40,6 +40,7 @@
 
 import 'dart:ui' show Color, FontStyle, TextAlign;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -68,14 +69,15 @@ const String controllerPolarAreaReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerPolarAreaReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -111,7 +113,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -8008,7 +8010,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ],
       scales: const [RadialLinearAxis(startAngle: 90)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -8882,7 +8884,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -10877,7 +10879,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         PolarAreaDataset(data: [10.0, 20.0, 30.0, 40.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -13891,7 +13893,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -14763,7 +14765,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         'spacingMode': ArcSpacingMode.parallel,
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -15632,7 +15634,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ],
       scales: const [RadialLinearAxis(min: 5, max: 25)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -16343,7 +16345,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         animateScale: true,
       ),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -18301,7 +18303,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ],
       scales: const [RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -19145,7 +19147,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -19815,7 +19817,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -20485,7 +20487,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -21162,7 +21164,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -21843,7 +21845,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -22582,7 +22584,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -23258,7 +23260,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -23276,7 +23278,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -23300,7 +23302,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -24264,7 +24266,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -25217,7 +25219,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         PolarAreaDataset(data: [10.0, 20.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -26293,7 +26295,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         'spacingMode': ArcSpacingMode.parallel,
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -27371,7 +27373,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -28451,7 +28453,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -29526,7 +29528,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         arc: ArcElementStyle(spacing: 3, spacingMode: ArcSpacingMode.parallel),
       ),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -30601,7 +30603,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         arc: ArcElementStyle(spacing: 0, spacingMode: ArcSpacingMode.angular),
       ),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -31675,7 +31677,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       elements: const ChartElements(arc: ArcElementStyle(spacing: 0)),
       extra: const <String, Object?>{'spacing': 12.0},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -32753,7 +32755,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ),
       extra: const <String, Object?>{'spacing': 7.0},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -33829,7 +33831,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ),
       extra: const <String, Object?>{'spacing': 7.0},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -34902,7 +34904,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ],
       extra: const <String, Object?>{'spacing': 7.0},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -35978,7 +35980,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ],
       extra: const <String, Object?>{'spacingMode': ArcSpacingMode.parallel},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -37053,7 +37055,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         arc: ArcElementStyle(spacing: 0, spacingMode: ArcSpacingMode.angular),
       ),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -38558,7 +38560,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         TestDataset(const ChartKind('polarAreaSharing'), data: [10.0, 20.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -38575,7 +38577,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         'spacingMode': ArcSpacingMode.parallel,
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -39572,7 +39574,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -40570,7 +40572,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -41563,7 +41565,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         arc: ArcElementStyle(spacing: 3, spacingMode: ArcSpacingMode.parallel),
       ),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -42556,7 +42558,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         arc: ArcElementStyle(spacing: 0, spacingMode: ArcSpacingMode.angular),
       ),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -42571,7 +42573,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       elements: const ChartElements(arc: ArcElementStyle(spacing: 0)),
       extra: const <String, Object?>{'spacing': 12.0},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -42590,7 +42592,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ),
       extra: const <String, Object?>{'spacing': 7.0},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -43584,7 +43586,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ),
       extra: const <String, Object?>{'spacing': 7.0},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -44579,7 +44581,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ],
       extra: const <String, Object?>{'spacing': 7.0},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -44597,7 +44599,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ],
       extra: const <String, Object?>{'spacingMode': ArcSpacingMode.parallel},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -44631,7 +44633,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -45425,7 +45427,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -46916,7 +46918,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
@@ -48877,7 +48879,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 10.0, 512.0, 512.0],
@@ -49503,7 +49505,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       ],
       disabledPlugins: const [PluginOff<LegendPlugin>()],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],

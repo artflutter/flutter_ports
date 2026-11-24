@@ -194,7 +194,7 @@ void main() {
       expectNoStaleScaleKeys(
         acquireReferenceChart(
           controllerScatterReference(_functions).first.config,
-          const {},
+          const AcquireOptions(),
           functions: _functions,
           theme: compileLightTheme(),
         ),

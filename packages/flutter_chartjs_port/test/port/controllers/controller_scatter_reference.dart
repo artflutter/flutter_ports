@@ -12,6 +12,7 @@
 
 import 'dart:ui' show Color, FontStyle, StrokeCap, StrokeJoin;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -38,14 +39,15 @@ const String controllerScatterReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerScatterReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -97,7 +99,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
@@ -6847,7 +6849,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
       ],
       extra: const <String, Object?>{'showLine': true},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 502.326171875, 483.6],
@@ -12704,7 +12706,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
       ],
       scales: const [LinearAxis(.x, min: 2, max: 7)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -16207,7 +16209,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 500.6591796875, 483.6],
@@ -17531,7 +17533,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 493.9853515625, 483.6],
@@ -18792,7 +18794,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -21402,7 +21404,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -21424,7 +21426,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
       ],
       scales: const [LogarithmicAxis(.x)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -22751,7 +22753,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
       ],
       scales: const [LogarithmicAxis(.x)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -24085,7 +24087,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
       ],
       scales: const [LinearAxis(.x, min: 4.5, max: 9.5)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -27260,7 +27262,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 502.326171875, 483.6],
@@ -28570,7 +28572,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -29497,7 +29499,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
       ],
       scales: const [LinearAxis(.y, stacked: StackMode.on)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[24.669921875, 32.0, 500.6591796875, 483.6],
@@ -30799,7 +30801,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -31848,7 +31850,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -33101,7 +33103,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -34344,7 +34346,7 @@ List<ControllerScatterReferenceCase> controllerScatterReference(
         LinearAxis(.y, min: 0, max: 10),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],

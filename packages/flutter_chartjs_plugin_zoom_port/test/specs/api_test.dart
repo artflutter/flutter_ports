@@ -56,7 +56,7 @@ ChartConfig _scatterFitted() => ChartConfig(
 );
 
 /// Acquires a chart through the typed config boundary.
-Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+Chart _acquire(ChartConfig config, [AcquireOptions? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 void main() {

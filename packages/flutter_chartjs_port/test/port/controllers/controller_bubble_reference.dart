@@ -12,6 +12,7 @@
 
 import 'dart:ui' show Color, FontStyle;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -38,14 +39,15 @@ const String controllerBubbleReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ControllerBubbleReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -97,7 +99,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[31.34375, 32.0, 499.0, 483.6],
@@ -6467,7 +6469,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.0, 483.6],
@@ -7666,7 +7668,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 497.0, 483.6],
@@ -10335,7 +10337,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -11456,7 +11458,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 499.0, 483.6],
@@ -17231,7 +17233,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         LinearAxis(.y, min: 0, max: 10),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[34.0, 34.0, 478.0, 478.0],
@@ -18454,7 +18456,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         LinearAxis(.y, min: 1, max: 9),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[26.0, 32.0, 486.0, 483.6],
@@ -19622,7 +19624,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -20645,7 +20647,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -20664,7 +20666,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'error': <String, Object?>{'at': 'initial', 'name': 'TypeError'},
     },
@@ -20690,7 +20692,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
@@ -21794,7 +21796,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -23293,7 +23295,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 497.322265625, 483.6],
@@ -24325,7 +24327,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -25187,7 +25189,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -28803,7 +28805,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -29690,7 +29692,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
@@ -30938,7 +30940,7 @@ List<ControllerBubbleReferenceCase> controllerBubbleReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],

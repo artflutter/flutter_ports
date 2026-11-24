@@ -12,6 +12,7 @@
 
 import 'dart:ui' show FontStyle;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../support/test_dataset.dart';
@@ -39,14 +40,15 @@ const String scaleCategoryReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ScaleCategoryReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -74,7 +76,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 495.9892578125, 483.6],
       'scales': <String, Object?>{
@@ -650,7 +652,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 496.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -1183,7 +1185,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       },
       'options': <String, Object?>{'indexAxis': YAxis()},
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.673828125, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -1711,7 +1713,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         CategoryAxis(.x, labels: ['w', 'x', 'y', 'z']),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -2201,7 +2203,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -2690,7 +2692,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -3135,7 +3137,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 507.3330078125, 483.6],
       'scales': <String, Object?>{
@@ -3703,7 +3705,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[36.6875, 32.0, 498.6611328125, 483.6],
       'scales': <String, Object?>{
@@ -4175,7 +4177,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -4699,7 +4701,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -5099,7 +5101,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 496.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -5628,7 +5630,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
@@ -6090,7 +6092,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         TestDataset(const ChartKind('categoryTest'), data: [1.0, 2.0, 3.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 495.330078125, 454.8],
       'scales': <String, Object?>{
@@ -6539,7 +6541,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, min: 'February', max: 'April')],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 496.9970703125, 483.6],
       'scales': <String, Object?>{
@@ -6994,7 +6996,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         CategoryAxis(.x, extra: <String, Object?>{'min': 1.4, 'max': 3.5}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 497.6650390625, 483.6],
       'scales': <String, Object?>{
@@ -7492,7 +7494,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         CategoryAxis(.x, extra: <String, Object?>{'min': -3.0, 'max': 99.0}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 495.9892578125, 483.6],
       'scales': <String, Object?>{
@@ -8066,7 +8068,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, min: 'April', max: 'February')],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.005859375, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
@@ -8443,7 +8445,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, min: 'zz')],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.005859375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -8838,7 +8840,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, bounds: ScaleBounds.data)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 496.9970703125, 483.6],
       'scales': <String, Object?>{
@@ -9297,7 +9299,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 495.9892578125, 483.6],
       'scales': <String, Object?>{
@@ -9806,7 +9808,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         CategoryAxis(.x, extra: <String, Object?>{'offset': true}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -10390,7 +10392,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -10906,7 +10908,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, reverse: true)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -11477,7 +11479,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       scales: const [CategoryAxis(.y, reverse: true)],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[62.017578125, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -12054,7 +12056,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[6.3369140625, 32.0, 449.982421875, 483.6],
       'scales': <String, Object?>{
@@ -12632,7 +12634,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, position: ChartPosition.top)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         37.35546875,
@@ -13215,9 +13217,9 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, ticks: AxisTicks(autoSkip: false))],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 200.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 200, height: 300),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         74.79252992530104,
@@ -13807,9 +13809,9 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 300.0, 'height': 300.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 300, height: 300),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 300.0, 241.47289806487558],
       'scales': <String, Object?>{
@@ -14967,7 +14969,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -15885,7 +15887,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 493.33203125, 483.6],
       'scales': <String, Object?>{
@@ -16470,7 +16472,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, bounds: ScaleBounds.data)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -16897,7 +16899,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         TestDataset(const ChartKind('categoryTest'), data: [3.0, 9.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -17395,7 +17397,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       parsing: false,
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 504.6669921875, 483.6],
       'scales': <String, Object?>{
@@ -17848,7 +17850,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       scales: const [CategoryAxis(.x, bounds: ScaleBounds.data)],
       parsing: false,
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 498.6611328125, 483.6],
       'scales': <String, Object?>{
@@ -18255,7 +18257,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       datasets: [TestDataset(const ChartKind('categoryTest'), data: [])],
       scales: const [CategoryAxis(.x, bounds: ScaleBounds.data)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.005859375, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
@@ -18612,7 +18614,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -19064,7 +19066,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -19601,7 +19603,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -20089,7 +20091,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -20499,7 +20501,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ],
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -20913,7 +20915,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 509.0, 483.6],
       'scales': <String, Object?>{
@@ -21344,7 +21346,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
@@ -21813,7 +21815,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         CategoryAxis(.x, labels: ['p', 'q']),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -22246,7 +22248,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: [CategoryAxis(.x, labels: [])],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 512.0, 501.8],
       'scales': <String, Object?>{
@@ -22570,7 +22572,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, max: 'March')],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 492.330078125, 483.6],
       'scales': <String, Object?>{
@@ -23023,7 +23025,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, min: '2')],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[38.005859375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -23432,7 +23434,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[23.33984375, 32.0, 504.6669921875, 483.6],
       'scales': <String, Object?>{
@@ -23952,7 +23954,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[62.017578125, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
@@ -24527,7 +24529,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[7.001953125, 32.0, 504.6669921875, 483.6],
       'scales': <String, Object?>{
@@ -24967,7 +24969,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[7.001953125, 32.0, 504.6669921875, 483.6],
       'scales': <String, Object?>{
@@ -25402,7 +25404,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         TestDataset(const ChartKind('categoryTest'), data: [1.0, 3.0, 2.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 504.6669921875, 483.6],
       'scales': <String, Object?>{
@@ -25861,7 +25863,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -26293,7 +26295,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -26830,7 +26832,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
       ],
       scales: const [CategoryAxis(.x, min: 'zz')],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.029296875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -27220,7 +27222,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         TestDataset(const ChartKind('categoryTest'), data: [1.0, 3.0, 2.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 504.6669921875, 483.6],
       'scales': <String, Object?>{
@@ -27674,7 +27676,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -28149,7 +28151,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -28627,7 +28629,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         CategoryAxis(.x, labels: ['p', 'q']),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[37.35546875, 32.0, 506.0, 483.6],
       'scales': <String, Object?>{
@@ -29056,7 +29058,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -29474,7 +29476,7 @@ List<ScaleCategoryReferenceCase> scaleCategoryReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{

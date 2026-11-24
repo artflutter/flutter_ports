@@ -132,7 +132,7 @@ void main() {
       ) as Map<String, Object?>;
       final chart = acquireReferenceChart(
         controllerBubbleReference(_functions).first.config,
-        const {},
+        const AcquireOptions(),
         functions: _functions,
         theme: compileLightTheme(),
       );

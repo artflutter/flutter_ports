@@ -244,9 +244,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `acquireChartRoot` takes the typed root scope of a typed config (`ChartConfigLowering`,
     Chart.js ADR 0054 §7). Both take an `AcquireOptions` (Chart.js ADR 0200, row
     `harness-acquire-options`): `canvas` a `HarnessCanvas` (render size, display size, `hidden`),
-    `wrapper` a `HarnessBox`, and `useOffscreenCanvas`, `useShadowDOM` and `persistent`; a Map of
-    numbers (`AcquireOptions.fromMap`) stays for the fixture runner and the reference harnesses, and
-    a `style` or `wrapper` key in it throws. The harness has no CSS: each `HarnessElement` is laid
+    `wrapper` a `HarnessBox`, and `useOffscreenCanvas`, `useShadowDOM` and `persistent`; no Map
+    form: the fixture configs and the reference generators give an `AcquireOptions`. The harness
+    has no CSS: each `HarnessElement` is laid
     out from the typed fields of its `HarnessBox` (`width`, `height`, `maxWidth`, `maxHeight`,
     `padding`, `hidden`, `absolute`, `offset`, `direction`), and a spec writes them as Dart values
     (`wrapper.width = 455`, `canvas.hidden = false`). The DOM stand-in exports are `document`,

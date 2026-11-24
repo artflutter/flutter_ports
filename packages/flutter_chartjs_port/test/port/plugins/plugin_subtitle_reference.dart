@@ -12,6 +12,7 @@
 
 import 'dart:ui' show Color, FontStyle, FontWeight, StrokeCap, StrokeJoin;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -38,14 +39,15 @@ const String pluginSubtitleReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginSubtitleReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -91,7 +93,7 @@ final List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -1198,7 +1200,7 @@ final List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 48.8, 496.9970703125, 483.6],
@@ -2867,7 +2869,7 @@ final List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -3970,7 +3972,7 @@ final List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -7460,7 +7462,7 @@ final List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 496.9970703125, 428.8],
@@ -8564,7 +8566,7 @@ final List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 76.4, 496.9970703125, 483.6],
@@ -9656,7 +9658,7 @@ final List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         TitleOptions(display: true, text: <String>['Chart title']),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[

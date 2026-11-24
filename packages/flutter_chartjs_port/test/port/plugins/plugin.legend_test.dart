@@ -408,7 +408,7 @@ void main() {
       expectNoStaleScaleKeys(
         acquireReferenceChart(
           pluginLegendReference(_functions).first.config,
-          const {},
+          const AcquireOptions(),
           functions: _functions,
           theme: compileLightTheme(),
         ),
@@ -682,9 +682,10 @@ void main() {
         ),
       ).lower();
       if (theme != null) root.dollarTheme = compileThemeData(theme)!;
-      final chart = acquireChartRoot(root, <String, Object?>{
-        'canvas': <String, Object?>{'width': 400, 'height': 300},
-      });
+      final chart = acquireChartRoot(
+        root,
+        const AcquireOptions(canvas: HarnessCanvas(width: 400, height: 300)),
+      );
       final ctx = createMockContext();
       (chart.legend! as Legend)
         ..ctx = ctx
@@ -789,9 +790,9 @@ void main() {
                 ),
               ),
             ),
-            <String, Object?>{
-              'canvas': <String, Object?>{'width': 400, 'height': 300},
-            },
+            const AcquireOptions(
+              canvas: HarnessCanvas(width: 400, height: 300),
+            ),
           ),
           throwsA(isA<AssertionError>()),
         );
@@ -864,9 +865,7 @@ void main() {
     List<Object?> layout(LegendLabelOptions labels) {
       final chart = acquireChartRoot(
         _mapLine(LegendOptions(labels: labels)),
-        <String, Object?>{
-          'canvas': <String, Object?>{'width': 400, 'height': 300},
-        },
+        const AcquireOptions(canvas: HarnessCanvas(width: 400, height: 300)),
       );
       final box = chart.legend! as Legend;
       return [

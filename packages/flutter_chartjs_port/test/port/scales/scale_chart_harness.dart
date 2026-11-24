@@ -783,7 +783,8 @@ Object? copyReference(
 };
 
 /// The chart of the config [config] of a reference case with the
-/// `acquireChart` options [options] (Chart.js ADR 0052, section 7).
+/// `acquireChart` options [options] (Chart.js ADR 0052, section 7; Chart.js
+/// ADR 0200).
 ///
 /// A typed config is a function that gives a new `ChartConfig` at each
 /// call: the chart takes the root scope of its lowering
@@ -794,22 +795,21 @@ Object? copyReference(
 /// chart.
 Chart acquireReferenceChart(
   Object config,
-  Map<String, Object?> options, {
+  AcquireOptions options, {
   Map<String, Object?> functions = const {},
   ChartOptionsScope? theme,
   void Function(AnyObject config)? prepareMap,
 }) {
-  final chartOptions = copyReference(options)! as AnyObject;
   if (config case final ChartConfig Function() make) {
     final root = ChartConfigLowering(make()).lower();
     if (theme != null) root.dollarTheme = theme;
-    return acquireChartRoot(root, chartOptions);
+    return acquireChartRoot(root, options);
   }
   final map = copyReference(config, functions)! as AnyObject;
   if (theme != null) map[themeConfigKey] = theme;
   nativeFixtureColors(map);
   prepareMap?.call(map);
-  return acquireChart(map, chartOptions);
+  return acquireChart(map, options);
 }
 
 /// A plain copy of [value] for an `equals` compare with a Map literal: a
@@ -937,7 +937,7 @@ void expectScaleChart(
 typedef ScaleChartCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 

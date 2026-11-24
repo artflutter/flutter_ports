@@ -507,7 +507,7 @@ void main() {
         }
         final config = ChartConfigLowering(typed).lower()
           ..plugins = [_recorder(notifies)];
-        final options = copyReference(c.options)! as AnyObject;
+        final options = c.options;
         Chart? chart;
         final steps = c.expected['steps']! as List<Object?>;
         for (var k = 0; k < steps.length; k++) {

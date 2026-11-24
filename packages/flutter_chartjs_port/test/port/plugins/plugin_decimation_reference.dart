@@ -12,6 +12,7 @@
 
 import 'dart:ui' show Color, FontStyle, StrokeCap, StrokeJoin;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../support/native_plugin.dart';
@@ -39,14 +40,15 @@ const String pluginDecimationReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef PluginDecimationReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -154,7 +156,7 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -2737,9 +2739,9 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 100.0, 'height': 100.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 100, height: 100),
+    ),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -5841,7 +5843,7 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -7589,7 +7591,7 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 507.0, 476.46403735794087],
@@ -9540,7 +9542,7 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -11265,7 +11267,7 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -13026,7 +13028,7 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -14238,9 +14240,9 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         PluginOff<TooltipPlugin>(),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 30.0, 'height': 100.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 30, height: 100),
+    ),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[15.0, 10.2, 15.0, 71.63140947102644],
@@ -19788,7 +19790,7 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         },
       },
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[
@@ -21760,7 +21762,7 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 10.2, 507.0, 483.59999999999997],
@@ -24578,7 +24580,7 @@ List<PluginDecimationReferenceCase> pluginDecimationReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'initial': <String, Object?>{
         'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],

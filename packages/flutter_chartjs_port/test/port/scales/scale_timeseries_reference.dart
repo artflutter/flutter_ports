@@ -12,6 +12,7 @@
 
 import 'dart:ui' show FontStyle;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../support/test_dataset.dart';
@@ -39,14 +40,15 @@ const String scaleTimeseriesReferenceCommit =
 ///   function that gives a new typed `ChartConfig` at each call, or the
 ///   Map of a config with no typed form. `'fn:<name>'` is a named
 ///   function of the Dart test.
-/// - `options`: the options of acquireChart (the canvas size).
+/// - `options`: the options of acquireChart (the canvas size), an
+///   `AcquireOptions` (Chart.js ADR 0200).
 /// - `expected`: the observations of `observe` (`chartArea`,
 ///   `scales` by id and `points`), and `drawCalls`, the calls of one
 ///   `chart.draw()` as JSON lines `[name, ...args]`.
 typedef ScaleTimeseriesReferenceCase = ({
   String name,
   Object config,
-  Map<String, Object?> options,
+  AcquireOptions options,
   Map<String, Object?> expected,
 });
 
@@ -82,7 +84,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
@@ -949,7 +951,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
@@ -1831,7 +1833,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.34765625, 32.0, 490.9853515625, 483.6],
       'scales': <String, Object?>{
@@ -2810,7 +2812,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         TimeSeriesAxis(.x, extra: <String, Object?>{'offset': true}),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -3677,7 +3679,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
       ],
       scales: const [TimeSeriesAxis(.x, reverse: true)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.677734375, 32.0, 494.322265625, 483.6],
       'scales': <String, Object?>{
@@ -4546,7 +4548,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.data)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
@@ -5416,7 +5418,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -6125,7 +6127,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
       ],
       scales: const [TimeSeriesAxis(.x, bounds: ScaleBounds.ticks)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
@@ -6997,7 +6999,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 490.3203125, 483.6],
       'scales': <String, Object?>{
@@ -7719,7 +7721,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 492.6611328125, 483.6],
       'scales': <String, Object?>{
@@ -8644,7 +8646,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[44.6982421875, 32.0, 467.3017578125, 483.6],
       'scales': <String, Object?>{
@@ -9282,7 +9284,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
     config: () => ChartConfig(
       datasets: [TestDataset(const ChartKind('timeseriesTest'), data: [])],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 493.326171875, 483.6],
       'scales': <String, Object?>{
@@ -9896,7 +9898,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
@@ -10888,7 +10890,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
@@ -11787,7 +11789,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
       ],
       scales: const [TimeSeriesAxis(.x, unit: TimeUnit.day)],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
@@ -12705,9 +12707,9 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{
-      'canvas': <String, Object?>{'width': 200.0, 'height': 240.0},
-    },
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 200, height: 240),
+    ),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         34.73889367282305,
@@ -14075,7 +14077,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         104.0703125,
@@ -15037,7 +15039,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         34.73889367282305,
@@ -16918,7 +16920,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         30.534095073970928,
@@ -18757,7 +18759,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
       ],
       extra: const <String, Object?>{'normalized': true},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[27.6884765625, 32.0, 484.6513671875, 483.6],
       'scales': <String, Object?>{
@@ -19698,7 +19700,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
@@ -20563,7 +20565,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 493.6572265625, 483.6],
       'scales': <String, Object?>{
@@ -21192,7 +21194,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         },
       },
     },
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.677734375, 10.0, 494.322265625, 483.6],
       'scales': <String, Object?>{
@@ -21599,7 +21601,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         TestDataset(const ChartKind('timeseriesTest'), data: [1.0, 2.0, 3.0]),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
@@ -22259,7 +22261,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[33.6884765625, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
@@ -22925,7 +22927,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[33.6884765625, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
@@ -23550,7 +23552,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
@@ -24356,7 +24358,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.677734375, 32.0, 494.322265625, 483.6],
       'scales': <String, Object?>{
@@ -25226,7 +25228,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -26098,7 +26100,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
       ],
       extra: const <String, Object?>{'normalized': true},
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 493.6630859375, 483.6],
       'scales': <String, Object?>{
@@ -26870,7 +26872,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
       ],
       indexAxis: const YAxis(),
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         92.3844084864283,
@@ -28315,7 +28317,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[
         20.673828125,
@@ -29199,7 +29201,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[22.0107421875, 32.0, 489.32421875, 483.6],
       'scales': <String, Object?>{
@@ -30142,7 +30144,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 493.326171875, 483.6],
       'scales': <String, Object?>{
@@ -30787,7 +30789,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
@@ -31533,7 +31535,7 @@ List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference(
         ),
       ],
     ),
-    options: const <String, Object?>{},
+    options: const AcquireOptions(),
     expected: const <String, Object?>{
       'chartArea': <Object?>[30.681640625, 32.0, 493.6572265625, 483.6],
       'scales': <String, Object?>{

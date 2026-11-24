@@ -61,7 +61,10 @@ final Map<Object, Chart> charts = {};
 ///
 /// [config] is a JS object literal of a spec: a Map. A nested Map literal
 /// gets the type `<String, Object?>` from the parameter type.
-Chart acquireChart([Map<String, Object?>? config, Object? options]) {
+Chart acquireChart([
+  Map<String, Object?>? config,
+  utils.AcquireOptions? options,
+]) {
   final chart = utils.acquireChart(config, options);
   charts[chart.id] = chart;
   return chart;
@@ -69,7 +72,7 @@ Chart acquireChart([Map<String, Object?>? config, Object? options]) {
 
 /// [acquireChart] for a config that is not a Map: the typed root scope of a
 /// typed config (`ChartConfigLowering`, Chart.js ADR 0054 §7). Port-only.
-Chart acquireChartRoot(Object config, [Object? options]) {
+Chart acquireChartRoot(Object config, [utils.AcquireOptions? options]) {
   final chart = utils.acquireChart(config, options);
   charts[chart.id] = chart;
   return chart;
