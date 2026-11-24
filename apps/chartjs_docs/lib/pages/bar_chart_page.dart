@@ -1044,8 +1044,8 @@ DocPageContent barChartPage() => DocPageContent(
         const DocParagraph(
           DocText(
             'A floating bar takes a pair `[start, end]` for each label. For '
-            'this form and for the other Chart.js data forms, use '
-            '`ChartView.raw` with the config as a Dart `Map`.',
+            'this form and for the other Chart.js data forms, give the data '
+            "in `extra` of the dataset: `extra: {'data': [[1, 5], [2, 6]]}`.",
           ),
         ),
       ],

@@ -1039,8 +1039,8 @@ DocPageContent lineChartPage() => DocPageContent(
         ),
         const DocParagraph(
           DocText(
-            'For the other Chart.js data forms, use `ChartView.raw` with the '
-            'config as a Dart `Map`.',
+            'For the other Chart.js data forms, give the data in `extra` of '
+            "the dataset: `extra: {'data': [...]}`.",
           ),
         ),
       ],
