@@ -46,7 +46,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'backgroundColor': ChartPaint.solid(Color(0xFF000080)),
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'width': 100, 'height': 500},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 100, height: 500)),
 );

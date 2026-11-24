@@ -50,12 +50,10 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'plugins': <String, Object?>{'filler': true},
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-    'run': () {
-      final resolve = Completer<void>();
-      setTimeout(resolve.complete, 50);
-      return resolve.future;
-    },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
+  run: (_) {
+    final resolve = Completer<void>();
+    setTimeout(resolve.complete, 50);
+    return resolve.future;
   },
 );

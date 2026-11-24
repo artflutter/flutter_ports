@@ -39,7 +39,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
       PluginOff<TooltipPlugin>(),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'width': 1000, 'height': 200},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 1000, height: 200)),
 );

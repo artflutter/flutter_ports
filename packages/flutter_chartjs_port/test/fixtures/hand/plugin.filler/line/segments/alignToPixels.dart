@@ -54,7 +54,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'width': 300, 'height': 240},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 300, height: 240)),
 );

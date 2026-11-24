@@ -70,9 +70,6 @@ FixtureConfig fixture() {
       ],
     ),
     description: 'https://github.com/chartjs/Chart.js/issues/7991',
-    options: <String, Object?>{
-      'spriteText': true,
-      'canvas': <String, Object?>{'width': 256, 'height': 128},
-    },
+    options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 128)),
   );
 }

@@ -38,15 +38,12 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'plugins': <String, Object?>{'tooltip': true},
     },
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 256, 'height': 256},
-    'run': (Chart chart) async {
-      final point = chart.getDatasetMeta(0).data[0];
-      await triggerMouseEvent(chart, 'click', <String, Object?>{
-        'y': point.y,
-        'x': chart.chartArea!.left,
-      });
-    },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
+  run: (chart) async {
+    final point = chart.getDatasetMeta(0).data[0];
+    await triggerMouseEvent(chart, 'click', <String, Object?>{
+      'y': point.y,
+      'x': chart.chartArea!.left,
+    });
   },
 );

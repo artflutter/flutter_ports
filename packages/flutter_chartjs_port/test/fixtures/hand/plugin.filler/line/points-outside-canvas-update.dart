@@ -43,10 +43,8 @@ FixtureConfig fixture() => FixtureConfig.typed(
     disabledPlugins: [PluginOff<LegendPlugin>(), PluginOff<TitlePlugin>()],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/8699',
-  options: <String, Object?>{
-    'run': (Chart chart) {
-      chart.scales['x']!.optionsView['min'] = 5;
-      chart.update();
-    },
+  run: (chart) {
+    chart.scales['x']!.optionsView['min'] = 5;
+    chart.update();
   },
 );

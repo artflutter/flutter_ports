@@ -115,13 +115,11 @@ FixtureConfig fixture() {
         ),
       ],
     ),
-    options: <String, Object?>{
-      'run': (Chart chart) {
-        final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
-        spliceList(datasets, 0, 1);
-        notifyArrayListeners(datasets, 'splice', <Object?>[0, 1]);
-        chart.update();
-      },
+    run: (chart) {
+      final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
+      spliceList(datasets, 0, 1);
+      notifyArrayListeners(datasets, 'splice', <Object?>[0, 1]);
+      chart.update();
     },
   );
 }

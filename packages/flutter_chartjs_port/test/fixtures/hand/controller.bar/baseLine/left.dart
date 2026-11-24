@@ -50,7 +50,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     maintainAspectRatio: false,
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'width': 128, 'height': 128},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 128, height: 128)),
 );

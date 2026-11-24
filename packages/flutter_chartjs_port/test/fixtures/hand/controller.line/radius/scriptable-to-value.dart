@@ -31,11 +31,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'radius': () => 20,
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-    'run': (Chart chart) {
-      chart.options['radius'] = 5;
-      chart.update();
-    },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
+  run: (chart) {
+    chart.options['radius'] = 5;
+    chart.update();
   },
 );

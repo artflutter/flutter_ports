@@ -68,7 +68,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
       point: PointElementStyle(radius: 0),
     ),
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256.0, 'width': 512.0},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );

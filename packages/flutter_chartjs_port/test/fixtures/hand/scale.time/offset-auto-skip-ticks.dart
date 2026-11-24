@@ -43,8 +43,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/10215',
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 600, 'height': 400},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 600, height: 400)),
 );

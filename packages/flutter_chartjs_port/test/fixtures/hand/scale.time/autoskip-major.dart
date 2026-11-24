@@ -49,6 +49,5 @@ FixtureConfig fixture() {
         LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
       ],
     ),
-    options: <String, Object?>{'spriteText': true},
   );
 }

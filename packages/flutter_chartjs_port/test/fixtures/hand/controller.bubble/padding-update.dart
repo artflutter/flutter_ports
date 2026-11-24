@@ -25,11 +25,8 @@ FixtureConfig fixture() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 256, 'height': 256},
-    'run': (Chart chart) {
-      chart.update();
-    },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
+  run: (chart) {
+    chart.update();
   },
 );

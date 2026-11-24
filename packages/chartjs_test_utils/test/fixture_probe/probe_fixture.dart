@@ -50,26 +50,25 @@ ChartConfig _config({
   plugins: plugins,
 );
 
+/// The options of a chart of 64 x 64 pixels.
+const AcquireOptions _options = AcquireOptions(
+  canvas: HarnessCanvas(width: 64, height: 64),
+);
+
 /// A fixture with [config] and the [run] hook.
-FixtureConfig _fixture(ChartConfig config, [Function? run]) =>
-    FixtureConfig.typed(
-      config,
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 64, 'width': 64},
-        'run': ?run,
-      },
-    );
+FixtureConfig _fixture(ChartConfig config, [FixtureRun? run]) =>
+    FixtureConfig.typed(config, options: _options, run: run);
 
 /// The options object of the config of [chart]: the root scope of its
 /// typed config.
 Object? _plugins(Chart chart) => jsGet(chart.config.options, 'plugins');
 
-FixtureConfig _ruleNone() => _fixture(_config(), (Chart chart) {
+FixtureConfig _ruleNone() => _fixture(_config(), (chart) {
   expect(_plugins(chart), isFalse);
 });
 
 FixtureConfig _ruleInstance() =>
-    _fixture(_config(plugins: <Plugin<Object?>>[]), (Chart chart) {
+    _fixture(_config(plugins: <Plugin<Object?>>[]), (chart) {
       // The runner did not write false. initOptions of the config wrote
       // `{}` (core.config.js:118).
       expect(_plugins(chart), isNot(isFalse));
@@ -79,13 +78,13 @@ FixtureConfig _ruleInstance() =>
 const LegendOptions _legend = LegendOptions(display: false);
 
 FixtureConfig _ruleObject() =>
-    _fixture(_config(pluginOptions: [_legend]), (Chart chart) {
+    _fixture(_config(pluginOptions: [_legend]), (chart) {
       // The object of the options stays.
       expect(jsObjectKeys(_plugins(chart)), ['legend']);
       expect(identical(jsGet(_plugins(chart), 'legend'), _legend), isTrue);
     });
 
-FixtureConfig _pluginPath() => _fixture(_config(), (Chart chart) {
+FixtureConfig _pluginPath() => _fixture(_config(), (chart) {
   // The runner did not write false. initOptions of the config wrote
   // `{}` (core.config.js:118).
   expect(_plugins(chart), isNot(isFalse));
@@ -95,12 +94,12 @@ FixtureConfig _pluginPath() => _fixture(_config(), (Chart chart) {
 Chart? _thrown;
 bool _futureSettled = false;
 
-FixtureConfig _runSync() => _fixture(_config(), (Chart chart) {
+FixtureConfig _runSync() => _fixture(_config(), (chart) {
   expect(chart.attached, isTrue);
   expect(chart.canvas, isNotNull);
 });
 
-FixtureConfig _runFuture() => _fixture(_config(), (Chart chart) {
+FixtureConfig _runFuture() => _fixture(_config(), (chart) {
   final completer = Completer<void>();
   setTimeout(() {
     _futureSettled = true;
@@ -110,14 +109,14 @@ FixtureConfig _runFuture() => _fixture(_config(), (Chart chart) {
 });
 
 FixtureConfig _runNever() =>
-    _fixture(_config(), (Chart chart) => Completer<void>().future);
+    _fixture(_config(), (chart) => Completer<void>().future);
 
-FixtureConfig _runThrows() => _fixture(_config(), (Chart chart) {
+FixtureConfig _runThrows() => _fixture(_config(), (chart) {
   _thrown = chart;
   throw StateError('probe sync error');
 });
 
-FixtureConfig _runAsyncThrows() => _fixture(_config(), (Chart chart) async {
+FixtureConfig _runAsyncThrows() => _fixture(_config(), (chart) async {
   await Future<void>.value();
   throw StateError('probe async error');
 });
@@ -126,17 +125,12 @@ FixtureConfig _both() => _fixture(_config());
 
 /// A config of `fixtures.json` that a ChartConfig cannot hold: no dataset.
 FixtureConfig _noDataset() => FixtureConfig.map(<String, Object?>{
-  'config': <String, Object?>{
-    'type': 'bar',
-    'data': <String, Object?>{
-      'labels': <Object?>['a', 'b'],
-      'datasets': <Object?>[],
-    },
+  'type': 'bar',
+  'data': <String, Object?>{
+    'labels': <Object?>['a', 'b'],
+    'datasets': <Object?>[],
   },
-  'options': <String, Object?>{
-    'canvas': <String, Object?>{'height': 64, 'width': 64},
-  },
-});
+}, options: _options);
 
 /// A source whose upstream file `crlf/lines.json` has CRLF line ends, as a
 /// checkout with `core.autocrlf=true` writes it. The manifest has the

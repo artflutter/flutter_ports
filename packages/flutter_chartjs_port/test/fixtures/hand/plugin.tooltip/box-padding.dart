@@ -90,9 +90,6 @@ FixtureConfig fixture() {
         ),
       ],
     ),
-    options: <String, Object?>{
-      'spriteText': true,
-      'canvas': <String, Object?>{'height': 400, 'width': 500},
-    },
+    options: AcquireOptions(canvas: HarnessCanvas(width: 500, height: 400)),
   );
 }

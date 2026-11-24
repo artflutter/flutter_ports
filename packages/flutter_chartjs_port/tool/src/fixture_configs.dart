@@ -553,21 +553,17 @@ final class FixtureEmitter(
     if (typed == null) {
       mapReason ??= 'the fixture has no config object';
       declarations.clear();
-      return 'FixtureConfig.map(${literalOf(json)})';
     }
-    final args = <String>[typed];
+    final args = <String>[typed ?? literalOf(config ?? FixtureMap([]))];
     for (final entry in json.entries) {
+      final c = _commentLines(entry.comments);
       switch (entry.key) {
         case 'config':
           break;
         case 'options':
-          args.add(
-            '${_commentLines(entry.comments)}options: ${literalOf(entry.value)}',
-          );
+          args.addAll(_acquireOptions(entry.value, c));
         case 'description':
-          args.add(
-            '${_commentLines(entry.comments)}description: ${literalOf(entry.value)}',
-          );
+          args.add('${c}description: ${literalOf(entry.value)}');
         case 'threshold' || 'tolerance' || 'debug':
           // The image comparison has no port (Chart.js ADR 0034, section 4).
           break;
@@ -575,7 +571,44 @@ final class FixtureEmitter(
           throw FormatException('$path: the fixture key ${entry.key}.');
       }
     }
-    return 'FixtureConfig.typed(${args.map(_comma).join()})';
+    final kind = typed == null ? 'map' : 'typed';
+    return 'FixtureConfig.$kind(${args.map(_comma).join()})';
+  }
+
+  /// The arguments `options` (the typed `AcquireOptions` of Chart.js ADR
+  /// 0200) and `run` of the fixture options [options]. `spriteText` has no
+  /// port (utils.js:90-92).
+  List<String> _acquireOptions(FixtureValue options, String comments) {
+    if (options is! FixtureMap) {
+      throw FormatException('$path: the fixture options are no object.');
+    }
+    final acquire = <String>[];
+    final run = <String>[];
+    for (final entry in options.entries) {
+      final c = _commentLines(entry.comments);
+      final value = entry.value;
+      switch (entry.key) {
+        case 'canvas' when value is FixtureMap:
+          final size = [
+            for (final key in const ['width', 'height'])
+              if (value[key] case final FixtureValue v) '$key: ${literalOf(v)}',
+          ];
+          acquire.add('${c}canvas: HarnessCanvas(${size.join(', ')})');
+        case 'useOffscreenCanvas' || 'useShadowDOM' || 'persistent':
+          acquire.add('$c${entry.key}: ${literalOf(value)}');
+        case 'run':
+          run.add('${c}run: ${literalOf(value)}');
+        case 'spriteText':
+          break;
+        default:
+          throw FormatException('$path: the fixture option ${entry.key}.');
+      }
+    }
+    return [
+      if (acquire.isNotEmpty)
+        '${comments}options: AcquireOptions(${acquire.map(_comma).join()})',
+      ...run,
+    ];
   }
 
   /// The source of the `ChartConfig` of [config], or Dart `null` with

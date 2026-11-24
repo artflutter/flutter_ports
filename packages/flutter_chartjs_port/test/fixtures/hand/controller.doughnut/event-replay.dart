@@ -51,55 +51,53 @@ FixtureConfig fixture() {
         ),
       ],
     ),
-    options: <String, Object?>{
-      'canvas': <String, Object?>{'width': 512, 'height': 512},
-      'run': (Chart chart) async {
-        ctx.drawImage(
-          (chart.canvas! as UiCanvasElement).toImageSource(),
-          0,
-          0,
-          256,
-          256,
-        );
+    options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
+    run: (chart) async {
+      ctx.drawImage(
+        (chart.canvas! as UiCanvasElement).toImageSource(),
+        0,
+        0,
+        256,
+        256,
+      );
 
-        // `getCenterPoint` is a member of the arc element: the cast gives
-        // the element class of the `pie` dataset.
-        final arc = chart.getDatasetMeta(0).data[0] as ArcElement;
-        final center = arc.getCenterPoint();
-        await triggerMouseEvent(chart, 'mousemove', arc);
-        drawMousePoint(chart.ctx!, center);
-        ctx.drawImage(
-          (chart.canvas! as UiCanvasElement).toImageSource(),
-          256,
-          0,
-          256,
-          256,
-        );
+      // `getCenterPoint` is a member of the arc element: the cast gives
+      // the element class of the `pie` dataset.
+      final arc = chart.getDatasetMeta(0).data[0] as ArcElement;
+      final center = arc.getCenterPoint();
+      await triggerMouseEvent(chart, 'mousemove', arc);
+      drawMousePoint(chart.ctx!, center);
+      ctx.drawImage(
+        (chart.canvas! as UiCanvasElement).toImageSource(),
+        256,
+        0,
+        256,
+        256,
+      );
 
-        chart
-          ..toggleDataVisibility(0)
-          ..update();
-        drawMousePoint(chart.ctx!, center);
-        ctx.drawImage(
-          (chart.canvas! as UiCanvasElement).toImageSource(),
-          0,
-          256,
-          256,
-          256,
-        );
+      chart
+        ..toggleDataVisibility(0)
+        ..update();
+      drawMousePoint(chart.ctx!, center);
+      ctx.drawImage(
+        (chart.canvas! as UiCanvasElement).toImageSource(),
+        0,
+        256,
+        256,
+        256,
+      );
 
-        await triggerMouseEvent(chart, 'mouseout', arc);
-        ctx.drawImage(
-          (chart.canvas! as UiCanvasElement).toImageSource(),
-          256,
-          256,
-          256,
-          256,
-        );
+      await triggerMouseEvent(chart, 'mouseout', arc);
+      ctx.drawImage(
+        (chart.canvas! as UiCanvasElement).toImageSource(),
+        256,
+        256,
+        256,
+        256,
+      );
 
-        clearCanvas(chart.canvas);
-        chart.ctx!.drawImage((canvas as UiCanvasElement).toImageSource(), 0, 0);
-      },
+      clearCanvas(chart.canvas);
+      chart.ctx!.drawImage((canvas as UiCanvasElement).toImageSource(), 0, 0);
     },
   );
 }

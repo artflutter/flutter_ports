@@ -14,10 +14,8 @@ FixtureConfig fixture() {
     return DateTime.utc(2015, 1, 1 + days, 12);
   }
 
-  return FixtureConfig.map(<String, Object?>{
-    'threshold': 0.1,
-    'tolerance': 0.002,
-    'config': <String, Object?>{
+  return FixtureConfig.map(
+    <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
         'labels': <Object?>[
@@ -40,9 +38,8 @@ FixtureConfig fixture() {
         },
       },
     },
-    'options': <String, Object?>{
-      'spriteText': true,
-      'canvas': <String, Object?>{'width': 1000, 'height': 200},
-    },
-  });
+    options: const AcquireOptions(
+      canvas: HarnessCanvas(width: 1000, height: 200),
+    ),
+  );
 }

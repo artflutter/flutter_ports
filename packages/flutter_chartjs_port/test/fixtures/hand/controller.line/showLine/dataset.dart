@@ -45,7 +45,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
     },
   ),
   description: 'should draw all elements except lines turned off per dataset',
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'width': 512, 'height': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
 );

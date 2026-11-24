@@ -33,16 +33,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     scales: [RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.on)],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'run': (Chart chart) {
-      // Avoid browser-specific interpolation of the overlapping text sprites.
-      // DIVERGES(chartjs): harness-fixture-sources, no imageSmoothingEnabled.
-      // `chart.ctx.imageSmoothingEnabled = false`: the canvas layer has no
-      // `imageSmoothingEnabled`. The port draws no text sprite
-      // (`spriteText` is n/a, Chart.js ADR 0022 section 4 item 5) and
-      // compares no image (Chart.js ADR 0034), so the write has no effect.
-      chart.draw();
-    },
+  run: (chart) {
+    // Avoid browser-specific interpolation of the overlapping text sprites.
+    // DIVERGES(chartjs): harness-fixture-sources, no imageSmoothingEnabled.
+    // `chart.ctx.imageSmoothingEnabled = false`: the canvas layer has no
+    // `imageSmoothingEnabled`. The port draws no text sprite
+    // (`spriteText` is n/a, Chart.js ADR 0022 section 4 item 5) and
+    // compares no image (Chart.js ADR 0034), so the write has no effect.
+    chart.draw();
   },
 );

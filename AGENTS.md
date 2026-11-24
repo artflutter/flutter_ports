@@ -257,9 +257,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     runner of `lib/src/fixture.dart`.
   - `lib/src/fixture.dart` ports `src/fixture.js` (Chart.js ADR 0029): `specsFromFixtures`,
     `specFromFixture`, `FixtureConfig` and `fixtureInput` (Chart.js ADR 0199: a loader gives
-    `FixtureConfig.typed(ChartConfig, options:, description:)`, which the runner lowers with
-    `ChartConfigLowering` and the plugin rule of `fixture.js:45-48`, or `FixtureConfig.map(json)`
-    for a config that a `ChartConfig` cannot hold, which takes `nativeFixtureColors`; `data` of
+    `FixtureConfig.typed(ChartConfig, options:, run:, description:)`, which the runner lowers with
+    `ChartConfigLowering` and the plugin rule of `fixture.js:45-48`, or `FixtureConfig.map(Map,
+    ...)` for a config that a `ChartConfig` cannot hold, which takes `nativeFixtureColors`;
+    `options` is the typed `AcquireOptions` of Chart.js ADR 0200 and `run` a `FixtureRun`; `data` of
     `specsFromFixtures` takes the generated configs) and `FixtureSource` (the manifest and
     `fixtures.json` of tool 4, which the runner does not read, the folder
     `upstream` of the upstream fixture files, `requireUpstream` and `submodule`, the submodule that

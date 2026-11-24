@@ -47,5 +47,4 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/8892',
-  options: <String, Object?>{'spriteText': true},
 );

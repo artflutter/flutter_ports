@@ -8,30 +8,28 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
-  'config': <String, Object?>{
-    'type': 'radar',
-    'data': <String, Object?>{
-      'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
-    },
-    'options': <String, Object?>{
-      'responsive': false,
-      'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'grid': <String, Object?>{'display': true},
-          'angleLines': <String, Object?>{
-            'color': (ScriptableScalePointLabelContext context) {
-              return jsToNumber(context.index).remainder(2) == 0
-                  ? 'red'
-                  : 'green';
-            },
-            'lineWidth': (ScriptableScalePointLabelContext context) {
-              return jsToNumber(context.index).remainder(2) == 0 ? 1 : 5;
-            },
+  'type': 'radar',
+  'data': <String, Object?>{
+    'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
+  },
+  'options': <String, Object?>{
+    'responsive': false,
+    'scales': <String, Object?>{
+      'r': <String, Object?>{
+        'grid': <String, Object?>{'display': true},
+        'angleLines': <String, Object?>{
+          'color': (ScriptableScalePointLabelContext context) {
+            return jsToNumber(context.index).remainder(2) == 0
+                ? 'red'
+                : 'green';
           },
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
-          'ticks': <String, Object?>{'display': false},
+          'lineWidth': (ScriptableScalePointLabelContext context) {
+            return jsToNumber(context.index).remainder(2) == 0 ? 1 : 5;
+          },
         },
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
+        'ticks': <String, Object?>{'display': false},
       },
     },
   },

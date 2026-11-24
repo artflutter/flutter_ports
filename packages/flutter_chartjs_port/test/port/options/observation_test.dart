@@ -79,7 +79,7 @@ final Map<String, String> _collected = {};
 /// The input of one run: the config and the options of `acquireChart`. The
 /// config is a Map, or a [_Fixture] that [fixtureInput] of the fixture
 /// runner turns into the input of `acquireChart`.
-typedef _Input = ({Object config, Map<String, Object?>? options});
+typedef _Input = ({Object config, AcquireOptions? options});
 
 /// The config of the fixture [path] (Chart.js ADR 0199).
 final class _Fixture(
@@ -307,7 +307,7 @@ String _run(_Case c, {required bool wrap}) {
       fixture,
     );
     config = fixtureInputs.config;
-    options = fixtureInputs.fixtureOptions;
+    options = fixture.options;
   }
   if (config is Map<String, Object?>) nativeFixtureColors(config);
   if (wrap) _wrapFunctions(config, 'config', trace, resolvers);

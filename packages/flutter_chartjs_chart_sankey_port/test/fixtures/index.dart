@@ -298,7 +298,7 @@ HandFixture _observed(
     final options =
         (json['options'] ??= <String, Object?>{}) as Map<String, Object?>;
     final run = options['run'] as Object? Function(Chart)?;
-    Object? observedRun(Chart chart) {
+    Future<void>? observedRun(Chart chart) {
       void finish() => _compare(path, observe(chart));
 
       final result = run?.call(chart);
@@ -307,8 +307,20 @@ HandFixture _observed(
       return null;
     }
 
-    options['run'] = observedRun;
-    return FixtureConfig.map(json);
+    final canvas = options['canvas'] as Map<String, Object?>?;
+    return FixtureConfig.map(
+      json['config']! as Map<String, Object?>,
+      options: AcquireOptions(
+        canvas: canvas == null
+            ? null
+            : HarnessCanvas(
+                width: canvas['width'] as int?,
+                height: canvas['height'] as int?,
+              ),
+      ),
+      run: observedRun,
+      description: json['description'] as String?,
+    );
   },
   sha256: sha256,
 );

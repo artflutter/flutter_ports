@@ -73,43 +73,37 @@ FixtureConfig fixture() {
         },
       },
     ),
-    options: <String, Object?>{
-      'canvas': <String, Object?>{'height': 512, 'width': 512},
-      'run': (Chart chart) {
-        // `const animator = Chart.animator`: the singleton `animator` of
-        // core.animator.dart.
-        final anims = animator.getAnims(chart);
-        // disable animator
-        final backup = animator.refresh;
-        animator.refresh = () {};
+    options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
+    run: (chart) {
+      // `const animator = Chart.animator`: the singleton `animator` of
+      // core.animator.dart.
+      final anims = animator.getAnims(chart);
+      // disable animator
+      final backup = animator.refresh;
+      animator.refresh = () {};
 
-        final completer = Completer<void>();
-        requestAnimFrame(() {
-          final start = anims.items[0].start;
-          for (var i = 0.0; i < 16; i++) {
-            animator.update(start + i * 500);
-            final x = i.remainder(4) * 128;
-            final y = (i / 4).floorToDouble() * 128;
-            ctx.drawImage(
-              (chart.canvas! as UiCanvasElement).toImageSource(),
-              x,
-              y,
-              128,
-              128,
-            );
-          }
-          clearCanvas(chart.canvas);
-          chart.ctx!.drawImage(
-            (canvas as UiCanvasElement).toImageSource(),
-            0,
-            0,
+      final completer = Completer<void>();
+      requestAnimFrame(() {
+        final start = anims.items[0].start;
+        for (var i = 0.0; i < 16; i++) {
+          animator.update(start + i * 500);
+          final x = i.remainder(4) * 128;
+          final y = (i / 4).floorToDouble() * 128;
+          ctx.drawImage(
+            (chart.canvas! as UiCanvasElement).toImageSource(),
+            x,
+            y,
+            128,
+            128,
           );
+        }
+        clearCanvas(chart.canvas);
+        chart.ctx!.drawImage((canvas as UiCanvasElement).toImageSource(), 0, 0);
 
-          animator.refresh = backup;
-          completer.complete();
-        });
-        return completer.future;
-      },
+        animator.refresh = backup;
+        completer.complete();
+      });
+      return completer.future;
     },
   );
 }

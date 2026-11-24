@@ -64,7 +64,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );

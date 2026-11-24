@@ -87,47 +87,61 @@ const String fixturesRequiredVariable = 'FIXTURES_REQUIRED';
 /// load). It runs its body again at each call, and gives new objects.
 typedef FixtureLoad = FixtureConfig Function();
 
+/// The `run` hook of a fixture (fixture.js:63-68): it gets the chart. A
+/// `Future` result settles before the test ends.
+typedef FixtureRun = FutureOr<void> Function(Chart chart);
+
 /// The config of one fixture: `module.exports` of a fixture file
 /// (fixture.js:24, :27), `{config, options, description}` (Chart.js ADR
 /// 0199).
 ///
 /// [FixtureConfig.typed] holds the chart config as a typed `ChartConfig`.
-/// [FixtureConfig.map] holds the whole `json` object as a Map, for a config
-/// that a `ChartConfig` cannot hold: a config with no dataset, for example.
-/// The keys `threshold`, `tolerance` and `debug` of the image comparison
-/// have no port (Chart.js ADR 0034, section 4).
+/// [FixtureConfig.map] holds it as a Map, for a config that a `ChartConfig`
+/// cannot hold: a config with no dataset, for example. `json.options` is
+/// the typed [options] of `acquireChart` (Chart.js ADR 0200) and the [run]
+/// hook. The option `spriteText` (utils.js:90-92) and the keys `threshold`,
+/// `tolerance` and `debug` of the image comparison have no port (Chart.js
+/// ADR 0034, section 4).
 ///
-/// The constructors are not `const`: the harness writes into the Maps of a
-/// fixture (`acquireChart` writes `canvas` and `wrapper` into its options),
-/// so a loader gives new Maps at each call.
+/// The constructors are not `const`: the chart writes into the Lists and
+/// the Maps of its config, so a loader gives new objects at each call.
 sealed class FixtureConfig._() {
   /// A fixture with the typed chart [config], the [options] of
-  /// `acquireChart` (`canvas`, `wrapper`, `useOffscreenCanvas`, `spriteText`
-  /// and the `run` hook) and the [description].
+  /// `acquireChart`, the [run] hook and the [description].
   factory typed(
     ChartConfig config, {
-    Map<String, Object?>? options,
+    AcquireOptions? options,
+    FixtureRun? run,
     String? description,
   }) = TypedFixtureConfig;
 
-  /// A fixture whose `json` object `{config, options, description}` keeps
-  /// its Map: a config that a `ChartConfig` cannot hold. The runner gives
-  /// its CSS colors and keywords their native values
-  /// ([nativeFixtureColors]).
-  factory map(Map<String, Object?> json) = MapFixtureConfig;
+  /// A fixture whose chart [config] keeps its Map: a config that a
+  /// `ChartConfig` cannot hold. The runner gives its CSS colors and keywords
+  /// their native values ([nativeFixtureColors]).
+  factory map(
+    Map<String, Object?> config, {
+    AcquireOptions? options,
+    FixtureRun? run,
+    String? description,
+  }) = MapFixtureConfig;
+
+  /// `json.options` without `run`: the options of `acquireChart`.
+  AcquireOptions? get options;
+
+  /// `json.options.run`: the hook of the fixture.
+  FixtureRun? get run;
+
+  /// `json.description`.
+  String? get description;
 }
 
 /// [FixtureConfig.typed].
 final class TypedFixtureConfig(
   /// `json.config`: the chart config.
   final ChartConfig config, {
-
-  /// `json.options`: the options of `acquireChart` and the `run` hook. The
-  /// harness writes into the Map: a loader gives a new Map at each call.
-  final Map<String, Object?>? options,
-
-  /// `json.description`.
-  final String? description,
+  @override final AcquireOptions? options,
+  @override final FixtureRun? run,
+  @override final String? description,
 }) extends FixtureConfig {
   /// A fixture with the typed chart [config].
   this : super._();
@@ -135,10 +149,13 @@ final class TypedFixtureConfig(
 
 /// [FixtureConfig.map].
 final class MapFixtureConfig(
-  /// The `json` object `{config, options, description}`.
-  final Map<String, Object?> json,
-) extends FixtureConfig {
-  /// A fixture with the Map [json].
+  /// `json.config`: the chart config, a Map.
+  final Map<String, Object?> config, {
+  @override final AcquireOptions? options,
+  @override final FixtureRun? run,
+  @override final String? description,
+}) extends FixtureConfig {
+  /// A fixture with the Map [config].
   this : super._();
 }
 
@@ -402,23 +419,12 @@ void specFromFixture(String description, String input, FixtureInputs inputs) {
       );
     }
     final fixture = load(); // :39
-    final (:descr, :config, :fixtureOptions) = fixtureInput(
-      input,
-      description,
-      fixture,
-    );
-    final chart = utils.acquireChart(config, fixtureOptions); // :50
+    final (:descr, :config) = fixtureInput(input, description, fixture);
+    final chart = utils.acquireChart(config, fixture.options); // :50
     try {
-      final run = fixtureOptions == null
-          ? undefined
-          : jsGet(fixtureOptions, 'run'); // :63
-      // A typed call (Chart.js ADR 0173): `run(chart)` or `run()`.
-      final result = switch (run) {
-        final Object? Function(Chart) fn => fn(chart),
-        final Object? Function() fn => fn(),
-        _ => null,
-      };
-      if (result is Future<Object?>) await _settle(result); // :65
+      // :63 `run(chart)`, a typed call (Chart.js ADR 0173).
+      final result = fixture.run?.call(chart);
+      if (result is Future<void>) await _settle(result); // :65
       if (inputs.png == null) {
         fail('$descr\r\nMissing PNG comparison file for $input'); // :52-55
       }
@@ -432,23 +438,25 @@ void specFromFixture(String description, String input, FixtureInputs inputs) {
   }, tags: fixturesTag);
 }
 
-/// The input of `_acquireChart` of the fixture [fixture] at [input]
+/// The config of `_acquireChart` of the fixture [fixture] at [input]
 /// (fixture.js:39-48): the description default (:40), the `config.options`
-/// default (:43) and the plugin rule (:45-48).
+/// default (:43) and the plugin rule (:45-48). The options of
+/// `_acquireChart` are `fixture.options`.
 ///
 /// A typed config lowers with `ChartConfigLowering` to its root scope: the
 /// `config` of the result. Its `options` scope always exists, so :43 has no
 /// work. A [FixtureConfig.map] keeps its Map, with the native values of
 /// [nativeFixtureColors]. The observation oracle O1 of flutter_chartjs_port
 /// takes its input from this function too.
-({Object? descr, Object config, Map<String, Object?>? fixtureOptions})
-fixtureInput(String input, String description, FixtureConfig fixture) {
+({Object? descr, Object config}) fixtureInput(
+  String input,
+  String description,
+  FixtureConfig fixture,
+) {
+  final d = fixture.description;
+  final descr = d != null && d.isNotEmpty ? d : description; // :40
   switch (fixture) {
-    case TypedFixtureConfig(
-      :final config,
-      :final options,
-      description: final d,
-    ):
+    case TypedFixtureConfig(:final config):
       final root = ChartConfigLowering(config).lower();
       final chartOptions = jsGet(root, 'options')!;
       // plugins are disabled by default, except if the path contains
@@ -458,17 +466,8 @@ fixtureInput(String input, String description, FixtureConfig fixture) {
         final plugins = jsGet(chartOptions, 'plugins');
         jsSet(chartOptions, 'plugins', jsTruthy(plugins) ? plugins : false);
       }
-      return (
-        descr: d != null && d.isNotEmpty ? d : description,
-        config: root,
-        fixtureOptions: options,
-      );
-    case MapFixtureConfig(:final json):
-      final descr = jsTruthy(json['description'])
-          ? json['description']
-          : (json['description'] = description); // :40
-
-      final config = json['config']! as Map<String, Object?>;
+      return (descr: descr, config: root);
+    case MapFixtureConfig(:final config):
       final options =
           (jsTruthy(config['options'])
                   ? config['options']
@@ -484,11 +483,7 @@ fixtureInput(String input, String description, FixtureConfig fixture) {
             : false;
       }
       nativeFixtureColors(config);
-      return (
-        descr: descr,
-        config: config,
-        fixtureOptions: json['options'] as Map<String, Object?>?,
-      );
+      return (descr: descr, config: config);
   }
 }
 

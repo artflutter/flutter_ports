@@ -41,8 +41,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
       PluginOff<TooltipPlugin>(),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 400, 'width': 400},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 400, height: 400)),
 );

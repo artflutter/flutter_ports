@@ -47,5 +47,4 @@ FixtureConfig fixture() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );

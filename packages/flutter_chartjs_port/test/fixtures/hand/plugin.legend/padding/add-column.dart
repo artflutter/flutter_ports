@@ -30,22 +30,19 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9278',
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 400, 'height': 300},
-    'run': (Chart chart) {
-      // Upstream: chart.data.labels.push('k'). The chart does not listen to
-      // the labels array.
-      (jsGet(chart.data, 'labels')! as List<Object?>).add('k');
-      // Upstream: chart.data.datasets[0].data.push(11). The push, then the
-      // body of the hooked method (differences.md row
-      // platform-array-events).
-      final data =
-          jsGet(jsGetIndex(jsGet(chart.data, 'datasets'), 0), 'data')!
-                as List<Object?>
-            ..add(11);
-      notifyArrayListeners(data, 'push', <Object?>[11]);
-      chart.update();
-    },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 400, height: 300)),
+  run: (chart) {
+    // Upstream: chart.data.labels.push('k'). The chart does not listen to
+    // the labels array.
+    (jsGet(chart.data, 'labels')! as List<Object?>).add('k');
+    // Upstream: chart.data.datasets[0].data.push(11). The push, then the
+    // body of the hooked method (differences.md row
+    // platform-array-events).
+    final data =
+        jsGet(jsGetIndex(jsGet(chart.data, 'datasets'), 0), 'data')!
+              as List<Object?>
+          ..add(11);
+    notifyArrayListeners(data, 'push', <Object?>[11]);
+    chart.update();
   },
 );

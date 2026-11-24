@@ -56,5 +56,4 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
   ),
-  options: <String, Object?>{'spriteText': true},
 );

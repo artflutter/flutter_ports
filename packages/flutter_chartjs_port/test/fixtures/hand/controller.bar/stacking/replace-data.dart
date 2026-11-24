@@ -52,16 +52,14 @@ FixtureConfig fixture() {
       ],
     ),
     description: 'https://github.com/chartjs/Chart.js/issues/8614',
-    options: <String, Object?>{
-      'run': (Chart chart) {
-        // The dataset is a typed scope of the lowering: a write by name.
-        jsSet(jsGet(jsGet(chart.data, 'datasets'), 1), 'data', <Object?>[
-          <String, Object?>{'x': 'January', 'y': 5},
-          // Februay missing
-          <String, Object?>{'x': 'March', 'y': 5},
-        ]);
-        chart.update();
-      },
+    run: (chart) {
+      // The dataset is a typed scope of the lowering: a write by name.
+      jsSet(jsGet(jsGet(chart.data, 'datasets'), 1), 'data', <Object?>[
+        <String, Object?>{'x': 'January', 'y': 5},
+        // Februay missing
+        <String, Object?>{'x': 'March', 'y': 5},
+      ]);
+      chart.update();
     },
   );
 }

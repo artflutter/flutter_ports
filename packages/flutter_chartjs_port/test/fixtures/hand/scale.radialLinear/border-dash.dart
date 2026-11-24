@@ -10,32 +10,30 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
-  'config': <String, Object?>{
-    'type': 'radar',
-    'data': <String, Object?>{
-      'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
-    },
-    'options': <String, Object?>{
-      'responsive': false,
-      'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'grid': <String, Object?>{
-            'color': 'rgba(0, 0, 255, 0.5)',
-            'lineWidth': 1,
-          },
-          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
-          'border': const RadialAxisBorder(dash: <double>[4, 2], dashOffset: 2),
-          'angleLines': <String, Object?>{
-            'color': 'rgba(0, 0, 255, 0.5)',
-            'lineWidth': 1,
-            // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
-            'borderDash': <double>[4, 2],
-            'borderDashOffset': 2,
-          },
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
-          'ticks': <String, Object?>{'display': false},
+  'type': 'radar',
+  'data': <String, Object?>{
+    'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
+  },
+  'options': <String, Object?>{
+    'responsive': false,
+    'scales': <String, Object?>{
+      'r': <String, Object?>{
+        'grid': <String, Object?>{
+          'color': 'rgba(0, 0, 255, 0.5)',
+          'lineWidth': 1,
         },
+        // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+        'border': const RadialAxisBorder(dash: <double>[4, 2], dashOffset: 2),
+        'angleLines': <String, Object?>{
+          'color': 'rgba(0, 0, 255, 0.5)',
+          'lineWidth': 1,
+          // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
+          'borderDash': <double>[4, 2],
+          'borderDashOffset': 2,
+        },
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
+        'ticks': <String, Object?>{'display': false},
       },
     },
   },

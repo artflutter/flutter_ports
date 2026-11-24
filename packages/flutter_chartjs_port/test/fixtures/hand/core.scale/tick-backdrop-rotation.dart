@@ -10,9 +10,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The upstream config, with native padding values.
 // DIVERGES(chartjs): adapt-edge-insets-padding, the native padding value.
-FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
-  'tolerance': 0.0016,
-  'config': <String, Object?>{
+FixtureConfig fixture() => FixtureConfig.map(
+  <String, Object?>{
     'type': 'line',
     'options': <String, Object?>{
       'events': <Object?>[],
@@ -75,8 +74,5 @@ FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
       },
     },
   },
-  'options': <String, Object?>{
-    'canvas': <String, Object?>{'height': 256.0, 'width': 256.0},
-    'spriteText': true,
-  },
-});
+  options: const AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
+);

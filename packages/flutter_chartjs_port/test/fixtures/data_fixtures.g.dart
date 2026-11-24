@@ -1125,9 +1125,7 @@ FixtureConfig _controller_bar_backgroundcolor_indexable() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/backgroundColor/loopable.js`.
@@ -1160,9 +1158,7 @@ FixtureConfig _controller_bar_backgroundcolor_loopable() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/backgroundColor/value.js`.
@@ -1186,9 +1182,7 @@ FixtureConfig _controller_bar_backgroundcolor_value() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/bar-base-value.js`.
@@ -1209,9 +1203,7 @@ FixtureConfig _controller_bar_bar_base_value() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/bar-default-begin-at-zero.js`.
@@ -1231,9 +1223,7 @@ FixtureConfig _controller_bar_bar_default_begin_at_zero() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/bar-thickness-absolute.json`.
@@ -1265,9 +1255,7 @@ FixtureConfig _controller_bar_bar_thickness_absolute() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-absolute.json`.
@@ -1304,9 +1292,7 @@ FixtureConfig _controller_bar_bar_thickness_absolute_icu() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/bar-thickness-flex-offset.json`.
@@ -1341,9 +1327,7 @@ FixtureConfig _controller_bar_bar_thickness_flex_offset() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// The ICU twin of `controller.bar/bar-thickness-flex-offset.json`.
@@ -1378,9 +1362,7 @@ FixtureConfig _controller_bar_bar_thickness_flex_offset_icu() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/bar-thickness-flex-single-reverse.json`.
@@ -1416,9 +1398,7 @@ FixtureConfig _controller_bar_bar_thickness_flex_single_reverse() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// The ICU twin of `controller.bar/bar-thickness-flex-single-reverse.json`.
@@ -1454,9 +1434,7 @@ FixtureConfig _controller_bar_bar_thickness_flex_single_reverse_icu() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/bar-thickness-flex-single.json`.
@@ -1491,9 +1469,7 @@ FixtureConfig _controller_bar_bar_thickness_flex_single() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// The ICU twin of `controller.bar/bar-thickness-flex-single.json`.
@@ -1528,9 +1504,7 @@ FixtureConfig _controller_bar_bar_thickness_flex_single_icu() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/bar-thickness-flex.json`.
@@ -1560,9 +1534,7 @@ FixtureConfig _controller_bar_bar_thickness_flex() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-flex.json`.
@@ -1592,9 +1564,7 @@ FixtureConfig _controller_bar_bar_thickness_flex_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/bar-thickness-max.json`.
@@ -1624,9 +1594,7 @@ FixtureConfig _controller_bar_bar_thickness_max() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-max.json`.
@@ -1656,9 +1624,7 @@ FixtureConfig _controller_bar_bar_thickness_max_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/bar-thickness-min-interval-multi.json`.
@@ -1693,9 +1659,7 @@ _controller_bar_bar_thickness_min_interval_multi() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-min-interval-multi.json`.
@@ -1730,9 +1694,7 @@ _controller_bar_bar_thickness_min_interval_multi_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/bar-thickness-min-interval.json`.
@@ -1766,9 +1728,7 @@ FixtureConfig _controller_bar_bar_thickness_min_interval() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// The ICU twin of `controller.bar/bar-thickness-min-interval.json`.
@@ -1802,9 +1762,7 @@ FixtureConfig _controller_bar_bar_thickness_min_interval_icu() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/bar-thickness-multiple.json`.
@@ -1844,9 +1802,7 @@ FixtureConfig _controller_bar_bar_thickness_multiple() => FixtureConfig.typed(
       },
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-multiple.json`.
@@ -1894,9 +1850,7 @@ FixtureConfig _controller_bar_bar_thickness_multiple_icu() =>
           },
         },
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/bar-thickness-no-overlap.json`.
@@ -1936,9 +1890,7 @@ FixtureConfig _controller_bar_bar_thickness_no_overlap() => FixtureConfig.typed(
       },
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-no-overlap.json`.
@@ -1986,9 +1938,7 @@ FixtureConfig _controller_bar_bar_thickness_no_overlap_icu() =>
           },
         },
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/bar-thickness-offset.json`.
@@ -2028,9 +1978,7 @@ FixtureConfig _controller_bar_bar_thickness_offset() => FixtureConfig.typed(
       },
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-offset.json`.
@@ -2070,9 +2018,7 @@ FixtureConfig _controller_bar_bar_thickness_offset_icu() => FixtureConfig.typed(
       },
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/bar-thickness-per-dataset-stacked.json`.
@@ -2080,190 +2026,170 @@ FixtureConfig _controller_bar_bar_thickness_offset_icu() => FixtureConfig.typed(
 /// The config keeps its Map: the config has no chart type, and a ChartConfig takes the type of its first dataset (Chart.js ADR 0190).
 FixtureConfig _controller_bar_bar_thickness_per_dataset_stacked() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'data': <String, Object?>{
-          'labels': <Object?>['2016', '2018', '2020', '2024', '2030'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'type': 'bar',
-              'barThickness': 16,
-              'backgroundColor': '#FF6384',
-              'data': <Object?>[1, null, 3, 4, 5],
-            },
-            <String, Object?>{
-              'type': 'bar',
-              'barThickness': 8,
-              'backgroundColor': '#36A2EB',
-              'data': <Object?>[5, 4, 3, null, 1],
-            },
-            <String, Object?>{
-              'type': 'bar',
-              'barThickness': 4,
-              'backgroundColor': '#FFCE56',
-              'data': <Object?>[3, 5, 2, null, 4],
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': false,
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'offset': true,
-              'stacked': true,
-              'display': false,
-              'time': <String, Object?>{'parser': 'YYYY'},
-              'ticks': <String, Object?>{'source': 'labels'},
-            },
-            'y': <String, Object?>{
-              'display': false,
-              'stacked': true,
-              'beginAtZero': true,
-            },
+      'data': <String, Object?>{
+        'labels': <Object?>['2016', '2018', '2020', '2024', '2030'],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'type': 'bar',
+            'barThickness': 16,
+            'backgroundColor': '#FF6384',
+            'data': <Object?>[1, null, 3, 4, 5],
+          },
+          <String, Object?>{
+            'type': 'bar',
+            'barThickness': 8,
+            'backgroundColor': '#36A2EB',
+            'data': <Object?>[5, 4, 3, null, 1],
+          },
+          <String, Object?>{
+            'type': 'bar',
+            'barThickness': 4,
+            'backgroundColor': '#FFCE56',
+            'data': <Object?>[3, 5, 2, null, 4],
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'responsive': false,
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'time',
+            'offset': true,
+            'stacked': true,
+            'display': false,
+            'time': <String, Object?>{'parser': 'YYYY'},
+            'ticks': <String, Object?>{'source': 'labels'},
+          },
+          'y': <String, Object?>{
+            'display': false,
+            'stacked': true,
+            'beginAtZero': true,
           },
         },
       },
-      'options': <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)));
 
 /// The ICU twin of `controller.bar/bar-thickness-per-dataset-stacked.json`.
 ///
 /// The config keeps its Map: the config has no chart type, and a ChartConfig takes the type of its first dataset (Chart.js ADR 0190).
 FixtureConfig _controller_bar_bar_thickness_per_dataset_stacked_icu() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'data': <String, Object?>{
-          'labels': <Object?>['2016', '2018', '2020', '2024', '2030'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'type': 'bar',
-              'barThickness': 16,
-              'backgroundColor': '#FF6384',
-              'data': <Object?>[1, null, 3, 4, 5],
-            },
-            <String, Object?>{
-              'type': 'bar',
-              'barThickness': 8,
-              'backgroundColor': '#36A2EB',
-              'data': <Object?>[5, 4, 3, null, 1],
-            },
-            <String, Object?>{
-              'type': 'bar',
-              'barThickness': 4,
-              'backgroundColor': '#FFCE56',
-              'data': <Object?>[3, 5, 2, null, 4],
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': false,
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'offset': true,
-              'stacked': true,
-              'display': false,
-              'time': <String, Object?>{'parser': 'yyyy'},
-              'ticks': <String, Object?>{'source': 'labels'},
-            },
-            'y': <String, Object?>{
-              'display': false,
-              'stacked': true,
-              'beginAtZero': true,
-            },
+      'data': <String, Object?>{
+        'labels': <Object?>['2016', '2018', '2020', '2024', '2030'],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'type': 'bar',
+            'barThickness': 16,
+            'backgroundColor': '#FF6384',
+            'data': <Object?>[1, null, 3, 4, 5],
+          },
+          <String, Object?>{
+            'type': 'bar',
+            'barThickness': 8,
+            'backgroundColor': '#36A2EB',
+            'data': <Object?>[5, 4, 3, null, 1],
+          },
+          <String, Object?>{
+            'type': 'bar',
+            'barThickness': 4,
+            'backgroundColor': '#FFCE56',
+            'data': <Object?>[3, 5, 2, null, 4],
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'responsive': false,
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'time',
+            'offset': true,
+            'stacked': true,
+            'display': false,
+            'time': <String, Object?>{'parser': 'yyyy'},
+            'ticks': <String, Object?>{'source': 'labels'},
+          },
+          'y': <String, Object?>{
+            'display': false,
+            'stacked': true,
+            'beginAtZero': true,
           },
         },
       },
-      'options': <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)));
 
 /// `controller.bar/bar-thickness-per-dataset.json`.
 ///
 /// The config keeps its Map: the config has no chart type, and a ChartConfig takes the type of its first dataset (Chart.js ADR 0190).
 FixtureConfig _controller_bar_bar_thickness_per_dataset() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'data': <String, Object?>{
-          'labels': <Object?>['2016', '2018', '2020', '2024', '2030'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'type': 'bar',
-              'barThickness': 16,
-              'backgroundColor': '#FF6384',
-              'data': <Object?>[1, null, 3, 4, 5],
-            },
-            <String, Object?>{
-              'type': 'bar',
-              'barThickness': 8,
-              'backgroundColor': '#36A2EB',
-              'data': <Object?>[5, 4, 3, null, 1],
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': false,
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'offset': true,
-              'display': false,
-              'time': <String, Object?>{'parser': 'YYYY'},
-              'ticks': <String, Object?>{'source': 'labels'},
-            },
-            'y': <String, Object?>{'display': false, 'beginAtZero': true},
+      'data': <String, Object?>{
+        'labels': <Object?>['2016', '2018', '2020', '2024', '2030'],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'type': 'bar',
+            'barThickness': 16,
+            'backgroundColor': '#FF6384',
+            'data': <Object?>[1, null, 3, 4, 5],
           },
-        },
+          <String, Object?>{
+            'type': 'bar',
+            'barThickness': 8,
+            'backgroundColor': '#36A2EB',
+            'data': <Object?>[5, 4, 3, null, 1],
+          },
+        ],
       },
       'options': <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
+        'responsive': false,
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'time',
+            'offset': true,
+            'display': false,
+            'time': <String, Object?>{'parser': 'YYYY'},
+            'ticks': <String, Object?>{'source': 'labels'},
+          },
+          'y': <String, Object?>{'display': false, 'beginAtZero': true},
+        },
       },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)));
 
 /// The ICU twin of `controller.bar/bar-thickness-per-dataset.json`.
 ///
 /// The config keeps its Map: the config has no chart type, and a ChartConfig takes the type of its first dataset (Chart.js ADR 0190).
 FixtureConfig _controller_bar_bar_thickness_per_dataset_icu() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'data': <String, Object?>{
-          'labels': <Object?>['2016', '2018', '2020', '2024', '2030'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'type': 'bar',
-              'barThickness': 16,
-              'backgroundColor': '#FF6384',
-              'data': <Object?>[1, null, 3, 4, 5],
-            },
-            <String, Object?>{
-              'type': 'bar',
-              'barThickness': 8,
-              'backgroundColor': '#36A2EB',
-              'data': <Object?>[5, 4, 3, null, 1],
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': false,
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'offset': true,
-              'display': false,
-              'time': <String, Object?>{'parser': 'yyyy'},
-              'ticks': <String, Object?>{'source': 'labels'},
-            },
-            'y': <String, Object?>{'display': false, 'beginAtZero': true},
+      'data': <String, Object?>{
+        'labels': <Object?>['2016', '2018', '2020', '2024', '2030'],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'type': 'bar',
+            'barThickness': 16,
+            'backgroundColor': '#FF6384',
+            'data': <Object?>[1, null, 3, 4, 5],
           },
-        },
+          <String, Object?>{
+            'type': 'bar',
+            'barThickness': 8,
+            'backgroundColor': '#36A2EB',
+            'data': <Object?>[5, 4, 3, null, 1],
+          },
+        ],
       },
       'options': <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
+        'responsive': false,
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'time',
+            'offset': true,
+            'display': false,
+            'time': <String, Object?>{'parser': 'yyyy'},
+            'ticks': <String, Object?>{'source': 'labels'},
+          },
+          'y': <String, Object?>{'display': false, 'beginAtZero': true},
+        },
       },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)));
 
 /// `controller.bar/bar-thickness-reverse.json`.
 FixtureConfig _controller_bar_bar_thickness_reverse() => FixtureConfig.typed(
@@ -2303,9 +2229,7 @@ FixtureConfig _controller_bar_bar_thickness_reverse() => FixtureConfig.typed(
       },
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-reverse.json`.
@@ -2354,9 +2278,7 @@ FixtureConfig _controller_bar_bar_thickness_reverse_icu() =>
           },
         },
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/bar-thickness-single-xy.json`.
@@ -2385,9 +2307,7 @@ FixtureConfig _controller_bar_bar_thickness_single_xy() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-single-xy.json`.
@@ -2421,9 +2341,7 @@ FixtureConfig _controller_bar_bar_thickness_single_xy_icu() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/bar-thickness-single.json`.
@@ -2453,9 +2371,7 @@ FixtureConfig _controller_bar_bar_thickness_single() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-single.json`.
@@ -2485,9 +2401,7 @@ FixtureConfig _controller_bar_bar_thickness_single_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/bar-thickness-stacked.json`.
@@ -2533,9 +2447,7 @@ FixtureConfig _controller_bar_bar_thickness_stacked() => FixtureConfig.typed(
       },
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// The ICU twin of `controller.bar/bar-thickness-stacked.json`.
@@ -2585,9 +2497,7 @@ FixtureConfig _controller_bar_bar_thickness_stacked_icu() =>
           },
         },
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/borderColor/border+dpr.js`.
@@ -2611,9 +2521,7 @@ FixtureConfig _controller_bar_bordercolor_border_dpr() => FixtureConfig.typed(
       'borderWidth': 8,
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 501},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 501, height: 256)),
 );
 
 /// `controller.bar/borderColor/indexable.js`.
@@ -2655,9 +2563,7 @@ FixtureConfig _controller_bar_bordercolor_indexable() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/borderColor/value.js`.
@@ -2683,9 +2589,7 @@ FixtureConfig _controller_bar_bordercolor_value() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/borderRadius/border-radius-stacked-number-mixed-chart.js`.
@@ -2727,9 +2631,7 @@ _controller_bar_borderradius_border_radius_stacked_number_mixed_chart() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/borderRadius/border-radius-stacked-number-with-order.js`.
@@ -2774,9 +2676,7 @@ _controller_bar_borderradius_border_radius_stacked_number_with_order() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/borderRadius/border-radius-stacked-number.js`.
@@ -2817,9 +2717,7 @@ FixtureConfig _controller_bar_borderradius_border_radius_stacked_number() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/borderRadius/no-spacing.js`.
@@ -2856,9 +2754,7 @@ FixtureConfig _controller_bar_borderradius_no_spacing() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/borderSkipped/indexable.js`.
@@ -2903,9 +2799,7 @@ FixtureConfig _controller_bar_borderskipped_indexable() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/borderSkipped/middle.js`.
@@ -2944,9 +2838,7 @@ FixtureConfig _controller_bar_borderskipped_middle() => FixtureConfig.typed(
       'borderWidth': 2,
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/borderSkipped/value.js`.
@@ -2985,9 +2877,7 @@ FixtureConfig _controller_bar_borderskipped_value() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/borderWidth/indexable-object.js`.
@@ -3034,9 +2924,7 @@ FixtureConfig _controller_bar_borderwidth_indexable_object() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/borderWidth/indexable.js`.
@@ -3066,9 +2954,7 @@ FixtureConfig _controller_bar_borderwidth_indexable() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/borderWidth/negative.js`.
@@ -3110,9 +2996,7 @@ FixtureConfig _controller_bar_borderwidth_negative() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/borderWidth/object.js`.
@@ -3154,9 +3038,7 @@ FixtureConfig _controller_bar_borderwidth_object() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/borderWidth/value.js`.
@@ -3182,9 +3064,7 @@ FixtureConfig _controller_bar_borderwidth_value() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/data/object.js`.
@@ -3210,9 +3090,7 @@ FixtureConfig _controller_bar_data_object() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/data/parsing.js`.
@@ -3259,9 +3137,7 @@ FixtureConfig _controller_bar_data_parsing() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/floatBar/data-as-objects.js`.
@@ -3306,9 +3182,7 @@ FixtureConfig _controller_bar_floatbar_data_as_objects() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, min: 0),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/floatBar/float-bar-stacked.json`.
@@ -3364,9 +3238,7 @@ FixtureConfig _controller_bar_floatbar_float_bar_stacked() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.bar/floatBar/float-bar.json`.
@@ -3413,9 +3285,7 @@ FixtureConfig _controller_bar_floatbar_float_bar() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/minBarLength/vertical-neg.js`.
@@ -3437,9 +3307,7 @@ FixtureConfig _controller_bar_minbarlength_vertical_neg() =>
           LinearAxis(CartesianAxis.y, ticks: AxisTicks(display: false)),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 512, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
     );
 
 /// `controller.bar/minBarLength/vertical-pos.js`.
@@ -3461,9 +3329,7 @@ FixtureConfig _controller_bar_minbarlength_vertical_pos() =>
           LinearAxis(CartesianAxis.y, ticks: AxisTicks(display: false)),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 512, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
     );
 
 /// `controller.bar/minBarLength/vertical-stacked-no-overlap.js`.
@@ -3507,9 +3373,7 @@ FixtureConfig _controller_bar_minbarlength_vertical_stacked_no_overlap() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 512, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
     );
 
 /// `controller.bar/minBarLength/vertical-stacked.js`.
@@ -3544,9 +3408,7 @@ FixtureConfig _controller_bar_minbarlength_vertical_stacked() =>
           },
         },
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 512, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
     );
 
 /// `controller.bar/not-grouped/mixed.js`.
@@ -3645,10 +3507,7 @@ FixtureConfig _controller_bar_not_grouped_on_time() => FixtureConfig.typed(
     },
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/5139',
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 1000, 'height': 300},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 1000, height: 300)),
 );
 
 /// `controller.bar/skipNull/combinations.js`.
@@ -3678,9 +3537,7 @@ FixtureConfig _controller_bar_skipnull_combinations() => FixtureConfig.typed(
     ],
     extra: <String, Object?>{'skipNull': true},
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/stacking/logarithmic-strings.js`.
@@ -3789,9 +3646,7 @@ FixtureConfig _controller_bar_stacking_order_default() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/stacking/order-specified.json`.
@@ -3830,9 +3685,7 @@ FixtureConfig _controller_bar_stacking_order_specified() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.bar/stacking/stacked-and-multiple-axis.js`.
@@ -3919,7 +3772,6 @@ FixtureConfig _controller_bar_stacking_stacked_and_multiple_axis() =>
           },
         },
       ),
-      options: <String, Object?>{},
     );
 
 /// `controller.bubble/autoPadding-disabled.js`.
@@ -3939,10 +3791,7 @@ FixtureConfig _controller_bubble_autopadding_disabled() => FixtureConfig.typed(
       'layout': <String, Object?>{'autoPadding': false},
     },
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 256, 'height': 256},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
 );
 
 /// `controller.bubble/padding.js`.
@@ -3959,10 +3808,7 @@ FixtureConfig _controller_bubble_padding() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 256, 'height': 256},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
 );
 
 /// `controller.doughnut/backgroundColor/indexable.js`.
@@ -3999,9 +3845,7 @@ FixtureConfig _controller_doughnut_backgroundcolor_indexable() =>
           ),
         ),
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/backgroundColor/value.js`.
@@ -4022,9 +3866,7 @@ FixtureConfig _controller_doughnut_backgroundcolor_value() =>
           ),
         ),
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/borderAlign/indexable.js`.
@@ -4067,9 +3909,7 @@ FixtureConfig _controller_doughnut_borderalign_indexable() =>
           ),
         ),
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/borderAlign/value.js`.
@@ -4093,9 +3933,7 @@ FixtureConfig _controller_doughnut_borderalign_value() => FixtureConfig.typed(
       ),
     ),
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.doughnut/borderColor/indexable.js`.
@@ -4134,9 +3972,7 @@ FixtureConfig _controller_doughnut_bordercolor_indexable() =>
           ),
         ),
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/borderColor/value.js`.
@@ -4158,9 +3994,7 @@ FixtureConfig _controller_doughnut_bordercolor_value() => FixtureConfig.typed(
       ),
     ),
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.doughnut/borderDash/value.js`.
@@ -4185,9 +4019,7 @@ FixtureConfig _controller_doughnut_borderdash_value() => FixtureConfig.typed(
     ),
     scales: [RadialLinearAxis(display: ScaleDisplay.off)],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.doughnut/borderJoinStyle/bevel-default.js`.
@@ -4205,9 +4037,7 @@ FixtureConfig _controller_doughnut_borderjoinstyle_bevel_default() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/borderJoinStyle/miter.js`.
@@ -4226,9 +4056,7 @@ FixtureConfig _controller_doughnut_borderjoinstyle_miter() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/borderJoinStyle/round.js`.
@@ -4247,9 +4075,7 @@ FixtureConfig _controller_doughnut_borderjoinstyle_round() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/borderRadius/value-corners.js`.
@@ -4275,9 +4101,7 @@ FixtureConfig _controller_doughnut_borderradius_value_corners() =>
           ),
         ),
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/borderRadius/value-large-radius.js`.
@@ -4299,9 +4123,7 @@ FixtureConfig _controller_doughnut_borderradius_value_large_radius() =>
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/borderRadius/value-small-number.js`.
@@ -4322,9 +4144,7 @@ FixtureConfig _controller_doughnut_borderradius_value_small_number() =>
           ),
         ),
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/borderWidth/indexable.js`.
@@ -4351,9 +4171,7 @@ FixtureConfig _controller_doughnut_borderwidth_indexable() =>
           ),
         ),
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.doughnut/borderWidth/value.js`.
@@ -4372,9 +4190,7 @@ FixtureConfig _controller_doughnut_borderwidth_value() => FixtureConfig.typed(
       ),
     ),
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.doughnut/doughnut-border-align-center.json`.
@@ -4721,9 +4537,7 @@ FixtureConfig _controller_doughnut_doughnut_weight() => FixtureConfig.typed(
     ],
     labels: <Object>['label0', 'label1'],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 500, 'width': 500},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 500, height: 500)),
 );
 
 /// `controller.doughnut/pie-border-align-center.json`.
@@ -4846,9 +4660,7 @@ FixtureConfig _controller_doughnut_pie_weight() => FixtureConfig.typed(
     ],
     labels: <Object>['label0', 'label1'],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 500, 'width': 500},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 500, height: 500)),
 );
 
 /// `controller.doughnut/selfJoin/doughnut.js`.
@@ -4868,9 +4680,7 @@ FixtureConfig _controller_doughnut_selfjoin_doughnut() => FixtureConfig.typed(
     ],
     labels: <Object>['Red'],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.doughnut/selfJoin/pie.js`.
@@ -4891,9 +4701,7 @@ FixtureConfig _controller_doughnut_selfjoin_pie() => FixtureConfig.typed(
     ],
     labels: <Object>['Red'],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.doughnut/selfJoin/single-slice-360-border-no-selfjoin.js`.
@@ -4952,9 +4760,7 @@ FixtureConfig _controller_doughnut_single_slice_circumference_405() =>
         ],
         labels: <Object>['A'],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'width': 256, 'height': 256},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
     );
 
 /// `controller.doughnut/single-slice-offset.js`.
@@ -4991,9 +4797,7 @@ FixtureConfig _controller_doughnut_single_slice_opacity() =>
         ],
         labels: <Object>['A'],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'width': 256, 'height': 256},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
     );
 
 /// `controller.line/stacking/bounds-data.js`.
@@ -5019,7 +4823,6 @@ FixtureConfig _controller_line_stacking_bounds_data() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `controller.line/stacking/stacked-scatter.js`.
@@ -5077,9 +4880,7 @@ FixtureConfig _controller_line_stacking_stacked_scatter() =>
           'plugins': <String, Object?>{'filler': true},
         },
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/angle-array.json`.
@@ -5182,9 +4983,7 @@ FixtureConfig _controller_polararea_backgroundcolor_indexable_dataset() =>
         labels: <Object>[0, 1, 2, 3, 4, 5],
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/backgroundColor/indexable-element-options.js`.
@@ -5212,9 +5011,7 @@ _controller_polararea_backgroundcolor_indexable_element_options() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/backgroundColor/value-dataset.js`.
@@ -5230,9 +5027,7 @@ FixtureConfig _controller_polararea_backgroundcolor_value_dataset() =>
         labels: <Object>[0, 1, 2, 3, 4, 5],
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/backgroundColor/value-element-options.js`.
@@ -5250,9 +5045,7 @@ FixtureConfig _controller_polararea_backgroundcolor_value_element_options() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/border-align-center.json`.
@@ -5359,9 +5152,7 @@ FixtureConfig _controller_polararea_borderalign_indexable_dataset() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderAlign/indexable-element-options.js`.
@@ -5391,9 +5182,7 @@ FixtureConfig _controller_polararea_borderalign_indexable_element_options() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderAlign/value-dataset.js`.
@@ -5417,9 +5206,7 @@ FixtureConfig _controller_polararea_borderalign_value_dataset() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderAlign/value-element-options.js`.
@@ -5440,9 +5227,7 @@ FixtureConfig _controller_polararea_borderalign_value_element_options() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderColor/indexable-dataset.js`.
@@ -5471,9 +5256,7 @@ FixtureConfig _controller_polararea_bordercolor_indexable_dataset() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderColor/indexable-element-options.js`.
@@ -5502,9 +5285,7 @@ FixtureConfig _controller_polararea_bordercolor_indexable_element_options() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderColor/value-dataset.js`.
@@ -5526,9 +5307,7 @@ FixtureConfig _controller_polararea_bordercolor_value_dataset() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderColor/value-element-options.js`.
@@ -5548,9 +5327,7 @@ FixtureConfig _controller_polararea_bordercolor_value_element_options() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderDash/value.js`.
@@ -5575,9 +5352,7 @@ FixtureConfig _controller_polararea_borderdash_value() => FixtureConfig.typed(
     ),
     scales: [RadialLinearAxis(display: ScaleDisplay.off)],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `controller.polarArea/borderWidth/indexable-dataset.js`.
@@ -5601,9 +5376,7 @@ FixtureConfig _controller_polararea_borderwidth_indexable_dataset() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderWidth/indexable-element-options.js`.
@@ -5625,9 +5398,7 @@ FixtureConfig _controller_polararea_borderwidth_indexable_element_options() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderWidth/value-dataset.js`.
@@ -5646,9 +5417,7 @@ FixtureConfig _controller_polararea_borderwidth_value_dataset() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/borderWidth/value-element-options.js`.
@@ -5668,9 +5437,7 @@ FixtureConfig _controller_polararea_borderwidth_value_element_options() =>
         ),
         scales: [RadialLinearAxis(display: ScaleDisplay.off)],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `controller.polarArea/parse-object-data.json`.
@@ -5738,7 +5505,6 @@ FixtureConfig _controller_polararea_pointlabels_centered_180() =>
           ),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `controller.polarArea/pointLabels/centered-45.js`.
@@ -5774,7 +5540,6 @@ FixtureConfig _controller_polararea_pointlabels_centered_45() =>
           ),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `controller.polarArea/pointLabels/centered.js`.
@@ -5809,7 +5574,6 @@ FixtureConfig _controller_polararea_pointlabels_centered() =>
           ),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `controller.polarArea/pointLabels/default-180.js`.
@@ -5840,7 +5604,6 @@ FixtureConfig _controller_polararea_pointlabels_default_180() =>
           ),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `controller.polarArea/pointLabels/default-45.js`.
@@ -5868,7 +5631,6 @@ FixtureConfig _controller_polararea_pointlabels_default_45() =>
           RadialLinearAxis(startAngle: 45, pointLabelsDisplay: ScaleDisplay.on),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `controller.polarArea/pointLabels/default.js`.
@@ -5894,7 +5656,6 @@ FixtureConfig _controller_polararea_pointlabels_default() =>
         ],
         scales: [RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.on)],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `controller.polarArea/pointLabels/displayAuto-180.js`.
@@ -6022,7 +5783,6 @@ FixtureConfig _controller_polararea_pointlabels_displayauto_180() =>
           ),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `controller.polarArea/pointLabels/displayAuto.js`.
@@ -6145,7 +5905,6 @@ FixtureConfig _controller_polararea_pointlabels_displayauto() =>
         ],
         scales: [RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.auto)],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `controller.radar/startAngle/135.js`.
@@ -6173,7 +5932,6 @@ FixtureConfig _controller_radar_startangle_135() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `controller.radar/startAngle/180.js`.
@@ -6201,7 +5959,6 @@ FixtureConfig _controller_radar_startangle_180() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `controller.radar/startAngle/225.js`.
@@ -6229,7 +5986,6 @@ FixtureConfig _controller_radar_startangle_225() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `controller.radar/startAngle/270.js`.
@@ -6257,7 +6013,6 @@ FixtureConfig _controller_radar_startangle_270() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `controller.radar/startAngle/315.js`.
@@ -6285,7 +6040,6 @@ FixtureConfig _controller_radar_startangle_315() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `controller.radar/startAngle/45.js`.
@@ -6313,7 +6067,6 @@ FixtureConfig _controller_radar_startangle_45() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `controller.radar/startAngle/90.js`.
@@ -6341,7 +6094,6 @@ FixtureConfig _controller_radar_startangle_90() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `controller.radar/startAngle/default.js`.
@@ -6368,7 +6120,6 @@ FixtureConfig _controller_radar_startangle_default() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `controller.scatter/showLine/true.js`.
@@ -6389,9 +6140,7 @@ FixtureConfig _controller_scatter_showline_true() => FixtureConfig.typed(
     ],
   ),
   description: 'showLine option should draw a line if true',
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'width': 256, 'height': 256},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
 );
 
 /// `controller.scatter/showLine/undefined.js`.
@@ -6411,9 +6160,7 @@ FixtureConfig _controller_scatter_showline_undefined() => FixtureConfig.typed(
     ],
   ),
   description: 'showLine option should not draw a line if undefined',
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'width': 256, 'height': 256},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
 );
 
 /// `core.datasetController/stacked-initial-render.js`.
@@ -6446,9 +6193,7 @@ FixtureConfig _core_datasetcontroller_stacked_initial_render() =>
           PluginOff<FillerPlugin>(),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 512, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
     );
 
 /// `core.layouts/long-labels.js`.
@@ -6474,10 +6219,7 @@ FixtureConfig _core_layouts_long_labels() => FixtureConfig.typed(
     ],
     disabledPlugins: [PluginOff<LegendPlugin>()],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 150, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 150)),
 );
 
 /// `core.scale/autoSkip/fit-after.js`.
@@ -6515,10 +6257,7 @@ FixtureConfig _core_scale_autoskip_fit_after() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/3694',
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 185, 'height': 185},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 185, height: 185)),
 );
 
 /// `core.scale/autoSkip/no-offset.js`.
@@ -6535,10 +6274,7 @@ FixtureConfig _core_scale_autoskip_no_offset() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/8611',
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 470, 'height': 128},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 470, height: 128)),
 );
 
 /// `core.scale/autoSkip/offset.js`.
@@ -6555,10 +6291,7 @@ FixtureConfig _core_scale_autoskip_offset() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/8611',
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 506, 'height': 128},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 506, height: 128)),
 );
 
 /// `core.scale/backgroundColor.js`.
@@ -6566,50 +6299,45 @@ FixtureConfig _core_scale_autoskip_offset() => FixtureConfig.typed(
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_backgroundcolor() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'top': <String, Object?>{
-              'type': 'linear',
-              'backgroundColor': 'red',
-              'position': 'top',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'test': ''},
-            },
-            'left': <String, Object?>{
-              'type': 'linear',
-              'backgroundColor': 'green',
-              'position': 'left',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'test': ''},
-            },
-            'bottom': <String, Object?>{
-              'type': 'linear',
-              'backgroundColor': 'blue',
-              'position': 'bottom',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'test': ''},
-            },
-            'right': <String, Object?>{
-              'type': 'linear',
-              'backgroundColor': 'gray',
-              'position': 'right',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'test': ''},
-            },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'top': <String, Object?>{
+            'type': 'linear',
+            'backgroundColor': 'red',
+            'position': 'top',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'test': ''},
+          },
+          'left': <String, Object?>{
+            'type': 'linear',
+            'backgroundColor': 'green',
+            'position': 'left',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'test': ''},
+          },
+          'bottom': <String, Object?>{
+            'type': 'linear',
+            'backgroundColor': 'blue',
+            'position': 'bottom',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'test': ''},
+          },
+          'right': <String, Object?>{
+            'type': 'linear',
+            'backgroundColor': 'gray',
+            'position': 'right',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'test': ''},
           },
         },
       },
-      'options': <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/crossAlignment/cross-align-bottom-center.js`.
 FixtureConfig _core_scale_crossalignment_cross_align_bottom_center() =>
@@ -6630,10 +6358,7 @@ FixtureConfig _core_scale_crossalignment_cross_align_bottom_center() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `core.scale/crossAlignment/cross-align-bottom-far.js`.
@@ -6655,10 +6380,7 @@ FixtureConfig _core_scale_crossalignment_cross_align_bottom_far() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `core.scale/crossAlignment/cross-align-bottom-near.js`.
@@ -6680,10 +6402,7 @@ FixtureConfig _core_scale_crossalignment_cross_align_bottom_near() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `core.scale/crossAlignment/cross-align-top-center.js`.
@@ -6706,10 +6425,7 @@ FixtureConfig _core_scale_crossalignment_cross_align_top_center() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `core.scale/crossAlignment/cross-align-top-far.js`.
@@ -6732,10 +6448,7 @@ FixtureConfig _core_scale_crossalignment_cross_align_top_far() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `core.scale/crossAlignment/cross-align-top-near.js`.
@@ -6758,10 +6471,7 @@ FixtureConfig _core_scale_crossalignment_cross_align_top_near() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `core.scale/label-align-center.js`.
@@ -6776,10 +6486,7 @@ FixtureConfig _core_scale_label_align_center() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, ticks: AxisTicks(align: TickAlign.center)),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `core.scale/label-align-end.js`.
@@ -6794,10 +6501,7 @@ FixtureConfig _core_scale_label_align_end() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, ticks: AxisTicks(align: TickAlign.end)),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `core.scale/label-align-inner-onlyX.js`.
@@ -6812,10 +6516,7 @@ FixtureConfig _core_scale_label_align_inner_onlyx() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `core.scale/label-align-inner-reverse.js`.
@@ -6833,10 +6534,7 @@ FixtureConfig _core_scale_label_align_inner_reverse() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `core.scale/label-align-inner-rotate.js`.
@@ -6857,10 +6555,7 @@ FixtureConfig _core_scale_label_align_inner_rotate() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `core.scale/label-align-inner.js`.
@@ -6874,10 +6569,7 @@ FixtureConfig _core_scale_label_align_inner() => FixtureConfig.typed(
       CategoryAxis(CartesianAxis.x, ticks: AxisTicks(align: TickAlign.inner)),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `core.scale/label-align-start.js`.
@@ -6892,10 +6584,7 @@ FixtureConfig _core_scale_label_align_start() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, ticks: AxisTicks(align: TickAlign.start)),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `core.scale/tick-backdrop-alignment-inner.js`.
@@ -6934,9 +6623,7 @@ FixtureConfig _core_scale_tick_backdrop_alignment_inner() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
     );
 
 /// `core.scale/ticks-mirror-x.js`.
@@ -6954,10 +6641,7 @@ FixtureConfig _core_scale_ticks_mirror_x() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `core.scale/ticks-mirror.js`.
@@ -6974,10 +6658,7 @@ FixtureConfig _core_scale_ticks_mirror() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `core.scale/title/align-end.js`.
@@ -6985,529 +6666,463 @@ FixtureConfig _core_scale_ticks_mirror() => FixtureConfig.typed(
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_title_align_end() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'top': <String, Object?>{
-              'type': 'linear',
-              'position': 'top',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'end',
-                'text': 'top',
-              },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'top': <String, Object?>{
+            'type': 'linear',
+            'position': 'top',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'end',
+              'text': 'top',
             },
-            'left': <String, Object?>{
-              'type': 'linear',
-              'position': 'left',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'end',
-                'text': 'left',
-              },
+          },
+          'left': <String, Object?>{
+            'type': 'linear',
+            'position': 'left',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'end',
+              'text': 'left',
             },
-            'bottom': <String, Object?>{
-              'type': 'linear',
-              'position': 'bottom',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'end',
-                'text': 'bottom',
-              },
+          },
+          'bottom': <String, Object?>{
+            'type': 'linear',
+            'position': 'bottom',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'end',
+              'text': 'bottom',
             },
-            'right': <String, Object?>{
-              'type': 'linear',
-              'position': 'right',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'end',
-                'text': 'right',
-              },
+          },
+          'right': <String, Object?>{
+            'type': 'linear',
+            'position': 'right',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'end',
+              'text': 'right',
             },
           },
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/title/align-start.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_title_align_start() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'top': <String, Object?>{
-              'type': 'linear',
-              'position': 'top',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'start',
-                'text': 'top',
-              },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'top': <String, Object?>{
+            'type': 'linear',
+            'position': 'top',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'start',
+              'text': 'top',
             },
-            'left': <String, Object?>{
-              'type': 'linear',
-              'position': 'left',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'start',
-                'text': 'left',
-              },
+          },
+          'left': <String, Object?>{
+            'type': 'linear',
+            'position': 'left',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'start',
+              'text': 'left',
             },
-            'bottom': <String, Object?>{
-              'type': 'linear',
-              'position': 'bottom',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'start',
-                'text': 'bottom',
-              },
+          },
+          'bottom': <String, Object?>{
+            'type': 'linear',
+            'position': 'bottom',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'start',
+              'text': 'bottom',
             },
-            'right': <String, Object?>{
-              'type': 'linear',
-              'position': 'right',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'start',
-                'text': 'right',
-              },
+          },
+          'right': <String, Object?>{
+            'type': 'linear',
+            'position': 'right',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'start',
+              'text': 'right',
             },
           },
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/title/default.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_title_default() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'top': <String, Object?>{
-              'type': 'linear',
-              'position': 'top',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'top'},
-            },
-            'left': <String, Object?>{
-              'type': 'linear',
-              'position': 'left',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'left'},
-            },
-            'bottom': <String, Object?>{
-              'type': 'linear',
-              'position': 'bottom',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'bottom'},
-            },
-            'right': <String, Object?>{
-              'type': 'linear',
-              'position': 'right',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'right'},
-            },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'top': <String, Object?>{
+            'type': 'linear',
+            'position': 'top',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'top'},
+          },
+          'left': <String, Object?>{
+            'type': 'linear',
+            'position': 'left',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'left'},
+          },
+          'bottom': <String, Object?>{
+            'type': 'linear',
+            'position': 'bottom',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'bottom'},
+          },
+          'right': <String, Object?>{
+            'type': 'linear',
+            'position': 'right',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'right'},
           },
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/title/horizontal-center.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_title_horizontal_center() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'linear',
-              'position': 'left',
-              'min': 0,
-              'max': 100,
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'vertical'},
-            },
-            'x': <String, Object?>{
-              'type': 'linear',
-              'position': 'center',
-              'min': 0,
-              'max': 100,
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'horizontal'},
-            },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'y': <String, Object?>{
+            'type': 'linear',
+            'position': 'left',
+            'min': 0,
+            'max': 100,
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'vertical'},
+          },
+          'x': <String, Object?>{
+            'type': 'linear',
+            'position': 'center',
+            'min': 0,
+            'max': 100,
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'horizontal'},
           },
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/title/horizontal-value.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_title_horizontal_value() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'linear',
-              'position': 'left',
-              'min': 0,
-              'max': 100,
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'vertical'},
-            },
-            'x': <String, Object?>{
-              'type': 'linear',
-              'position': <String, Object?>{'y': 40},
-              'min': 0,
-              'max': 100,
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'horizontal'},
-            },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'y': <String, Object?>{
+            'type': 'linear',
+            'position': 'left',
+            'min': 0,
+            'max': 100,
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'vertical'},
+          },
+          'x': <String, Object?>{
+            'type': 'linear',
+            'position': <String, Object?>{'y': 40},
+            'min': 0,
+            'max': 100,
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'horizontal'},
           },
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/title/multi-line/align-end.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_title_multi_line_align_end() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'top': <String, Object?>{
-              'type': 'linear',
-              'position': 'top',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'end',
-                'text': <Object?>['top', 'line2', 'line3'],
-              },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'top': <String, Object?>{
+            'type': 'linear',
+            'position': 'top',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'end',
+              'text': <Object?>['top', 'line2', 'line3'],
             },
-            'left': <String, Object?>{
-              'type': 'linear',
-              'position': 'left',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'end',
-                'text': <Object?>['left', 'line2', 'line3'],
-              },
+          },
+          'left': <String, Object?>{
+            'type': 'linear',
+            'position': 'left',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'end',
+              'text': <Object?>['left', 'line2', 'line3'],
             },
-            'bottom': <String, Object?>{
-              'type': 'linear',
-              'position': 'bottom',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'end',
-                'text': <Object?>['bottom', 'line2', 'line3'],
-              },
+          },
+          'bottom': <String, Object?>{
+            'type': 'linear',
+            'position': 'bottom',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'end',
+              'text': <Object?>['bottom', 'line2', 'line3'],
             },
-            'right': <String, Object?>{
-              'type': 'linear',
-              'position': 'right',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'end',
-                'text': <Object?>['right', 'line2', 'line3'],
-              },
+          },
+          'right': <String, Object?>{
+            'type': 'linear',
+            'position': 'right',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'end',
+              'text': <Object?>['right', 'line2', 'line3'],
             },
           },
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/title/multi-line/align-start.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_title_multi_line_align_start() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'top': <String, Object?>{
-              'type': 'linear',
-              'position': 'top',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'start',
-                'text': <Object?>['top', 'line2', 'line3'],
-              },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'top': <String, Object?>{
+            'type': 'linear',
+            'position': 'top',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'start',
+              'text': <Object?>['top', 'line2', 'line3'],
             },
-            'left': <String, Object?>{
-              'type': 'linear',
-              'position': 'left',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'start',
-                'text': <Object?>['left', 'line2', 'line3'],
-              },
+          },
+          'left': <String, Object?>{
+            'type': 'linear',
+            'position': 'left',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'start',
+              'text': <Object?>['left', 'line2', 'line3'],
             },
-            'bottom': <String, Object?>{
-              'type': 'linear',
-              'position': 'bottom',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'start',
-                'text': <Object?>['bottom', 'line2', 'line3'],
-              },
+          },
+          'bottom': <String, Object?>{
+            'type': 'linear',
+            'position': 'bottom',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'start',
+              'text': <Object?>['bottom', 'line2', 'line3'],
             },
-            'right': <String, Object?>{
-              'type': 'linear',
-              'position': 'right',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'align': 'start',
-                'text': <Object?>['right', 'line2', 'line3'],
-              },
+          },
+          'right': <String, Object?>{
+            'type': 'linear',
+            'position': 'right',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'align': 'start',
+              'text': <Object?>['right', 'line2', 'line3'],
             },
           },
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/title/multi-line/default.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_title_multi_line_default() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'top': <String, Object?>{
-              'type': 'linear',
-              'position': 'top',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'text': <Object?>['top', 'line2', 'line3'],
-              },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'top': <String, Object?>{
+            'type': 'linear',
+            'position': 'top',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'text': <Object?>['top', 'line2', 'line3'],
             },
-            'left': <String, Object?>{
-              'type': 'linear',
-              'position': 'left',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'text': <Object?>['left', 'line2', 'line3'],
-              },
+          },
+          'left': <String, Object?>{
+            'type': 'linear',
+            'position': 'left',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'text': <Object?>['left', 'line2', 'line3'],
             },
-            'bottom': <String, Object?>{
-              'type': 'linear',
-              'position': 'bottom',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'text': <Object?>['bottom', 'line2', 'line3'],
-              },
+          },
+          'bottom': <String, Object?>{
+            'type': 'linear',
+            'position': 'bottom',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'text': <Object?>['bottom', 'line2', 'line3'],
             },
-            'right': <String, Object?>{
-              'type': 'linear',
-              'position': 'right',
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{
-                'display': true,
-                'text': <Object?>['right', 'line2', 'line3'],
-              },
+          },
+          'right': <String, Object?>{
+            'type': 'linear',
+            'position': 'right',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{
+              'display': true,
+              'text': <Object?>['right', 'line2', 'line3'],
             },
           },
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/title/vertical-center.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_title_vertical_center() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'linear',
-              'position': 'center',
-              'min': 0,
-              'max': 100,
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'vertical'},
-            },
-            'x': <String, Object?>{
-              'type': 'linear',
-              'position': 'bottom',
-              'min': 0,
-              'max': 100,
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'horizontal'},
-            },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'y': <String, Object?>{
+            'type': 'linear',
+            'position': 'center',
+            'min': 0,
+            'max': 100,
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'vertical'},
+          },
+          'x': <String, Object?>{
+            'type': 'linear',
+            'position': 'bottom',
+            'min': 0,
+            'max': 100,
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'horizontal'},
           },
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/title/vertical-value.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_title_vertical_value() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'events': <Object?>[],
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'linear',
-              'position': <String, Object?>{'x': 40},
-              'min': 0,
-              'max': 100,
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'vertical'},
-            },
-            'x': <String, Object?>{
-              'type': 'linear',
-              'position': 'bottom',
-              'min': 0,
-              'max': 100,
-              'ticks': <String, Object?>{'display': false},
-              'grid': <String, Object?>{'display': false},
-              'title': <String, Object?>{'display': true, 'text': 'horizontal'},
-            },
+      'type': 'line',
+      'options': <String, Object?>{
+        'events': <Object?>[],
+        'scales': <String, Object?>{
+          'y': <String, Object?>{
+            'type': 'linear',
+            'position': <String, Object?>{'x': 40},
+            'min': 0,
+            'max': 100,
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'vertical'},
+          },
+          'x': <String, Object?>{
+            'type': 'linear',
+            'position': 'bottom',
+            'min': 0,
+            'max': 100,
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'display': false},
+            'title': <String, Object?>{'display': true, 'text': 'horizontal'},
           },
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 256, 'width': 256},
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)));
 
 /// `core.scale/x-axis-position-dynamic-margin.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _core_scale_x_axis_position_dynamic_margin() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'labels': <Object?>['Left Label', 'Center Label', 'Right Label'],
-              'position': <String, Object?>{'y': 30},
-            },
-            'y': <String, Object?>{'display': false, 'min': -100, 'max': 100},
+      'type': 'line',
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'labels': <Object?>['Left Label', 'Center Label', 'Right Label'],
+            'position': <String, Object?>{'y': 30},
           },
+          'y': <String, Object?>{'display': false, 'min': -100, 'max': 100},
         },
       },
-      'options': <String, Object?>{
-        'canvas': <String, Object?>{'height': 256, 'width': 512},
-        'spriteText': true,
-      },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)));
 
 /// `element.line/default.js`.
 FixtureConfig _element_line_default() => FixtureConfig.typed(
@@ -7527,9 +7142,7 @@ FixtureConfig _element_line_default() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, min: -15, max: 15),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );
 
 /// `plugin.filler/radar/dataset/order.js`.
@@ -7587,151 +7200,129 @@ FixtureConfig _scale_linear_issue_8806() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/8806',
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 256, 'height': 256},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
 );
 
 /// `scale.linear/min-max-skip/edge-case-1.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
-FixtureConfig _scale_linear_min_max_skip_edge_case_1() =>
-    FixtureConfig.map(<String, Object?>{
-      'description': 'https://github.com/chartjs/Chart.js/issues/8982',
-      'config': <String, Object?>{
-        'type': 'scatter',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'max': 1069,
-              'min': 230,
-              'ticks': <String, Object?>{'autoSkip': false},
-            },
-            'x': <String, Object?>{
-              'max': 1069,
-              'min': 230,
-              'ticks': <String, Object?>{'autoSkip': false},
-            },
-          },
+FixtureConfig _scale_linear_min_max_skip_edge_case_1() => FixtureConfig.map(
+  <String, Object?>{
+    'type': 'scatter',
+    'options': <String, Object?>{
+      'scales': <String, Object?>{
+        'y': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false},
+        },
+        'x': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false},
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 196, 'width': 407},
-      },
-    });
+    },
+  },
+  description: 'https://github.com/chartjs/Chart.js/issues/8982',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 407, height: 196)),
+);
 
 /// `scale.linear/min-max-skip/edge-case-2.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
-FixtureConfig _scale_linear_min_max_skip_edge_case_2() =>
-    FixtureConfig.map(<String, Object?>{
-      'description': 'https://github.com/chartjs/Chart.js/issues/8982',
-      'config': <String, Object?>{
-        'type': 'scatter',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'max': 1069,
-              'min': 230,
-              'ticks': <String, Object?>{'autoSkip': false},
-            },
-            'x': <String, Object?>{
-              'max': 1069,
-              'min': 230,
-              'ticks': <String, Object?>{'autoSkip': false},
-            },
-          },
+FixtureConfig _scale_linear_min_max_skip_edge_case_2() => FixtureConfig.map(
+  <String, Object?>{
+    'type': 'scatter',
+    'options': <String, Object?>{
+      'scales': <String, Object?>{
+        'y': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false},
+        },
+        'x': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false},
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 197, 'width': 420},
-      },
-    });
+    },
+  },
+  description: 'https://github.com/chartjs/Chart.js/issues/8982',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 420, height: 197)),
+);
 
 /// `scale.linear/min-max-skip/edge-case-3.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
-FixtureConfig _scale_linear_min_max_skip_edge_case_3() =>
-    FixtureConfig.map(<String, Object?>{
-      'description': 'https://github.com/chartjs/Chart.js/issues/8982',
-      'config': <String, Object?>{
-        'type': 'scatter',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'max': 1069,
-              'min': 230,
-              'ticks': <String, Object?>{'autoSkip': false},
-            },
-            'x': <String, Object?>{
-              'max': 1069,
-              'min': 230,
-              'ticks': <String, Object?>{'autoSkip': false},
-            },
-          },
+FixtureConfig _scale_linear_min_max_skip_edge_case_3() => FixtureConfig.map(
+  <String, Object?>{
+    'type': 'scatter',
+    'options': <String, Object?>{
+      'scales': <String, Object?>{
+        'y': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false},
+        },
+        'x': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false},
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 199, 'width': 556},
-      },
-    });
+    },
+  },
+  description: 'https://github.com/chartjs/Chart.js/issues/8982',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 556, height: 199)),
+);
 
 /// `scale.linear/min-max-skip/edge-case-4.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
-FixtureConfig _scale_linear_min_max_skip_edge_case_4() =>
-    FixtureConfig.map(<String, Object?>{
-      'description': 'https://github.com/chartjs/Chart.js/issues/8982',
-      'config': <String, Object?>{
-        'type': 'scatter',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'max': 1069,
-              'min': 230,
-              'ticks': <String, Object?>{'autoSkip': false},
-            },
-            'x': <String, Object?>{
-              'max': 1069,
-              'min': 230,
-              'ticks': <String, Object?>{'autoSkip': false},
-            },
-          },
+FixtureConfig _scale_linear_min_max_skip_edge_case_4() => FixtureConfig.map(
+  <String, Object?>{
+    'type': 'scatter',
+    'options': <String, Object?>{
+      'scales': <String, Object?>{
+        'y': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false},
+        },
+        'x': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false},
         },
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'height': 200, 'width': 557},
-      },
-    });
+    },
+  },
+  description: 'https://github.com/chartjs/Chart.js/issues/8982',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 557, height: 200)),
+);
 
 /// `scale.linear/min-max-skip/includeBounds.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _scale_linear_min_max_skip_includebounds() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'scatter',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'max': 1225.2,
-              'min': 369.5,
-              'ticks': <String, Object?>{'includeBounds': false},
-            },
-            'x': <String, Object?>{
-              'min': 20,
-              'max': 100,
-              'ticks': <String, Object?>{'includeBounds': false},
-            },
+      'type': 'scatter',
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'y': <String, Object?>{
+            'max': 1225.2,
+            'min': 369.5,
+            'ticks': <String, Object?>{'includeBounds': false},
+          },
+          'x': <String, Object?>{
+            'min': 20,
+            'max': 100,
+            'ticks': <String, Object?>{'includeBounds': false},
           },
         },
       },
-      'options': <String, Object?>{'spriteText': true},
     });
 
 /// `scale.linear/min-max-skip/min-max-skip.js`.
@@ -7739,18 +7330,14 @@ FixtureConfig _scale_linear_min_max_skip_includebounds() =>
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _scale_linear_min_max_skip_min_max_skip() =>
     FixtureConfig.map(<String, Object?>{
-      'description': 'https://github.com/chartjs/Chart.js/issues/7734',
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'max': 1225.2, 'min': 369.5},
-            'x': <String, Object?>{'display': false},
-          },
+      'type': 'line',
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'y': <String, Object?>{'max': 1225.2, 'min': 369.5},
+          'x': <String, Object?>{'display': false},
         },
       },
-      'options': <String, Object?>{'spriteText': true},
-    });
+    }, description: 'https://github.com/chartjs/Chart.js/issues/7734');
 
 /// `scale.linear/min-max-skip/no-collision.js`.
 FixtureConfig _scale_linear_min_max_skip_no_collision() => FixtureConfig.typed(
@@ -7780,10 +7367,7 @@ FixtureConfig _scale_linear_min_max_skip_no_collision() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9025',
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'width': 200, 'height': 200},
-    'spriteText': true,
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 200, height: 200)),
 );
 
 /// `scale.linear/min-max-skip/rotated-case-1.js`.
@@ -7791,30 +7375,24 @@ FixtureConfig _scale_linear_min_max_skip_no_collision() => FixtureConfig.typed(
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _scale_linear_min_max_skip_rotated_case_1() => FixtureConfig.map(
   <String, Object?>{
-    'description': 'https://github.com/chartjs/Chart.js/issues/9025',
-    'threshold': 0.2,
-    'config': <String, Object?>{
-      'type': 'scatter',
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'max': 1069,
-            'min': 230,
-            'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 22.5},
-          },
-          'x': <String, Object?>{
-            'max': 1069,
-            'min': 230,
-            'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 67.5},
-          },
+    'type': 'scatter',
+    'options': <String, Object?>{
+      'scales': <String, Object?>{
+        'y': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 22.5},
+        },
+        'x': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 67.5},
         },
       },
     },
-    'options': <String, Object?>{
-      'spriteText': true,
-      'canvas': <String, Object?>{'height': 231, 'width': 221},
-    },
   },
+  description: 'https://github.com/chartjs/Chart.js/issues/9025',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 221, height: 231)),
 );
 
 /// `scale.linear/min-max-skip/rotated-case-2.js`.
@@ -7822,30 +7400,24 @@ FixtureConfig _scale_linear_min_max_skip_rotated_case_1() => FixtureConfig.map(
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _scale_linear_min_max_skip_rotated_case_2() => FixtureConfig.map(
   <String, Object?>{
-    'description': 'https://github.com/chartjs/Chart.js/issues/9025',
-    'threshold': 0.2,
-    'config': <String, Object?>{
-      'type': 'scatter',
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'max': 1069,
-            'min': 230,
-            'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 22.5},
-          },
-          'x': <String, Object?>{
-            'max': 1069,
-            'min': 230,
-            'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 67.5},
-          },
+    'type': 'scatter',
+    'options': <String, Object?>{
+      'scales': <String, Object?>{
+        'y': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 22.5},
+        },
+        'x': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 67.5},
         },
       },
     },
-    'options': <String, Object?>{
-      'spriteText': true,
-      'canvas': <String, Object?>{'height': 232, 'width': 222},
-    },
   },
+  description: 'https://github.com/chartjs/Chart.js/issues/9025',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 222, height: 232)),
 );
 
 /// `scale.linear/min-max-skip/rotated-case-3.js`.
@@ -7853,30 +7425,24 @@ FixtureConfig _scale_linear_min_max_skip_rotated_case_2() => FixtureConfig.map(
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _scale_linear_min_max_skip_rotated_case_3() => FixtureConfig.map(
   <String, Object?>{
-    'description': 'https://github.com/chartjs/Chart.js/issues/9025',
-    'threshold': 0.2,
-    'config': <String, Object?>{
-      'type': 'scatter',
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'max': 1069,
-            'min': 230,
-            'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 22.5},
-          },
-          'x': <String, Object?>{
-            'max': 1069,
-            'min': 230,
-            'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 67.5},
-          },
+    'type': 'scatter',
+    'options': <String, Object?>{
+      'scales': <String, Object?>{
+        'y': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 22.5},
+        },
+        'x': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 67.5},
         },
       },
     },
-    'options': <String, Object?>{
-      'spriteText': true,
-      'canvas': <String, Object?>{'height': 234, 'width': 224},
-    },
   },
+  description: 'https://github.com/chartjs/Chart.js/issues/9025',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 224, height: 234)),
 );
 
 /// `scale.linear/min-max-skip/rotated-case-4.js`.
@@ -7884,39 +7450,31 @@ FixtureConfig _scale_linear_min_max_skip_rotated_case_3() => FixtureConfig.map(
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _scale_linear_min_max_skip_rotated_case_4() => FixtureConfig.map(
   <String, Object?>{
-    'description': 'https://github.com/chartjs/Chart.js/issues/9025',
-    'threshold': 0.2,
-    'config': <String, Object?>{
-      'type': 'scatter',
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'max': 1069,
-            'min': 230,
-            'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 22.5},
-          },
-          'x': <String, Object?>{
-            'max': 1069,
-            'min': 230,
-            'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 67.5},
-          },
+    'type': 'scatter',
+    'options': <String, Object?>{
+      'scales': <String, Object?>{
+        'y': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 22.5},
+        },
+        'x': <String, Object?>{
+          'max': 1069,
+          'min': 230,
+          'ticks': <String, Object?>{'autoSkip': false, 'minRotation': 67.5},
         },
       },
     },
-    'options': <String, Object?>{
-      'spriteText': true,
-      'canvas': <String, Object?>{'height': 235, 'width': 225},
-    },
   },
+  description: 'https://github.com/chartjs/Chart.js/issues/9025',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 225, height: 235)),
 );
 
 /// `scale.linear/rotated-45.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
-FixtureConfig _scale_linear_rotated_45() => FixtureConfig.map(<String, Object?>{
-  'description': 'https://github.com/chartjs/Chart.js/issues/9025',
-  'threshold': 0.2,
-  'config': <String, Object?>{
+FixtureConfig _scale_linear_rotated_45() => FixtureConfig.map(
+  <String, Object?>{
     'type': 'scatter',
     'options': <String, Object?>{
       'scales': <String, Object?>{
@@ -7943,19 +7501,15 @@ FixtureConfig _scale_linear_rotated_45() => FixtureConfig.map(<String, Object?>{
       },
     },
   },
-  'options': <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 350, 'width': 350},
-  },
-});
+  description: 'https://github.com/chartjs/Chart.js/issues/9025',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 350, height: 350)),
+);
 
 /// `scale.linear/rotated-5.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
-FixtureConfig _scale_linear_rotated_5() => FixtureConfig.map(<String, Object?>{
-  'description': 'https://github.com/chartjs/Chart.js/issues/9025',
-  'threshold': 0.2,
-  'config': <String, Object?>{
+FixtureConfig _scale_linear_rotated_5() => FixtureConfig.map(
+  <String, Object?>{
     'type': 'scatter',
     'options': <String, Object?>{
       'scales': <String, Object?>{
@@ -7972,19 +7526,15 @@ FixtureConfig _scale_linear_rotated_5() => FixtureConfig.map(<String, Object?>{
       },
     },
   },
-  'options': <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 350, 'width': 350},
-  },
-});
+  description: 'https://github.com/chartjs/Chart.js/issues/9025',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 350, height: 350)),
+);
 
 /// `scale.linear/rotated-85.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
-FixtureConfig _scale_linear_rotated_85() => FixtureConfig.map(<String, Object?>{
-  'description': 'https://github.com/chartjs/Chart.js/issues/9025',
-  'threshold': 0.2,
-  'config': <String, Object?>{
+FixtureConfig _scale_linear_rotated_85() => FixtureConfig.map(
+  <String, Object?>{
     'type': 'scatter',
     'options': <String, Object?>{
       'scales': <String, Object?>{
@@ -8001,33 +7551,27 @@ FixtureConfig _scale_linear_rotated_85() => FixtureConfig.map(<String, Object?>{
       },
     },
   },
-  'options': <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 350, 'width': 350},
-  },
-});
+  description: 'https://github.com/chartjs/Chart.js/issues/9025',
+  options: AcquireOptions(canvas: HarnessCanvas(width: 350, height: 350)),
+);
 
 /// `scale.linear/tick-count-min-max-not-aligned.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _scale_linear_tick_count_min_max_not_aligned() =>
     FixtureConfig.map(<String, Object?>{
-      'description': 'https://github.com/chartjs/Chart.js/issues/4234',
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'max': 27,
-              'min': -3,
-              'ticks': <String, Object?>{'count': 11},
-            },
-            'x': <String, Object?>{'display': false},
+      'type': 'line',
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'y': <String, Object?>{
+            'max': 27,
+            'min': -3,
+            'ticks': <String, Object?>{'count': 11},
           },
+          'x': <String, Object?>{'display': false},
         },
       },
-      'options': <String, Object?>{'spriteText': true},
-    });
+    }, description: 'https://github.com/chartjs/Chart.js/issues/4234');
 
 /// `scale.linear/tick-count-min-max-not-int.js`.
 FixtureConfig _scale_linear_tick_count_min_max_not_int() => FixtureConfig.typed(
@@ -8053,10 +7597,7 @@ FixtureConfig _scale_linear_tick_count_min_max_not_int() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9078',
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 256, 'height': 256},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
 );
 
 /// `scale.linear/tick-count-min-max.js`.
@@ -8064,67 +7605,55 @@ FixtureConfig _scale_linear_tick_count_min_max_not_int() => FixtureConfig.typed(
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _scale_linear_tick_count_min_max() =>
     FixtureConfig.map(<String, Object?>{
-      'description': 'https://github.com/chartjs/Chart.js/issues/4234',
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'max': 50,
-              'min': 0,
-              'ticks': <String, Object?>{'count': 21},
-            },
-            'x': <String, Object?>{'display': false},
+      'type': 'line',
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'y': <String, Object?>{
+            'max': 50,
+            'min': 0,
+            'ticks': <String, Object?>{'count': 21},
           },
+          'x': <String, Object?>{'display': false},
         },
       },
-      'options': <String, Object?>{'spriteText': true},
-    });
+    }, description: 'https://github.com/chartjs/Chart.js/issues/4234');
 
 /// `scale.linear/tick-step-min-max-step-fp.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _scale_linear_tick_step_min_max_step_fp() =>
     FixtureConfig.map(<String, Object?>{
-      'description': 'https://github.com/chartjs/Chart.js/issues/9334',
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'display': false},
-            'x': <String, Object?>{
-              'type': 'linear',
-              'min': 7.2,
-              'max': 21.6,
-              'ticks': <String, Object?>{'stepSize': 1.8},
-            },
+      'type': 'line',
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'y': <String, Object?>{'display': false},
+          'x': <String, Object?>{
+            'type': 'linear',
+            'min': 7.2,
+            'max': 21.6,
+            'ticks': <String, Object?>{'stepSize': 1.8},
           },
         },
       },
-      'options': <String, Object?>{'spriteText': true},
-    });
+    }, description: 'https://github.com/chartjs/Chart.js/issues/9334');
 
 /// `scale.linear/tick-step-min-max.js`.
 ///
 /// The config keeps its Map: the config has no data: a ChartConfig needs a dataset (Chart.js ADR 0190).
 FixtureConfig _scale_linear_tick_step_min_max() =>
     FixtureConfig.map(<String, Object?>{
-      'description': 'https://github.com/chartjs/Chart.js/issues/4234',
-      'config': <String, Object?>{
-        'type': 'line',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'max': 27,
-              'min': -3,
-              'ticks': <String, Object?>{'stepSize': 3},
-            },
-            'x': <String, Object?>{'display': false},
+      'type': 'line',
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'y': <String, Object?>{
+            'max': 27,
+            'min': -3,
+            'ticks': <String, Object?>{'stepSize': 3},
           },
+          'x': <String, Object?>{'display': false},
         },
       },
-      'options': <String, Object?>{'spriteText': true},
-    });
+    }, description: 'https://github.com/chartjs/Chart.js/issues/4234');
 
 /// `scale.linear/tiny-numbers.js`.
 FixtureConfig _scale_linear_tiny_numbers() => FixtureConfig.typed(
@@ -8138,15 +7667,13 @@ FixtureConfig _scale_linear_tiny_numbers() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.radialLinear/anglelines-disable.json`.
 ///
 /// The config keeps its Map: the config has no dataset: a ChartConfig needs one (Chart.js ADR 0190).
-FixtureConfig _scale_radiallinear_anglelines_disable() => FixtureConfig.map(
-  <String, Object?>{
-    'config': <String, Object?>{
+FixtureConfig _scale_radiallinear_anglelines_disable() =>
+    FixtureConfig.map(<String, Object?>{
       'type': 'radar',
       'data': <String, Object?>{
         'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
@@ -8162,32 +7689,28 @@ FixtureConfig _scale_radiallinear_anglelines_disable() => FixtureConfig.map(
           },
         },
       },
-    },
-  },
-);
+    });
 
 /// `scale.radialLinear/anglelines-indexable.js`.
 ///
 /// The config keeps its Map: the config has no dataset: a ChartConfig needs one (Chart.js ADR 0190).
 FixtureConfig _scale_radiallinear_anglelines_indexable() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
-        },
-        'options': <String, Object?>{
-          'responsive': false,
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'grid': <String, Object?>{'display': true},
-              'angleLines': <String, Object?>{
-                'color': <Object?>['red', 'green'],
-                'lineWidth': <Object?>[1, 5],
-              },
-              'pointLabels': <String, Object?>{'display': false},
-              'ticks': <String, Object?>{'display': false},
+      'type': 'radar',
+      'data': <String, Object?>{
+        'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
+      },
+      'options': <String, Object?>{
+        'responsive': false,
+        'scales': <String, Object?>{
+          'r': <String, Object?>{
+            'grid': <String, Object?>{'display': true},
+            'angleLines': <String, Object?>{
+              'color': <Object?>['red', 'green'],
+              'lineWidth': <Object?>[1, 5],
             },
+            'pointLabels': <String, Object?>{'display': false},
+            'ticks': <String, Object?>{'display': false},
           },
         },
       },
@@ -8213,7 +7736,6 @@ FixtureConfig _scale_radiallinear_anglelines_reverse_scale() =>
           ),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `scale.radialLinear/backgroundColor.js`.
@@ -8279,23 +7801,21 @@ FixtureConfig _scale_radiallinear_circular_backgroundcolor() =>
 /// The config keeps its Map: the config has no dataset: a ChartConfig needs one (Chart.js ADR 0190).
 FixtureConfig _scale_radiallinear_gridlines_disable() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
-        },
-        'options': <String, Object?>{
-          'responsive': false,
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'grid': <String, Object?>{'display': false},
-              'angleLines': <String, Object?>{
-                'color': 'rgb(0, 0, 0)',
-                'lineWidth': 1,
-              },
-              'pointLabels': <String, Object?>{'display': false},
-              'ticks': <String, Object?>{'display': false},
+      'type': 'radar',
+      'data': <String, Object?>{
+        'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
+      },
+      'options': <String, Object?>{
+        'responsive': false,
+        'scales': <String, Object?>{
+          'r': <String, Object?>{
+            'grid': <String, Object?>{'display': false},
+            'angleLines': <String, Object?>{
+              'color': 'rgb(0, 0, 0)',
+              'lineWidth': 1,
             },
+            'pointLabels': <String, Object?>{'display': false},
+            'ticks': <String, Object?>{'display': false},
           },
         },
       },
@@ -8375,38 +7895,36 @@ FixtureConfig _scale_radiallinear_gridlines_z() => FixtureConfig.typed(
 /// The config keeps its Map: the config has no dataset: a ChartConfig needs one (Chart.js ADR 0190).
 FixtureConfig _scale_radiallinear_indexable_gridlines() =>
     FixtureConfig.map(<String, Object?>{
-      'config': <String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
-        },
-        'options': <String, Object?>{
-          'responsive': false,
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'grid': <String, Object?>{
-                'display': true,
-                'color': <Object?>[
-                  'rgba(0, 0, 0, 0.5)',
-                  'rgba(255, 255, 255, 0.5)',
-                  false,
-                  '',
-                  'rgba(255, 0, 0, 0.5)',
-                  'rgba(0, 255, 0, 0.5)',
-                  'rgba(0, 0, 255, 0.5)',
-                  'rgba(255, 255, 0, 0.5)',
-                  'rgba(255, 0, 255, 0.5)',
-                  'rgba(0, 255, 255, 0.5)',
-                ],
-                'lineWidth': <Object?>[false, 0, 1, 2, 1, 2, 1, 2, 1, 2],
-              },
-              'angleLines': <String, Object?>{
-                'color': 'rgba(255, 255, 255, 0.5)',
-                'lineWidth': 2,
-              },
-              'pointLabels': <String, Object?>{'display': false},
-              'ticks': <String, Object?>{'display': false},
+      'type': 'radar',
+      'data': <String, Object?>{
+        'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
+      },
+      'options': <String, Object?>{
+        'responsive': false,
+        'scales': <String, Object?>{
+          'r': <String, Object?>{
+            'grid': <String, Object?>{
+              'display': true,
+              'color': <Object?>[
+                'rgba(0, 0, 0, 0.5)',
+                'rgba(255, 255, 255, 0.5)',
+                false,
+                '',
+                'rgba(255, 0, 0, 0.5)',
+                'rgba(0, 255, 0, 0.5)',
+                'rgba(0, 0, 255, 0.5)',
+                'rgba(255, 255, 0, 0.5)',
+                'rgba(255, 0, 255, 0.5)',
+                'rgba(0, 255, 255, 0.5)',
+              ],
+              'lineWidth': <Object?>[false, 0, 1, 2, 1, 2, 1, 2, 1, 2],
             },
+            'angleLines': <String, Object?>{
+              'color': 'rgba(255, 255, 255, 0.5)',
+              'lineWidth': 2,
+            },
+            'pointLabels': <String, Object?>{'display': false},
+            'ticks': <String, Object?>{'display': false},
           },
         },
       },
@@ -8436,10 +7954,7 @@ FixtureConfig _scale_radiallinear_pointlabels_no_more_than_half_radius() =>
           ),
         ],
       ),
-      options: <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'width': 256, 'height': 256},
-      },
+      options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
     );
 
 /// `scale.radialLinear/pointLabels/padding.js`.
@@ -8481,154 +7996,137 @@ FixtureConfig _scale_radiallinear_pointlabels_padding() => FixtureConfig.typed(
       PluginOff<FillerPlugin>(),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.time/labels-strings.js`.
 ///
 /// The config keeps its Map: the config has no dataset: a ChartConfig needs one (Chart.js ADR 0190).
-FixtureConfig _scale_time_labels_strings() =>
-    FixtureConfig.map(<String, Object?>{
-      'threshold': 0.05,
-      'tolerance': 0.002,
-      'config': <String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>[
-            '2015-01-01T12:00:00',
-            '2015-01-02T21:00:00',
-            '2015-01-03T22:00:00',
-            '2015-01-05T23:00:00',
-            '2015-01-07T03:00',
-            '2015-01-08T10:00',
-            '2015-01-10T12:00',
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'time'},
-            'y': <String, Object?>{'display': false},
-          },
-        },
+FixtureConfig _scale_time_labels_strings() => FixtureConfig.map(
+  <String, Object?>{
+    'type': 'line',
+    'data': <String, Object?>{
+      'labels': <Object?>[
+        '2015-01-01T12:00:00',
+        '2015-01-02T21:00:00',
+        '2015-01-03T22:00:00',
+        '2015-01-05T23:00:00',
+        '2015-01-07T03:00',
+        '2015-01-08T10:00',
+        '2015-01-10T12:00',
+      ],
+    },
+    'options': <String, Object?>{
+      'scales': <String, Object?>{
+        'x': <String, Object?>{'type': 'time'},
+        'y': <String, Object?>{'display': false},
       },
-      'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'width': 1000, 'height': 200},
-      },
-    });
+    },
+  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 1000, height: 200)),
+);
 
 /// `scale.time/labels.js`.
 ///
 /// The config keeps its Map: the data key `xLabels` has no parameter of ChartConfig.
 FixtureConfig _scale_time_labels() => FixtureConfig.map(<String, Object?>{
-  'threshold': 0.01,
-  'tolerance': 0.002,
-  'config': <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'labels': <Object?>['1975', '1976', '1977'],
-      'xLabels': <Object?>['1985', '1986', '1987'],
-      'yLabels': <Object?>['1995', '1996', '1997'],
-    },
-    'options': <String, Object?>{
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'time',
-          'labels': <Object?>['2015', '2016', '2017'],
-          'time': <String, Object?>{
-            'parser': 'YYYY',
-            'unit': 'year',
-            'displayFormats': <String, Object?>{'year': 'YYYY'},
-          },
+  'type': 'line',
+  'data': <String, Object?>{
+    'labels': <Object?>['1975', '1976', '1977'],
+    'xLabels': <Object?>['1985', '1986', '1987'],
+    'yLabels': <Object?>['1995', '1996', '1997'],
+  },
+  'options': <String, Object?>{
+    'scales': <String, Object?>{
+      'x': <String, Object?>{
+        'type': 'time',
+        'labels': <Object?>['2015', '2016', '2017'],
+        'time': <String, Object?>{
+          'parser': 'YYYY',
+          'unit': 'year',
+          'displayFormats': <String, Object?>{'year': 'YYYY'},
         },
-        'x2': <String, Object?>{
-          'type': 'time',
-          'position': 'bottom',
-          'time': <String, Object?>{
-            'parser': 'YYYY',
-            'unit': 'year',
-            'displayFormats': <String, Object?>{'year': 'YYYY'},
-          },
+      },
+      'x2': <String, Object?>{
+        'type': 'time',
+        'position': 'bottom',
+        'time': <String, Object?>{
+          'parser': 'YYYY',
+          'unit': 'year',
+          'displayFormats': <String, Object?>{'year': 'YYYY'},
         },
-        'y': <String, Object?>{
-          'type': 'time',
-          'time': <String, Object?>{
-            'parser': 'YYYY',
-            'unit': 'year',
-            'displayFormats': <String, Object?>{'year': 'YYYY'},
-          },
+      },
+      'y': <String, Object?>{
+        'type': 'time',
+        'time': <String, Object?>{
+          'parser': 'YYYY',
+          'unit': 'year',
+          'displayFormats': <String, Object?>{'year': 'YYYY'},
         },
-        'y2': <String, Object?>{
-          'position': 'left',
-          'type': 'time',
-          'labels': <Object?>['2005', '2006', '2007'],
-          'time': <String, Object?>{
-            'parser': 'YYYY',
-            'unit': 'year',
-            'displayFormats': <String, Object?>{'year': 'YYYY'},
-          },
+      },
+      'y2': <String, Object?>{
+        'position': 'left',
+        'type': 'time',
+        'labels': <Object?>['2005', '2006', '2007'],
+        'time': <String, Object?>{
+          'parser': 'YYYY',
+          'unit': 'year',
+          'displayFormats': <String, Object?>{'year': 'YYYY'},
         },
       },
     },
   },
-  'options': <String, Object?>{'spriteText': true},
 });
 
 /// The ICU twin of `scale.time/labels.js`.
 ///
 /// The config keeps its Map: the data key `xLabels` has no parameter of ChartConfig.
 FixtureConfig _scale_time_labels_icu() => FixtureConfig.map(<String, Object?>{
-  'threshold': 0.01,
-  'tolerance': 0.002,
-  'config': <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'labels': <Object?>['1975', '1976', '1977'],
-      'xLabels': <Object?>['1985', '1986', '1987'],
-      'yLabels': <Object?>['1995', '1996', '1997'],
-    },
-    'options': <String, Object?>{
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'time',
-          'labels': <Object?>['2015', '2016', '2017'],
-          'time': <String, Object?>{
-            'parser': 'yyyy',
-            'unit': 'year',
-            'displayFormats': <String, Object?>{'year': 'yyyy'},
-          },
+  'type': 'line',
+  'data': <String, Object?>{
+    'labels': <Object?>['1975', '1976', '1977'],
+    'xLabels': <Object?>['1985', '1986', '1987'],
+    'yLabels': <Object?>['1995', '1996', '1997'],
+  },
+  'options': <String, Object?>{
+    'scales': <String, Object?>{
+      'x': <String, Object?>{
+        'type': 'time',
+        'labels': <Object?>['2015', '2016', '2017'],
+        'time': <String, Object?>{
+          'parser': 'yyyy',
+          'unit': 'year',
+          'displayFormats': <String, Object?>{'year': 'yyyy'},
         },
-        'x2': <String, Object?>{
-          'type': 'time',
-          'position': 'bottom',
-          'time': <String, Object?>{
-            'parser': 'yyyy',
-            'unit': 'year',
-            'displayFormats': <String, Object?>{'year': 'yyyy'},
-          },
+      },
+      'x2': <String, Object?>{
+        'type': 'time',
+        'position': 'bottom',
+        'time': <String, Object?>{
+          'parser': 'yyyy',
+          'unit': 'year',
+          'displayFormats': <String, Object?>{'year': 'yyyy'},
         },
-        'y': <String, Object?>{
-          'type': 'time',
-          'time': <String, Object?>{
-            'parser': 'yyyy',
-            'unit': 'year',
-            'displayFormats': <String, Object?>{'year': 'yyyy'},
-          },
+      },
+      'y': <String, Object?>{
+        'type': 'time',
+        'time': <String, Object?>{
+          'parser': 'yyyy',
+          'unit': 'year',
+          'displayFormats': <String, Object?>{'year': 'yyyy'},
         },
-        'y2': <String, Object?>{
-          'position': 'left',
-          'type': 'time',
-          'labels': <Object?>['2005', '2006', '2007'],
-          'time': <String, Object?>{
-            'parser': 'yyyy',
-            'unit': 'year',
-            'displayFormats': <String, Object?>{'year': 'yyyy'},
-          },
+      },
+      'y2': <String, Object?>{
+        'position': 'left',
+        'type': 'time',
+        'labels': <Object?>['2005', '2006', '2007'],
+        'time': <String, Object?>{
+          'parser': 'yyyy',
+          'unit': 'year',
+          'displayFormats': <String, Object?>{'year': 'yyyy'},
         },
       },
     },
   },
-  'options': <String, Object?>{'spriteText': true},
 });
 
 /// `scale.time/offset-with-1-tick.js`.
@@ -8657,10 +8155,7 @@ FixtureConfig _scale_time_offset_with_1_tick() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/8718',
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 256, 'height': 128},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 128)),
 );
 
 /// `scale.time/offset-with-2-ticks.js`.
@@ -8704,10 +8199,7 @@ FixtureConfig _scale_time_offset_with_2_ticks() => FixtureConfig.typed(
     ],
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/8718',
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 256, 'height': 128},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 128)),
 );
 
 /// `scale.time/source-auto-linear.js`.
@@ -8728,7 +8220,6 @@ FixtureConfig _scale_time_source_auto_linear() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.time/source-auto-linear.js`.
@@ -8749,7 +8240,6 @@ FixtureConfig _scale_time_source_auto_linear_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.time/source-data-linear.js`.
@@ -8770,7 +8260,6 @@ FixtureConfig _scale_time_source_data_linear() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.time/source-data-linear.js`.
@@ -8791,7 +8280,6 @@ FixtureConfig _scale_time_source_data_linear_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.time/source-labels-linear-offset-min-max.js`.
@@ -8819,7 +8307,6 @@ FixtureConfig _scale_time_source_labels_linear_offset_min_max() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// The ICU twin of `scale.time/source-labels-linear-offset-min-max.js`.
@@ -8847,7 +8334,6 @@ FixtureConfig _scale_time_source_labels_linear_offset_min_max_icu() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `scale.time/source-labels-linear.js`.
@@ -8868,7 +8354,6 @@ FixtureConfig _scale_time_source_labels_linear() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.time/source-labels-linear.js`.
@@ -8889,7 +8374,6 @@ FixtureConfig _scale_time_source_labels_linear_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.time/ticks-capacity.js`.
@@ -8897,33 +8381,28 @@ FixtureConfig _scale_time_source_labels_linear_icu() => FixtureConfig.typed(
 /// The config keeps its Map: the config has no dataset: a ChartConfig needs one (Chart.js ADR 0190).
 FixtureConfig _scale_time_ticks_capacity() =>
     FixtureConfig.map(<String, Object?>{
-      'threshold': 0.01,
-      'tolerance': 0.002,
-      'config': <String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>[
-            '2012-01-01',
-            '2013-01-01',
-            '2014-01-01',
-            '2015-01-01',
-            '2016-01-01',
-            '2017-01-01',
-            '2018-01-01',
-            '2019-01-01',
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'time': <String, Object?>{'unit': 'year'},
-            },
-            'y': <String, Object?>{'display': false},
+      'type': 'line',
+      'data': <String, Object?>{
+        'labels': <Object?>[
+          '2012-01-01',
+          '2013-01-01',
+          '2014-01-01',
+          '2015-01-01',
+          '2016-01-01',
+          '2017-01-01',
+          '2018-01-01',
+          '2019-01-01',
+        ],
+      },
+      'options': <String, Object?>{
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'time',
+            'time': <String, Object?>{'unit': 'year'},
           },
+          'y': <String, Object?>{'display': false},
         },
       },
-      'options': <String, Object?>{'spriteText': true},
     });
 
 /// `scale.time/ticks-minunit.js`.
@@ -8931,29 +8410,21 @@ FixtureConfig _scale_time_ticks_capacity() =>
 /// The config keeps its Map: the config has no dataset: a ChartConfig needs one (Chart.js ADR 0190).
 FixtureConfig _scale_time_ticks_minunit() =>
     FixtureConfig.map(<String, Object?>{
-      'threshold': 0.01,
-      'tolerance': 0.002,
-      'config': <String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['2015-01-01T20:00:00', '2015-01-02T21:00:00'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'bounds': 'ticks',
-              'time': <String, Object?>{'minUnit': 'day'},
-            },
-            'y': <String, Object?>{'display': false},
-          },
-        },
+      'type': 'line',
+      'data': <String, Object?>{
+        'labels': <Object?>['2015-01-01T20:00:00', '2015-01-02T21:00:00'],
       },
       'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'width': 256, 'height': 128},
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'time',
+            'bounds': 'ticks',
+            'time': <String, Object?>{'minUnit': 'day'},
+          },
+          'y': <String, Object?>{'display': false},
+        },
       },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 128)));
 
 /// `scale.time/ticks-reverse-linear-min-max.js`.
 FixtureConfig _scale_time_ticks_reverse_linear_min_max() => FixtureConfig.typed(
@@ -8979,7 +8450,6 @@ FixtureConfig _scale_time_ticks_reverse_linear_min_max() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.time/ticks-reverse-linear-min-max.js`.
@@ -9007,7 +8477,6 @@ FixtureConfig _scale_time_ticks_reverse_linear_min_max_icu() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `scale.time/ticks-reverse-linear.js`.
@@ -9029,7 +8498,6 @@ FixtureConfig _scale_time_ticks_reverse_linear() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.time/ticks-reverse-linear.js`.
@@ -9051,7 +8519,6 @@ FixtureConfig _scale_time_ticks_reverse_linear_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.time/ticks-reverse-offset.js`.
@@ -9074,7 +8541,6 @@ FixtureConfig _scale_time_ticks_reverse_offset() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.time/ticks-reverse-offset.js`.
@@ -9097,7 +8563,6 @@ FixtureConfig _scale_time_ticks_reverse_offset_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.time/ticks-reverse.js`.
@@ -9119,7 +8584,6 @@ FixtureConfig _scale_time_ticks_reverse() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.time/ticks-reverse.js`.
@@ -9141,95 +8605,72 @@ FixtureConfig _scale_time_ticks_reverse_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.time/ticks-round.js`.
 ///
 /// The config keeps its Map: the config has no dataset: a ChartConfig needs one (Chart.js ADR 0190).
 FixtureConfig _scale_time_ticks_round() => FixtureConfig.map(<String, Object?>{
-  'threshold': 0.05,
-  'config': <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'labels': <Object?>[
-        '2015-01-01T20:00:00',
-        '2015-02-02T21:00:00',
-        '2015-02-21T01:00:00',
-      ],
-    },
-    'options': <String, Object?>{
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'time',
-          'bounds': 'ticks',
-          'time': <String, Object?>{'unit': 'week', 'round': 'week'},
-        },
-        'y': <String, Object?>{'display': false},
-      },
-    },
+  'type': 'line',
+  'data': <String, Object?>{
+    'labels': <Object?>[
+      '2015-01-01T20:00:00',
+      '2015-02-02T21:00:00',
+      '2015-02-21T01:00:00',
+    ],
   },
   'options': <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 512, 'height': 256},
+    'scales': <String, Object?>{
+      'x': <String, Object?>{
+        'type': 'time',
+        'bounds': 'ticks',
+        'time': <String, Object?>{'unit': 'week', 'round': 'week'},
+      },
+      'y': <String, Object?>{'display': false},
+    },
   },
-});
+}, options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)));
 
 /// `scale.time/ticks-stepsize.js`.
 ///
 /// The config keeps its Map: the config has no dataset: a ChartConfig needs one (Chart.js ADR 0190).
 FixtureConfig _scale_time_ticks_stepsize() =>
     FixtureConfig.map(<String, Object?>{
-      'threshold': 0.01,
-      'config': <String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['2015-01-01T20:00:00', '2015-01-01T21:00:00'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'bounds': 'ticks',
-              'time': <String, Object?>{'unit': 'hour'},
-              'ticks': <String, Object?>{'stepSize': 2},
-            },
-            'y': <String, Object?>{'display': false},
-          },
-        },
+      'type': 'line',
+      'data': <String, Object?>{
+        'labels': <Object?>['2015-01-01T20:00:00', '2015-01-01T21:00:00'],
       },
       'options': <String, Object?>{
-        'spriteText': true,
-        'canvas': <String, Object?>{'width': 512, 'height': 128},
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'time',
+            'bounds': 'ticks',
+            'time': <String, Object?>{'unit': 'hour'},
+            'ticks': <String, Object?>{'stepSize': 2},
+          },
+          'y': <String, Object?>{'display': false},
+        },
       },
-    });
+    }, options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 128)));
 
 /// `scale.time/ticks-unit.js`.
 ///
 /// The config keeps its Map: the config has no dataset: a ChartConfig needs one (Chart.js ADR 0190).
 FixtureConfig _scale_time_ticks_unit() => FixtureConfig.map(<String, Object?>{
-  'threshold': 0.05,
-  'tolerance': 0.002,
-  'config': <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'labels': <Object?>['2015-01-01T20:00:00', '2015-01-02T21:00:00'],
-    },
-    'options': <String, Object?>{
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'time',
-          'time': <String, Object?>{'unit': 'hour'},
-        },
-        'y': <String, Object?>{'display': false},
-      },
-    },
+  'type': 'line',
+  'data': <String, Object?>{
+    'labels': <Object?>['2015-01-01T20:00:00', '2015-01-02T21:00:00'],
   },
   'options': <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 1200, 'height': 200},
+    'scales': <String, Object?>{
+      'x': <String, Object?>{
+        'type': 'time',
+        'time': <String, Object?>{'unit': 'hour'},
+      },
+      'y': <String, Object?>{'display': false},
+    },
   },
-});
+}, options: AcquireOptions(canvas: HarnessCanvas(width: 1200, height: 200)));
 
 /// `scale.timeseries/normalize.js`.
 FixtureConfig _scale_timeseries_normalize() => FixtureConfig.typed(
@@ -9258,7 +8699,6 @@ FixtureConfig _scale_timeseries_normalize() => FixtureConfig.typed(
     ],
     extra: <String, Object?>{'normalized': true},
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.timeseries/normalize.js`.
@@ -9288,7 +8728,6 @@ FixtureConfig _scale_timeseries_normalize_icu() => FixtureConfig.typed(
     ],
     extra: <String, Object?>{'normalized': true},
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.timeseries/source-auto.js`.
@@ -9309,7 +8748,6 @@ FixtureConfig _scale_timeseries_source_auto() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.timeseries/source-auto.js`.
@@ -9330,7 +8768,6 @@ FixtureConfig _scale_timeseries_source_auto_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.timeseries/source-data-offset-min-max.js`.
@@ -9358,7 +8795,6 @@ FixtureConfig _scale_timeseries_source_data_offset_min_max() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// The ICU twin of `scale.timeseries/source-data-offset-min-max.js`.
@@ -9386,7 +8822,6 @@ FixtureConfig _scale_timeseries_source_data_offset_min_max_icu() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `scale.timeseries/source-data.js`.
@@ -9407,7 +8842,6 @@ FixtureConfig _scale_timeseries_source_data() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.timeseries/source-data.js`.
@@ -9428,7 +8862,6 @@ FixtureConfig _scale_timeseries_source_data_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.timeseries/source-labels-offset-min-max.js`.
@@ -9456,7 +8889,6 @@ FixtureConfig _scale_timeseries_source_labels_offset_min_max() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// The ICU twin of `scale.timeseries/source-labels-offset-min-max.js`.
@@ -9484,7 +8916,6 @@ FixtureConfig _scale_timeseries_source_labels_offset_min_max_icu() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `scale.timeseries/source-labels.js`.
@@ -9505,7 +8936,6 @@ FixtureConfig _scale_timeseries_source_labels() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.timeseries/source-labels.js`.
@@ -9526,7 +8956,6 @@ FixtureConfig _scale_timeseries_source_labels_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.timeseries/ticks-reverse-max.js`.
@@ -9549,7 +8978,6 @@ FixtureConfig _scale_timeseries_ticks_reverse_max() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.timeseries/ticks-reverse-max.js`.
@@ -9572,7 +9000,6 @@ FixtureConfig _scale_timeseries_ticks_reverse_max_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.timeseries/ticks-reverse-min-max.js`.
@@ -9596,7 +9023,6 @@ FixtureConfig _scale_timeseries_ticks_reverse_min_max() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.timeseries/ticks-reverse-min-max.js`.
@@ -9624,7 +9050,6 @@ FixtureConfig _scale_timeseries_ticks_reverse_min_max_icu() =>
           LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
         ],
       ),
-      options: <String, Object?>{'spriteText': true},
     );
 
 /// `scale.timeseries/ticks-reverse-min.js`.
@@ -9647,7 +9072,6 @@ FixtureConfig _scale_timeseries_ticks_reverse_min() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.timeseries/ticks-reverse-min.js`.
@@ -9670,7 +9094,6 @@ FixtureConfig _scale_timeseries_ticks_reverse_min_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// `scale.timeseries/ticks-reverse.js`.
@@ -9692,7 +9115,6 @@ FixtureConfig _scale_timeseries_ticks_reverse() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );
 
 /// The ICU twin of `scale.timeseries/ticks-reverse.js`.
@@ -9714,5 +9136,4 @@ FixtureConfig _scale_timeseries_ticks_reverse_icu() => FixtureConfig.typed(
       LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );

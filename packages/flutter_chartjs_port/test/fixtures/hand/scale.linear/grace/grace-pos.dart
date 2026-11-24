@@ -36,8 +36,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
       ),
     ],
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 512, 'height': 128},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 128)),
 );

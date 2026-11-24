@@ -83,7 +83,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
     disabledPlugins: [PluginOff<LegendPlugin>(), PluginOff<TitlePlugin>()],
     extra: <String, Object?>{'spanGaps': false},
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 256},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
 );

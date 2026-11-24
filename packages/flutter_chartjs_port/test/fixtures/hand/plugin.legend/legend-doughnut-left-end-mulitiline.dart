@@ -67,7 +67,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
       const LegendOptions(position: ChartPosition.left, align: ChartAlign.end),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
 );

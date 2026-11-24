@@ -13,30 +13,28 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
 FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
-  'config': <String, Object?>{
-    'type': 'scatter',
-    'options': <String, Object?>{
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'position': <String, Object?>{'y': 0}, 'min': -10, 'max': 10,
-          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
-          'border': const AxisBorder(
-            color: ChartPaint.solid(Color(0xFF000000)),
-            width: 5,
-          ),
-          'grid': <String, Object?>{'color': 'lightGray', 'lineWidth': 3},
-          'ticks': <String, Object?>{'display': false},
-        },
-        'y': <String, Object?>{
-          'position': <String, Object?>{'x': 0}, 'min': -10, 'max': 10,
-          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
-          'border': const AxisBorder(
-            color: ChartPaint.solid(Color(0xFF000000)),
-            width: 5,
-          ),
-          'grid': <String, Object?>{'color': 'lightGray', 'lineWidth': 3},
-          'ticks': <String, Object?>{'display': false},
-        },
+  'type': 'scatter',
+  'options': <String, Object?>{
+    'scales': <String, Object?>{
+      'x': <String, Object?>{
+        'position': <String, Object?>{'y': 0}, 'min': -10, 'max': 10,
+        // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+        'border': const AxisBorder(
+          color: ChartPaint.solid(Color(0xFF000000)),
+          width: 5,
+        ),
+        'grid': <String, Object?>{'color': 'lightGray', 'lineWidth': 3},
+        'ticks': <String, Object?>{'display': false},
+      },
+      'y': <String, Object?>{
+        'position': <String, Object?>{'x': 0}, 'min': -10, 'max': 10,
+        // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+        'border': const AxisBorder(
+          color: ChartPaint.solid(Color(0xFF000000)),
+          width: 5,
+        ),
+        'grid': <String, Object?>{'color': 'lightGray', 'lineWidth': 3},
+        'ticks': <String, Object?>{'display': false},
       },
     },
   },

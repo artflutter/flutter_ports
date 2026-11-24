@@ -62,19 +62,17 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'hoverBackgroundColor': ChartPaint.solid(Color(0xFFFF0000)),
     },
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 256},
-    'run': (Chart chart) {
-      chart
-        ..setActiveElements([
-          const ActiveElement(datasetIndex: 0, index: 1),
-          const ActiveElement(datasetIndex: 0, index: 2),
-          const ActiveElement(datasetIndex: 1, index: 1),
-          const ActiveElement(datasetIndex: 1, index: 2),
-          const ActiveElement(datasetIndex: 2, index: 1),
-          const ActiveElement(datasetIndex: 2, index: 2),
-        ])
-        ..update();
-    },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
+  run: (chart) {
+    chart
+      ..setActiveElements([
+        const ActiveElement(datasetIndex: 0, index: 1),
+        const ActiveElement(datasetIndex: 0, index: 2),
+        const ActiveElement(datasetIndex: 1, index: 1),
+        const ActiveElement(datasetIndex: 1, index: 2),
+        const ActiveElement(datasetIndex: 2, index: 1),
+        const ActiveElement(datasetIndex: 2, index: 2),
+      ])
+      ..update();
   },
 );

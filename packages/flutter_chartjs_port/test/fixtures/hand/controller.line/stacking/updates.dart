@@ -56,21 +56,18 @@ FixtureConfig fixture() => FixtureConfig.typed(
     extra: <String, Object?>{'borderWidth': 5},
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9424',
-  options: <String, Object?>{
-    'spriteText': true,
-    'run': (Chart chart) {
-      // Upstream: chart.data.datasets.splice(1, 0, {...}). The splice, then
-      // the body of the hooked method (differences.md row
-      // platform-array-events).
-      final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
-      final dataset = <String, Object?>{
-        'data': <Object?>[1.5, 1.5, 1.5],
-        'stack': 's2',
-        'borderColor': const ChartPaint.solid(ui.Color(0xFF000000)),
-      };
-      spliceList(datasets, 1, 0, <Object?>[dataset]);
-      notifyArrayListeners(datasets, 'splice', <Object?>[1, 0, dataset]);
-      chart.update();
-    },
+  run: (chart) {
+    // Upstream: chart.data.datasets.splice(1, 0, {...}). The splice, then
+    // the body of the hooked method (differences.md row
+    // platform-array-events).
+    final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
+    final dataset = <String, Object?>{
+      'data': <Object?>[1.5, 1.5, 1.5],
+      'stack': 's2',
+      'borderColor': const ChartPaint.solid(ui.Color(0xFF000000)),
+    };
+    spliceList(datasets, 1, 0, <Object?>[dataset]);
+    notifyArrayListeners(datasets, 'splice', <Object?>[1, 0, dataset]);
+    chart.update();
   },
 );

@@ -34,17 +34,15 @@ FixtureConfig fixture() {
       ],
       disabledPlugins: [PluginOff<LegendPlugin>()],
     ),
-    options: <String, Object?>{
-      'run': (Chart chart) {
-        final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
-        final item = <String, Object?>{
-          'data': <Object?>[5, 5, 5, 5, 5, 5],
-        };
-        datasets.add(item);
-        notifyArrayListeners(datasets, 'push', <Object?>[item]);
+    run: (chart) {
+      final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
+      final item = <String, Object?>{
+        'data': <Object?>[5, 5, 5, 5, 5, 5],
+      };
+      datasets.add(item);
+      notifyArrayListeners(datasets, 'push', <Object?>[item]);
 
-        chart.update();
-      },
+      chart.update();
     },
   );
 }

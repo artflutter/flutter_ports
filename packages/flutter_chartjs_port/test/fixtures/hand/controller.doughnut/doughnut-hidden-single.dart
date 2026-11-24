@@ -46,11 +46,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
       PluginOff<FillerPlugin>(),
     ],
   ),
-  options: <String, Object?>{
-    'run': (Chart chart) {
-      chart
-        ..hide(0, 4)
-        ..hide(1, 2);
-    },
+  run: (chart) {
+    chart
+      ..hide(0, 4)
+      ..hide(1, 2);
   },
 );

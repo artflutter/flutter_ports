@@ -58,5 +58,4 @@ FixtureConfig fixture() => FixtureConfig.typed(
       PluginOff<FillerPlugin>(),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );

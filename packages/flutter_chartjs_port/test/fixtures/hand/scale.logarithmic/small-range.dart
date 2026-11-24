@@ -42,5 +42,4 @@ FixtureConfig fixture() => FixtureConfig.typed(
       LogarithmicAxis(CartesianAxis.y, ticks: AxisTicks(autoSkip: false)),
     ],
   ),
-  options: <String, Object?>{'spriteText': true},
 );

@@ -57,17 +57,15 @@ FixtureConfig fixture() {
       ),
       padding: const EdgeInsets.only(left: 24, right: 24),
     ),
-    options: <String, Object?>{
-      'canvas': <String, Object?>{'height': 128, 'width': 256},
-      'run': (Chart chart) async {
-        // `chart.data = {datasets: [dsB, dsA]}`: the dataset scopes of the
-        // lowering of dsA and dsB, in the other order.
-        final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
-        chart
-          ..data = (ChartDataScope()
-            ..datasets = <Object?>[datasets[1], datasets[0]])
-          ..update();
-      },
+    options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 128)),
+    run: (chart) async {
+      // `chart.data = {datasets: [dsB, dsA]}`: the dataset scopes of the
+      // lowering of dsA and dsB, in the other order.
+      final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
+      chart
+        ..data = (ChartDataScope()
+          ..datasets = <Object?>[datasets[1], datasets[0]])
+        ..update();
     },
   );
 }

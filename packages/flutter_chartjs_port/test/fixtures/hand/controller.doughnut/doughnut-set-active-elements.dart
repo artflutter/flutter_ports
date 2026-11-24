@@ -37,11 +37,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
     },
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9248',
-  options: <String, Object?>{
-    'run': (Chart chart) {
-      chart
-        ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)])
-        ..update();
-    },
+  run: (chart) {
+    chart
+      ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)])
+      ..update();
   },
 );

@@ -8,47 +8,44 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
-  'config': <String, Object?>{
-    'type': 'radar',
-    'data': <String, Object?>{
-      'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
-    },
-    'options': <String, Object?>{
-      'responsive': false,
-      'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'min': -1,
-          'max': 1,
-          'grid': <String, Object?>{
-            'display': true,
-            'color': 'blue',
-            'lineWidth': 2,
-          },
-          'angleLines': <String, Object?>{
-            'color': 'rgba(255, 255, 255, 0.5)',
-            'lineWidth': 2,
-          },
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
-          'ticks': <String, Object?>{
-            'display': true,
-            'autoSkip': false,
-            'stepSize': 0.2,
-            // A TickCallback (row adapt-native-tick).
-            'callback':
-                (Object? scale, double value, int index, Object? ticks) {
-                  if (value == 0.8) {
-                    return <String>['Strong'];
-                  }
-                  if (value == 0.4) {
-                    return <String>['Weak'];
-                  }
-                  if (value == 0) {
-                    return <String>['No'];
-                  }
-                  // The JS function ends without a return: undefined.
-                  return null;
-                },
+  'type': 'radar',
+  'data': <String, Object?>{
+    'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
+  },
+  'options': <String, Object?>{
+    'responsive': false,
+    'scales': <String, Object?>{
+      'r': <String, Object?>{
+        'min': -1,
+        'max': 1,
+        'grid': <String, Object?>{
+          'display': true,
+          'color': 'blue',
+          'lineWidth': 2,
+        },
+        'angleLines': <String, Object?>{
+          'color': 'rgba(255, 255, 255, 0.5)',
+          'lineWidth': 2,
+        },
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
+        'ticks': <String, Object?>{
+          'display': true,
+          'autoSkip': false,
+          'stepSize': 0.2,
+          // A TickCallback (row adapt-native-tick).
+          'callback': (Object? scale, double value, int index, Object? ticks) {
+            if (value == 0.8) {
+              return <String>['Strong'];
+            }
+            if (value == 0.4) {
+              return <String>['Weak'];
+            }
+            if (value == 0) {
+              return <String>['No'];
+            }
+            // The JS function ends without a return: undefined.
+            return null;
           },
         },
       },

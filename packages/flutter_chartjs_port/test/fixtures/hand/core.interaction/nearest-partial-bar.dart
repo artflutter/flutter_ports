@@ -33,16 +33,13 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'plugins': <String, Object?>{'tooltip': true},
     },
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'width': 256, 'height': 256},
-    'run': (Chart chart) async {
-      final chartArea = chart.chartArea!;
-      final point = <String, Object?>{
-        'x': chartArea.left + chartArea.width / 2,
-        'y': chartArea.top + chartArea.height / 2,
-      };
-      await triggerMouseEvent(chart, 'click', point);
-    },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
+  run: (chart) async {
+    final chartArea = chart.chartArea!;
+    final point = <String, Object?>{
+      'x': chartArea.left + chartArea.width / 2,
+      'y': chartArea.top + chartArea.height / 2,
+    };
+    await triggerMouseEvent(chart, 'click', point);
   },
 );

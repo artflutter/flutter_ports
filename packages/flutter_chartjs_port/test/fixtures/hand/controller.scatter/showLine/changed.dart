@@ -30,11 +30,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ],
   ),
   description: 'showLine option should draw a line if true',
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'width': 256, 'height': 256},
-    'run': (Chart chart) {
-      chart.options['showLine'] = true;
-      chart.update();
-    },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),
+  run: (chart) {
+    chart.options['showLine'] = true;
+    chart.update();
   },
 );

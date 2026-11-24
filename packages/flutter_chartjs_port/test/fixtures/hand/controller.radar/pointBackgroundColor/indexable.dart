@@ -55,7 +55,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
       RadialLinearAxis(display: ScaleDisplay.off, min: -15),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 512, 'width': 512},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
 );

@@ -9,8 +9,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
-FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
-  'config': <String, Object?>{
+FixtureConfig fixture() => FixtureConfig.map(
+  <String, Object?>{
     'type': 'bar',
     'data': <String, Object?>{
       'labels': <Object?>[
@@ -86,7 +86,5 @@ FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
       },
     },
   },
-  'options': <String, Object?>{
-    'canvas': <String, Object?>{'height': 256, 'width': 512},
-  },
-});
+  options: const AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
+);

@@ -8,36 +8,34 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
-  'config': <String, Object?>{
-    'type': 'radar',
-    'data': <String, Object?>{
-      'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
-    },
-    'options': <String, Object?>{
-      'responsive': false,
-      'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'grid': <String, Object?>{
-            'display': true,
-            'color': (ScriptableScaleContext context) {
-              return jsToNumber(context.index ?? undefined).remainder(2) == 0
-                  ? 'green'
-                  : 'red';
-            },
-            'lineWidth': (ScriptableScaleContext context) {
-              return jsToNumber(context.index ?? undefined).remainder(2) == 0
-                  ? 5
-                  : 1;
-            },
+  'type': 'radar',
+  'data': <String, Object?>{
+    'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
+  },
+  'options': <String, Object?>{
+    'responsive': false,
+    'scales': <String, Object?>{
+      'r': <String, Object?>{
+        'grid': <String, Object?>{
+          'display': true,
+          'color': (ScriptableScaleContext context) {
+            return jsToNumber(context.index ?? undefined).remainder(2) == 0
+                ? 'green'
+                : 'red';
           },
-          'angleLines': <String, Object?>{
-            'color': 'rgba(255, 255, 255, 0.5)',
-            'lineWidth': 2,
+          'lineWidth': (ScriptableScaleContext context) {
+            return jsToNumber(context.index ?? undefined).remainder(2) == 0
+                ? 5
+                : 1;
           },
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
-          'ticks': <String, Object?>{'display': false},
         },
+        'angleLines': <String, Object?>{
+          'color': 'rgba(255, 255, 255, 0.5)',
+          'lineWidth': 2,
+        },
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
+        'ticks': <String, Object?>{'display': false},
       },
     },
   },

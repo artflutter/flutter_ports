@@ -50,12 +50,10 @@ FixtureConfig fixture() {
       extra: <String, Object?>{'plugins': false},
     ),
     description: 'https://github.com/chartjs/Chart.js/issues/9105',
-    options: <String, Object?>{
-      'run': (Chart chart) {
-        // The dataset is a typed scope of the lowering: a write by name.
-        jsSet(jsGet(jsGet(chart.data, 'datasets'), 1), 'stack', '1');
-        chart.update();
-      },
+    run: (chart) {
+      // The dataset is a typed scope of the lowering: a write by name.
+      jsSet(jsGet(jsGet(chart.data, 'datasets'), 1), 'stack', '1');
+      chart.update();
     },
   );
 }

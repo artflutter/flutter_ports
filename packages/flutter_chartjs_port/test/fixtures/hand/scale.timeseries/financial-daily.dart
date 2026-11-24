@@ -614,62 +614,57 @@ FixtureConfig fixture() {
   ];
 
   return FixtureConfig.map(<String, Object?>{
-    'threshold': 0.01,
-    'tolerance': 0.0015,
-    'config': <String, Object?>{
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': data,
-            'type': 'line',
-            'pointRadius': 0,
-            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-            'fill': FillTarget.none,
-            'tension': 0,
-            'borderWidth': 2,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'animation': <String, Object?>{'duration': 0},
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'type': 'timeseries',
-            'offset': true,
-            'ticks': <String, Object?>{
-              'major': <String, Object?>{'enabled': true},
-              // DIVERGES(chartjs): adapt-text-style-fonts, a style.
-              'font': (ScriptableScaleContext context) {
-                return jsTruthy(context.tick) && context.tick!.major
-                    ? const ChartTextStyle(fontWeight: FontWeight.bold)
-                    : undefined;
-              },
-              // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
-              'source': TickSource.data,
-              'autoSkip': true,
-              'autoSkipPadding': 75,
-              'maxRotation': 0,
-              'sampleSize': 100,
-              'maxTicksLimit': 3,
+    'data': <String, Object?>{
+      'datasets': <Object?>[
+        <String, Object?>{
+          'data': data,
+          'type': 'line',
+          'pointRadius': 0,
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          'fill': FillTarget.none,
+          'tension': 0,
+          'borderWidth': 2,
+        },
+      ],
+    },
+    'options': <String, Object?>{
+      'animation': <String, Object?>{'duration': 0},
+      'scales': <String, Object?>{
+        'x': <String, Object?>{
+          'type': 'timeseries',
+          'offset': true,
+          'ticks': <String, Object?>{
+            'major': <String, Object?>{'enabled': true},
+            // DIVERGES(chartjs): adapt-text-style-fonts, a style.
+            'font': (ScriptableScaleContext context) {
+              return jsTruthy(context.tick) && context.tick!.major
+                  ? const ChartTextStyle(fontWeight: FontWeight.bold)
+                  : undefined;
             },
-            // manually set major ticks so that test passes in all time zones
-            // with moment adapter
-            'afterBuildTicks': (Scale scale) {
-              final ticks = scale.ticks!;
-              final major = <Object?>[0, 264, 522];
-              for (var i = 0; i < ticks.length; i++) {
-                ticks[i].major = major.contains(i); // major.indexOf(i) >= 0
-              }
-            },
+            // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
+            'source': TickSource.data,
+            'autoSkip': true,
+            'autoSkipPadding': 75,
+            'maxRotation': 0,
+            'sampleSize': 100,
+            'maxTicksLimit': 3,
           },
-          'y': <String, Object?>{
-            'type': 'linear',
-            // DIVERGES(chartjs): adapt-native-scale-border, the border object.
-            'border': const AxisBorder(display: false),
+          // manually set major ticks so that test passes in all time zones
+          // with moment adapter
+          'afterBuildTicks': (Scale scale) {
+            final ticks = scale.ticks!;
+            final major = <Object?>[0, 264, 522];
+            for (var i = 0; i < ticks.length; i++) {
+              ticks[i].major = major.contains(i); // major.indexOf(i) >= 0
+            }
           },
+        },
+        'y': <String, Object?>{
+          'type': 'linear',
+          // DIVERGES(chartjs): adapt-native-scale-border, the border object.
+          'border': const AxisBorder(display: false),
         },
       },
     },
-    'options': <String, Object?>{'spriteText': true},
   });
 }

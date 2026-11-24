@@ -124,5 +124,4 @@ FixtureConfig fixture() => FixtureConfig.typed(
     padding: const EdgeInsets.fromLTRB(0, 0, 2, 0),
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/10856',
-  options: <String, Object?>{'spriteText': true},
 );

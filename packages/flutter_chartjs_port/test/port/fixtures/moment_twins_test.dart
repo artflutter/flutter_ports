@@ -114,12 +114,7 @@ const Set<String> _timeTypes = {'time', 'timeseries'};
 /// fixes). Thus a moment pattern that stays in the twin, or a defect of the
 /// ICU parse or format, makes the twin fail. A smoke test alone fails only
 /// on an exception.
-Object? Function(Object?) _examine(
-  String path,
-  int datasets,
-  Set<double> named,
-) => (value) {
-  final chart = value! as Chart;
+FixtureRun _examine(String path, int datasets, Set<double> named) => (chart) {
   final differs = _differs.contains(path);
   var unparsed = 0;
   for (var i = 0; i < datasets; i++) {
@@ -147,7 +142,7 @@ Object? Function(Object?) _examine(
     _unparsed[path] ?? 0,
     reason: '$path: the number of time values that do not parse',
   );
-  if (differs) return null;
+  if (differs) return;
   for (final MapEntry(key: id, value: scale) in chart.scales.entries) {
     if (!_timeTypes.contains(scale.type)) continue;
     expect(
@@ -176,7 +171,6 @@ Object? Function(Object?) _examine(
       );
     }
   }
-  return null;
 };
 
 /// The time values of the date strings of [node]: each string `'YYYY'` or
@@ -215,32 +209,29 @@ Set<double> _named(Object? node) {
 FixtureConfig _load(FixtureSource source, String path) {
   final named = _named(source.dataConfig(path)['config']);
   final twin = momentTwins[path]!.load();
+  if (twin.run != null) {
+    throw StateError('$path: the fixture has a run hook.');
+  }
   switch (twin) {
     case TypedFixtureConfig(:final config, :final options, :final description):
-      final runOptions = options ?? <String, Object?>{};
-      if (runOptions.containsKey('run')) {
-        throw StateError('$path: the fixture has a run hook.');
-      }
-      runOptions['run'] = _examine(path, config.datasets.length, named);
       return FixtureConfig.typed(
         config,
-        options: runOptions,
+        options: options,
+        run: _examine(path, config.datasets.length, named),
         description: description,
       );
-    case MapFixtureConfig(:final json):
+    case MapFixtureConfig(:final config, :final options, :final description):
       // A config that a ChartConfig cannot hold keeps its Map. Its fill is
       // `false` or absent: its FillTarget (Chart.js ADR 0140).
-      nativeFixtureFalseFills(json);
-      final config = json['config']! as Map<String, Object?>;
+      nativeFixtureFalseFills(config);
       final data = config['data']! as Map<String, Object?>;
       final datasets = (data['datasets'] as List<Object?>?)?.length ?? 0;
-      final options =
-          (json['options'] ??= <String, Object?>{}) as Map<String, Object?>;
-      if (options.containsKey('run')) {
-        throw StateError('$path: the fixture has a run hook.');
-      }
-      options['run'] = _examine(path, datasets, named);
-      return twin;
+      return FixtureConfig.map(
+        config,
+        options: options,
+        run: _examine(path, datasets, named),
+        description: description,
+      );
   }
 }
 

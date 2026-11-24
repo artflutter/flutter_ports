@@ -44,7 +44,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
       PluginOff<FillerPlugin>(),
     ],
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 32.0, 'width': 32.0},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 32, height: 32)),
 );

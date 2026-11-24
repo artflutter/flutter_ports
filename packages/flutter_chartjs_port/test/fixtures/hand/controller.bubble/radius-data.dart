@@ -47,7 +47,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
     ),
     padding: const EdgeInsets.only(left: 24, right: 24),
   ),
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'height': 128, 'width': 256},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 256, height: 128)),
 );

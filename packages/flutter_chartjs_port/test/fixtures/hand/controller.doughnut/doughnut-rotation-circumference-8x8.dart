@@ -52,42 +52,40 @@ FixtureConfig fixture() {
       events: <String>[],
       extra: <String, Object?>{'rotation': -360, 'circumference': 180},
     ),
-    options: <String, Object?>{
-      'canvas': <String, Object?>{'height': 512, 'width': 512},
-      'run': (Chart chart) {
-        final completer = Completer<void>();
-        for (var i = 0.0; i < 64; i++) {
-          final col = i.remainder(8);
-          final row = (i / 8).floorToDouble();
-          final evenodd = jsTruthy(row.remainder(2)) ? 1 : -1;
-          chart.options['rotation'] = col * 45 * evenodd;
-          chart.options['circumference'] = 360 - row * 45;
-          chart.update();
-          ctx.drawImage(
-            (chart.canvas! as UiCanvasElement).toImageSource(),
-            col * 64,
-            row * 64,
-            64,
-            64,
-          );
-        }
+    options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
+    run: (chart) {
+      final completer = Completer<void>();
+      for (var i = 0.0; i < 64; i++) {
+        final col = i.remainder(8);
+        final row = (i / 8).floorToDouble();
+        final evenodd = jsTruthy(row.remainder(2)) ? 1 : -1;
+        chart.options['rotation'] = col * 45 * evenodd;
+        chart.options['circumference'] = 360 - row * 45;
+        chart.update();
+        ctx.drawImage(
+          (chart.canvas! as UiCanvasElement).toImageSource(),
+          col * 64,
+          row * 64,
+          64,
+          64,
+        );
+      }
+      ctx
+        ..strokeStyle = const native_ui.Color(0xffff0000)
+        ..lineWidth = 0.5
+        ..beginPath();
+      for (var i = 1.0; i < 8; i++) {
         ctx
-          ..strokeStyle = const native_ui.Color(0xffff0000)
-          ..lineWidth = 0.5
-          ..beginPath();
-        for (var i = 1.0; i < 8; i++) {
-          ctx
-            ..moveTo(i * 64, 0)
-            ..lineTo(i * 64, 511)
-            ..moveTo(0, i * 64)
-            ..lineTo(511, i * 64);
-        }
-        ctx.stroke();
-        clearCanvas(chart.canvas);
-        chart.ctx!.drawImage((canvas as UiCanvasElement).toImageSource(), 0, 0);
-        completer.complete();
-        return completer.future;
-      },
+          ..moveTo(i * 64, 0)
+          ..lineTo(i * 64, 511)
+          ..moveTo(0, i * 64)
+          ..lineTo(511, i * 64);
+      }
+      ctx.stroke();
+      clearCanvas(chart.canvas);
+      chart.ctx!.drawImage((canvas as UiCanvasElement).toImageSource(), 0, 0);
+      completer.complete();
+      return completer.future;
     },
   );
 }

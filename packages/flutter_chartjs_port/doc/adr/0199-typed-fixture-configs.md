@@ -18,7 +18,9 @@ config form of the port (Chart.js ADR 0198), so the largest corpus of real chart
 ## Decision
 
 1. A fixture config is a `FixtureConfig` of `chartjs_test_utils`: `FixtureConfig.typed(ChartConfig config,
-   {options, description})`, or `FixtureConfig.map(json)` for a config that a `ChartConfig` cannot hold. The runner
+   {options, run, description})`, or `FixtureConfig.map(Map config, {options, run, description})` for a config that
+   a `ChartConfig` cannot hold. `options` is the typed `AcquireOptions` of Chart.js ADR 0200, and `run` the hook
+   (`FutureOr<void> Function(Chart)`); `spriteText` and the keys of the image comparison have no port. The runner
    lowers a typed config with `ChartConfigLowering(config).lower()` and applies the plugin rule of `fixture.js:45-48`
    to the root scope (`fixtureInput`). Only a `FixtureConfig.map` goes through `nativeFixtureColors`.
 
@@ -32,7 +34,7 @@ config form of the port (Chart.js ADR 0198), so the largest corpus of real chart
    // After
    FixtureConfig fixture() => FixtureConfig.typed(
      ChartConfig(datasets: [BarDataset(data: .values([1, 2]))], ...),
-     options: <String, Object?>{'canvas': ...},
+     options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
    );
    ```
 

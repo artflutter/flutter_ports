@@ -40,11 +40,9 @@ FixtureConfig fixture() => FixtureConfig.typed(
     extra: <String, Object?>{'rotation': -90},
   ),
   description: 'https://github.com/chartjs/Chart.js/issues/9832',
-  options: <String, Object?>{
-    'canvas': <String, Object?>{'width': 512, 'height': 512},
-    'run': (Chart chart) {
-      chart.options['circumference'] = 180;
-      chart.update();
-    },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 512)),
+  run: (chart) {
+    chart.options['circumference'] = 180;
+    chart.update();
   },
 );

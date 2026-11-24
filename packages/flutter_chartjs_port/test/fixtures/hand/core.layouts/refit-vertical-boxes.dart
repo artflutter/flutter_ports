@@ -49,8 +49,5 @@ FixtureConfig fixture() => FixtureConfig.typed(
       'plugins': <String, Object?>{'legend': true},
     },
   ),
-  options: <String, Object?>{
-    'spriteText': true,
-    'canvas': <String, Object?>{'height': 185, 'width': 185},
-  },
+  options: AcquireOptions(canvas: HarnessCanvas(width: 185, height: 185)),
 );
