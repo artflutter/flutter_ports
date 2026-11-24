@@ -50,16 +50,20 @@ config form of the port (Chart.js ADR 0198), so the largest corpus of real chart
    first dataset of another type than the chart, or a key of `config` or `data` with no parameter. The generated
    function and the hand port name the reason.
 5. Each hand port returns a `FixtureConfig`. Its code is plain: no helper converts a Map at run time. A function of
-   a color option returns a `ChartPaint`.
+   a color option returns a `ChartPaint`, and a run hook writes into a typed dataset scope by name (`jsSet`). A typed
+   hand port ignores `prefer_const_constructors` and `prefer_const_literals_to_create_immutables`: each call gives
+   new objects (`fixture.js:24`), and the chart keeps the Lists of its config and writes into some of them.
 6. The runner takes the generated configs as `data` of `specsFromFixtures`. A skip wins over a hand port, and a
    hand port over a generated config. O1 runs each hand port and each generated config through `fixtureInput`, and
    its trace records the function of a typed `ChartValue.resolver` with the context only.
-7. The plugin rule writes `plugins: false` into the typed options scope, and a dataset can keep a number label in
-   its `extra`. `test/port/options/foreign_audit.dart` lists both pairs.
+7. The plugin rule writes `plugins: false` into the typed options scope; a dataset can keep a number label, and the
+   chart options a number `radius`, in their `extra`. `test/port/options/foreign_audit.dart` lists the three pairs.
 
 ## Consequences
 
-- The fixtures exercise the typed API and its lowering; the O1 digests stay the same.
+- The fixtures exercise the typed API and its lowering; the O1 digests stay the same. At the pin, 414 of the 433 hand
+  ports and 189 of the 231 generated configs are typed; 19 hand ports and 42 generated configs keep a Map (most have
+  no dataset).
 - A Chart.js bump runs `upstream:manifest` and `fixtures:gen`. A changed hand-ported fixture still fails at its
   stale `sha256`.
 - The `extra` entries show the options with no typed parameter: the input of later typed parameters.

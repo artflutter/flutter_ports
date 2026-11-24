@@ -743,10 +743,12 @@ and the items that stay open. In short:
   `group('auto', fixture.specs('<prefix>'))` at the upstream line. 27 Dart spec files do this:
   the 20 of phase 7 and the 7 `plugin.*` spec files of phase 8. Thus each of them is a VM file.
   `element.point_test.dart` moved for its 12 fixtures.
-- The list of the fixtures and the pure data configs come from tool 4 (`manifest.json` and
-  `fixtures.json`). Before a fixture runs, the runner compares the SHA-256 of the upstream file
+- The list of the fixtures comes from tool 4 (`manifest.json`). The pure data configs of
+  `fixtures.json` become typed `ChartConfig`s in the generated `test/fixtures/data_fixtures.g.dart`
+  (`fixtures:gen`, Chart.js ADR 0199). Before a fixture runs, the runner compares the SHA-256 of the upstream file
   in `third_party/Chart.js/test/fixtures/` with the manifest.
-- Each impure config has a hand port `test/fixtures/hand/<path>.dart` with a function `fixture()`,
+- Each impure config has a hand port `test/fixtures/hand/<path>.dart` with a function
+  `FixtureConfig fixture()` (a typed `ChartConfig`, Chart.js ADR 0199),
   and an entry with the first 12 hex digits of its manifest `sha256`. A stale hand port, a stale
   `blocked: plugin.<id>` skip and an impure fixture without a hand port fail.
 - The animator has `getAnims`, `update` and the field `refresh`: six hand ports replace `refresh`.
@@ -844,7 +846,7 @@ regular dependencies of the package ([Chart.js ADR 0022](adr/0022-chart-test-har
 | `src/utils.js` | `acquireChart`, `releaseChart`, `afterEvent` and `waitForResize` (over the function fields of `Chart`), and `triggerMouseEvent` (a `NativeEvent` to the listeners of the canvas, frames of 16 ms). `acquireChart` is synchronous and works only in the body of a `testWidgets` test. It gives 512×512 as attributes of the `UiCanvasElement` of `document.createElement`, and the `canvas.style` option as the inline style. The wrapper has the class `chartjs-wrapper` in the DOM stand-in, with the CSS subset of `dom.dart`. The default wrapper is a box of the canvas display size. A forced layout attaches the chart at its construction. The defaults are `animation: false`, `responsive: false` and `locale: 'en-US'`. `useOffscreenCanvas` gives a canvas that no host shows | 5, done |
 | `src/index.js` | `acquireChart`, `releaseChart`, `releaseCharts` and the registry `charts`. `releaseCharts` never deletes a chart. `index.dart` imports `utils.dart` with the prefix `utils` ([Chart.js ADR 0012](adr/0012-dart-file-naming.md), Collisions). `export 'fixture.dart';` is the re-export of `src/fixture.js` (`:5`) | 5, done; the re-export 7, done |
 | — | `dom.dart`, exported by `flutter.dart` ([Chart.js ADR 0022](adr/0022-chart-test-harness.md) §3, §7 and §8): the DOM stand-in (`document`, `window`, `div` and `canvas` nodes, a subset of CSS), the harness body, the mutation checkpoint, the harness tasks of `setTimeout`, `pumpFrames` (frames of 16 ms, the Jasmine timeout after 5000 ms; one loop pumps at a time, and a loop that starts during another loop awaits its steps), `waitForDone`, `afterEachChart`, and `pumpFrame` (one frame of the fixture runner) | 5, done; `pumpFrame` 7, done |
-| `src/fixture.js` | `fixture.dart`: `specsFromFixtures` and `specFromFixture` as a smoke runner (prefix match, plugin rule, `run` hook, one frame), no image comparison. `FixtureSource` reads the manifest, `fixtures.json` and the upstream files of the SHA-256 check. Rows `harness-fixture-sources` and `harness-fixture-frame` ([Chart.js ADR 0029](adr/0029-fixture-smoke-runner.md)) | 7, done |
+| `src/fixture.js` | `fixture.dart`: `specsFromFixtures` and `specFromFixture` as a smoke runner (prefix match, plugin rule, `run` hook, one frame), no image comparison. `FixtureSource` reads the manifest and the upstream files of the SHA-256 check; each config is a `FixtureConfig` of a hand port or of `data_fixtures.g.dart` ([Chart.js ADR 0199](adr/0199-typed-fixture-configs.md)). Rows `harness-fixture-sources` and `harness-fixture-frame` ([Chart.js ADR 0029](adr/0029-fixture-smoke-runner.md)) | 7, done |
 | `src/spriting.js`; pixelmatch `index.js`; Canvas-call recordings | not ported (`n/a`): no image comparison ([Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md)) | — |
 | `injectWrapperCSS`, `useShadowDOM` | not ported (`n/a`). The class `chartjs-wrapper` of `dom.dart` gives the effect of the `injectWrapperCSS` rule. `useShadowDOM` throws an `UnsupportedError`. The `useShadowDOM` cases of `helpers.dom` skip as `'n/a: Flutter has no shadow DOM'` | — |
 
@@ -1148,9 +1150,10 @@ person writes `parity.md`.
 **7. Fixture smoke runner** (`test:fixtures`, job `fixtures`, phase 7). It builds a chart from
 each fixture config of a ported module and renders one frame. A test passes when no exception
 occurs. The runner compares no pixels and keeps no ledger
-([Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md)). It reads the list and the pure
-data configs that tool 4 writes (`manifest.json`, `fixtures.json`) and the hand-ported configs in
-`test/fixtures/hand/`, through the registry `test/fixtures/index.dart`. Before a fixture runs, it
+([Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md)). It reads the list that tool 4 writes
+(`manifest.json`), the typed configs that `fixtures:gen` writes from `fixtures.json`
+(`test/fixtures/data_fixtures.g.dart`) and the hand-ported configs in `test/fixtures/hand/`, through
+the registry `test/fixtures/index.dart` (Chart.js ADR 0199). Before a fixture runs, it
 compares the SHA-256 of the upstream file in `third_party/Chart.js/test/fixtures/` with the
 manifest. `test:fixtures` is tool 5 with `--fixtures`: it runs the tests with the tag `fixtures`
 of the spec files with a fixture group and of `test/port/fixtures/`, and reports each fixture as

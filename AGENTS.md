@@ -62,11 +62,11 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   it. It needs a local Google Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
   `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tool 2) and tool 9,
-  `options:gen:check` and `adr:index:check`, as melos steps. The CI job `port-checks` runs the four
-  checks with a shallow checkout of the three Chart.js submodules,
+  `options:gen:check`, `fixtures:gen:check` and `adr:index:check`, as melos steps. The CI job
+  `port-checks` runs the five checks with a shallow checkout of the three Chart.js submodules,
   `third_party/chartjs-plugin-zoom` and `third_party/chartjs-chart-sankey`.
   `check:headers` also examines the add-on ports `flutter_chartjs_plugin_zoom_port` and
-  `flutter_chartjs_chart_sankey_port` (ADR 0009 item 6). The other three checks examine only
+  `flutter_chartjs_chart_sankey_port` (ADR 0009 item 6). The other four checks examine only
   `flutter_chartjs_port`. The port has no JS-semantics check (Chart.js ADR 0178).
   Each check can also run alone:
   - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of the home
@@ -106,6 +106,7 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
     (also of `lib/src/options/`) with a Map supertype (`Map`, or a name that ends with `Map`,
     `MapBase`, `MapMixin` or `MapView`) is an error, with no baseline.
   - `options:gen:check`: the check mode of `options:gen` (below).
+  - `fixtures:gen:check`: the check mode of `fixtures:gen` (below).
 - `dart run melos run adr:index`: writes the list in the `README.md` of each ADR folder from the
   header lines of the ADRs (`tool/adr_index.dart`). `adr:index:check` fails on a stale list, and on a
   "Supersedes" line without the matching "Superseded by" or "Superseded in part by" line, or the
@@ -118,6 +119,13 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   into `.dart_tool/options_gen_check/` and fails when a committed file differs or when
   `lib/src/options/` has a `.g.dart` file that the generator does not write. The analyzer
   excludes `**/*.g.dart`.
+- `dart run melos run fixtures:gen`: writes `test/fixtures/data_fixtures.g.dart` of
+  `flutter_chartjs_port` from `doc/upstream/fixtures.json` through `tool/fixture_configs_gen.dart`
+  (writer `tool/src/fixture_configs.dart`), formatted (Chart.js ADR 0199): `dataFixtures`, the
+  typed config of each pure data fixture without a hand port, and `momentTwins`, the ICU twin of
+  each data fixture with a moment pattern. Never edit the file. A Chart.js bump runs it after
+  `upstream:manifest`. `fixtures:gen:check` generates into `.dart_tool/fixture_configs_check/` and
+  fails when the committed file differs.
 - `dart run melos run test:cases`: tool 5. It runs `test/specs/` and reports each upstream case of
   `doc/upstream/manifest.json` as passed, failed, skipped or missing. It fails on an unknown test
   name, a bad skip reason and a missing case of a `ported` module. CI runs it in the ubuntu `test`
@@ -131,7 +139,9 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   the spec files with a fixture group and of `test/port/fixtures/`. It reports each upstream fixture
   as passed, failed, skipped or missing, and prints the 10 slowest tests. It fails on a failed,
   missing or unknown fixture, on a fixture group that no Dart file calls and on a bad skip reason.
-  It also runs the stale-block check of `test:cases` (Chart.js ADR 0041). The runner compares the
+  It also runs the stale-block check of `test:cases` (Chart.js ADR 0041). Each fixture builds its
+  chart from a typed `ChartConfig` (Chart.js ADR 0199), except the configs that a `ChartConfig`
+  cannot hold (`FixtureConfig.map`). The runner compares the
   SHA-256 of each upstream fixture file `third_party/Chart.js/test/fixtures/<path>` with the
   manifest. Without the submodule, each fixture skips with `'n/a: the submodule third_party/Chart.js
   is not checked out'`. With `FIXTURES_REQUIRED=1`, it fails. The CI job `fixtures` makes a shallow
@@ -246,7 +256,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     that starts while another loop pumps awaits each step of that loop. It also exports the fixture
     runner of `lib/src/fixture.dart`.
   - `lib/src/fixture.dart` ports `src/fixture.js` (Chart.js ADR 0029): `specsFromFixtures`,
-    `specFromFixture` and `FixtureSource` (the manifest and `fixtures.json` of tool 4, the folder
+    `specFromFixture`, `FixtureConfig` and `fixtureInput` (Chart.js ADR 0199: a loader gives
+    `FixtureConfig.typed(ChartConfig, options:, description:)`, which the runner lowers with
+    `ChartConfigLowering` and the plugin rule of `fixture.js:45-48`, or `FixtureConfig.map(json)`
+    for a config that a `ChartConfig` cannot hold, which takes `nativeFixtureColors`; `data` of
+    `specsFromFixtures` takes the generated configs) and `FixtureSource` (the manifest and
+    `fixtures.json` of tool 4, which the runner does not read, the folder
     `upstream` of the upstream fixture files, `requireUpstream` and `submodule`, the submodule that
     the skip reason of a missing checkout names, Chart.js ADR 0108 §11). Each fixture test has the tag
     `fixtures`. The rows are `harness-fixture-sources` and `harness-fixture-frame`. It is not a
@@ -1661,8 +1676,17 @@ sankey ADRs are proposed. The doc paths are relative to
   `@TestOn('vm')`. Each fixture test has the tag `fixtures`: `test --no-select` and `test:cases`
   exclude it, and `test:fixtures` runs it. A hand port is one file at
   `test/fixtures/hand/<path>.dart` with the header of rule 2, the library doc `/// A hand-ported
-  fixture config (Chart.js ADR 0029, section 4).` before `library;`, and the function `fixture()`,
-  which makes new objects at each call. Its entry in `handFixtures` has the first 12 hex digits of
+  fixture config (Chart.js ADR 0029, section 4).` before `library;`, and the function
+  `FixtureConfig fixture()`, which makes new objects at each call (Chart.js ADR 0199). It returns
+  `FixtureConfig.typed` with a typed `ChartConfig`: an option with no typed parameter goes to the
+  `extra` Map of the nearest typed class, with its native value (a `ChartPaint.solid(Color(...))`
+  for a color, the enum value for a keyword), and a function of a color option returns a
+  `ChartPaint`. Only a config that a `ChartConfig` cannot hold (no dataset, no chart type, a first
+  dataset of another type than the chart, `xLabels` or another key with no parameter) returns
+  `FixtureConfig.map`, with the reason in its doc. A typed hand port ignores the lints
+  `prefer_const_constructors` and `prefer_const_literals_to_create_immutables`: the chart keeps the
+  Lists of its config and writes into some of them. A run hook writes into a typed dataset scope by
+  name (`jsSet`). Its entry in `handFixtures` has the first 12 hex digits of
   the manifest `sha256`. The import prefix is the path without the extension in lower case, with
   each run of other characters than `a-z` and `0-9` as `_`. A fixture skip is an entry of
   `fixtureSkips`. No skip covers a defect. In a hand port, a scriptable option takes the typed
