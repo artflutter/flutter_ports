@@ -483,24 +483,6 @@ abstract interface class TextMetrics() {
   double get actualBoundingBoxDescent;
 }
 
-/// lib.dom.d.ts `CSSStyleDeclaration`: the read-only view of
-/// [HTMLCanvasElement.style] (Chart.js ADR 0200, item 8).
-///
-/// The canvas has no CSS style: no library reads or writes it. The view
-/// gives the typed members of the canvas as CSS text for its last readers,
-/// the gallery and a tooltip test, and then goes.
-abstract interface class CSSStyleDeclaration() {
-  /// `getPropertyValue(property)`. An unset property gives `''`.
-  String getPropertyValue(String property);
-
-  /// `getPropertyPriority(property)`: always `''`.
-  String getPropertyPriority(String property);
-
-  /// `setProperty(property, value, priority)`: the view throws an
-  /// [UnsupportedError].
-  void setProperty(String property, String? value, [String? priority]);
-}
-
 /// lib.dom.d.ts `HTMLCanvasElement`: the part that the ported code reads
 /// from `ctx.canvas` and from `chart.canvas`.
 ///
@@ -516,10 +498,6 @@ abstract interface class HTMLCanvasElement() {
   /// `height`: the render height in device pixels. The DOM default is 150.
   /// It reflects the `height` attribute: a write sets the attribute.
   abstract int height;
-
-  /// `style`: a read-only view of the typed members below as CSS text
-  /// (Chart.js ADR 0200, item 8). No library reads it.
-  CSSStyleDeclaration get style;
 
   /// The display width of the canvas in logical pixels (the `style.width`
   /// of upstream), or `null` for none: then the display width is the render
@@ -781,7 +759,7 @@ abstract interface class CanvasRenderingContext2D() implements CanvasPath {
   abstract CanvasTextBaseline? textBaseline;
 
   /// The native text direction. Null selects inheritance from
-  /// [HTMLCanvasElement.style], the default canvas state. Writing null
+  /// [HTMLCanvasElement.textDirection], the default canvas state. Writing null
   /// resets an explicit direction to inheritance (Chart.js ADR 0124).
   // DIVERGES(chartjs): adapt-text-direction, null represents inheritance.
   abstract TextDirection? direction;

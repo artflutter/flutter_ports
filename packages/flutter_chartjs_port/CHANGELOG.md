@@ -11,8 +11,10 @@
   `UiCssStyleDeclaration` are gone: write `canvas.touchAction = CanvasTouchAction.none` and
   `canvas.userSelect = false` in place of `canvas.style.touchAction = 'none'` and
   `canvas.style.userSelect = 'none'`, and `canvas.displayWidth = 400` in place of
-  `canvas.style.width = '400px'`. `HTMLCanvasElement.style` is a read-only view of these members, and
-  `setAttribute('style', ...)` of a canvas throws an `ArgumentError`.
+  `canvas.style.width = '400px'`. `HTMLCanvasElement.style` and `CSSStyleDeclaration` are gone: read
+  `canvas.displayWidth` in place of `canvas.style.getPropertyValue('width')`, and `canvas.textDirection` in
+  place of `canvas.style.getPropertyValue('direction')`. `setAttribute('style', ...)` of a canvas throws an
+  `ArgumentError`.
 - BREAKING: `ChartView.raw` and the raw Map config of `ChartView` are gone (Chart.js ADR 0198). `ChartView` takes
   only `ChartConfig`, and `ChartView.rawConfig` is gone: write `ChartView(config: ChartConfig(...))`, with
   `extra` for a Chart.js option that has no parameter. `new Chart(canvas, config)` still takes a Map config.

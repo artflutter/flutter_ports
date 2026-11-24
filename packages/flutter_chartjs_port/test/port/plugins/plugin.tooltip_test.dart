@@ -318,11 +318,10 @@ AnyObject _undefinedAxisIds(AnyObject observation) => <String, Object?>{
 /// 0041, section 4 item 4).
 /// The probes of the generator: `canvasDirection`, the `direction` value
 /// and priority of the canvas style after the draw (helpers.rtl.ts:55-73).
+/// The canvas has no CSS style (Chart.js ADR 0200): the value is the name of
+/// [HTMLCanvasElement.textDirection] or `''`, and the priority is `''`.
 final Map<String, Object? Function(Chart chart)> _extras = {
-  'canvasDirection': (chart) => [
-    chart.canvas!.style.getPropertyValue('direction'),
-    chart.canvas!.style.getPropertyPriority('direction'),
-  ],
+  'canvasDirection': (chart) => [chart.canvas!.textDirection?.name ?? '', ''],
 };
 
 final List<ScaleChartCase> _reference = _mapObservations([
@@ -1906,7 +1905,7 @@ void main() {
         expect(ctx.drawDirections, isNotEmpty);
         expect(ctx.drawDirections, everyElement(native_ui.TextDirection.ltr));
         expect(ctx.direction, native_ui.TextDirection.ltr);
-        expect(ctx.canvas.style.log, isEmpty);
+        expect(ctx.canvas.writes, isEmpty);
 
         ctx.throwOnText = true;
         expect(legend.draw, throwsStateError);
@@ -1934,7 +1933,7 @@ void main() {
           expect(ctx.drawDirections, isNotEmpty);
           expect(ctx.drawDirections, everyElement(direction));
           expect(ctx.direction, original);
-          expect(ctx.canvas.style.log, isEmpty);
+          expect(ctx.canvas.writes, isEmpty);
         }
       });
     }
@@ -1949,7 +1948,7 @@ void main() {
         expect(ctx.drawDirections, isNotEmpty);
         expect(ctx.drawDirections, everyElement(native_ui.TextDirection.rtl));
         expect(ctx.direction, native_ui.TextDirection.rtl);
-        expect(ctx.canvas.style.log, isEmpty);
+        expect(ctx.canvas.writes, isEmpty);
       },
     );
 
@@ -1969,7 +1968,7 @@ void main() {
         ..throwOnText = true;
       expect(() => _tooltipOf(chart).draw(ctx), throwsStateError);
       expect(ctx.direction, native_ui.TextDirection.ltr);
-      expect(ctx.canvas.style.log, isEmpty);
+      expect(ctx.canvas.writes, isEmpty);
     });
   });
 
@@ -2031,58 +2030,44 @@ void main() {
   });
 }
 
-/// A canvas style with the DOM rules of `setProperty` (as `_Style` of
-/// test/port/helpers/helpers.rtl_test.dart). It logs each call with its
-/// result, as the `domStyle` of the probe fix-node.mjs: `[get, name,
-/// value]`, `[prio, name, priority]` and `[set, name, value, priority]`.
-final class _LogStyle() implements CSSStyleDeclaration {
-  final Map<String, (String, String)> _properties = {};
-
-  /// The calls.
-  final List<List<String?>> log = [];
-
-  static const _directions = {
-    'ltr',
-    'rtl',
-    'inherit',
-    'initial',
-    'unset',
-    'revert',
-    'revert-layer',
-  };
-
-  @override
-  String getPropertyValue(String property) {
-    final value = _properties[property]?.$1 ?? '';
-    log.add(['get', property, value]);
-    return value;
-  }
-
-  @override
-  String getPropertyPriority(String property) {
-    final priority = _properties[property]?.$2 ?? '';
-    log.add(['prio', property, priority]);
-    return priority;
-  }
-
-  @override
-  void setProperty(String property, String? value, [String? priority]) {
-    log.add(['set', property, value, priority]);
-    final important = priority?.toLowerCase() == 'important';
-    if (priority != null && priority.isNotEmpty && !important) return;
-    if (value == null || value.isEmpty) {
-      _properties.remove(property);
-      return;
-    }
-    if (property == 'direction' && !_directions.contains(value)) return;
-    _properties[property] = (value, important ? 'important' : '');
-  }
-}
-
-/// A canvas element that has only a [_LogStyle].
+/// A canvas element that logs each write of its typed display members
+/// (Chart.js ADR 0200): a text direction override of a draw writes the
+/// context, never the canvas.
 final class _StyleCanvas() implements HTMLCanvasElement {
+  /// The writes: `[member, value]`.
+  final List<List<Object?>> writes = [];
+
   @override
-  final _LogStyle style = _LogStyle();
+  native_ui.TextDirection? get textDirection => null;
+
+  @override
+  set textDirection(native_ui.TextDirection? value) =>
+      writes.add(['textDirection', value]);
+
+  @override
+  double? get displayWidth => null;
+
+  @override
+  set displayWidth(double? value) => writes.add(['displayWidth', value]);
+
+  @override
+  double? get displayHeight => null;
+
+  @override
+  set displayHeight(double? value) => writes.add(['displayHeight', value]);
+
+  @override
+  CanvasTouchAction get touchAction => CanvasTouchAction.auto;
+
+  @override
+  set touchAction(CanvasTouchAction value) =>
+      writes.add(['touchAction', value]);
+
+  @override
+  bool get userSelect => true;
+
+  @override
+  set userSelect(bool value) => writes.add(['userSelect', value]);
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -2092,7 +2077,7 @@ final class _StyleCanvas() implements HTMLCanvasElement {
       throw UnimplementedError();
 }
 
-/// A mock context whose canvas has a [_LogStyle].
+/// A mock context whose canvas is a [_StyleCanvas].
 final class _StyleContext() extends MockContext {
   final List<native_ui.TextDirection?> drawDirections = [];
   bool throwOnText = false;

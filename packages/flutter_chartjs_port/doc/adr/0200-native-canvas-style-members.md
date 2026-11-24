@@ -110,10 +110,10 @@ test layout.
    render size for the other, and an unset pair gives the render size, truncated toward zero. A hidden canvas
    has no `auto` rule: no spec checks the size of a hidden canvas.
 
-8. Two forms wait for other changes and then go: `HTMLCanvasElement.style`, a read-only view of the typed
-   members (`'<n>px'`, `'none'`, `'rtl'`) for the gallery and a tooltip test, and the Map form of the
-   `acquireChart` options (numeric `canvas` sizes, `useOffscreenCanvas`, `persistent`; a `style` or a `wrapper`
-   key throws) for the fixture runner and the reference harnesses.
+8. The canvas has no `style` member, and the library has no `CSSStyleDeclaration`: a reader reads the typed
+   members (`canvas.displayWidth`, `canvas.textDirection`). One form waits for the fixture runner and then goes:
+   the Map form of the `acquireChart` options (numeric `canvas` sizes, `useOffscreenCanvas`, `persistent`; a
+   `style` or a `wrapper` key throws). The reference harnesses take an `AcquireOptions`: the generators write it.
 
 ## Rejected
 
@@ -123,9 +123,9 @@ test layout.
 
 ## Consequences
 
-- No library and no harness file parses or writes CSS text, except the two waits of item 8.
-- Public API: `getStyle`, `CssStyleProperties` and `UiCssStyleDeclaration` are removed; `readUsedSize` takes an
-  `Axis`.
+- No library and no harness file parses or writes CSS text, except the wait of item 8.
+- Public API: `getStyle`, `CssStyleProperties`, `UiCssStyleDeclaration`, `CSSStyleDeclaration` and
+  `HTMLCanvasElement.style` are removed; `readUsedSize` takes an `Axis`.
 - The spec cases keep their names; a CSS value becomes its typed value.
 
 ## Tests

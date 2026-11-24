@@ -4206,30 +4206,6 @@ void main() {
       expect(canvas.textDirection, native_ui.TextDirection.rtl);
       expect((canvas.displayWidth, canvas.displayHeight), (345.5, 125));
     });
-
-    test('style is a read-only view of the members', () {
-      // Chart.js ADR 0200, item 8: the view of the last readers.
-      final canvas = UiCanvasElement();
-      final style = canvas.style;
-      expect(style.getPropertyValue('width'), '');
-      expect(style.getPropertyValue('touch-action'), '');
-      expect(style.getPropertyValue('user-select'), '');
-      expect(style.getPropertyValue('direction'), '');
-      canvas
-        ..displayWidth = 345.5
-        ..displayHeight = 125
-        ..touchAction = CanvasTouchAction.none
-        ..userSelect = false
-        ..textDirection = native_ui.TextDirection.rtl;
-      expect(style.getPropertyValue('width'), '345.5px');
-      expect(style.getPropertyValue('height'), '125px');
-      expect(style.getPropertyValue('touch-action'), 'none');
-      expect(style.getPropertyValue('user-select'), 'none');
-      expect(style.getPropertyValue('direction'), 'rtl');
-      expect(style.getPropertyPriority('direction'), '');
-      expect(style.getPropertyValue('display'), '');
-      expect(() => style.setProperty('width', '10px'), throwsUnsupportedError);
-    });
   });
 
   group('getBoundingClientRect', () {

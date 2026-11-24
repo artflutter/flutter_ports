@@ -461,11 +461,12 @@ lines of that commit. §3.10 gives the code after C2.
 | 615-623 | `isAttached` from the host | Keep |
 
 `lib/src/canvas/canvas.dart` (pure interface): `HTMLCanvasElement` (326-347) gets
-`getAttribute`, `setAttribute` and `removeAttribute`. `CSSStyleDeclaration`, `CanvasNode` and
-`CanvasContainer` do not change.
+`getAttribute`, `setAttribute` and `removeAttribute`. `CanvasNode` and `CanvasContainer` do not
+change. `CSSStyleDeclaration` is gone (Chart.js ADR 0200).
 
 `lib/src/canvas/canvas_ui.dart`:
-- `UiCssStyleDeclaration` (94-127) stays. `retinaScale` writes it, and `direction` reads it.
+- `UiCssStyleDeclaration` is gone (Chart.js ADR 0200): `retinaScale` writes `displayWidth` and
+  `displayHeight`, and `direction` reads `textDirection`.
 - `UiCanvasElement` (129-216): the constructor (136-138), the `width` and `height` setters
   (145-165), `_devicePixelRatio` (142), the `devicePixelRatio` getter and setter (175-187) and
   `logicalSize` (189-192).

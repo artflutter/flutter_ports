@@ -108,36 +108,6 @@ const TextStyle _defaultFont = TextStyle(
 /// `UiCanvasContext._snappedTextMatrix`).
 const double _textAngleStep = math.pi / 90;
 
-/// The read-only `style` of a [UiCanvasElement]: a view of its typed
-/// members as CSS text (Chart.js ADR 0200, item 8). It waits for the
-/// gallery and a tooltip test that read it, then goes. A write throws.
-final class _CanvasStyleView(final UiCanvasElement _element)
-    implements CSSStyleDeclaration {
-  static String _px(double? value) =>
-      value == null ? '' : '${jsToString(value)}px';
-
-  @override
-  String getPropertyValue(String property) => switch (property) {
-    'width' => _px(_element.displayWidth),
-    'height' => _px(_element.displayHeight),
-    'touch-action' =>
-      _element.touchAction == CanvasTouchAction.none ? 'none' : '',
-    'user-select' => _element.userSelect ? '' : 'none',
-    'direction' => _element.textDirection?.name ?? '',
-    _ => '',
-  };
-
-  @override
-  String getPropertyPriority(String property) => '';
-
-  @override
-  void setProperty(String property, String? value, [String? priority]) =>
-      throw UnsupportedError(
-        'The canvas has no CSS style: write its typed members '
-        '(Chart.js ADR 0200).',
-      );
-}
-
 /// The `dart:ui` [HTMLCanvasElement]: the bitmap size, the attributes, the
 /// typed display members and the one 2D context.
 ///
@@ -250,11 +220,6 @@ final class UiCanvasElement({int? width, int? height})
   }
 
   static final RegExp _sizePattern = RegExp(r'^[\t\n\f\r ]*\+?(\d+)');
-
-  /// A read-only view of the typed members as CSS text (Chart.js ADR 0200,
-  /// item 8). It waits for its last readers, then goes.
-  @override
-  late final CSSStyleDeclaration style = _CanvasStyleView(this);
 
   @override
   double? displayWidth;

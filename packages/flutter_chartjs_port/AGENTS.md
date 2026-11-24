@@ -892,9 +892,8 @@ repository.
     direction that a context with a `null` `direction` inherits `textDirection`. `retinaScale`,
     `initCanvas`, `releaseContext` and the chart host read and write them; `initCanvas` writes no
     `display` and no `box-sizing`. `setAttribute('style', ...)` throws an `ArgumentError`, and
-    `HTMLCanvasElement.style` is a read-only view of the members (`'<n>px'`, `'none'`, `'rtl'`)
-    that waits for the gallery and a tooltip test, then goes. Other attributes keep their values
-    as strings (Chart.js ADR 0022). The canvas `textBaseline` holds the enum
+    `HTMLCanvasElement` has no `style` member. Other attributes keep their values as strings
+    (Chart.js ADR 0022). The canvas `textBaseline` holds the enum
     `CanvasTextBaseline` of `canvas.dart` (row `adapt-canvas-text-baseline-enum`), also in a label
     item and in the options of `renderText`.
     - [Chart.js ADR 0070](doc/adr/0070-native-rectangular-bar-drawing.md): an ordinary bar rectangle draws through

@@ -75,7 +75,6 @@ BulkBarChart
 BulkBarElement
 BulkBarOptions
 BulkBarScale
-CSSStyleDeclaration
 CancelableHookFunction
 CanvasCompositeOperation
 CanvasContainer
@@ -1126,7 +1125,6 @@ BulkBarChart
 BulkBarElement
 BulkBarOptions
 BulkBarScale
-CSSStyleDeclaration
 CancelableHookFunction
 CanvasCompositeOperation
 CanvasContainer
