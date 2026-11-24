@@ -275,11 +275,13 @@ class _EventsDemoState() extends State<EventsDemo> {
 
   String _size(double v) => v.isFinite ? jsNumberText(v) : 'Infinity';
 
+  /// A display size of the canvas: `null` is the render size.
+  String _display(double? v) => v == null ? 'null' : _size(v);
+
   Widget _buildReadout(BuildContext context) {
     final chart = _chart;
     final canvas = chart?.canvas;
     final container = canvas == null ? null : getParentNode(canvas);
-    final style = canvas?.style;
     final dpr = MediaQuery.devicePixelRatioOf(context);
     return Column(
       key: const ValueKey('events.readout'),
@@ -312,11 +314,11 @@ class _EventsDemoState() extends State<EventsDemo> {
               canvas == null ? '-' : '${canvas.width} x ${canvas.height}',
             ),
             (
-              'display size (style)',
-              style == null
+              'canvas.displayWidth x displayHeight',
+              canvas == null
                   ? '-'
-                  : '${style.getPropertyValue('width')} x '
-                        '${style.getPropertyValue('height')}',
+                  : '${_display(canvas.displayWidth)} x '
+                        '${_display(canvas.displayHeight)}',
             ),
             (
               'container',
@@ -503,8 +505,9 @@ class _EventsDemoState() extends State<EventsDemo> {
               ),
               Text(
                 'retinaScale sets the canvas render size to the display size '
-                'times the device pixel ratio, and the display size as the '
-                'canvas style; the readout above shows both.',
+                'times the device pixel ratio, and the display size as '
+                'displayWidth and displayHeight; the readout above shows '
+                'both.',
                 style: theme.textTheme.bodySmall,
               ),
             ],

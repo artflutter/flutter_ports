@@ -94,7 +94,7 @@ void _expectDrawn(WidgetTester tester, String key, {double dpr = _phoneDpr}) {
     ),
   );
   expect(canvas.parentNode, isNotNull, reason: key);
-  expect(canvas.style.getPropertyValue('width'), isNotEmpty, reason: key);
+  expect(canvas.displayWidth, isNotNull, reason: key);
   expect(canvas.width, (box.width * dpr).truncate(), reason: key);
   expect(canvas.height, (box.height * dpr).truncate(), reason: key);
   expect(canvas.getContext2d().isEmpty, isFalse, reason: key);
