@@ -225,6 +225,17 @@ void main() {
       }
     }
   });
+  test('the CPU load is on by default and adds a key', () {
+    const on = BenchmarkConfig();
+    final off = on.copyWith(cpuLoad: false);
+    expect(on.cpuLoad, isTrue);
+    expect(on.toJson()['cpuLoad'], isTrue);
+    // A run without the load keeps the key of the earlier saved runs.
+    expect(off.toJson().containsKey('cpuLoad'), isFalse);
+    expect(off, isNot(on));
+    expect(off.copyWith(cpuLoad: true), on);
+    expect(off.copyWith(cpuLoad: true).hashCode, on.hashCode);
+  });
   test('a set zoom adds a key, so earlier saved runs keep theirs', () {
     const off = BenchmarkConfig();
     const on = BenchmarkConfig(zoom: true);

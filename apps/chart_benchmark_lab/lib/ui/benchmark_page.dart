@@ -833,6 +833,16 @@ class _BenchmarkPageState()
               (v) => controller.configure(config.copyWith(rotateLabels: v)),
             ),
           const Divider(height: 28),
+          _toggle(
+            'Background CPU load',
+            'cpuLoad',
+            config.cpuLoad,
+            !locked,
+            (v) => controller.configure(config.copyWith(cpuLoad: v)),
+            hint:
+                'One busy thread during a test moves a light chart to '
+                'the performance cores',
+          ),
           Row(
             children: [
               const Expanded(child: Text('Capture length')),

@@ -331,6 +331,12 @@ class const BenchmarkConfig({
   /// their own way.
   final bool trackpad = true,
 
+  /// One busy background thread (an isolate, or a Web Worker on the web)
+  /// while a test runs. A small workload leaves the CPU almost idle, so the
+  /// system keeps the app on efficiency cores at low clocks. The load makes
+  /// it raise the clocks and move the app to performance cores.
+  final bool cpuLoad = true,
+
   /// Common overlay text count, outside each library's renderer.
   final int overlayLabels = 0,
 
@@ -359,6 +365,7 @@ class const BenchmarkConfig({
     bool? shadowBlur,
     bool? zoom,
     bool? trackpad,
+    bool? cpuLoad,
     int? overlayLabels,
     bool? rotateLabels,
     int? seed,
@@ -377,6 +384,7 @@ class const BenchmarkConfig({
     shadowBlur: shadowBlur ?? this.shadowBlur,
     zoom: zoom ?? this.zoom,
     trackpad: trackpad ?? this.trackpad,
+    cpuLoad: cpuLoad ?? this.cpuLoad,
     overlayLabels: overlayLabels ?? this.overlayLabels,
     rotateLabels: rotateLabels ?? this.rotateLabels,
     seed: seed ?? this.seed,
@@ -399,6 +407,7 @@ class const BenchmarkConfig({
       other.shadowBlur == shadowBlur &&
       other.zoom == zoom &&
       other.trackpad == trackpad &&
+      other.cpuLoad == cpuLoad &&
       other.overlayLabels == overlayLabels &&
       other.rotateLabels == rotateLabels &&
       other.seed == seed;
@@ -419,6 +428,7 @@ class const BenchmarkConfig({
     shadowBlur,
     zoom,
     trackpad,
+    cpuLoad,
     overlayLabels,
     rotateLabels,
     seed,
@@ -449,6 +459,9 @@ class const BenchmarkConfig({
     // The same rule for zoom.
     if (zooms) 'zoom': true,
     if (zooms && !trackpad) 'trackpad': false,
+    // The earlier saved runs had no load, and a run without it keeps their
+    // comparison key.
+    if (cpuLoad) 'cpuLoad': true,
     'overlayLabels': overlayLabels,
     'rotateLabels': overlayLabels > 0 && rotateLabels,
     'nativeTransitions': false,

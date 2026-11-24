@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:chart_benchmark_lab/benchmark/config.dart';
+import 'package:chart_benchmark_lab/benchmark/cpu_load.dart';
 import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:chart_benchmark_lab/benchmark/metrics.dart';
 import 'package:chart_benchmark_lab/benchmark/web_mode.dart';
@@ -252,6 +253,7 @@ class BenchmarkController(TickerProvider vsync, {Random? random})
   List<ChartLibrary> _batchOrder = const [];
   int? _batchIndex;
   bool _disposed = false;
+  final CpuLoad _load = CpuLoad();
 
   /// Whether a sequential capture of all engines is in progress.
   bool get batchCapturing => _batchIndex != null;
@@ -528,9 +530,23 @@ class BenchmarkController(TickerProvider vsync, {Random? random})
     notifyListeners();
   }
 
+  /// Each change of the run state notifies, so the load follows it here: it
+  /// runs from the start of the warmup to the end of the timing drain, also
+  /// between the captures of a batch.
+  @override
+  void notifyListeners() {
+    if (config.cpuLoad && (running || finishing) && !_disposed) {
+      _load.start();
+    } else {
+      _load.stop();
+    }
+    super.notifyListeners();
+  }
+
   @override
   void dispose() {
     _disposed = true;
+    _load.stop();
     _session++;
     _publisher.cancel();
     _drainTimer?.cancel();

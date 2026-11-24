@@ -19,6 +19,15 @@ class const ChangeLogEntry(
 /// when a change of the library or of the lab moves a figure. The full records
 /// are in `doc/performance.md` of the Chart.js port.
 const List<ChangeLogEntry> changeLog = [
+  ChangeLogEntry('2026-11-24', [
+    'Lab: a Background CPU load setting, on by default. During a test, one '
+        'background thread (an isolate, or a Web Worker on the web) keeps a '
+        'core busy. A light chart otherwise leaves the CPU almost idle, so '
+        'the system keeps the app on efficiency cores at low clocks, and the '
+        'Chart.js port shows slower frames than a busier library. A run with '
+        'the load has the key cpuLoad, so it does not compare with an earlier '
+        'saved run.',
+  ]),
   ChangeLogEntry('2026-11-15', [
     'Lab: a fifth library, apexcharts_flutter 0.1.2, a native port of '
         'ApexCharts 4.7.0. It has no polar area or sankey chart. It runs each '

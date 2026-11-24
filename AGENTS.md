@@ -465,6 +465,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   and a test goes on. A desktop trackpad differs by library (the host of the
   Chart.js port maps it to `wheel` events while the toggle "Trackpad gestures",
   `BenchmarkConfig.trackpad`, is on): `zoomsWith` states it.
+  The setting "Background CPU load" (`BenchmarkConfig.cpuLoad`, on by default) keeps one
+  isolate (a Web Worker on the web) busy from the start of a test to the end of its timing drain
+  (`lib/benchmark/cpu_load.dart`), so a light chart runs on performance cores at high clocks. A
+  run with it has the key `cpuLoad`. `flutter test` gets no load.
   Run `dart run melos run benchmark:macos` for profile measurements. Dependencies
   are pinned; Syncfusion is included under the owner's confirmed eligible license.
   Shared seeded data and controls live in `lib/benchmark`, adapters in
