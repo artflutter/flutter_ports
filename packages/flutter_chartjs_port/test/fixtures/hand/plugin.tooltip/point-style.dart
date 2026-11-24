@@ -1,9 +1,15 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.tooltip/point-style.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../fixture_events.dart';
@@ -16,7 +22,7 @@ import '../../fixture_events.dart';
 /// and draws the tooltip. The canvas of the harness is at the origin of its
 /// host: `canvas.getBoundingClientRect()` gives the left and the top 0 (row
 /// `harness-fixture-sources`).
-Map<String, Object?> fixture() {
+FixtureConfig fixture() {
   // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
   const pointStyles = <Object?>[
     CirclePointStyle(),
@@ -32,53 +38,51 @@ Map<String, Object?> fixture() {
     false,
   ];
 
-  Map<String, Object?> newDataset(Object? pointStyle, int i) =>
-      <String, Object?>{
-        'label': '',
-        'data': [for (final _ in pointStyles) i],
-        'pointStyle': pointStyle,
-        'pointBackgroundColor': '#0000ff',
-        'pointBorderColor': '#00ff00',
-        'showLine': false,
-      };
+  LineDataset newDataset(Object? pointStyle, int i) => LineDataset(
+    label: '',
+    data: .values(<num?>[for (final _ in pointStyles) i]),
+    // A PointStyle, or `false` (no point style) in extra.
+    pointStyle: pointStyle is PointStyle ? .constant(pointStyle) : null,
+    pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
+    pointBorderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+    showLine: false,
+    extra: pointStyle is PointStyle
+        ? null
+        : <String, Object?>{'pointStyle': pointStyle},
+  );
 
-  return <String, Object?>{
-    'config': <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          for (final (i, pointStyle) in pointStyles.indexed)
-            newDataset(pointStyle, i),
-        ],
-        'labels': <Object?>[for (final _ in pointStyles) ''],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'x': <String, Object?>{'display': ScaleDisplay.off},
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'y': <String, Object?>{'display': ScaleDisplay.off},
-        },
-        'elements': <String, Object?>{
-          'line': <String, Object?>{'fill': FillTarget.none},
-        },
-        'plugins': <String, Object?>{
-          'legend': false,
-          'title': false,
-          'filler': false,
-          // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-          'tooltip': TooltipOptions(
-            // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
-            mode: const NearestInteractionMode(),
-            intersect: false,
-            padding: const EdgeInsets.all(5),
-            usePointStyle: true,
-            callbacks: TooltipCallbacks(label: (tooltip, arg) => ['​']),
-          ),
-        },
-        'layout': <String, Object?>{'padding': const EdgeInsets.all(15)},
-      },
-      'plugins': <Plugin<Object?>>[
+  return FixtureConfig.typed(
+    ChartConfig(
+      datasets: [
+        for (final (i, pointStyle) in pointStyles.indexed)
+          newDataset(pointStyle, i),
+      ],
+      labels: <Object>[for (final _ in pointStyles) ''],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+      elements: ChartElements(line: LineElementStyle(fill: FillTarget.none)),
+      padding: const EdgeInsets.all(15),
+      pluginOptions: [
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        TooltipOptions(
+          // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
+          mode: const NearestInteractionMode(),
+          intersect: false,
+          padding: const EdgeInsets.all(5),
+          usePointStyle: true,
+          callbacks: TooltipCallbacks(label: (tooltip, arg) => ['​']),
+        ),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<FillerPlugin>(),
+      ],
+      plugins: [
         // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
         Plugin<Object?>(
           id: 'inline',
@@ -97,9 +101,9 @@ Map<String, Object?> fixture() {
           },
         ),
       ],
-    },
-    'options': <String, Object?>{
+    ),
+    options: <String, Object?>{
       'canvas': <String, Object?>{'height': 256, 'width': 512},
     },
-  };
+  );
 }

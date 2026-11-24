@@ -1,9 +1,15 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.tooltip/color-box-border-dash.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../fixture_events.dart';
@@ -17,61 +23,54 @@ import '../../fixture_events.dart';
 /// [Chart]) and to the tooltip, and draws the tooltip. The canvas of the
 /// harness is at the origin of its host: `canvas.getBoundingClientRect()`
 /// gives the left and the top 0 (row `harness-fixture-sources`).
-Map<String, Object?> fixture() => <String, Object?>{
-  'config': <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[8, 7, 6, 5],
-          'pointBorderColor': '#ff0000',
-          'pointBackgroundColor': '#00ff00',
-          'showLine': false,
-        },
-      ],
-      'labels': <Object?>['', '', '', ''],
-    },
-    'options': <String, Object?>{
-      'scales': <String, Object?>{
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'x': <String, Object?>{'display': ScaleDisplay.off},
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'y': <String, Object?>{'display': ScaleDisplay.off},
-      },
-      'elements': <String, Object?>{
-        'line': <String, Object?>{'fill': FillTarget.none},
-      },
-      'plugins': <String, Object?>{
-        'legend': false,
-        'title': false,
-        'filler': false,
-        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-        'tooltip': TooltipOptions(
-          // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
-          mode: const NearestInteractionMode(),
-          intersect: false,
-          callbacks: TooltipCallbacks(
-            label: (tooltip, arg) => ['​'],
-            labelColor: (tooltip, tooltipItem) {
-              final meta = tooltipItem.chart.getDatasetMeta(
-                tooltipItem.datasetIndex,
-              );
-              final options = meta.controller!.getStyle(tooltipItem.dataIndex);
-              return TooltipLabelStyle(
-                borderColor: jsGet(options, 'borderColor')! as ChartPaint,
-                backgroundColor:
-                    jsGet(options, 'backgroundColor')! as ChartPaint,
-                borderWidth: 2,
-                borderDash: <double>[2, 2],
-              );
-            },
-          ),
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      LineDataset(
+        data: .values(<num?>[8, 7, 6, 5]),
+        pointBorderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+        pointBackgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
+        showLine: false,
+      ),
+    ],
+    labels: <Object>['', '', '', ''],
+    scales: [
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+    ],
+    elements: ChartElements(line: LineElementStyle(fill: FillTarget.none)),
+    padding: const EdgeInsets.all(15),
+    pluginOptions: [
+      // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+      TooltipOptions(
+        // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
+        mode: const NearestInteractionMode(),
+        intersect: false,
+        callbacks: TooltipCallbacks(
+          label: (tooltip, arg) => ['​'],
+          labelColor: (tooltip, tooltipItem) {
+            final meta = tooltipItem.chart.getDatasetMeta(
+              tooltipItem.datasetIndex,
+            );
+            final options = meta.controller!.getStyle(tooltipItem.dataIndex);
+            return TooltipLabelStyle(
+              borderColor: jsGet(options, 'borderColor')! as ChartPaint,
+              backgroundColor: jsGet(options, 'backgroundColor')! as ChartPaint,
+              borderWidth: 2,
+              borderDash: <double>[2, 2],
+            );
+          },
         ),
-      },
-
-      'layout': <String, Object?>{'padding': const EdgeInsets.all(15)},
-    },
-    'plugins': <Plugin<Object?>>[
+      ),
+    ],
+    disabledPlugins: [
+      PluginOff<LegendPlugin>(),
+      PluginOff<TitlePlugin>(),
+      PluginOff<FillerPlugin>(),
+    ],
+    plugins: [
       // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
       Plugin<Object?>(
         id: 'inline',
@@ -88,8 +87,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       ),
     ],
-  },
-  'options': <String, Object?>{
+  ),
+  options: <String, Object?>{
     'canvas': <String, Object?>{'height': 256, 'width': 512},
   },
-};
+);

@@ -1,17 +1,24 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.filler/line/dataset/interpolated.js (MIT, Chart.js Contributors).
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
 /// The module loop makes the data with `Math.sin` and `Math.cos`. The smoke
 /// test of the fixture asserts no value, so `dart:math` is sufficient
 /// (Chart.js ADR 0034).
-Map<String, Object?> fixture() {
+FixtureConfig fixture() {
   final data1 = <Object?>[];
   final data2 = <Object?>[];
   final data3 = <Object?>[];
@@ -32,37 +39,61 @@ Map<String, Object?> fixture() {
     }
   }
 
-  return <String, Object?>{
-    'config': <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'borderColor': 'rgba(255, 0, 0, 0.5)',
-            'backgroundColor': 'rgba(255, 0, 0, 0.25)',
-            'data': data1,
-            // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-            'fill': FillTarget.none,
-          },
-          <String, Object?>{
-            'borderColor': 'rgba(0, 0, 255, 0.5)',
-            'backgroundColor': 'rgba(0, 0, 255, 0.25)',
+  return FixtureConfig.typed(
+    ChartConfig(
+      datasets: [
+        LineDataset(
+          borderColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.5)),
+          ),
+          backgroundColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(255, 0, 0, 0.25)),
+          ),
+          // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
+          fill: FillTarget.none,
+          extra: <String, Object?>{'data': data1},
+        ),
+        LineDataset(
+          borderColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.5)),
+          ),
+          backgroundColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(0, 0, 255, 0.25)),
+          ),
+          extra: <String, Object?>{
             'data': data2,
             // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
             'fill': const FillTarget.toDataset(0),
           },
-          <String, Object?>{
-            'borderColor': 'rgba(0, 255, 0, 0.5)',
-            'backgroundColor': 'rgba(0, 255, 0, 0.25)',
+        ),
+        LineDataset(
+          borderColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.5)),
+          ),
+          backgroundColor: .constant(
+            ChartPaint.solid(Color.fromRGBO(0, 255, 0, 0.25)),
+          ),
+          extra: <String, Object?>{
             'data': data3,
             // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
             'fill': const FillTarget.toDataset(1),
           },
-        ],
-      },
-      'options': <String, Object?>{
-        'animation': false,
-        'responsive': false,
+        ),
+      ],
+      animation: ChartAnimation.none,
+      responsive: false,
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.x, display: ScaleDisplay.off),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<TooltipPlugin>(),
+      ],
+      extra: <String, Object?>{
         'datasets': <String, Object?>{
           'line': <String, Object?>{
             'tension': 0.4,
@@ -70,21 +101,10 @@ Map<String, Object?> fixture() {
             'pointRadius': 1.5,
           },
         },
-        'plugins': <String, Object?>{
-          'legend': false,
-          'title': false,
-          'tooltip': false,
-        },
-        'scales': <String, Object?>{
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'x': <String, Object?>{'type': 'linear', 'display': ScaleDisplay.off},
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'y': <String, Object?>{'type': 'linear', 'display': ScaleDisplay.off},
-        },
       },
-    },
-    'options': <String, Object?>{
+    ),
+    options: <String, Object?>{
       'canvas': <String, Object?>{'height': 512, 'width': 512},
     },
-  };
+  );
 }

@@ -1,8 +1,14 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.colors/dynamic-datasets-default.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -11,35 +17,26 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 /// [notifyArrayListeners], the body of the hooked method (differences.md
 /// row platform-array-events). The datasets array has no listeners, so the
 /// notification does nothing, as upstream.
-Map<String, Object?> fixture() {
-  return <String, Object?>{
-    'config': <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>[0, 1, 2, 3, 4, 5],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[5, 5, 5, 5, 5, 5],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'ticks': <String, Object?>{'display': false},
-          },
-          'y': <String, Object?>{
-            'ticks': <String, Object?>{'display': false},
-          },
-        },
+FixtureConfig fixture() {
+  return FixtureConfig.typed(
+    ChartConfig(
+      datasets: [
+        BarDataset(data: .values(<num?>[5, 5, 5, 5, 5, 5])),
+      ],
+      labels: <Object>[0, 1, 2, 3, 4, 5],
+      scales: [
+        CategoryAxis(CartesianAxis.x, ticks: AxisTicks(display: false)),
+        LinearAxis(CartesianAxis.y, ticks: AxisTicks(display: false)),
+      ],
+      disabledPlugins: [PluginOff<LegendPlugin>()],
+      extra: <String, Object?>{
         'plugins': <String, Object?>{
-          'legend': false,
           // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
           'colors': const ColorsPluginOptions(enabled: true),
         },
       },
-    },
-    'options': <String, Object?>{
+    ),
+    options: <String, Object?>{
       'run': (Chart chart) {
         final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
         final item = <String, Object?>{
@@ -51,5 +48,5 @@ Map<String, Object?> fixture() {
         chart.update();
       },
     },
-  };
+  );
 }

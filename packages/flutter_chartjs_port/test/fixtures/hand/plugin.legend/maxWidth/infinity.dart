@@ -1,41 +1,46 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.legend/maxWidth/infinity.js (MIT, Chart.js Contributors).
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
 /// `Infinity` is [double.infinity].
-Map<String, Object?> fixture() => <String, Object?>{
-  'config': <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'labels': <Object?>['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      'datasets': <Object?>[
-        <String, Object?>{
-          'label': '# of Votes',
-          'data': <Object?>[12, 19, 3, 5, 2, 3],
-          'borderWidth': 1,
-        },
-        <String, Object?>{
-          'label': '# of Points',
-          'data': <Object?>[7, 11, 5, 8, 3, 7],
-          'borderWidth': 1,
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'scales': <String, Object?>{
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'x': <String, Object?>{'display': ScaleDisplay.off},
-        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-        'y': <String, Object?>{'display': ScaleDisplay.off},
-      },
+FixtureConfig fixture() => FixtureConfig.typed(
+  ChartConfig(
+    datasets: [
+      LineDataset(
+        label: '# of Votes',
+        data: .values(<num?>[12, 19, 3, 5, 2, 3]),
+        borderWidth: 1,
+      ),
+      LineDataset(
+        label: '# of Points',
+        data: .values(<num?>[7, 11, 5, 8, 3, 7]),
+        borderWidth: 1,
+      ),
+    ],
+    labels: <Object>['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    scales: [
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      CategoryAxis(CartesianAxis.x, display: ScaleDisplay.off),
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off),
+    ],
+    disabledPlugins: [
+      PluginOff<TitlePlugin>(),
+      PluginOff<TooltipPlugin>(),
+      PluginOff<FillerPlugin>(),
+    ],
+    extra: <String, Object?>{
       'plugins': <String, Object?>{
-        'title': false,
-        'tooltip': false,
-        'filler': false,
         // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
         'legend': const LegendOptions(
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
@@ -44,9 +49,9 @@ Map<String, Object?> fixture() => <String, Object?>{
         ),
       },
     },
-  },
-  'options': <String, Object?>{
+  ),
+  options: <String, Object?>{
     'spriteText': true,
     'canvas': <String, Object?>{'width': 150, 'height': 75},
   },
-};
+);

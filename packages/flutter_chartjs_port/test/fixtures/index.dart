@@ -1868,686 +1868,552 @@ final Map<String, HandFixture> handFixtures = {
   ),
   'mixed/bar+line.js': (load: mixed_bar_line.fixture, sha256: 'f125d76e617a'),
   'plugin.colors/bar.js': (
-    load: () => FixtureConfig.map(plugin_colors_bar.fixture()),
+    load: plugin_colors_bar.fixture,
     sha256: '5b7d6e37a317',
   ),
   'plugin.colors/bubble.js': (
-    load: () => FixtureConfig.map(plugin_colors_bubble.fixture()),
+    load: plugin_colors_bubble.fixture,
     sha256: '6fb32bf556f5',
   ),
   'plugin.colors/chart-options-colors.js': (
-    load: () => FixtureConfig.map(plugin_colors_chart_options_colors.fixture()),
+    load: plugin_colors_chart_options_colors.fixture,
     sha256: 'fb21860abf67',
   ),
   'plugin.colors/doughnut.js': (
-    load: () => FixtureConfig.map(plugin_colors_doughnut.fixture()),
+    load: plugin_colors_doughnut.fixture,
     sha256: 'fd2dd53074e7',
   ),
   'plugin.colors/line.js': (
-    load: () => FixtureConfig.map(plugin_colors_line.fixture()),
+    load: plugin_colors_line.fixture,
     sha256: 'b95c8e8ea646',
   ),
   'plugin.colors/mixed.js': (
-    load: () => FixtureConfig.map(plugin_colors_mixed.fixture()),
+    load: plugin_colors_mixed.fixture,
     sha256: 'd0f227780986',
   ),
   'plugin.colors/pie.js': (
-    load: () => FixtureConfig.map(plugin_colors_pie.fixture()),
+    load: plugin_colors_pie.fixture,
     sha256: '23c64ed648be',
   ),
   'plugin.colors/polarArea.js': (
-    load: () => FixtureConfig.map(plugin_colors_polararea.fixture()),
+    load: plugin_colors_polararea.fixture,
     sha256: '96de1594ef64',
   ),
   'plugin.colors/radar.js': (
-    load: () => FixtureConfig.map(plugin_colors_radar.fixture()),
+    load: plugin_colors_radar.fixture,
     sha256: '94c1d1e9d1e0',
   ),
   'plugin.colors/scatter.js': (
-    load: () => FixtureConfig.map(plugin_colors_scatter.fixture()),
+    load: plugin_colors_scatter.fixture,
     sha256: '5ad61f0e7a29',
   ),
   'plugin.colors/dynamic-datasets-default.js': (
-    load: () =>
-        FixtureConfig.map(plugin_colors_dynamic_datasets_default.fixture()),
+    load: plugin_colors_dynamic_datasets_default.fixture,
     sha256: 'f855a092e685',
   ),
   'plugin.colors/dynamic-datasets-force-override.js': (
-    load: () => FixtureConfig.map(
-      plugin_colors_dynamic_datasets_force_override.fixture(),
-    ),
+    load: plugin_colors_dynamic_datasets_force_override.fixture,
     sha256: 'f3ad48682a29',
   ),
   'plugin.filler/line/above-below-vertical-linechart.js': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_above_below_vertical_linechart.fixture(),
-    ),
+    load: plugin_filler_line_above_below_vertical_linechart.fixture,
     sha256: 'd57e7980d449',
   ),
   'plugin.filler/line/before-dataset-draw.js': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_before_dataset_draw.fixture()),
+    load: plugin_filler_line_before_dataset_draw.fixture,
     sha256: 'f1c3e3ffd23d',
   ),
   'plugin.filler/line/before-datasets-draw.js': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_before_datasets_draw.fixture()),
+    load: plugin_filler_line_before_datasets_draw.fixture,
     sha256: '75c315ee70b7',
   ),
   'plugin.filler/line/boundary/above-below-line-null-start.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_boundary_above_below_line_null_start.fixture(),
-    ),
+    load: plugin_filler_line_boundary_above_below_line_null_start.fixture,
     sha256: '056a90d9f162',
   ),
   'plugin.filler/line/boundary/above-below-line-null.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_boundary_above_below_line_null.fixture(),
-    ),
+    load: plugin_filler_line_boundary_above_below_line_null.fixture,
     sha256: '5fd8772ba62b',
   ),
   'plugin.filler/line/boundary/end-span.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_boundary_end_span.fixture()),
+    load: plugin_filler_line_boundary_end_span.fixture,
     sha256: 'b8d82d21bbed',
   ),
   'plugin.filler/line/boundary/end.json': (
-    load: () => FixtureConfig.map(plugin_filler_line_boundary_end.fixture()),
+    load: plugin_filler_line_boundary_end.fixture,
     sha256: '8e9560da3312',
   ),
   'plugin.filler/line/boundary/origin-span-dual.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_boundary_origin_span_dual.fixture(),
-    ),
+    load: plugin_filler_line_boundary_origin_span_dual.fixture,
     sha256: 'dd7cb6f60abe',
   ),
   'plugin.filler/line/boundary/origin-span.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_boundary_origin_span.fixture()),
+    load: plugin_filler_line_boundary_origin_span.fixture,
     sha256: '70e44ba3f128',
   ),
   'plugin.filler/line/boundary/origin-spline-above.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_boundary_origin_spline_above.fixture(),
-    ),
+    load: plugin_filler_line_boundary_origin_spline_above.fixture,
     sha256: '464229ae7cf8',
   ),
   'plugin.filler/line/boundary/origin-spline-span.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_boundary_origin_spline_span.fixture(),
-    ),
+    load: plugin_filler_line_boundary_origin_spline_span.fixture,
     sha256: '0857764d15ef',
   ),
   'plugin.filler/line/boundary/origin-spline.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_boundary_origin_spline.fixture()),
+    load: plugin_filler_line_boundary_origin_spline.fixture,
     sha256: '64f80b7f22d1',
   ),
   'plugin.filler/line/boundary/origin-stepped-span.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_boundary_origin_stepped_span.fixture(),
-    ),
+    load: plugin_filler_line_boundary_origin_stepped_span.fixture,
     sha256: '3297a1dbfef5',
   ),
   'plugin.filler/line/boundary/origin-stepped.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_boundary_origin_stepped.fixture()),
+    load: plugin_filler_line_boundary_origin_stepped.fixture,
     sha256: '1219a3329e87',
   ),
   'plugin.filler/line/boundary/origin.json': (
-    load: () => FixtureConfig.map(plugin_filler_line_boundary_origin.fixture()),
+    load: plugin_filler_line_boundary_origin.fixture,
     sha256: 'f543e133289d',
   ),
   'plugin.filler/line/boundary/start-span.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_boundary_start_span.fixture()),
+    load: plugin_filler_line_boundary_start_span.fixture,
     sha256: '2eeca87ccb38',
   ),
   'plugin.filler/line/boundary/start.json': (
-    load: () => FixtureConfig.map(plugin_filler_line_boundary_start.fixture()),
+    load: plugin_filler_line_boundary_start.fixture,
     sha256: '799aeeee22de',
   ),
   'plugin.filler/line/dataset/border.json': (
-    load: () => FixtureConfig.map(plugin_filler_line_dataset_border.fixture()),
+    load: plugin_filler_line_dataset_border.fixture,
     sha256: 'f09a964e16e9',
   ),
   'plugin.filler/line/dataset/clip-bounds-x-off.js': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_dataset_clip_bounds_x_off.fixture(),
-    ),
+    load: plugin_filler_line_dataset_clip_bounds_x_off.fixture,
     sha256: '8836ab53d59c',
   ),
   'plugin.filler/line/dataset/clip-bounds-x.js': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_dataset_clip_bounds_x.fixture()),
+    load: plugin_filler_line_dataset_clip_bounds_x.fixture,
     sha256: 'bda46a00ed22',
   ),
   'plugin.filler/line/dataset/clip-bounds-y-off.js': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_dataset_clip_bounds_y_off.fixture(),
-    ),
+    load: plugin_filler_line_dataset_clip_bounds_y_off.fixture,
     sha256: 'b5bbf8a1a659',
   ),
   'plugin.filler/line/dataset/clip-bounds-y.js': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_dataset_clip_bounds_y.fixture()),
+    load: plugin_filler_line_dataset_clip_bounds_y.fixture,
     sha256: '90bfcba6e0f9',
   ),
   'plugin.filler/line/dataset/dual.json': (
-    load: () => FixtureConfig.map(plugin_filler_line_dataset_dual.fixture()),
+    load: plugin_filler_line_dataset_dual.fixture,
     sha256: 'd83b84901d83',
   ),
   'plugin.filler/line/dataset/interpolated.js': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_dataset_interpolated.fixture()),
+    load: plugin_filler_line_dataset_interpolated.fixture,
     sha256: '6b037bf196dd',
   ),
   'plugin.filler/line/dataset/no-border.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_dataset_no_border.fixture()),
+    load: plugin_filler_line_dataset_no_border.fixture,
     sha256: 'bd4bb11fd06e',
   ),
   'plugin.filler/line/dataset/span-dual.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_dataset_span_dual.fixture()),
+    load: plugin_filler_line_dataset_span_dual.fixture,
     sha256: 'e3e6ad8a49ac',
   ),
   'plugin.filler/line/dataset/span.json': (
-    load: () => FixtureConfig.map(plugin_filler_line_dataset_span.fixture()),
+    load: plugin_filler_line_dataset_span.fixture,
     sha256: '86f8063a20bf',
   ),
   'plugin.filler/line/dataset/spline-span-above.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_dataset_spline_span_above.fixture(),
-    ),
+    load: plugin_filler_line_dataset_spline_span_above.fixture,
     sha256: '1a335dcecb56',
   ),
   'plugin.filler/line/dataset/spline-span-below.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_dataset_spline_span_below.fixture(),
-    ),
+    load: plugin_filler_line_dataset_spline_span_below.fixture,
     sha256: '8c509ad6ec22',
   ),
   'plugin.filler/line/dataset/spline-span.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_dataset_spline_span.fixture()),
+    load: plugin_filler_line_dataset_spline_span.fixture,
     sha256: '0eb077970b95',
   ),
   'plugin.filler/line/dataset/spline.json': (
-    load: () => FixtureConfig.map(plugin_filler_line_dataset_spline.fixture()),
+    load: plugin_filler_line_dataset_spline.fixture,
     sha256: 'ffd7f1b534f6',
   ),
   'plugin.filler/line/dataset/stepped.json': (
-    load: () => FixtureConfig.map(plugin_filler_line_dataset_stepped.fixture()),
+    load: plugin_filler_line_dataset_stepped.fixture,
     sha256: 'ccfddf63096b',
   ),
   'plugin.filler/line/drawTimeFillFalse/beforeDatasetDraw.js': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_drawtimefillfalse_beforedatasetdraw.fixture(),
-    ),
+    load: plugin_filler_line_drawtimefillfalse_beforedatasetdraw.fixture,
     sha256: 'cdfb18aeb044',
   ),
   'plugin.filler/line/drawTimeFillFalse/beforeDatasetsDraw.js': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_drawtimefillfalse_beforedatasetsdraw.fixture(),
-    ),
+    load: plugin_filler_line_drawtimefillfalse_beforedatasetsdraw.fixture,
     sha256: '63411777b6d5',
   ),
   'plugin.filler/line/drawTimeFillFalse/beforeDraw.js': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_drawtimefillfalse_beforedraw.fixture(),
-    ),
+    load: plugin_filler_line_drawtimefillfalse_beforedraw.fixture,
     sha256: '38b68a18e4a4',
   ),
   'plugin.filler/line/offset-scale-minmax.js': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_offset_scale_minmax.fixture()),
+    load: plugin_filler_line_offset_scale_minmax.fixture,
     sha256: 'd54cf10ad44e',
   ),
   'plugin.filler/line/points-outside-canvas-initial.js': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_points_outside_canvas_initial.fixture(),
-    ),
+    load: plugin_filler_line_points_outside_canvas_initial.fixture,
     sha256: '009594cd8979',
   ),
   'plugin.filler/line/points-outside-canvas-update.js': (
-    load: () => FixtureConfig.map(
-      plugin_filler_line_points_outside_canvas_update.fixture(),
-    ),
+    load: plugin_filler_line_points_outside_canvas_update.fixture,
     sha256: 'cff53652abd9',
   ),
   'plugin.filler/line/segments/alignToPixels.js': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_segments_aligntopixels.fixture()),
+    load: plugin_filler_line_segments_aligntopixels.fixture,
     sha256: '7bafe2061cdb',
   ),
   'plugin.filler/line/segments/gap.js': (
-    load: () => FixtureConfig.map(plugin_filler_line_segments_gap.fixture()),
+    load: plugin_filler_line_segments_gap.fixture,
     sha256: '7c65b2aa556b',
   ),
   'plugin.filler/line/segments/slope.js': (
-    load: () => FixtureConfig.map(plugin_filler_line_segments_slope.fixture()),
+    load: plugin_filler_line_segments_slope.fixture,
     sha256: '2c5be7cc3c3d',
   ),
   'plugin.filler/line/shape.js': (
-    load: () => FixtureConfig.map(plugin_filler_line_shape.fixture()),
+    load: plugin_filler_line_shape.fixture,
     sha256: '8a625d91544e',
   ),
   'plugin.filler/line/stack-multiple-scales.js': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_line_stack_multiple_scales.fixture()),
+    load: plugin_filler_line_stack_multiple_scales.fixture,
     sha256: '635970d68aad',
   ),
   'plugin.filler/line/stack.json': (
-    load: () => FixtureConfig.map(plugin_filler_line_stack.fixture()),
+    load: plugin_filler_line_stack.fixture,
     sha256: '9c2707f9dd4a',
   ),
   'plugin.filler/line/value.json': (
-    load: () => FixtureConfig.map(plugin_filler_line_value.fixture()),
+    load: plugin_filler_line_value.fixture,
     sha256: '434c45f78dea',
   ),
   'plugin.filler/line/vertical.js': (
-    load: () => FixtureConfig.map(plugin_filler_line_vertical.fixture()),
+    load: plugin_filler_line_vertical.fixture,
     sha256: 'ea3de3ba05d4',
   ),
   'plugin.filler/radar/beforeDraw.js': (
-    load: () => FixtureConfig.map(plugin_filler_radar_beforedraw.fixture()),
+    load: plugin_filler_radar_beforedraw.fixture,
     sha256: '7e340f017db3',
   ),
   'plugin.filler/radar/boundary/end-circular.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_radar_boundary_end_circular.fixture()),
+    load: plugin_filler_radar_boundary_end_circular.fixture,
     sha256: '6e55c212112e',
   ),
   'plugin.filler/radar/boundary/end-span.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_radar_boundary_end_span.fixture()),
+    load: plugin_filler_radar_boundary_end_span.fixture,
     sha256: '0cc9ee209f89',
   ),
   'plugin.filler/radar/boundary/end.json': (
-    load: () => FixtureConfig.map(plugin_filler_radar_boundary_end.fixture()),
+    load: plugin_filler_radar_boundary_end.fixture,
     sha256: '38dad6e1b60c',
   ),
   'plugin.filler/radar/boundary/origin-circular.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_radar_boundary_origin_circular.fixture(),
-    ),
+    load: plugin_filler_radar_boundary_origin_circular.fixture,
     sha256: '6aa5b7a79095',
   ),
   'plugin.filler/radar/boundary/origin-span.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_radar_boundary_origin_span.fixture()),
+    load: plugin_filler_radar_boundary_origin_span.fixture,
     sha256: '3004e271547a',
   ),
   'plugin.filler/radar/boundary/origin-spline-span.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_radar_boundary_origin_spline_span.fixture(),
-    ),
+    load: plugin_filler_radar_boundary_origin_spline_span.fixture,
     sha256: '5915a985a7ba',
   ),
   'plugin.filler/radar/boundary/origin-spline.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_radar_boundary_origin_spline.fixture()),
+    load: plugin_filler_radar_boundary_origin_spline.fixture,
     sha256: '2189102509a3',
   ),
   'plugin.filler/radar/boundary/origin.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_radar_boundary_origin.fixture()),
+    load: plugin_filler_radar_boundary_origin.fixture,
     sha256: '10c3b90a279f',
   ),
   'plugin.filler/radar/boundary/start-circular.json': (
-    load: () => FixtureConfig.map(
-      plugin_filler_radar_boundary_start_circular.fixture(),
-    ),
+    load: plugin_filler_radar_boundary_start_circular.fixture,
     sha256: '19cf0bd096a1',
   ),
   'plugin.filler/radar/boundary/start-span.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_radar_boundary_start_span.fixture()),
+    load: plugin_filler_radar_boundary_start_span.fixture,
     sha256: '6f6639b6e9f0',
   ),
   'plugin.filler/radar/boundary/start.json': (
-    load: () => FixtureConfig.map(plugin_filler_radar_boundary_start.fixture()),
+    load: plugin_filler_radar_boundary_start.fixture,
     sha256: 'f8744ee79db8',
   ),
   'plugin.filler/radar/dataset/border.json': (
-    load: () => FixtureConfig.map(plugin_filler_radar_dataset_border.fixture()),
+    load: plugin_filler_radar_dataset_border.fixture,
     sha256: '94b5a3ac3142',
   ),
   'plugin.filler/radar/dataset/default.json': (
-    load: () =>
-        FixtureConfig.map(plugin_filler_radar_dataset_default.fixture()),
+    load: plugin_filler_radar_dataset_default.fixture,
     sha256: '7f9fa3d736bc',
   ),
   'plugin.filler/radar/dataset/span.json': (
-    load: () => FixtureConfig.map(plugin_filler_radar_dataset_span.fixture()),
+    load: plugin_filler_radar_dataset_span.fixture,
     sha256: '49fce1b429f2',
   ),
   'plugin.filler/radar/dataset/spline.json': (
-    load: () => FixtureConfig.map(plugin_filler_radar_dataset_spline.fixture()),
+    load: plugin_filler_radar_dataset_spline.fixture,
     sha256: 'f9bd42c61ec9',
   ),
   'plugin.filler/radar/value.json': (
-    load: () => FixtureConfig.map(plugin_filler_radar_value.fixture()),
+    load: plugin_filler_radar_value.fixture,
     sha256: 'aaa76214d47d',
   ),
   'plugin.legend/borderRadius/legend-border-radius.js': (
-    load: () => FixtureConfig.map(
-      plugin_legend_borderradius_legend_border_radius.fixture(),
-    ),
+    load: plugin_legend_borderradius_legend_border_radius.fixture,
     sha256: '819fb07d37b6',
   ),
   'plugin.legend/horizontal-rtl-hitbox.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_horizontal_rtl_hitbox.fixture()),
+    load: plugin_legend_horizontal_rtl_hitbox.fixture,
     sha256: '9936ce127cee',
   ),
   'plugin.legend/label-textAlign/center.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_label_textalign_center.fixture()),
+    load: plugin_legend_label_textalign_center.fixture,
     sha256: 'e3be05aa8c24',
   ),
   'plugin.legend/label-textAlign/horizontal-left.js': (
-    load: () => FixtureConfig.map(
-      plugin_legend_label_textalign_horizontal_left.fixture(),
-    ),
+    load: plugin_legend_label_textalign_horizontal_left.fixture,
     sha256: '10cd63040297',
   ),
   'plugin.legend/label-textAlign/horizontal-right.js': (
-    load: () => FixtureConfig.map(
-      plugin_legend_label_textalign_horizontal_right.fixture(),
-    ),
+    load: plugin_legend_label_textalign_horizontal_right.fixture,
     sha256: '2111136e56fd',
   ),
   'plugin.legend/label-textAlign/horizontal-rtl-left.js': (
-    load: () => FixtureConfig.map(
-      plugin_legend_label_textalign_horizontal_rtl_left.fixture(),
-    ),
+    load: plugin_legend_label_textalign_horizontal_rtl_left.fixture,
     sha256: '6592d373e581',
   ),
   'plugin.legend/label-textAlign/horizontal-rtl-right.js': (
-    load: () => FixtureConfig.map(
-      plugin_legend_label_textalign_horizontal_rtl_right.fixture(),
-    ),
+    load: plugin_legend_label_textalign_horizontal_rtl_right.fixture,
     sha256: '5c49ba37a57c',
   ),
   'plugin.legend/label-textAlign/left.js': (
-    load: () => FixtureConfig.map(plugin_legend_label_textalign_left.fixture()),
+    load: plugin_legend_label_textalign_left.fixture,
     sha256: '6a23f638e40b',
   ),
   'plugin.legend/label-textAlign/right.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_label_textalign_right.fixture()),
+    load: plugin_legend_label_textalign_right.fixture,
     sha256: 'd6e83cc4bac9',
   ),
   'plugin.legend/label-textAlign/rtl-center.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_label_textalign_rtl_center.fixture()),
+    load: plugin_legend_label_textalign_rtl_center.fixture,
     sha256: 'd5d3e08a45aa',
   ),
   'plugin.legend/label-textAlign/rtl-left.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_label_textalign_rtl_left.fixture()),
+    load: plugin_legend_label_textalign_rtl_left.fixture,
     sha256: '9a7268ff9c32',
   ),
   'plugin.legend/label-textAlign/rtl-right.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_label_textalign_rtl_right.fixture()),
+    load: plugin_legend_label_textalign_rtl_right.fixture,
     sha256: 'fbdd122559a9',
   ),
   'plugin.legend/legend-doughnut-bottom-center-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_bottom_center_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_bottom_center_mulitiline.fixture,
     sha256: '77c5b286e14a',
   ),
   'plugin.legend/legend-doughnut-bottom-center-single.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_bottom_center_single.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_bottom_center_single.fixture,
     sha256: '9aaf4d12535c',
   ),
   'plugin.legend/legend-doughnut-bottom-end-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_bottom_end_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_bottom_end_mulitiline.fixture,
     sha256: '2d9c9932b2dc',
   ),
   'plugin.legend/legend-doughnut-bottom-start-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_bottom_start_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_bottom_start_mulitiline.fixture,
     sha256: 'f5ba64d7d71a',
   ),
   'plugin.legend/legend-doughnut-left-center-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_left_center_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_left_center_mulitiline.fixture,
     sha256: '126b8911625f',
   ),
   'plugin.legend/legend-doughnut-left-center-single.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_left_center_single.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_left_center_single.fixture,
     sha256: '8e7623f20d43',
   ),
   'plugin.legend/legend-doughnut-left-default-center.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_left_default_center.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_left_default_center.fixture,
     sha256: '0d424666b8d4',
   ),
   'plugin.legend/legend-doughnut-left-end-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_left_end_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_left_end_mulitiline.fixture,
     sha256: 'd7f1039c05db',
   ),
   'plugin.legend/legend-doughnut-left-start-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_left_start_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_left_start_mulitiline.fixture,
     sha256: '2ea0336af675',
   ),
   'plugin.legend/legend-doughnut-point-style.json': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_legend_doughnut_point_style.fixture()),
+    load: plugin_legend_legend_doughnut_point_style.fixture,
     sha256: '45bf9d8ecf21',
   ),
   'plugin.legend/legend-doughnut-right-center-mulitiline-labels.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_right_center_mulitiline_labels.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_right_center_mulitiline_labels.fixture,
     sha256: 'bbd3bc84ac71',
   ),
   'plugin.legend/legend-doughnut-right-center-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_right_center_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_right_center_mulitiline.fixture,
     sha256: 'e71f27673cca',
   ),
   'plugin.legend/legend-doughnut-right-center-single.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_right_center_single.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_right_center_single.fixture,
     sha256: '841368c910cf',
   ),
   'plugin.legend/legend-doughnut-right-default-center.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_right_default_center.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_right_default_center.fixture,
     sha256: 'f2161b207223',
   ),
   'plugin.legend/legend-doughnut-right-end-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_right_end_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_right_end_mulitiline.fixture,
     sha256: '11fa62a18f94',
   ),
   'plugin.legend/legend-doughnut-right-start-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_right_start_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_right_start_mulitiline.fixture,
     sha256: 'a90b6bb40f1b',
   ),
   'plugin.legend/legend-doughnut-top-center-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_top_center_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_top_center_mulitiline.fixture,
     sha256: '6a78f70123e9',
   ),
   'plugin.legend/legend-doughnut-top-center-single.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_top_center_single.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_top_center_single.fixture,
     sha256: '107b3735a4f7',
   ),
   'plugin.legend/legend-doughnut-top-end-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_top_end_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_top_end_mulitiline.fixture,
     sha256: 'd974cb48496f',
   ),
   'plugin.legend/legend-doughnut-top-start-mulitiline.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_legend_doughnut_top_start_mulitiline.fixture(),
-    ),
+    load: plugin_legend_legend_doughnut_top_start_mulitiline.fixture,
     sha256: 'f44ef28e839c',
   ),
   'plugin.legend/legend-line-chart-area.json': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_legend_line_chart_area.fixture()),
+    load: plugin_legend_legend_line_chart_area.fixture,
     sha256: 'bea07feafefd',
   ),
   'plugin.legend/maxWidth/infinity.js': (
-    load: () => FixtureConfig.map(plugin_legend_maxwidth_infinity.fixture()),
+    load: plugin_legend_maxwidth_infinity.fixture,
     sha256: '66c879c203c1',
   ),
   'plugin.legend/maxWidth/undefined.js': (
-    load: () => FixtureConfig.map(plugin_legend_maxwidth_undefined.fixture()),
+    load: plugin_legend_maxwidth_undefined.fixture,
     sha256: '63eaad803fbc',
   ),
   'plugin.legend/maxWidth/value.js': (
-    load: () => FixtureConfig.map(plugin_legend_maxwidth_value.fixture()),
+    load: plugin_legend_maxwidth_value.fixture,
     sha256: '0a076add5350',
   ),
   'plugin.legend/padding/2cols-with-padding.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_padding_2cols_with_padding.fixture()),
+    load: plugin_legend_padding_2cols_with_padding.fixture,
     sha256: 'ea51cab97ce5',
   ),
   'plugin.legend/padding/add-column.js': (
-    load: () => FixtureConfig.map(plugin_legend_padding_add_column.fixture()),
+    load: plugin_legend_padding_add_column.fixture,
     sha256: 'bd23e530172e',
   ),
   'plugin.legend/pointStyle-width/legend-pointStyle-width-default.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_pointstyle_width_legend_pointstyle_width_default.fixture(),
-    ),
+    load:
+        plugin_legend_pointstyle_width_legend_pointstyle_width_default.fixture,
     sha256: 'd2952260c1a8',
   ),
   'plugin.legend/pointStyle-width/legend-pointStyle-width.json': (
-    load: () => FixtureConfig.map(
-      plugin_legend_pointstyle_width_legend_pointstyle_width.fixture(),
-    ),
+    load: plugin_legend_pointstyle_width_legend_pointstyle_width.fixture,
     sha256: 'b903fe95c19e',
   ),
   'plugin.legend/title/bottom-center-center.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_title_bottom_center_center.fixture()),
+    load: plugin_legend_title_bottom_center_center.fixture,
     sha256: '30e8784ec142',
   ),
   'plugin.legend/title/bottom-end-end.js': (
-    load: () => FixtureConfig.map(plugin_legend_title_bottom_end_end.fixture()),
+    load: plugin_legend_title_bottom_end_end.fixture,
     sha256: '7bb5a79c8ad2',
   ),
   'plugin.legend/title/bottom-start-start.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_title_bottom_start_start.fixture()),
+    load: plugin_legend_title_bottom_start_start.fixture,
     sha256: '17b7d477015e',
   ),
   'plugin.legend/title/left-center-center.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_title_left_center_center.fixture()),
+    load: plugin_legend_title_left_center_center.fixture,
     sha256: 'af66d7c01f7e',
   ),
   'plugin.legend/title/left-end-end.js': (
-    load: () => FixtureConfig.map(plugin_legend_title_left_end_end.fixture()),
+    load: plugin_legend_title_left_end_end.fixture,
     sha256: 'c4015274fe5c',
   ),
   'plugin.legend/title/left-start-start.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_title_left_start_start.fixture()),
+    load: plugin_legend_title_left_start_start.fixture,
     sha256: '70f168d3bd17',
   ),
   'plugin.legend/title/right-center-center.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_title_right_center_center.fixture()),
+    load: plugin_legend_title_right_center_center.fixture,
     sha256: '06f58695894d',
   ),
   'plugin.legend/title/right-end-end.js': (
-    load: () => FixtureConfig.map(plugin_legend_title_right_end_end.fixture()),
+    load: plugin_legend_title_right_end_end.fixture,
     sha256: '2254432957e1',
   ),
   'plugin.legend/title/right-start-start.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_title_right_start_start.fixture()),
+    load: plugin_legend_title_right_start_start.fixture,
     sha256: 'a11c759d2429',
   ),
   'plugin.legend/title/top-center-center.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_title_top_center_center.fixture()),
+    load: plugin_legend_title_top_center_center.fixture,
     sha256: '587008dba99c',
   ),
   'plugin.legend/title/top-end-end.js': (
-    load: () => FixtureConfig.map(plugin_legend_title_top_end_end.fixture()),
+    load: plugin_legend_title_top_end_end.fixture,
     sha256: '7c8115ddea42',
   ),
   'plugin.legend/title/top-start-start.js': (
-    load: () =>
-        FixtureConfig.map(plugin_legend_title_top_start_start.fixture()),
+    load: plugin_legend_title_top_start_start.fixture,
     sha256: '5f59112baca5',
   ),
   'plugin.subtitle/basic.js': (
-    load: () => FixtureConfig.map(plugin_subtitle_basic.fixture()),
+    load: plugin_subtitle_basic.fixture,
     sha256: '6c27489e32e7',
   ),
   'plugin.title/scriptable-options.js': (
-    load: () => FixtureConfig.map(plugin_title_scriptable_options.fixture()),
+    load: plugin_title_scriptable_options.fixture,
     sha256: '2a67dd8b043d',
   ),
   'plugin.tooltip/box-padding.js': (
-    load: () => FixtureConfig.map(plugin_tooltip_box_padding.fixture()),
+    load: plugin_tooltip_box_padding.fixture,
     sha256: 'f1046694a16a',
   ),
   'plugin.tooltip/caret-position.js': (
-    load: () => FixtureConfig.map(plugin_tooltip_caret_position.fixture()),
+    load: plugin_tooltip_caret_position.fixture,
     sha256: '204d3723a843',
   ),
   'plugin.tooltip/color-box-border-dash.js': (
-    load: () =>
-        FixtureConfig.map(plugin_tooltip_color_box_border_dash.fixture()),
+    load: plugin_tooltip_color_box_border_dash.fixture,
     sha256: 'a13adb1b6eef',
   ),
   'plugin.tooltip/color-box-border-radius.js': (
-    load: () =>
-        FixtureConfig.map(plugin_tooltip_color_box_border_radius.fixture()),
+    load: plugin_tooltip_color_box_border_radius.fixture,
     sha256: '98d9572c8437',
   ),
   'plugin.tooltip/corner-radius.js': (
-    load: () => FixtureConfig.map(plugin_tooltip_corner_radius.fixture()),
+    load: plugin_tooltip_corner_radius.fixture,
     sha256: '6806969b8ac2',
   ),
   'plugin.tooltip/opacity.js': (
-    load: () => FixtureConfig.map(plugin_tooltip_opacity.fixture()),
+    load: plugin_tooltip_opacity.fixture,
     sha256: '82f95f0a2fd0',
   ),
   'plugin.tooltip/point-style.js': (
-    load: () => FixtureConfig.map(plugin_tooltip_point_style.fixture()),
+    load: plugin_tooltip_point_style.fixture,
     sha256: '4d3b800e358b',
   ),
   'plugin.tooltip/positioning.js': (
-    load: () => FixtureConfig.map(plugin_tooltip_positioning.fixture()),
+    load: plugin_tooltip_positioning.fixture,
     sha256: '9644a47dcf84',
   ),
   'scale.category/invalid-data.js': (

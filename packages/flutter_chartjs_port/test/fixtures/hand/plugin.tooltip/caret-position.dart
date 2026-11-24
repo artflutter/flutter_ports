@@ -1,10 +1,17 @@
 // Ported from Chart.js v4.6.1 test/fixtures/plugin.tooltip/caret-position.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
+// Each call runs the module body again and gives new objects
+// (fixture.js:24): the chart keeps the Lists of its config and writes
+// into some of them.
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
 import 'dart:ui';
 
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../fixture_events.dart';
@@ -18,7 +25,7 @@ import '../../fixture_events.dart';
 /// gives the left and the top 0 (row `harness-fixture-sources`). The
 /// tooltip is `chart.tooltip` cast to [Tooltip] (Chart.js ADR 0039, section
 /// 1).
-Map<String, Object?> fixture() {
+FixtureConfig fixture() {
   final data = <Object?>[];
   for (var x = 1; x < 4; x++) {
     for (var y = 1; y < 4; y++) {
@@ -26,54 +33,46 @@ Map<String, Object?> fixture() {
     }
   }
 
-  return <String, Object?>{
-    'config': <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': data,
-            'backgroundColor': 'red',
-            'radius': 8,
-            'hoverRadius': 0,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'x': <String, Object?>{
-            'display': ScaleDisplay.off,
-            'min': 0.96,
-            'max': 3.04,
-          },
-          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
-          'y': <String, Object?>{
-            'display': ScaleDisplay.off,
-            'min': 1,
-            'max': 3,
-          },
-        },
-        'plugins': <String, Object?>{
-          'legend': false,
-          'title': false,
-          'filler': false,
-          // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
-          'tooltip': TooltipOptions(
-            // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
-            mode: const PointInteractionMode(),
-            intersect: true,
-            // spriteText: use white background to hide any gaps between fonts
-            // DIVERGES(chartjs): adapt-direct-colors, the native paint.
-            backgroundColor: const ChartPaint.solid(Color(0xFFFFFFFF)),
-            // DIVERGES(chartjs): adapt-direct-colors, the native paint.
-            borderColor: const ChartPaint.solid(Color(0xFF000000)),
-            borderWidth: 1,
-            callbacks: TooltipCallbacks(label: (tooltip, arg) => ['label']),
-          ),
-        },
-      },
-      'plugins': <Plugin<Object?>>[
+  return FixtureConfig.typed(
+    ChartConfig(
+      datasets: [
+        ScatterDataset(
+          backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
+          extra: <String, Object?>{'data': data, 'radius': 8, 'hoverRadius': 0},
+        ),
+      ],
+      scales: [
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(
+          CartesianAxis.x,
+          display: ScaleDisplay.off,
+          min: 0.96,
+          max: 3.04,
+        ),
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, min: 1, max: 3),
+      ],
+      pluginOptions: [
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        TooltipOptions(
+          // DIVERGES(chartjs): adapt-interaction-mode-objects, the mode.
+          mode: const PointInteractionMode(),
+          intersect: true,
+          // spriteText: use white background to hide any gaps between fonts
+          // DIVERGES(chartjs): adapt-direct-colors, the native paint.
+          backgroundColor: const ChartPaint.solid(Color(0xFFFFFFFF)),
+          // DIVERGES(chartjs): adapt-direct-colors, the native paint.
+          borderColor: const ChartPaint.solid(Color(0xFF000000)),
+          borderWidth: 1,
+          callbacks: TooltipCallbacks(label: (tooltip, arg) => ['label']),
+        ),
+      ],
+      disabledPlugins: [
+        PluginOff<LegendPlugin>(),
+        PluginOff<TitlePlugin>(),
+        PluginOff<FillerPlugin>(),
+      ],
+      plugins: [
         // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
         Plugin<Object?>(
           id: 'inline',
@@ -94,10 +93,10 @@ Map<String, Object?> fixture() {
           },
         ),
       ],
-    },
-    'options': <String, Object?>{
+    ),
+    options: <String, Object?>{
       'spriteText': true,
       'canvas': <String, Object?>{'height': 240, 'width': 320},
     },
-  };
+  );
 }

@@ -3,11 +3,12 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
-Map<String, Object?> fixture() => <String, Object?>{
+FixtureConfig fixture() => FixtureConfig.map(<String, Object?>{
   'config': <String, Object?>{
     'data': <String, Object?>{
       'labels': <Object?>[0, 1, 2, 3],
@@ -42,4 +43,4 @@ Map<String, Object?> fixture() => <String, Object?>{
       },
     },
   },
-};
+});
