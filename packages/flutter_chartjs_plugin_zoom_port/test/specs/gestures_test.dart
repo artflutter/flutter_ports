@@ -26,8 +26,9 @@ void main() {
         ),
       );
 
-      expect(chart.canvas!.style.touchAction, equals('none'));
-      expect(chart.canvas!.style.userSelect, equals('none'));
+      // `toBe('none')`: the typed members (Zoom ADR 0009).
+      expect(chart.canvas!.touchAction, equals(CanvasTouchAction.none));
+      expect(chart.canvas!.userSelect, isFalse);
     });
 
     testWidgets(
@@ -45,8 +46,9 @@ void main() {
           ),
         );
 
-        expect(chart.canvas!.style.userSelect, equals(''));
-        expect(chart.canvas!.style.touchAction, equals(''));
+        // `toBe('')`: the defaults of the typed members (Zoom ADR 0009).
+        expect(chart.canvas!.userSelect, isTrue);
+        expect(chart.canvas!.touchAction, equals(CanvasTouchAction.auto));
       },
     );
   });

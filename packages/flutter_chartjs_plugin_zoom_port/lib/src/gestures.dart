@@ -6,10 +6,10 @@
 /// A gesture manager tracks the pointers of one canvas (`pointerdown` on the
 /// canvas; `pointermove`, `pointerup` and `pointercancel` on its document)
 /// and turns them into the pan and pinch steps that the plugin once got from
-/// Hammer.js. The host gives the canvas listeners, the document and the
-/// style members through the extensions `CanvasEventTarget` and
-/// `CssStyleProperties` (Chart.js ADR 0108), so the upstream lines keep
-/// their form.
+/// Hammer.js. The host gives the canvas listeners and the document through
+/// the extension `CanvasEventTarget` (Chart.js ADR 0108), and the typed
+/// canvas members `touchAction` and `userSelect` in place of the style
+/// (Chart.js ADR 0200, Zoom ADR 0009).
 ///
 /// - The listeners are method tear-offs. Two tear-offs of one method of one
 ///   object are `==`, so `removeEventListener` removes the listener that
@@ -281,14 +281,14 @@ final class _GestureManager(
 
     // Suppress the browser's own scroll/zoom so gestures reach the canvas,
     // mirroring what Hammer configured on its manager.
-    _previousTouchAction = _canvas.style.touchAction;
-    _canvas.style.touchAction = 'none';
+    // DIVERGES(zoom): adapt-canvas-style-members, the typed members.
+    _previousTouchAction = _canvas.touchAction;
+    _canvas.touchAction = CanvasTouchAction.none;
 
     // Stop a drag from selecting text or other page content, as Hammer did
-    // while a manager was active.
-    _previousUserSelect = _canvas.style.userSelect;
-    _canvas.style.userSelect = 'none';
-    _canvas.style.setProperty('-webkit-user-select', 'none');
+    // while a manager was active. `-webkit-user-select` is `userSelect` too.
+    _previousUserSelect = _canvas.userSelect;
+    _canvas.userSelect = false;
 
     _canvas.addEventListener('pointerdown', _onPointerDown);
     _doc.addEventListener('pointermove', _onPointerMove);
@@ -309,10 +309,10 @@ final class _GestureManager(
   late final bool Function(GestureEvent event) _enabler;
 
   /// gestures.ts:181 `previousTouchAction`.
-  late final String _previousTouchAction;
+  late final CanvasTouchAction _previousTouchAction;
 
   /// gestures.ts:182 `previousUserSelect`.
-  late final String _previousUserSelect;
+  late final bool _previousUserSelect;
 
   /// gestures.ts:184 `pointers`: the tracked pointers by `pointerId`, in the
   /// order of their first `pointerdown`.
@@ -334,9 +334,10 @@ final class _GestureManager(
     _doc.removeEventListener('pointermove', _onPointerMove);
     _doc.removeEventListener('pointerup', _onPointerUp);
     _doc.removeEventListener('pointercancel', _onPointerCancel);
-    _canvas.style.touchAction = _previousTouchAction;
-    _canvas.style.userSelect = _previousUserSelect;
-    _canvas.style.removeProperty('-webkit-user-select');
+    // DIVERGES(zoom): adapt-canvas-style-members, the typed members.
+    _canvas
+      ..touchAction = _previousTouchAction
+      ..userSelect = _previousUserSelect;
     _abortGesture();
   }
 

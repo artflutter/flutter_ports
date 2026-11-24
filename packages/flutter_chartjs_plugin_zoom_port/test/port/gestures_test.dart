@@ -9,8 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 // The gesture manager of src/gestures.ts on a `ChartView` in a vertical
 // `ListView`, driven by the touch events of Flutter through `WidgetTester`
-// (design §5 item 5). The manager writes `touch-action: none` into the
-// style of the canvas (`src/gestures.ts:198-201`). With it, the chart host
+// (design §5 item 5). The manager sets `touchAction` of the canvas to
+// `CanvasTouchAction.none` (`src/gestures.ts:198-201`, Zoom ADR 0009). With
+// it, the chart host
 // begins no pan of its own and claims the touch pointers in the gesture
 // arena (Chart.js ADR 0108 §8): the pointer events reach the manager, and
 // the list does not scroll. The specs dispatch synthetic pointer events on
@@ -116,7 +117,7 @@ void main() {
       ),
       controller,
     );
-    expect(chart.canvas!.style.touchAction, 'none');
+    expect(chart.canvas!.touchAction, CanvasTouchAction.none);
     final y = chart.scales['y']!;
     final pixelsPerValue =
         (y.getPixelForValue(0) - y.getPixelForValue(100)) / 100;
@@ -153,7 +154,7 @@ void main() {
       ),
       controller,
     );
-    expect(chart.canvas!.style.touchAction, isNot('none'));
+    expect(chart.canvas!.touchAction, CanvasTouchAction.auto);
     final gesture = await tester.startGesture(_center(chart));
     for (var i = 0; i < 5; i++) {
       await gesture.moveBy(const Offset(0, -20));
@@ -180,7 +181,7 @@ void main() {
       ),
       controller,
     );
-    expect(chart.canvas!.style.touchAction, 'none');
+    expect(chart.canvas!.touchAction, CanvasTouchAction.none);
     final center = _center(chart);
 
     // Two fingers on a diagonal move apart to twice their distance: both
