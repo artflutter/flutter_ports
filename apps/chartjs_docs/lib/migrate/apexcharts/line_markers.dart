@@ -31,7 +31,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
       pointBorderColor: .constant(.solid(Colors.white)),
       pointHoverBackgroundColor: .constant(.solid(Apex.blue)),
       pointHoverBorderColor: .constant(.solid(Colors.white)),
-      extra: {'pointHoverBorderWidth': 2},
+      pointHoverBorderWidth: .constant(2),
     ),
   ],
   maintainAspectRatio: false,

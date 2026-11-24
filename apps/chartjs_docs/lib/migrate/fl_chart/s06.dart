@@ -23,10 +23,11 @@ LineDataset _line(List<num> ys, Color from, Color to, Color text) =>
         for (var i = 0; i < ys.length; i++)
           .solid(Color.lerp(from, to, i / (ys.length - 1))!),
       ]),
+      pointHitRadius: const .constant(12),
       extra: {
         'borderColor': horizontalGradient([from, to]),
-        'pointHitRadius': 12,
       },
+
       clip: ChartClip.none,
     );
 

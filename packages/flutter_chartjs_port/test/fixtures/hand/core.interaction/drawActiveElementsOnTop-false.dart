@@ -28,7 +28,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
         ),
         hoverBackgroundColor: .constant(ChartPaint.solid(Color(0xFFFFFF00))),
         hoverRadius: 0,
-        extra: <String, Object?>{'drawActiveElementsOnTop': false},
+        drawActiveElementsOnTop: false,
       ),
     ],
     scales: [

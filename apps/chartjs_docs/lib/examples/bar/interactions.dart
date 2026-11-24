@@ -42,7 +42,7 @@ const hoverBars = BarDataset(
   hoverBackgroundColor: .constant(.solid(redFill)),
   hoverBorderColor: .constant(.solid(red)),
   hoverBorderWidth: 3,
-  extra: {'hoverBorderRadius': 8},
+  hoverBorderRadius: 8,
 );
 // #enddocregion bar-interactions
 

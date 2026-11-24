@@ -37,7 +37,7 @@ const baseBars = ChartConfig(
       borderColor: .constant(.solid(teal)),
       borderWidth: 1,
       // A value of the y axis, through extra.
-      extra: {'base': 60},
+      base: 60,
     ),
   ],
 );

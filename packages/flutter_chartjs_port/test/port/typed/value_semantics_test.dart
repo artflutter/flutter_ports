@@ -91,6 +91,12 @@ const List<String> _lineStyle = [
   'pointBorderWidth',
   'pointHoverBackgroundColor',
   'pointHoverBorderColor',
+  'borderDashOffset',
+  'capBezierPoints',
+  'drawActiveElementsOnTop',
+  'pointHitRadius',
+  'pointHoverBorderWidth',
+  'pointRotation',
 ];
 
 /// The parameter names of the pie and the doughnut arcs.
@@ -103,6 +109,11 @@ const List<String> _arcs = [
   'rotation',
   'cutout',
   'radius',
+  'borderAlign',
+  'borderJoinStyle',
+  'borderRadius',
+  'selfJoin',
+  'spacingMode',
 ];
 
 /// Each dataset class without parameters, with the names of its
@@ -127,6 +138,11 @@ const List<(Dataset, List<String>)> _datasets = [
       'minBarLength',
       'grouped',
       'borderSkipped',
+      'base',
+      'inflateAmount',
+      'skipNull',
+      'hoverBorderRadius',
+      'pointStyle',
       'extra',
     ],
   ),
@@ -171,6 +187,7 @@ const List<(Dataset, List<String>)> _datasets = [
       'radius',
       'hoverRadius',
       'pointStyle',
+      'drawActiveElementsOnTop',
       'extra',
     ],
   ),
@@ -186,6 +203,12 @@ const List<(Dataset, List<String>)> _datasets = [
       'offset',
       'hoverOffset',
       'spacing',
+      'borderAlign',
+      'borderJoinStyle',
+      'borderRadius',
+      'selfJoin',
+      'spacingMode',
+      'angle',
       'extra',
     ],
   ),

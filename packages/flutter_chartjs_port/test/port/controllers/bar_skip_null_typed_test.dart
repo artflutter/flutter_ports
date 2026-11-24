@@ -42,7 +42,7 @@ ChartConfig _config(int count, {required bool shown}) {
           borderWidth: 0,
           barPercentage: .8,
           categoryPercentage: 1,
-          extra: const {'skipNull': true},
+          skipNull: true,
         ),
     ],
     labels: [for (var i = 0; i < count; i++) 'c$i'],

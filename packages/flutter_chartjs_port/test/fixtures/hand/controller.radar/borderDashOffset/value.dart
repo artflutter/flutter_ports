@@ -21,7 +21,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
         borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
         // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
         borderDash: <double>[20],
-        extra: <String, Object?>{'borderDashOffset': 5.0},
+        borderDashOffset: 5,
       ),
       RadarDataset(data: <num?>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
     ],

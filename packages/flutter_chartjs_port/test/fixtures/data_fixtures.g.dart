@@ -1191,10 +1191,10 @@ FixtureConfig _controller_bar_bar_base_value() => FixtureConfig.typed(
     datasets: [
       BarDataset(
         data: .values(<num?>[5, 20, 10, 11]),
+        base: 10,
         backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
         borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
         borderWidth: 2,
-        extra: <String, Object?>{'base': 10},
       ),
     ],
     labels: <Object>[0, 1, 3, 4],
@@ -3918,8 +3918,8 @@ FixtureConfig _controller_doughnut_borderalign_value() => FixtureConfig.typed(
     datasets: [
       DoughnutDataset(
         data: <num?>[0, 2, 4, null, 6, 8],
+        borderAlign: ArcBorderAlign.inner,
         borderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        extra: <String, Object?>{'borderAlign': ArcBorderAlign.inner},
       ),
       DoughnutDataset(data: <num?>[0, 2, 4, null, 6, 8]),
     ],
@@ -4003,8 +4003,8 @@ FixtureConfig _controller_doughnut_borderdash_value() => FixtureConfig.typed(
     datasets: [
       PolarAreaDataset(
         data: <num?>[5, 2, 4, 7, 6, 8],
+        borderAlign: ArcBorderAlign.inner,
         borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-        extra: <String, Object?>{'borderAlign': ArcBorderAlign.inner},
       ),
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],
@@ -4047,9 +4047,9 @@ FixtureConfig _controller_doughnut_borderjoinstyle_miter() =>
             data: <num?>[0, 2, 4, null, 6, 8],
             backgroundColor: .constant(ChartPaint.solid(Color(0x00000000))),
             borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
+            borderJoinStyle: StrokeJoin.miter,
             borderWidth: 10,
             spacing: 20,
-            extra: <String, Object?>{'borderJoinStyle': StrokeJoin.miter},
           ),
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
@@ -4066,9 +4066,9 @@ FixtureConfig _controller_doughnut_borderjoinstyle_round() =>
             data: <num?>[0, 2, 4, null, 6, 8],
             backgroundColor: .constant(ChartPaint.solid(Color(0x00000000))),
             borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
+            borderJoinStyle: StrokeJoin.round,
             borderWidth: 10,
             spacing: 20,
-            extra: <String, Object?>{'borderJoinStyle': StrokeJoin.round},
           ),
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
@@ -4109,6 +4109,7 @@ FixtureConfig _controller_doughnut_borderradius_value_large_radius() =>
         datasets: [
           DoughnutDataset(
             data: <num?>[60, 15, 33, 44, 12],
+            borderRadius: 200,
             backgroundColor: .indexed(<ChartPaint>[
               ChartPaint.solid(Color(0xFFFF6384)),
               ChartPaint.solid(Color(0xFFFF9F40)),
@@ -4116,7 +4117,6 @@ FixtureConfig _controller_doughnut_borderradius_value_large_radius() =>
               ChartPaint.solid(Color(0xFF4BC0C0)),
               ChartPaint.solid(Color(0xFF36A2EB)),
             ]),
-            extra: <String, Object?>{'borderRadius': 200},
           ),
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
@@ -4129,10 +4129,7 @@ FixtureConfig _controller_doughnut_borderradius_value_small_number() =>
     FixtureConfig.typed(
       ChartConfig(
         datasets: [
-          DoughnutDataset(
-            data: <num?>[0, 2, 4, null, 6, 8],
-            extra: <String, Object?>{'borderRadius': 20},
-          ),
+          DoughnutDataset(data: <num?>[0, 2, 4, null, 6, 8], borderRadius: 20),
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
         elements: ChartElements(
@@ -4242,7 +4239,7 @@ FixtureConfig _controller_doughnut_doughnut_border_align_inner() =>
               ChartPaint.solid(Color(0xFF4BC0C0)),
               ChartPaint.solid(Color(0xFF9966FF)),
             ]),
-            extra: <String, Object?>{'borderAlign': ArcBorderAlign.inner},
+            borderAlign: ArcBorderAlign.inner,
           ),
         ],
         labels: <Object>['A', 'B', 'C', 'D', 'E'],
@@ -4589,7 +4586,7 @@ FixtureConfig _controller_doughnut_pie_border_align_inner() =>
               ChartPaint.solid(Color(0xFF4BC0C0)),
               ChartPaint.solid(Color(0xFF9966FF)),
             ]),
-            extra: <String, Object?>{'borderAlign': ArcBorderAlign.inner},
+            borderAlign: ArcBorderAlign.inner,
           ),
         ],
         labels: <Object>['A', 'B', 'C', 'D', 'E'],
@@ -4670,10 +4667,8 @@ FixtureConfig _controller_doughnut_selfjoin_doughnut() => FixtureConfig.typed(
         borderWidth: 15,
         backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
         borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-        extra: <String, Object?>{
-          'borderAlign': ArcBorderAlign.center,
-          'selfJoin': true,
-        },
+        borderAlign: ArcBorderAlign.center,
+        selfJoin: true,
       ),
     ],
     labels: <Object>['Red'],
@@ -4690,11 +4685,9 @@ FixtureConfig _controller_doughnut_selfjoin_pie() => FixtureConfig.typed(
         borderWidth: 15,
         backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
         borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-        extra: <String, Object?>{
-          'borderAlign': ArcBorderAlign.center,
-          'borderJoinStyle': StrokeJoin.round,
-          'selfJoin': true,
-        },
+        borderAlign: ArcBorderAlign.center,
+        borderJoinStyle: StrokeJoin.round,
+        selfJoin: true,
       ),
     ],
     labels: <Object>['Red'],
@@ -4713,7 +4706,7 @@ _controller_doughnut_selfjoin_single_slice_360_border_no_selfjoin() =>
             backgroundColor: .constant(ChartPaint.solid(Color(0xFFDDA7EE))),
             borderColor: .constant(ChartPaint.solid(Color(0xFF6E0D8F))),
             borderWidth: 1,
-            extra: <String, Object?>{'selfJoin': false},
+            selfJoin: false,
           ),
         ],
         labels: <Object>['A'],
@@ -4732,7 +4725,7 @@ _controller_doughnut_selfjoin_single_slice_360_border_selfjoin() =>
             backgroundColor: .constant(ChartPaint.solid(Color(0xFFDDA7EE))),
             borderColor: .constant(ChartPaint.solid(Color(0xFF6E0D8F))),
             borderWidth: 1,
-            extra: <String, Object?>{'selfJoin': true},
+            selfJoin: true,
           ),
         ],
         labels: <Object>['A'],
@@ -5104,7 +5097,7 @@ FixtureConfig _controller_polararea_border_align_inner() => FixtureConfig.typed(
           ChartPaint.solid(Color(0xFF4BC0C0)),
           ChartPaint.solid(Color(0xFF9966FF)),
         ]),
-        extra: <String, Object?>{'borderAlign': ArcBorderAlign.inner},
+        borderAlign: ArcBorderAlign.inner,
       ),
     ],
     labels: <Object>['A', 'B', 'C', 'D', 'E'],
@@ -5190,8 +5183,8 @@ FixtureConfig _controller_polararea_borderalign_value_dataset() =>
         datasets: [
           PolarAreaDataset(
             data: <num?>[0, 2, 4, null, 6, 8],
+            borderAlign: ArcBorderAlign.inner,
             borderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-            extra: <String, Object?>{'borderAlign': ArcBorderAlign.inner},
           ),
         ],
         labels: <Object>[0, 1, 2, 3, 4, 5],
@@ -5334,8 +5327,8 @@ FixtureConfig _controller_polararea_borderdash_value() => FixtureConfig.typed(
     datasets: [
       PolarAreaDataset(
         data: <num?>[5, 2, 4, 7, 6, 8],
+        borderAlign: ArcBorderAlign.inner,
         borderColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-        extra: <String, Object?>{'borderAlign': ArcBorderAlign.inner},
       ),
     ],
     labels: <Object>[0, 1, 2, 3, 4, 5],

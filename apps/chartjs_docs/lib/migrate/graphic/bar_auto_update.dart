@@ -85,7 +85,7 @@ class _GraphicBarAutoUpdateState() extends State<GraphicBarAutoUpdate> {
           barThickness: const BarThickness.pixels(barSize),
           // The bars start at 0, or at the bottom of the axis when 0 is
           // below it.
-          extra: {'base': max(range.min, 0)},
+          base: max(range.min, 0),
         ),
       ],
       scales: [

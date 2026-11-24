@@ -39487,7 +39487,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           backgroundColor: const ChartValue.constant(
             ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
           ),
-          extra: const <String, Object?>{'pointRotation': 30.0},
+          pointRotation: const ChartValue.constant(30),
         ),
         LineDataset(
           label: 'Dataset 2',
@@ -39496,14 +39496,14 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
           ),
           pointStyle: const ChartValue.constant(RectRotPointStyle()),
-          extra: const <String, Object?>{'pointRotation': 30.0},
+          pointRotation: const ChartValue.constant(30),
         ),
         LineDataset(
           label: 'Dataset 3',
           data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
           borderDash: const [4, 2],
           pointStyle: const ChartValue.constant(TrianglePointStyle()),
-          extra: const <String, Object?>{'pointRotation': 30.0},
+          pointRotation: const ChartValue.constant(30),
         ),
       ],
       pluginOptions: const [
@@ -60499,14 +60499,14 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           borderColor: const ChartValue.constant(
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
           ),
-          extra: const <String, Object?>{'pointStyle': RectRotPointStyle()},
+          pointStyle: const RectRotPointStyle(),
         ),
         BarDataset(
           label: 'Dataset 3',
           data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          pointStyle: const TrianglePointStyle(),
           extra: const <String, Object?>{
             'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
           },
         ),
       ],

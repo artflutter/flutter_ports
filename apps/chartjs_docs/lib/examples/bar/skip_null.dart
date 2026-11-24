@@ -31,13 +31,13 @@ const skipNullBars = ChartConfig(
       label: 'North',
       data: .values([65, null, 80, null, 56, 55, null]),
       backgroundColor: .constant(.solid(teal)),
-      extra: {'skipNull': true},
+      skipNull: true,
     ),
     BarDataset(
       label: 'South',
       data: .values([50, 62, null, 60, null, 66, 52]),
       backgroundColor: .constant(.solid(blue)),
-      extra: {'skipNull': true},
+      skipNull: true,
     ),
   ],
 );

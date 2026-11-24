@@ -39,7 +39,7 @@ final ChartConfig _config = ChartConfig(
       // The bars of Graphic start at 0, below the axis, and the region clips
       // them. The bars start at the bottom of the axis: the same look, and a
       // tap also selects a short bar.
-      extra: {'base': _range.min},
+      base: _range.min,
     ),
   ],
   scales: [

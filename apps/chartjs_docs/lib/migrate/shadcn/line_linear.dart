@@ -23,7 +23,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
       pointHoverRadius: .constant(4),
       pointBackgroundColor: .constant(.solid(Shadcn.chart1)),
       pointHoverBackgroundColor: .constant(.solid(Shadcn.chart1)),
-      extra: {'pointHoverBorderWidth': 0},
+      pointHoverBorderWidth: .constant(0),
     ),
   ],
   aspectRatio: 16 / 9,

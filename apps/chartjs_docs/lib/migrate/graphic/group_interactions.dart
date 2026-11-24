@@ -32,7 +32,7 @@ LineDataset _group(int index, String name) {
     pointBackgroundColor: .constant(.solid(color)),
     pointHoverRadius: const .constant(2.5),
     pointHoverBackgroundColor: .constant(.solid(color)),
-    extra: const {'pointHoverBorderWidth': 0},
+    pointHoverBorderWidth: const .constant(0),
   );
 }
 

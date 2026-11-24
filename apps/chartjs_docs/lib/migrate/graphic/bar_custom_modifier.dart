@@ -37,7 +37,7 @@ BarDataset _type(int index, String type) {
     categoryPercentage: 0.7,
     barPercentage: 0.67,
     // The bars start at the bottom of the axis.
-    extra: {'base': _range.min},
+    base: _range.min,
   );
 }
 

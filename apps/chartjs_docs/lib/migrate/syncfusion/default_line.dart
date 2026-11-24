@@ -29,7 +29,8 @@ LineDataset _series(String name, Color color, List<num> values) => LineDataset(
   pointBorderColor: .constant(.solid(color)),
   pointHoverBackgroundColor: const .constant(.solid(Colors.white)),
   pointHoverBorderColor: .constant(.solid(color)),
-  extra: const {'pointHoverBorderWidth': 2, 'pointHitRadius': 8},
+  pointHoverBorderWidth: const .constant(2),
+  pointHitRadius: const .constant(8),
 );
 
 List<String>? _year(Scale scale, double value, int index, List<Tick> ticks) => [

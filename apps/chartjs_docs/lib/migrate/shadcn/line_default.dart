@@ -25,7 +25,8 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
       pointHoverRadius: .constant(4),
       pointBackgroundColor: .constant(.solid(Shadcn.chart1)),
       pointHoverBackgroundColor: .constant(.solid(Shadcn.chart1)),
-      extra: {'pointHoverBorderWidth': 0, 'capBezierPoints': false},
+      pointHoverBorderWidth: .constant(0),
+      capBezierPoints: false,
     ),
   ],
   // The 16:9 of ChartContainer, and margin={{left: 12, right: 12}}.

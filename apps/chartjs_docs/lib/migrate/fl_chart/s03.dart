@@ -105,13 +105,13 @@ class _Sample3State() extends State<Sample3> {
           pointBorderWidth: 3,
           pointHoverBackgroundColor: const .constant(.solid(Colors.white)),
           pointHoverBorderColor: const .constant(.solid(Fl.yellow)),
+          pointHoverBorderWidth: const .constant(5),
           extra: {
             'stepped': SteppedLine.middle,
             'backgroundColor': verticalGradient(
               [Fl.red.withValues(alpha: 0.5), Fl.red.withValues(alpha: 0)],
               const [0.5, 1],
             ),
-            'pointHoverBorderWidth': 5,
           },
         ),
       ],

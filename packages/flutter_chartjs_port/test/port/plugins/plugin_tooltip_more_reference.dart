@@ -83,14 +83,14 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
           borderColor: const ChartValue.constant(
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
           ),
-          extra: const <String, Object?>{'pointStyle': RectRotPointStyle()},
+          pointStyle: const RectRotPointStyle(),
         ),
         BarDataset(
           label: 'Dataset 3',
           data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          pointStyle: const TrianglePointStyle(),
           extra: const <String, Object?>{
             'borderDash': <double>[4, 2],
-            'pointStyle': TrianglePointStyle(),
           },
         ),
       ],

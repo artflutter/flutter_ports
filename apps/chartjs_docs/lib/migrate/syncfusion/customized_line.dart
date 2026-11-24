@@ -85,7 +85,8 @@ final ChartConfig _config = ChartConfig(
       pointRadius: const .constant(0),
       pointHoverRadius: const .constant(0),
       clip: const ChartClip.all(0),
-      extra: const {'pointHitRadius': 0, 'animation': false},
+      pointHitRadius: const .constant(0),
+      extra: const {'animation': false},
     ),
     LineDataset(
       data: .points([
@@ -101,7 +102,8 @@ final ChartConfig _config = ChartConfig(
       pointBorderColor: const .constant(.solid(_marker)),
       pointHoverBackgroundColor: const .constant(.solid(Colors.white)),
       pointHoverBorderColor: const .constant(.solid(_marker)),
-      extra: const {'pointHoverBorderWidth': 2, 'pointHitRadius': 8},
+      pointHoverBorderWidth: const .constant(2),
+      pointHitRadius: const .constant(8),
     ),
   ],
   maintainAspectRatio: false,

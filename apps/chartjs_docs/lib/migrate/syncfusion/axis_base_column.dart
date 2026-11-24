@@ -47,7 +47,7 @@ ChartConfig _config(double crossAt) => ChartConfig(
       categoryPercentage: 0.7,
       barPercentage: 1,
       // crossesAt of the x axis: the value where the columns start.
-      extra: {'base': crossAt},
+      base: crossAt,
     ),
   ],
   maintainAspectRatio: false,

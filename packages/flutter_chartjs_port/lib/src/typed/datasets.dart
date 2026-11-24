@@ -355,6 +355,26 @@ final class const BarDataset({
   /// [BorderSkip]. The default is [BorderSkip.start], the edge at the base
   /// of the bar.
   final BorderSkip? borderSkipped,
+
+  /// The value where the bars start, in the units of the value axis: `base`.
+  /// The default is the start of the axis or 0.
+  final double? base,
+
+  /// The pixels that each side of a bar grows by: `inflateAmount`. Null is the
+  /// upstream `'auto'` (row `adapt-inflate-amount-auto`).
+  final double? inflateAmount,
+
+  /// Whether a null value takes no space in its category: `skipNull`.
+  final bool? skipNull,
+
+  /// The corner radius of a bar under the pointer, in pixels:
+  /// `hoverBorderRadius`.
+  final double? hoverBorderRadius,
+
+  /// The point style of the legend item of the dataset: `pointStyle`, with
+  /// `LegendLabelOptions.usePointStyle`.
+  final PointStyle? pointStyle,
+
   super.extra,
 }) extends Dataset {
   /// A bar dataset.
@@ -389,6 +409,11 @@ final class const BarDataset({
     double? minBarLength,
     bool? grouped,
     BorderSkip? borderSkipped,
+    double? base,
+    double? inflateAmount,
+    bool? skipNull,
+    double? hoverBorderRadius,
+    PointStyle? pointStyle,
     Map<String, Object?>? extra,
   }) => BarDataset(
     key: key ?? this.key,
@@ -417,6 +442,11 @@ final class const BarDataset({
     minBarLength: minBarLength ?? this.minBarLength,
     grouped: grouped ?? this.grouped,
     borderSkipped: borderSkipped ?? this.borderSkipped,
+    base: base ?? this.base,
+    inflateAmount: inflateAmount ?? this.inflateAmount,
+    skipNull: skipNull ?? this.skipNull,
+    hoverBorderRadius: hoverBorderRadius ?? this.hoverBorderRadius,
+    pointStyle: pointStyle ?? this.pointStyle,
     extra: extra ?? this.extra,
   );
 
@@ -444,6 +474,11 @@ final class const BarDataset({
     put(scope, OptionKey.minBarLength, minBarLength);
     put(scope, OptionKey.grouped, grouped);
     put(scope, OptionKey.borderSkipped, borderSkippedOf(borderSkipped));
+    put(scope, OptionKey.base, base);
+    put(scope, OptionKey.inflateAmount, inflateAmount);
+    put(scope, OptionKey.skipNull, skipNull);
+    put(scope, OptionKey.hoverBorderRadius, hoverBorderRadius);
+    put(scope, OptionKey.pointStyle, pointStyle);
   }
 
   @override
@@ -464,6 +499,11 @@ final class const BarDataset({
     ('minBarLength', minBarLength),
     ('grouped', grouped),
     ('borderSkipped', borderSkipped),
+    ('base', base),
+    ('inflateAmount', inflateAmount),
+    ('skipNull', skipNull),
+    ('hoverBorderRadius', hoverBorderRadius),
+    ('pointStyle', pointStyle),
     ('extra', byEntries(extra)),
   ];
 }
@@ -491,6 +531,12 @@ base mixin _LineStyle on Dataset {
   double? get pointBorderWidth;
   ChartValue<ChartPaint>? get pointHoverBackgroundColor;
   ChartValue<ChartPaint>? get pointHoverBorderColor;
+  double? get borderDashOffset;
+  bool? get capBezierPoints;
+  bool? get drawActiveElementsOnTop;
+  ChartValue<double>? get pointHitRadius;
+  ChartValue<double>? get pointHoverBorderWidth;
+  ChartValue<double>? get pointRotation;
 
   /// Writes the keys of the line style into [scope].
   void _lowerLine(OptionScope scope) {
@@ -526,6 +572,18 @@ base mixin _LineStyle on Dataset {
     if (pointHoverBorderColor case final value?) {
       scope.store(OptionKey.pointHoverBorderColor, value.toOptionCell());
     }
+    put(scope, OptionKey.borderDashOffset, borderDashOffset);
+    put(scope, OptionKey.capBezierPoints, capBezierPoints);
+    put(scope, OptionKey.drawActiveElementsOnTop, drawActiveElementsOnTop);
+    if (pointHitRadius case final value?) {
+      scope.store(OptionKey.pointHitRadius, value.toOptionCell());
+    }
+    if (pointHoverBorderWidth case final value?) {
+      scope.store(OptionKey.pointHoverBorderWidth, value.toOptionCell());
+    }
+    if (pointRotation case final value?) {
+      scope.store(OptionKey.pointRotation, value.toOptionCell());
+    }
   }
 
   /// The properties of the line style, in parameter order.
@@ -548,6 +606,12 @@ base mixin _LineStyle on Dataset {
     ('pointBorderWidth', pointBorderWidth),
     ('pointHoverBackgroundColor', pointHoverBackgroundColor),
     ('pointHoverBorderColor', pointHoverBorderColor),
+    ('borderDashOffset', borderDashOffset),
+    ('capBezierPoints', capBezierPoints),
+    ('drawActiveElementsOnTop', drawActiveElementsOnTop),
+    ('pointHitRadius', pointHitRadius),
+    ('pointHoverBorderWidth', pointHoverBorderWidth),
+    ('pointRotation', pointRotation),
   ];
 }
 
@@ -697,6 +761,30 @@ final class const LineDataset({
   /// The border color of a point under the pointer: `pointHoverBorderColor`.
   /// {@endtemplate}
   @override final ChartValue<ChartPaint>? pointHoverBorderColor,
+
+  /// The offset of the dash pattern of the line: `borderDashOffset`.
+  @override final double? borderDashOffset,
+
+  /// Whether the control points of a curve stay inside the chart area:
+  /// `capBezierPoints`. The default is `true`.
+  @override final bool? capBezierPoints,
+
+  /// Whether the points under the pointer draw over the other points:
+  /// `drawActiveElementsOnTop`. The default is `true`.
+  @override final bool? drawActiveElementsOnTop,
+
+  /// The extra radius of a point for a hit test, in pixels: `pointHitRadius`. A
+  /// [ChartValue], as `pointRadius`.
+  @override final ChartValue<double>? pointHitRadius,
+
+  /// The border width of a point under the pointer, in pixels:
+  /// `pointHoverBorderWidth`. A [ChartValue], as `pointRadius`.
+  @override final ChartValue<double>? pointHoverBorderWidth,
+
+  /// The rotation of the point style in degrees: `pointRotation`. A
+  /// [ChartValue], as `pointRadius`.
+  @override final ChartValue<double>? pointRotation,
+
   super.extra,
 }) extends Dataset with _LineStyle {
   /// A line dataset.
@@ -741,6 +829,12 @@ final class const LineDataset({
     double? pointBorderWidth,
     ChartValue<ChartPaint>? pointHoverBackgroundColor,
     ChartValue<ChartPaint>? pointHoverBorderColor,
+    double? borderDashOffset,
+    bool? capBezierPoints,
+    bool? drawActiveElementsOnTop,
+    ChartValue<double>? pointHitRadius,
+    ChartValue<double>? pointHoverBorderWidth,
+    ChartValue<double>? pointRotation,
     Map<String, Object?>? extra,
   }) => LineDataset(
     key: key ?? this.key,
@@ -781,6 +875,13 @@ final class const LineDataset({
     pointHoverBackgroundColor:
         pointHoverBackgroundColor ?? this.pointHoverBackgroundColor,
     pointHoverBorderColor: pointHoverBorderColor ?? this.pointHoverBorderColor,
+    borderDashOffset: borderDashOffset ?? this.borderDashOffset,
+    capBezierPoints: capBezierPoints ?? this.capBezierPoints,
+    drawActiveElementsOnTop:
+        drawActiveElementsOnTop ?? this.drawActiveElementsOnTop,
+    pointHitRadius: pointHitRadius ?? this.pointHitRadius,
+    pointHoverBorderWidth: pointHoverBorderWidth ?? this.pointHoverBorderWidth,
+    pointRotation: pointRotation ?? this.pointRotation,
     extra: extra ?? this.extra,
   );
 
@@ -906,6 +1007,30 @@ final class const ScatterDataset({
 
   /// {@macro flutter_chartjs_port.typed.pointHoverBorderColor}
   @override final ChartValue<ChartPaint>? pointHoverBorderColor,
+
+  /// The offset of the dash pattern of the line: `borderDashOffset`.
+  @override final double? borderDashOffset,
+
+  /// Whether the control points of a curve stay inside the chart area:
+  /// `capBezierPoints`. The default is `true`.
+  @override final bool? capBezierPoints,
+
+  /// Whether the points under the pointer draw over the other points:
+  /// `drawActiveElementsOnTop`. The default is `true`.
+  @override final bool? drawActiveElementsOnTop,
+
+  /// The extra radius of a point for a hit test, in pixels: `pointHitRadius`. A
+  /// [ChartValue], as `pointRadius`.
+  @override final ChartValue<double>? pointHitRadius,
+
+  /// The border width of a point under the pointer, in pixels:
+  /// `pointHoverBorderWidth`. A [ChartValue], as `pointRadius`.
+  @override final ChartValue<double>? pointHoverBorderWidth,
+
+  /// The rotation of the point style in degrees: `pointRotation`. A
+  /// [ChartValue], as `pointRadius`.
+  @override final ChartValue<double>? pointRotation,
+
   super.extra,
 }) extends Dataset with _LineStyle {
   /// A scatter dataset.
@@ -949,6 +1074,12 @@ final class const ScatterDataset({
     double? pointBorderWidth,
     ChartValue<ChartPaint>? pointHoverBackgroundColor,
     ChartValue<ChartPaint>? pointHoverBorderColor,
+    double? borderDashOffset,
+    bool? capBezierPoints,
+    bool? drawActiveElementsOnTop,
+    ChartValue<double>? pointHitRadius,
+    ChartValue<double>? pointHoverBorderWidth,
+    ChartValue<double>? pointRotation,
     Map<String, Object?>? extra,
   }) => ScatterDataset(
     key: key ?? this.key,
@@ -988,6 +1119,13 @@ final class const ScatterDataset({
     pointHoverBackgroundColor:
         pointHoverBackgroundColor ?? this.pointHoverBackgroundColor,
     pointHoverBorderColor: pointHoverBorderColor ?? this.pointHoverBorderColor,
+    borderDashOffset: borderDashOffset ?? this.borderDashOffset,
+    capBezierPoints: capBezierPoints ?? this.capBezierPoints,
+    drawActiveElementsOnTop:
+        drawActiveElementsOnTop ?? this.drawActiveElementsOnTop,
+    pointHitRadius: pointHitRadius ?? this.pointHitRadius,
+    pointHoverBorderWidth: pointHoverBorderWidth ?? this.pointHoverBorderWidth,
+    pointRotation: pointRotation ?? this.pointRotation,
     extra: extra ?? this.extra,
   );
 
@@ -1064,6 +1202,11 @@ final class const BubbleDataset({
   /// The style of the bubbles: `pointStyle`, a [PointStyle] (row
   /// `adapt-point-style-objects`).
   final PointStyle? pointStyle,
+
+  /// Whether the bubbles under the pointer draw over the other bubbles:
+  /// `drawActiveElementsOnTop`. The default is `true`.
+  final bool? drawActiveElementsOnTop,
+
   super.extra,
 }) extends Dataset {
   /// A bubble dataset.
@@ -1091,6 +1234,7 @@ final class const BubbleDataset({
     double? radius,
     double? hoverRadius,
     PointStyle? pointStyle,
+    bool? drawActiveElementsOnTop,
     Map<String, Object?>? extra,
   }) => BubbleDataset(
     key: key ?? this.key,
@@ -1112,6 +1256,8 @@ final class const BubbleDataset({
     radius: radius ?? this.radius,
     hoverRadius: hoverRadius ?? this.hoverRadius,
     pointStyle: pointStyle ?? this.pointStyle,
+    drawActiveElementsOnTop:
+        drawActiveElementsOnTop ?? this.drawActiveElementsOnTop,
     extra: extra ?? this.extra,
   );
 
@@ -1128,6 +1274,7 @@ final class const BubbleDataset({
     put(scope, OptionKey.radius, radius);
     put(scope, OptionKey.hoverRadius, hoverRadius);
     put(scope, OptionKey.pointStyle, pointStyle);
+    put(scope, OptionKey.drawActiveElementsOnTop, drawActiveElementsOnTop);
   }
 
   @override
@@ -1141,6 +1288,7 @@ final class const BubbleDataset({
     ('radius', radius),
     ('hoverRadius', hoverRadius),
     ('pointStyle', pointStyle),
+    ('drawActiveElementsOnTop', drawActiveElementsOnTop),
     ('extra', byEntries(extra)),
   ];
 }
@@ -1158,6 +1306,11 @@ base mixin _ArcStyle on Dataset {
   double? get rotation;
   RadiusLength? get cutout;
   RadiusLength? get radius;
+  ArcBorderAlign? get borderAlign;
+  StrokeJoin? get borderJoinStyle;
+  double? get borderRadius;
+  bool? get selfJoin;
+  ArcSpacingMode? get spacingMode;
 
   /// Writes the keys of the arcs into [scope].
   void _lowerArc(OptionScope scope) {
@@ -1169,6 +1322,11 @@ base mixin _ArcStyle on Dataset {
     put(scope, OptionKey.rotation, rotation);
     put(scope, OptionKey.cutout, cutout);
     put(scope, OptionKey.radius, radius);
+    put(scope, OptionKey.borderAlign, borderAlign);
+    put(scope, OptionKey.borderJoinStyle, borderJoinStyle);
+    put(scope, OptionKey.borderRadius, borderRadius);
+    put(scope, OptionKey.selfJoin, selfJoin);
+    put(scope, OptionKey.spacingMode, spacingMode);
   }
 
   /// The properties of the arcs, in parameter order.
@@ -1181,6 +1339,11 @@ base mixin _ArcStyle on Dataset {
     ('rotation', rotation),
     ('cutout', cutout),
     ('radius', radius),
+    ('borderAlign', borderAlign),
+    ('borderJoinStyle', borderJoinStyle),
+    ('borderRadius', borderRadius),
+    ('selfJoin', selfJoin),
+    ('spacingMode', spacingMode),
   ];
 }
 
@@ -1261,6 +1424,23 @@ final class const PieDataset({
   /// `PixelRadius(150)` pixels.
   /// {@endtemplate}
   @override final RadiusLength? radius,
+
+  /// Where the border of an arc draws: `borderAlign`. The default is
+  /// [ArcBorderAlign.center].
+  @override final ArcBorderAlign? borderAlign,
+
+  /// The join of the border lines of an arc: `borderJoinStyle`.
+  @override final StrokeJoin? borderJoinStyle,
+
+  /// The corner radius of an arc, in pixels: `borderRadius`.
+  @override final double? borderRadius,
+
+  /// Whether an arc of a full circle joins its border at its start: `selfJoin`.
+  @override final bool? selfJoin,
+
+  /// How [spacing] applies to the arcs: `spacingMode`.
+  @override final ArcSpacingMode? spacingMode,
+
   super.extra,
 }) extends Dataset with _ArcStyle {
   /// A pie dataset.
@@ -1291,6 +1471,11 @@ final class const PieDataset({
     double? rotation,
     RadiusLength? cutout,
     RadiusLength? radius,
+    ArcBorderAlign? borderAlign,
+    StrokeJoin? borderJoinStyle,
+    double? borderRadius,
+    bool? selfJoin,
+    ArcSpacingMode? spacingMode,
     Map<String, Object?>? extra,
   }) => PieDataset(
     key: key ?? this.key,
@@ -1315,6 +1500,11 @@ final class const PieDataset({
     rotation: rotation ?? this.rotation,
     cutout: cutout ?? this.cutout,
     radius: radius ?? this.radius,
+    borderAlign: borderAlign ?? this.borderAlign,
+    borderJoinStyle: borderJoinStyle ?? this.borderJoinStyle,
+    borderRadius: borderRadius ?? this.borderRadius,
+    selfJoin: selfJoin ?? this.selfJoin,
+    spacingMode: spacingMode ?? this.spacingMode,
     extra: extra ?? this.extra,
   );
 
@@ -1386,6 +1576,23 @@ final class const DoughnutDataset({
 
   /// {@macro flutter_chartjs_port.typed.radius}
   @override final RadiusLength? radius,
+
+  /// Where the border of an arc draws: `borderAlign`. The default is
+  /// [ArcBorderAlign.center].
+  @override final ArcBorderAlign? borderAlign,
+
+  /// The join of the border lines of an arc: `borderJoinStyle`.
+  @override final StrokeJoin? borderJoinStyle,
+
+  /// The corner radius of an arc, in pixels: `borderRadius`.
+  @override final double? borderRadius,
+
+  /// Whether an arc of a full circle joins its border at its start: `selfJoin`.
+  @override final bool? selfJoin,
+
+  /// How [spacing] applies to the arcs: `spacingMode`.
+  @override final ArcSpacingMode? spacingMode,
+
   super.extra,
 }) extends Dataset with _ArcStyle {
   /// A doughnut dataset.
@@ -1416,6 +1623,11 @@ final class const DoughnutDataset({
     double? rotation,
     RadiusLength? cutout,
     RadiusLength? radius,
+    ArcBorderAlign? borderAlign,
+    StrokeJoin? borderJoinStyle,
+    double? borderRadius,
+    bool? selfJoin,
+    ArcSpacingMode? spacingMode,
     Map<String, Object?>? extra,
   }) => DoughnutDataset(
     key: key ?? this.key,
@@ -1440,6 +1652,11 @@ final class const DoughnutDataset({
     rotation: rotation ?? this.rotation,
     cutout: cutout ?? this.cutout,
     radius: radius ?? this.radius,
+    borderAlign: borderAlign ?? this.borderAlign,
+    borderJoinStyle: borderJoinStyle ?? this.borderJoinStyle,
+    borderRadius: borderRadius ?? this.borderRadius,
+    selfJoin: selfJoin ?? this.selfJoin,
+    spacingMode: spacingMode ?? this.spacingMode,
     extra: extra ?? this.extra,
   );
 
@@ -1494,6 +1711,27 @@ final class const PolarAreaDataset({
 
   /// {@macro flutter_chartjs_port.typed.spacing}
   final double? spacing,
+
+  /// Where the border of an arc draws: `borderAlign`. The default is
+  /// [ArcBorderAlign.center].
+  final ArcBorderAlign? borderAlign,
+
+  /// The join of the border lines of an arc: `borderJoinStyle`.
+  final StrokeJoin? borderJoinStyle,
+
+  /// The corner radius of an arc, in pixels: `borderRadius`.
+  final double? borderRadius,
+
+  /// Whether an arc of a full circle joins its border at its start: `selfJoin`.
+  final bool? selfJoin,
+
+  /// How `spacing` applies to the arcs: `spacingMode`.
+  final ArcSpacingMode? spacingMode,
+
+  /// The angle of each arc in degrees: `angle`. The default is the full circle
+  /// shared by the data.
+  final double? angle,
+
   super.extra,
 }) extends Dataset {
   /// A polar area dataset.
@@ -1519,6 +1757,12 @@ final class const PolarAreaDataset({
     double? offset,
     double? hoverOffset,
     double? spacing,
+    ArcBorderAlign? borderAlign,
+    StrokeJoin? borderJoinStyle,
+    double? borderRadius,
+    bool? selfJoin,
+    ArcSpacingMode? spacingMode,
+    double? angle,
     Map<String, Object?>? extra,
   }) => PolarAreaDataset(
     key: key ?? this.key,
@@ -1538,6 +1782,12 @@ final class const PolarAreaDataset({
     offset: offset ?? this.offset,
     hoverOffset: hoverOffset ?? this.hoverOffset,
     spacing: spacing ?? this.spacing,
+    borderAlign: borderAlign ?? this.borderAlign,
+    borderJoinStyle: borderJoinStyle ?? this.borderJoinStyle,
+    borderRadius: borderRadius ?? this.borderRadius,
+    selfJoin: selfJoin ?? this.selfJoin,
+    spacingMode: spacingMode ?? this.spacingMode,
+    angle: angle ?? this.angle,
     extra: extra ?? this.extra,
   );
 
@@ -1552,6 +1802,12 @@ final class const PolarAreaDataset({
     put(scope, OptionKey.offset, offset);
     put(scope, OptionKey.hoverOffset, hoverOffset);
     put(scope, OptionKey.spacing, spacing);
+    put(scope, OptionKey.borderAlign, borderAlign);
+    put(scope, OptionKey.borderJoinStyle, borderJoinStyle);
+    put(scope, OptionKey.borderRadius, borderRadius);
+    put(scope, OptionKey.selfJoin, selfJoin);
+    put(scope, OptionKey.spacingMode, spacingMode);
+    put(scope, OptionKey.angle, angle);
   }
 
   @override
@@ -1563,6 +1819,12 @@ final class const PolarAreaDataset({
     ('offset', offset),
     ('hoverOffset', hoverOffset),
     ('spacing', spacing),
+    ('borderAlign', borderAlign),
+    ('borderJoinStyle', borderJoinStyle),
+    ('borderRadius', borderRadius),
+    ('selfJoin', selfJoin),
+    ('spacingMode', spacingMode),
+    ('angle', angle),
     ('extra', byEntries(extra)),
   ];
 }
@@ -1643,6 +1905,30 @@ final class const RadarDataset({
 
   /// {@macro flutter_chartjs_port.typed.pointHoverBorderColor}
   @override final ChartValue<ChartPaint>? pointHoverBorderColor,
+
+  /// The offset of the dash pattern of the line: `borderDashOffset`.
+  @override final double? borderDashOffset,
+
+  /// Whether the control points of a curve stay inside the chart area:
+  /// `capBezierPoints`. The default is `true`.
+  @override final bool? capBezierPoints,
+
+  /// Whether the points under the pointer draw over the other points:
+  /// `drawActiveElementsOnTop`. The default is `true`.
+  @override final bool? drawActiveElementsOnTop,
+
+  /// The extra radius of a point for a hit test, in pixels: `pointHitRadius`. A
+  /// [ChartValue], as `pointRadius`.
+  @override final ChartValue<double>? pointHitRadius,
+
+  /// The border width of a point under the pointer, in pixels:
+  /// `pointHoverBorderWidth`. A [ChartValue], as `pointRadius`.
+  @override final ChartValue<double>? pointHoverBorderWidth,
+
+  /// The rotation of the point style in degrees: `pointRotation`. A
+  /// [ChartValue], as `pointRadius`.
+  @override final ChartValue<double>? pointRotation,
+
   super.extra,
 }) extends Dataset with _LineStyle {
   /// A radar dataset.
@@ -1683,6 +1969,12 @@ final class const RadarDataset({
     double? pointBorderWidth,
     ChartValue<ChartPaint>? pointHoverBackgroundColor,
     ChartValue<ChartPaint>? pointHoverBorderColor,
+    double? borderDashOffset,
+    bool? capBezierPoints,
+    bool? drawActiveElementsOnTop,
+    ChartValue<double>? pointHitRadius,
+    ChartValue<double>? pointHoverBorderWidth,
+    ChartValue<double>? pointRotation,
     Map<String, Object?>? extra,
   }) => RadarDataset(
     key: key ?? this.key,
@@ -1719,6 +2011,13 @@ final class const RadarDataset({
     pointHoverBackgroundColor:
         pointHoverBackgroundColor ?? this.pointHoverBackgroundColor,
     pointHoverBorderColor: pointHoverBorderColor ?? this.pointHoverBorderColor,
+    borderDashOffset: borderDashOffset ?? this.borderDashOffset,
+    capBezierPoints: capBezierPoints ?? this.capBezierPoints,
+    drawActiveElementsOnTop:
+        drawActiveElementsOnTop ?? this.drawActiveElementsOnTop,
+    pointHitRadius: pointHitRadius ?? this.pointHitRadius,
+    pointHoverBorderWidth: pointHoverBorderWidth ?? this.pointHoverBorderWidth,
+    pointRotation: pointRotation ?? this.pointRotation,
     extra: extra ?? this.extra,
   );
 

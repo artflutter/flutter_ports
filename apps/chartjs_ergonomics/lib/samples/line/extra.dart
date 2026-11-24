@@ -15,7 +15,8 @@ const extra = ChartConfig(
       borderColor: .constant(.solid(teal)),
       pointHoverRadius: .constant(9),
       // Chart.js options with no parameter.
-      extra: {'pointHoverBorderWidth': 6, 'pointHitRadius': 20},
+      pointHoverBorderWidth: .constant(6),
+      pointHitRadius: .constant(20),
     ),
   ],
 );

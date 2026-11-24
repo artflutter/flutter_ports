@@ -21554,14 +21554,8 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c', 'd'],
       datasets: [
-        BarDataset(
-          data: DatasetData.values([5.0, 1.0, -3.0, 2.0]),
-          extra: const <String, Object?>{'base': 2.0},
-        ),
-        BarDataset(
-          data: DatasetData.values([3.0, -4.0, 0.0, 1.0]),
-          extra: const <String, Object?>{'base': -1.0},
-        ),
+        BarDataset(data: DatasetData.values([5.0, 1.0, -3.0, 2.0]), base: 2),
+        BarDataset(data: DatasetData.values([3.0, -4.0, 0.0, 1.0]), base: -1),
       ],
     ),
     options: const AcquireOptions(),
@@ -24098,7 +24092,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
         ),
         BarDataset(
           data: DatasetData.values([2.0, 4.0, -1.0]),
-          extra: const <String, Object?>{'inflateAmount': 3.0},
+          inflateAmount: 3,
         ),
         BarDataset(
           data: DatasetData.values([1.0, -3.0, 2.0]),
@@ -37989,10 +37983,7 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
     config: () => ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        BarDataset(
-          data: DatasetData.values([10.0, 5.0, -3.0]),
-          extra: const <String, Object?>{'base': 5.0},
-        ),
+        BarDataset(data: DatasetData.values([10.0, 5.0, -3.0]), base: 5),
       ],
     ),
     options: const AcquireOptions(),
@@ -39496,8 +39487,8 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
       datasets: [
         BarDataset(
           data: DatasetData.values([5.0, 6.0, 0.0]),
+          base: 5,
           minBarLength: 20,
-          extra: const <String, Object?>{'base': 5.0},
         ),
       ],
     ),
@@ -41674,8 +41665,8 @@ final List<ControllerBarReferenceCase> controllerBarReference = [
       datasets: [
         BarDataset(
           data: DatasetData.values([0.0, 0.01, 3.0]),
+          base: 0,
           minBarLength: 10,
-          extra: const <String, Object?>{'base': 0.0},
         ),
       ],
     ),

@@ -24169,7 +24169,7 @@ List<PluginLegendReferenceCase> pluginLegendReference(
           backgroundColor: const ChartValue.constant(
             ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
           ),
-          extra: const <String, Object?>{'pointRotation': 30.0},
+          pointRotation: const ChartValue.constant(30),
         ),
         LineDataset(
           label: 'Dataset 2',
@@ -24178,14 +24178,14 @@ List<PluginLegendReferenceCase> pluginLegendReference(
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
           ),
           borderWidth: 6,
-          extra: const <String, Object?>{'pointRotation': 30.0},
+          pointRotation: const ChartValue.constant(30),
         ),
         LineDataset(
           label: 'A longer dataset 3',
           data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
           borderDash: const [4, 2],
           pointStyle: const ChartValue.constant(RectRotPointStyle()),
-          extra: const <String, Object?>{'pointRotation': 30.0},
+          pointRotation: const ChartValue.constant(30),
         ),
       ],
       pluginOptions: const [
@@ -61459,10 +61459,10 @@ List<PluginLegendReferenceCase> pluginLegendReference(
         BarDataset(
           label: 'A longer dataset 3',
           data: DatasetData.values([5.0, 15.0, 10.0, 30.0]),
+          pointStyle: const RectRotPointStyle(),
           borderWidth: 2,
           extra: const <String, Object?>{
             'borderDash': <double>[4, 2],
-            'pointStyle': RectRotPointStyle(),
           },
         ),
       ],

@@ -106,7 +106,7 @@ List<Dataset> _barDatasets({bool? legendHidden, double? borderRadius}) => [
     borderRadius: borderRadius,
     data: const .values([]),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
-    extra: const {'pointStyle': CrossRotPointStyle()},
+    pointStyle: const CrossRotPointStyle(),
   ),
 ];
 
@@ -120,7 +120,7 @@ const List<Dataset> _lineDatasets = [
     borderCapStyle: native_ui.StrokeCap.round,
     borderDash: [2, 2],
     data: .values([]),
-    extra: {'borderDashOffset': 5.5},
+    borderDashOffset: 5.5,
   ),
   LineDataset(
     label: 'dataset2',
@@ -1092,7 +1092,7 @@ const List<Dataset> _pointStyleDatasets = [
       ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
     ),
     data: .values([]),
-    extra: {'borderDashOffset': 5.5},
+    borderDashOffset: 5.5,
   ),
   LineDataset(
     label: 'dataset2',
@@ -1107,7 +1107,7 @@ const List<Dataset> _pointStyleDatasets = [
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
     pointStyle: .constant(CrossRotPointStyle()),
     data: .values([]),
-    extra: {'pointRotation': 15},
+    pointRotation: .constant(15),
   ),
 ];
 

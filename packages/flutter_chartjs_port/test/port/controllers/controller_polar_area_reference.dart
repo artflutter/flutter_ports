@@ -27367,9 +27367,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
         PolarAreaDataset(
           data: [10.0, 20.0],
           spacing: 5,
-          extra: const <String, Object?>{
-            'spacingMode': ArcSpacingMode.parallel,
-          },
+          spacingMode: ArcSpacingMode.parallel,
         ),
       ],
     ),
@@ -35975,7 +35973,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
       datasets: [
         PolarAreaDataset(
           data: [10.0, 20.0],
-          extra: const <String, Object?>{'spacingMode': ArcSpacingMode.angular},
+          spacingMode: ArcSpacingMode.angular,
         ),
       ],
       extra: const <String, Object?>{'spacingMode': ArcSpacingMode.parallel},
@@ -44620,7 +44618,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
             ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ]),
-          extra: const <String, Object?>{'borderRadius': 3.0},
+          borderRadius: 3,
         ),
       ],
       pluginOptions: const [
@@ -45414,7 +45412,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
             ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ]),
-          extra: const <String, Object?>{'borderRadius': 3.0},
+          borderRadius: 3,
         ),
       ],
       pluginOptions: const [
@@ -46905,7 +46903,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
             ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ]),
-          extra: const <String, Object?>{'borderRadius': 3.0},
+          borderRadius: 3,
         ),
       ],
       pluginOptions: const [
@@ -48866,7 +48864,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
             ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ]),
-          extra: const <String, Object?>{'borderRadius': 3.0},
+          borderRadius: 3,
         ),
       ],
       pluginOptions: const [
@@ -49500,7 +49498,7 @@ List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference(
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
             ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ]),
-          extra: const <String, Object?>{'borderRadius': 3.0},
+          borderRadius: 3,
         ),
       ],
       disabledPlugins: const [PluginOff<LegendPlugin>()],

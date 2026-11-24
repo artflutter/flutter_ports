@@ -55,7 +55,7 @@ final ChartConfig _config = ChartConfig(
       hoverBackgroundColor: const .resolver(_selectedFill),
       barThickness: const BarThickness.pixels(barSize),
       // The bars start at the left of the axis.
-      extra: {'base': _range.min},
+      base: _range.min,
     ),
   ],
   scales: [

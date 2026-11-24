@@ -113,6 +113,8 @@ const Map<String, int> _allowlist = {
   'options.elements.point.hoverBackgroundColor': 1864,
   'options.elements.point.hoverBorderColor': 1863,
   'options.elements.point.drawActiveElementsOnTop': 2080,
+  'data.datasets.*.base': 2152,
+  'data.datasets.*.skipNull': 153,
   'options.animation.onProgress': 1802,
   'options.animation.onComplete': 1806,
   'options.animation.animateRotate': 298,
@@ -245,6 +247,11 @@ List<ChartConfig> _configs() {
           minBarLength: 1,
           grouped: true,
           borderSkipped: BorderSkip.start,
+          base: 0,
+          inflateAmount: 0,
+          skipNull: false,
+          hoverBorderRadius: 0,
+          pointStyle: const CirclePointStyle(),
         ),
         LineDataset(
           data: .points(points),
@@ -268,6 +275,12 @@ List<ChartConfig> _configs() {
           pointBorderWidth: 1,
           pointHoverBackgroundColor: const .constant(.solid(_red)),
           pointHoverBorderColor: const .constant(.solid(_red)),
+          borderDashOffset: 0,
+          capBezierPoints: true,
+          drawActiveElementsOnTop: true,
+          pointHitRadius: const .constant(1),
+          pointHoverBorderWidth: const .constant(1),
+          pointRotation: const .constant(0),
         ),
         ScatterDataset(
           data: .points(points),
@@ -296,6 +309,7 @@ List<ChartConfig> _configs() {
           radius: 3,
           hoverRadius: 4,
           pointStyle: const CirclePointStyle(),
+          drawActiveElementsOnTop: true,
         ),
       ],
       scales: [
@@ -510,6 +524,11 @@ List<ChartConfig> _configs() {
             rotation: 0,
             cutout: const PercentRadius(50),
             radius: const PixelRadius(100),
+            borderAlign: ArcBorderAlign.center,
+            borderJoinStyle: .round,
+            borderRadius: 0,
+            selfJoin: false,
+            spacingMode: ArcSpacingMode.angular,
           ),
         ])
           dataset,
@@ -518,7 +537,18 @@ List<ChartConfig> _configs() {
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: [
-        PolarAreaDataset(data: data, offset: 1, hoverOffset: 2, spacing: 1),
+        PolarAreaDataset(
+          data: data,
+          offset: 1,
+          hoverOffset: 2,
+          spacing: 1,
+          borderAlign: ArcBorderAlign.center,
+          borderJoinStyle: .round,
+          borderRadius: 0,
+          selfJoin: false,
+          spacingMode: ArcSpacingMode.angular,
+          angle: 90,
+        ),
       ],
       scales: const [
         RadialLinearAxis(

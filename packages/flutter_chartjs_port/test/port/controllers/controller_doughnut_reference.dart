@@ -14472,16 +14472,12 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         DoughnutDataset(
           data: [10.0, 20.0, 30.0, 15.0],
           spacing: 10,
-          extra: const <String, Object?>{
-            'spacingMode': ArcSpacingMode.proportional,
-          },
+          spacingMode: ArcSpacingMode.proportional,
         ),
         DoughnutDataset(
           data: [5.0, 15.0, 10.0, 20.0],
           spacing: 4,
-          extra: const <String, Object?>{
-            'spacingMode': ArcSpacingMode.proportional,
-          },
+          spacingMode: ArcSpacingMode.proportional,
         ),
       ],
     ),
@@ -15432,16 +15428,12 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
         DoughnutDataset(
           data: [10.0, 20.0, 30.0, 15.0],
           spacing: 10,
-          extra: const <String, Object?>{
-            'spacingMode': ArcSpacingMode.parallel,
-          },
+          spacingMode: ArcSpacingMode.parallel,
         ),
         DoughnutDataset(
           data: [5.0, 15.0, 10.0, 20.0],
           spacing: 4,
-          extra: const <String, Object?>{
-            'spacingMode': ArcSpacingMode.parallel,
-          },
+          spacingMode: ArcSpacingMode.parallel,
         ),
       ],
     ),
@@ -18016,8 +18008,8 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
       datasets: [
         DoughnutDataset(
           data: [10.0, 20.0, 30.0, 15.0],
+          borderAlign: ArcBorderAlign.inner,
           borderWidth: 10,
-          extra: const <String, Object?>{'borderAlign': ArcBorderAlign.inner},
         ),
         DoughnutDataset(data: [5.0, 15.0, 10.0, 20.0], borderWidth: 4),
       ],
@@ -29393,7 +29385,7 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
             ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ]),
-          extra: const <String, Object?>{'borderRadius': 3.0},
+          borderRadius: 3,
         ),
       ],
       pluginOptions: const [
@@ -30055,7 +30047,7 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
             ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ]),
-          extra: const <String, Object?>{'borderRadius': 3.0},
+          borderRadius: 3,
         ),
       ],
       pluginOptions: const [
@@ -31244,7 +31236,7 @@ final List<ControllerDoughnutReferenceCase> controllerDoughnutReference = [
             ChartPaint.solid(Color.fromRGBO(0, 128, 0, 1)),
             ChartPaint.solid(Color.fromRGBO(0, 0, 255, 1)),
           ]),
-          extra: const <String, Object?>{'borderRadius': 3.0},
+          borderRadius: 3,
         ),
       ],
       pluginOptions: const [

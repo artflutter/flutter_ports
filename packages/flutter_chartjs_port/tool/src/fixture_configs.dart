@@ -1262,11 +1262,22 @@ Map<String, _Convert> _datasetFields(String kind) {
     'pointBorderWidth': _double,
     'pointHoverBackgroundColor': _paintValue,
     'pointHoverBorderColor': _paintValue,
+    'borderDashOffset': _double,
+    'capBezierPoints': _bool,
+    'drawActiveElementsOnTop': _bool,
+    'pointHitRadius': _doubleValue,
+    'pointHoverBorderWidth': _doubleValue,
+    'pointRotation': _doubleValue,
   };
   const arc = <String, _Convert>{
     'offset': _double,
     'hoverOffset': _double,
     'spacing': _double,
+    'borderAlign': _arcBorderAlign,
+    'borderJoinStyle': _strokeJoin,
+    'borderRadius': _double,
+    'selfJoin': _bool,
+    'spacingMode': _arcSpacingMode,
   };
   return switch (kind) {
     'bar' => {
@@ -1281,6 +1292,11 @@ Map<String, _Convert> _datasetFields(String kind) {
       'minBarLength': _double,
       'grouped': _bool,
       'borderSkipped': _borderSkip,
+      'base': _double,
+      'inflateAmount': _double,
+      'skipNull': _bool,
+      'hoverBorderRadius': _double,
+      'pointStyle': _object,
     },
     'line' => {...common, 'stack': _string, 'indexAxis': _indexAxis, ...line},
     'scatter' => {...common, 'stack': _string, ...line},
@@ -1290,6 +1306,7 @@ Map<String, _Convert> _datasetFields(String kind) {
       'radius': _double,
       'hoverRadius': _double,
       'pointStyle': _object,
+      'drawActiveElementsOnTop': _bool,
     },
     'pie' || 'doughnut' => {
       ...common,
@@ -1300,7 +1317,7 @@ Map<String, _Convert> _datasetFields(String kind) {
       'cutout': _object,
       'radius': _object,
     },
-    'polarArea' => {...common, ...arc},
+    'polarArea' => {...common, ...arc, 'angle': _double},
     _ => common,
   };
 }

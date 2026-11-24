@@ -20,9 +20,7 @@ FixtureConfig fixture() => FixtureConfig.typed(
       LineDataset(
         data: .values(<num?>[0, 5, 10, null, -10, -5]),
         pointBorderColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
-        extra: <String, Object?>{
-          'pointRotation': <Object?>[0, 30, 60, 90, 120, 150],
-        },
+        pointRotation: .indexed(<double>[0, 30, 60, 90, 120, 150]),
       ),
       LineDataset(data: .values(<num?>[4, -5, -10, null, 10, 5])),
     ],

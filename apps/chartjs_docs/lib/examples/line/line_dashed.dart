@@ -30,7 +30,7 @@ const dashedLine = LineDataset(
   borderColor: .constant(.solid(teal)),
   borderDash: [10, 6],
   borderCapStyle: StrokeCap.round,
-  extra: {'borderDashOffset': 2},
+  borderDashOffset: 2,
 );
 // #enddocregion line-dashed
 

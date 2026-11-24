@@ -18223,10 +18223,8 @@ final List<ControllerRadarReferenceCase> controllerRadarReference = [
           pointHoverBackgroundColor: const ChartValue.constant(
             ChartPaint.solid(Color.fromRGBO(255, 0, 0, 1)),
           ),
-          extra: const <String, Object?>{
-            'hoverRadius': 7.0,
-            'pointHoverBorderWidth': 3.0,
-          },
+          pointHoverBorderWidth: const ChartValue.constant(3),
+          extra: const <String, Object?>{'hoverRadius': 7.0},
         ),
       ],
     ),

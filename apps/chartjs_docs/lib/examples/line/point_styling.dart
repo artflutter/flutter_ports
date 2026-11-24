@@ -38,7 +38,7 @@ ChartConfig pointStyling(PointStyle style) => ChartConfig(
       pointBorderWidth: 2,
       pointBackgroundColor: const .constant(.solid(tealFill)),
       pointBorderColor: const .constant(.solid(teal)),
-      extra: const {'pointHitRadius': 14},
+      pointHitRadius: const .constant(14),
     ),
   ],
 );

@@ -22,7 +22,8 @@ LineDataset _line(String label, List<num> data, Color color) => LineDataset(
   pointHoverRadius: const .constant(4),
   pointBackgroundColor: .constant(.solid(color)),
   pointHoverBackgroundColor: .constant(.solid(color)),
-  extra: const {'pointHoverBorderWidth': 0, 'capBezierPoints': false},
+  pointHoverBorderWidth: const .constant(0),
+  capBezierPoints: false,
 );
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(

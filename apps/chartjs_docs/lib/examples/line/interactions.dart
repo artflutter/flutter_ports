@@ -38,7 +38,7 @@ const hoverLine = LineDataset(
   pointHoverRadius: .constant(11),
   pointHoverBackgroundColor: .constant(.solid(red)),
   pointHoverBorderColor: .constant(.solid(redFill)),
-  extra: {'pointHoverBorderWidth': 6},
+  pointHoverBorderWidth: .constant(6),
 );
 // #enddocregion interactions
 

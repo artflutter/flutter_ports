@@ -3020,11 +3020,22 @@ function datasetSpec(kind, state, axes, paths) {
     pointBorderWidth: number,
     pointHoverBackgroundColor: paint,
     pointHoverBorderColor: paint,
+    borderDashOffset: number,
+    capBezierPoints: boolNode,
+    drawActiveElementsOnTop: boolNode,
+    pointHitRadius: numberValueNode,
+    pointHoverBorderWidth: numberValueNode,
+    pointRotation: numberValueNode,
   };
   const arc = {
     offset: number,
     hoverOffset: number,
     spacing: number,
+    borderAlign: (v) => enumNode('ArcBorderAlign', ['center', 'inner'], v, state, 'arcEnums'),
+    borderJoinStyle: (v) => (['miter', 'round', 'bevel'].includes(v) ? strokeNode('StrokeJoin', v, state) : undefined),
+    borderRadius: number,
+    selfJoin: boolNode,
+    spacingMode: (v) => enumNode('ArcSpacingMode', ['angular', 'proportional', 'parallel'], v, state, 'arcEnums'),
   };
   const arcMore = {
     weight: number,
@@ -3060,6 +3071,11 @@ function datasetSpec(kind, state, axes, paths) {
             if (v === true) return node('BorderSkip.all');
             return enumNode('BorderSkip', ['start', 'end', 'middle', 'bottom', 'left', 'top', 'right'], v, state);
           },
+          base: number,
+          inflateAmount: number,
+          skipNull: boolNode,
+          hoverBorderRadius: number,
+          pointStyle: (v) => pointStyleNode(v, state),
         },
       };
     case 'line':
@@ -3077,6 +3093,7 @@ function datasetSpec(kind, state, axes, paths) {
           radius: number,
           hoverRadius: number,
           pointStyle: (v) => pointStyleNode(v, state),
+          drawActiveElementsOnTop: boolNode,
         },
       };
     case 'pie':
@@ -3084,7 +3101,7 @@ function datasetSpec(kind, state, axes, paths) {
     case 'doughnut':
       return {cls: 'DoughnutDataset', data: 'numbers', fields: {...common, ...arc, ...arcMore}};
     case 'polarArea':
-      return {cls: 'PolarAreaDataset', data: 'numbers', fields: {...common, ...arc}};
+      return {cls: 'PolarAreaDataset', data: 'numbers', fields: {...common, ...arc, angle: number}};
     case 'radar':
       return {cls: 'RadarDataset', data: 'numbers', fields: {...common, ...line}};
     default:

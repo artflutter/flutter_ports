@@ -166,7 +166,7 @@ void main() {
                 {
                   'data': [1],
                   'borderColor': 'red',
-                  'base': 2,
+                  'legendHidden': true,
                 },
               ],
             },
@@ -184,12 +184,12 @@ void main() {
         source,
         contains('borderColor: .constant(ChartPaint.solid(Color(0xFFFF0000)))'),
       );
-      expect(source, contains("'base': 2"));
+      expect(source, contains("'legendHidden': true"));
       expect(source, contains('CategoryAxis(CartesianAxis.x,'));
       expect(source, contains('display: ScaleDisplay.off'));
       expect(source, contains("'locale': 'de-DE'"));
       expect(emitter.extras, [
-        'Dataset.extra[base]',
+        'Dataset.extra[legendHidden]',
         'ChartConfig.extra[locale]',
       ]);
     });

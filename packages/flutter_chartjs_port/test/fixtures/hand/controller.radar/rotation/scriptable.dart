@@ -19,18 +19,16 @@ FixtureConfig fixture() => FixtureConfig.typed(
         // option in dataset
         data: <num?>[0, 5, 10, null, -10, -5],
         pointBorderColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-        extra: <String, Object?>{
-          'pointRotation': (ScriptableContext ctx) {
-            final value = jsOrZero(
-              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
-            );
-            return value > 4
-                ? 120
-                : value > -4
-                ? 60
-                : 0;
-          },
-        },
+        pointRotation: .resolver((ctx) {
+          final value = jsOrZero(
+            jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
+          );
+          return value > 4
+              ? 120
+              : value > -4
+              ? 60
+              : 0;
+        }),
       ),
       RadarDataset(
         // option in element (fallback)

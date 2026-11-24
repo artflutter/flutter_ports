@@ -10480,7 +10480,7 @@ List<ControllerLineReferenceCase> controllerLineReference(
         LineDataset(
           data: DatasetData.values([9.0, 2.0, 8.0, 1.0, 7.0]),
           tension: 0.4,
-          extra: const <String, Object?>{'capBezierPoints': false},
+          capBezierPoints: false,
         ),
       ],
     ),
@@ -27011,8 +27011,8 @@ List<ControllerLineReferenceCase> controllerLineReference(
       datasets: [
         LineDataset(
           data: DatasetData.values([1.0, 3.0, 2.0, 4.0, 3.0]),
+          drawActiveElementsOnTop: false,
           pointRadius: const ChartValue.constant(6),
-          extra: const <String, Object?>{'drawActiveElementsOnTop': false},
         ),
         LineDataset(
           data: DatasetData.values([2.0, 3.0, 1.0, 4.0, 2.0]),

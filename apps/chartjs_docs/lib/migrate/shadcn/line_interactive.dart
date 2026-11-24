@@ -35,7 +35,8 @@ ChartConfig _config(ShadcnTip tip, int active) {
         pointHoverRadius: const .constant(4),
         pointBackgroundColor: .constant(.solid(color)),
         pointHoverBackgroundColor: .constant(.solid(color)),
-        extra: const {'pointHoverBorderWidth': 0, 'capBezierPoints': false},
+        pointHoverBorderWidth: const .constant(0),
+        capBezierPoints: false,
       ),
     ],
     // className="aspect-auto h-[250px] w-full"
