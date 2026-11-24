@@ -97,11 +97,14 @@ void main() {
           ..data = (ChartDataScope()
             ..xLabels = labels
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 5, 0, 25, 78],
+                },
+              ),
             ])
-          ..options = mergeExtra((ChartOptionsScope()), {
+          ..options = scopeFromMap((ChartOptionsScope()), {
             'scales': <String, Object?>{
               'x': <String, Object?>{'type': 'category'},
             },
@@ -121,11 +124,14 @@ void main() {
           ..data = (ChartDataScope()
             ..yLabels = labels
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 5, 0, 25, 78],
+                },
+              ),
             ])
-          ..options = mergeExtra((ChartOptionsScope()), {
+          ..options = scopeFromMap((ChartOptionsScope()), {
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'category'},
             },
@@ -160,11 +166,14 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <String, Object?>{'a': 1, 'b': 3, 'c': -1, 'd': 10},
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <String, Object?>{'a': 1, 'b': 3, 'c': -1, 'd': 10},
+                },
+              ),
             ])
-          ..options = mergeExtra((ChartOptionsScope()), {
+          ..options = scopeFromMap((ChartOptionsScope()), {
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
@@ -336,15 +345,18 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-                'data': <Object?>['3', '5', '1', '4', '2'],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'xAxisID': 'x',
+                  'yAxisID': 'y',
+                  'data': <Object?>['3', '5', '1', '4', '2'],
+                },
+              ),
             ]
             ..labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5']
             ..yLabels = <Object?>['1', '2', '3', '4', '5'])
-          ..options = mergeExtra((ChartOptionsScope()), {
+          ..options = scopeFromMap((ChartOptionsScope()), {
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
@@ -385,7 +397,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'xAxisID': 'x',
@@ -396,7 +408,7 @@ void main() {
               ]
               ..labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5']
               ..yLabels = <Object?>['1', '2', '3', '4', '5'])
-            ..options = mergeExtra((ChartOptionsScope()), {
+            ..options = scopeFromMap((ChartOptionsScope()), {
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
@@ -465,7 +477,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'xAxisID': 'x',
@@ -482,7 +494,7 @@ void main() {
               ]
               ..labels = <Object?>[0, 1, 2, 3]
               ..yLabels = <Object?>[0, 1, 2, 3, 4])
-            ..options = mergeExtra((ChartOptionsScope()), {
+            ..options = scopeFromMap((ChartOptionsScope()), {
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
@@ -606,11 +618,14 @@ void main() {
           ..data = (ChartDataScope()
             ..labels = <Object?>['a', 'b', 'c', 'd']
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <String, Object?>{'b': 1, 'c': 99},
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <String, Object?>{'b': 1, 'c': 99},
+                },
+              ),
             ])
-          ..options = mergeExtra((ChartOptionsScope()), {
+          ..options = scopeFromMap((ChartOptionsScope()), {
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',

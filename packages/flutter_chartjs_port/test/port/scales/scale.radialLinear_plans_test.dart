@@ -1162,7 +1162,7 @@ void main() {
       ChartConfigurationScope config({String? scaleType}) =>
           (ChartConfigurationScope()
             ..type = 'radar'
-            ..data = mergeExtra(ChartDataScope(), {
+            ..data = scopeFromMap(ChartDataScope(), {
               'labels': labels,
               'datasets': <Object?>[
                 <String, Object?>{
@@ -1173,7 +1173,7 @@ void main() {
                 },
               ],
             })
-            ..options = mergeExtra(ChartOptionsScope(), {
+            ..options = scopeFromMap(ChartOptionsScope(), {
               'responsive': false,
               'events': <String>[],
               'plugins': <String, Object?>{'legend': false},

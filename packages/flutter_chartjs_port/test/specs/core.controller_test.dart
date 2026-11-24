@@ -489,7 +489,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'spanGaps': false,
               'hover': <String, Object?>{
                 'mode': const DatasetInteractionMode(),
@@ -562,7 +562,7 @@ void main() {
           acquireChartRoot(
             ChartConfigurationScope()
               ..type = 'area'
-              ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
                 'datasets': <Object?>[
                   <String, Object?>{
                     'label': 'first',
@@ -571,7 +571,7 @@ void main() {
                 ],
                 'labels': <Object?>['0', '1'],
               })
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'scales': <String, Object?>{
                   'x': <String, Object?>{
                     'type': 'linear',
@@ -614,7 +614,7 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..type = 'line'
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'hover': false,
               }),
           );
@@ -627,7 +627,7 @@ void main() {
             final chart = acquireChartRoot(
               ChartConfigurationScope()
                 ..type = 'line'
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'interaction': false,
                 }),
             );
@@ -641,7 +641,7 @@ void main() {
             final chart = acquireChartRoot(
               ChartConfigurationScope()
                 ..type = 'line'
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'interaction': false,
                   'hover': <String, Object?>{
                     'mode': const NearestInteractionMode(),
@@ -684,7 +684,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+            ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
               'labels': <Object?>['A', 'B', 'C', 'D'],
               'datasets': <Object?>[
                 <String, Object?>{
@@ -692,7 +692,7 @@ void main() {
                 },
               ],
             })
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'events': <Object?>['click'],
             }),
         );
@@ -764,7 +764,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+            ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
               'labels': <Object?>['A', 'B', 'C', 'D'],
               'datasets': <Object?>[
                 <String, Object?>{
@@ -772,7 +772,7 @@ void main() {
                 },
               ],
             })
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'hover': false,
             }),
         );
@@ -875,7 +875,7 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..type = 'line'
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'scales': <String, Object?>{
                   'xFoo0': <String, Object?>{},
                   'xFoo1': <String, Object?>{},
@@ -898,7 +898,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'foo': <String, Object?>{
                   'axis': const XAxis(),
@@ -928,7 +928,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'logarithmic',
@@ -969,7 +969,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               '_jasmineCheck': 42,
               'scales': <String, Object?>{
                 'x': <String, Object?>{'type': 'linear', '_jasmineCheck': 42},
@@ -1011,7 +1011,7 @@ void main() {
           ChartConfigurationScope()
             ..type = 'line'
             ..['data'] = <Object?>[]
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'grid': <String, Object?>{
@@ -1044,7 +1044,7 @@ void main() {
           ChartConfigurationScope()
             ..type = 'line'
             ..['data'] = <Object?>[]
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'xAxes': <Object?>[
                   <String, Object?>{'id': 'xAxes', 'type': 'category'},
@@ -1068,7 +1068,7 @@ void main() {
           ChartConfigurationScope()
             ..type = 'line'
             ..['data'] = <Object?>[]
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'animation': false,
               // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
               'locale': const native_ui.Locale('en', 'US'),
@@ -1093,7 +1093,7 @@ void main() {
       testWidgets('should fill parent width and height', (tester) async {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'responsive': true,
               'maintainAspectRatio': false,
             }),
@@ -1117,7 +1117,7 @@ void main() {
         final size = <String, Object?>{'width': 0, 'height': 0};
         acquireChartRoot(
           ChartConfigurationScope()
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'responsive': true,
               'maintainAspectRatio': false,
               // Chart.js gives the chart as `this` and as the first
@@ -1147,7 +1147,7 @@ void main() {
         await waitForDone((done) {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': false,
               }),
@@ -1189,7 +1189,7 @@ void main() {
           await waitForDone((done) {
             final chart = acquireChartRoot(
               ChartConfigurationScope()
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
@@ -1249,7 +1249,7 @@ void main() {
           await waitForDone((done) {
             final chart = acquireChartRoot(
               ChartConfigurationScope()
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
@@ -1296,7 +1296,7 @@ void main() {
         await waitForDone((done) {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': false,
               }),
@@ -1382,7 +1382,7 @@ void main() {
           await waitForDone((done) {
             final chart = acquireChartRoot(
               ChartConfigurationScope()
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
@@ -1413,7 +1413,7 @@ void main() {
           await waitForDone((done) {
             final chart = acquireChartRoot(
               ChartConfigurationScope()
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
@@ -1445,7 +1445,7 @@ void main() {
             // https://github.com/chartjs/Chart.js/issues/4659
             final chart = acquireChartRoot(
               ChartConfigurationScope()
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
@@ -1480,7 +1480,7 @@ void main() {
           await waitForDone((done) {
             final chart = acquireChartRoot(
               ChartConfigurationScope()
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
                   'devicePixelRatio': 1,
@@ -1622,7 +1622,7 @@ void main() {
           await waitForDone((done) {
             final chart = acquireChartRoot(
               ChartConfigurationScope()
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
                 }),
@@ -1679,7 +1679,7 @@ void main() {
         await waitForDone((done) {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': false,
               }),
@@ -1713,7 +1713,7 @@ void main() {
         await waitForDone((done) {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': false,
               }),
@@ -1746,7 +1746,7 @@ void main() {
         await waitForDone((done) {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': false,
               }),
@@ -1790,7 +1790,7 @@ void main() {
         await waitForDone((done) {
           var chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
               }),
             const AcquireOptions(wrapper: HarnessBox(width: 320)),
@@ -1893,7 +1893,7 @@ void main() {
             // needs one (Chart.js ADR 0190).
             final chart = acquireChartRoot(
               ChartConfigurationScope()
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   // AR == 2
                   'responsive': true,
                   'maintainAspectRatio': true,
@@ -1937,7 +1937,7 @@ void main() {
         await waitForDone((done) {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': true,
               }),
@@ -1994,7 +1994,7 @@ void main() {
         (tester) async {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': false,
               }),
             const AcquireOptions(
@@ -2014,7 +2014,7 @@ void main() {
         (tester) async {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': false,
               }),
             const AcquireOptions(
@@ -2048,7 +2048,7 @@ void main() {
         (tester) async {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': false,
                 'devicePixelRatio': 3,
               }),
@@ -2069,7 +2069,7 @@ void main() {
         (tester) async {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'responsive': false,
                 'devicePixelRatio': 3,
               }),
@@ -2093,7 +2093,7 @@ void main() {
           await waitForDone((done) {
             final chart = acquireChartRoot(
               ChartConfigurationScope()
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'aspectRatio': 1,
                 }),
@@ -2163,7 +2163,7 @@ void main() {
             acquireChartRoot(
                 ChartConfigurationScope()
                   ..type = 'line'
-                  ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+                  ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
                     'labels': <Object?>['A', 'B', 'C', 'D'],
                     'datasets': <Object?>[
                       <String, Object?>{
@@ -2171,9 +2171,10 @@ void main() {
                       },
                     ],
                   })
-                  ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
-                    'responsive': true,
-                  }),
+                  ..options = scopeFromMap(
+                    ChartOptionsScope(),
+                    <String, Object?>{'responsive': true},
+                  ),
               )
               ..options = <String, Object?>{
                 'responsive': false,
@@ -2192,7 +2193,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+            ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
               'labels': <Object?>['A', 'B', 'C', 'D'],
               'datasets': <Object?>[
                 <String, Object?>{
@@ -2200,7 +2201,7 @@ void main() {
                 },
               ],
             })
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'responsive': true,
             }),
         );
@@ -2221,7 +2222,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+            ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
               'labels': <Object?>['A', 'B', 'C', 'D'],
               'datasets': <Object?>[
                 <String, Object?>{
@@ -2229,7 +2230,7 @@ void main() {
                 },
               ],
             })
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'responsive': true,
             }),
         );
@@ -2250,7 +2251,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+            ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
               'labels': <Object?>['A', 'B', 'C', 'D'],
               'datasets': <Object?>[
                 <String, Object?>{
@@ -2258,7 +2259,7 @@ void main() {
                 },
               ],
             })
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'responsive': true,
               'scales': <String, Object?>{
                 'yAxis0': <String, Object?>{'min': 0, 'max': 10},
@@ -2480,11 +2481,11 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+            ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
               'datasets': <Object?>[<String, Object?>{}],
             })
             ..['plugins'] = <Plugin<Object?>>[plugin]
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{'plugin': false},
             }),
         );
@@ -2605,7 +2606,7 @@ void main() {
         chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+            ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
               'datasets': <Object?>[
                 <String, Object?>{'label': '1', 'order': 2},
                 <String, Object?>{'label': '2', 'order': 1},

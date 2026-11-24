@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -364,7 +365,7 @@ ChartConfigurationScope _config(
   };
   final config = ChartConfigurationScope()
     ..type = id
-    ..data = mergeExtra(ChartDataScope(), {
+    ..data = scopeFromMap(ChartDataScope(), {
       if (type != 'scatter' && type != 'bubble')
         'labels': <Object?>[for (var i = 0; i < length; i++) 'item $i'],
       'datasets': <Object?>[
@@ -384,7 +385,7 @@ ChartConfigurationScope _config(
           },
       ],
     })
-    ..options = mergeExtra(ChartOptionsScope(), {
+    ..options = scopeFromMap(ChartOptionsScope(), {
       'responsive': false,
       'animation': false,
       'events': <String>[],

@@ -325,7 +325,7 @@ ChartConfigurationScope _testConfig(
   final root = ChartConfigurationScope()
     ..type = 'test'
     ..data = (ChartDataScope()..datasets = datasets)
-    ..options = mergeExtra(ChartOptionsScope(), {
+    ..options = scopeFromMap(ChartOptionsScope(), {
       'scales': <String, Object?>{
         'x': <String, Object?>{'type': 'testlinear'},
         'y': <String, Object?>{'type': 'testlinear'},
@@ -1294,7 +1294,7 @@ void main() {
     ChartConfigurationScope config(List<Object?> labels, Object? key) =>
         (ChartConfigurationScope()
           ..type = 'line'
-          ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+          ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
             'labels': labels,
             'datasets': <Object?>[
               <String, Object?>{
@@ -1304,7 +1304,7 @@ void main() {
               },
             ],
           })
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'parsing': <String, Object?>{'yAxisKey': key},
             'scales': <String, Object?>{
               'x': <String, Object?>{'type': 'category'},

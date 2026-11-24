@@ -7,6 +7,7 @@ import 'dart:typed_data' show ByteData;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/widgets.dart' hide Animation, Element;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
@@ -50,7 +51,7 @@ ChartConfigurationScope _config(
   List<Plugin<Object?>>? plugins,
 }) => (ChartConfigurationScope()
   ..type = type
-  ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+  ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
     'labels': labelValues ?? <Object?>['a', 'b', 'c'],
     'datasets':
         datasets ??
@@ -76,7 +77,7 @@ ChartConfigurationScope _config(
 /// Keep user Map subclasses at the same location in the option tree: the
 /// probes observe their runtime reads. Ordinary option Maps become scopes.
 ChartOptionsScope _nativeOptions(Map<String, Object?> source) {
-  final result = mergeExtra(ChartOptionsScope(), source);
+  final result = scopeFromMap(ChartOptionsScope(), source);
   void restore(Object target, Map<String, Object?> values) {
     for (final entry in values.entries) {
       final value = entry.value;
@@ -3372,7 +3373,7 @@ void main() {
         final other = acquireChartRoot(
           ChartConfigurationScope()
             ..type = type
-            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+            ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
               'labels': <Object?>['a', 'b', 'c'],
               'datasets': <Object?>[
                 <String, Object?>{

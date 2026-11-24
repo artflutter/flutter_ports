@@ -328,7 +328,7 @@ void main() {
 
         final chart = acquireChartRoot(
           ChartConfigurationScope()
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{
                 'foo': <String, Object?>{'a': '123'},
               },
@@ -365,7 +365,7 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..plugins = <Plugin<Object?>>[plugins['b']!, plugins['c']!]
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'plugins': <String, Object?>{
                   'a': <String, Object?>{'a': '123'},
                   'b': <String, Object?>{'b': '456'},
@@ -414,7 +414,7 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..plugins = <Plugin<Object?>>[plugins['b']!, plugins['c']!]
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'plugins': <String, Object?>{'a': false, 'b': false},
               }),
           );
@@ -446,7 +446,7 @@ void main() {
 
           final chart = acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'plugins': <String, Object?>{'a': true},
               }),
           );
@@ -504,7 +504,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..plugins = [plugin]
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{
                 'a': <String, Object?>{'foo': 'foo'},
               },
@@ -529,7 +529,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..plugins = [plugin]
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{
                 'a': <String, Object?>{'foo': 'foo'},
               },
@@ -585,7 +585,7 @@ void main() {
           acquireChartRoot(
             ChartConfigurationScope()
               ..plugins = [plugin]
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'plugins': <String, Object?>{
                   'a': <String, Object?>{
                     'l1': <String, Object?>{'l2': undefined},
@@ -622,7 +622,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..plugins = [plugin]
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': false,
             }),
         );
@@ -687,7 +687,7 @@ void main() {
           );
           acquireChartRoot(
             ChartConfigurationScope()
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'plugins': <String, Object?>{
                   'test': <String, Object?>{
                     'fun': () => 'test',
@@ -710,7 +710,7 @@ void main() {
         final results = <String>[];
         final chart = acquireChartRoot(
           ChartConfigurationScope()
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'events': ['mousemove', 'test', 'test2', 'pointerleave'],
               'plugins': <String, Object?>{
                 'testPlugin': <String, Object?>{
@@ -759,7 +759,7 @@ void main() {
         final results = <String>[];
         final chart = acquireChartRoot(
           ChartConfigurationScope()
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'events': ['test'],
               'plugins': <String, Object?>{
                 'testPlugin': <String, Object?>{

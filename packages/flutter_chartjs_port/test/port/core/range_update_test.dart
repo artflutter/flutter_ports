@@ -5,6 +5,7 @@ library;
 import 'dart:ui' show Color;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -197,8 +198,8 @@ ChartConfigurationScope _config(
 }) => (ChartConfigurationScope()
   ..type = type
   ..plugins = <Plugin<Object?>>[_recorder(log)]
-  ..data = mergeExtra(ChartDataScope(), data)
-  ..options = mergeExtra(ChartOptionsScope(), {
+  ..data = scopeFromMap(ChartDataScope(), data)
+  ..options = scopeFromMap(ChartOptionsScope(), {
     'animation': _animation(log, animated: animated),
     'layout': <String, Object?>{'padding': _padding(log)},
     'scales': scales,
@@ -701,12 +702,12 @@ ChartConfigurationScope _small(
 }) => (ChartConfigurationScope()
   ..type = 'line'
   ..plugins = <Plugin<Object?>>[_recorder(log), ...plugins]
-  ..data = mergeExtra(ChartDataScope(), {
+  ..data = scopeFromMap(ChartDataScope(), {
     'datasets': <Object?>[
       <String, Object?>{'label': 'a', 'data': _points(8, 0)},
     ],
   })
-  ..options = mergeExtra(ChartOptionsScope(), {
+  ..options = scopeFromMap(ChartOptionsScope(), {
     'animation': false,
     'scales': <String, Object?>{
       'x': <String, Object?>{'type': 'linear'},

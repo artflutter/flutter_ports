@@ -9,6 +9,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -231,7 +232,7 @@ ChartConfigurationScope _lineChart([Object? legendOptions]) {
         LineControllerDatasetOptionsScope()..data = <Object?>[10, 20, 30, 100],
       ]);
   if (legendOptions != null) {
-    config.options = mergeExtra(ChartOptionsScope(), {
+    config.options = scopeFromMap(ChartOptionsScope(), {
       'plugins': {'legend': legendOptions},
     });
   }
@@ -452,7 +453,7 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'label': 'dataset1',
@@ -467,7 +468,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>[])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{'legend': const LegendOptions()},
             }),
         );
@@ -884,7 +885,7 @@ void main() {
           ChartConfigurationScope()
             ..type = 'line'
             ..data = (ChartDataScope())
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{
                 'legend': const LegendOptions(
                   fullSize: true,

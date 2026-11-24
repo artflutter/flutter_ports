@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/widgets.dart'
     show Align, Alignment, Directionality, SizedBox, TextDirection;
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -229,7 +230,7 @@ ChartConfigurationScope _config(
   ..data = (ChartDataScope()
     ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     ..datasets = <Object?>[...datasets])
-  ..options = mergeExtra(
+  ..options = scopeFromMap(
     ChartOptionsScope()
       ..responsive = false
       ..animation = false,

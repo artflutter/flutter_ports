@@ -193,8 +193,8 @@ AnyObject _oneDataset() => <String, Object?>{
 ChartConfigurationScope _line(AnyObject data, [AnyObject? options]) =>
     (ChartConfigurationScope()
       ..type = 'line'
-      ..data = mergeExtra(ChartDataScope(), data)
-      ..options = mergeExtra(ChartOptionsScope(), options));
+      ..data = scopeFromMap(ChartDataScope(), data)
+      ..options = scopeFromMap(ChartOptionsScope(), options));
 
 /// The label color of the default `labelColor` for a line point with the
 /// default colors (:157-163).
@@ -1194,7 +1194,7 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..type = 'bar'
-              ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
                 'datasets': <Object?>[
                   <String, Object?>{
                     'label': 'Dataset 1',
@@ -1231,7 +1231,7 @@ void main() {
                 ],
                 'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
               })
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'interaction': <String, Object?>{
                   'mode': const IndexInteractionMode(),
                 },
@@ -1860,7 +1860,7 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..type = 'line'
-              ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
                 'labels': <Object?>['A', 'B', 'C', 'D'],
                 'datasets': <Object?>[
                   <String, Object?>{
@@ -1868,7 +1868,7 @@ void main() {
                   },
                 ],
               })
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'scales': <String, Object?>{
                   'x': <String, Object?>{'display': ScaleDisplay.off},
                   'y': <String, Object?>{'display': ScaleDisplay.off},

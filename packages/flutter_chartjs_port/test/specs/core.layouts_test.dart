@@ -57,9 +57,12 @@ void main() {
           ..type = 'bar'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78, -10],
-              }),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 5, 0, 25, 78, -10],
+                },
+              ),
             ]
             ..labels = <Object?>[
               'tick1',
@@ -100,9 +103,12 @@ void main() {
           ..type = 'bar'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78, -10],
-              }),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 5, 0, 25, 78, -10],
+                },
+              ),
             ]
             ..labels = <Object?>[
               'tick1',
@@ -112,7 +118,7 @@ void main() {
               'tick5',
               'tick6',
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
@@ -155,13 +161,13 @@ void main() {
           ..type = 'radar'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 RadarControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[10, 5, 0, 25, 78, -10],
                 },
               ),
-              mergeExtra(
+              scopeFromMap(
                 RadarControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[-19, -20, 0, -99, -50, 0],
@@ -200,14 +206,20 @@ void main() {
           ..type = 'bar'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[10, 5, 0, 25, 78, -10],
-              }),
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'yAxisID': 'y2',
-                'data': <Object?>[-19, -20, 0, -99, -50, 0],
-              }),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'yAxisID': 'y',
+                  'data': <Object?>[10, 5, 0, 25, 78, -10],
+                },
+              ),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'yAxisID': 'y2',
+                  'data': <Object?>[-19, -20, 0, -99, -50, 0],
+                },
+              ),
             ]
             ..labels = <Object?>[
               'tick1',
@@ -217,7 +229,7 @@ void main() {
               'tick5',
               'tick6',
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{'type': 'category'},
               'y': <String, Object?>{'type': 'linear'},
@@ -259,14 +271,20 @@ void main() {
           ..type = 'bar'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'xAxisID': 'x',
-                'data': <Object?>[10, 5, 0, 25, 78, -10],
-              }),
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'xAxisID': 'x2',
-                'data': <Object?>[-19, -20, 0, -99, -50, 0],
-              }),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'xAxisID': 'x',
+                  'data': <Object?>[10, 5, 0, 25, 78, -10],
+                },
+              ),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'xAxisID': 'x2',
+                  'data': <Object?>[-19, -20, 0, -99, -50, 0],
+                },
+              ),
             ]
             ..labels = <Object?>[
               'tick1',
@@ -276,7 +294,7 @@ void main() {
               'tick5',
               'tick6',
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{'type': 'category', 'offset': false},
               'x2': <String, Object?>{
@@ -322,7 +340,7 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 5, 0, 25, 78, -10],
@@ -337,7 +355,7 @@ void main() {
                 'tick5',
                 'tick6',
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
@@ -366,7 +384,7 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 5, 0, 25, 78, -10],
@@ -381,7 +399,7 @@ void main() {
                 'tick5',
                 'tick6',
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
@@ -419,7 +437,7 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 5, 0, 25, 78, -10],
@@ -434,7 +452,7 @@ void main() {
                 'tick5',
                 'tick6',
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
@@ -465,7 +483,7 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 5, 0, 25, 78, -10],
@@ -480,7 +498,7 @@ void main() {
                 'tick5',
                 'tick6',
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{
                 // The legend options are one object (Chart.js ADR 0193).
                 'legend': const LegendOptions(
@@ -514,7 +532,7 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 5, 0, 25, 78, -10],
@@ -529,7 +547,7 @@ void main() {
                 'tick5',
                 'tick6',
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
@@ -656,14 +674,14 @@ void main() {
                 'tick 5',
               ]
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[0, 2.25, 1.5, 1.25, 2.5],
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{'legend': false},
             }),
           const AcquireOptions(canvas: HarnessCanvas(width: 256, height: 256)),

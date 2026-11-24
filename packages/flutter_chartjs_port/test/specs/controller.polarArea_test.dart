@@ -117,7 +117,7 @@ void main() {
                   ..type = 'polarArea'
                   ..data = (ChartDataScope()
                     ..datasets = [
-                      mergeExtra(
+                      scopeFromMap(
                         PolarAreaControllerDatasetOptionsScope(),
                         <String, Object?>{
                           'data': <Object?>[100],
@@ -144,11 +144,11 @@ void main() {
           ..type = 'polarArea'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 PolarAreaControllerDatasetOptionsScope(),
                 <String, Object?>{'data': <Object?>[]},
               ),
-              mergeExtra(
+              scopeFromMap(
                 PolarAreaControllerDatasetOptionsScope(),
                 <String, Object?>{'data': <Object?>[]},
               ),
@@ -176,11 +176,11 @@ void main() {
             ..type = 'polarArea'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   PolarAreaControllerDatasetOptionsScope(),
                   <String, Object?>{'data': <Object?>[]},
                 ),
-                mergeExtra(
+                scopeFromMap(
                   PolarAreaControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 15, 0, -4],
@@ -207,7 +207,7 @@ void main() {
           ..type = 'polarArea'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 PolarAreaControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[10, 20],
@@ -236,7 +236,7 @@ void main() {
           ..type = 'polarArea'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 PolarAreaControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[10, 20],
@@ -244,7 +244,7 @@ void main() {
               ),
             ]
             ..labels = <Object?>['a', 'b'])
-          ..options = mergeExtra((ChartOptionsScope()), {
+          ..options = scopeFromMap((ChartOptionsScope()), {
             'spacing': 12,
             'spacingMode': ArcSpacingMode.parallel,
           }),
@@ -263,7 +263,7 @@ void main() {
           ..type = 'polarArea'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 PolarAreaControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[10, 15, 0, -4],
@@ -295,7 +295,7 @@ void main() {
           ..type = 'polarArea'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 PolarAreaControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[10, 15, 0, -4],
@@ -304,7 +304,7 @@ void main() {
               ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
-          ..options = mergeExtra((ChartOptionsScope()), {
+          ..options = scopeFromMap((ChartOptionsScope()), {
             'showLine': true,
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'elements': <String, Object?>{
@@ -373,7 +373,7 @@ void main() {
           ..type = 'polarArea'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 PolarAreaControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[10, 15, 0, -4],
@@ -382,7 +382,7 @@ void main() {
               ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
-          ..options = mergeExtra((ChartOptionsScope()), {
+          ..options = scopeFromMap((ChartOptionsScope()), {
             'showLine': true,
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
@@ -426,7 +426,7 @@ void main() {
           ..type = 'polarArea'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 PolarAreaControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[10, 15, 0, -4],
@@ -435,7 +435,7 @@ void main() {
               ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
-          ..options = mergeExtra((ChartOptionsScope()), {
+          ..options = scopeFromMap((ChartOptionsScope()), {
             'showLine': true,
             'elements': <String, Object?>{
               'arc': <String, Object?>{
@@ -493,14 +493,14 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>['label1', 'label2', 'label3', 'label4']
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   PolarAreaControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 15, 0, 4],
                   },
                 ),
               ])
-            ..options = mergeExtra((ChartOptionsScope()), {
+            ..options = scopeFromMap((ChartOptionsScope()), {
               'cutoutPercentage': 0,
               'elements': <String, Object?>{
                 'arc': <String, Object?>{
@@ -637,14 +637,14 @@ void main() {
           ..data = (ChartDataScope()
             ..labels = <Object?>['Label 1', 'Label 2']
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 PolarAreaControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[21, 79],
                   'label': 'Dataset 1',
                 },
               ),
-              mergeExtra(
+              scopeFromMap(
                 PolarAreaControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[33, 67],

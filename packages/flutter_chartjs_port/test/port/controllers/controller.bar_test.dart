@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -87,7 +88,7 @@ ChartConfigurationScope _one(
   ..data = (ChartDataScope()
     ..labels = <Object?>['a', 'b', 'c']
     ..datasets = <Object?>[
-      mergeExtra(
+      scopeFromMap(
         BarControllerDatasetOptionsScope()..data = <Object?>[...data],
         extra,
       ),

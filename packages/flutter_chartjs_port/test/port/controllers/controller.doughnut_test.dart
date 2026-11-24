@@ -3,6 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -168,7 +169,7 @@ ChartConfigurationScope _one(AnyObject extra, List<Object?> data) =>
       ..data = (ChartDataScope()
         ..labels = <Object?>['a', 'b', 'c']
         ..datasets = <Object?>[
-          mergeExtra(
+          scopeFromMap(
             // A List of parsed items keeps its class: the parsed List of
             // `parsing: false` is the data List itself.
             DoughnutControllerDatasetOptionsScope()

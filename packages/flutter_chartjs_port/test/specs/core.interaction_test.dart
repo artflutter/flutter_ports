@@ -6,6 +6,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -77,7 +78,7 @@ List<Object?> _datasets(
   List<Object?>? radius1,
   List<Object?>? radius2,
 }) => <Object?>[
-  mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+  scopeFromMap(LineControllerDatasetOptionsScope(), <String, Object?>{
     'label': 'Dataset 1',
     'data': data1,
     'pointRadius': ?radius1,
@@ -88,7 +89,7 @@ List<Object?> _datasets(
       native_ui.Color.fromRGBO(0, 255, 0, 1),
     ),
   }),
-  mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+  scopeFromMap(LineControllerDatasetOptionsScope(), <String, Object?>{
     'label': 'Dataset 2',
     'data': data2,
     'pointRadius': ?radius2,
@@ -281,7 +282,7 @@ void main() {
           chart = acquireChartRoot(
             ChartConfigurationScope()
               ..type = 'line'
-              ..data = mergeExtra(ChartDataScope(), data),
+              ..data = scopeFromMap(ChartDataScope(), data),
           );
         }
 
@@ -309,8 +310,8 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..type = 'bar'
-              ..data = mergeExtra(ChartDataScope(), data)
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..data = scopeFromMap(ChartDataScope(), data)
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'indexAxis': const YAxis(),
               }),
           );
@@ -416,7 +417,7 @@ void main() {
           chart = acquireChartRoot(
             ChartConfigurationScope()
               ..type = 'line'
-              ..data = mergeExtra(ChartDataScope(), data),
+              ..data = scopeFromMap(ChartDataScope(), data),
           );
         }
 
@@ -425,8 +426,8 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigurationScope()
               ..type = 'bar'
-              ..data = mergeExtra(ChartDataScope(), data)
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..data = scopeFromMap(ChartDataScope(), data)
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'indexAxis': const YAxis(),
               }),
           );
@@ -508,7 +509,7 @@ void main() {
               ..type = 'polarArea'
               ..data = (ChartDataScope()
                 ..datasets = [
-                  mergeExtra(
+                  scopeFromMap(
                     PolarAreaControllerDatasetOptionsScope(),
                     <String, Object?>{
                       'data': <Object?>[1, 9, 5],
@@ -516,7 +517,7 @@ void main() {
                   ),
                 ]
                 ..labels = _labels())
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'plugins': <String, Object?>{
                   'legend': const LegendOptions(display: false),
                 },
@@ -1037,12 +1038,12 @@ void main() {
             ..type = 'scatter'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{'data': data},
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{'min': 2},
               },
@@ -1075,12 +1076,12 @@ void main() {
             ..type = 'scatter'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{'data': data},
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{'min': 2},
               },
@@ -1116,7 +1117,7 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>[1, 2, 3, 4, 5, 6, 7, 8, 9]
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     // The `data` of a const record cannot change. The chart

@@ -246,13 +246,13 @@ void main() {
             ..type = 'radar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   RadarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   RadarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>['150'],
@@ -267,7 +267,7 @@ void main() {
                 'label5',
                 'label6',
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{},
             }),
         );
@@ -287,19 +287,19 @@ void main() {
             ..type = 'radar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   RadarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   RadarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>['150'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   RadarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[1000],
@@ -315,7 +315,7 @@ void main() {
                 'label5',
                 'label6',
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{},
             }),
         );
@@ -335,7 +335,7 @@ void main() {
             ..type = 'radar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   RadarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[
@@ -361,7 +361,7 @@ void main() {
                 'label7',
                 'label8',
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{},
             }),
         );
@@ -610,7 +610,7 @@ void main() {
           ..type = 'radar'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 RadarControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[10, 5, 0, 25, 78, 20],

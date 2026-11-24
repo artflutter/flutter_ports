@@ -225,35 +225,35 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y',
                     'data': <Object?>['42', '1000', '64', '100'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y1',
                     'data': <Object?>['10', '5', '5000', '78', '450'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y1',
                     'data': <Object?>['150'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y2',
                     'data': <Object?>['20', '0', '150', '1800', '3040'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y3',
@@ -262,7 +262,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>['a', 'b', 'c', 'd', 'e'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'y': <String, Object?>{'type': 'logarithmic'},
                 'y1': <String, Object?>{
@@ -341,7 +341,7 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y',
@@ -357,7 +357,7 @@ void main() {
                     ],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y',
@@ -375,7 +375,7 @@ void main() {
                     ],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y1',
@@ -391,7 +391,7 @@ void main() {
                     ],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y1',
@@ -409,7 +409,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'y': <String, Object?>{'type': 'logarithmic'},
                 'y1': <String, Object?>{
@@ -628,12 +628,15 @@ void main() {
           ..type = 'bar'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[1, 1, 1, 2, 1, 0],
-              }),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[1, 1, 1, 2, 1, 0],
+                },
+              ),
             ]
             ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'y': <String, Object?>{
                 'type': 'logarithmic',

@@ -153,21 +153,21 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y',
                     'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y2',
                     'data': <Object?>['-1000', '1000'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y',
@@ -176,7 +176,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'y': <String, Object?>{'type': 'linear'},
                 'y2': <String, Object?>{
@@ -234,21 +234,21 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y',
                     'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y2',
                     'data': <Object?>['-1000', '1000'],
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y',
@@ -258,7 +258,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'y': <String, Object?>{'type': 'linear'},
                 'y2': <String, Object?>{
@@ -285,7 +285,7 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'yAxisID': 'y',
@@ -303,7 +303,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'y': <String, Object?>{'type': 'linear', 'beginAtZero': false},
               },
@@ -1354,7 +1354,7 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>[0, 1, 2, 3, 4, 5, 6, 7, '7+']
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[
@@ -1371,7 +1371,7 @@ void main() {
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': false,
               'layout': <String, Object?>{
                 'padding': const EdgeInsets.only(

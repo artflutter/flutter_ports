@@ -983,17 +983,23 @@ void main() {
           ..type = 'bar'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>['10', '-10', '10', '-10'],
-                'label': 'dataset1',
-              }),
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>['10', '15', '0', '-4'],
-                'label': 'dataset2',
-              }),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>['10', '-10', '10', '-10'],
+                  'label': 'dataset1',
+                },
+              ),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>['10', '15', '0', '-4'],
+                  'label': 'dataset2',
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
               'x': <String, Object?>{
@@ -1740,7 +1746,7 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>['a']
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[
@@ -1813,75 +1819,84 @@ void main() {
           ..type = 'bar'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'id': '1',
-                'label': 'USA',
-                'data': <Object?>[
-                  <String, Object?>{
-                    'xScale': 'First',
-                    'Country': 'USA',
-                    'yScale': 524,
-                  },
-                  <String, Object?>{
-                    'xScale': 'Second',
-                    'Country': 'USA',
-                    'yScale': 325,
-                  },
-                ],
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'id': '1',
+                  'label': 'USA',
+                  'data': <Object?>[
+                    <String, Object?>{
+                      'xScale': 'First',
+                      'Country': 'USA',
+                      'yScale': 524,
+                    },
+                    <String, Object?>{
+                      'xScale': 'Second',
+                      'Country': 'USA',
+                      'yScale': 325,
+                    },
+                  ],
 
-                'yAxisID': 'yScale',
-                'xAxisID': 'xScale',
+                  'yAxisID': 'yScale',
+                  'xAxisID': 'xScale',
 
-                'parsing': <String, Object?>{
-                  'yAxisKey': 'yScale',
-                  'xAxisKey': 'xScale',
+                  'parsing': <String, Object?>{
+                    'yAxisKey': 'yScale',
+                    'xAxisKey': 'xScale',
+                  },
                 },
-              }),
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'id': '2',
-                'label': 'BRA',
-                'data': <Object?>[
-                  <String, Object?>{
-                    'xScale': 'Second',
-                    'Country': 'BRA',
-                    'yScale': 183,
-                  },
-                  <String, Object?>{
-                    'xScale': 'First',
-                    'Country': 'BRA',
-                    'yScale': 177,
-                  },
-                ],
+              ),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'id': '2',
+                  'label': 'BRA',
+                  'data': <Object?>[
+                    <String, Object?>{
+                      'xScale': 'Second',
+                      'Country': 'BRA',
+                      'yScale': 183,
+                    },
+                    <String, Object?>{
+                      'xScale': 'First',
+                      'Country': 'BRA',
+                      'yScale': 177,
+                    },
+                  ],
 
-                'yAxisID': 'yScale',
-                'xAxisID': 'xScale',
+                  'yAxisID': 'yScale',
+                  'xAxisID': 'xScale',
 
-                'parsing': <String, Object?>{
-                  'yAxisKey': 'yScale',
-                  'xAxisKey': 'xScale',
+                  'parsing': <String, Object?>{
+                    'yAxisKey': 'yScale',
+                    'xAxisKey': 'xScale',
+                  },
                 },
-              }),
-              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
-                'id': '3',
-                'label': 'DEU',
-                'data': <Object?>[
-                  <String, Object?>{
-                    'xScale': 'First',
-                    'Country': 'DEU',
-                    'yScale': 162,
+              ),
+              scopeFromMap(
+                BarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'id': '3',
+                  'label': 'DEU',
+                  'data': <Object?>[
+                    <String, Object?>{
+                      'xScale': 'First',
+                      'Country': 'DEU',
+                      'yScale': 162,
+                    },
+                  ],
+
+                  'yAxisID': 'yScale',
+                  'xAxisID': 'xScale',
+
+                  'parsing': <String, Object?>{
+                    'yAxisKey': 'yScale',
+                    'xAxisKey': 'xScale',
                   },
-                ],
-
-                'yAxisID': 'yScale',
-                'xAxisID': 'xScale',
-
-                'parsing': <String, Object?>{
-                  'yAxisKey': 'yScale',
-                  'xAxisKey': 'xScale',
                 },
-              }),
+              ),
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'skipNull': true,
           }),
       );

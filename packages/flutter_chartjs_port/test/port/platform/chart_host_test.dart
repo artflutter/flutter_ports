@@ -5,6 +5,7 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' as native_ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart'
     show ClipRectLayer, RenderRepaintBoundary;
@@ -3644,7 +3645,7 @@ void main() {
       );
       ChartConfigurationScope config() => (ChartConfigurationScope()
         ..type = 'line'
-        ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+        ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
           'labels': <Object?>['a', 'b', 'c'],
           'datasets': <Object?>[
             <String, Object?>{
@@ -3652,7 +3653,7 @@ void main() {
             },
           ],
         })
-        ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+        ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
           'animation': false,
           'maintainAspectRatio': false,
           'plugins': <String, Object?>{

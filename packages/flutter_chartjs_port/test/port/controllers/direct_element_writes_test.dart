@@ -6,6 +6,7 @@ import 'dart:collection';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -385,7 +386,7 @@ ChartConfigurationScope _config(
         ...dataset,
       },
     ])
-  ..options = mergeExtra(
+  ..options = scopeFromMap(
     ChartOptionsScope()
       ..responsive = false
       ..animation = false,

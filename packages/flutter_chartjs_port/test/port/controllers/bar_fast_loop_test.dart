@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/widgets.dart' show ValueKey;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -98,7 +99,7 @@ ChartConfigurationScope _config({
           ...?extra?.call(k),
         },
     ])
-  ..options = mergeExtra(ChartOptionsScope(), {
+  ..options = scopeFromMap(ChartOptionsScope(), {
     'responsive': false,
     if (hasAnimation) 'animation': animation,
     'indexAxis': horizontal ? const YAxis() : const XAxis(),

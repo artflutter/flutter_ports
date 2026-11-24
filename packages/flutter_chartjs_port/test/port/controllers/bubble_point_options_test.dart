@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/widgets.dart'
     show Directionality, SizedBox, TextDirection;
@@ -171,7 +172,7 @@ ChartConfigurationScope _config({
     ..type = type
     ..data = (ChartDataScope()
       ..datasets = <Object?>[
-        mergeExtra(BubbleControllerDatasetOptionsScope(), {
+        scopeFromMap(BubbleControllerDatasetOptionsScope(), {
           'data': data ?? _maps(),
           'backgroundColor': backgroundColor,
           'borderColor': borderColor,
@@ -179,7 +180,7 @@ ChartConfigurationScope _config({
           ...dataset,
         }),
       ])
-    ..options = mergeExtra(
+    ..options = scopeFromMap(
       ChartOptionsScope()
         ..responsive = false
         ..animation = false,

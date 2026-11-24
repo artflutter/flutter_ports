@@ -639,7 +639,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'customScale',
@@ -671,7 +671,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigurationScope()
             ..type = 'line'
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'my': <String, Object?>{
                   'type': 'customScale1',
@@ -704,7 +704,7 @@ void main() {
             return acquireChartRoot(
               ChartConfigurationScope()
                 ..type = 'line'
-                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                   'scales': <String, Object?>{
                     'my': <String, Object?>{'type': 'customScale2'},
                   },

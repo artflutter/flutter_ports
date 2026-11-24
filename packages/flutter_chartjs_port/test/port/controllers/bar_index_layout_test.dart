@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -100,7 +101,7 @@ ChartConfigurationScope _config({
         'borderWidth': 1.0,
       },
     ])
-  ..options = mergeExtra(
+  ..options = scopeFromMap(
     ChartOptionsScope()
       ..responsive = false
       ..animation = false,

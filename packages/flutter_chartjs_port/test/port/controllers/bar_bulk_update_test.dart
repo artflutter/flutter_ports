@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -139,14 +140,14 @@ ChartConfigurationScope _config({
   ..data = (ChartDataScope()
     ..labels = <String>['a', 'b', 'c', 'd', 'e', 'f']
     ..datasets = <Object?>[
-      mergeExtra(BarControllerDatasetOptionsScope(), {
+      scopeFromMap(BarControllerDatasetOptionsScope(), {
         'data': values ?? <Object?>[1.0, 0.0, -0.0, -2.0, 3.0, 4.0],
         'backgroundColor': const ChartPaint.solid(ui.Color(0x803366AA)),
         'borderWidth': 1.0,
         ...extra,
       }),
     ])
-  ..options = mergeExtra(
+  ..options = scopeFromMap(
     ChartOptionsScope()
       ..responsive = false
       ..animation = false,

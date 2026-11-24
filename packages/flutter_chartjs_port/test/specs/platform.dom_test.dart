@@ -427,7 +427,7 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>['A', 'B', 'C', 'D']
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 20, 30, 100],

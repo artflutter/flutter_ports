@@ -7,6 +7,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -60,7 +61,7 @@ ChartConfigurationScope _config(String type) => (ChartConfigurationScope()
   ..data = (ChartDataScope()
     ..labels = <Object?>['label1', 'label2', 'label3']
     ..datasets = [
-      mergeExtra(
+      scopeFromMap(
         type == 'polarArea'
             ? PolarAreaControllerDatasetOptionsScope()
             : DoughnutControllerDatasetOptionsScope(),
@@ -130,7 +131,7 @@ void main() {
               ..data = (ChartDataScope()
                 ..labels = <Object?>['label1']
                 ..datasets = [
-                  mergeExtra(
+                  scopeFromMap(
                     DoughnutControllerDatasetOptionsScope(),
                     <String, Object?>{
                       'data': <Object?>[10],
@@ -150,7 +151,7 @@ void main() {
                     },
                   ),
                 ])
-              ..options = mergeExtra((ChartOptionsScope()), {
+              ..options = scopeFromMap((ChartOptionsScope()), {
                 'plugins': <String, Object?>{
                   // The legend options are one object (Chart.js ADR 0193).
                   'legend': const LegendOptions(

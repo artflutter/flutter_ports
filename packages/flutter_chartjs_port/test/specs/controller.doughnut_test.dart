@@ -101,7 +101,7 @@ void main() {
           ..type = 'doughnut'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{'data': <Object?>[]},
               ),
@@ -128,7 +128,7 @@ void main() {
             ..type = 'doughnut'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   DoughnutControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10.0, 15.0, 0.0, 4.0],
@@ -153,7 +153,7 @@ void main() {
           ..type = 'doughnut'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[10.0, 20.0],
@@ -174,20 +174,20 @@ void main() {
           ..type = 'doughnut'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[1.0, 2.0, 3.0, 4.0],
                   'hidden': true,
                 },
               ),
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[5.0, 6.0, 0.0, 7.0],
                 },
               ),
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[8.0, 9.0, 10.0, 11.0],
@@ -195,7 +195,7 @@ void main() {
               ),
             ]
             ..labels = <Object?>['label0', 'label1', 'label2', 'label3'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'animation': <String, Object?>{
               'duration': 0.0,
@@ -309,20 +309,20 @@ void main() {
           ..type = 'doughnut'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[2.0, 4.0],
                   'hidden': true,
                 },
               ),
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[1.0, 3.0],
                 },
               ),
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[1.0, 0.0],
@@ -330,7 +330,7 @@ void main() {
               ),
             ]
             ..labels = <Object?>['label0', 'label1', 'label2'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             // DIVERGES(chartjs): adapt-length-objects, the length class.
             'cutout': const PercentRadius(50),
@@ -370,7 +370,7 @@ void main() {
           ..type = 'doughnut'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[-1.0, -3.0],
@@ -378,7 +378,7 @@ void main() {
               ),
             ]
             ..labels = <Object?>['label0', 'label1'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             // DIVERGES(chartjs): adapt-length-objects, the length class.
             'cutout': const PercentRadius(50),
@@ -414,7 +414,7 @@ void main() {
           ..type = 'doughnut'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[10.0, 15.0, 0.0, 4.0],
@@ -448,7 +448,7 @@ void main() {
             ..type = 'doughnut'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   DoughnutControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[2.0, 4.0],
@@ -456,14 +456,14 @@ void main() {
                     'hidden': true,
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   DoughnutControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[1.0, 3.0],
                     'borderWidth': 8.0,
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   DoughnutControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[1.0, 0.0],
@@ -472,7 +472,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>['label0', 'label1'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{'legend': false, 'title': false},
             }),
         )..update(); // :313 `chart.update()`
@@ -508,14 +508,14 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>['label1', 'label2', 'label3', 'label4']
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   DoughnutControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10.0, 15.0, 0.0, 4.0],
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               // DIVERGES(chartjs): adapt-length-objects, the length class.
               'cutout': const PercentRadius(50),
               'elements': <String, Object?>{
@@ -653,14 +653,14 @@ void main() {
           ..data = (ChartDataScope()
             ..labels = <Object?>['Label 1', 'Label 2']
             ..datasets = [
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[21, 79],
                   'label': 'Dataset 1',
                 },
               ),
-              mergeExtra(
+              scopeFromMap(
                 DoughnutControllerDatasetOptionsScope(),
                 <String, Object?>{
                   'data': <Object?>[33, 67],
@@ -668,7 +668,7 @@ void main() {
                 },
               ),
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'responsive': true,
             'maintainAspectRatio': true,
           }),

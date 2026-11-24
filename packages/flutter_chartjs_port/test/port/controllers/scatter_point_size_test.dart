@@ -6,7 +6,7 @@ import 'dart:collection' show ListBase;
 import 'dart:typed_data' show Uint8List;
 import 'dart:ui' as ui;
 
-import 'package:chartjs_test_utils/pure.dart' show RecordingContext;
+import 'package:chartjs_test_utils/pure.dart';
 
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -115,7 +115,7 @@ ChartConfigurationScope _config({
   ..type = type
   ..data = (ChartDataScope()
     ..datasets = <Object?>[
-      mergeExtra(LineControllerDatasetOptionsScope(), {
+      scopeFromMap(LineControllerDatasetOptionsScope(), {
         'data': <Object?>[
           for (var i = 0; i < _length; i++)
             <String, Object?>{'x': i.toDouble(), 'y': (i - 3).toDouble()},
@@ -127,7 +127,7 @@ ChartConfigurationScope _config({
         ...dataset,
       }),
     ])
-  ..options = mergeExtra(
+  ..options = scopeFromMap(
     ChartOptionsScope()
       ..responsive = false
       ..animation = false,

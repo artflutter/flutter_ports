@@ -26,7 +26,7 @@ void main() {
         ChartConfigurationScope()
           ..type = 'sankey'
           ..data = ChartDataScope()
-          ..options = mergeExtra(ChartOptionsScope(), {
+          ..options = scopeFromMap(ChartOptionsScope(), {
             'plugins': {
               'legend': const LegendOptions(display: false),
               'title': const TitleOptions(

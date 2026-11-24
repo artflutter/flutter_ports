@@ -127,9 +127,10 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{'data': <Object?>[]},
+              ),
             ]
             ..labels = <Object?>[]),
       );
@@ -153,7 +154,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{'data': <Object?>[]},
                 ),
@@ -177,7 +178,7 @@ void main() {
               ..type = 'line'
               ..data = (ChartDataScope()
                 ..datasets = [
-                  mergeExtra(
+                  scopeFromMap(
                     LineControllerDatasetOptionsScope(),
                     <String, Object?>{'data': <Object?>[], 'tension': 0.5},
                   ),
@@ -196,15 +197,21 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 11, 12, 13],
-              }),
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[1, 2, 3, 4],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 11, 12, 13],
+                },
+              ),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[1, 2, 3, 4],
+                },
+              ),
             ]
             ..labels = <Object?>['a', 'b', 'c', 'd'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'y': <String, Object?>{'stacked': StackMode.on},
             },
@@ -239,7 +246,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 15, 0, -4],
@@ -266,13 +273,16 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-                'label': 'dataset1',
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, -4],
+                  'label': 'dataset1',
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'showLine': true,
           }),
       );
@@ -300,15 +310,18 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-                'label': 'dataset',
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, -4],
+                  'label': 'dataset',
+                  'xAxisID': 'x',
+                  'yAxisID': 'y',
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'showLine': true,
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'elements': <String, Object?>{
@@ -374,11 +387,14 @@ void main() {
           ..data = (ChartDataScope()
             ..labels = <Object?>['One']
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[1],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[1],
+                },
+              ),
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'hover': <String, Object?>{
               'mode': const NearestInteractionMode(),
@@ -471,17 +487,23 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, -10, 10, -10],
-                'label': 'dataset1',
-              }),
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-                'label': 'dataset2',
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, -10, 10, -10],
+                  'label': 'dataset1',
+                },
+              ),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, -4],
+                  'label': 'dataset2',
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
               'x': <String, Object?>{'display': ScaleDisplay.off},
@@ -504,21 +526,21 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, -10, 10, -10],
                     'label': 'dataset1',
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 15, 0, -4],
                     'label': 'dataset2',
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 10, -10, -10],
@@ -528,7 +550,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'scales': <String, Object?>{
                 'x': <String, Object?>{'display': ScaleDisplay.off},
@@ -558,7 +580,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[
@@ -570,7 +592,7 @@ void main() {
                     'label': 'dataset1',
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[
@@ -584,7 +606,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'scales': <String, Object?>{
                 'x': <String, Object?>{'display': ScaleDisplay.off},
@@ -608,14 +630,14 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>['10', '-10', '10', '-10'],
                     'label': 'dataset1',
                   },
                 ),
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>['10', '15', '0', '-4'],
@@ -624,7 +646,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'scales': <String, Object?>{
                 'x': <String, Object?>{'display': ScaleDisplay.off},
@@ -648,19 +670,22 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[0, 0],
-                'label': 'dataset1',
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[0, 0],
+                  'label': 'dataset1',
 
-                // line styles
-                'backgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(98, 98, 98, 1),
-                ),
-                'borderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(8, 8, 8, 1),
-                ),
-                'borderWidth': 0.55,
-              }),
+                  // line styles
+                  'backgroundColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(98, 98, 98, 1),
+                  ),
+                  'borderColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(8, 8, 8, 1),
+                  ),
+                  'borderWidth': 0.55,
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2']),
       );
@@ -719,7 +744,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[0, 0],
@@ -767,7 +792,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[0, 0],
@@ -780,7 +805,7 @@ void main() {
                 ),
               ]
               ..labels = <Object?>['label1', 'label2'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'datasets': <String, Object?>{
                 'line': <String, Object?>{
                   'tension': 0.345,
@@ -859,13 +884,16 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[0, 0],
-                'label': 'dataset1',
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[0, 0],
+                  'label': 'dataset1',
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'datasets': <String, Object?>{
               'line': <String, Object?>{
                 ...lineOptions,
@@ -884,12 +912,15 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[0, 0],
-                'label': 'dataset1',
-                ...lineOptions,
-                'borderDash': <double>[0],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[0, 0],
+                  'label': 'dataset1',
+                  ...lineOptions,
+                  'borderDash': <double>[0],
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2']),
       );
@@ -905,10 +936,13 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-                'label': 'dataset1',
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, -4],
+                  'label': 'dataset1',
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
       );
@@ -941,14 +975,14 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>['label1', 'label2', 'label3', 'label4']
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[10, 15, 0, -4],
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{'offset': true},
               },
@@ -1148,11 +1182,14 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-                'label': 'dataset1',
-                'pointBorderWidth': 0,
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, -4],
+                  'label': 'dataset1',
+                  'pointBorderWidth': 0,
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
       );
@@ -1171,11 +1208,14 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-                'label': 'dataset1',
-                'pointBorderWidth': <Object?>[1, 2, 3, 4],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, -4],
+                  'label': 'dataset1',
+                  'pointBorderWidth': <Object?>[1, 2, 3, 4],
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
       );
@@ -1198,7 +1238,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': data,
@@ -1207,7 +1247,7 @@ void main() {
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{'type': 'linear'},
                 'y': <String, Object?>{'type': 'linear'},
@@ -1225,11 +1265,14 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[10, null, 0, -4],
-                'label': 'dataset1',
-                'pointBorderWidth': <Object?>[1, 2, 3, 4],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, null, 0, -4],
+                  'label': 'dataset1',
+                  'pointBorderWidth': <Object?>[1, 2, 3, 4],
+                },
+              ),
             ]
             ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
       );
@@ -1248,19 +1291,22 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'spanGaps': 10,
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 123},
-                  <String, Object?>{'x': 15, 'y': 124},
-                  <String, Object?>{'x': 26, 'y': 125},
-                  <String, Object?>{'x': 30, 'y': 126},
-                  <String, Object?>{'x': 35, 'y': 127},
-                ],
-                'label': 'dataset1',
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'spanGaps': 10,
+                  'data': <Object?>[
+                    <String, Object?>{'x': 10, 'y': 123},
+                    <String, Object?>{'x': 15, 'y': 124},
+                    <String, Object?>{'x': 26, 'y': 125},
+                    <String, Object?>{'x': 30, 'y': 126},
+                    <String, Object?>{'x': 35, 'y': 127},
+                  ],
+                  'label': 'dataset1',
+                },
+              ),
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{'type': 'linear'},
             },
@@ -1280,19 +1326,22 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'spanGaps': 10,
-                'data': <Object?>[
-                  <String, Object?>{'x': 35, 'y': 123},
-                  <String, Object?>{'x': 30, 'y': 124},
-                  <String, Object?>{'x': 26, 'y': 125},
-                  <String, Object?>{'x': 15, 'y': 126},
-                  <String, Object?>{'x': 10, 'y': 127},
-                ],
-                'label': 'dataset1',
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'spanGaps': 10,
+                  'data': <Object?>[
+                    <String, Object?>{'x': 35, 'y': 123},
+                    <String, Object?>{'x': 30, 'y': 124},
+                    <String, Object?>{'x': 26, 'y': 125},
+                    <String, Object?>{'x': 15, 'y': 126},
+                    <String, Object?>{'x': 10, 'y': 127},
+                  ],
+                  'label': 'dataset1',
+                },
+              ),
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{'type': 'linear'},
             },
@@ -1314,14 +1363,17 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 20},
-                  <String, Object?>{'x': 15, 'y': 19},
-                ],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[
+                    <String, Object?>{'x': 10, 'y': 20},
+                    <String, Object?>{'x': 15, 'y': 19},
+                  ],
+                },
+              ),
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'linear', 'min': 0, 'max': 25},
               'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 50},
@@ -1366,7 +1418,7 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>[0, 10, 20, 30, 40, 50]
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[3, null, 2, 3, null, 1.5],
@@ -1375,7 +1427,7 @@ void main() {
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{'type': 'linear', 'min': 11, 'max': 40},
               },
@@ -1399,7 +1451,7 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>[0, 10, 20, 30, 40, 50]
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[null, null, 2, 3, null, null],
@@ -1408,7 +1460,7 @@ void main() {
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{'type': 'linear', 'min': 11, 'max': 40},
               },
@@ -1431,7 +1483,7 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>[0, 10, 20, 30, 40, 50]
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[3, null, 2, 3, null, 1.5],
@@ -1440,7 +1492,7 @@ void main() {
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{'type': 'linear', 'min': 11, 'max': 40},
               },
@@ -1464,16 +1516,22 @@ void main() {
           ..data = (ChartDataScope()
             ..labels = <Object?>['Label 1', 'Label 2']
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[21, 79],
-                'label': 'Dataset 1',
-              }),
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[33, 67],
-                'label': 'Dataset 2',
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[21, 79],
+                  'label': 'Dataset 1',
+                },
+              ),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[33, 67],
+                  'label': 'Dataset 2',
+                },
+              ),
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'responsive': true,
             'maintainAspectRatio': true,
           }),

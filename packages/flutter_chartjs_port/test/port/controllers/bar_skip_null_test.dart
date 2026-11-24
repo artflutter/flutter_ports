@@ -6,6 +6,7 @@ import 'dart:collection';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -60,7 +61,7 @@ ChartConfigurationScope _config({
             ...?each?.call(d),
           }),
       ])
-    ..options = mergeExtra(
+    ..options = scopeFromMap(
       ChartOptionsScope()
         ..responsive = false
         ..animation = false,
@@ -313,7 +314,7 @@ ChartConfigurationScope _random(math.Random r) {
     ..data = (ChartDataScope()
       ..labels = labels
       ..datasets = sets)
-    ..options = mergeExtra(
+    ..options = scopeFromMap(
       ChartOptionsScope()
         ..responsive = false
         ..animation = false,

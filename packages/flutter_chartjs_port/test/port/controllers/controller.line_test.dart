@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -114,12 +115,12 @@ ChartConfigurationScope _lines(List<Object?> datasets, [AnyObject? options]) =>
         ..labels = <Object?>['a', 'b', 'c', 'd', 'e']
         ..datasets = <Object?>[
           for (final dataset in datasets)
-            mergeExtra(
+            scopeFromMap(
               LineControllerDatasetOptionsScope(),
               dataset! as AnyObject,
             ),
         ])
-      ..options = mergeExtra(ChartOptionsScope(), options);
+      ..options = scopeFromMap(ChartOptionsScope(), options);
 
 /// `x`, `y`, `skip` and `stop` of each point of each dataset of [chart].
 List<Object?> _points(Chart chart) => [

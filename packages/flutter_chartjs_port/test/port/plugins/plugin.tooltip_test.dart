@@ -7,7 +7,7 @@ import 'dart:io';
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:chartjs_test_utils/pure.dart' show MockContext;
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
@@ -1423,7 +1423,7 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigurationScope()
           ..type = 'scatter'
-          ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+          ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
             'labels': <Object?>[7, null],
             'datasets': <Object?>[
               <String, Object?>{
@@ -1435,7 +1435,7 @@ void main() {
               },
             ],
           })
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'plugins': <String, Object?>{'legend': false},
           }),
       );
@@ -1982,7 +1982,7 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigurationScope()
           ..type = 'line'
-          ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+          ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
             'labels': <Object?>['A', 'B', 'C'],
             'datasets': <Object?>[
               <String, Object?>{
@@ -1994,7 +1994,7 @@ void main() {
               },
             ],
           })
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'plugins': <String, Object?>{'legend': false},
           }),
       );

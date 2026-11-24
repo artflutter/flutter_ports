@@ -5,6 +5,7 @@ library;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -130,7 +131,7 @@ ChartConfigurationScope _timeConfig({
     ..type = 'bar'
     ..data = (ChartDataScope()
       ..datasets = <Object?>[
-        mergeExtra(BarControllerDatasetOptionsScope(), {
+        scopeFromMap(BarControllerDatasetOptionsScope(), {
           'data': <Object?>[
             for (var i = 0; i < 12; i++)
               <String, Object?>{
@@ -148,7 +149,7 @@ ChartConfigurationScope _timeConfig({
           ...extra,
         }),
       ])
-    ..options = mergeExtra(
+    ..options = scopeFromMap(
       ChartOptionsScope()
         ..responsive = false
         ..animation = false,
@@ -216,14 +217,14 @@ ChartConfigurationScope _floatingConfig({
     ..data = (ChartDataScope()
       ..labels = _labels(labels)
       ..datasets = <Object?>[
-        mergeExtra(BarControllerDatasetOptionsScope(), {
+        scopeFromMap(BarControllerDatasetOptionsScope(), {
           'data': data,
           'backgroundColor': const ChartPaint.solid(ui.Color(0x803366AA)),
           'borderWidth': 1.0,
           ...extra,
         }),
       ])
-    ..options = mergeExtra(
+    ..options = scopeFromMap(
       ChartOptionsScope()
         ..responsive = false
         ..animation = false,

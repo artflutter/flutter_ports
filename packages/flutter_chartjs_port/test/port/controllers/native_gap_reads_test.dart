@@ -5,6 +5,7 @@ library;
 import 'dart:collection';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -49,18 +50,18 @@ ChartConfigurationScope _config(
   Map<String, Object?> y = const {'type': 'linear'},
 }) => (ChartConfigurationScope()
   ..type = type
-  ..data = mergeExtra(ChartDataScope(), {
+  ..data = scopeFromMap(ChartDataScope(), {
     if (x['type'] == 'category')
       'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g'],
     'datasets': <Object?>[
-      mergeExtra(LineControllerDatasetOptionsScope(), {
+      scopeFromMap(LineControllerDatasetOptionsScope(), {
         'data': data ?? <Object?>[for (final p in _points) _item(form, p)],
         if (!identical(spanGaps, undefined)) 'spanGaps': spanGaps,
         ...dataset,
       }),
     ],
   })
-  ..options = mergeExtra(
+  ..options = scopeFromMap(
     ChartOptionsScope()
       ..responsive = false
       ..animation = false,

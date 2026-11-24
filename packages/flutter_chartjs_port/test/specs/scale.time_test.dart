@@ -8,7 +8,7 @@ import 'dart:math' as math;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -91,8 +91,8 @@ Scale _createScale(
   final chart = acquireChartRoot(
     ChartConfigurationScope()
       ..type = 'line'
-      ..data = mergeExtra(ChartDataScope(), data)
-      ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+      ..data = scopeFromMap(ChartDataScope(), data)
+      ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
         'scales': <String, Object?>{'x': options},
       }),
     AcquireOptions(
@@ -265,12 +265,12 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'xAxisID': 'x',
-                'data': data,
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{'xAxisID': 'x', 'data': data},
+              ),
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'time',
@@ -383,7 +383,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{'xAxisID': 'x', 'data': <Object?>[]},
                 ),
@@ -397,7 +397,7 @@ void main() {
                 '2015-01-08T10:00',
                 '2015-01-10T12:00',
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'time',
@@ -483,7 +483,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..labels = <Object?>['2005-07-04', '2017-01-20'])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'time',
@@ -573,7 +573,7 @@ void main() {
           ..data =
               (ChartDataScope()
                 ..datasets = [
-                  mergeExtra(
+                  scopeFromMap(
                     LineControllerDatasetOptionsScope(),
                     <String, Object?>{
                       'xAxisID': 'x',
@@ -592,7 +592,7 @@ void main() {
                 ]
               // days
               )
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'time',
@@ -644,7 +644,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'xAxisID': 'x',
@@ -656,7 +656,7 @@ void main() {
                 '2015-01-01T20:00:00',
                 '2015-01-01T20:01:00',
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'time',
@@ -714,7 +714,7 @@ void main() {
             ..type = 'line'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'xAxisID': 'x',
@@ -725,7 +725,7 @@ void main() {
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'time',
@@ -761,7 +761,10 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+              scopeFromMap(LineControllerDatasetOptionsScope(), <
+                String,
+                Object?
+              >{
                 'xAxisID': 'x',
                 'data': <Object?>[
                   // Normally (at least with the moment.js adapter), times would
@@ -779,7 +782,7 @@ void main() {
                 ],
               }),
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'parsing': <String, Object?>{'xAxisKey': 't'},
             'scales': <String, Object?>{
               'x': <String, Object?>{
@@ -808,7 +811,7 @@ void main() {
             ..data = (ChartDataScope()
               ..labels = <Object?>['2016-05-27']
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   LineControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'xAxisID': 'x',
@@ -816,7 +819,7 @@ void main() {
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'display': ScaleDisplay.on,
@@ -844,11 +847,12 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'data': <Object?>[],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{'data': <Object?>[]},
+              ),
             ])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'time',
@@ -886,14 +890,14 @@ void main() {
               ..data = (ChartDataScope()
                 ..labels = <Object?>['2017', '2019', '2020', '2025', '2042']
                 ..datasets = [
-                  mergeExtra(
+                  scopeFromMap(
                     LineControllerDatasetOptionsScope(),
                     <String, Object?>{
                       'data': <Object?>[0, 1, 2, 3, 4, 5],
                     },
                   ),
                 ])
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'scales': <String, Object?>{
                   'x': <String, Object?>{
                     'type': 'time',
@@ -1006,13 +1010,13 @@ void main() {
               ..data = (ChartDataScope()
                 ..labels = <Object?>['2017', '2019', '2020', '2025', '2042']
                 ..datasets = [
-                  mergeExtra(
+                  scopeFromMap(
                     LineControllerDatasetOptionsScope(),
                     <String, Object?>{
                       'data': <Object?>[0, 1, 2, 3, 4, 5],
                     },
                   ),
-                  mergeExtra(
+                  scopeFromMap(
                     LineControllerDatasetOptionsScope(),
                     <String, Object?>{
                       'data': <Object?>[
@@ -1023,7 +1027,7 @@ void main() {
                     },
                   ),
                 ])
-              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
                 'scales': <String, Object?>{
                   'x': <String, Object?>{
                     'type': 'time',
@@ -1216,7 +1220,7 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[
@@ -1310,7 +1314,7 @@ void main() {
                   },
                 ),
               ])
-            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'timeseries',
@@ -1382,7 +1386,7 @@ void main() {
         ChartConfigurationScope()
           ..type = 'line'
           ..data = (ChartDataScope())
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
             'locale': const native_ui.Locale('es'),
             'scales': <String, Object?>{
@@ -1411,13 +1415,16 @@ void main() {
           ..type = 'line'
           ..data = (ChartDataScope()
             ..datasets = [
-              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
-                'xAxisID': 'x',
-                'data': <Object?>[0, 0],
-              }),
+              scopeFromMap(
+                LineControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'xAxisID': 'x',
+                  'data': <Object?>[0, 0],
+                },
+              ),
             ]
             ..labels = <Object?>['2015-01-01T20:00:00', '2015-01-01T20:01:00'])
-          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+          ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'time',

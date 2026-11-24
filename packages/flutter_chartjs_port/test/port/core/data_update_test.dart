@@ -6,6 +6,7 @@ import 'dart:collection';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
@@ -115,7 +116,7 @@ ChartConfigurationScope config(
   final xy = type == 'scatter' || type == 'bubble' || prepared;
   return (ChartConfigurationScope()
     ..type = type
-    ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+    ..data = scopeFromMap(ChartDataScope(), <String, Object?>{
       'labels': <String>['a', 'b', 'c', 'd'],
       'datasets': <Object?>[
         <String, Object?>{
@@ -144,7 +145,7 @@ ChartConfigurationScope config(
         },
       ],
     })
-    ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+    ..options = scopeFromMap(ChartOptionsScope(), <String, Object?>{
       'responsive': false,
       'animation': false,
       'indexAxis': horizontal ? const YAxis() : const XAxis(),

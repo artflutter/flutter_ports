@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -66,12 +67,12 @@ ChartConfigurationScope _radar(
   ..data = (ChartDataScope()
     ..labels = <Object?>[...labels]
     ..datasets = <Object?>[
-      mergeExtra(
+      scopeFromMap(
         RadarControllerDatasetOptionsScope()..data = <Object?>[...data],
         extra,
       ),
     ])
-  ..options = mergeExtra(ChartOptionsScope(), options);
+  ..options = scopeFromMap(ChartOptionsScope(), options);
 
 /// The `[datasetIndex, index]` pairs of the hit items of [mode] at
 /// ([x], [y]) with `intersect: true` and the keys of [extra].

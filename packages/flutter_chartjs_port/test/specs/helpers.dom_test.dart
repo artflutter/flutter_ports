@@ -3,6 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -223,7 +224,7 @@ void main() {
             ..type = 'bar'
             ..data = (ChartDataScope()
               ..datasets = [
-                mergeExtra(
+                scopeFromMap(
                   BarControllerDatasetOptionsScope(),
                   <String, Object?>{
                     'data': <Object?>[
@@ -234,7 +235,7 @@ void main() {
                   },
                 ),
               ])
-            ..options = mergeExtra((ChartOptionsScope()), {
+            ..options = scopeFromMap((ChartOptionsScope()), {
               'onHover': (Object e, Object? _, Object? _) {
                 final canvasPosition = getRelativePosition(e, chart);
 
@@ -261,7 +262,7 @@ void main() {
               ..type = 'bar'
               ..data = (ChartDataScope()
                 ..datasets = [
-                  mergeExtra(
+                  scopeFromMap(
                     BarControllerDatasetOptionsScope(),
                     <String, Object?>{
                       'data': <Object?>[
@@ -272,7 +273,7 @@ void main() {
                     },
                   ),
                 ])
-              ..options = mergeExtra((ChartOptionsScope()), {
+              ..options = scopeFromMap((ChartOptionsScope()), {
                 'onHover': (Object chartEvent, Object? _, Object? _) {
                   chartPosition = getRelativePosition(chartEvent, chart);
                 },

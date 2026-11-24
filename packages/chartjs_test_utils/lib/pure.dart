@@ -31,6 +31,7 @@ export 'package:chartjs_test_utils/src/matchers.dart';
 export 'package:chartjs_test_utils/src/matchers.options.dart';
 export 'package:chartjs_test_utils/src/native_easing.dart';
 export 'package:chartjs_test_utils/src/recording_context.dart';
+export 'package:chartjs_test_utils/src/scope_from_map.dart';
 
 /// Sets up the specs of one pure-layer spec file. Call it first in `main()`.
 ///

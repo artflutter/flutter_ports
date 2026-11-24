@@ -134,7 +134,7 @@ ChartConfigurationScope _config({
   Map<String, Object?>? r,
 }) => (ChartConfigurationScope()
   ..type = type
-  ..data = mergeExtra(ChartDataScope(), {
+  ..data = scopeFromMap(ChartDataScope(), {
     'labels': <Object?>[for (var i = 0; i < n; i++) 'Label $i'],
     'datasets': <Object?>[
       <String, Object?>{
@@ -144,7 +144,7 @@ ChartConfigurationScope _config({
       },
     ],
   })
-  ..options = mergeExtra(ChartOptionsScope(), {
+  ..options = scopeFromMap(ChartOptionsScope(), {
     'responsive': false,
     'events': <String>[],
     'plugins': <String, Object?>{'legend': false},
