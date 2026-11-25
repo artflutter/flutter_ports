@@ -844,7 +844,7 @@ class Tooltip(({IChart chart, Object? options}) config)
   /// plugin.tooltip.js:464 `constructor(config)`.
   ///
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
-  /// 4). The `construct` closure of [jsClass] reads it from a JS value. The
+  /// 4). The
   /// start values follow the upstream order (:467-495). The other
   /// properties start in the `undefined` state.
   this {
@@ -853,19 +853,6 @@ class Tooltip(({IChart chart, Object? options}) config)
     _tooltipItems = [];
     _setOptions(config.options);
   }
-
-  /// plugin.tooltip.js:457 `class Tooltip` as a value (Chart.js ADR 0020,
-  /// section 3).
-  ///
-  /// Its superclass is [Element.jsClass]. It has no static `positioners`
-  /// (plugin.tooltip.js:462): a positioner is a class, and no table maps a
-  /// name to a positioner (row `adapt-tooltip-positioner-objects`). Its
-  /// `construct` reads the `config` argument with [_tooltipConfig].
-  static final JsClass jsClass = JsClass(
-    'Tooltip',
-    superclass: Element.jsClass,
-    construct: (newTarget, args) => Tooltip(_tooltipConfig(args)),
-  );
 
   /// plugin.tooltip.js:475 `chart`. Not final: the access by name writes it
   /// (Chart.js ADR 0039, section 2).
@@ -2328,24 +2315,6 @@ class Tooltip(({IChart chart, Object? options}) config)
   }
 }
 
-/// The `config` of `new Tooltip(config)` from the arguments [args] of the
-/// `construct` closure of [Tooltip.jsClass]: the reads `config.chart` and
-/// `config.options` of plugin.tooltip.js:475-476.
-///
-/// An absent argument, [undefined] and JS `null` throw the [TypeError] of
-/// the read `config.chart`, as upstream. A member with the value
-/// [undefined] gives Dart `null`. A `chart` that is not a `types.Chart` and
-/// an `options` that is not a [TooltipOptions] (Chart.js ADR 0192) throw a
-/// [TypeError]. Upstream stores such a value and reads its members later.
-// DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
-({IChart chart, Object? options}) _tooltipConfig(List<Object?> args) {
-  final config = args.isEmpty ? undefined : args[0];
-  return (
-    chart: _orNull(jsGet(config, 'chart'))! as IChart,
-    options: _orNull(jsGet(config, 'options')) as TooltipOptions?,
-  );
-}
-
 /// Dart `null` for the [undefined] sentinel, else [value].
 Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 
@@ -2421,7 +2390,7 @@ void _afterEvent(IChart chart, EventHookArgs args, TooltipOptions _) {
 ///
 /// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
 /// upstream order. The key `_element: Tooltip` of plugin.tooltip.js:1225 is
-/// for the tests: they read `Tooltip.jsClass`.
+/// for the tests: they construct `Tooltip` directly.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
 final tooltip = TooltipPlugin();
 

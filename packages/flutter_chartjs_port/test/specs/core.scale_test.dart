@@ -35,10 +35,10 @@ import '../support/tick_label.dart';
 // with no argument is `throwsA(anything)`.
 //
 // A class `class X extends Chart.Scale` of the spec is a Dart subclass of
-// Scale and a class value that constructs it: `JsClass('X', superclass:
-// Scale.jsClass, construct: ...)`. The static properties that the spec writes
-// after the class are writes with `operator []=` (Chart.js ADR 0020, section
-// 8). Dart has no local classes, so the classes of the spec are private
+// Scale and a typed component that constructs it: `ScaleType(id: ...,
+// defaults: ..., create: X.new)`. The static properties that the spec writes
+// after the class are arguments of the component (Chart.js ADR 0204). Dart
+// has no local classes, so the classes of the spec are private
 // classes of this file. `chart.scales.x` is `chart.scales['x']!`, and
 // `scale._layers()` is `scale.layers!()` (Chart.js ADR 0012, Underscore
 // members). `new Error(m)` is a StateError with the message m.
@@ -634,13 +634,11 @@ void main() {
       testWidgets('should default to one layer for custom scales', (
         tester,
       ) async {
-        final customScale = JsClass(
-          'CustomScale',
-          superclass: Scale.jsClass,
-          construct: (newTarget, args) => _CustomScale(scaleCfgArg(args)),
+        final customScale = ScaleType(
+          id: 'customScale',
+          defaults: ScaleOptionsScope(),
+          create: _CustomScale.new,
         );
-        customScale['id'] = 'customScale';
-        customScale['defaults'] = <String, Object?>{};
         Chart.register([customScale]);
 
         final chart = acquireChartRoot(
@@ -666,13 +664,11 @@ void main() {
       testWidgets('should default to one layer for custom scales for axis', (
         tester,
       ) async {
-        final customScale1 = JsClass(
-          'CustomScale1',
-          superclass: Scale.jsClass,
-          construct: (newTarget, args) => _CustomScale1(scaleCfgArg(args)),
+        final customScale1 = ScaleType(
+          id: 'customScale1',
+          defaults: scopeFromMap(ScaleOptionsScope(), {'axis': const XAxis()}),
+          create: _CustomScale1.new,
         );
-        customScale1['id'] = 'customScale1';
-        customScale1['defaults'] = <String, Object?>{'axis': const XAxis()};
         Chart.register([customScale1]);
 
         final chart = acquireChartRoot(
@@ -698,13 +694,11 @@ void main() {
       testWidgets(
         'should fail for custom scales without any axis or position',
         (tester) async {
-          final customScale2 = JsClass(
-            'CustomScale2',
-            superclass: Scale.jsClass,
-            construct: (newTarget, args) => _CustomScale2(scaleCfgArg(args)),
+          final customScale2 = ScaleType(
+            id: 'customScale2',
+            defaults: ScaleOptionsScope(),
+            create: _CustomScale2.new,
           );
-          customScale2['id'] = 'customScale2';
-          customScale2['defaults'] = <String, Object?>{};
           Chart.register([customScale2]);
 
           Chart createChart() {

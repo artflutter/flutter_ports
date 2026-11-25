@@ -78,7 +78,7 @@ void main() {
     group('auto', fixture.specs('controller.bubble'));
 
     test('should be registered as dataset controller', () {
-      expect(Chart.registry.controllers.items['bubble'], isA<JsClass>());
+      expect(Chart.registry.controllers.items['bubble'], isA<ControllerType>());
     });
 
     testWidgets('should be constructed', (tester) async {

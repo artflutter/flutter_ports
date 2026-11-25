@@ -46,12 +46,9 @@ void main() {
 
   group('the order of the resolver', () {
     test('a function is a function cell for every shape', () {
-      final klass = JsClass('C');
-      for (final value in <Object>[_fn, klass]) {
-        expect(classifyNumber(value), isA<OptFunction<double>>());
-        expect(classifyString(value).raw, same(value));
-        expect(classifyUnion(value, ShapeBits.any), isA<OptFunction<Object>>());
-      }
+      expect(classifyNumber(_fn), isA<OptFunction<double>>());
+      expect(classifyString(_fn).raw, same(_fn));
+      expect(classifyUnion(_fn, ShapeBits.any), isA<OptFunction<Object>>());
     });
 
     test('an array is a list cell with the same List', () {

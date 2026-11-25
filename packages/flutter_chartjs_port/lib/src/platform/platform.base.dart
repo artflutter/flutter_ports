@@ -26,19 +26,6 @@ class BasePlatform() implements IBasePlatform {
   /// platform.base.js:9 the implicit constructor.
   this;
 
-  /// platform.base.js:9 `class BasePlatform` as a value (Chart.js ADR 0020,
-  /// section 3).
-  ///
-  /// `core.controller.js:136` constructs `config.platform` with `new`. Thus
-  /// a platform of the configuration is a class value. It has no statics.
-  /// Its `construct` ignores the arguments, as the implicit constructor
-  /// does. A class value that extends it without a `construct` of its own
-  /// constructs a [BasePlatform].
-  static final JsClass jsClass = JsClass(
-    'BasePlatform',
-    construct: (newTarget, args) => BasePlatform(),
-  );
-
   /// platform.base.js:16 `acquireContext(canvas, aspectRatio)`.
   ///
   /// Called at chart construction time, returns a context2d instance

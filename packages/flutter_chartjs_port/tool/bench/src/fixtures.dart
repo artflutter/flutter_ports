@@ -28,7 +28,7 @@ bool _registered = false;
 void registerBarDefaults() {
   if (_registered) return;
   _registered = true;
-  Chart.register([BarController.jsClass, BarElement.jsClass]);
+  Chart.register([BarController.component, BarElement.component]);
 }
 
 /// The data of a bar dataset: 100 values.

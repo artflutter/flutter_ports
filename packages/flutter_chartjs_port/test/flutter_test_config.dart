@@ -100,8 +100,18 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // `setUpSpecs()`, because `dart test` does not run this file.
   // DIVERGES(chartjs): harness-register-builtins, src/index.umd.ts:28.
   setUpBuiltins(
-    () => Chart.register([controllers, scales, elements, plugins]),
-    () => Chart.unregister([controllers, scales, elements, plugins]),
+    () => Chart.register([
+      ...controllers.values,
+      ...scales.values,
+      ...elements.values,
+      ...plugins.values,
+    ]),
+    () => Chart.unregister([
+      ...controllers.values,
+      ...scales.values,
+      ...elements.values,
+      ...plugins.values,
+    ]),
   );
 
   // index.js:25-28

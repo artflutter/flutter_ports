@@ -48,7 +48,7 @@ class Title(
   /// @param {{ ctx: any; options: any; chart: any; }} config
   ///
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
-  /// 4). The `construct` closure of [jsClass] reads it from a JS value.
+  /// 4).
   this {
     options = config.options;
   }
@@ -66,17 +66,6 @@ class Title(
   @override
   set options(covariant TitleBoxOptions<Object?>? value) =>
       super.options = value;
-
-  /// plugin.title.js:7 `class Title` as a value (Chart.js ADR 0020, section
-  /// 3).
-  ///
-  /// Its superclass is [Element.jsClass]. It has no static property. Its
-  /// `construct` reads the `config` argument with [_titleConfig].
-  static final JsClass jsClass = JsClass(
-    'Title',
-    superclass: Element.jsClass,
-    construct: (newTarget, args) => Title(_titleConfig(args)),
-  );
 
   /// plugin.title.js:14 `chart`. Upstream stores it and never reads it.
   /// Thus it keeps any value.
@@ -268,34 +257,6 @@ class Title(
   }
 }
 
-/// The `config` of `new Title(config)` from the arguments [args] of the
-/// `construct` closure of [Title.jsClass]: the reads `config.chart`,
-/// `config.options` and `config.ctx` of plugin.title.js:14-16.
-///
-/// An absent argument, [undefined] and JS `null` throw the [TypeError] of
-/// the read `config.chart`, as upstream. A member with the value
-/// [undefined] gives Dart `null`. The `chart` keeps any value, because
-/// `Title` never reads it. An `options` that is not a [TitleBoxOptions]
-/// (Chart.js ADR 0197) and a `ctx` that is not a context throw a
-/// [TypeError]. Upstream stores such a value.
-// DIVERGES(chartjs): adapt-component-class-role, other options throw.
-({
-  Object? chart,
-  TitleBoxOptions<Object?>? options,
-  CanvasRenderingContext2D? ctx,
-})
-_titleConfig(List<Object?> args) {
-  final config = args.isEmpty ? undefined : args[0];
-  return (
-    chart: _orNull(jsGet(config, 'chart')),
-    options: _orNull(jsGet(config, 'options')) as TitleBoxOptions<Object?>?,
-    ctx: _orNull(jsGet(config, 'ctx')) as CanvasRenderingContext2D?,
-  );
-}
-
-/// Dart `null` for the [undefined] sentinel, else [value].
-Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
-
 /// plugin.title.js:108 `createTitle(chart, titleOpts)`.
 void _createTitle(IChart chart, TitleOptions titleOpts) {
   final title = Title((ctx: chart.ctx, options: titleOpts, chart: chart));
@@ -392,7 +353,7 @@ T resolvedTitleOptions<T extends TitleBoxOptions<T>>(
 /// upstream order. Each hook is a private function of the hook type
 /// `(chart, args, options)` with the argument class of its hook and the
 /// merged [TitleOptions] (Chart.js ADR 0197). The key `_element: Title` of
-/// plugin.title.js:127 is for the tests: they read `Title.jsClass`.
+/// plugin.title.js:127 is for the tests: they construct `Title` directly.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
 final title = TitlePlugin();
 

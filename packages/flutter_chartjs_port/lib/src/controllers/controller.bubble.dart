@@ -28,8 +28,8 @@
 ///   module (Chart.js ADR 0028, section 1). `getMaxOverflow` casts each data
 ///   element to `types.PointElement` at `size` (Chart.js ADR 0028, section
 ///   4).
-/// - [BubbleController.jsClass] is the class as a value with the statics
-///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
+/// - [BubbleController.component] is the class as a typed component with the
+///   statics `id`, `defaults` and `overrides` (Chart.js ADR 0204).
 /// - The option copy for each item (the option resolution of each parse
 ///   and the copy of the shared options) is ported literally (Chart.js ADR
 ///   0036, section 8: the step 7 list), except inside the guarded native loops
@@ -194,11 +194,11 @@ final class _ParseRadii(final BubbleController _owner, List<Object?> data) {
 }
 
 /// controller.bubble.js:4 `BubbleController extends DatasetController`.
-class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
+class BubbleController(super.chart, super.datasetIndex, [super.elements])
     extends DatasetController {
   /// `new BubbleController(chart, datasetIndex)`. Upstream declares no
-  /// constructor in this class. `newTarget` is `new.target` (Chart.js ADR
-  /// 0020, section 4).
+  /// constructor in this class. [elements] are the element types of the
+  /// chart type (Chart.js ADR 0204).
   this;
 
   /// Native support for the explicit data-only lifecycle.
@@ -235,21 +235,13 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
       ..jsWrite('x', ScaleOptionsScope()..type = 'linear')
       ..jsWrite('y', ScaleOptionsScope()..type = 'linear'));
 
-  /// controller.bubble.js:4 `class BubbleController extends
-  /// DatasetController` as a value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [DatasetController.jsClass]. Its statics are `id`
-  /// (`'bubble'`), [defaults] and [overrides], in the upstream order of
-  /// declaration (:6-35). Its `construct` calls `BubbleController(chart,
-  /// datasetIndex, newTarget)` with the arguments of [controllerArgs].
-  static final JsClass jsClass = JsClass(
-    'BubbleController',
-    superclass: DatasetController.jsClass,
-    statics: {'id': id, 'defaults': defaults, 'overrides': overrides},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return BubbleController(chart, datasetIndex, newTarget);
-    },
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `overrides`, and the constructor.
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: defaults,
+    overrides: overrides,
+    create: BubbleController.new,
   );
 
   /// controller.bubble.js:37 `initialize()`.

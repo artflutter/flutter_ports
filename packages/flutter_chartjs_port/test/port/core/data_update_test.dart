@@ -39,11 +39,11 @@ final class _ObservedList(final List<Object?> values)
 }
 
 class _CustomLinear(super.cfg) extends LinearScale {
-  static final value = JsClass(
-    'DataCustomLinear',
-    superclass: LinearScale.jsClass,
-    statics: {'id': 'data-custom-linear'},
-    construct: (_, args) => _CustomLinear(scaleCfgArg(args)),
+  static final ScaleType value = ScaleType(
+    id: 'data-custom-linear',
+    defaults: LinearScale.defaults,
+    parent: LinearScale.component,
+    create: _CustomLinear.new,
   );
 }
 
@@ -62,16 +62,15 @@ final class _Event(@override final double? x, @override final double? y)
 }
 
 // The user subclasses of Chart.js ADR 0100: the same results, the full path.
-final class _UserPie(super.chart, super.datasetIndex, [super.newTarget])
+final class _UserPie(super.chart, super.datasetIndex, [super.elements])
     extends PieController {
-  static final value = JsClass(
-    'UserPie',
-    superclass: PieController.jsClass,
-    statics: {'id': 'user-pie'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _UserPie(chart, datasetIndex, target);
-    },
+  static final ControllerType value = ControllerType(
+    id: 'user-pie',
+    defaults: PieController.defaults,
+    overrides: DoughnutController.overrides,
+    descriptors: DoughnutController.descriptors,
+    parent: PieController.component,
+    create: _UserPie.new,
   );
 }
 

@@ -33,11 +33,11 @@ void Function()? _onLoggedRead;
 /// A scale that logs the order of its `parse` calls.
 final class _OrderLinear(super.cfg) extends LinearScale {
   static final List<String> log = [];
-  static final value = JsClass(
-    'PlumbingOrderLinear',
-    superclass: LinearScale.jsClass,
-    statics: {'id': 'plumbing-order-linear'},
-    construct: (_, args) => _OrderLinear(scaleCfgArg(args)),
+  static final value = ScaleType(
+    id: 'plumbing-order-linear',
+    defaults: LinearScale.defaults,
+    parent: LinearScale.component,
+    create: _OrderLinear.new,
   );
 
   @override
@@ -68,18 +68,16 @@ final class _ObservedItems(
 
 /// A line controller whose `parsePrimitiveData` gives fewer items than the
 /// count, with [short], or a custom List, with [onItemRead].
-final class _ShortController(super.chart, super.datasetIndex, [super.newTarget])
+final class _ShortController(super.chart, super.datasetIndex, [super.elements])
     extends LineController {
   static bool short = false;
   static void Function()? onItemRead;
-  static final value = JsClass(
-    'PlumbingShortController',
-    superclass: LineController.jsClass,
-    statics: {'id': 'plumbing-short'},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _ShortController(chart, datasetIndex, newTarget);
-    },
+  static final value = ControllerType(
+    id: 'plumbing-short',
+    defaults: LineController.defaults,
+    overrides: LineController.overrides,
+    parent: LineController.component,
+    create: _ShortController.new,
   );
 
   @override
@@ -100,17 +98,15 @@ final class _ShortController(super.chart, super.datasetIndex, [super.newTarget])
 final class _DatasetCountController(
   super.chart,
   super.datasetIndex, [
-  super.newTarget,
+  super.elements,
 ]) extends LineController {
   int reads = 0;
-  static final value = JsClass(
-    'PlumbingDatasetController',
-    superclass: LineController.jsClass,
-    statics: {'id': 'plumbing-dataset'},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _DatasetCountController(chart, datasetIndex, newTarget);
-    },
+  static final value = ControllerType(
+    id: 'plumbing-dataset',
+    defaults: LineController.defaults,
+    overrides: LineController.overrides,
+    parent: LineController.component,
+    create: _DatasetCountController.new,
   );
 
   @override

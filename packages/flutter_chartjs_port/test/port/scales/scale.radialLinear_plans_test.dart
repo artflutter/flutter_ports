@@ -31,21 +31,25 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// A trivial user subclass of the scale, which keeps each ordinary call.
 final class _OrdinaryRadial(super.cfg) extends RadialLinearScale {
-  static final value = JsClass(
-    'OrdinaryRadial',
-    superclass: RadialLinearScale.jsClass,
-    statics: {'id': 'ordinaryRadial'},
-    construct: (_, args) => _OrdinaryRadial(scaleCfgArg(args)),
+  static final ScaleType value = ScaleType(
+    id: 'ordinaryRadial',
+    defaults: RadialLinearScale.defaults,
+    defaultRoutes: RadialLinearScale.defaultRoutes,
+    descriptors: RadialLinearScale.descriptors,
+    parent: RadialLinearScale.component,
+    create: _OrdinaryRadial.new,
   );
 }
 
 /// A user subclass that counts the contexts of its point labels.
 class _CountedRadial(super.cfg) extends RadialLinearScale {
-  static final value = JsClass(
-    'CountedRadial',
-    superclass: RadialLinearScale.jsClass,
-    statics: {'id': 'countedRadial'},
-    construct: (_, args) => _CountedRadial(scaleCfgArg(args)),
+  static final ScaleType value = ScaleType(
+    id: 'countedRadial',
+    defaults: RadialLinearScale.defaults,
+    defaultRoutes: RadialLinearScale.defaultRoutes,
+    descriptors: RadialLinearScale.descriptors,
+    parent: RadialLinearScale.component,
+    create: _CountedRadial.new,
   );
 
   int contexts = 0;
@@ -60,11 +64,13 @@ class _CountedRadial(super.cfg) extends RadialLinearScale {
 /// [_CountedRadial] that reports the class of the built-in scale. It stays a
 /// user subclass: it keeps each ordinary call.
 final class _DisguisedRadial(super.cfg) extends _CountedRadial {
-  static final value = JsClass(
-    'DisguisedRadial',
-    superclass: RadialLinearScale.jsClass,
-    statics: {'id': 'disguisedRadial'},
-    construct: (_, args) => _DisguisedRadial(scaleCfgArg(args)),
+  static final ScaleType value = ScaleType(
+    id: 'disguisedRadial',
+    defaults: RadialLinearScale.defaults,
+    defaultRoutes: RadialLinearScale.defaultRoutes,
+    descriptors: RadialLinearScale.descriptors,
+    parent: RadialLinearScale.component,
+    create: _DisguisedRadial.new,
   );
 
   @override

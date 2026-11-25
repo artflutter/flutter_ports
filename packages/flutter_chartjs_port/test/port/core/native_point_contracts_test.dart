@@ -58,13 +58,13 @@ void main() {
   );
 
   test('class identity and dataset indices remain independent live facts', () {
-    final cls = JsClass('Point', statics: {'id': 'point'});
-    expect(nativePointClass(cls), isTrue);
-    cls['id'] = 'other';
-    expect(nativePointClass(cls), isFalse);
-    cls['id'] = 1;
-    expect(nativePointClass(cls), isFalse);
-    expect(nativePointClass({'id': 'point'}), isFalse);
+    ElementType point(String id) => ElementType(
+      id: id,
+      defaults: GenericElementOptionsScope(),
+      create: Element.new,
+    );
+    expect(nativePointClass(point('point')), isTrue);
+    expect(nativePointClass(point('other')), isFalse);
     expect(nativePointClass(null), isFalse);
     for (final index in [0, 2]) {
       expect(nativePointDatasetIndex(index), isTrue);

@@ -44,9 +44,9 @@ import 'package:flutter_test/flutter_test.dart';
 // test the Flutter platform and the chart host without a chart.
 
 void main() {
-  // :1
+  // :1 `const DomPlatform = Chart.platforms.DomPlatform`: the class is
+  // FlutterPlatform, with no value of its own (Chart.js ADR 0204).
   // DIVERGES(chartjs): platform-dom-platform-class, no Chart.platforms.
-  final domPlatform = FlutterPlatform.jsClass;
 
   group('Platform.dom', () {
     group('context acquisition', () {
@@ -68,9 +68,8 @@ void main() {
           ChartConfigurationScope()..type = 'line',
         );
 
-        // `toBeInstanceOf(Chart.platforms.DomPlatform)`: the class value is
-        // the one of FlutterPlatform, and the platform is a FlutterPlatform.
-        expect(domPlatform, same(FlutterPlatform.jsClass));
+        // `toBeInstanceOf(Chart.platforms.DomPlatform)`: the platform is a
+        // FlutterPlatform.
         expect(chart.platform, isA<FlutterPlatform>());
 
         chart.destroy();

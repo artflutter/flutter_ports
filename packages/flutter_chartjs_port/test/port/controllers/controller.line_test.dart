@@ -95,11 +95,10 @@ Object? _stackKeys(Chart chart) => [
 
 /// The element class `OtherLine` of the generator: `class OtherLine extends
 /// Element { static id = 'otherLine'; }`.
-final JsClass _otherLine = JsClass(
-  'OtherLine',
-  superclass: Element.jsClass,
-  statics: {'id': 'otherLine'},
-  construct: (newTarget, args) => Element(),
+final ElementType _otherLine = ElementType(
+  id: 'otherLine',
+  defaults: GenericElementOptionsScope(),
+  create: Element.new,
 );
 
 /// `chart.data.datasets[index].data`.

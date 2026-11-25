@@ -42,7 +42,7 @@ import 'plugin_legend_reference.dart';
 // form, and the options compare only the keys of upstream.
 //
 // The groups `class value`, `start state`, `stop`,
-// `adapt-component-class-role`, `adapt-legend-dataset-index` and `input`
+// `adapt-legend-dataset-index` and `input`
 // hold the pin tests of Chart.js ADR 0038, section 11, and of Chart.js ADR
 // 0037, section 14. The expected results come from a probe on the pinned
 // build in Node.js v24.12.0 on x64 (controller_chart_common.mjs:
@@ -274,9 +274,6 @@ const List<String> _upstreamDefaultsKeys = [
   'title',
 ];
 
-/// `new Legend(config)` through the class value.
-Object? _construct(List<Object?> args) => jsConstruct(Legend.jsClass, args);
-
 /// A raw line chart with two datasets and the legend options
 /// [legendOptions]: a [LegendOptions], or `false`.
 // Keep the malformed labels that these cases exercise.
@@ -420,37 +417,20 @@ void main() {
   });
 
   group('class value', () {
-    test('the superclass is Element.jsClass', () {
-      expect(Legend.jsClass.superclass, same(Element.jsClass));
-    });
-
     test('new Legend(config) keeps the chart, the options and the ctx', () {
-      // A Map config: the test pins the read of a JS config object. The
-      // options are one LegendOptions (Chart.js ADR 0193).
+      // The options are one LegendOptions (Chart.js ADR 0193).
       final chart = _FakeChart();
       const options = LegendOptions(display: true);
-      final constructed = _construct([
-        <String, Object?>{'chart': chart, 'options': options},
-      ]);
-      expect(constructed, isA<Legend>());
-      final value = constructed! as Legend;
+      final value = Legend((chart: chart, options: options, ctx: null));
       expect(value.chart, same(chart));
       expect(value.options, same(options));
       expect(value.ctx, isNull);
     });
 
-    test('new Legend() and new Legend(undefined) throw a TypeError', () {
-      // Upstream: the read config.chart of undefined and null (probe:
-      // newNoArg, newUndefined, newNull).
-      expect(() => _construct(const []), throwsA(isA<TypeError>()));
-      expect(() => _construct([undefined]), throwsA(isA<TypeError>()));
-      expect(() => _construct([null]), throwsA(isA<TypeError>()));
-    });
-
     test('the plugin has the hooks and the keys of the upstream object', () {
       // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
       // object are its hooks, and `id` and `defaults` its fields. `_element`
-      // is no field: the class is `Legend.jsClass`. The defaults are one
+      // is no field: the class is `Legend`. The defaults are one
       // LegendOptions with a field for each key of upstream but the `null`
       // of `onHover` and `onLeave`, and the legend has no descriptors
       // (Chart.js ADR 0193).
@@ -819,45 +799,6 @@ void main() {
         ),
       );
       expect(chart.legend!.legendItems, [same(a), same(b), same(c)]);
-    });
-  });
-
-  group('adapt-component-class-role', () {
-    test('a chart that is not a types.Chart throws a TypeError', () {
-      // Upstream stores the value (probe: newChart5 gives 5, newEmpty gives
-      // undefined).
-      for (final chart in <Object?>[5, 'x', <String, Object?>{}, undefined]) {
-        expect(
-          () => _construct([
-            <String, Object?>{'chart': chart},
-          ]),
-          throwsA(isA<TypeError>()),
-        );
-      }
-      expect(
-        () => _construct([<String, Object?>{}]),
-        throwsA(isA<TypeError>()),
-      );
-    });
-
-    test('an options value that is not a LegendOptions throws a TypeError', () {
-      // Upstream stores the value (probe: newOptions5 gives 5).
-      expect(
-        () => _construct([
-          <String, Object?>{'chart': _FakeChart(), 'options': 5},
-        ]),
-        throwsA(isA<TypeError>()),
-      );
-    });
-
-    test('a ctx value that is not a context throws a TypeError', () {
-      // Upstream stores the value (probe: newCtxString gives 'x').
-      expect(
-        () => _construct([
-          <String, Object?>{'chart': _FakeChart(), 'ctx': 'x'},
-        ]),
-        throwsA(isA<TypeError>()),
-      );
     });
   });
 

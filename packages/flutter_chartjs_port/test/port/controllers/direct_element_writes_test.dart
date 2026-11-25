@@ -21,70 +21,70 @@ const green = ui.Color(0xff00ff00);
 
 // Trivial user subclasses: the exact-class guard fails, and each element takes
 // `updateElement`. Their charts are the reference of each twin.
-class _RefDoughnut(super.chart, super.datasetIndex, [super.newTarget])
+class _RefDoughnut(super.chart, super.datasetIndex, [super.elements])
     extends DoughnutController {
-  static final value = JsClass(
-    'WritesRefDoughnut',
-    superclass: DoughnutController.jsClass,
-    statics: {'id': 'writes-ref-doughnut'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefDoughnut(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'writes-ref-doughnut',
+    defaults: DoughnutController.component.defaults,
+    overrides: DoughnutController.component.overrides,
+    defaultRoutes: DoughnutController.component.defaultRoutes,
+    descriptors: DoughnutController.component.descriptors,
+    parent: DoughnutController.component,
+    create: _RefDoughnut.new,
   );
 }
 
-class _RefPie(super.chart, super.datasetIndex, [super.newTarget])
+class _RefPie(super.chart, super.datasetIndex, [super.elements])
     extends PieController {
-  static final value = JsClass(
-    'WritesRefPie',
-    superclass: PieController.jsClass,
-    statics: {'id': 'writes-ref-pie'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefPie(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'writes-ref-pie',
+    defaults: PieController.component.defaults,
+    overrides: PieController.component.overrides,
+    defaultRoutes: PieController.component.defaultRoutes,
+    descriptors: PieController.component.descriptors,
+    parent: PieController.component,
+    create: _RefPie.new,
   );
 }
 
-class _RefPolar(super.chart, super.datasetIndex, [super.newTarget])
+class _RefPolar(super.chart, super.datasetIndex, [super.elements])
     extends PolarAreaController {
-  static final value = JsClass(
-    'WritesRefPolar',
-    superclass: PolarAreaController.jsClass,
-    statics: {'id': 'writes-ref-polarArea'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefPolar(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'writes-ref-polarArea',
+    defaults: PolarAreaController.component.defaults,
+    overrides: PolarAreaController.component.overrides,
+    defaultRoutes: PolarAreaController.component.defaultRoutes,
+    descriptors: PolarAreaController.component.descriptors,
+    parent: PolarAreaController.component,
+    create: _RefPolar.new,
   );
 }
 
-class _RefBubble(super.chart, super.datasetIndex, [super.newTarget])
+class _RefBubble(super.chart, super.datasetIndex, [super.elements])
     extends BubbleController {
-  static final value = JsClass(
-    'WritesRefBubble',
-    superclass: BubbleController.jsClass,
-    statics: {'id': 'writes-ref-bubble'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefBubble(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'writes-ref-bubble',
+    defaults: BubbleController.component.defaults,
+    overrides: BubbleController.component.overrides,
+    defaultRoutes: BubbleController.component.defaultRoutes,
+    descriptors: BubbleController.component.descriptors,
+    parent: BubbleController.component,
+    create: _RefBubble.new,
   );
 }
 
 /// A user controller: `updateElement` sees each element of each loop.
-class _CountingPie(super.chart, super.datasetIndex, [super.newTarget])
+class _CountingPie(super.chart, super.datasetIndex, [super.elements])
     extends PieController {
   static int updates = 0;
-  static final value = JsClass(
-    'WritesCountingPie',
-    superclass: PieController.jsClass,
-    statics: {'id': 'writes-counting-pie'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _CountingPie(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'writes-counting-pie',
+    defaults: PieController.component.defaults,
+    overrides: PieController.component.overrides,
+    defaultRoutes: PieController.component.defaultRoutes,
+    descriptors: PieController.component.descriptors,
+    parent: PieController.component,
+    create: _CountingPie.new,
   );
   @override
   void updateElement(
@@ -175,11 +175,13 @@ class _ReferenceChart(super.item, super.userConfig) extends Chart {
 }
 
 class _UserRadial(super.cfg) extends RadialLinearScale {
-  static final value = JsClass(
-    'WritesUserRadial',
-    superclass: RadialLinearScale.jsClass,
-    statics: {'id': 'writes-user-radial'},
-    construct: (_, args) => _UserRadial(scaleCfgArg(args)),
+  static final value = ScaleType(
+    id: 'writes-user-radial',
+    defaults: RadialLinearScale.component.defaults,
+    defaultRoutes: RadialLinearScale.component.defaultRoutes,
+    descriptors: RadialLinearScale.component.descriptors,
+    parent: RadialLinearScale.component,
+    create: _UserRadial.new,
   );
 }
 
@@ -228,11 +230,6 @@ class _CountingScope(final Map<String, Object?> own, final List<String> reads)
 
 /// A platform that keeps the option `animation`.
 class _AnimatedPlatform() extends BasicPlatform {
-  static final JsClass value = JsClass(
-    'WritesAnimatedPlatform',
-    superclass: BasicPlatform.jsClass,
-    construct: (_, _) => _AnimatedPlatform(),
-  );
   @override
   void updateConfig(ChartConfiguration config) {}
 }
@@ -804,7 +801,7 @@ void main() {
             (cfg['options']! as JsObjectFace)['animation'] = <String, Object?>{
               'duration': 1000.0,
             };
-            cfg['platform'] = _AnimatedPlatform.value;
+            cfg['platform'] = _AnimatedPlatform.new;
             return cfg;
           }).toList();
           final charts = configs.map(_chart).toList();

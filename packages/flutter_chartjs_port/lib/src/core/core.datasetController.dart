@@ -23,10 +23,10 @@
 ///   with typed reads ([readOption], Chart.js ADR 0054 §4). The options
 ///   of an element are the typed classes of `element_options.dart`
 ///   ([ElementOptions]).
-/// - [DatasetController.jsClass] is the class as a value with the statics
-///   `defaults`, `datasetElementType` and `dataElementType` (Chart.js ADR
-///   0020, section 3). The constructor takes `new.target` as an optional
-///   last parameter (section 4).
+/// - A controller class is a [ControllerType] value (Chart.js ADR 0204).
+///   The constructor takes the element types of the chart type as an
+///   optional last parameter ([ElementTypes]), the statics
+///   `datasetElementType` and `dataElementType` of upstream.
 /// - The `_` members that other modules or the controllers of phase 7 read
 ///   drop the underscore and carry `@internal` (Chart.js ADR 0012). Two of
 ///   them then have the name of a public member: `_update` is
@@ -586,7 +586,7 @@ final class HeldElementOptions._() {
   int _generation = -1;
 
   /// Whether the last call took the entry and ran no code of the app: the
-  /// data element type is a class value and the entry a `PointOptions`.
+  /// entry is a `PointOptions`.
   bool native = false;
 
   int _taken = 0;
@@ -806,26 +806,11 @@ Object? stacksOf(ParsedItem? item) {
 }
 
 /// `this.datasetElementType.id` and `this.dataElementType.id`
-/// (core.datasetController.js:789, :798, Chart.js ADR 0020, section 4).
+/// (core.datasetController.js:789, :798).
 ///
-/// Dart `null` (the JS `null` or `false`) throws a [TypeError], as in
-/// JavaScript.
-Object? _idOf(JsClass? elementType) =>
+/// Dart `null` (the JS `null`) throws a [TypeError], as in JavaScript.
+String _idOf(ElementType? elementType) =>
     elementType == null ? throw TypeError() : elementType.id;
-
-/// The element class of the static `datasetElementType` or `dataElementType`
-/// [value] of a controller class value: a class value, or Dart `null` for the
-/// JS `null` and `false`. Another value stops a debug build, and a release
-/// build takes no class.
-// DIVERGES(chartjs): adapt-element-type-classes, a class value or null.
-JsClass? _elementClassOf(Object? value) {
-  if (value is JsClass) return value;
-  assert(
-    value == null || value == false || value is Undefined,
-    'An element type is a JsClass, not $value.',
-  );
-  return null;
-}
 
 /// `console.warn(message)`.
 void _consoleWarn(String message) {
@@ -834,33 +819,44 @@ void _consoleWarn(String message) {
   print(message);
 }
 
-/// The `chart` and `datasetIndex` of `new ControllerClass(chart,
-/// datasetIndex)` from the arguments [args] of the `construct` closure of a
-/// controller class value (Chart.js ADR 0020, sections 3 and 4).
+/// A dataset controller class as a typed value: `class XController extends
+/// DatasetController` with its statics (Chart.js ADR 0204).
 ///
-/// The first argument must be a `types.Chart`. Another value throws a
-/// [TypeError]. Upstream reads `chart.ctx` and calls
-/// `chart.getDatasetMeta`: an object with these members also works there.
-/// The second argument gives its `ToNumber`, NaN for an absent argument.
-///
-/// `chartjs.dart` exports it: the class value of a controller of another
-/// package reads its arguments with it (Chart.js ADR 0133).
-// DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
-({IChart chart, int datasetIndex}) controllerArgs(List<Object?> args) {
-  final chart = args.isEmpty ? undefined : args[0];
-  final datasetIndex = args.length < 2 ? undefined : args[1];
-  return switch (chart) {
-    final IChart value => (
-      chart: value,
-      // An absent or another argument is no dataset index, -1.
-      datasetIndex: datasetIndex is num && datasetIndex.isFinite
-          ? datasetIndex.toInt()
-          : -1,
-    ),
-    // A JavaScript TypeError: a property read of a value without the
-    // members of a chart.
-    _ => throw TypeError(),
-  };
+/// ```dart
+/// static final ControllerType component = ControllerType(
+///   id: id,
+///   defaults: defaults,
+///   overrides: overrides,
+///   create: LineController.new,
+/// );
+/// ```
+final class ControllerType({
+  required super.id,
+  required super.defaults,
+
+  /// `new ControllerClass(chart, datasetIndex)` with the element types of
+  /// the chart type (core.controller.js:443-448).
+  required final DatasetController Function(
+    IChart chart,
+    int datasetIndex,
+    ElementTypes elements,
+  )
+  create,
+
+  /// `static overrides`: the options of the chart type.
+  @override final ChartOptionsScope? overrides,
+  super.defaultRoutes,
+  super.descriptors,
+  super.beforeRegister,
+  super.afterRegister,
+  super.beforeUnregister,
+  super.afterUnregister,
+
+  /// The registered controller class that this class extends.
+  @override final ControllerType? parent,
+}) extends ChartComponent {
+  /// A controller type.
+  this;
 }
 
 /// core.datasetController.js:234 `DatasetController`.
@@ -868,17 +864,18 @@ class DatasetController(
   /// core.datasetController.js:256 `chart` (index.d.ts:630).
   final IChart chart,
   int datasetIndex, [
-  JsClass? newTarget,
+  ElementTypes elements = (dataset: null, data: null),
 ]) with ArrayListener<Object?> implements IDatasetController {
   /// core.datasetController.js:255 `constructor(chart, datasetIndex)`.
   ///
   /// @param {Chart} chart
   /// @param {number} datasetIndex
   ///
-  /// [newTarget] is `new.target` (Chart.js ADR 0020, section 4). A direct
-  /// Dart call without it stands for `new DatasetController(chart,
-  /// datasetIndex)`. The instance fields `datasetElementType` and
-  /// `dataElementType` copy the statics of `new.target`.
+  /// [elements] are the statics `datasetElementType` and
+  /// `dataElementType` that `buildOrUpdateControllers` gives the class
+  /// (core.controller.js:443-447). The instance fields copy them. A direct
+  /// Dart call without them stands for `new DatasetController(chart,
+  /// datasetIndex)`, whose statics are JS `null`.
   ///
   /// The fields with a start value get it before the body, and the body
   /// reads the meta. A subclass that overrides [getMeta] thus sees the start
@@ -886,9 +883,8 @@ class DatasetController(
   this {
     cachedMeta = getMeta();
     type = cachedMeta.type;
-    final target = newTarget ?? jsClass;
-    datasetElementType = _elementClassOf(target['datasetElementType']);
-    dataElementType = _elementClassOf(target['dataElementType']);
+    datasetElementType = elements.dataset;
+    dataElementType = elements.data;
 
     initialize();
   }
@@ -897,31 +893,6 @@ class DatasetController(
   /// scope of the kind `GenericDatasetOptions` (Chart.js ADR 0054 §3).
   static final GenericDatasetOptionsScope defaults =
       GenericDatasetOptionsScope();
-
-  /// core.datasetController.js:234 `class DatasetController` as a value
-  /// (Chart.js ADR 0020, section 3).
-  ///
-  /// Its statics are [defaults], `datasetElementType` and `dataElementType`,
-  /// in that order (:239-249). The last two are JS `null`: the element types
-  /// that generate a meta dataset (e.g. `Chart.element.LineElement`) and a
-  /// meta data (e.g. `Chart.element.PointElement`). They are only properties
-  /// of the class value, because the instance has members of the same names
-  /// (Chart.js ADR 0020, section 3). Its `construct` gives `newTarget` to the
-  /// constructor. Thus a registered subclass value without a Dart class
-  /// constructs a [DatasetController] with its own class value as
-  /// `new.target`.
-  static final JsClass jsClass = JsClass(
-    'DatasetController',
-    statics: {
-      'defaults': defaults,
-      'datasetElementType': null,
-      'dataElementType': null,
-    },
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return DatasetController(chart, datasetIndex, newTarget);
-    },
-  );
 
   /// core.datasetController.js:257 `_ctx`, the context of the chart.
   /// controller.bar.js:677 reads it. Dart `null` stands for the JS `null` of
@@ -1044,8 +1015,8 @@ class DatasetController(
 
   /// Whether the cache has an entry of the element type [type], in another mode
   /// than `active`.
-  bool _hasCachedEntry(JsClass? type) {
-    final prefix = '${jsToString(_idOf(type))}-';
+  bool _hasCachedEntry(ElementType? type) {
+    final prefix = '${_idOf(type)}-';
     return _cachedElementOptions.keys.any(
       (key) => key.startsWith(prefix) && key != '${prefix}active',
     );
@@ -1081,8 +1052,7 @@ class DatasetController(
   /// dataset element has no such plan: its cached entry stays the proof.
   bool _hasIndexedDataOptions(Config config) {
     final elementType = _idOf(dataElementType);
-    if (elementType is! String ||
-        !nativePointDatasetIndex(index) ||
+    if (!nativePointDatasetIndex(index) ||
         (cachedMeta.dataset != null && !_hasCachedEntry(datasetElementType))) {
       return false;
     }
@@ -1111,9 +1081,8 @@ class DatasetController(
   /// entry of [_resolveElementOptions]: the read then runs no context and no
   /// option function (Chart.js ADR 0092).
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
-  bool get hasCachedDefaultDataOptions => _cachedElementOptions.containsKey(
-    '${jsToString(_idOf(dataElementType))}-default',
-  );
+  bool get hasCachedDefaultDataOptions =>
+      _cachedElementOptions.containsKey('${_idOf(dataElementType)}-default');
 
   /// Whether the next `getStyle(index)` of a data element needs no context, and
   /// thus calls no option function and writes the `default` entry: an entry of
@@ -1142,15 +1111,14 @@ class DatasetController(
   /// `[method, start, count]` until the next [_resyncElements].
   List<List<Object?>> _syncList = [];
 
-  /// core.datasetController.js:274 `datasetElementType`: the class value of
-  /// the dataset element, or Dart `null` for the JS `null` and `false`
-  /// (Chart.js ADR 0020, section 4). controller.scatter.js:94 and :105 write
-  /// it.
-  JsClass? datasetElementType;
+  /// core.datasetController.js:274 `datasetElementType`: the type of the
+  /// dataset element, or Dart `null` for the JS `null` and `false`.
+  /// controller.scatter.js:94 and :105 write it.
+  ElementType? datasetElementType;
 
-  /// core.datasetController.js:275 `dataElementType`: the class value of
-  /// the data elements, or Dart `null` for JS `null`.
-  JsClass? dataElementType;
+  /// core.datasetController.js:275 `dataElementType`: the type of the data
+  /// elements, or Dart `null` for JS `null`.
+  ElementType? dataElementType;
 
   /// core.datasetController.js:280 `initialize()`.
   void initialize() {
@@ -1328,8 +1296,7 @@ class DatasetController(
 
     final datasetElementType = this.datasetElementType;
     if (datasetElementType != null) {
-      // DIVERGES(chartjs): adapt-component-class-role, the cast throws earlier.
-      meta.dataset = jsConstruct(datasetElementType, const []) as Element;
+      meta.dataset = datasetElementType.create();
     }
   }
 
@@ -2046,8 +2013,7 @@ class DatasetController(
     int index,
     String mode,
   ) {
-    final elementType = dataElementType;
-    final id = _idOf(elementType);
+    final id = _idOf(dataElementType);
     final entry = hold._entry;
     if (entry != null &&
         identical(id, hold._id) &&
@@ -2057,10 +2023,10 @@ class DatasetController(
       _lastElementTypeName = hold._id;
       _lastElementMode = hold._mode;
       _lastElementCacheKey = hold._key;
-      // A class value gives its `id` with no code of the app, and the clone of
-      // the final class `PointOptions` is ours.
+      // An element type gives its `id` with no code of the app, and the clone
+      // of the final class `PointOptions` is ours.
       hold
-        ..native = elementType is JsClass && entry is PointOptions
+        ..native = entry is PointOptions
         .._taken += 1;
       return _cloneIfNotShared(entry, enableOptionSharing);
     }
@@ -2069,9 +2035,7 @@ class DatasetController(
       .._entry = null;
     final result = _resolveElementOptions(id, mode, index);
     // The key of this call, unless a call inside it wrote another one.
-    if (id is String &&
-        _lastElementTypeName == id &&
-        _lastElementMode == mode) {
+    if (_lastElementTypeName == id && _lastElementMode == mode) {
       final key = _lastElementCacheKey;
       final cached = _cachedElementOptions[key];
       if (cached != null) {
@@ -2095,10 +2059,7 @@ class DatasetController(
   /// exact native controller reads a value of it. Dart `null` on a miss.
   // DIVERGES(chartjs): adapt-arc-native-options, a read needs no clone.
   ElementOptions? cachedDataElementOptions(String mode) =>
-      _cachedElementOptions[_elementCacheKey(
-        jsToString(_idOf(dataElementType)),
-        mode,
-      )];
+      _cachedElementOptions[_elementCacheKey(_idOf(dataElementType), mode)];
 
   /// Whether [options], the result of the last data element call, is its
   /// frozen cached entry. For an exact native controller, each later call
@@ -2139,20 +2100,20 @@ class DatasetController(
   /// = 'default', index)`.
   /// @private
   ///
-  /// [elementType] is the `id` of the element class value: any value. Dart
-  /// `null` for [mode] gives `'default'`. Dart `null` for [index] stands for
+  /// [elementType] is the `id` of the element type. Dart `null` for [mode]
+  /// gives `'default'`. Dart `null` for [index] stands for
   /// JS `undefined`.
   ///
   /// The result object is the typed options class of [elementType]
   /// (`createElementOptions`, Chart.js ADR 0021, section 1).
   ElementOptions _resolveElementOptions(
-    Object? elementType, [
+    String elementType, [
     String? mode,
     int? index,
   ]) {
     final resolvedMode = mode ?? 'default';
     final cache = _cachedElementOptions;
-    final typeName = jsToString(elementType);
+    final typeName = elementType;
     final cacheKey = _elementCacheKey(typeName, resolvedMode);
     final cached = cache[cacheKey];
     final sharing = enableOptionSharing && index != null;
@@ -2434,8 +2395,8 @@ class DatasetController(
     String mode,
   ) {
     if (_isDirectUpdateMode(mode)) {
-      // Each data and dataset element is an Element: the casts of
-      // addElements and _insertElements (row adapt-component-class-role).
+      // Each data and dataset element is an Element: `ElementType.create`
+      // gives one (row adapt-typed-components).
       (element as Element).assign(properties);
     } else {
       // DIVERGES(chartjs): adapt-shared-bar-animations, one resolution for
@@ -2596,8 +2557,8 @@ class DatasetController(
     move<IElement>(data, _hole);
 
     for (i = start; i < end; ++i) {
-      // DIVERGES(chartjs): adapt-component-class-role, the cast throws earlier.
-      data[i] = jsConstruct(dataElementType, const []) as Element;
+      // A JavaScript TypeError: `new` of the JS `null`.
+      data[i] = (dataElementType ?? (throw TypeError())).create();
     }
 
     if (parsing != null) {

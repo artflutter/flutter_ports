@@ -77,7 +77,6 @@ Object? jsObjectOrNull(Object? value) => switch (value) {
 /// - A [JsObjectFace]: [JsObjectFace.jsWrite].
 /// - A `Map`: the Map write. A Map with a narrow value type throws a
 ///   [TypeError] for a value of another type.
-/// - A [JsClass]: the static property ([JsClass.operator []=]).
 ///
 /// Throws a [TypeError] for `null` and [undefined], as JavaScript does, and
 /// an [ArgumentError] for another value: no ported code writes a property
@@ -91,8 +90,6 @@ void jsSet(Object? object, String key, Object? value) {
       face.jsWrite(key, value);
     case final Map<dynamic, dynamic> map:
       map[key] = value;
-    case final JsClass cls:
-      cls[key] = value;
     default:
       throw ArgumentError.value(object, 'object', 'is not a JS object');
   }
@@ -113,14 +110,12 @@ void jsSet(Object? object, String key, Object? value) {
 /// - A `List` or a `String`: the element at a canonical array index, as a
 ///   String of one code unit for a String, and `length` as a `double`. Any
 ///   other key gives [undefined].
-/// - A [JsClass]: the static property `C[key]` through the static prototype
-///   chain ([JsClass.operator []], Chart.js ADR 0020, section 2).
 /// - Any other value: [undefined]. A Dart value has none of the members that
 ///   a JavaScript primitive or function inherits.
 ///
 /// Throws a [TypeError] for `null` and [undefined], where JavaScript throws
 /// a `TypeError`.
-// DIVERGES(chartjs): js-semantics-resolver-objects, Map, List, String, class.
+// DIVERGES(chartjs): js-semantics-resolver-objects, Map, List, String.
 Object? jsGet(Object? object, Object? key) {
   final name = key is String ? key : jsToString(key);
   switch (object) {
@@ -143,8 +138,6 @@ Object? jsGet(Object? object, Object? key) {
       if (name == 'length') return string.length.toDouble();
       final index = _index(name, string.length);
       return index == null ? undefined : string[index];
-    case final JsClass value:
-      return value[name];
   }
   return undefined;
 }

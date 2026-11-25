@@ -814,10 +814,9 @@ String capitalize(String str) {
 /// sentinel.
 bool defined(Object? value) => !identical(value, undefined);
 
-/// helpers.core.ts:393 `isFunction`: `typeof value === 'function'`, which is
-/// true for a Dart [Function] and a class value ([JsClass], Chart.js ADR
-/// 0020).
-bool isFunction(Object? value) => value is Function || value is JsClass;
+/// helpers.core.ts:393 `isFunction`: `typeof value === 'function'`, true for
+/// a Dart [Function]. A typed component is no function (Chart.js ADR 0204).
+bool isFunction(Object? value) => value is Function;
 
 /// helpers.core.ts:396 `setsEqual`.
 ///

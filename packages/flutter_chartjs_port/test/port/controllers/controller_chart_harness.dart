@@ -190,7 +190,7 @@ Object? plainValue(Object? value, [int depth = 0]) {
     throw StateError('A plain copy of an object with a cycle');
   }
   return switch (value) {
-    Function() || JsClass() => '<fn>',
+    Function() => '<fn>',
     // The names of the functions of a segment style (Chart.js ADR 0142).
     final LineSegmentStyle style => segmentStyleMarker(style),
     // A side of Dart `null` is the JS `false` of `toClip` (row

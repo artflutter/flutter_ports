@@ -417,8 +417,8 @@ void main() {
     });
 
     testWidgets('a subclass of the controller', (tester) async {
-      Chart.register([_SubScatterController.jsClass]);
-      addTearDown(() => Chart.unregister([_SubScatterController.jsClass]));
+      Chart.register([_SubScatterController.component]);
+      addTearDown(() => Chart.unregister([_SubScatterController.component]));
       final run = await _run(
         _scatter(type: _SubScatterController.id),
         twin: false,
@@ -443,19 +443,15 @@ void main() {
 final class _SubScatterController(
   super.chart,
   super.datasetIndex, [
-  super.newTarget,
+  super.elements,
 ]) extends ScatterController {
   static const String id = 'subscatter';
 
-  static final JsClass jsClass = JsClass(
-    'SubScatterController',
-    superclass: ScatterController.jsClass,
-    statics: {
-      'id': id,
-      'defaults': ScatterController.defaults,
-      'overrides': ScatterController.overrides,
-    },
-    construct: (newTarget, args) =>
-        _SubScatterController(args[0]! as IChart, args[1]! as int, newTarget),
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: ScatterController.defaults,
+    overrides: ScatterController.overrides,
+    parent: ScatterController.component,
+    create: _SubScatterController.new,
   );
 }

@@ -803,29 +803,6 @@ void main() {
       expect(attachContext(resolver, {})['constructor'], same(undefined));
     });
 
-    test('a class value scope has no key, and a read gives its static', () {
-      // The reference engine, for the first scope
-      // `class A { static id = 'a'; static defaults = {x: 1}; }`: `r.id` is
-      // 'a', `'id' in r` is true and `Object.keys(r)` is ['id', 'defaults'].
-      // In the port, a class value is a function scope without keys.
-      final classValue = JsClass(
-        'A',
-        statics: {
-          'id': 'a',
-          'defaults': <String, Object?>{'x': 1},
-        },
-      );
-      final resolver = createResolver([
-        classValue,
-        <String, Object?>{'y': 2},
-      ]);
-      expect(resolver['id'], 'a');
-      expect(resolver['y'], 2);
-      expect(resolver.hasProperty('id'), isFalse);
-      expect(resolver.hasOwnProperty('id'), isFalse);
-      expect(resolver.objectKeys(), isEmpty);
-    });
-
     test('a set on a target that is not a Map throws a TypeError', () {
       final resolver = createResolver(
         [<String, Object?>{}],

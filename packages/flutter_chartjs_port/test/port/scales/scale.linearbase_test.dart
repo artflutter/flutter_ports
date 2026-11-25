@@ -5,6 +5,7 @@ library;
 import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,7 +16,7 @@ import 'scale_chart_harness.dart';
 // The port-only tests of `LinearScaleBase` (scale.linearbase.js). Upstream
 // has no spec for this file, and the class has no reference test: the
 // linear and radial linear scale reference tests examine its two real
-// subclasses. These tests pin the class value, `prototypeParse` and the row
+// subclasses. These tests pin the component, `prototypeParse` and the row
 // `adapt-linearbase-tick-bounds`.
 //
 // The test scales extend LinearScaleBase: `testLinearBase` (the data limits
@@ -23,7 +24,7 @@ import 'scale_chart_harness.dart';
 // computeTickLimit of LinearScaleBase) and `testLinearBaseLimit` (also the
 // computeTickLimit of the linear scale, scale.linear.js:34-41). The
 // cartesian test controller `linearBaseChart` puts testLinearBase on both
-// axes. main() registers the three classes through their class values,
+// axes. main() registers the three classes through their components,
 // before the snapshot of the defaults restore (Chart.js ADR 0020, section 8,
 // and Chart.js ADR 0022, section 8).
 
@@ -50,17 +51,13 @@ class _TestLinearBaseScale(super.cfg) extends LinearScaleBase {
   }
 }
 
-/// The class value of `testLinearBase`.
-final JsClass _testLinearBaseScale = JsClass(
-  'TestLinearBaseScale',
-  superclass: LinearScaleBase.jsClass,
-  statics: {
-    'id': 'testLinearBase',
-    'defaults': <String, Object?>{
-      'ticks': <String, Object?>{'callback': formatters['numeric']},
-    },
-  },
-  construct: (newTarget, args) => _TestLinearBaseScale(scaleCfgArg(args)),
+/// The component of `testLinearBase`.
+final ScaleType _testLinearBaseScale = ScaleType(
+  id: 'testLinearBase',
+  defaults: scopeFromMap(ScaleOptionsScope(), {
+    'ticks': <String, Object?>{'callback': formatters['numeric']},
+  }),
+  create: _TestLinearBaseScale.new,
 );
 
 /// The test scale `testLinearBaseLimit`: `testLinearBase`
@@ -80,16 +77,17 @@ final class _TestLinearBaseLimitScale(super.cfg) extends _TestLinearBaseScale {
   }
 }
 
-/// The class value of `testLinearBaseLimit`.
-final JsClass _testLinearBaseLimitScale = JsClass(
-  'TestLinearBaseLimitScale',
-  superclass: _testLinearBaseScale,
-  statics: {'id': 'testLinearBaseLimit', 'defaults': <String, Object?>{}},
-  construct: (newTarget, args) => _TestLinearBaseLimitScale(scaleCfgArg(args)),
+/// The component of `testLinearBaseLimit`: its parent is
+/// `testLinearBase`.
+final ScaleType _testLinearBaseLimitScale = ScaleType(
+  id: 'testLinearBaseLimit',
+  defaults: ScaleOptionsScope(),
+  parent: _testLinearBaseScale,
+  create: _TestLinearBaseLimitScale.new,
 );
 
 /// The cartesian test controller `linearBaseChart`.
-final JsClass _linearBaseChartController = cartesianTestController(
+final ControllerType _linearBaseChartController = cartesianTestController(
   'linearBaseChart',
   {
     'scales': <String, Object?>{
@@ -128,31 +126,18 @@ void main() {
     _linearBaseChartController,
   ]);
 
-  group('the class value', () {
-    test('LinearScaleBase.jsClass extends Scale.jsClass without statics', () {
-      final value = LinearScaleBase.jsClass;
-      expect(value.name, 'LinearScaleBase');
-      expect(identical(value.superclass, Scale.jsClass), isTrue);
-      // `'id' in LinearScaleBase` is false: the registry does not register
-      // it as a component (core.typedRegistry.js:115-116).
-      expect(value.id, same(undefined));
-      expect(value['defaults'], same(Scale.jsClass['defaults']));
-    });
-
-    testWidgets('jsConstruct makes a LinearScaleBase from the cfg object', (
+  group('the component', () {
+    testWidgets('new LinearScaleBase(cfg) has the start values', (
       tester,
     ) async {
       final chart = _chart(_config([]));
-      final scale = jsConstruct(LinearScaleBase.jsClass, [
-        <String, Object?>{
-          'id': 'z',
-          'type': 'testLinearBase',
-          'ctx': null,
-          'chart': chart,
-        },
-      ]);
-      expect(scale, isA<LinearScaleBase>());
-      expect((scale as LinearScaleBase).id, 'z');
+      final scale = LinearScaleBase((
+        id: 'z',
+        type: 'testLinearBase',
+        ctx: null,
+        chart: chart,
+      ));
+      expect(scale.id, 'z');
       // scale.linearbase.js:159-167: the start values.
       expect(scale.start, isNaN);
       expect(scale.end, isNaN);
@@ -161,11 +146,13 @@ void main() {
       expect(scale.valueRange, 0);
     });
 
-    test('the registry has the test scales and not LinearScaleBase', () {
+    test('the registry has the test scales', () {
+      // LinearScaleBase has no `id`: it has no component
+      // (core.typedRegistry.js:115-116).
       final items = Chart.registry.scales.items;
       expect(items['testLinearBase'], same(_testLinearBaseScale));
       expect(items['testLinearBaseLimit'], same(_testLinearBaseLimitScale));
-      expect(items.values, isNot(contains(same(LinearScaleBase.jsClass))));
+      expect(_testLinearBaseLimitScale.parent, same(_testLinearBaseScale));
     });
   });
 

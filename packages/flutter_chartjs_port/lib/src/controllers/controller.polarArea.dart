@@ -32,8 +32,8 @@
 /// - `overrides` holds the tear-offs of the two legend functions
 ///   `_generateLabels` and `_onClick` (Chart.js ADR 0028, section 6). The
 ///   legend plugin calls them.
-/// - [PolarAreaController.jsClass] is the class as a value with the statics
-///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
+/// - [PolarAreaController.component] is the class as a typed component with the
+///   statics `id`, `defaults` and `overrides` (Chart.js ADR 0204).
 ///
 /// This library imports `core.datasetController.dart`, which imports
 /// `core.animations.dart`. Thus it is not a pure layer.
@@ -129,11 +129,12 @@ void _onClick(Object? e, LegendItem legendItem, LegendElement legend) {
 
 /// controller.polarArea.js:4 `PolarAreaController extends
 /// DatasetController`.
-class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
+class PolarAreaController(super.chart, super.datasetIndex, [super.elements])
     extends DatasetController {
   /// controller.polarArea.js:90 `constructor(chart, datasetIndex)`.
   ///
-  /// `newTarget` is `new.target` (Chart.js ADR 0020, section 4). The fields
+  /// [elements] are the element types of the chart type (Chart.js ADR
+  /// 0204). The fields
   /// [innerRadius] and [outerRadius] start as Dart `null`, the `undefined`
   /// of :93-94.
   this;
@@ -209,21 +210,13 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
           ..startAngle = 0.0,
       ));
 
-  /// controller.polarArea.js:4 `class PolarAreaController extends
-  /// DatasetController` as a value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [DatasetController.jsClass]. Its statics are `id`
-  /// (`'polarArea'`), [defaults] and [overrides], in the upstream order of
-  /// declaration (:6-88). Its `construct` calls `PolarAreaController(chart,
-  /// datasetIndex, newTarget)` with the arguments of [controllerArgs].
-  static final JsClass jsClass = JsClass(
-    'PolarAreaController',
-    superclass: DatasetController.jsClass,
-    statics: {'id': id, 'defaults': defaults, 'overrides': overrides},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return PolarAreaController(chart, datasetIndex, newTarget);
-    },
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `overrides`, and the constructor.
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: defaults,
+    overrides: overrides,
+    create: PolarAreaController.new,
   );
 
   /// controller.polarArea.js:93 `innerRadius`. `_updateRadius` writes it.

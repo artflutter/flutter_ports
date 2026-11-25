@@ -250,12 +250,12 @@ ChartConfigurationScope _floatingConfig({
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
-    BarController.jsClass,
-    BarElement.jsClass,
-    CategoryScale.jsClass,
-    LinearScale.jsClass,
-    TimeScale.jsClass,
-    TimeSeriesScale.jsClass,
+    BarController.component,
+    BarElement.component,
+    CategoryScale.component,
+    LinearScale.component,
+    TimeScale.component,
+    TimeSeriesScale.component,
   ]);
 
   group('time index axis', () {
@@ -386,12 +386,12 @@ void main() {
       );
       final scale = chart.scales['x']!;
       expect(scale.supportsNativeBarIndexReads, isTrue);
-      final sub = _SubTime({
-        'id': 'x',
-        'type': 'time',
-        'ctx': chart.ctx,
-        'chart': chart,
-      });
+      final sub = _SubTime((
+        id: 'x',
+        type: 'time',
+        ctx: chart.ctx,
+        chart: chart,
+      ));
       expect(sub.supportsNativeBarIndexReads, isFalse);
     });
   });

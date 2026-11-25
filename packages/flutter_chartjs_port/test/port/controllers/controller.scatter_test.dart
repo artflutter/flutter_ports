@@ -414,7 +414,7 @@ void main() {
             controller.datasetElementType,
             same(registry.getElement('line')),
           );
-          expect(controller.datasetElementType, same(LineElement.jsClass));
+          expect(controller.datasetElementType, same(LineElement.component));
           _expectLinePoints(chart);
         } else {
           expect(meta.dataset, isNull);

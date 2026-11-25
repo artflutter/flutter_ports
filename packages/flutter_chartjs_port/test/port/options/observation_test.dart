@@ -659,8 +659,6 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
       return jsonEncode(keyword.name);
     case Function():
       return '<fn>';
-    case final JsClass c:
-      return '<class ${c.name}>';
     case final DateTime d:
       return 'Date(${d.millisecondsSinceEpoch})';
     case final IElement e:

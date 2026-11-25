@@ -53,7 +53,7 @@ final class const OptValue<T>(
   String toString() => 'OptValue($value)';
 }
 
-/// A function value: a Dart `Function` or a class value (`JsClass`).
+/// A function value: a Dart `Function`.
 final class const OptFunction<T>(
   /// The function value, as the user gave it.
   final Object function,
@@ -348,7 +348,7 @@ abstract final class ShapeBits() {
 Opt<T>? _special<T>(Object? raw) {
   if (raw == null) return optNull;
   if (raw is Undefined) return optUndefined;
-  if (raw is Function || raw is JsClass) return OptFunction<T>(raw);
+  if (raw is Function) return OptFunction<T>(raw);
   if (raw is List<Object?>) return OptList<T>(raw);
   if (raw is Map<String, Object?> ||
       raw is OptionObject ||

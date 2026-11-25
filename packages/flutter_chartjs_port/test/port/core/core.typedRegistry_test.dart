@@ -13,42 +13,64 @@ import 'registry_reference.dart' hide registryReference;
 // Upstream has no spec for src/core/core.typedRegistry.js (AGENTS.md rule
 // 3). core.registry.tests.js reaches it only through Chart.register. These
 // tests run the scenarios of tool/reference/registry_reference.mjs on a new
-// TypedRegistry each (Chart.js ADR 0020, section 12): the strict
-// `isForType`, the parent that registers first, the statics that a subclass
-// inherits, a duplicate `id`, the routes and descriptors, the key order of
-// `items`, the errors and `unregister`. The expected lines come from the
-// pinned sources in Node.js v24.22.1 on arm64. The harness restores
-// `defaults`, `overrides` and `descriptors` after each test (setUpSpecs).
+// TypedRegistry each: the parent that registers first, a duplicate `id`,
+// the routes and descriptors, the key order of `items`, an empty id and
+// `unregister`. The expected lines come from the pinned sources in Node.js
+// v24.22.1 on arm64. The harness restores `defaults`, `overrides` and
+// `descriptors` after each test (setUpSpecs).
 //
-// A class `X extends Y {}` of the generator is a class value with the class
-// value of `Y` as its superclass. Its static properties are writes through
-// `operator []=`, as the generator writes them after the class (Chart.js
-// ADR 0020, section 8).
+// A class `X extends Y {}` of the generator is a typed component with the
+// component of `Y` as its `parent` (Chart.js ADR 0204). The scenarios of a
+// JS class semantic with no typed form have no test here: `isForType`, the
+// statics that a subclass inherits, the routes that are not a Map of
+// strings, the ids and items that are not components, and a parent without
+// defaults (row adapt-typed-components).
 
-/// The stand-in base class of the controllers in this pure test: a class
-/// value with the static `defaults` and no `id`, as DatasetController
-/// (core.datasetController.js:239-249). `core.datasetController.dart` is not
-/// a pure layer.
-final JsClass _tBase = JsClass(
-  'TBase',
-  statics: {'defaults': <String, Object?>{}},
-);
+/// A component of this pure test: the stand-in of a controller, with
+/// `overrides`. `core.datasetController.dart` is not a pure layer.
+final class _TComponent({
+  required super.id,
+  required super.defaults,
 
-/// The class value `class <name> extends <superclass> {}` with the static
-/// properties [statics], written after the class in their order.
-JsClass _class(
-  String name, {
-  JsClass? superclass,
-  Map<String, Object?> statics = const {},
-}) {
-  final value = JsClass(name, superclass: superclass);
-  statics.forEach((key, v) => value[key] = v);
-  return value;
+  /// `static overrides`.
+  @override final ChartOptionsScope? overrides,
+}) extends ChartComponent {
+  /// A test component.
+  this;
+
+  /// A test component has no parent.
+  @override
+  _TComponent? get parent => null;
 }
 
+/// An element type with the id [id] and the defaults [defaults], a Map.
+ElementType _element(
+  String id,
+  Map<String, Object?> defaults, {
+  ElementType? parent,
+  Map<String, String>? defaultRoutes,
+  Map<String, Object?>? descriptors,
+}) => ElementType(
+  id: id,
+  defaults: scopeFromMap(GenericElementOptionsScope(), defaults),
+  parent: parent,
+  defaultRoutes: defaultRoutes,
+  descriptors: descriptors == null
+      ? null
+      : scopeFromMap(DescriptorsScope(), descriptors),
+  create: Element.new,
+);
+
 /// The value of [id] in [registry]: [undefined] for Dart `null`.
-Object? _get(TypedRegistry registry, Object? id) =>
+Object? _get(TypedRegistry<IChartComponent> registry, String id) =>
     registry.get(id) ?? undefined;
+
+/// [reference] without the lines that start with one of [labels]: the
+/// observations that have no typed form.
+String _without(String reference, List<String> labels) => reference
+    .split('\n')
+    .where((line) => !labels.any((label) => line.startsWith('$label: ')))
+    .join('\n');
 
 void main() {
   setUpSpecs();
@@ -58,70 +80,21 @@ void main() {
     expect(registryReferenceArch, 'arm64');
   });
 
-  test('isForType is strict and has the Object root', () {
-    final o = Observations();
-    final elements = TypedRegistry(Element.jsClass, 'telements');
-    final controllers = TypedRegistry(_tBase, 'tdatasets', true);
-    final plugins = TypedRegistry(jsObjectClass, 'tplugins');
-    final tPointSub = _class('TPointSub', superclass: PointElement.jsClass);
-    final tPlain = _class('TPlain');
-    final tSub = _class('TSub', superclass: _tBase);
-    final values = <(String, Object?)>[
-      ('Element', Element.jsClass),
-      ('PointElement', PointElement.jsClass),
-      ('TPointSub', tPointSub),
-      ('TPlain', tPlain),
-      ('TBase', _tBase),
-      ('TSub', tSub),
-      ('Object', jsObjectClass),
-      ('map', <String, Object?>{'id': 'x'}),
-      ('string', 'str'),
-      ('number', 5.0),
-      ('boolean', true),
-      ('arrow', () => 1.0),
-      ('null', null),
-      ('undefined', undefined),
-    ];
-    for (final (name, value) in values) {
-      final results = [elements, controllers, plugins].map((reg) {
-        var result = '';
-        final e = error(() => result = '${reg.isForType(value)}');
-        return e == 'ok' ? result : e;
-      });
-      o.observe(name, results.join(' '));
-    }
-    expect(o.text, registryReference['typedRegistry isForType']);
-  });
-
   test('a parent with id and defaults registers first', () {
     final o = Observations();
-    final reg = TypedRegistry(Element.jsClass, 'elements');
+    final reg = TypedRegistry<ElementType>('elements');
     final tParent = o.label(
-      _class(
-        'TParent',
-        superclass: Element.jsClass,
-        statics: {
-          'id': 'tparent',
-          'defaults': <String, Object?>{
-            'a': 1.0,
-            'nested': <String, Object?>{'b': 2.0},
-          },
-        },
-      ),
+      _element('tparent', {
+        'a': 1.0,
+        'nested': <String, Object?>{'b': 2.0},
+      }),
       'TParent',
     );
     final tChild = o.label(
-      _class(
-        'TChild',
-        superclass: tParent,
-        statics: {
-          'id': 'tchild',
-          'defaults': <String, Object?>{
-            'nested': <String, Object?>{'c': 3.0},
-            'd': 4.0,
-          },
-        },
-      ),
+      _element('tchild', {
+        'nested': <String, Object?>{'c': 3.0},
+        'd': 4.0,
+      }, parent: tParent),
       'TChild',
     );
     o
@@ -143,71 +116,11 @@ void main() {
     expect(o.text, registryReference['typedRegistry parent first']);
   });
 
-  test('a subclass reads the statics of its superclass', () {
+  test('a duplicate id keeps the first component', () {
     final o = Observations();
-    final reg = TypedRegistry(_tBase, 'tdatasets', true);
-    final tCtl = o.label(
-      _class(
-        'TCtl',
-        superclass: _tBase,
-        statics: {
-          'id': 'tctl',
-          'defaults': <String, Object?>{
-            'x': 1.0,
-            'sub': <String, Object?>{'y': 2.0},
-          },
-          'overrides': <String, Object?>{'o': 1.0},
-          'descriptors': <String, Object?>{
-            '_scriptable': false,
-            'sub': <String, Object?>{'_indexable': false},
-          },
-        },
-      ),
-      'TCtl',
-    );
-    final tPie = o.label(
-      _class('TPie', superclass: tCtl, statics: {'id': 'tpie'}),
-      'TPie',
-    );
-    o
-      ..observe('scope', reg.register(tPie))
-      ..observe('items', o.json(jsObjectKeys(reg.items)))
-      ..observe('defaults.tdatasets', o.json(defaults['tdatasets']))
-      ..observe('overrides.tctl', o.json(overrides['tctl']))
-      ..observe('overrides.tpie', o.json(overrides['tpie']))
-      ..observe('descriptors.tdatasets', o.json(descriptors['tdatasets']))
-      ..observe(
-        'overrides.tpie is TCtl.overrides',
-        '${identical(overrides['tpie'], tCtl['overrides'])}',
-      );
-    expect(o.text, registryReference['typedRegistry inherited statics']);
-  });
-
-  test('a duplicate id keeps the first class value', () {
-    final o = Observations();
-    final reg = TypedRegistry(Element.jsClass, 'elements');
-    final tDupA = o.label(
-      _class(
-        'TDupA',
-        superclass: Element.jsClass,
-        statics: {
-          'id': 'tdup',
-          'defaults': <String, Object?>{'a': 1.0},
-        },
-      ),
-      'TDupA',
-    );
-    final tDupB = o.label(
-      _class(
-        'TDupB',
-        superclass: Element.jsClass,
-        statics: {
-          'id': 'tdup',
-          'defaults': <String, Object?>{'b': 2.0},
-        },
-      ),
-      'TDupB',
-    );
+    final reg = TypedRegistry<ElementType>('elements');
+    final tDupA = o.label(_element('tdup', {'a': 1.0}), 'TDupA');
+    final tDupB = o.label(_element('tdup', {'b': 2.0}), 'TDupB');
     o
       ..observe('first', reg.register(tDupA))
       ..observe('second', reg.register(tDupB))
@@ -221,21 +134,17 @@ void main() {
 
   test('the routes and the descriptors of a component', () {
     final o = Observations();
-    final reg = TypedRegistry(Element.jsClass, 'elements');
-    final tRouted = _class(
-      'TRouted',
-      superclass: Element.jsClass,
-      statics: {
-        'id': 'trouted',
-        'defaults': <String, Object?>{'own': 1.0},
-        'defaultRoutes': <String, Object?>{
-          'backgroundColor': 'color',
-          'sub.borderColor': 'elements.trouted.own',
-        },
-        'descriptors': <String, Object?>{
-          '_scriptable': true,
-          'sub': <String, Object?>{'_indexable': false},
-        },
+    final reg = TypedRegistry<ElementType>('elements');
+    final tRouted = _element(
+      'trouted',
+      {'own': 1.0},
+      defaultRoutes: {
+        'backgroundColor': 'color',
+        'sub.borderColor': 'elements.trouted.own',
+      },
+      descriptors: {
+        '_scriptable': true,
+        'sub': <String, Object?>{'_indexable': false},
       },
     );
     reg.register(tRouted);
@@ -257,48 +166,12 @@ void main() {
     expect(o.text, registryReference['typedRegistry routes and descriptors']);
   });
 
-  test('the routes of a List, a string, a number and a number target', () {
-    final o = Observations();
-    final reg = TypedRegistry(Element.jsClass, 'elements');
-    for (final (name, routes) in <(String, Object?)>[
-      ('list', ['color']),
-      ('string', 'ab'),
-      ('number', 5.0),
-      ('not a string', <String, Object?>{'backgroundColor': 5.0}),
-    ]) {
-      final tr = _class(
-        'TR',
-        superclass: Element.jsClass,
-        statics: {
-          'id': 'troutes-$name',
-          'defaults': <String, Object?>{},
-          'defaultRoutes': routes,
-        },
-      );
-      o
-        ..observe(name, error(() => reg.register(tr)))
-        ..observe(
-          '$name keys',
-          o.json(jsObjectKeys(jsGet(defaults['elements'], 'troutes-$name'))),
-        );
-    }
-    expect(o.text, registryReference['typedRegistry routes of other values']);
-  });
-
   test('the current defaults of the scope keep their key order', () {
     final o = Observations();
-    final reg = TypedRegistry(Element.jsClass, 'elements');
+    final reg = TypedRegistry<ElementType>('elements');
     defaults.set('elements.tpre', <String, Object?>{'z': 0.0, 'a': 9.0});
     final before = at(defaults, 'elements.tpre');
-    final tPre = _class(
-      'TPre',
-      superclass: Element.jsClass,
-      statics: {
-        'id': 'tpre',
-        'defaults': <String, Object?>{'a': 1.0, 'b': 2.0},
-      },
-    );
-    reg.register(tPre);
+    reg.register(_element('tpre', {'a': 1.0, 'b': 2.0}));
     o
       ..observe('defaults.elements.tpre', o.json(at(defaults, 'elements.tpre')))
       ..observe(
@@ -309,54 +182,48 @@ void main() {
   });
 
   test('the keys of items are in the Object.keys order', () {
+    // The id 10 of the generator is the string '10': an id is a String.
     final o = Observations();
-    final reg = TypedRegistry(jsObjectClass, 'tplugins');
-    final plugins = <Map<String, Object?>>[
-      {'id': 'zz'},
-      {'id': '7'},
-      {'id': 'a'},
-      {'id': 10.0},
+    final reg = TypedRegistry<Plugin<Object?>>('tplugins');
+    final plugins = [
+      for (final id in ['zz', '7', 'a', '10']) Plugin<Object?>(id: id),
     ];
     for (var i = 0; i < plugins.length; i++) {
       o.label(plugins[i], 'p$i');
     }
     for (final plugin in plugins) {
-      o.observe('register ${o.json(plugin['id'])}', reg.register(plugin));
+      final id = plugin.id == '10' ? '10' : o.json(plugin.id);
+      o.observe('register $id', reg.register(plugin));
     }
     o
       ..observe('items', o.json(jsObjectKeys(reg.items)))
       ..observe('defaults.tplugins', o.json(defaults['tplugins']))
-      ..observe('get 10', o.json(_get(reg, 10.0)))
+      ..observe('get 10', o.json(_get(reg, '10')))
       ..observe('get "10"', o.json(_get(reg, '10')))
-      ..observe('get 7', o.json(_get(reg, 7.0)))
-      ..observe('get absent', o.json(_get(reg, 'absent')))
-      ..observe('get undefined', o.json(_get(reg, undefined)));
-    expect(o.text, registryReference['typedRegistry key order']);
+      ..observe('get 7', o.json(_get(reg, '7')))
+      ..observe('get absent', o.json(_get(reg, 'absent')));
+    expect(
+      o.text,
+      _without(registryReference['typedRegistry key order']!, [
+        'get undefined',
+      ]),
+    );
   });
 
-  test('register throws for null, undefined and a falsy id', () {
-    final o = Observations();
-    final reg = TypedRegistry(jsObjectClass, 'tplugins');
-    for (final (name, value) in <(String, Object?)>[
-      ('null', null),
-      ('undefined', undefined),
-      ('number', 5.0),
-      ('string', 'str'),
-      ('empty map', <String, Object?>{}),
-      ('empty id', <String, Object?>{'id': ''}),
-      ('zero id', <String, Object?>{'id': 0.0}),
-      ('class without id', JsClass('NoId')),
-      (
-        'list',
-        [
-          <String, Object?>{'id': 'x'},
-        ],
+  test('register throws for an empty id', () {
+    // core.typedRegistry.js:37-39: an id that is falsy throws.
+    final reg = TypedRegistry<ElementType>('elements');
+    expect(
+      () => reg.register(_element('', {})),
+      throwsA(
+        isA<StateError>().having(
+          (error) => error.message,
+          'message',
+          startsWith('class does not have id: '),
+        ),
       ),
-    ]) {
-      o.observe(name, error(() => reg.register(value)));
-    }
-    o.observe('items', o.json(jsObjectKeys(reg.items)));
-    expect(o.text, registryReference['typedRegistry register errors']);
+    );
+    expect(reg.items, isEmpty);
   });
 
   /// The lines of `unregister` in the port. The scope `defaults.tarr` is a
@@ -364,15 +231,13 @@ void main() {
   /// `adapt-defaults-scope-object`).
   String unregisterLines() {
     final o = Observations();
-    final reg = TypedRegistry(_tBase, 'tunreg', true);
-    final tU = _class(
-      'TU',
-      superclass: _tBase,
-      statics: {
-        'id': 'tu',
-        'defaults': <String, Object?>{'a': 1.0},
-        'overrides': <String, Object?>{'o': 1.0},
-      },
+    final reg = TypedRegistry<_TComponent>('tunreg', true);
+    _TComponent component(String id) =>
+        _TComponent(id: id, defaults: GenericDatasetOptionsScope());
+    final tU = _TComponent(
+      id: 'tu',
+      defaults: scopeFromMap(GenericDatasetOptionsScope(), {'a': 1.0}),
+      overrides: scopeFromMap(ChartOptionsScope(), {'o': 1.0}),
     );
     reg.register(tU);
     o
@@ -386,71 +251,63 @@ void main() {
       ..observe('again', error(() => reg.unregister(tU)))
       ..observe(
         'not registered',
-        error(() => reg.unregister(<String, Object?>{'id': 'other'})),
+        error(() => reg.unregister(component('other'))),
       )
-      ..observe('null', error(() => reg.unregister(null)))
-      ..observe('undefined', error(() => reg.unregister(undefined)))
       ..observe(
         'missing scope',
         error(
-          () => TypedRegistry(
-            _tBase,
-            'tmissing',
-          ).unregister(<String, Object?>{'id': 'x'}),
+          () =>
+              TypedRegistry<_TComponent>('tmissing').unregister(component('x')),
         ),
       )
       ..observe(
         'empty scope',
-        error(
-          () => TypedRegistry(
-            _tBase,
-            '',
-          ).unregister(<String, Object?>{'id': 'x'}),
-        ),
+        error(() => TypedRegistry<_TComponent>('').unregister(component('x'))),
       );
     defaults['tprim'] = 5.0;
     o.observe(
       'number scope',
       error(
-        () => TypedRegistry(
-          _tBase,
-          'tprim',
-        ).unregister(<String, Object?>{'id': 'x'}),
+        () => TypedRegistry<_TComponent>('tprim').unregister(component('x')),
       ),
     );
     defaults['tarr'] = <Object?>[];
     o.observe(
       'list scope',
       error(
-        () => TypedRegistry(
-          _tBase,
-          'tarr',
-        ).unregister(<String, Object?>{'id': 'x'}),
+        () => TypedRegistry<_TComponent>('tarr').unregister(component('x')),
       ),
     );
     return o.text;
   }
 
+  /// The reference lines of `unregister` that have a typed form: an item
+  /// is a component, never `null` or `undefined`.
+  String unregisterReference() => _without(
+    registryReference['typedRegistry unregister']!,
+    ['null', 'undefined'],
+  );
+
   test('unregister removes the item, its defaults and its overrides', () {
     // The last line is the hunk of the group adapt-defaults-scope-object.
     expect(
       unregisterLines(),
-      registryReference['typedRegistry unregister']!.replaceFirst(
+      unregisterReference().replaceFirst(
         'list scope: ok',
         'list scope: TypeError',
       ),
     );
   });
 
-  test('a plugin Map with defaults, routes and descriptors', () {
+  test('a plugin with defaults, routes and descriptors', () {
     final o = Observations();
-    final reg = TypedRegistry(jsObjectClass, 'tplugins2');
-    final plugin = <String, Object?>{
-      'id': 'tmap',
-      'defaults': <String, Object?>{'x': 1.0},
-      'defaultRoutes': <String, Object?>{'y': 'color'},
-      'descriptors': <String, Object?>{'_scriptable': false},
-    };
+    final reg = TypedRegistry<Plugin<Object?>>('tplugins2');
+    final plugin = Plugin<Object?>(
+      id: 'tmap',
+      defaults: scopeFromMap(GenericElementOptionsScope(), {'x': 1.0}),
+      defaultRoutes: const {'y': 'color'},
+      descriptors: scopeFromMap(DescriptorsScope(), {'_scriptable': false}),
+    );
     o
       ..observe('scope', reg.register(plugin))
       ..observe('keys', o.json(jsObjectKeys(at(defaults, 'tplugins2.tmap'))))
@@ -460,17 +317,6 @@ void main() {
       )
       ..observe('descriptors.tplugins2', o.json(descriptors['tplugins2']));
     expect(o.text, registryReference['typedRegistry plugin map']);
-  });
-
-  test('a parent without defaults is not a component', () {
-    final o = Observations();
-    final reg = TypedRegistry(jsObjectClass, 'tplugins3');
-    final tNoDef = _class('TNoDef', statics: {'id': 'tnodef'});
-    final tKid = _class('TKid', superclass: tNoDef, statics: {'id': 'tkid'});
-    o
-      ..observe('scope', reg.register(tKid))
-      ..observe('items', o.json(jsObjectKeys(reg.items)));
-    expect(o.text, registryReference['typedRegistry parent without defaults']);
   });
 
   group('adapt-defaults-scope-object', () {
@@ -485,42 +331,12 @@ void main() {
       expect(unregisterLines(), endsWith('list scope: TypeError'));
       defaults['tarr2'] = <Object?>[];
       expect(
-        () => TypedRegistry(_tBase, 'tarr2').unregister(<String, Object?>{}),
+        () => TypedRegistry<_TComponent>('tarr2').unregister(
+          _TComponent(id: 'x', defaults: GenericDatasetOptionsScope()),
+        ),
         throwsA(isA<TypeError>()),
       );
     });
-  });
-
-  group('js-semantics-function-source', () {
-    // core.typedRegistry.js:38 throws `'class does not have id: ' + item`.
-    // JavaScript prints the source of a function, for example `() => 1`.
-    // jsToString of a Dart closure or another Dart object is
-    // its Dart toString(), whose text differs between the VM and the web
-    // compilers. The throw is the same.
-    final plugins = TypedRegistry(jsObjectClass, 'tfunctions');
-
-    for (final (name, item) in <(String, Object)>[
-      ('a closure', () => 1),
-      ('a Dart object', PointElement()),
-    ]) {
-      test('$name gives the Dart text in the register error', () {
-        expect(
-          () => plugins.register(item),
-          throwsA(
-            isA<StateError>().having(
-              (error) => error.message,
-              'message',
-              allOf(
-                startsWith('class does not have id: '),
-                isNot('class does not have id: () => 1'),
-                isNot('class does not have id: [object Object]'),
-                endsWith(item.toString()),
-              ),
-            ),
-          ),
-        );
-      });
-    }
   });
 }
 

@@ -1,31 +1,28 @@
 // Ported from Chart.js v4.6.1 src/core/core.typedRegistry.js (MIT, Chart.js Contributors).
 
 /// Port of `src/core/core.typedRegistry.js`: the registry of one type of
-/// chart component (Chart.js ADR 0020, section 5).
+/// chart component (Chart.js ADR 0204).
 ///
-/// A component is a class value ([JsClass]), a plugin Map or another value.
-/// The JSDoc type of a component is `IChartComponent`
-/// (core.typedRegistry.js:4-6), `{id: string, defaults: any, overrides?: any,
-/// defaultRoutes: any}`. [TypedRegistry.register] reads these properties
-/// with [jsGet]. Thus a class value, a Map and any other value give the
-/// upstream result. A class value reads them through its static prototype
-/// chain.
+/// An item is an [IChartComponent]: a typed component of
+/// `chart_component.dart` or a plugin. [TypedRegistry.register] reads its
+/// typed fields, the `IChartComponent` of core.typedRegistry.js:4-6.
 ///
 /// `new Error(message)` is a [StateError] with the upstream message, as in
 /// `helpers.config.dart`.
 ///
 /// This library is a pure layer. It imports neither `dart:ui` nor
 /// `package:flutter`.
+// DIVERGES(chartjs): adapt-typed-components, the items are typed components.
 library;
 
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// core.typedRegistry.js:8 `TypedRegistry`, the default export.
-final class TypedRegistry(
-  /// core.typedRegistry.js:10 `type`: the class value of the base class of
-  /// the components, or [jsObjectClass] for the plugins.
-  final JsClass type,
-
+///
+/// [T] is the type of the items: the `type` of upstream. The registry of
+/// `Registry` picks the typed registry of an item by its Dart type, so this
+/// class has no `isForType`.
+final class TypedRegistry<T extends IChartComponent>(
   /// core.typedRegistry.js:11 `scope`: the scope of the defaults, for
   /// example `'datasets'`.
   final String scope, [
@@ -35,75 +32,47 @@ final class TypedRegistry(
   final bool override = false,
 ]) {
   /// core.typedRegistry.js:9 `constructor(type, scope, override)`.
-  ///
-  /// An absent [override] is false: upstream tests only its truthiness
-  /// (core.typedRegistry.js:48, :77).
   this;
 
   /// core.typedRegistry.js:13 `items`, `Object.create(null)`: the
-  /// registered components by `id`.
-  ///
-  /// A key is the `ToString` of an `id` ([jsToString]), the `ToPropertyKey`
-  /// of `id in items` and of `items[id] = item`. Read the keys in the
-  /// upstream order with [jsObjectKeys].
-  final Map<String, Object> items = <String, Object>{};
-
-  /// core.typedRegistry.js:16 `isForType`.
-  ///
-  /// `Object.prototype.isPrototypeOf.call(this.type.prototype,
-  /// type.prototype)`: true for a class value whose superclass chain has
-  /// [type] ([JsClass.isSubclassOf]). The test is strict: [type] itself is
-  /// not for its own registry. Each other value has no `prototype` that a
-  /// class prototype can be the prototype of: a Map, a string, a number, a
-  /// Dart `Function` (an arrow function or a method) give false.
-  ///
-  /// Throws a [TypeError] for Dart `null` and [undefined], as the read
-  /// `type.prototype` does.
-  bool isForType(Object? type) {
-    if (type == null || type is Undefined) {
-      // A JavaScript TypeError: a property read of null or undefined.
-      throw TypeError();
-    }
-    return type is JsClass && type.isSubclassOf(this.type);
-  }
+  /// registered components by `id`, in the order of registration.
+  final Map<String, T> items = <String, T>{};
 
   /// core.typedRegistry.js:24 `register`.
   ///
   /// @param {IChartComponent} item
   /// @returns {string} The scope where items defaults were registered to.
   ///
-  /// `Object.getPrototypeOf(item)` is the superclass of a class value. Each
-  /// other value has a built-in prototype, which is never a component. Throws
-  /// a [TypeError] for Dart `null` and [undefined], and a [StateError] for an
-  /// item without a truthy `id`.
-  String register(Object? item) {
-    final proto = _getPrototypeOf(item);
+  /// The [IChartComponent.parent] of [item] registers first, as the
+  /// prototype of a class that is a component
+  /// (core.typedRegistry.js:28-32).
+  String register(T item) {
+    final proto = item.parent;
     String? parentScope;
 
-    if (_isIChartComponent(proto)) {
+    if (proto is T) {
       // Make sure the parent is registered and note the scope where its
       // defaults are.
       parentScope = register(proto);
     }
 
     final items = this.items;
-    final id = _idOf(item);
-    final scope = '${this.scope}.${jsToString(id)}';
+    final id = item.id;
+    final scope = '${this.scope}.$id';
 
-    if (!jsTruthy(id)) {
-      throw StateError('class does not have id: ${jsToString(item)}');
+    if (id.isEmpty) {
+      throw StateError('class does not have id: $item');
     }
 
-    final key = _propertyKey(id);
-    if (items.containsKey(key)) {
+    if (items.containsKey(id)) {
       // already registered
       return scope;
     }
 
-    items[key] = item!;
+    items[id] = item;
     _registerDefaults(item, scope, parentScope);
     if (override) {
-      defaults.override(jsGet(item, 'id'), jsGet(item, 'overrides'));
+      defaults.override(id, item.overrides ?? undefined);
     }
 
     return scope;
@@ -114,24 +83,22 @@ final class TypedRegistry(
   /// @param {string} id
   /// @returns {object?}
   ///
-  /// Dart `null` stands for `undefined`: no component has the key of [id].
-  Object? get(Object? id) {
-    return items[_propertyKey(id)];
+  /// Dart `null` stands for `undefined`: no component has the key [id].
+  T? get(String id) {
+    return items[id];
   }
 
   /// core.typedRegistry.js:66 `unregister`.
   ///
   /// @param {IChartComponent} item
   ///
-  /// Throws a [TypeError] for Dart `null` and [undefined], as the read
-  /// `item.id` does. Also throws a [TypeError] when `defaults[scope]` is not
-  /// an object (a typed scope or a Map), as the `in` operator does for a
-  /// value that is not an object (core.typedRegistry.js:75).
-  void unregister(Object? item) {
+  /// Throws a [TypeError] when `defaults[scope]` is not an object (a typed
+  /// scope or a Map), as the `in` operator does for a value that is not an
+  /// object (core.typedRegistry.js:75).
+  void unregister(T item) {
     final items = this.items;
-    final id = _idOf(item);
+    final key = item.id;
     final scope = this.scope;
-    final key = _propertyKey(id);
 
     if (items.containsKey(key)) {
       items.remove(key);
@@ -164,10 +131,12 @@ final class TypedRegistry(
 /// `getScope`). The merge keeps the key order of the current defaults of
 /// [scope]: a value of `item.defaults` replaces the current value of its
 /// key, and its new keys follow.
-void _registerDefaults(Object item, String scope, String? parentScope) {
-  final pluginDefaults = item is Plugin<Object?>
-      ? item.defaults
-      : jsGet(item, 'defaults');
+void _registerDefaults(
+  IChartComponent item,
+  String scope,
+  String? parentScope,
+) {
+  final pluginDefaults = item.defaults;
   if (pluginDefaults is PluginOptions<Object?>) {
     // The options object of an add-on (Chart.js ADR 0148): it merges over
     // the options object of an earlier registration, and goes into its key.
@@ -204,17 +173,13 @@ void _registerDefaults(Object item, String scope, String? parentScope) {
 
   defaults.set(scope, itemDefaults);
 
-  final defaultRoutes = item is Plugin<Object?>
-      ? item.defaultRoutes
-      : jsGet(item, 'defaultRoutes');
-  if (jsTruthy(defaultRoutes)) {
+  final defaultRoutes = item.defaultRoutes;
+  if (defaultRoutes != null) {
     _routeDefaults(scope, defaultRoutes);
   }
 
-  final itemDescriptors = item is Plugin<Object?>
-      ? item.descriptors
-      : jsGet(item, 'descriptors');
-  if (jsTruthy(itemDescriptors)) {
+  final itemDescriptors = item.descriptors;
+  if (itemDescriptors != null) {
     defaults.describe(scope, itemDescriptors);
   }
 }
@@ -222,56 +187,15 @@ void _registerDefaults(Object item, String scope, String? parentScope) {
 /// core.typedRegistry.js:103 `routeDefaults`.
 ///
 /// A key of [routes] is a dot path under [scope]. Its value is the dot path
-/// of the target. A value that is not a string throws a [TypeError], as the
-/// call `routes[property].split('.')` does.
-void _routeDefaults(String scope, Object? routes) {
-  for (final property in _objectKeys(routes)) {
+/// of the target.
+void _routeDefaults(String scope, Map<String, String> routes) {
+  for (final MapEntry(key: property, value: target) in routes.entries) {
     final propertyParts = property.split('.');
     final sourceName = propertyParts.removeLast();
     final sourceScope = [scope, ...propertyParts].join('.');
-    final target = jsGet(routes, property);
-    // A JavaScript TypeError: `split` of a value that is not a string.
-    final parts = target is String ? target.split('.') : throw TypeError();
+    final parts = target.split('.');
     final targetName = parts.removeLast();
     final targetScope = parts.join('.');
     defaults.route(sourceScope, sourceName, targetScope, targetName);
   }
 }
-
-/// core.typedRegistry.js:115 `isIChartComponent`: `'id' in proto &&
-/// 'defaults' in proto`.
-///
-/// [proto] is the result of [_getPrototypeOf]: a class value, or Dart `null`
-/// for a built-in prototype, which has neither key.
-bool _isIChartComponent(JsClass? proto) {
-  return proto != null && proto.has('id') && proto.has('defaults');
-}
-
-/// `Object.getPrototypeOf(item)` where it can be a chart component: the
-/// superclass of a class value ([JsClass.superclass]).
-///
-/// Dart `null` stands for each other prototype: `Function.prototype` of a
-/// base class, and the built-in prototype of a Map, a List, a string or a
-/// number. Throws a [TypeError] for Dart `null` and [undefined], as
-/// `Object.getPrototypeOf` does.
-JsClass? _getPrototypeOf(Object? item) => switch (item) {
-  // A JavaScript TypeError: ToObject of null or undefined.
-  null || Undefined() => throw TypeError(),
-  final JsClass value => value.superclass,
-  _ => null,
-};
-
-/// The `ToPropertyKey` of [id]: [id] itself for a string, else its
-/// `ToString` ([jsToString]).
-String _propertyKey(Object? id) => id is String ? id : jsToString(id);
-
-/// `item.id`: the typed field of a native [Plugin] (Chart.js ADR 0144), else
-/// the read by name of a class value. Throws a [TypeError] for Dart `null`
-/// and [undefined], as the read does.
-Object? _idOf(Object? item) =>
-    item is Plugin<Object?> ? item.id : jsGet(item, 'id');
-
-/// `Object.keys(value)` for the truthy `defaultRoutes` value [value]: an
-/// object (a Map or a typed object) gives [jsObjectKeys], a List or a String
-/// gives its indices, and another value gives no key.
-List<String> _objectKeys(Object? value) => jsObjectKeys(value);

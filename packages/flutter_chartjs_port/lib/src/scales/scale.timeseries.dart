@@ -97,26 +97,19 @@ class TimeSeriesScale(super.cfg) extends TimeScale {
   this;
 
   // scale.timeseries.js:36 `static id = 'timeseries'`. Scale has the
-  // instance field `id`. Thus the value is only in the statics of jsClass.
+  // instance field `id`. Thus the value is only in [component].
 
   /// scale.timeseries.js:41 `static defaults = TimeScale.defaults`: the same
   /// typed scope as [TimeScale.defaults].
   static final ScaleOptionsScope defaults = TimeScale.defaults;
 
-  /// scale.timeseries.js:34 `class TimeSeriesScale extends TimeScale` as a
-  /// value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [TimeScale.jsClass]. Its statics are `id` (`'timeseries'`)
-  /// and [defaults], in the upstream order of declaration
-  /// (scale.timeseries.js:36-41). Its `construct` calls
-  /// `TimeSeriesScale(cfg)` with the `cfg` of [scaleCfgArg]. The registry
-  /// registers [TimeScale.jsClass] first, because it has an `id` and
-  /// `defaults` (core.typedRegistry.js:30-32).
-  static final JsClass jsClass = JsClass(
-    'TimeSeriesScale',
-    superclass: TimeScale.jsClass,
-    statics: {'id': 'timeseries', 'defaults': defaults},
-    construct: (newTarget, args) => TimeSeriesScale(scaleCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, and the constructor.
+  static final ScaleType component = ScaleType(
+    id: 'timeseries',
+    defaults: defaults,
+    parent: TimeScale.component,
+    create: TimeSeriesScale.new,
   );
 
   /// This exact built-in scale has ordinary axis and metadata reads.

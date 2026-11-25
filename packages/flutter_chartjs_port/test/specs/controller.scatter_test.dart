@@ -45,7 +45,10 @@ void main() {
     group('auto', fixture.specs('controller.scatter'));
 
     test('should be registered as dataset controller', () {
-      expect(Chart.registry.controllers.items['scatter'], isA<JsClass>());
+      expect(
+        Chart.registry.controllers.items['scatter'],
+        isA<ControllerType>(),
+      );
     });
 
     // :8

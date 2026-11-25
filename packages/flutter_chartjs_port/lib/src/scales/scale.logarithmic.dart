@@ -167,7 +167,7 @@ class LogarithmicScale(super.cfg) extends Scale implements NullValueScale {
   this;
 
   // scale.logarithmic.js:76 `static id = 'logarithmic'`. Scale has the
-  // instance field `id`. Thus the value is only in the statics of jsClass.
+  // instance field `id`. Thus the value is only in [component].
 
   /// scale.logarithmic.js:81 `static defaults`.
   ///
@@ -182,18 +182,12 @@ class LogarithmicScale(super.cfg) extends Scale implements NullValueScale {
       ..callback = formatters['logarithmic']!
       ..major = (MajorTickOptionsScope()..enabled = true));
 
-  /// scale.logarithmic.js:74 `class LogarithmicScale extends Scale` as a
-  /// value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [Scale.jsClass]. Its statics are `id` (`'logarithmic'`) and
-  /// [defaults], in the upstream order of declaration
-  /// (scale.logarithmic.js:76-88). Its `construct` calls
-  /// `LogarithmicScale(cfg)` with the `cfg` of [scaleCfgArg].
-  static final JsClass jsClass = JsClass(
-    'LogarithmicScale',
-    superclass: Scale.jsClass,
-    statics: {'id': 'logarithmic', 'defaults': defaults},
-    construct: (newTarget, args) => LogarithmicScale(scaleCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, and the constructor.
+  static final ScaleType component = ScaleType(
+    id: 'logarithmic',
+    defaults: defaults,
+    create: LogarithmicScale.new,
   );
 
   /// The options of the scale: the logarithmic scale options (index.d.ts:3405).

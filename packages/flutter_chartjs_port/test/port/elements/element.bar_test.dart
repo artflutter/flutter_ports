@@ -680,39 +680,17 @@ void main() {
       expect(BarElement.defaultRoutes.keys, ['backgroundColor', 'borderColor']);
     });
 
-    test('jsClass is BarElement as a value', () {
-      // From element.bar.js in Node.js v24.12.0 on x64: the own statics of
-      // BarElement are id, defaults and defaultRoutes, and its superclass is
-      // Element. 'descriptors' in BarElement is false. typeof BarElement is
-      // 'function'.
-      final c = BarElement.jsClass;
-      expect(c.name, 'BarElement');
-      expect(c.superclass, same(Element.jsClass));
+    test('component is BarElement as a typed component', () {
+      // The statics of element.bar.js are the typed fields of the component
+      // (Chart.js ADR 0204). It has no parent, and create is the
+      // constructor.
+      final c = BarElement.component;
       expect(c.id, 'bar');
-      expect(c['id'], BarElement.id);
-      expect(c['defaults'], same(BarElement.defaults));
-      expect(c['defaultRoutes'], same(BarElement.defaultRoutes));
-      expect(c.has('descriptors'), isFalse);
-      expect(c.isSubclassOf(Element.jsClass), isTrue);
-      expect(c.isSubclassOf(c), isFalse);
-    });
-
-    test('jsConstruct of jsClass makes a BarElement with the cfg', () {
-      // new BarElement({x: 2}) and new BarElement() (Chart.js ADR 0020,
-      // section 3).
-      final element = jsConstruct(BarElement.jsClass, [
-        <String, Object?>{'x': 2},
-      ]);
-      expect(element, isA<BarElement>());
-      expect((element as BarElement)['x'], 2.0);
-      expect(jsConstruct(BarElement.jsClass, const []), isA<BarElement>());
-      // class My extends BarElement { static id = 'my'; }: the subclass value
-      // constructs a BarElement and reads the statics of BarElement.
-      final my = JsClass('My', superclass: BarElement.jsClass)..['id'] = 'my';
-      expect(jsConstruct(my, const []), isA<BarElement>());
-      expect(my.id, 'my');
-      expect(BarElement.jsClass.id, 'bar');
-      expect(my['defaults'], same(BarElement.defaults));
+      expect(c.defaults, same(BarElement.defaults));
+      expect(c.defaultRoutes, same(BarElement.defaultRoutes));
+      expect(c.descriptors, isNull);
+      expect(c.parent, isNull);
+      expect(c.create(), isA<BarElement>());
     });
   });
 

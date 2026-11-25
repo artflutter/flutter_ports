@@ -81,7 +81,7 @@ void main() {
     group('auto', fixture.specs('controller.radar'));
 
     test('should be registered as dataset controller', () {
-      expect(Chart.registry.controllers.items['radar'], isA<JsClass>());
+      expect(Chart.registry.controllers.items['radar'], isA<ControllerType>());
     });
 
     testWidgets('Should be constructed', (tester) async {

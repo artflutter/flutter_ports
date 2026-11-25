@@ -20,8 +20,8 @@ void main() {
   ) async {
     // test/flutter_test_config.dart registers `sankeyRegisterables`.
     expect(sankeyRegisterables, [
-      SankeyController.jsClass,
-      sankey.Flow.jsClass,
+      SankeyController.component,
+      sankey.Flow.component,
     ]);
 
     final config = ChartConfig(

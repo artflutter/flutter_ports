@@ -36,11 +36,13 @@ class _ProbePoint() extends PointElement {
 
 class _CustomScale(super.cfg) extends LinearScale {
   int calls = 0;
-  static final value = JsClass(
-    'ScatterCustomScale',
-    superclass: LinearScale.jsClass,
-    statics: {'id': 'scatter-custom-scale'},
-    construct: (_, args) => _CustomScale(scaleCfgArg(args)),
+  static final value = ScaleType(
+    id: 'scatter-custom-scale',
+    defaults: LinearScale.component.defaults,
+    defaultRoutes: LinearScale.component.defaultRoutes,
+    descriptors: LinearScale.component.descriptors,
+    parent: LinearScale.component,
+    create: _CustomScale.new,
   );
   @override
   double getPixelForValue(double value, [int? index]) {
@@ -144,10 +146,10 @@ Object _observe(Chart chart, [int dataset = 0]) => [
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
-    LineController.jsClass,
-    PointElement.jsClass,
-    LineElement.jsClass,
-    LinearScale.jsClass,
+    LineController.component,
+    PointElement.component,
+    LineElement.component,
+    LinearScale.component,
   ]);
 
   for (final line in [false, true]) {

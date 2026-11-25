@@ -190,23 +190,18 @@ class PointElement([AnyObject? cfg])
     ..rotation = 0.0;
 
   /// element.point.ts:44 `static defaultRoutes`.
-  static final AnyObject defaultRoutes = {
+  static final Map<String, String> defaultRoutes = {
     'backgroundColor': 'backgroundColor',
     'borderColor': 'borderColor',
   };
 
-  /// element.point.ts:20 `class PointElement extends Element` as a value
-  /// (Chart.js ADR 0020, section 3).
-  ///
-  /// Its statics are [id], [defaults] and [defaultRoutes], in the upstream
-  /// order of declaration (element.point.ts:22-47). They are the objects of the
-  /// static fields. Its `construct` calls `PointElement(cfg)` with the `cfg` of
-  /// [elementCfgArg].
-  static final JsClass jsClass = JsClass(
-    'PointElement',
-    superclass: Element.jsClass,
-    statics: {'id': id, 'defaults': defaults, 'defaultRoutes': defaultRoutes},
-    construct: (newTarget, args) => PointElement(elementCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `defaultRoutes`, and the constructor.
+  static final ElementType component = ElementType(
+    id: id,
+    defaults: defaults,
+    defaultRoutes: defaultRoutes,
+    create: PointElement.new,
   );
 
   /// The value of [parsed]. Dart `null` stands for JS `undefined`.

@@ -19,12 +19,12 @@ import 'package:material_ui/material_ui.dart';
 // starts with an empty registry.
 
 /// The line set: the components of a line chart on the default scales.
-final List<Object?> _lineSet = [
-  LineController.jsClass,
-  LineElement.jsClass,
-  PointElement.jsClass,
-  CategoryScale.jsClass,
-  LinearScale.jsClass,
+final List<IChartComponent> _lineSet = [
+  LineController.component,
+  LineElement.component,
+  PointElement.component,
+  CategoryScale.component,
+  LinearScale.component,
 ];
 
 void main() {
@@ -34,8 +34,8 @@ void main() {
     expect(() => registry.getController('line'), throwsStateError);
     Chart.register(_lineSet);
     addTearDown(() => Chart.unregister(_lineSet));
-    expect(registry.getController('line'), same(LineController.jsClass));
-    expect(registry.getScale('category'), same(CategoryScale.jsClass));
+    expect(registry.getController('line'), same(LineController.component));
+    expect(registry.getScale('category'), same(CategoryScale.component));
 
     await tester.pumpWidget(
       const MaterialApp(home: Scaffold(body: Text('Chart.js'))),

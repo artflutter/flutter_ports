@@ -3133,12 +3133,12 @@ void main() {
       testWidgets('should use the platform constructor provided in config', (
         tester,
       ) async {
-        // `Chart.platforms.BasicPlatform` (src/index.umd.ts:41) is the class
-        // value `BasicPlatform.jsClass` (Chart.js ADR 0020, section 3).
+        // `Chart.platforms.BasicPlatform` (src/index.umd.ts:41) is the
+        // constructor tear-off `BasicPlatform.new` (Chart.js ADR 0204).
         // A native root: the typed config has no key `platform`.
         final chart = acquireChartRoot(
           ChartConfigurationScope()
-            ..['platform'] = BasicPlatform.jsClass
+            ..['platform'] = BasicPlatform.new
             ..type = 'line',
         );
         expect(chart.platform, isA<BasicPlatform>());

@@ -424,7 +424,7 @@ abstract class const PluginOptions<T extends PluginOptions<T>>()
 base class PluginOf<O, C extends IChart>({
   /// `id`: the id of the plugin, the key of its options in
   /// `options.plugins`.
-  required final String id,
+  @override required final String id,
 
   /// Makes the options that the hooks get from the resolved options of the
   /// plugin, for example the constructor of an extension type over them.
@@ -435,15 +435,15 @@ base class PluginOf<O, C extends IChart>({
   /// `defaults`: the default options, which the registry merges into
   /// `defaults.plugins.<id>`: the [PluginOptions] of a built-in plugin or
   /// an add-on, or a typed scope.
-  final PluginDefaults? defaults,
+  @override final PluginDefaults? defaults,
 
   /// `defaultRoutes`: a route of the defaults for each option key, for
   /// example `{'color': 'color'}` (`defaults.route`).
-  final Map<String, String>? defaultRoutes,
+  @override final Map<String, String>? defaultRoutes,
 
   /// `descriptors`: the `_scriptable` and `_indexable` rules of the resolved
   /// options of a plugin. [PluginOptions] have no rules.
-  final DescriptorsScope? descriptors,
+  @override final DescriptorsScope? descriptors,
 
   /// `additionalOptionScopes`: more scopes of the options after
   /// `plugins.<id>` (U `core.config.js:267-278`).
@@ -612,7 +612,7 @@ base class PluginOf<O, C extends IChart>({
   /// It cannot cancel.
   var void Function(C chart, TooltipDrawHookArgs args, O options)?
   afterTooltipDraw,
-}) {
+}) implements IChartComponent {
   /// A plugin with the given id, options and hooks.
   this {
     assert(
@@ -622,6 +622,14 @@ base class PluginOf<O, C extends IChart>({
       'Plugin<$O> $id: give options, a function that makes a $O.',
     );
   }
+
+  /// A plugin has no parent: its prototype is a plain object.
+  @override
+  IChartComponent? get parent => null;
+
+  /// A plugin has no overrides of a chart type.
+  @override
+  ChartOptionsScope? get overrides => null;
 
   /// The check of the resolved plugin options for `Chart.updateRanges`
   /// (Chart.js ADR 0111), or Dart `null` for none. A false result sends the

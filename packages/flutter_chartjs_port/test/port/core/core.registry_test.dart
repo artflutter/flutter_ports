@@ -15,45 +15,62 @@ import 'registry_reference.dart' hide registryReference;
 // The 15 cases of core.registry.tests.js call Chart.register and read
 // Chart.registry (core.controller, a later group). These tests cover the
 // Registry of src/core/core.registry.js with the scenarios of
-// tool/reference/registry_reference.mjs (Chart.js ADR 0020, section 12):
-// the registry of each kind of item, the base classes, the List and Map
-// items, the values that are not items, the register callbacks and their
-// `this`, the getters, the namespace `elements` and the singleton. The
-// expected lines come from the pinned sources in Node.js v24.22.1 on arm64.
+// tool/reference/registry_reference.mjs: the registry of each kind of item,
+// the register callbacks, the getters, the namespace `elements` and the
+// singleton. The expected lines come from the pinned sources in Node.js
+// v24.22.1 on arm64.
+//
+// An item is a typed component or a plugin (Chart.js ADR 0204). The
+// scenarios with no typed form have no test here: the base classes without
+// an id, the List and Map items and the values that are not items (row
+// adapt-typed-components).
 //
 // Each test makes a new Registry, except the test of the singleton, which
 // unregisters its item, as core.registry.tests.js does (Chart.js ADR 0022,
-// section 8). A rest argument list `reg.add(A, B)` is `reg.add([a, b])`
-// (Chart.js ADR 0020, section 6).
+// section 8). A rest argument list `reg.add(A, B)` is `reg.add([a, b])`.
 
-/// The class value `class <name> extends <superclass> {}` with the static
-/// properties [statics], written after the class in their order.
-JsClass _class(
-  String name, {
-  JsClass? superclass,
-  Map<String, Object?> statics = const {},
-}) {
-  final value = JsClass(name, superclass: superclass);
-  statics.forEach((key, v) => value[key] = v);
-  return value;
-}
-
-/// The keys of the items of [registry] in the `Object.keys` order.
+/// The keys of the items of [items] in the `Object.keys` order.
 List<String> _keys(Map<String, Object> items) => jsObjectKeys(items);
 
-/// The reference text [reference] with the line of each observation of
-/// [port] replaced by the line of the port. A plugin is a native [Plugin]
-/// (Chart.js ADR 0144): another value that reaches the registry of the
-/// plugins stops a debug build (`Registry._exec`), where upstream registers
-/// the object of its `id` or throws for a missing `id`.
-String _port(String reference, Map<String, String> port) => [
-  for (final line in reference.split('\n'))
-    switch (port.entries.where((e) => line.startsWith('${e.key}: '))) {
-      final Iterable<MapEntry<String, String>> found when found.isNotEmpty =>
-        '${found.first.key}: ${found.first.value}',
-      _ => line,
-    },
-].join('\n');
+/// [reference] without the lines that start with one of [labels]: the
+/// observations that have no typed form.
+String _without(String reference, List<String> labels) => reference
+    .split('\n')
+    .where((line) => !labels.any((label) => line.startsWith('$label: ')))
+    .join('\n');
+
+/// A controller type with the id [id] and the defaults [defaults].
+ControllerType _controller(String id, [Map<String, Object?>? defaults]) =>
+    ControllerType(
+      id: id,
+      defaults: scopeFromMap(GenericDatasetOptionsScope(), defaults),
+      create: DatasetController.new,
+    );
+
+/// A scale type with the id [id] and the defaults [defaults].
+ScaleType _scale(String id, [Map<String, Object?>? defaults]) => ScaleType(
+  id: id,
+  defaults: scopeFromMap(ScaleOptionsScope(), defaults),
+  create: Scale.new,
+);
+
+/// An element type with the id [id], the defaults [defaults], the parent
+/// [parent] and the register hooks [hook].
+ElementType _element(
+  String id, {
+  Map<String, Object?>? defaults,
+  ElementType? parent,
+  ComponentHook Function(String name)? hook,
+}) => ElementType(
+  id: id,
+  defaults: scopeFromMap(GenericElementOptionsScope(), defaults),
+  parent: parent,
+  beforeRegister: hook?.call('beforeRegister'),
+  afterRegister: hook?.call('afterRegister'),
+  beforeUnregister: hook?.call('beforeUnregister'),
+  afterUnregister: hook?.call('afterUnregister'),
+  create: Element.new,
+);
 
 void main() {
   setUpSpecs();
@@ -66,21 +83,11 @@ void main() {
   test('each kind of item goes to its registry', () {
     final o = Observations();
     final reg = Registry();
-    final rCtl = _class(
-      'RCtl',
-      superclass: DatasetController.jsClass,
-      statics: {'id': 'rctl'},
-    );
-    final rScale = _class(
-      'RScale',
-      superclass: Scale.jsClass,
-      statics: {'id': 'rscale'},
-    );
-    final rElem = _class(
-      'RElem',
-      superclass: Element.jsClass,
-      statics: {'id': 'relem'},
-    );
+    // A subclass with no own defaults has the defaults of its base class:
+    // an empty scope.
+    final rCtl = _controller('rctl');
+    final rScale = _scale('rscale');
+    final rElem = _element('relem');
     // The plugin class `RPlug` and the plugin Map of upstream are native
     // plugins with their ids (Chart.js ADR 0144).
     final rPlug = Plugin<Object?>(id: 'rplug');
@@ -105,162 +112,24 @@ void main() {
     expect(o.text, registryReference['registry routing']);
   });
 
-  test('the base classes have no id', () {
-    // The message has the source text of the class upstream. Only its start
-    // is the same (differences.md js-semantics-class-source).
-    final o = Observations();
-    final reg = Registry();
-    for (final (name, value) in [
-      ('DatasetController', DatasetController.jsClass),
-      ('Scale', Scale.jsClass),
-      ('Element', Element.jsClass),
-    ]) {
-      final result = error(() => reg.add([value]));
-      final start = 'Error: class does not have id: class $name';
-      o.observe(name, result.startsWith(start) ? start : result);
-    }
-    o.observe('plugins', o.json(_keys(reg.plugins.items)));
-    // The base classes DatasetController and Element are no item of their
-    // registries (core.typedRegistry.js:22-24), so they reach the registry of
-    // the plugins.
-    expect(
-      o.text,
-      _port(registryReference['registry base classes']!, {
-        'DatasetController': '_AssertionError',
-        'Element': '_AssertionError',
-      }),
-    );
-  });
-
-  test('a List and a Map of items, and a Map with an id', () {
-    final o = Observations();
-    final reg = Registry();
-    // The plugin objects of upstream are native plugins (Chart.js ADR 0144).
-    final ra = o.label(Plugin<Object?>(id: 'ra'), 'ra');
-    final rb = o.label(Plugin<Object?>(id: 'rb'), 'rb');
-    final rc = o.label(Plugin<Object?>(id: 'rc'), 'rc');
-    final rd = o.label(Plugin<Object?>(id: 'rd'), 'rd');
-    final re = o.label(Plugin<Object?>(id: 're'), 're');
-    reg.add([
-      [ra, rb],
-      <String, Object?>{'k2': rc, '10': rd, 'k1': re},
-    ]);
-    o.observe('plugins', o.json(_keys(reg.plugins.items)));
-    // Upstream registers the object with an `id` and the item `k` as one
-    // plugin: an item, not a loopable. The native plugin has no item `k`.
-    final withId = o.label(Plugin<Object?>(id: 'rwithid'), 'rwithid');
-    reg.add([withId]);
-    o.observe('with id', o.json(_keys(reg.plugins.items)));
-    final rCtl2 = _class(
-      'RCtl2',
-      superclass: DatasetController.jsClass,
-      statics: {'id': 'rctl2'},
-    );
-    final rplug2 = o.label(Plugin<Object?>(id: 'rplug2'), 'rplug2');
-    reg.add([
-      <String, Object?>{'a': rCtl2, 'b': rplug2},
-    ]);
-    o
-      ..observe('mixed controllers', o.json(_keys(reg.controllers.items)))
-      ..observe('mixed plugins', o.json(_keys(reg.plugins.items)));
-    reg.remove([
-      [ra, rb],
-      <String, Object?>{'k2': rc, '10': rd, 'k1': re},
-      withId,
-      <String, Object?>{'a': rCtl2, 'b': rplug2},
-    ]);
-    o
-      ..observe('controllers after', o.json(_keys(reg.controllers.items)))
-      ..observe('plugins after', o.json(_keys(reg.plugins.items)));
-    expect(o.text, registryReference['registry loopables']);
-  });
-
-  test('values that are not items', () {
-    final o = Observations();
-    final reg = Registry();
-    for (final (name, value) in <(String, Object?)>[
-      ('number', 5.0),
-      ('string', 'ab'),
-      ('boolean', true),
-      ('empty map', <String, Object?>{}),
-      ('arrow', () => 1.0),
-      ('null', null),
-      ('undefined', undefined),
-      ('map of a string', <String, Object?>{'foo': 'bar'}),
-      ('map of a number', <String, Object?>{'n': 5.0}),
-      ('list of null', <Object?>[null]),
-      (
-        'nested list',
-        [
-          [Plugin<Object?>(id: 'rn1')],
-        ],
-      ),
-      ('list', [Plugin<Object?>(id: 'rn2')]),
-    ]) {
-      o.observe(name, error(() => reg.add([value])));
-    }
-    o
-      ..observe('plugins', o.json(_keys(reg.plugins.items)))
-      ..observe('remove null', error(() => reg.remove([null])))
-      ..observe(
-        'remove map',
-        error(() => reg.remove([Plugin<Object?>(id: 'rnone')])),
-      );
-    // The string, the number and the inner List of a loopable reach the
-    // registry of the plugins.
-    expect(
-      o.text,
-      _port(registryReference['registry items of other values']!, {
-        'map of a string': '_AssertionError',
-        'map of a number': '_AssertionError',
-        'nested list': '_AssertionError',
-      }),
-    );
-  });
-
-  test('the register callbacks get the component as this', () {
+  test('the register callbacks get the component', () {
     final o = Observations();
     final reg = Registry();
     final log = <String>[];
-    void callbacks(Object target) {
-      for (final name in const [
-        'beforeRegister',
-        'afterRegister',
-        'beforeUnregister',
-        'afterUnregister',
-      ]) {
-        // The hook gets the component as its parameter (Chart.js ADR 0173).
-        Object? callback(Object? self) {
-          final id = jsGet(self, 'id');
-          log.add(
-            '$name ${o.labelOf(self)} ${has(reg.plugins.items, id)}'
-            ' ${has(reg.elements.items, id)}',
-          );
-          return null;
-        }
+    // The hook gets the component as its parameter (Chart.js ADR 0173).
+    ComponentHook hook(String name) =>
+        (component) => log.add(
+          '$name ${o.labelOf(component)}'
+          ' ${has(reg.plugins.items, component.id)}'
+          ' ${has(reg.elements.items, component.id)}',
+        );
 
-        switch (target) {
-          case final JsClass value:
-            value[name] = callback;
-          case final Map<String, Object?> map:
-            map[name] = callback;
-        }
-      }
-    }
-
-    // The plugin class `RCb`, its subclass `RCbSub` and the plugin Map
-    // `rcbmap` of upstream have their register callbacks. A native plugin
-    // (Chart.js ADR 0144) has no callback and no other key: the case keeps
-    // the element classes, and the lines of the plugins go.
-    final rCbP = o.label(
-      _class('RCbP', superclass: Element.jsClass, statics: {'id': 'rcbp'}),
-      'RCbP',
-    );
-    callbacks(rCbP);
-    final rCbC = o.label(
-      _class('RCbC', superclass: rCbP, statics: {'id': 'rcbc'}),
-      'RCbC',
-    );
+    // Upstream `RCbC` inherits the callbacks of `RCbP`. A component has its
+    // own hooks. The plugin class `RCb`, its subclass `RCbSub` and the
+    // plugin Map `rcbmap` have callbacks upstream; a native plugin
+    // (Chart.js ADR 0144) has none: the lines of the plugins go.
+    final rCbP = o.label(_element('rcbp', hook: hook), 'RCbP');
+    final rCbC = o.label(_element('rcbc', parent: rCbP, hook: hook), 'RCbC');
     reg
       ..add([rCbC])
       ..remove([rCbC]);
@@ -284,49 +153,39 @@ void main() {
   });
 
   test('the getters, and the explicit registries', () {
+    // An id is a String: `undefined` and `null` are their `ToPropertyKey`.
     final o = Observations();
     final reg = Registry();
     o
       ..observe('controller', error(() => reg.getController('nope')))
-      ..observe('element', error(() => reg.getElement(undefined)))
+      ..observe('element', error(() => reg.getElement('undefined')))
       ..observe('plugin', error(() => reg.getPlugin<_RExtPlugin>()))
-      ..observe('scale', error(() => reg.getScale(null)));
-    final rExt = o.label(
-      _class(
-        'RExt',
-        statics: {
-          'id': 'rext',
-          'defaults': <String, Object?>{'prop': true},
-        },
-      ),
+      ..observe('scale', error(() => reg.getScale('null')));
+    final extDefaults = <String, Object?>{'prop': true};
+    final rExtController = o.label(_controller('rext', extDefaults), 'RExt');
+    final rExtElement = o.label(
+      _element('rext', defaults: extDefaults),
       'RExt',
     );
+    final rExtScale = o.label(_scale('rext', extDefaults), 'RExt');
     // The plugin of the class `RExt` is a native plugin (Chart.js ADR 0144)
     // with the same id and defaults.
     final rExtPlugin = o.label(_RExtPlugin(), 'RExt');
-    for (final (name, item, add, get, remove) in [
-      (
-        'controller',
-        rExt,
-        reg.addControllers,
-        reg.getController,
-        reg.removeControllers,
-      ),
-      ('element', rExt, reg.addElements, reg.getElement, reg.removeElements),
-      (
-        'plugin',
-        rExtPlugin,
-        reg.addPlugins,
-        (Object? _) => reg.getPlugin<_RExtPlugin>(),
-        reg.removePlugins,
-      ),
-      ('scale', rExt, reg.addScales, reg.getScale, reg.removeScales),
-    ]) {
-      add([item]);
-      o.observe('$name get', o.json(get('rext')));
-      remove([item]);
-      o.observe('$name after', error(() => get('rext')));
-    }
+    reg.addControllers([rExtController]);
+    o.observe('controller get', o.json(reg.getController('rext')));
+    reg.removeControllers([rExtController]);
+    o
+      ..observe('controller after', error(() => reg.getController('rext')))
+      ..observe('element get', o.json(_registerGet(reg, rExtElement)))
+      ..observe('element after', error(() => reg.getElement('rext')));
+    reg.addPlugins([rExtPlugin]);
+    o.observe('plugin get', o.json(reg.getPlugin<_RExtPlugin>()));
+    reg.removePlugins([rExtPlugin]);
+    o.observe('plugin after', error(() => reg.getPlugin<_RExtPlugin>()));
+    reg.addScales([rExtScale]);
+    o.observe('scale get', o.json(reg.getScale('rext')));
+    reg.removeScales([rExtScale]);
+    o.observe('scale after', error(() => reg.getScale('rext')));
     // The plugin type is the key of getPlugin (row adapt-typed-plugins).
     expect(
       o.text,
@@ -342,50 +201,20 @@ void main() {
     );
   });
 
-  /// The namespace `elements` of the bundle: a Map with the export names in
-  /// code unit order (Chart.js ADR 0020, section 6).
-  Map<String, Object?> elementsNamespace() => Map.unmodifiable({
-    'ArcElement': ArcElement.jsClass,
-    'BarElement': BarElement.jsClass,
-    'LineElement': LineElement.jsClass,
-    'PointElement': PointElement.jsClass,
-  });
-
-  /// The lines of the namespace scenario in the port.
-  String namespaceLines() {
+  test('the namespace elements registers in code unit order', () {
+    // `Chart.register(registerables)` of upstream takes the namespaces. The
+    // port takes their items (Chart.js ADR 0204): the namespace has no
+    // List form, so the line `as a list` goes.
     final o = Observations();
     final reg = Registry();
-    final elements = elementsNamespace();
-    final empty = Map<String, Object?>.unmodifiable(<String, Object?>{});
     o.observe('keys', o.json(jsObjectKeys(elements)));
-    reg.add([empty, empty, elements, empty]);
-    o
-      ..observe('elements', o.json(_keys(reg.elements.items)))
-      ..observe(
-        'as a list',
-        error(
-          () => reg.add([
-            [empty, empty, elements, empty],
-          ]),
-        ),
-      );
-    return o.text;
-  }
-
-  test('the namespace elements registers in code unit order', () {
-    // `Chart.register(registerables)` of upstream is
-    // `Chart.register([registerables])`. The namespace objects of the
-    // bundle have a null prototype: `'id' in null` throws a TypeError.
-    // Here a namespace is a Map, which reaches the registry of the plugins,
-    // and a debug build stops there: a plugin is a Plugin (Chart.js ADR
-    // 0144). Both stop at the first namespace, before a write (Chart.js ADR
-    // 0020, section 6).
+    reg.add(elements.values);
+    o.observe('elements', o.json(_keys(reg.elements.items)));
     expect(
-      namespaceLines(),
-      registryReference['registry elements namespace']!.replaceFirst(
-        'as a list: TypeError',
-        'as a list: _AssertionError',
-      ),
+      o.text,
+      _without(registryReference['registry elements namespace']!, [
+        'as a list',
+      ]),
     );
   });
 
@@ -414,30 +243,26 @@ void main() {
     );
   });
 
-  test('the four registries of the base class values', () {
+  test('the four registries', () {
     final reg = Registry();
-    expect(reg.controllers.type, same(DatasetController.jsClass));
     expect(reg.controllers.scope, 'datasets');
     expect(reg.controllers.override, isTrue);
-    expect(reg.elements.type, same(Element.jsClass));
     expect(reg.elements.scope, 'elements');
     expect(reg.elements.override, isFalse);
-    expect(reg.plugins.type, same(jsObjectClass));
     expect(reg.plugins.scope, 'plugins');
-    expect(reg.scales.type, same(Scale.jsClass));
+    expect(reg.plugins.override, isFalse);
     expect(reg.scales.scope, 'scales');
-    // The statics that the registry reads from the base classes
-    // (core.datasetController.js:239-249, core.element.ts:8-9).
-    expect(DatasetController.jsClass.has('id'), isFalse);
-    expect(
-      DatasetController.jsClass['defaults'],
-      same(DatasetController.defaults),
-    );
-    expect(Scale.jsClass.superclass, same(Element.jsClass));
-    expect(Scale.jsClass.has('id'), isFalse);
-    expect(Scale.jsClass['defaults'], same(Element.defaults));
-    expect(Element.jsClass['defaultRoutes'], same(undefined));
+    expect(reg.scales.override, isFalse);
   });
+}
+
+/// Registers [element] in [reg] and gives `reg.getElement` of its id, then
+/// removes it again.
+ElementType _registerGet(Registry reg, ElementType element) {
+  reg.addElements([element]);
+  final result = reg.getElement(element.id);
+  reg.removeElements([element]);
+  return result;
 }
 
 final Map<String, String> registryReference = {

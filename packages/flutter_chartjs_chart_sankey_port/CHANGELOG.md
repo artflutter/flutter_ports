@@ -1,5 +1,8 @@
 ## Unreleased
 
+- BREAKING: `sankeyRegisterables` is a `List<ChartComponent>` of `SankeyController.component` and
+  `Flow.component` (Chart.js ADR 0204 of flutter_chartjs_port): the `jsClass` of both classes is gone. The
+  static `defaults`, `descriptors` and `overrides` are typed scopes of the host.
 - BREAKING: `SankeyDataset` has no `extra` (Chart.js ADR 0201 of flutter_chartjs_port): each option is a typed
   parameter.
 - The options of a dataset and of a flow are immutable classes with a typed field for each option,

@@ -40,7 +40,7 @@ import 'registry_observe.dart';
 // snapshot of the defaults restore (Chart.js ADR 0022, section 8).
 //
 // The other groups test the hunks of the port: the rows of differences.md
-// (`adapt-component-class-role`, `adapt-chart-registry-getter`,
+// (`adapt-typed-components`, `adapt-chart-registry-getter`,
 // `harness-method-fields`, `platform-destroy-cancel-resize`,
 // `platform-to-base64-image`, `js-semantics-debounce-args` and the TickerMode
 // mute of Chart.js ADR 0016, decision 7) and the forms of `Chart.register`
@@ -107,7 +107,7 @@ final class _Canvas([
 
 /// The dataset controller `test` of the generator: it places each point at
 /// its parsed x and y.
-final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
+final class _TestController(super.chart, super.datasetIndex, [super.elements])
     extends DatasetController {
   @override
   void update(String mode) {
@@ -144,20 +144,13 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
 }
 
 /// `class TestController extends DatasetController` of the generator.
-final JsClass _testController = JsClass(
-  'TestController',
-  superclass: DatasetController.jsClass,
-  statics: {
-    'id': 'test',
-    'defaults': <String, Object?>{
-      'datasetElementType': false,
-      'dataElementType': 'point',
-    },
-  },
-  construct: (newTarget, args) {
-    final (:chart, :datasetIndex) = controllerArgs(args);
-    return _TestController(chart, datasetIndex, newTarget);
-  },
+final ControllerType _testController = ControllerType(
+  id: 'test',
+  defaults: scopeFromMap(GenericDatasetOptionsScope(), {
+    'datasetElementType': false,
+    'dataElementType': 'point',
+  }),
+  create: _TestController.new,
 );
 
 /// The scale `testlinear` of the generator: the range 0 to 10, with the
@@ -179,11 +172,10 @@ final class _TestScale(super.cfg) extends Scale {
 }
 
 /// `class TestScale extends Scale` of the generator.
-final JsClass _testScale = JsClass(
-  'TestScale',
-  superclass: Scale.jsClass,
-  statics: {'id': 'testlinear', 'defaults': <String, Object?>{}},
-  construct: (newTarget, args) => _TestScale(scaleCfgArg(args)),
+final ScaleType _testScale = ScaleType(
+  id: 'testlinear',
+  defaults: ScaleOptionsScope(),
+  create: _TestScale.new,
 );
 
 /// The text of a value of a hook argument, as `argText` of the generator.
@@ -471,17 +463,14 @@ Chart _hostedChart(AnyObject config, {void Function(Chart chart)? replace}) {
   return chart;
 }
 
-/// `class X {}` with the static `id`, as a plain class of a spec.
-JsClass _plainClass(String name, String id, [AnyObject? defaults]) {
-  final value = JsClass(name)..['id'] = id;
-  if (defaults != null) value['defaults'] = defaults;
-  return value;
-}
-
 /// The upstream text of a position: the name of a [ChartPosition] (row
 /// adapt-chart-position-enum), else the string of the value.
 String _positionText(Object? position) =>
     position is ChartPosition ? position.name : '$position';
+
+/// The observation of the nested register forms, which the port does not
+/// have (Chart.js ADR 0204).
+const String _noNestedItems = 'n/a: typed items';
 
 void main() {
   // The invalid numeric parsing key must still fail at its reader.
@@ -1206,16 +1195,7 @@ void main() {
       (o, charts) {
         o
           ..observe('version', Chart.version)
-          ..observe(
-            'register forms',
-            error(
-              () => Chart.register([
-                [
-                  [Plugin<Object?>(id: 'x')],
-                ],
-              ]),
-            ),
-          );
+          ..observe('register forms', _noNestedItems);
         final log = <String>[];
         final chart = Chart(_Canvas(), _testConfig([]));
         charts.add(chart);
@@ -1232,17 +1212,16 @@ void main() {
           ..observe('after unregister', log.join(' '))
           ..observe('BasicPlatform', chart.platform is BasicPlatform);
         final own = Chart(_Canvas(), <String, Object?>{
-          'platform': BasicPlatform.jsClass,
+          'platform': BasicPlatform.new,
           'type': 'test',
         });
         charts.add(own);
         o.observe('config platform', own.platform.runtimeType);
       },
-      // The inner List `[x]` reaches the registry of the plugins. Upstream
-      // throws there for its missing `id` (core.typedRegistry.js:46), and the
-      // port stops a debug build first: a plugin is a Plugin (Chart.js ADR
-      // 0144, core.registry.dart `_exec`).
-      port: const {'register forms': '_AssertionError'},
+      // Upstream throws for the missing `id` of the inner List `[x]`
+      // (core.typedRegistry.js:46). `Chart.register` of the port takes typed
+      // items only: a nested List does not compile (Chart.js ADR 0204).
+      port: const {'register forms': _noNestedItems},
     );
   });
 
@@ -1493,30 +1472,18 @@ void main() {
       expect(first.getContext(), same(context));
     });
 
-    test('a platform class value of another role throws a TypeError', () {
-      // `new (config.platform)()` of a plain class gives a plain object, and
-      // upstream throws a TypeError at `this.platform.updateConfig`, the
-      // next line. The port throws it at the cast.
-      expect(
-        () => Chart(_Canvas(), <String, Object?>{
-          'platform': JsClass('PlainPlatform'),
-        }),
-        throwsA(isA<TypeError>()),
-      );
-      // A Dart function is not a class value: `new` throws a TypeError.
-      expect(
-        () =>
-            Chart(_Canvas(), <String, Object?>{'platform': BasicPlatform.new}),
-        throwsA(isA<TypeError>()),
-      );
-    });
-
-    test('a subclass of a platform class value constructs its superclass', () {
-      final sub = JsClass('SubPlatform', superclass: BasicPlatform.jsClass);
-      final chart = Chart(_Canvas(), <String, Object?>{'platform': sub});
+    test('the platform option holds a constructor tear-off', () {
+      // `new (config.platform)()` of upstream is a call of the tear-off
+      // (Chart.js ADR 0204). A value of another type stops a debug build.
+      final chart = Chart(_Canvas(), <String, Object?>{
+        'platform': BasicPlatform.new,
+      });
       addTearDown(chart.destroy);
       expect(chart.platform, isA<BasicPlatform>());
-      expect(BasicPlatform.jsClass.isSubclassOf(BasePlatform.jsClass), isTrue);
+      expect(
+        () => Chart(_Canvas(), <String, Object?>{'platform': Object()}),
+        throwsA(isA<AssertionError>()),
+      );
     });
   });
 
@@ -1535,17 +1502,8 @@ void main() {
       final e = Plugin<Object?>(id: 'formE');
       Chart.register([a]);
       Chart.register([b, c]);
-      Chart.register([
-        [d],
-      ]);
-      Chart.register([
-        <String, Object?>{'E': e},
-      ]);
-      addTearDown(
-        () => Chart.unregister([
-          [a, b, c, d, e],
-        ]),
-      );
+      Chart.register({d, e});
+      addTearDown(() => Chart.unregister([a, b, c, d, e]));
       final ids = jsObjectKeys(Chart.registry.plugins.items);
       expect(ids.where((id) => id.startsWith('form')), [
         'formA',
@@ -1554,21 +1512,6 @@ void main() {
         'formD',
         'formE',
       ]);
-    });
-
-    test('a nested List and Dart null throw', () {
-      // The inner List reaches the registry of the plugins: upstream throws
-      // for its missing `id`, and the port stops a debug build first, because
-      // a plugin is a Plugin (Chart.js ADR 0144).
-      expect(
-        () => Chart.register([
-          [
-            [Plugin<Object?>(id: 'nested')],
-          ],
-        ]),
-        throwsA(isA<AssertionError>()),
-      );
-      expect(() => Chart.register([null]), throwsA(isA<TypeError>()));
     });
 
     // A Map config: the chart has no chart type, which a typed config needs.
@@ -1587,54 +1530,6 @@ void main() {
   group('adapt-chart-registry-getter', () {
     test('Chart.registry is the singleton registry', () {
       expect(Chart.registry, same(registry));
-    });
-  });
-
-  // Map configs: plain controller and scale classes, which a typed config
-  // cannot name.
-  group('adapt-component-class-role', () {
-    test('a plain controller class throws a TypeError in update()', () {
-      // Upstream constructs the plain class and keeps it in meta.controller.
-      // It notifies beforeElementsUpdate and throws a TypeError at
-      // `controller.buildOrUpdateElements` (core.controller.js:497-506). The
-      // port throws the TypeError at the cast.
-      final plain = _plainClass('plain', 'plainController', {
-        'dataElementType': 'point',
-      });
-      Chart.registry.addControllers([plain]);
-      addTearDown(() => Chart.registry.removeControllers([plain]));
-      final log = <String>[];
-      final chart = Chart(
-        _Canvas(),
-        _testConfig([], plugins: [_spy('spy', log, Observations())]),
-      );
-      addTearDown(chart.destroy);
-      (chart.data['datasets']! as List<Object?>).add(<String, Object?>{
-        'type': 'plainController',
-        'data': <Object?>[],
-      });
-      log.clear();
-      expect(chart.update, throwsA(isA<TypeError>()));
-      expect(log, isNot(contains('beforeElementsUpdate()')));
-      expect(chart.getDatasetMeta(0).controller, isNull);
-    });
-
-    test('a plain scale class throws a TypeError in update()', () {
-      // Upstream writes `scales[scale.id]` before the TypeError of
-      // `scale.init` (core.controller.js:364-367). The port has no entry.
-      final plain = _plainClass('plainScale', 'plainScale');
-      Chart.registry.addScales([plain]);
-      addTearDown(() => Chart.registry.removeScales([plain]));
-      final chart = Chart(_Canvas(), <String, Object?>{});
-      addTearDown(chart.destroy);
-      chart.options = <String, Object?>{
-        'animation': false,
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'plainScale'},
-        },
-      };
-      expect(chart.update, throwsA(isA<TypeError>()));
-      expect(chart.scales, isEmpty);
     });
   });
 

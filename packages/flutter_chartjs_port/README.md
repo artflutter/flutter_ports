@@ -558,16 +558,16 @@ As the `chart.js` package of npm, the library registers nothing. Register the co
 the first chart. `Chart.register(registerables)` registers all controllers, elements, scales and
 plugins. To keep a web build small, register only the components of your chart types, as the
 [integration guide](https://www.chartjs.org/docs/4.6.1/getting-started/integration.html#bundle-optimization)
-of Chart.js lists them. A component is its class value (`jsClass`), and a plugin is its plugin
-object:
+of Chart.js lists them. A component is the typed `component` of its class, and a plugin is its
+plugin object:
 
 ```dart
 Chart.register([
-  LineController.jsClass,
-  LineElement.jsClass,
-  PointElement.jsClass,
-  CategoryScale.jsClass,
-  LinearScale.jsClass,
+  LineController.component,
+  LineElement.component,
+  PointElement.component,
+  CategoryScale.component,
+  LinearScale.component,
   legend,
   tooltip,
 ]);
@@ -685,7 +685,7 @@ shadow colors and theme tokens remain Flutter `Color` values.
 | Library | Contents |
 |---|---|
 | `package:flutter_chartjs_port/flutter_chartjs_port.dart` | The library of an app: `ChartView`, the typed API (`ChartConfig`, the dataset classes, the axes and the option groups), `ChartTheme`, `ChartThemeData`, and the Chart.js API: `Chart`, the controllers, elements, scales and plugin objects, `registerables`, `defaults`, the types of the callbacks, the date zone functions, `notifyArrayListeners` and `undefined`. It leaves out `Animation` and `Element`, two names that Flutter also has, so an app imports it next to `material.dart` with no prefix. |
-| `package:flutter_chartjs_port/chartjs.dart` | The `chart.js` entry of npm, for code that extends Chart.js (a plugin, a controller or a scale): the whole Chart.js API with `Animation` and `Element`, the Canvas 2D interface that a plugin draws on (`chart.ctx`), `ChartMeta`, `JsClass` (the class value of a subclass) and `JsObjectFace` (the read by name of an object of the chart). It has no typed API. Next to Flutter, import it with a prefix or with `hide Animation, Element`. |
+| `package:flutter_chartjs_port/chartjs.dart` | The `chart.js` entry of npm, for code that extends Chart.js (a plugin, a controller or a scale): the whole Chart.js API with `Animation` and `Element`, the Canvas 2D interface that a plugin draws on (`chart.ctx`), `ChartMeta`, `ControllerType`, `ScaleType` and `ElementType` (the typed component of a subclass) and `JsObjectFace` (the read by name of an object of the chart). It has no typed API. Next to Flutter, import it with a prefix or with `hide Animation, Element`. |
 | `package:flutter_chartjs_port/helpers.dart` | The `chart.js/helpers` entry: the public helpers of Chart.js. An upper case constant has a lowerCamelCase name: `PI` is `pi`. Import it with a prefix. |
 
 `ChartConfig` is the typed config of a `ChartView`. `ChartConfiguration` is another type: the

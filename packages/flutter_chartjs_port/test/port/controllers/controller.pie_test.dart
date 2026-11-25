@@ -43,17 +43,17 @@ Chart _chart(ChartConfig config) => acquireChartRoot(lowerForTest(config));
 
 void main() {
   group('interfaces', () {
-    test('the class value extends the doughnut class value and gets its '
-        'descriptors and overrides', () {
-      final pie = PieController.jsClass;
-      expect(identical(pie.superclass, DoughnutController.jsClass), isTrue);
-      expect(pie['id'], 'pie');
-      expect(identical(pie['defaults'], PieController.defaults), isTrue);
+    test('the component has the doughnut component as its parent and gets '
+        'its descriptors and overrides', () {
+      final pie = PieController.component;
+      expect(identical(pie.parent, DoughnutController.component), isTrue);
+      expect(pie.id, 'pie');
+      expect(identical(pie.defaults, PieController.defaults), isTrue);
       expect(
-        identical(pie['descriptors'], DoughnutController.descriptors),
+        identical(pie.descriptors, DoughnutController.descriptors),
         isTrue,
       );
-      expect(identical(pie['overrides'], DoughnutController.overrides), isTrue);
+      expect(identical(pie.overrides, DoughnutController.overrides), isTrue);
       expect(jsObjectKeys(PieController.defaults), [
         'cutout',
         'rotation',

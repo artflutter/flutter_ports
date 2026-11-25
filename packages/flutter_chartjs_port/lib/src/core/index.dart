@@ -15,8 +15,9 @@
 ///   reads it.
 /// - index.ts:3 `Animation`, index.ts:4 `Animations` and index.ts:5
 ///   `animator`.
-/// - index.ts:6 `Chart`. The class values of the components are static
-///   members (`jsClass`). They need no export of their own.
+/// - index.ts:6 `Chart`. The typed components of the classes are static
+///   members (`component`, Chart.js ADR 0204). They need no export of their
+///   own.
 /// - index.ts:7 `DatasetController`, index.ts:8 `defaults`, index.ts:9
 ///   `Element`, index.ts:10 `Interaction` and index.ts:11 `layouts`.
 /// - index.ts:12 `export {default as plugins} from './core.plugins.js'`:

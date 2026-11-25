@@ -690,13 +690,6 @@ final class _BenchPointer() {
 /// cases `tooltip.still` and `tooltip.fade` need the animations. The
 /// reference generators of the controllers do the same in Node.js.
 final class _AnimatedPlatform() extends BasicPlatform {
-  /// The class value of `config.platform` (core.controller.js:136).
-  static final JsClass jsClass = JsClass(
-    'AnimatedBasicPlatform',
-    superclass: BasicPlatform.jsClass,
-    construct: (newTarget, args) => _AnimatedPlatform(),
-  );
-
   @override
   void updateConfig(ChartConfiguration config) {
     // no-op
@@ -740,7 +733,7 @@ ChartBenchScene _tooltipScene(
     },
     plugins: timing.plugins,
   );
-  if (animate) config['platform'] = _AnimatedPlatform.jsClass;
+  if (animate) config['platform'] = _AnimatedPlatform.new;
   return ChartBenchScene(
     config: config,
     takeParts: timing.take,
@@ -1142,7 +1135,7 @@ ChartBenchCase _motionCase(StressChartType type) => ChartBenchCase(
     );
     // The default animations: no option `animation: false`.
     (config['options']! as Map<String, Object?>).remove('animation');
-    config['platform'] = _AnimatedPlatform.jsClass;
+    config['platform'] = _AnimatedPlatform.new;
     return ChartBenchScene(
       config: config,
       takeParts: timing.take,
@@ -1194,7 +1187,7 @@ ChartBenchCase _motionDelayCase() => ChartBenchCase(
     // The default animations with a scriptable delay.
     (config['options']! as Map<String, Object?>)['animation'] =
         <String, Object?>{'delay': stressDelayByIndex};
-    config['platform'] = _AnimatedPlatform.jsClass;
+    config['platform'] = _AnimatedPlatform.new;
     return ChartBenchScene(
       config: config,
       takeParts: timing.take,
@@ -1443,7 +1436,7 @@ ChartBenchCase _themeCase(
         },
         plugins: timing.plugins,
       );
-      config['platform'] = _AnimatedPlatform.jsClass;
+      config['platform'] = _AnimatedPlatform.new;
       final theme = _BenchTheme(config, chartBenchThemes.first);
       (config['plugins']! as List<Object?>).add(theme.plugin);
       final step = frame();

@@ -110,11 +110,21 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // DIVERGES(zoom): harness-register-builtins, the UMD entries of karma.
   setUpBuiltins(
     () {
-      Chart.register([controllers, scales, elements, plugins]);
+      Chart.register([
+        ...controllers.values,
+        ...scales.values,
+        ...elements.values,
+        ...plugins.values,
+      ]);
       Chart.register([zoomPlugin]);
     },
-    () =>
-        Chart.unregister([zoomPlugin, controllers, scales, elements, plugins]),
+    () => Chart.unregister([
+      zoomPlugin,
+      ...controllers.values,
+      ...scales.values,
+      ...elements.values,
+      ...plugins.values,
+    ]),
   );
 
   // index.js:140-143

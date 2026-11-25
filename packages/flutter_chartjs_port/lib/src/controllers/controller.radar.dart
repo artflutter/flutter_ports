@@ -24,8 +24,8 @@
 ///   `getPointPositionForValue` (:88).
 /// - The label of [RadarController.getLabelAndValue] is the raw label
 ///   (Chart.js ADR 0028, section 2).
-/// - [RadarController.jsClass] is the class as a value with the statics
-///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
+/// - [RadarController.component] is the class as a typed component with the
+///   statics `id`, `defaults` and `overrides` (Chart.js ADR 0204).
 /// - The option resolution for each point stays literal (Chart.js ADR 0036,
 ///   section 8: the step 7 list), but for the guarded loop of Chart.js ADR
 ///   0095: in the mode `none`, once the options of a point are the cached
@@ -39,11 +39,11 @@ library;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// controller.radar.js:4 `RadarController extends DatasetController`.
-class RadarController(super.chart, super.datasetIndex, [super.newTarget])
+class RadarController(super.chart, super.datasetIndex, [super.elements])
     extends DatasetController {
   /// `new RadarController(chart, datasetIndex)`. Upstream declares no
-  /// constructor in this class. `newTarget` is `new.target` (Chart.js ADR
-  /// 0020, section 4).
+  /// constructor in this class. [elements] are the element types of the
+  /// chart type (Chart.js ADR 0204).
   this;
 
   /// Native support for the explicit data-only lifecycle.
@@ -78,21 +78,13 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
     ..scales = (ScaleOptionsByIdScope()
       ..jsWrite('r', ScaleOptionsScope()..type = 'radialLinear'));
 
-  /// controller.radar.js:4 `class RadarController extends
-  /// DatasetController` as a value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [DatasetController.jsClass]. Its statics are `id`
-  /// (`'radar'`), [defaults] and [overrides], in the upstream order of
-  /// declaration (:6-34). Its `construct` calls `RadarController(chart,
-  /// datasetIndex, newTarget)` with the arguments of [controllerArgs].
-  static final JsClass jsClass = JsClass(
-    'RadarController',
-    superclass: DatasetController.jsClass,
-    statics: {'id': id, 'defaults': defaults, 'overrides': overrides},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return RadarController(chart, datasetIndex, newTarget);
-    },
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `overrides`, and the constructor.
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: defaults,
+    overrides: overrides,
+    create: RadarController.new,
   );
 
   /// controller.radar.js:39 `getLabelAndValue(index)`.

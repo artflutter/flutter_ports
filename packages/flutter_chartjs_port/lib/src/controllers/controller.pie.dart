@@ -6,18 +6,14 @@
 /// [DoughnutController] with other `defaults`: the methods, the
 /// `descriptors` and the `overrides` come from the doughnut controller.
 ///
-/// - The class value [PieController.jsClass] extends
-///   [DoughnutController.jsClass] (Chart.js ADR 0020, section 3). Its own
-///   statics are `id` and `defaults`, as in the upstream class body. A read
-///   of `descriptors` or `overrides` on the class value follows the
-///   superclass chain and gives the doughnut objects, as the static
-///   prototype chain of JS does. Thus the legend functions of
-///   `overrides['pie']` are the doughnut functions. This file does not copy
-///   them (Chart.js ADR 0028, section 6).
-/// - Dart does not inherit static members. Thus `PieController.overrides`
-///   and `PieController.descriptors` do not exist in Dart: read
-///   `PieController.jsClass['overrides']` and
-///   `PieController.jsClass['descriptors']`.
+/// - [PieController.component] has the `parent`
+///   [DoughnutController.component] (Chart.js ADR 0204). Its own statics are
+///   `id` and `defaults`, as in the upstream class body. Upstream reads
+///   `descriptors` and `overrides` through the static prototype chain. A
+///   typed component inherits no value: it gives
+///   [DoughnutController.descriptors] and [DoughnutController.overrides].
+///   Thus the legend functions of `overrides['pie']` are the doughnut
+///   functions (Chart.js ADR 0028, section 6).
 /// - The registry registers the parent class first
 ///   (core.typedRegistry.js:28-31). The defaults of the scope
 ///   `datasets.pie` are the merge of the doughnut defaults and of
@@ -32,12 +28,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// controller.pie.js:4 `PieController extends DoughnutController`.
 ///
 /// Pie charts are Doughnut chart with different defaults
-class PieController(super.chart, super.datasetIndex, [super.newTarget])
+class PieController(super.chart, super.datasetIndex, [super.elements])
     extends DoughnutController {
   /// The default constructor of the JS class: `constructor(...args) {
   /// super(...args); }` (controller.pie.js:4 has no constructor).
   ///
-  /// `newTarget` is `new.target` (Chart.js ADR 0020, section 4).
+  /// [elements] are the element types of the chart type (Chart.js ADR
+  /// 0204).
   this;
 
   /// Native support for the explicit data-only lifecycle.
@@ -67,22 +64,14 @@ class PieController(super.chart, super.datasetIndex, [super.newTarget])
         // The outer radius of the chart
         ..radius = const PercentRadius(100);
 
-  /// controller.pie.js:4 `class PieController extends DoughnutController`
-  /// as a value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [DoughnutController.jsClass]. Its own statics are `id`
-  /// (`'pie'`) and [defaults], in the upstream order of declaration
-  /// (:6-23). The statics `descriptors` and `overrides` come from the
-  /// superclass. Its `construct` calls `PieController(chart, datasetIndex,
-  /// newTarget)` with the arguments of [controllerArgs]: without it, the
-  /// closure of the superclass constructs a [DoughnutController].
-  static final JsClass jsClass = JsClass(
-    'PieController',
-    superclass: DoughnutController.jsClass,
-    statics: {'id': id, 'defaults': defaults},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return PieController(chart, datasetIndex, newTarget);
-    },
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `overrides`, `descriptors`, and the constructor.
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: defaults,
+    overrides: DoughnutController.overrides,
+    descriptors: DoughnutController.descriptors,
+    parent: DoughnutController.component,
+    create: PieController.new,
   );
 }

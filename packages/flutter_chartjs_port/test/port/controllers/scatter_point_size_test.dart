@@ -22,32 +22,32 @@ const _length = 8;
 
 /// A trivial user subclass: the exact-class guard fails, and each call stays on
 /// the ordinary path. Its charts are the reference of each twin.
-class _ReferenceScatter(super.chart, super.datasetIndex, [super.newTarget])
+class _ReferenceScatter(super.chart, super.datasetIndex, [super.elements])
     extends ScatterController {
-  static final JsClass value = JsClass(
-    'ReferenceScatter',
-    superclass: ScatterController.jsClass,
-    statics: {'id': 'referenceScatter'},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _ReferenceScatter(chart, datasetIndex, newTarget);
-    },
+  static final ControllerType value = ControllerType(
+    id: 'referenceScatter',
+    defaults: ScatterController.component.defaults,
+    overrides: ScatterController.component.overrides,
+    defaultRoutes: ScatterController.component.defaultRoutes,
+    descriptors: ScatterController.component.descriptors,
+    parent: ScatterController.component,
+    create: _ReferenceScatter.new,
   );
 }
 
 /// A user subclass that counts each option resolve.
-class _CountingScatter(super.chart, super.datasetIndex, [super.newTarget])
+class _CountingScatter(super.chart, super.datasetIndex, [super.elements])
     extends ScatterController {
   static int resolves = 0;
 
-  static final JsClass value = JsClass(
-    'CountingScatter',
-    superclass: ScatterController.jsClass,
-    statics: {'id': 'countingScatter'},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _CountingScatter(chart, datasetIndex, newTarget);
-    },
+  static final ControllerType value = ControllerType(
+    id: 'countingScatter',
+    defaults: ScatterController.component.defaults,
+    overrides: ScatterController.component.overrides,
+    defaultRoutes: ScatterController.component.defaultRoutes,
+    descriptors: ScatterController.component.descriptors,
+    parent: ScatterController.component,
+    create: _CountingScatter.new,
   );
 
   @override
@@ -65,12 +65,6 @@ class _ReferenceChart(super.item, super.userConfig) extends Chart {
 /// A platform that keeps the option `animation`: an unhosted canvas otherwise
 /// gets a [BasicPlatform], whose `updateConfig` writes `false` into it.
 class _AnimatedPlatform() extends BasicPlatform {
-  static final JsClass value = JsClass(
-    'AnimatedPlatform',
-    superclass: BasicPlatform.jsClass,
-    construct: (_, _) => _AnimatedPlatform(),
-  );
-
   @override
   void updateConfig(ChartConfiguration config) {}
 }
@@ -291,12 +285,12 @@ Future<Uint8List> _pixels(Chart chart) async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
-    ScatterController.jsClass,
+    ScatterController.component,
     _ReferenceScatter.value,
     _CountingScatter.value,
-    PointElement.jsClass,
-    LineElement.jsClass,
-    LinearScale.jsClass,
+    PointElement.component,
+    LineElement.component,
+    LinearScale.component,
   ]);
 
   group('one size in overflow', () {
@@ -397,7 +391,7 @@ void main() {
           final b = _config(type: 'referenceScatter', backgroundColor: color);
           for (final cfg in [a, b]) {
             (cfg['options']! as JsObjectFace)['animation'] = true;
-            cfg['platform'] = _AnimatedPlatform.value;
+            cfg['platform'] = _AnimatedPlatform.new;
           }
           final first = _chart(a);
           final second = _chart(b, reference: true);

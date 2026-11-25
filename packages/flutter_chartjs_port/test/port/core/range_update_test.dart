@@ -736,16 +736,14 @@ void _expectFallbackTwins(
 }
 
 /// A user subclass of the line controller.
-final class _UserLine(super.chart, super.datasetIndex, [super.newTarget])
+final class _UserLine(super.chart, super.datasetIndex, [super.elements])
     extends LineController {
-  static final value = JsClass(
-    'RangeUserLine',
-    superclass: LineController.jsClass,
-    statics: {'id': 'rangeUserLine'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _UserLine(chart, datasetIndex, target);
-    },
+  static final ControllerType value = ControllerType(
+    id: 'rangeUserLine',
+    defaults: LineController.defaults,
+    overrides: LineController.overrides,
+    parent: LineController.component,
+    create: _UserLine.new,
   );
 }
 

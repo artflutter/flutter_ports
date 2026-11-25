@@ -53,7 +53,6 @@ void main() {
           <Object?>[],
           DateTime.utc(2026),
           (Object? x) => x,
-          jsObjectClass,
           <String, Object?>{},
         ].map(jsKindOf),
         [
@@ -64,7 +63,6 @@ void main() {
           'string',
           'array',
           'Date',
-          'function',
           'function',
           'object',
         ],

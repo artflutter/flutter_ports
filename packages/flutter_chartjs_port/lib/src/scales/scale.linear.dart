@@ -39,7 +39,7 @@ class LinearScale(super.cfg)
   this;
 
   // scale.linear.js:8 `static id = 'linear'`. Scale has the instance field
-  // `id`. Thus the value is only in the statics of jsClass.
+  // `id`. Thus the value is only in [component].
 
   /// Native support for the explicit data-only lifecycle.
   @override
@@ -62,18 +62,12 @@ class LinearScale(super.cfg)
   static final ScaleOptionsScope defaults = ScaleOptionsScope()
     ..ticks = (TickOptionsScope()..callback = formatters['numeric']!);
 
-  /// scale.linear.js:6 `class LinearScale extends LinearScaleBase` as a
-  /// value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [LinearScaleBase.jsClass]. Its statics are `id`
-  /// (`'linear'`) and [defaults], in the upstream order of declaration
-  /// (scale.linear.js:8-17). Its `construct` calls `LinearScale(cfg)` with
-  /// the `cfg` of [scaleCfgArg].
-  static final JsClass jsClass = JsClass(
-    'LinearScale',
-    superclass: LinearScaleBase.jsClass,
-    statics: {'id': 'linear', 'defaults': defaults},
-    construct: (newTarget, args) => LinearScale(scaleCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, and the constructor.
+  static final ScaleType component = ScaleType(
+    id: 'linear',
+    defaults: defaults,
+    create: LinearScale.new,
   );
 
   /// This exact built-in scale has ordinary axis and metadata reads.

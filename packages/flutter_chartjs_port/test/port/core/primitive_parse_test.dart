@@ -44,11 +44,11 @@ class _ObservedList(final List<Object?> values) extends ListBase<Object?> {
 
 class _CustomLinear(super.cfg) extends LinearScale {
   int calls = 0;
-  static final value = JsClass(
-    'ParseObservedLinear',
-    superclass: LinearScale.jsClass,
-    statics: {'id': 'parse-observed-linear'},
-    construct: (_, args) => _CustomLinear(scaleCfgArg(args)),
+  static final ScaleType value = ScaleType(
+    id: 'parse-observed-linear',
+    defaults: LinearScale.defaults,
+    parent: LinearScale.component,
+    create: _CustomLinear.new,
   );
   @override
   double? parse(Object? raw, [int? index]) {
@@ -59,11 +59,11 @@ class _CustomLinear(super.cfg) extends LinearScale {
 
 class _CustomCategory(super.cfg) extends CategoryScale {
   int calls = 0;
-  static final value = JsClass(
-    'ParseObservedCategory',
-    superclass: CategoryScale.jsClass,
-    statics: {'id': 'parse-observed-category'},
-    construct: (_, args) => _CustomCategory(scaleCfgArg(args)),
+  static final ScaleType value = ScaleType(
+    id: 'parse-observed-category',
+    defaults: CategoryScale.defaults,
+    parent: CategoryScale.component,
+    create: _CustomCategory.new,
   );
   @override
   double? parse(Object? raw, [int? index]) {
@@ -165,13 +165,13 @@ Object _observe(Chart chart) => [
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
-    BarController.jsClass,
-    LineController.jsClass,
-    BarElement.jsClass,
-    LineElement.jsClass,
-    PointElement.jsClass,
-    CategoryScale.jsClass,
-    LinearScale.jsClass,
+    BarController.component,
+    LineController.component,
+    BarElement.component,
+    LineElement.component,
+    PointElement.component,
+    CategoryScale.component,
+    LinearScale.component,
     _CustomLinear.value,
     _CustomCategory.value,
   ]);

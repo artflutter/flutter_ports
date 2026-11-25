@@ -282,7 +282,7 @@ void main() {
   });
 
   test('the sample of the default options sets a default', () {
-    final line = _read(Chart.jsClass['overrides'], 'line')! as JsObjectFace;
+    final line = _read(Chart.overrides, 'line')! as JsObjectFace;
     addTearDown(() => line['spanGaps'] = undefined);
     spanGapsInAllLineCharts();
     expect(line['spanGaps'], isTrue);

@@ -26,7 +26,7 @@ void main() {
 
   test('setUpBuiltins registers, and removeBuiltins puts back the scopes of '
       'the modules', () {
-    final builtins = TypedRegistry(Element.jsClass, 'elements');
+    final builtins = TypedRegistry<ElementType>('elements');
     final descriptorKeys = descriptors.jsKeys();
     final log = <String>[];
 
@@ -34,14 +34,14 @@ void main() {
       () {
         log.add('register');
         builtins
-          ..register(ArcElement.jsClass)
-          ..register(PointElement.jsClass);
+          ..register(ArcElement.component)
+          ..register(PointElement.component);
       },
       () {
         log.add('unregister');
         builtins
-          ..unregister(ArcElement.jsClass)
-          ..unregister(PointElement.jsClass);
+          ..unregister(ArcElement.component)
+          ..unregister(PointElement.component);
       },
     );
     expect(log, ['register']);
@@ -56,7 +56,7 @@ void main() {
 
     // A registration of the test file through a new TypedRegistry routes
     // the element defaults again without a throw.
-    TypedRegistry(Element.jsClass, 'elements').register(PointElement.jsClass);
+    TypedRegistry<ElementType>('elements').register(PointElement.component);
     expect(_elementDefaults(), ['point']);
 
     // The removal runs once.
@@ -79,7 +79,7 @@ void main() {
   // id and the defaults of plugin.colors.ts:93-99, because plugin.colors.dart
   // is not a pure layer.
   test('removeBuiltins removes the colors plugin and the colors line', () {
-    final plugins = TypedRegistry(jsObjectClass, 'plugins');
+    final plugins = TypedRegistry<Plugin<Object?>>('plugins');
     final colors = Plugin<Object?>(
       id: 'colors',
       defaults: const ColorsPluginOptions(enabled: true, forceOverride: false),

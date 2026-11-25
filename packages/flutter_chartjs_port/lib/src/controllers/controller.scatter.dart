@@ -33,8 +33,8 @@
 ///   of `core.registry.dart`, the object that the upstream getter gives
 ///   (row `adapt-chart-registry-getter`). Thus this library imports
 ///   `core.registry.dart`, and upstream does not import it.
-/// - [ScatterController.jsClass] is the class as a value with the statics
-///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
+/// - [ScatterController.component] is the class as a typed component with the
+///   statics `id`, `defaults` and `overrides` (Chart.js ADR 0204).
 ///
 /// This library imports `core.datasetController.dart`, which imports
 /// `core.animations.dart`. Thus it is not a pure layer.
@@ -92,8 +92,8 @@ final class _PointWrites({
         final PointElementWrites point when point.typedWrites => point,
         _ => null,
       };
-      // Each data element is an Element: the cast of `_insertElements`
-      // (row adapt-component-class-role).
+      // Each data element is an Element: `ElementType.create` gives one
+      // (row adapt-typed-components).
       _access = point as PropertyAccess;
     }
   }
@@ -190,11 +190,11 @@ final class _PointWrites({
 typedef _OverflowPass = ({double? overflow, NativePointContextReader contexts});
 
 /// controller.scatter.js:6 `ScatterController extends DatasetController`.
-class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
+class ScatterController(super.chart, super.datasetIndex, [super.elements])
     extends DatasetController {
   /// `new ScatterController(chart, datasetIndex)`. Upstream declares no
-  /// constructor in this class. `newTarget` is `new.target` (Chart.js ADR
-  /// 0020, section 4).
+  /// constructor in this class. [elements] are the element types of the
+  /// chart type (Chart.js ADR 0204).
   this;
 
   /// Native support for the explicit data-only lifecycle.
@@ -226,21 +226,13 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
       ..jsWrite('x', ScaleOptionsScope()..type = 'linear')
       ..jsWrite('y', ScaleOptionsScope()..type = 'linear'));
 
-  /// controller.scatter.js:6 `class ScatterController extends
-  /// DatasetController` as a value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [DatasetController.jsClass]. Its statics are `id`
-  /// (`'scatter'`), [defaults] and [overrides], in the upstream order of
-  /// declaration (:8-37). Its `construct` calls `ScatterController(chart,
-  /// datasetIndex, newTarget)` with the arguments of [controllerArgs].
-  static final JsClass jsClass = JsClass(
-    'ScatterController',
-    superclass: DatasetController.jsClass,
-    statics: {'id': id, 'defaults': defaults, 'overrides': overrides},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return ScatterController(chart, datasetIndex, newTarget);
-    },
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `overrides`, and the constructor.
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: defaults,
+    overrides: overrides,
+    create: ScatterController.new,
   );
 
   /// controller.scatter.js:42 `getLabelAndValue(index)`.
@@ -399,7 +391,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
 
     if (datasetElementType == null && jsTruthy(showLine)) {
       // DIVERGES(chartjs): adapt-chart-registry-getter, the registry singleton.
-      datasetElementType = registry.getElement('line') as JsClass;
+      datasetElementType = registry.getElement('line');
     }
 
     super.addElements();
@@ -627,7 +619,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
           final elementMode = point.active ? 'active' : mode;
           if (hold != null) {
             writes.options(resolveHeldDataElementOptions(hold, i, elementMode));
-            // A held entry of a class value runs no user code.
+            // A held entry of an element type runs no user code.
             userCode = !hold.native;
           } else {
             userCode = true;
@@ -683,7 +675,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   /// reads and its pixels run no user code. A value that is not a number
   /// ends the run before any write: its reads ran no user code, so the pass
   /// of the loop reads it again. A pass whose options call did not take the
-  /// held entry of a class value is the last one: that call can run user
+  /// held entry of an element type is the last one: that call can run user
   /// code, as in the pass of the loop.
   // DIVERGES(chartjs): adapt-bulk-point-update, one loop with no user code.
   int _bulkPoints(

@@ -148,9 +148,9 @@ void main() {
 
           final calls = _spyOnReset(plugin);
 
-          Chart.register([
-            [plugin, plugin],
-          ]);
+          // `Chart.register([plugin, plugin])`: the items of the array
+          // (Chart.js ADR 0204).
+          Chart.register([plugin, plugin]);
           chart.notifyPlugins(PluginHook.reset);
           expect(calls, hasLength(1));
           Chart.unregister([plugin]);
@@ -205,12 +205,12 @@ void main() {
             },
           ),
         ];
-        Chart.register([plugins]);
+        Chart.register(plugins);
 
         final ret = chart.notifyPlugins(PluginHook.reset);
         expect(ret, isTrue);
         expect(results, [4, 5, 6, 1, 2, 3]);
-        Chart.unregister([plugins]);
+        Chart.unregister(plugins);
       });
 
       // The hooks of upstream return `undefined`, `null`, `0`, `true` and
@@ -360,7 +360,7 @@ void main() {
             'c': Plugin<Object?>(id: 'c', reset: (_, _, _) {}),
           };
 
-          Chart.register([plugins['a']]);
+          Chart.register([plugins['a']!]);
 
           final chart = acquireChartRoot(
             ChartConfigurationScope()
@@ -396,7 +396,7 @@ void main() {
             toEqualOptions(<String, Object?>{'c': '789'}),
           );
 
-          Chart.unregister([plugins['a']]);
+          Chart.unregister([plugins['a']!]);
         },
       );
 
@@ -409,7 +409,7 @@ void main() {
             'c': Plugin<Object?>(id: 'c', reset: (_, _, _) {}),
           };
 
-          Chart.register([plugins['a']]);
+          Chart.register([plugins['a']!]);
 
           final chart = acquireChartRoot(
             ChartConfigurationScope()
@@ -429,7 +429,7 @@ void main() {
           expect(callsB, isEmpty);
           expect(callsC, isNotEmpty);
 
-          Chart.unregister([plugins['a']]);
+          Chart.unregister([plugins['a']!]);
         },
       );
 

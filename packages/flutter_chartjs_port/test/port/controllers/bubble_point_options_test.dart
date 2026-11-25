@@ -24,32 +24,32 @@ const _length = 8;
 
 /// A trivial user subclass: the exact-class guard fails, and each call stays on
 /// the ordinary path. Its charts are the reference of each twin.
-class _ReferenceBubble(super.chart, super.datasetIndex, [super.newTarget])
+class _ReferenceBubble(super.chart, super.datasetIndex, [super.elements])
     extends BubbleController {
-  static final JsClass value = JsClass(
-    'ReferenceBubble',
-    superclass: BubbleController.jsClass,
-    statics: {'id': 'referenceBubble'},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _ReferenceBubble(chart, datasetIndex, newTarget);
-    },
+  static final ControllerType value = ControllerType(
+    id: 'referenceBubble',
+    defaults: BubbleController.component.defaults,
+    overrides: BubbleController.component.overrides,
+    defaultRoutes: BubbleController.component.defaultRoutes,
+    descriptors: BubbleController.component.descriptors,
+    parent: BubbleController.component,
+    create: _ReferenceBubble.new,
   );
 }
 
 /// A user subclass that counts each option resolve.
-class _CountingBubble(super.chart, super.datasetIndex, [super.newTarget])
+class _CountingBubble(super.chart, super.datasetIndex, [super.elements])
     extends BubbleController {
   static int resolves = 0;
 
-  static final JsClass value = JsClass(
-    'CountingBubble',
-    superclass: BubbleController.jsClass,
-    statics: {'id': 'countingBubble'},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _CountingBubble(chart, datasetIndex, newTarget);
-    },
+  static final ControllerType value = ControllerType(
+    id: 'countingBubble',
+    defaults: BubbleController.component.defaults,
+    overrides: BubbleController.component.overrides,
+    defaultRoutes: BubbleController.component.defaultRoutes,
+    descriptors: BubbleController.component.descriptors,
+    parent: BubbleController.component,
+    create: _CountingBubble.new,
   );
 
   @override
@@ -67,12 +67,6 @@ class _ReferenceChart(super.item, super.userConfig) extends Chart {
 /// A platform that keeps the option `animation`: an unhosted canvas otherwise
 /// gets a [BasicPlatform], whose `updateConfig` writes `false` into it.
 class _AnimatedPlatform() extends BasicPlatform {
-  static final JsClass value = JsClass(
-    'AnimatedPlatform',
-    superclass: BasicPlatform.jsClass,
-    construct: (_, _) => _AnimatedPlatform(),
-  );
-
   @override
   void updateConfig(ChartConfiguration config) {}
 }
@@ -111,11 +105,13 @@ class _CustomSize() extends PointElement {
 
 class _CustomScale(super.cfg) extends LinearScale {
   int calls = 0;
-  static final value = JsClass(
-    'BubbleCustomScale',
-    superclass: LinearScale.jsClass,
-    statics: {'id': 'bubble-custom-scale'},
-    construct: (_, args) => _CustomScale(scaleCfgArg(args)),
+  static final value = ScaleType(
+    id: 'bubble-custom-scale',
+    defaults: LinearScale.component.defaults,
+    defaultRoutes: LinearScale.component.defaultRoutes,
+    descriptors: LinearScale.component.descriptors,
+    parent: LinearScale.component,
+    create: _CustomScale.new,
   );
   @override
   double getPixelForValue(double value, [int? index]) {
@@ -283,11 +279,11 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
-    BubbleController.jsClass,
+    BubbleController.component,
     _ReferenceBubble.value,
     _CountingBubble.value,
-    PointElement.jsClass,
-    LinearScale.jsClass,
+    PointElement.component,
+    LinearScale.component,
   ]);
 
   /// The cases of the data and of the indexed colors, in two forms of parsing.
@@ -403,7 +399,7 @@ void main() {
         final configs = _pair((type) {
           final cfg = _config(type: type);
           (cfg['options']! as JsObjectFace)['animation'] = animation;
-          cfg['platform'] = _AnimatedPlatform.value;
+          cfg['platform'] = _AnimatedPlatform.new;
           return cfg;
         });
         final a = _chart(configs[0]);

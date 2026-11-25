@@ -224,7 +224,7 @@ void main() {
   });
 
   test('the sample of the default options sets a default', () {
-    final bar = _read(Chart.jsClass['overrides'], 'bar')! as JsObjectFace;
+    final bar = _read(Chart.overrides, 'bar')! as JsObjectFace;
     addTearDown(() => bar['skipNull'] = undefined);
     skipNullInAllBarCharts();
     expect(bar['skipNull'], isTrue);

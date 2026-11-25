@@ -48,7 +48,7 @@ const Set<String> _nestedKeys = {
 
 /// `valueOf` of the generator.
 Object? _valueOf(Object? v, int depth) => switch (v) {
-  Function() || JsClass() => '<fn>',
+  Function() => '<fn>',
   final List<Object?> list => [
     for (final item in list) _valueOf(item, depth + 1),
   ],

@@ -22,7 +22,7 @@ repository.
     typed API of `lib/src/typed/typed.dart`),
     `lib/chartjs.dart` (the `chart.js` entry: `lib/src/types.dart` with a hide list, the Canvas 2D
     interface, `ChartMeta`, `defaultDateZone`, `setDefaultDateZone`, `notifyArrayListeners`,
-    `JsClass`, `JsObjectFace`, `Undefined`, `undefined` and `lib/src/upstream.dart`; the native
+    `JsObjectFace`, `Undefined`, `undefined` and `lib/src/upstream.dart`; the native
     plugin API of Chart.js ADRs 0108 and 0144: `Plugin`, `PluginHook`, `PluginHookFunction`,
     `CancelableHookFunction` and the seven hook argument classes; and the input surface of Chart.js ADR 0108: `NativeEvent`, `NativeTouch`,
     `NativeEventListener`, `NativeEventTarget`, `DOMRect`, the extension `CanvasEventTarget` and
@@ -38,8 +38,8 @@ repository.
     (the JS runtime for add-on ports: each library of `lib/src/js/` with each of its names, with
     no `show` list, Chart.js ADR 0132; no other library exports it). `lib/chartjs.dart` also
     exports the names that a chart type of another package needs (Chart.js ADRs 0132 and 0133):
-    `ParsedItem`, `VisualElementRange`, and `controllerArgs`, `elementCfgArg` and
-    `scaleCfgArg` for the `construct` closure of a class value. `DatasetController.cachedMeta` is
+    `ParsedItem`, `VisualElementRange`, `ControllerType`, `ScaleType` and `ElementType` (Chart.js
+    ADR 0204). `DatasetController.cachedMeta` is
     public for a controller of another package (Chart.js ADR 0133). An app imports the app library next to
     `material_ui.dart` with no prefix. `doc/public_api.txt` is the committed list of their export
     names. `test/tool/public_api_test.dart` compares the list, checks that the app library shares
@@ -52,8 +52,7 @@ repository.
     registers the line set and pumps a `ChartView`.
   - `lib/src/`: ported modules at their upstream paths (`controllers/`, `core/`, `elements/`,
     `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), and `js/`, the JS runtime: port-only `js_*.dart` files. `canvas/canvas_values.dart` gives an
-    option value to a Canvas 2D setter, with no `ToNumber` (Chart.js ADR 0174). `js_class.dart` has the JS class values (Chart.js ADR
-    0020). `Animation.runFrame` of `core.animation.dart` runs the frame jobs of the animations (Chart.js ADR
+    option value to a Canvas 2D setter, with no `ToNumber` (Chart.js ADR 0174). `Animation.runFrame` of `core.animation.dart` runs the frame jobs of the animations (Chart.js ADR
     0172). The animator walks a copy
     of its chart list (row `adapt-animator-chart-list`): a chart that a listener starts gets its
     first visit in the next frame.
@@ -128,7 +127,7 @@ repository.
     `undefined` for an absent key, `jsKeys` gives the `Object.keys` order, `jsHas` and `jsDelete`
     are `hasOwnProperty` and `delete`. `JsObjectFace` is public (`chartjs.dart` and the app
     library): raw-API code reads the hook arguments or the options by name through it. A `Map` of the port is an object of the user. The JS runtime (`jsGet`,
-    `jsObjectKeys`, `jsAssign`, `jsSet`, `jsObjectOrNull`) and
+    `jsObjectKeys`, `jsSet`, `jsObjectOrNull`) and
     `isObject`, `clone`, `merge`, `mergeIf` and `each` take Maps and faces.
     The walk reads a typed scope with `OptionScope.lookup`. `Config.resolveElementNamedOptions` of
     `core.config.dart` is the typed element step of `_resolveElementOptions`: it reads each own key
@@ -341,7 +340,8 @@ repository.
       `MediaQuery.maybeDisableAnimationsOf`. `_createAnimations` of `core.animations.dart` reads
       it: with the flag, it reads no animation config (row `platform-reduced-motion`). No spec and
       no reference test sets it.
-    - `core.scale.dart` has `Scale`, `Scale.jsClass` and the typedef `TickCallback`. The typedef
+    - `core.scale.dart` has `Scale`, `ScaleType`, the record `ScaleConfig` (the `cfg` of the
+      constructor of a scale) and the typedef `TickCallback`. The typedef
       `Tick` of `core.scale.js:15` is the native class `Tick` of `lib/src/types/tick.dart` (row
       `adapt-native-tick`). `core.scale.dart` and `core.scale.autoskip.dart` are not pure layers:
       `core.scale` imports `helpers.extras`, and `core.scale.autoskip` imports `core.scale`.
@@ -389,7 +389,9 @@ repository.
       data on a category scale for the bar and base controllers. See `test/port/core/primitive_parse_test.dart`.
       The preflight is local to each call, and each parsed item is fresh.
     - `core.datasetController.dart` has `DatasetController`, with the mixin `ArrayListener` and
-      the class value `DatasetController.jsClass` (Chart.js ADR 0020). `_update` is `update_`, and
+      `ControllerType`, the typed component of a controller class (Chart.js ADR 0204). The
+      constructor takes the element types of the chart type as the record `ElementTypes`, in
+      place of `new.target`. `_update` is `update_`, and
       `_getSharedOptions` is `getSharedOptions_` (Chart.js ADR 0023). `cloneIfNotShared` and
       `getSharedOptions` copy the typed element options with `clone` (Chart.js ADR 0021).
       `resolveDataElementOptions`, `resolveDatasetElementOptions` and `getStyle` return
@@ -406,8 +408,8 @@ repository.
       and a parsed item reads with `parsedValueOf` (`@internal`, the `ScaleAxis` of the scale). A `_stacks`
       object that user code wrote by name reads with `jsGetKey`. `applyStack` gives a `double?` (row
       `adapt-apply-stack-number`). `parsing` is a `ParsingKeys?` (Dart `null` for `parsing: false`, row
-      `adapt-parsing-keys`), and `datasetElementType` and `dataElementType` are a `JsClass?` (row
-      `adapt-element-type-classes`). The index reads
+      `adapt-parsing-keys`), and `datasetElementType` and `dataElementType` are an `ElementType?` (row
+      `adapt-typed-components`). The index reads
       use `jsGetIndex`, the writes append at the length, and `getParsed` and the item reads of the parse functions read
       their List directly (Chart.js ADR 0096). `stacksOf` reads `item._stacks` of a parsed item, also of a List item,
       through an `Expando` (Chart.js ADR 0036).
@@ -420,10 +422,10 @@ repository.
       record `PluginDescriptor`) are not pure layers: `core.registry` imports
       `core.datasetController` and `core.scale` (Chart.js ADR 0020).
     - `core.controller.dart` has `Chart`. `resize` and `eventHandler` are fields that hold a
-      function (Chart.js ADR 0022). `Chart.register` and `Chart.unregister` take one List.
-      `Chart.registry` is a static field (Chart.js ADR 0020). `Chart.jsClass` is the class value
-      with the statics of `core.controller.js:105-120` (Chart.js ADR 0048 §2), as are
-      `Animation.jsClass`, `Animations.jsClass` and `FlutterPlatform.jsClass`. `toBase64Image`
+      function (Chart.js ADR 0022). `Chart.register` and `Chart.unregister` take one
+      `Iterable<IChartComponent>`, with no nested List or Map (Chart.js ADR 0204).
+      `Chart.registry` is a static field (Chart.js ADR 0020). The option `platform` holds a
+      `BasePlatform Function()`. `toBase64Image`
       returns a `Future<String>` from `HTMLCanvasElement.toDataURL` (row
       `platform-to-base64-image`): each fake canvas of the tests has that member. The dataset meta is the public
       open class `ChartMeta<C extends DatasetController>` of `lib/src/types/chart_meta.dart` (row
@@ -497,19 +499,20 @@ repository.
       `Chart.register` or `Chart.unregister` fall under the contract. It counts as a full update for re-entry, and
       ends as one (`_recordUpdateState`). Row `adapt-range-updates`. See `test/port/core/range_update_test.dart`.
     - `index.dart` has the exports of `src/core/index.ts`. `lib/src/index.dart` is the port of
-      `src/index.ts`, with the four namespaces and `registerables`. The namespace `controllers` has
+      `src/index.ts`, with the four namespaces (typed Maps of components and plugins) and
+      `registerables` (the `List<IChartComponent>` of their items). The namespace `controllers` has
       the eight controllers of phase 7 and the namespace `plugins` has the seven plugins of
       `lib/src/plugins/index.dart`, both in code unit order. Thus `flutter_test_config.dart`
       registers them with the built-in components. The port has no UMD entry (Chart.js ADR 0120):
       `src/index.umd.ts` is `n/a`, the namespace cases of the spec `global.namespace` skip, and the
-      spec `platform.dom` takes `FlutterPlatform.jsClass` as `DomPlatform` (row
+      spec `platform.dom` takes `FlutterPlatform` as `DomPlatform` (row
       `platform-dom-platform-class`).
       `lib/src/types.dart` is the port of `src/types.ts`: `lib/src/index.dart` and
       `lib/src/types/index.dart` without the 8 names that both declare (row `adapt-types-entry`).
   - `lib/src/controllers/`: the eight dataset controllers of phase 7. `index.dart` exports them
     (the port of `src/controllers/index.js`). Each controller file has the
-    controller class and its class value `<Name>Controller.jsClass` (statics `id`, `defaults`,
-    `overrides`; the doughnut also `descriptors`). The parsed items are typed `ParsedItem`
+    controller class and its typed component `<Name>Controller.component` (statics `id`,
+    `defaults`, `overrides`; the doughnut also `descriptors`; Chart.js ADR 0204). The parsed items are typed `ParsedItem`
     objects (Chart.js ADR 0054 §8) read with `parsedValueOf`, also the data items of `parsing: false`;
     the properties are the props classes of `lib/src/options/props.dart`.
     A controller reads the stacks with `stacksOf` and `axisStackOf`, and a raw option value stays
@@ -546,10 +549,10 @@ repository.
       raw index of the legend item to `toggleDataVisibility`. `parse` reads a List or a string
       `data`. `controller.pie.dart` imports this file.
     - `controller.pie.dart`: `PieController extends DoughnutController` with the statics `id` and
-      `defaults`. `PieController.jsClass` extends `DoughnutController.jsClass` and has its own
-      `construct`. It reads `descriptors` and `overrides` through the superclass chain: the
-      legend functions of `overrides['pie']` are the doughnut tear-offs (Chart.js ADR 0028 §6).
-      Dart has no `PieController.overrides`: read `PieController.jsClass['overrides']`.
+      `defaults`. `PieController.component` has the `parent` `DoughnutController.component` and
+      names `DoughnutController.overrides` and `DoughnutController.descriptors`: the legend
+      functions of `overrides['pie']` are the doughnut tear-offs (Chart.js ADR 0028 §6, Chart.js
+      ADR 0204).
     - `controller.polarArea.dart`: it casts the scale `r` to `types.RadialLinearScale` once
       (`controller.polarArea.js:166`), and it ports the #12238 hunk with `== 0` and
       `== 'angular'`. `overrides` holds the legend functions as tear-offs of top-level functions.
@@ -580,8 +583,8 @@ repository.
     `Plugin<TooltipOptions>`.
     `registry.getPlugin<T>()` finds a registered plugin by its class, with no id; a test plugin
     that a test finds this way has a private class. The
-    key `_element` of upstream has no field (the tests read `Legend.jsClass`, `Title.jsClass` and
-    `Tooltip.jsClass`), and the decimation plugin has no `destroy`. The options of each built-in
+    key `_element` of upstream has no field (the tests construct `Legend`, `Title` and `Tooltip`),
+    and the decimation plugin has no `destroy`. The options of each built-in
     plugin are an immutable final class of the port-only pure `plugin_options.dart` (row
     `adapt-native-plugin-options`), one immutable `PluginOptions` with a nullable field for each
     option. `TitleOptions` and `SubtitleOptions` are the two final classes of the sealed
@@ -831,7 +834,7 @@ repository.
       `lib/src/plugins/filler_draw_time.dart` (row `adapt-filler-draw-time-enum`), also in a raw
       config; an app gives it in `FillerOptions.drawTime` (Chart.js ADR 0196).
     - `plugin.legend.dart`: `Legend` (extends `Element`, implements `types.LegendElement`,
-      `LayoutItem` and `TRBL`) with `Legend.jsClass`, and the plugin `legend`. The items of the
+      `LayoutItem` and `TRBL`) and the plugin `legend`. The items of the
       built-in `generateLabels`, the hit boxes (`legendHitBoxes`, also a port-only member of
       `types.LegendElement`, which the keyboard of `ChartView` reads, Chart.js ADR 0051 §2) and the
       column sizes use the shared native `LegendItem` and `LegendHitBox`, and the Flutter `Size`
@@ -849,8 +852,8 @@ repository.
     - `plugin.subtitle.dart` has the plugin `subTitle` (no `_element`). Its box is a `Title` of
       `plugin.title.dart`, and the `WeakMap` of upstream is a file-private `Expando<Title>`
       (Chart.js ADR 0038 §5).
-    - `plugin.title.dart` has `Title` (`extends Element implements LayoutItem`, the class value
-      `Title.jsClass` with the superclass `Element.jsClass`) and the plugin `title`. The box
+    - `plugin.title.dart` has `Title` (`extends Element implements LayoutItem`) and the plugin
+      `title`. The box
       fields start as NaN, `undefined` and `false`. `draw` takes an optional chart area.
       `chart.titleBlock` is a field of `types.Chart`: Dart `null` is the JS `undefined` (Chart.js
       ADR 0038).
@@ -862,7 +865,7 @@ repository.
       `TooltipPosition` or Dart `null`. `AverageTooltipPositioner` (the default) and
       `NearestTooltipPositioner` are the positioners of upstream. An app or a plugin gives its own
       positioner as a subclass, with no registration. `lib/` has no positioner names and no table:
-      `Tooltip.positioners`, the static of `Tooltip.jsClass` and the plugin key `positioners` are
+      `Tooltip.positioners` and the plugin key `positioners` are
       gone. The field `TooltipOptions.position` takes only a positioner: a name does not
       compile. The base class and
       `TooltipPosition` are in the pure `tooltip_position.dart`, because `opt.dart` reads the

@@ -102,7 +102,7 @@ void main() {
     group('auto', fixture.specs('controller.bar'));
 
     test('should be registered as dataset controller', () {
-      expect(Chart.registry.controllers.items['bar'], isA<JsClass>());
+      expect(Chart.registry.controllers.items['bar'], isA<ControllerType>());
     });
 
     testWidgets('should be constructed', (tester) async {

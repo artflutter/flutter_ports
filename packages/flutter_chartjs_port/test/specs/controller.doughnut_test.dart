@@ -91,8 +91,11 @@ void main() {
     // :4 The case also reads `Chart.controllers.pie`. flutter_test_config.dart
     // registers the pie controller with the built-in components.
     test('should be registered as dataset controller', () {
-      expect(Chart.registry.controllers.items['doughnut'], isA<JsClass>());
-      expect(Chart.registry.controllers.items['pie'], isA<JsClass>());
+      expect(
+        Chart.registry.controllers.items['doughnut'],
+        isA<ControllerType>(),
+      );
+      expect(Chart.registry.controllers.items['pie'], isA<ControllerType>());
     });
 
     testWidgets('should be constructed', (tester) async {

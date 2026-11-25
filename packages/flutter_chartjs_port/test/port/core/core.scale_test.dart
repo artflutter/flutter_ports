@@ -427,12 +427,12 @@ void _run(ScaleReferenceCase c) {
   final ctx = MockContext();
   final options = _copy(c.options)! as AnyObject;
   final spec = _copy(c.scale)! as AnyObject;
-  final scale = _TestScale({
-    'id': options['id'] ?? 'x',
-    'type': 'test',
-    'ctx': ctx,
-    'chart': chart,
-  }, spec);
+  final scale = _TestScale((
+    id: (options['id'] ?? 'x') as String,
+    type: 'test',
+    ctx: ctx,
+    chart: chart,
+  ), spec);
   final expected = c.expected;
   final margins = spec['margins'] as AnyObject?;
   final marginsArea = margins == null
@@ -554,12 +554,8 @@ void _run(ScaleReferenceCase c) {
 }
 
 /// The scale configuration `{id, type, ctx, chart}` with a new chart.
-AnyObject _cfg(_Chart chart, [CanvasContextHolder? holder]) => {
-  'id': 'x',
-  'type': 'test',
-  'ctx': holder?.ctx ?? MockContext(),
-  'chart': chart,
-};
+ScaleConfig _cfg(_Chart chart, [CanvasContextHolder? holder]) =>
+    (id: 'x', type: 'test', ctx: holder?.ctx ?? MockContext(), chart: chart);
 
 /// Holds a context for [_cfg].
 final class CanvasContextHolder(final MockContext ctx);
@@ -786,46 +782,6 @@ void main() {
     });
   });
 
-  group('the class value', () {
-    test('Scale.jsClass extends Element.jsClass without statics', () {
-      expect(Scale.jsClass.name, 'Scale');
-      expect(identical(Scale.jsClass.superclass, Element.jsClass), isTrue);
-      expect(Scale.jsClass.isSubclassOf(Element.jsClass), isTrue);
-      expect(Scale.jsClass.id, same(undefined));
-      // The inherited statics of Element (core.element.ts:8-9).
-      expect(Scale.jsClass['defaults'], same(Element.defaults));
-      expect(Scale.jsClass.has('defaultRoutes'), isTrue);
-    });
-
-    test('jsConstruct makes a Scale from the cfg object', () {
-      final chart = _plainChart();
-      final scale = jsConstruct(Scale.jsClass, [_cfg(chart)]);
-      expect(scale, isA<Scale>());
-      expect((scale as Scale).id, 'x');
-      expect(scale.type, 'test');
-      expect(identical(scale.chart, chart), isTrue);
-    });
-
-    test('jsConstruct of a subclass value without construct makes a Scale', () {
-      final chart = _plainChart();
-      final custom = JsClass('CustomScale', superclass: Scale.jsClass)
-        ..['id'] = 'customScale'
-        ..['defaults'] = <String, Object?>{};
-      expect(jsConstruct(custom, [_cfg(chart)]), isA<Scale>());
-    });
-
-    test('jsConstruct without a cfg object throws a TypeError', () {
-      expect(
-        () => jsConstruct(Scale.jsClass, const []),
-        throwsA(isA<TypeError>()),
-      );
-      expect(
-        () => jsConstruct(Scale.jsClass, [undefined]),
-        throwsA(isA<TypeError>()),
-      );
-    });
-  });
-
   group('the start values', () {
     test('match the constructor of upstream', () {
       final chart = _plainChart();
@@ -948,7 +904,7 @@ void main() {
       final chart = _plainChart();
       final scale =
           _TestScale(
-              {'id': 'x', 'type': 'test', 'ctx': null, 'chart': chart},
+              (id: 'x', type: 'test', ctx: null, chart: chart),
               {'ticks': <Object?>[], 'min': 0, 'max': 1},
             )
             ..init(

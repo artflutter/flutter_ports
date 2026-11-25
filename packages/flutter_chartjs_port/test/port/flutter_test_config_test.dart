@@ -5,6 +5,7 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -45,13 +46,10 @@ Plugin<Object?> _destroyLog() => Plugin<Object?>(
 
 /// The element class that a test of the group `harness-register-builtins`
 /// leaves registered.
-final JsClass _keptElement = JsClass(
-  'KeptElement',
-  superclass: Element.jsClass,
-  statics: {
-    'id': 'harnessKept',
-    'defaults': <String, Object?>{'kept': true},
-  },
+final ElementType _keptElement = ElementType(
+  id: 'harnessKept',
+  defaults: scopeFromMap(GenericElementOptionsScope(), {'kept': true}),
+  create: Element.new,
 );
 
 /// Whether a test found [_keptElement] that an earlier test registered.
@@ -196,10 +194,10 @@ void main() {
         'line',
         'point',
       ]);
-      expect(Chart.registry.getElement('arc'), same(ArcElement.jsClass));
-      expect(Chart.registry.getElement('bar'), same(BarElement.jsClass));
-      expect(Chart.registry.getElement('line'), same(LineElement.jsClass));
-      expect(Chart.registry.getElement('point'), same(PointElement.jsClass));
+      expect(Chart.registry.getElement('arc'), same(ArcElement.component));
+      expect(Chart.registry.getElement('bar'), same(BarElement.component));
+      expect(Chart.registry.getElement('line'), same(LineElement.component));
+      expect(Chart.registry.getElement('point'), same(PointElement.component));
       expect(jsGet(_elementDefaults('point'), 'radius'), 3);
       expect(jsGet(_elementDefaults('arc'), 'borderWidth'), 2);
       expect(jsGet(descriptors['elements'], 'arc'), isNotNull);

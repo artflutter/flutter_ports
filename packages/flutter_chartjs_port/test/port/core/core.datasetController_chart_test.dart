@@ -5,7 +5,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:chartjs_test_utils/pure.dart' show createMockContext;
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -25,12 +25,12 @@ import '../../support/test_dataset.dart';
 // through `getSharedOptions_`. `enableOptionSharing` is true, as
 // controller.line.js:35 sets it, unless the dataset gives `sharing: false`.
 
-/// The test controller of the registered class values.
+/// The test controller of the registered components.
 final class _TypedController extends DatasetController {
-  new(super.chart, super.datasetIndex, [super.newTarget]) : drawElements = true;
+  new(super.chart, super.datasetIndex, [super.elements]) : drawElements = true;
 
   /// A controller whose [draw] draws nothing.
-  new noDraw(super.chart, super.datasetIndex, [super.newTarget])
+  new noDraw(super.chart, super.datasetIndex, [super.elements])
     : drawElements = false;
 
   /// Whether [draw] draws the elements. The bar, arc and custom elements of
@@ -93,36 +93,27 @@ final class _TypedController extends DatasetController {
   }
 }
 
-/// The class value of the test controller [id] with the element types
+/// The component of the test controller [id] with the element types
 /// [dataset] (`false` for none) and [data], and the scales of the type
 /// `typedLinear`. [draw] is [_TypedController.drawElements].
-JsClass _controller(
+ControllerType _controller(
   String id,
   Object dataset,
   String data, {
   bool draw = true,
-}) => JsClass(
-  'TypedController',
-  superclass: DatasetController.jsClass,
-  statics: {
-    'id': id,
-    'defaults': <String, Object?>{
-      'datasetElementType': dataset,
-      'dataElementType': data,
+}) => ControllerType(
+  id: id,
+  defaults: scopeFromMap(GenericDatasetOptionsScope(), {
+    'datasetElementType': dataset,
+    'dataElementType': data,
+  }),
+  overrides: scopeFromMap(ChartOptionsScope(), {
+    'scales': <String, Object?>{
+      '_index_': <String, Object?>{'type': 'typedLinear'},
+      '_value_': <String, Object?>{'type': 'typedLinear'},
     },
-    'overrides': <String, Object?>{
-      'scales': <String, Object?>{
-        '_index_': <String, Object?>{'type': 'typedLinear'},
-        '_value_': <String, Object?>{'type': 'typedLinear'},
-      },
-    },
-  },
-  construct: (newTarget, args) {
-    final (:chart, :datasetIndex) = controllerArgs(args);
-    return draw
-        ? _TypedController(chart, datasetIndex, newTarget)
-        : _TypedController.noDraw(chart, datasetIndex, newTarget);
-  },
+  }),
+  create: draw ? _TypedController.new : _TypedController.noDraw,
 );
 
 /// The scale `typedLinear`: the range 0 to 10, with the ticks 0, 5 and 10.
@@ -142,23 +133,22 @@ final class _TypedScale(super.cfg) extends Scale {
   }
 }
 
-/// The class value of the scale `typedLinear`.
-final JsClass _typedScale = JsClass(
-  'TypedScale',
-  superclass: Scale.jsClass,
-  statics: {'id': 'typedLinear', 'defaults': <String, Object?>{}},
-  construct: (newTarget, args) => _TypedScale(scaleCfgArg(args)),
+/// The component of the scale `typedLinear`.
+final ScaleType _typedScale = ScaleType(
+  id: 'typedLinear',
+  defaults: ScaleOptionsScope(),
+  create: _TypedScale.new,
 );
 
 /// `class CustomElement extends Element` with the id `custom` and its own
 /// defaults.
-final JsClass _customElement = JsClass(
-  'CustomElement',
-  superclass: Element.jsClass,
-  statics: {
-    'id': 'custom',
-    'defaults': <String, Object?>{'size': 3.0, 'label': 'c'},
-  },
+final ElementType _customElement = ElementType(
+  id: 'custom',
+  defaults: scopeFromMap(GenericElementOptionsScope(), {
+    'size': 3.0,
+    'label': 'c',
+  }),
+  create: Element.new,
 );
 
 /// The data of a dataset: two points.

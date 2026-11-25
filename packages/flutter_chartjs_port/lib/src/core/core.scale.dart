@@ -522,10 +522,51 @@ abstract class _ScalePrototype() extends Element {
   void _draw(ChartArea? chartArea);
 }
 
+/// The `cfg` of `new Scale(cfg)`: the object `{id, type, ctx, chart}` of
+/// `buildOrUpdateScales` (core.controller.js:357-362, index.d.ts
+/// `Scale` constructor). `ctx` is Dart `null` for the JS `null` of a chart
+/// without a context.
+typedef ScaleConfig = ({
+  String id,
+  String type,
+  CanvasRenderingContext2D? ctx,
+  IChart chart,
+});
+
+/// A scale class as a typed value: `class XScale extends Scale` with its
+/// statics (Chart.js ADR 0204).
+///
+/// ```dart
+/// static final ScaleType component = ScaleType(
+///   id: 'linear',
+///   defaults: defaults,
+///   create: LinearScale.new,
+/// );
+/// ```
+final class ScaleType({
+  required super.id,
+  required super.defaults,
+
+  /// `new ScaleClass(cfg)` (core.controller.js:357).
+  required final Scale Function(ScaleConfig cfg) create,
+  super.defaultRoutes,
+  super.descriptors,
+  super.beforeRegister,
+  super.afterRegister,
+  super.beforeUnregister,
+  super.afterUnregister,
+
+  /// The registered scale class that this class extends.
+  @override final ScaleType? parent,
+}) extends ChartComponent {
+  /// A scale type.
+  this;
+}
+
 /// core.scale.js:168 `Scale`.
 ///
 /// The base class of the scales. A scale is an element and a layout box.
-class Scale(AnyObject cfg)
+class Scale(ScaleConfig cfg)
     extends _ScalePrototype
     implements
         IScale,
@@ -539,40 +580,26 @@ class Scale(AnyObject cfg)
   /// core.scale.js:171 `constructor(cfg)`.
   ///
   /// [cfg] is the object `{id, type, ctx, chart}` of `buildOrUpdateScales`
-  /// (core.controller.js:357-362). `id` and `type` are strings, `ctx` is the
-  /// canvas context or Dart `null` (JS `null`), and `chart` is the chart.
-  /// A value of another type throws a `TypeError` at the cast.
+  /// (core.controller.js:357-362).
   // eslint-disable-next-line max-statements
   this;
 
-  /// core.scale.js:168 `class Scale` as a value (Chart.js ADR 0020, section
-  /// 3).
-  ///
-  /// It extends [Element.jsClass]. It has no own statics. Its `construct`
-  /// takes the `cfg` object: a Map. Another value throws a `TypeError`, as
-  /// `cfg.id` of `undefined` throws (row `adapt-component-class-role`).
-  static final JsClass jsClass = JsClass(
-    'Scale',
-    superclass: Element.jsClass,
-    construct: (newTarget, args) => Scale(scaleCfgArg(args)),
-  );
-
   /// core.scale.js:175 `id`.
   @override
-  final String id = cfg['id']! as String;
+  final String id = cfg.id;
 
   /// core.scale.js:177 `type`.
   @override
-  final String type = cfg['type']! as String;
+  final String type = cfg.type;
 
   /// core.scale.js:181 `ctx`. The specs replace it with a mock context
   /// (core.scale.tests.js:184). Dart `null` stands for JS `null`: a chart
   /// without a context.
-  CanvasRenderingContext2D? ctx = cfg['ctx'] as CanvasRenderingContext2D?;
+  CanvasRenderingContext2D? ctx = cfg.ctx;
 
   /// core.scale.js:183 `chart`.
   @override
-  final IChart chart = cfg['chart']! as IChart;
+  final IChart chart = cfg.chart;
 
   // implements box
 
@@ -3002,22 +3029,6 @@ class Scale(AnyObject cfg)
     final fontSize = resolveTickFontOptions(0).lineHeight!;
     return (isHorizontal() ? width : height) / fontSize;
   }
-}
-
-/// The `cfg` argument of the `construct` closure of [Scale.jsClass] and of a
-/// subclass: the first argument, a Map.
-///
-/// An absent argument, [undefined] and another value throw a `TypeError`.
-/// JavaScript throws for `undefined` and `null` at `cfg.id`
-/// (core.scale.js:175). It reads `undefined` members from another value
-/// (row `adapt-component-class-role`).
-AnyObject scaleCfgArg(List<Object?> args) {
-  final cfg = args.isEmpty ? undefined : args[0];
-  return switch (cfg) {
-    final AnyObject map => map,
-    // A JavaScript TypeError: the read `cfg.id` of undefined or null.
-    _ => throw TypeError(),
-  };
 }
 
 /// `value || 0` of a number that is NaN for JS `undefined`.

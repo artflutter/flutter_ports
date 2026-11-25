@@ -554,12 +554,6 @@ null calls: 0''');
         () => PluginService().notify(chart, PluginHook.beforeInit),
         throwsA(isA<AssertionError>()),
       );
-      expect(
-        () => registry.add([
-          <String, Object?>{'id': 'map', 'afterDraw': () {}},
-        ]),
-        throwsA(isA<AssertionError>()),
-      );
     });
   });
 }

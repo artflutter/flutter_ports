@@ -27,7 +27,7 @@ import 'scale_logarithmic_reference.dart';
 // logarithmic scale on the value axis. test/flutter_test_config.dart
 // registers the six scales of lib/src/index.dart before main() (the row
 // harness-register-builtins). Thus main() registers only the two test
-// controllers through their class values, before the snapshot of the
+// controllers through their components, before the snapshot of the
 // defaults restore (Chart.js ADR 0020, section 8, and Chart.js ADR 0022,
 // section 8). The generator registers the built-in components and the
 // seven plugins of the dist first (registerBuiltins, Chart.js ADR 0041,
@@ -40,7 +40,7 @@ import 'scale_logarithmic_reference.dart';
 
 /// The cartesian test controller `logTest` of the generator: the
 /// logarithmic scale on both axes.
-final JsClass _logTestController = cartesianTestController('logTest', {
+final ControllerType _logTestController = cartesianTestController('logTest', {
   'scales': <String, Object?>{
     '_index_': <String, Object?>{'type': 'logarithmic'},
     '_value_': <String, Object?>{'type': 'logarithmic'},
@@ -50,7 +50,7 @@ final JsClass _logTestController = cartesianTestController('logTest', {
 /// The cartesian test controller `logValueTest` of the generator: the
 /// category scale on the index axis and the logarithmic scale on the value
 /// axis.
-final JsClass _logValueTestController = cartesianTestController(
+final ControllerType _logValueTestController = cartesianTestController(
   'logValueTest',
   {
     'scales': <String, Object?>{
@@ -241,17 +241,19 @@ void main() {
     commit: scaleLogarithmicReferenceCommit,
   );
 
-  group('the class value (Chart.js ADR 0020)', () {
-    test('the registry gives the class value of the id logarithmic', () {
-      expect(registry.getScale('logarithmic'), same(LogarithmicScale.jsClass));
-      expect(LogarithmicScale.jsClass.name, 'LogarithmicScale');
-      expect(LogarithmicScale.jsClass['id'], 'logarithmic');
+  group('the component (Chart.js ADR 0204)', () {
+    test('the registry gives the component of the id logarithmic', () {
       expect(
-        LogarithmicScale.jsClass['defaults'],
+        registry.getScale('logarithmic'),
+        same(LogarithmicScale.component),
+      );
+      expect(LogarithmicScale.component.id, 'logarithmic');
+      expect(
+        LogarithmicScale.component.defaults,
         same(LogarithmicScale.defaults),
       );
-      expect(LogarithmicScale.jsClass.superclass, same(Scale.jsClass));
-      expect(LogarithmicScale.jsClass, isA<JsClass>());
+      expect(LogarithmicScale.component.parent, isNull);
+      expect(LogarithmicScale.component, isA<ScaleType>());
     });
 
     test('defaults.scales.logarithmic has the callback and major ticks', () {
@@ -266,18 +268,16 @@ void main() {
       expect(plainObject(ticks['major']), {'enabled': true});
     });
 
-    testWidgets('jsConstruct makes a LogarithmicScale with the start values', (
+    testWidgets('create makes a LogarithmicScale with the start values', (
       tester,
     ) async {
       final chart = _chart([1.0, 10.0, 100.0]);
-      final scale = jsConstruct(LogarithmicScale.jsClass, [
-        <String, Object?>{
-          'id': 'z',
-          'type': 'logarithmic',
-          'ctx': null,
-          'chart': chart,
-        },
-      ]);
+      final scale = LogarithmicScale.component.create((
+        id: 'z',
+        type: 'logarithmic',
+        ctx: null,
+        chart: chart,
+      ));
       expect(scale, isA<LogarithmicScale>());
       expect((scale as LogarithmicScale).id, 'z');
       // scale.logarithmic.js:94-100.

@@ -38,7 +38,7 @@ import 'plugin_title_reference.dart';
 // form, and the options compare only the keys of upstream.
 //
 // The groups `class value`, `start state`, `stop` and
-// `adapt-component-class-role` hold the pin tests of Chart.js ADR 0038,
+// `config record` hold the pin tests of Chart.js ADR 0038,
 // section 11. The expected results come from a probe on the pinned build in
 // Node.js v24.12.0 on x64 (controller_chart_common.mjs: loadChartJs,
 // registerBuiltins, makeChart). The probe read `registry.getPlugin('title')`
@@ -91,9 +91,6 @@ Object? _observeTitle(Chart chart) {
 /// order of `PluginHook` (the probe output `keys`: `id`, `_element`, these
 /// hooks, `defaults`, `defaultRoutes` and `descriptors`).
 const List<String> _upstreamHooks = ['start', 'stop', 'beforeUpdate'];
-
-/// `new Title(config)` through the class value.
-Object? _construct(List<Object?> args) => jsConstruct(Title.jsClass, args);
 
 /// A line chart with `plugins.title: false`: no title block.
 Chart _lineWithoutTitle() => acquireChartRoot(
@@ -203,38 +200,22 @@ void main() {
   });
 
   group('class value', () {
-    test('the superclass is Element.jsClass', () {
-      expect(Title.jsClass.superclass, same(Element.jsClass));
-    });
-
     test('new Title(config) keeps a plain chart object', () {
       // A config Map: the test pins the read of a JS config object. The
       // options are one TitleOptions (Chart.js ADR 0197).
       final chart = <String, Object?>{'options': <String, Object?>{}};
       const options = TitleOptions(display: true, text: ['a']);
-      final constructed = _construct([
-        <String, Object?>{'chart': chart, 'options': options},
-      ]);
-      expect(constructed, isA<Title>());
-      final value = constructed! as Title;
+      final value = Title((chart: chart, options: options, ctx: null));
       expect(value.chart, same(chart));
       expect(value.options, same(options));
       expect(value.ctx, isNull);
-    });
-
-    test('new Title() and new Title(undefined) throw a TypeError', () {
-      // Upstream: the read config.chart of undefined (probe: newNoArg,
-      // newUndefined, newNull).
-      expect(() => _construct(const []), throwsA(isA<TypeError>()));
-      expect(() => _construct([undefined]), throwsA(isA<TypeError>()));
-      expect(() => _construct([null]), throwsA(isA<TypeError>()));
     });
 
     test('the plugin has the hooks and the keys of the upstream object', () {
       // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
       // object are its hooks, and `id`, `defaults`, `defaultRoutes` and
       // `descriptors` its fields. `_element` is no field: the class is
-      // `Title.jsClass`. The `defaultRoutes` and the `descriptors` have no
+      // `Title`. The `defaultRoutes` and the `descriptors` have no
       // field: the plugin gives the color of the route itself (Chart.js ADR
       // 0197).
       expect(pluginHookNames(title), _upstreamHooks);
@@ -364,46 +345,14 @@ void main() {
     });
   });
 
-  group('adapt-component-class-role', () {
-    test('an options value that is not a TitleBoxOptions throws a '
-        'TypeError', () {
-      // Upstream stores the value (probe: newOptions5 gives 5). The options
-      // are one TitleOptions or SubtitleOptions (Chart.js ADR 0197): a Map
-      // throws too.
-      for (final options in <Object>[
-        5,
-        <String, Object?>{'display': true},
-      ]) {
-        expect(
-          () => _construct([
-            <String, Object?>{'options': options},
-          ]),
-          throwsA(isA<TypeError>()),
-        );
-      }
-    });
-
-    test('a ctx value that is not a context throws a TypeError', () {
-      // Upstream stores the value (probe: newCtxString gives 'x').
-      expect(
-        () => _construct([
-          <String, Object?>{'ctx': 'x'},
-        ]),
-        throwsA(isA<TypeError>()),
-      );
-    });
-
+  group('config record', () {
     test('a chart of any value stays', () {
       // The probe newChart5 gives 5: Title never reads the chart.
       for (final chart in <Object?>[5, 'x', true, <Object?>[]]) {
-        final box =
-            _construct([
-                  <String, Object?>{'chart': chart},
-                ])!
-                as Title;
+        final box = Title((chart: chart, options: null, ctx: null));
         expect(box.chart, same(chart));
       }
-      final empty = _construct([<String, Object?>{}])! as Title;
+      final empty = Title((chart: null, options: null, ctx: null));
       expect(empty.chart, isNull);
       expect(empty.options, isNull);
     });

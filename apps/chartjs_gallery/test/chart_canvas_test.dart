@@ -54,8 +54,8 @@ void main() {
       'scatter',
     ]);
     expect(items.keys, isNot(contains('stressPoint')));
-    expect(items['line'], same(LineController.jsClass));
-    expect(items['scatter'], same(ScatterController.jsClass));
+    expect(items['line'], same(LineController.component));
+    expect(items['scatter'], same(ScatterController.component));
   });
 
   testWidgets('chart canvas: a chart made under a disabled TickerMode is '

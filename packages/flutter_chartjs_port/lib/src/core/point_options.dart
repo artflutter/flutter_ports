@@ -42,10 +42,8 @@ bool nativePointElement(Object? point) =>
 bool nativePointProjection(IScale scale) =>
     scale is BulkBarScale && (scale as BulkBarScale).supportsBulkBarUpdate;
 
-/// Native class metadata only. Keep the two id reads and their short circuit;
-/// unknown class objects are never inspected merely to qualify a shortcut.
-bool nativePointClass(Object? value) =>
-    value is JsClass && value.id is String && value.id == 'point';
+/// Native class metadata only: the element type of the id `point`.
+bool nativePointClass(ElementType? value) => value?.id == 'point';
 
 /// A dataset index already read from an exact native controller.
 bool nativePointDatasetIndex(int index) => index >= 0;

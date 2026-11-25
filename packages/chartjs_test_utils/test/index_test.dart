@@ -54,7 +54,7 @@ int _destroyCount(String name) =>
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  Chart.register([DoughnutController.jsClass, ArcElement.jsClass]);
+  Chart.register([DoughnutController.component, ArcElement.component]);
 
   // The set-up of flutter_test_config.dart (Chart.js ADR 0022, section 8).
   setUp(() {

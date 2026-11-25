@@ -20,11 +20,11 @@ import '../support/tick_label.dart';
 // `Chart.Ticks` is `ticks` of core.ticks.dart (src/index.umd.ts:43).
 // test/flutter_test_config.dart registers the built-in components before
 // `main()` (`harness-register-builtins`). Thus the registry has the class
-// value `LogarithmicScale.jsClass`, and the defaults have the scope
+// value `LogarithmicScale.component`, and the defaults have the scope
 // `scales.logarithmic`. The file runs on the VM, because
 // core.controller.dart reaches the platform layer.
 //
-// `typeof x === 'function'` of a class value is `isA<JsClass>()`. The
+// `typeof x === 'function'` of a component is `isA<ScaleType>()`. The
 // default tick callback is the function `ticks.formatters.logarithmic`, a
 // `TickCallback` (row `adapt-native-tick`). `jasmine.any(Function)` is
 // `isA<Function>()`.
@@ -152,7 +152,7 @@ void main() {
     test('should register', () {
       final constructor = Chart.registry.getScale('logarithmic');
       expect(constructor, isNot(same(undefined)));
-      expect(constructor, isA<JsClass>());
+      expect(constructor, isA<ScaleType>());
     });
 
     test('should have the correct default config', () {

@@ -64,11 +64,13 @@ class _CustomBar() extends BarElement {
 
 class _CustomLinear(super.cfg) extends LinearScale {
   int projections = 0;
-  static final value = JsClass(
-    'BulkCustomLinear',
-    superclass: LinearScale.jsClass,
-    statics: {'id': 'bulk-custom-linear'},
-    construct: (_, args) => _CustomLinear(scaleCfgArg(args)),
+  static final value = ScaleType(
+    id: 'bulk-custom-linear',
+    defaults: LinearScale.component.defaults,
+    defaultRoutes: LinearScale.component.defaultRoutes,
+    descriptors: LinearScale.component.descriptors,
+    parent: LinearScale.component,
+    create: _CustomLinear.new,
   );
   @override
   double getPixelForValue(double value, [int? index]) {
@@ -77,17 +79,17 @@ class _CustomLinear(super.cfg) extends LinearScale {
   }
 }
 
-class _CustomController(super.chart, super.datasetIndex, super.newTarget)
+class _CustomController(super.chart, super.datasetIndex, super.elements)
     extends BarController {
   int writes = 0;
-  static final value = JsClass(
-    'BulkCustomController',
-    superclass: BarController.jsClass,
-    statics: {'id': 'bulk-custom-controller'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _CustomController(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'bulk-custom-controller',
+    defaults: BarController.component.defaults,
+    overrides: BarController.component.overrides,
+    defaultRoutes: BarController.component.defaultRoutes,
+    descriptors: BarController.component.descriptors,
+    parent: BarController.component,
+    create: _CustomController.new,
   );
   @override
   void updateElement(
@@ -266,10 +268,10 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
-    BarController.jsClass,
-    BarElement.jsClass,
-    CategoryScale.jsClass,
-    LinearScale.jsClass,
+    BarController.component,
+    BarElement.component,
+    CategoryScale.component,
+    LinearScale.component,
   ]);
 
   for (final horizontal in [false, true]) {

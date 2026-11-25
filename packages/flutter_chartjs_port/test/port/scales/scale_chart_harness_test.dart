@@ -52,21 +52,23 @@ final class _HarnessLinearScale(super.cfg) extends Scale {
   }
 }
 
-/// The class value of `harnessLinear`.
-final JsClass _harnessLinearScale = JsClass(
-  'HarnessLinearScale',
-  superclass: Scale.jsClass,
-  statics: {'id': 'harnessLinear', 'defaults': <String, Object?>{}},
-  construct: (newTarget, args) => _HarnessLinearScale(scaleCfgArg(args)),
+/// The component of `harnessLinear`.
+final ScaleType _harnessLinearScale = ScaleType(
+  id: 'harnessLinear',
+  defaults: ScaleOptionsScope(),
+  create: _HarnessLinearScale.new,
 );
 
 /// The cartesian test controller `harnessTest`.
-final JsClass _harnessTestController = cartesianTestController('harnessTest', {
-  'scales': <String, Object?>{
-    '_index_': <String, Object?>{'type': 'harnessLinear'},
-    '_value_': <String, Object?>{'type': 'harnessLinear'},
+final ControllerType _harnessTestController = cartesianTestController(
+  'harnessTest',
+  {
+    'scales': <String, Object?>{
+      '_index_': <String, Object?>{'type': 'harnessLinear'},
+      '_value_': <String, Object?>{'type': 'harnessLinear'},
+    },
   },
-});
+);
 
 /// The reference text of [calls]: one JSON line `[name, ...args]` for each
 /// call, as the generators write it.

@@ -45,8 +45,8 @@ import 'dataset_controller_reference.dart';
 // with an id and the frozen state.
 //
 // The other groups test the parts of the Dart form: the typed options of
-// Chart.js ADR 0021, section 7, the class value of Chart.js ADR 0020, and the
-// rows adapt-component-class-role and platform-array-events.
+// Chart.js ADR 0021, section 7, the element types of Chart.js ADR 0204, and
+// the rows adapt-typed-components and platform-array-events.
 //
 // main() registers the element classes through a new TypedRegistry of
 // core.typedRegistry.dart, as `registry.addElements` does. The upstream side
@@ -148,47 +148,41 @@ final class _SpyCustom() extends Element implements VisualElement, _Tagged {
 
 /// `class CustomElement extends Element` with the id `custom` and its own
 /// defaults.
-final JsClass _customElementClass = JsClass(
-  'CustomElement',
-  superclass: Element.jsClass,
-  statics: {
-    'id': 'custom',
-    'defaults': <String, Object?>{'size': 3.0, 'label': 'c'},
-  },
+final ElementType _customElementClass = ElementType(
+  id: 'custom',
+  defaults: scopeFromMap(GenericElementOptionsScope(), {
+    'size': 3.0,
+    'label': 'c',
+  }),
+  create: Element.new,
 );
 
-final JsClass _spyPointClass = JsClass(
-  'SpyPoint',
-  superclass: PointElement.jsClass,
-  construct: (newTarget, args) => _SpyPoint(),
+/// A subclass of the element type [base] that constructs [create]: it has
+/// the statics of [base], as the static prototype chain gives them.
+ElementType _spyOf(ElementType base, Element Function() create) => ElementType(
+  id: base.id,
+  defaults: base.defaults,
+  defaultRoutes: base.defaultRoutes,
+  descriptors: base.descriptors,
+  parent: base,
+  create: create,
 );
 
-final JsClass _spyLineClass = JsClass(
-  'SpyLine',
-  superclass: LineElement.jsClass,
-  construct: (newTarget, args) => _SpyLine(),
+final ElementType _spyPointClass = _spyOf(
+  PointElement.component,
+  _SpyPoint.new,
 );
 
-final JsClass _spyBarClass = JsClass(
-  'SpyBar',
-  superclass: BarElement.jsClass,
-  construct: (newTarget, args) => _SpyBar(),
-);
+final ElementType _spyLineClass = _spyOf(LineElement.component, _SpyLine.new);
 
-final JsClass _spyArcClass = JsClass(
-  'SpyArc',
-  superclass: ArcElement.jsClass,
-  construct: (newTarget, args) => _SpyArc(),
-);
+final ElementType _spyBarClass = _spyOf(BarElement.component, _SpyBar.new);
 
-final JsClass _spyCustomClass = JsClass(
-  'SpyCustom',
-  superclass: _customElementClass,
-  construct: (newTarget, args) => _SpyCustom(),
-);
+final ElementType _spyArcClass = _spyOf(ArcElement.component, _SpyArc.new);
+
+final ElementType _spyCustomClass = _spyOf(_customElementClass, _SpyCustom.new);
 
 /// The element classes of the scenarios by name.
-final Map<String, JsClass> _elementTypes = {
+final Map<String, ElementType> _elementTypes = {
   'point': _spyPointClass,
   'line': _spyLineClass,
   'bar': _spyBarClass,
@@ -205,7 +199,7 @@ double? _maxOverflow;
 
 /// The test controller: the option calls of controller.line.js:41-120. The
 /// pixels are 10 times the parsed values.
-final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
+final class _TestController(super.chart, super.datasetIndex, [super.elements])
     extends DatasetController {
   @override
   void initialize() {
@@ -269,16 +263,6 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
     }
   }
 }
-
-/// `class TestController extends DatasetController` as a value.
-final JsClass _testControllerClass = JsClass(
-  'TestController',
-  superclass: DatasetController.jsClass,
-  construct: (newTarget, args) {
-    final (:chart, :datasetIndex) = controllerArgs(args);
-    return _TestController(chart, datasetIndex, newTarget);
-  },
-);
 
 /// A rectangle `{left, top, right, bottom, width, height}`.
 final class _Area(
@@ -558,7 +542,7 @@ String _enc(Object? v) => switch (v) {
   bool() => '$v',
   final num n => n.isNaN ? 'NaN' : jsToString(n),
   final String s => jsonEncode(s),
-  final JsClass c => 'class:${c.name}',
+  final ChartComponent c => 'class:${c.id}',
   Function() => 'fn',
   final _Tagged t => t.tag,
   Element() => 'element',
@@ -994,17 +978,16 @@ final class _Run(final AnyObject spec) {
           ..updateIndex(i)
           ..linkScales();
       } else {
+        // `Object.assign(ControllerClass, {...})` and `new
+        // ControllerClass(chart, i)`: the element types are arguments
+        // (Chart.js ADR 0204). A falsy dataset element type is none.
         final datasetElement = elements['dataset'];
-        jsAssign(_testControllerClass, {
-          'dataElementType': _elementTypes[elements['data']],
-          'datasetElementType': datasetElement is String
+        meta.controller = _TestController(chart, i, (
+          data: _elementTypes[elements['data']],
+          dataset: datasetElement is String
               ? _elementTypes[datasetElement]
-              : datasetElement,
-        });
-        meta.controller = jsConstruct(_testControllerClass, [
-          chart,
-          i.toDouble(),
-        ]) as DatasetController;
+              : null,
+        ));
       }
     }
   }
@@ -1048,17 +1031,6 @@ _Run _runTo(String name, int count) {
   return run;
 }
 
-/// An element id whose string conversion must run even on an option cache hit.
-final class _CountingElementId() {
-  int calls = 0;
-
-  @override
-  String toString() {
-    calls++;
-    return 'point';
-  }
-}
-
 void main() {
   setUpSpecs();
 
@@ -1066,12 +1038,12 @@ void main() {
   // snapshot of the restore (Chart.js ADR 0022, section 8). An element class
   // has no parent scope: `Element` has no `id` (core.typedRegistry.js:115).
   [
-    PointElement.jsClass,
-    LineElement.jsClass,
-    BarElement.jsClass,
-    ArcElement.jsClass,
+    PointElement.component,
+    LineElement.component,
+    BarElement.component,
+    ArcElement.component,
     _customElementClass,
-  ].forEach(TypedRegistry(Element.jsClass, 'elements').register);
+  ].forEach(TypedRegistry<ElementType>('elements').register);
 
   tearDown(() {
     _counter = 0;
@@ -1118,33 +1090,27 @@ void main() {
     }
   });
 
-  group('class value', () {
+  group('element types', () {
     test('the statics of DatasetController', () {
-      // core.datasetController.js:239-249.
-      final value = DatasetController.jsClass;
-      expect(value.name, 'DatasetController');
-      expect(value.superclass, isNull);
-      expect(value['defaults'], same(DatasetController.defaults));
-      expect(jsObjectKeys(value['defaults']), isEmpty);
-      expect(value.has('datasetElementType'), isTrue);
-      expect(value['datasetElementType'], isNull);
-      expect(value.has('dataElementType'), isTrue);
-      expect(value['dataElementType'], isNull);
-      expect(isFunction(value), isTrue);
+      // core.datasetController.js:239-249: `defaults` is an empty object, and
+      // the element types of the class are JS `null`.
+      expect(jsObjectKeys(DatasetController.defaults), isEmpty);
+      final run = _runTo('parsePrimitiveData with labels', 0);
+      final direct = DatasetController(run.chart, 0);
+      expect(direct.dataElementType, isNull);
+      expect(direct.datasetElementType, isNull);
     });
 
-    test('new.target gives the element types of the subclass', () {
-      // A subclass value without a Dart class constructs a
-      // DatasetController with its own class value as new.target
-      // (Chart.js ADR 0020, section 4).
+    test('the constructor takes the element types of the chart type', () {
+      // `Object.assign(ControllerClass, {...})` of core.controller.js:443-447
+      // is the last argument of the constructor (Chart.js ADR 0204).
       final run = _runTo('parsePrimitiveData with labels', 0);
-      final subclass = JsClass('Sub', superclass: DatasetController.jsClass)
-        ..['dataElementType'] = _spyPointClass
-        ..['datasetElementType'] = false;
       final meta = run.chart.getDatasetMeta(0) as _Meta
         ..indexAxis = const XAxis();
-      final controller =
-          jsConstruct(subclass, [run.chart, 0.0]) as DatasetController;
+      final controller = DatasetController(run.chart, 0, (
+        dataset: null,
+        data: _spyPointClass,
+      ));
       meta.controller = controller;
       expect(controller.runtimeType, DatasetController);
       expect(controller.dataElementType, same(_spyPointClass));
@@ -1152,45 +1118,9 @@ void main() {
       expect(controller.index, 0);
       expect(controller.cachedMeta, same(meta));
       expect(controller.type, 'test');
-      // `if (this.datasetElementType)`: false gives no dataset element.
+      // `if (this.datasetElementType)`: no dataset element type gives no
+      // dataset element.
       expect(meta.dataset, isNull);
-      // A direct Dart call stands for `new DatasetController(chart, 0)`.
-      final direct = DatasetController(run.chart, 0);
-      expect(direct.dataElementType, isNull);
-      expect(direct.datasetElementType, isNull);
-    });
-  });
-
-  group('adapt-component-class-role', () {
-    test('a chart argument that is not a Chart throws a TypeError', () {
-      expect(
-        () => controllerArgs([<String, Object?>{}, 0.0]),
-        throwsA(isA<TypeError>()),
-      );
-      expect(() => controllerArgs(const []), throwsA(isA<TypeError>()));
-      final run = _runTo('parsePrimitiveData with labels', 0);
-      final (:chart, :datasetIndex) = controllerArgs([run.chart]);
-      expect(chart, same(run.chart));
-      // An absent dataset index is -1 (row `adapt-int-indexes`).
-      expect(datasetIndex, -1);
-    });
-
-    test('a data element class of another role throws at the cast', () {
-      // A class value that constructs a plain object. Upstream keeps the
-      // object in meta.data and throws later, at the first absent method.
-      final run = _runTo('parsePrimitiveData with labels', 1);
-      final plain = JsClass('Plain');
-      run.controller(0).dataElementType = plain;
-      expect(
-        () => run.controller(0).buildOrUpdateElements(false),
-        throwsA(isA<TypeError>()),
-      );
-    });
-
-    test('a dataset element class of another role throws at the cast', () {
-      final run = _runTo('parsePrimitiveData with labels', 1);
-      run.controller(0).datasetElementType = JsClass('Plain');
-      expect(() => run.controller(0).addElements(), throwsA(isA<TypeError>()));
     });
   });
 
@@ -1315,7 +1245,6 @@ void main() {
         ],
         <Object?>[DateTime.utc(1970)],
         <Object?>[f0],
-        <Object?>[JsClass('A')],
         <Object?>[1.0, 2.0],
         <Object?>['a', 'b'],
         <Object?>[true, false],
@@ -1356,17 +1285,6 @@ void main() {
       expect(controller.resolveDatasetElementOptions(), isNot(same(line)));
     });
 
-    test('an element id is converted on every cache hit', () {
-      final run = _runTo('shared options of a line chart', 2);
-      final controller = run.controller(0);
-      final cached = controller.resolveDataElementOptions(0);
-      final id = _CountingElementId();
-      controller.dataElementType = JsClass('Counting', statics: {'id': id});
-      expect(controller.resolveDataElementOptions(0), same(cached));
-      expect(controller.resolveDataElementOptions(1), same(cached));
-      expect(id.calls, 2);
-    });
-
     test(
       'hyphenated type and mode pairs retain the original key collision',
       () {
@@ -1374,9 +1292,10 @@ void main() {
         final controller = run.controller(0);
         final originalType = controller.dataElementType;
         final cached = controller.resolveDataElementOptions(0, 'default-x');
-        controller.dataElementType = JsClass(
-          'Hyphenated',
-          statics: {'id': 'point-default'},
+        controller.dataElementType = ElementType(
+          id: 'point-default',
+          defaults: GenericElementOptionsScope(),
+          create: Element.new,
         );
         expect(controller.resolveDataElementOptions(0, 'x'), same(cached));
         controller.dataElementType = originalType;

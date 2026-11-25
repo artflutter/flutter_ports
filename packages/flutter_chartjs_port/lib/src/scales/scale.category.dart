@@ -324,7 +324,7 @@ class CategoryScale(super.cfg)
   }
 
   // scale.category.js:36 `static id = 'category'`. Scale has the instance
-  // field `id`. Thus the value is only in the statics of jsClass.
+  // field `id`. Thus the value is only in [component].
 
   /// scale.category.js:41 `static defaults`.
   ///
@@ -334,18 +334,12 @@ class CategoryScale(super.cfg)
   static final ScaleOptionsScope defaults = ScaleOptionsScope()
     ..ticks = (TickOptionsScope()..callback = _tickLabelForValue);
 
-  /// scale.category.js:34 `class CategoryScale extends Scale` as a value
-  /// (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [Scale.jsClass]. Its statics are `id` (`'category'`) and
-  /// [defaults], in the upstream order of declaration
-  /// (scale.category.js:36-45). Its `construct` calls `CategoryScale(cfg)`
-  /// with the `cfg` of [scaleCfgArg].
-  static final JsClass jsClass = JsClass(
-    'CategoryScale',
-    superclass: Scale.jsClass,
-    statics: {'id': 'category', 'defaults': defaults},
-    construct: (newTarget, args) => CategoryScale(scaleCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, and the constructor.
+  static final ScaleType component = ScaleType(
+    id: 'category',
+    defaults: defaults,
+    create: CategoryScale.new,
   );
 
   /// This exact built-in scale has ordinary axis and metadata reads.

@@ -1,23 +1,22 @@
 // Ported from Chart.js v4.6.1 src/core/core.registry.js (MIT, Chart.js Contributors).
 
 /// Port of `src/core/core.registry.js`: the registry of the controllers,
-/// the elements, the plugins and the scales (Chart.js ADR 0020, section 5).
+/// the elements, the plugins and the scales (Chart.js ADR 0204).
 ///
-/// A rest parameter `...args` is one `List<Object?>` parameter. The Dart list
-/// is the array of the rest parameter (Chart.js ADR 0020, section 6). Thus
-/// `registry.add(A, B)` is `registry.add([a, b])`, and
-/// `registry.add([A, B])` is `registry.add([[a, b]])`. An item is a class
-/// value ([JsClass]), a plugin Map, another value, or a List or a Map of
-/// items.
+/// An item is an [IChartComponent]: a [ControllerType], a [ScaleType], an
+/// [ElementType] or a plugin. A rest parameter `...args` is one `Iterable`:
+/// `registry.add(A, B)` is `registry.add([a, b])`. Upstream also takes an
+/// array or a module namespace of items in place of an item; the port takes
+/// items only.
 ///
 /// `new Error(message)` is a [StateError] with the upstream message, as in
 /// `core.typedRegistry.dart`.
 ///
-/// This file imports `core.datasetController.dart`, `core.element.dart` and
-/// `core.scale.dart` for their class values, as upstream imports the
-/// classes (core.registry.js:1-3). `core.scale.dart` imports
-/// `helpers.extras`. Thus this file is not a pure layer (Chart.js ADR 0020,
-/// section 10).
+/// This file imports `core.datasetController.dart` and `core.scale.dart` for
+/// [ControllerType] and [ScaleType], as upstream imports the classes
+/// (core.registry.js:1-3). `core.scale.dart` imports `helpers.extras`. Thus
+/// this file is not a pure layer.
+// DIVERGES(chartjs): adapt-typed-components, typed items, no nested items.
 library;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -33,79 +32,71 @@ final class Registry() {
 
   /// core.registry.js:13 `controllers`: the dataset controllers, with the
   /// scope `datasets` and the overrides.
-  final TypedRegistry controllers = TypedRegistry(
-    DatasetController.jsClass,
-    'datasets',
-    true,
-  );
+  final TypedRegistry<ControllerType> controllers =
+      TypedRegistry<ControllerType>('datasets', true);
 
   /// core.registry.js:14 `elements`.
-  final TypedRegistry elements = TypedRegistry(Element.jsClass, 'elements');
+  final TypedRegistry<ElementType> elements = TypedRegistry<ElementType>(
+    'elements',
+  );
 
-  /// core.registry.js:15 `plugins`: the registry of the type `Object`.
-  final TypedRegistry plugins = TypedRegistry(jsObjectClass, 'plugins');
+  /// core.registry.js:15 `plugins`.
+  final TypedRegistry<Plugin<Object?>> plugins = TypedRegistry<Plugin<Object?>>(
+    'plugins',
+  );
 
   /// core.registry.js:16 `scales`.
-  final TypedRegistry scales = TypedRegistry(Scale.jsClass, 'scales');
-
-  /// core.registry.js:19 `_typedRegistries`.
-  // Order is important, Scale has Element in prototype chain,
-  // so Scales must be before Elements. Plugins are a fallback, so not listed
-  // here.
-  late final List<TypedRegistry> _typedRegistries = [
-    controllers,
-    scales,
-    elements,
-  ];
+  final TypedRegistry<ScaleType> scales = TypedRegistry<ScaleType>('scales');
 
   /// core.registry.js:25 `add(...args)`.
   ///
   /// @param  {...any} args
-  void add(List<Object?> args) {
-    _each('register', args);
+  void add(Iterable<IChartComponent> args) {
+    for (final item in [...args]) {
+      _execAny(register: true, item);
+    }
   }
 
   /// core.registry.js:29 `remove(...args)`.
-  void remove(List<Object?> args) {
-    _each('unregister', args);
+  void remove(Iterable<IChartComponent> args) {
+    for (final item in [...args]) {
+      _execAny(register: false, item);
+    }
   }
 
   /// core.registry.js:36 `addControllers(...args)`.
   ///
   /// @param  {...typeof DatasetController} args
-  void addControllers(List<Object?> args) {
-    _each('register', args, controllers);
+  void addControllers(Iterable<ControllerType> args) {
+    _each(register: true, args, controllers);
   }
 
   /// core.registry.js:43 `addElements(...args)`.
   ///
   /// @param  {...typeof Element} args
-  void addElements(List<Object?> args) {
-    _each('register', args, elements);
+  void addElements(Iterable<ElementType> args) {
+    _each(register: true, args, elements);
   }
 
   /// core.registry.js:50 `addPlugins(...args)`.
   ///
   /// @param  {...any} args
-  void addPlugins(List<Object?> args) {
-    _each('register', args, plugins);
+  void addPlugins(Iterable<Plugin<Object?>> args) {
+    _each(register: true, args, plugins);
   }
 
   /// core.registry.js:57 `addScales(...args)`.
   ///
   /// @param  {...typeof Scale} args
-  void addScales(List<Object?> args) {
-    _each('register', args, scales);
+  void addScales(Iterable<ScaleType> args) {
+    _each(register: true, args, scales);
   }
 
   /// core.registry.js:65 `getController`.
   ///
   /// @param {string} id
   /// @returns {typeof DatasetController}
-  ///
-  /// The result is the registered value: a class value, or another value
-  /// that [addControllers] registered (Chart.js ADR 0020, section 5).
-  Object getController(Object? id) {
+  ControllerType getController(String id) {
     return _get(id, controllers, 'controller');
   }
 
@@ -113,7 +104,7 @@ final class Registry() {
   ///
   /// @param {string} id
   /// @returns {typeof Element}
-  Object getElement(Object? id) {
+  ElementType getElement(String id) {
     return _get(id, elements, 'element');
   }
 
@@ -140,142 +131,104 @@ final class Registry() {
   ///
   /// @param {string} id
   /// @returns {typeof Scale}
-  Object getScale(Object? id) {
+  ScaleType getScale(String id) {
     return _get(id, scales, 'scale');
   }
 
   /// core.registry.js:96 `removeControllers(...args)`.
   ///
   /// @param  {...typeof DatasetController} args
-  void removeControllers(List<Object?> args) {
-    _each('unregister', args, controllers);
+  void removeControllers(Iterable<ControllerType> args) {
+    _each(register: false, args, controllers);
   }
 
   /// core.registry.js:103 `removeElements(...args)`.
   ///
   /// @param  {...typeof Element} args
-  void removeElements(List<Object?> args) {
-    _each('unregister', args, elements);
+  void removeElements(Iterable<ElementType> args) {
+    _each(register: false, args, elements);
   }
 
   /// core.registry.js:110 `removePlugins(...args)`.
   ///
   /// @param  {...any} args
-  void removePlugins(List<Object?> args) {
-    _each('unregister', args, plugins);
+  void removePlugins(Iterable<Plugin<Object?>> args) {
+    _each(register: false, args, plugins);
   }
 
   /// core.registry.js:117 `removeScales(...args)`.
   ///
   /// @param  {...typeof Scale} args
-  void removeScales(List<Object?> args) {
-    _each('unregister', args, scales);
+  void removeScales(Iterable<ScaleType> args) {
+    _each(register: false, args, scales);
   }
 
-  /// core.registry.js:124 `_each`.
+  /// core.registry.js:124 `_each`, for one typed registry.
   /// @private
-  ///
-  /// `each` of `helpers.core` gives the items of a List in index order and
-  /// the values of a Map in the `Object.keys` order. Its callback does not
-  /// recurse.
-  void _each(
-    String method,
-    List<Object?> args, [
-    TypedRegistry? typedRegistry,
-  ]) {
+  void _each<T extends IChartComponent>(
+    Iterable<T> args,
+    TypedRegistry<T> typedRegistry, {
+    required bool register,
+  }) {
     for (final arg in [...args]) {
-      final reg = typedRegistry ?? _getRegistryForType(arg);
-      if (typedRegistry != null ||
-          reg.isForType(arg) ||
-          (identical(reg, plugins) &&
-              (arg is Plugin<Object?> || jsTruthy(jsGet(arg, 'id'))))) {
-        _exec(method, reg, arg);
-      } else {
-        // Handle loopable args
-        // Use case:
-        //  import * as plugins from './plugins.js';
-        //  Chart.register(plugins);
-        each<Object?, Object?>(arg, (item, _) {
-          // If there are mixed types in the loopable, make sure those are
-          // registered in correct registry
-          // Use case: (treemap exporting controller, elements etc)
-          //  import * as treemap from 'chartjs-chart-treemap.js';
-          //  Chart.register(treemap);
+      _exec(register: register, typedRegistry, arg);
+    }
+  }
 
-          final itemReg = typedRegistry ?? _getRegistryForType(item);
-          _exec(method, itemReg, item);
-        });
-      }
+  /// core.registry.js:124 `_each` without a typed registry: the registry of
+  /// the type of [item] (`_getRegistryForType`, core.registry.js:161).
+  ///
+  /// The registry of the plugins is the fallback, as upstream. An item of
+  /// another class stops a debug build, and a release build skips it.
+  void _execAny(IChartComponent item, {required bool register}) {
+    switch (item) {
+      case final ControllerType controller:
+        _exec(register: register, controllers, controller);
+      case final ScaleType scale:
+        _exec(register: register, scales, scale);
+      case final ElementType element:
+        _exec(register: register, elements, element);
+      case final Plugin<Object?> plugin:
+        _exec(register: register, plugins, plugin);
+      default:
+        assert(false, 'A chart component or a Plugin, not $item.');
     }
   }
 
   /// core.registry.js:151 `_exec`.
   /// @private
   ///
-  /// A callback gets [component] as its parameter, in place of `this`
-  /// (Chart.js ADR 0173). The call
-  /// `registry[method](component)` is a `switch` on the two method names.
-  ///
-  /// A plugin is a native [Plugin] (Chart.js ADR 0144). Another value for the
-  /// registry of the plugins stops a debug build, and a release build skips
-  /// it.
-  void _exec(String method, TypedRegistry registry, Object? component) {
-    if (identical(registry, plugins) &&
-        component != null &&
-        component is! Undefined &&
-        component is! Plugin<Object?>) {
-      assert(false, 'A plugin is a Plugin, not $component.');
-      return;
-    }
-    final camelMethod = capitalize(method);
+  /// A hook gets [component] as its parameter, in place of `this` (Chart.js
+  /// ADR 0173). A plugin has no register hooks.
+  void _exec<T extends IChartComponent>(
+    TypedRegistry<T> registry,
+    T component, {
+    required bool register,
+  }) {
+    final hooks = component is ChartComponent ? component : null;
     // beforeRegister / beforeUnregister
-    _callHook(jsGet(component, 'before$camelMethod'), component);
-    switch (method) {
-      case 'register':
-        registry.register(component);
-      case 'unregister':
-        registry.unregister(component);
+    if (register) {
+      hooks?.beforeRegister?.call(hooks);
+      registry.register(component);
+      // afterRegister / afterUnregister
+      hooks?.afterRegister?.call(hooks);
+    } else {
+      hooks?.beforeUnregister?.call(hooks);
+      registry.unregister(component);
+      hooks?.afterUnregister?.call(hooks);
     }
-    // afterRegister / afterUnregister
-    _callHook(jsGet(component, 'after$camelMethod'), component);
-  }
-
-  /// `helpers.callback(hook, [], component)` of core.registry.js:153 and
-  /// :155: a function of the component, or of no argument. Another value
-  /// makes no call, as `callback` does.
-  // DIVERGES(chartjs): adapt-option-function-types, the component as a
-  // parameter.
-  void _callHook(Object? hook, Object? component) {
-    switch (hook) {
-      case final Object? Function(Object?) f:
-        f(component);
-      case final Object? Function() f:
-        f();
-    }
-  }
-
-  /// core.registry.js:161 `_getRegistryForType`.
-  /// @private
-  TypedRegistry _getRegistryForType(Object? type) {
-    for (var i = 0; i < _typedRegistries.length; i++) {
-      final reg = _typedRegistries[i];
-      if (reg.isForType(type)) {
-        return reg;
-      }
-    }
-    // plugins is the fallback registry
-    return plugins;
   }
 
   /// core.registry.js:175 `_get`.
   /// @private
-  ///
-  /// The registry never stores Dart `null`: `register(null)` throws before
-  /// the write. Thus Dart `null` from [TypedRegistry.get] is `undefined`.
-  Object _get(Object? id, TypedRegistry typedRegistry, String type) {
+  T _get<T extends IChartComponent>(
+    String id,
+    TypedRegistry<T> typedRegistry,
+    String type,
+  ) {
     final item = typedRegistry.get(id);
     if (item == null) {
-      throw StateError('"${jsToString(id)}" is not a registered $type.');
+      throw StateError('"$id" is not a registered $type.');
     }
     return item;
   }

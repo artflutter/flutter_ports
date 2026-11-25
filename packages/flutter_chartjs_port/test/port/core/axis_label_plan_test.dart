@@ -446,12 +446,12 @@ void main() {
   test('custom scale subclasses keep the full virtual font path', () {
     final pair = _Pair();
     pair.each((chart) {
-      chart.scales['x'] = _CustomCategory({
-        'id': 'x',
-        'type': 'category',
-        'ctx': chart.scales['x']!.ctx,
-        'chart': chart,
-      });
+      chart.scales['x'] = _CustomCategory((
+        id: 'x',
+        type: 'category',
+        ctx: chart.scales['x']!.ctx,
+        chart: chart,
+      ));
     });
     pair.update();
     pair.context.fontWrites = 0;

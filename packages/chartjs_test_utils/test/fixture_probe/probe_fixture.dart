@@ -180,13 +180,13 @@ final Map<String, HandFixture> _hand = {
 
 void main() {
   Chart.register([
-    BarController.jsClass,
-    LineController.jsClass,
-    CategoryScale.jsClass,
-    LinearScale.jsClass,
-    PointElement.jsClass,
-    LineElement.jsClass,
-    BarElement.jsClass,
+    BarController.component,
+    LineController.component,
+    CategoryScale.component,
+    LinearScale.component,
+    PointElement.component,
+    LineElement.component,
+    BarElement.component,
     // A plugin for the stale skip of `source/stale-skip.json`.
     Plugin<Object?>(id: 'probe'),
   ]);

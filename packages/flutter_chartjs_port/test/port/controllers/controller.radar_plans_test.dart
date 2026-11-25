@@ -18,32 +18,32 @@ import 'package:flutter_test/flutter_test.dart';
 // ordinary call. Their points must have each bit in common.
 
 /// A trivial user subclass, which keeps each ordinary call.
-final class _OrdinaryRadar(super.chart, super.datasetIndex, [super.newTarget])
+final class _OrdinaryRadar(super.chart, super.datasetIndex, [super.elements])
     extends RadarController {
-  static final value = JsClass(
-    'OrdinaryRadar',
-    superclass: RadarController.jsClass,
-    statics: {'id': 'ordinaryRadar'},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _OrdinaryRadar(chart, datasetIndex, newTarget);
-    },
+  static final value = ControllerType(
+    id: 'ordinaryRadar',
+    defaults: RadarController.component.defaults,
+    overrides: RadarController.component.overrides,
+    defaultRoutes: RadarController.component.defaultRoutes,
+    descriptors: RadarController.component.descriptors,
+    parent: RadarController.component,
+    create: _OrdinaryRadar.new,
   );
 }
 
 /// A subclass that observes `updateElement` of a direct mode.
-final class _ObservedRadar(super.chart, super.datasetIndex, [super.newTarget])
+final class _ObservedRadar(super.chart, super.datasetIndex, [super.elements])
     extends RadarController {
   static final List<String> updates = [];
 
-  static final value = JsClass(
-    'ObservedRadar',
-    superclass: RadarController.jsClass,
-    statics: {'id': 'observedRadar'},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _ObservedRadar(chart, datasetIndex, newTarget);
-    },
+  static final value = ControllerType(
+    id: 'observedRadar',
+    defaults: RadarController.component.defaults,
+    overrides: RadarController.component.overrides,
+    defaultRoutes: RadarController.component.defaultRoutes,
+    descriptors: RadarController.component.descriptors,
+    parent: RadarController.component,
+    create: _ObservedRadar.new,
   );
 
   @override

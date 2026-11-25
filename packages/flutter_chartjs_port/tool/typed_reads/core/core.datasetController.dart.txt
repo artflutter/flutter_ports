@@ -1,24 +1,18 @@
 # The by-name reads and writes that stay (lane L1, Chart.js ADR 0054).
 # jsGet: the dataset object of the user (xAxisID, yAxisID, rAxisID, data in
 #   _dataCheck, stack), dataset.data.length in onDataPush (2), the `_stacks`
-#   of a class value or a primitive data item (stacksOf), the id of an element
-#   type value that is not a class value (_idOf), and a user object in
+#   of a primitive data item (stacksOf), and a user object in
 #   `defaults.elements` (the element step). `chart.data.datasets` in
 #   getDataset and `dataset.data` in getContext are typed reads (readOption,
 #   Chart.js ADR 0096).
 # jsGetKey: the user data items of `parsing: false` and their `_stacks`
 #   objects: parsedValueOf (one read for the key of each axis class, row
 #   adapt-axis-objects), axisStackOf, _stackValueOf and visualValuesOf.
-# stringIndex: the write `dataset.data = []` into the dataset of the user,
-#   `item._stacks = {}` into a Map item and a class value item, the read
-#   `item._stacks` of a Map item (stacksOf), and the statics
-#   datasetElementType and dataElementType of a class value (Chart.js ADR
-#   0020). getContext reads the typed `Element.$context` (Chart.js ADR 0054
-#   §9).
+# The element types are typed components (Chart.js ADR 0204). getContext
+#   reads the typed `Element.$context` (Chart.js ADR 0054 §9).
 # jsObjectKeys: Object.keys of the object data of the user, of
 #   chart.scales (user scale ids, getFirstScaleId), and of a user object in
 #   `defaults.elements`.
 jsGet 8
 jsGetKey 3
-stringIndex 2
 jsObjectKeys 3

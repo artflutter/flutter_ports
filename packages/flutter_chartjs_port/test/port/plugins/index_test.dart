@@ -46,7 +46,7 @@ final Map<String, PluginHook<Object>> _hooks = {
 
 /// The keys of the upstream plugin objects that the native plugins of
 /// Chart.js ADR 0144 have no field for: the class of the box (the classes
-/// are `Legend.jsClass`, `Title.jsClass` and `Tooltip.jsClass`), and the
+/// `Legend`, `Title` and `Tooltip`), and the
 /// `destroy` of the decimation, which no chart calls.
 const Set<String> _removedKeys = {'_element: class', 'destroy(1)'};
 
@@ -470,7 +470,7 @@ void main() {
         );
       }
       for (final name in jsObjectKeys(plugins)) {
-        final plugin = plugins[name]! as Plugin<Object?>;
+        final plugin = plugins[name]!;
         expect(
           registry.plugins.items[plugin.id],
           same(plugin),

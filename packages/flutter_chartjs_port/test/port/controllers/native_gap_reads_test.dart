@@ -150,11 +150,13 @@ class _WritingScale(super.cfg) extends LinearScale {
   static List<Object?> data = const [];
   static bool armed = false;
 
-  static final value = JsClass(
-    'GapWritingScale',
-    superclass: LinearScale.jsClass,
-    statics: {'id': 'gap-writing-scale'},
-    construct: (_, args) => _WritingScale(scaleCfgArg(args)),
+  static final value = ScaleType(
+    id: 'gap-writing-scale',
+    defaults: LinearScale.component.defaults,
+    defaultRoutes: LinearScale.component.defaultRoutes,
+    descriptors: LinearScale.component.descriptors,
+    parent: LinearScale.component,
+    create: _WritingScale.new,
   );
 
   @override

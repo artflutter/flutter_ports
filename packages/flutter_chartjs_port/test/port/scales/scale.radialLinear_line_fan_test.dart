@@ -27,11 +27,13 @@ import '../canvas/line_fan_engine.dart';
 
 /// A trivial user subclass of the scale, which keeps each ordinary call.
 final class _OrdinaryRadial(super.cfg) extends RadialLinearScale {
-  static final value = JsClass(
-    'FanOrdinaryRadial',
-    superclass: RadialLinearScale.jsClass,
-    statics: {'id': 'fanOrdinaryRadial'},
-    construct: (_, args) => _OrdinaryRadial(scaleCfgArg(args)),
+  static final ScaleType value = ScaleType(
+    id: 'fanOrdinaryRadial',
+    defaults: RadialLinearScale.defaults,
+    defaultRoutes: RadialLinearScale.defaultRoutes,
+    descriptors: RadialLinearScale.descriptors,
+    parent: RadialLinearScale.component,
+    create: _OrdinaryRadial.new,
   );
 }
 

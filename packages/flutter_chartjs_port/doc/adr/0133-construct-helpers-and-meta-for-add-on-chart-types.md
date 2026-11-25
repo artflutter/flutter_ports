@@ -1,6 +1,7 @@
 # Chart.js ADR 0133: The construct helpers, the meta and a recording context for add-on chart types
 
 - Status: accepted (2026-11-13): the tests of each package and the port checks pass.
+- Superseded in part by: [Chart.js ADR 0204](0204-typed-chart-components.md) (2026-11-25)
 - Date: 2026-11-13
 - Related: [ADR 0009](../../../../docs/adr/0009-add-on-ports.md) (add-on ports), Chart.js ADR 0020 (the class
   values), Chart.js ADR 0129 (an index is an int), Chart.js ADR 0132 (exports for add-on chart types),

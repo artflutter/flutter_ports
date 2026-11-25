@@ -4,6 +4,7 @@ library;
 
 import 'dart:ui' as native_ui;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:test/test.dart' show TestOn, addTearDown;
 
@@ -201,14 +202,11 @@ resolverTraceSetups = {
   // A user scale class: a subclass of LinearScale with its own id and one
   // more default key. The registry keeps it until the tear-down.
   'userScale': (f) {
-    final myScale = JsClass(
-      'MyScale',
-      superclass: LinearScale.jsClass,
-      statics: {
-        'id': 'myScale',
-        'defaults': <String, Object?>{'myScaleOption': 3.0},
-      },
-      construct: (newTarget, args) => LinearScale(scaleCfgArg(args)),
+    final myScale = ScaleType(
+      id: 'myScale',
+      defaults: scopeFromMap(ScaleOptionsScope(), {'myScaleOption': 3.0}),
+      parent: LinearScale.component,
+      create: LinearScale.new,
     );
     Chart.register([myScale]);
     addTearDown(() => Chart.unregister([myScale]));
@@ -216,14 +214,15 @@ resolverTraceSetups = {
   // A user element class as the data element of the bar controller: a
   // subclass of BarElement with its own id.
   'userBar': (f) {
-    final myBar = JsClass(
-      'MyBar',
-      superclass: BarElement.jsClass,
-      statics: {
-        'id': 'myBar',
-        'defaults': <String, Object?>{'borderWidth': 2.0, 'myOption': 7.0},
-      },
-      construct: (newTarget, args) => BarElement(elementCfgArg(args)),
+    final myBar = ElementType(
+      id: 'myBar',
+      defaults: scopeFromMap(GenericElementOptionsScope(), {
+        'borderWidth': 2.0,
+        'myOption': 7.0,
+      }),
+      defaultRoutes: BarElement.defaultRoutes,
+      parent: BarElement.component,
+      create: BarElement.new,
     );
     Chart.register([myBar]);
     (jsGet(jsGet(defaults, 'datasets'), 'bar')!

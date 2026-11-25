@@ -40,8 +40,8 @@ import '../support/tick_label.dart';
 // The spec forms:
 // - A property chain of the spec, for example `Chart.defaults.scales`, is a
 //   chain of `jsGet`.
-// - `typeof x === 'function'` is `isA<JsClass>()`: the class value of a
-//   scale is a `JsClass` (Chart.js ADR 0020).
+// - `typeof x === 'function'` is `isA<ScaleType>()`: the class of a scale
+//   is a typed component (Chart.js ADR 0204).
 // - `toEqual` of an options object compares its `ownKeys` with
 //   `unorderedEquals` and the `raw` of the typed cell of each key with
 //   `equals`. A routed key, for example `ticks.color`, reads its route
@@ -111,7 +111,7 @@ void main() {
     test('Should register the constructor with the registry', () {
       final constructor = Chart.registry.getScale('radialLinear');
       expect(constructor, isNot(same(undefined)));
-      expect(constructor, isA<JsClass>());
+      expect(constructor, isA<ScaleType>());
     });
 
     test('Should have the correct default config', () {

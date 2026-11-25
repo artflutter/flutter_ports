@@ -387,7 +387,7 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
   }
 
   // scale.time.js:201 `static id = 'time'`. Scale has the instance field
-  // `id`. Thus the value is only in the statics of jsClass.
+  // `id`. Thus the value is only in [component].
 
   /// scale.time.js:206 `static defaults`.
   ///
@@ -432,18 +432,12 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
       ..callback = false
       ..major = (MajorTickOptionsScope()..enabled = false));
 
-  /// scale.time.js:199 `class TimeScale extends Scale` as a value (Chart.js
-  /// ADR 0020, section 3).
-  ///
-  /// It extends [Scale.jsClass]. Its statics are `id` (`'time'`) and
-  /// [defaults], in the upstream order of declaration
-  /// (scale.time.js:201-245). Its `construct` calls `TimeScale(cfg)` with
-  /// the `cfg` of [scaleCfgArg].
-  static final JsClass jsClass = JsClass(
-    'TimeScale',
-    superclass: Scale.jsClass,
-    statics: {'id': 'time', 'defaults': defaults},
-    construct: (newTarget, args) => TimeScale(scaleCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, and the constructor.
+  static final ScaleType component = ScaleType(
+    id: 'time',
+    defaults: defaults,
+    create: TimeScale.new,
   );
 
   /// This exact built-in scale has ordinary axis and metadata reads.

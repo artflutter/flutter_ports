@@ -1,10 +1,5 @@
-# The allowlist of the close step (Chart.js ADR 0020, ADR 0054 §3): a
-# component of user code (a class value) by name: id, overrides, defaults,
-# defaultRoutes and descriptors, and a route target of its defaultRoutes
-# (core.typedRegistry.js:41-118). A native Plugin gives its typed fields
-# (Chart.js ADR 0144). The options object of an add-on (Chart.js ADR 0148)
-# reads the earlier object in its parent scope by the plugin id, because the
-# scope of a plugin id is a key of the user. jsObjectKeys 1: the
-# keys of defaultRoutes in the Object.keys order.
-jsGet 8
-jsObjectKeys 1
+# The items are typed components and plugins (Chart.js ADRs 0144 and 0204).
+# jsGet 1: the options object of an add-on (Chart.js ADR 0148) reads the
+# earlier object in its parent scope by the plugin id, because the scope of a
+# plugin id is a key of the user.
+jsGet 1

@@ -146,10 +146,9 @@ void main() {
           spec.jsKeys().forEach(spec.jsDelete);
           plain.clear();
         } else {
-          jsAssign(spec, <String, Object?>{
-            'extra': i.toDouble(),
-            'loop': true,
-          });
+          spec
+            ..['extra'] = i.toDouble()
+            ..['loop'] = true;
           plain.addAll({'extra': i.toDouble(), 'loop': true});
         }
         _expectSame(spec, plain, 'operation $i');

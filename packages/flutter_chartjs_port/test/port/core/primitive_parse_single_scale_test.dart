@@ -22,11 +22,13 @@ class _OrdinaryRadial(super.cfg) extends RadialLinearScale {
     return super.parse(raw, index);
   }
 
-  static final value = JsClass(
-    'ParseOrdinaryRadial',
-    superclass: RadialLinearScale.jsClass,
-    statics: {'id': 'parse-ordinary-radial'},
-    construct: (_, args) => _OrdinaryRadial(scaleCfgArg(args)),
+  static final ScaleType value = ScaleType(
+    id: 'parse-ordinary-radial',
+    defaults: RadialLinearScale.defaults,
+    defaultRoutes: RadialLinearScale.defaultRoutes,
+    descriptors: RadialLinearScale.descriptors,
+    parent: RadialLinearScale.component,
+    create: _OrdinaryRadial.new,
   );
 }
 

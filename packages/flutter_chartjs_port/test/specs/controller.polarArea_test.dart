@@ -135,7 +135,10 @@ void main() {
     );
 
     test('should be registered as dataset controller', () {
-      expect(Chart.registry.controllers.items['polarArea'], isA<JsClass>());
+      expect(
+        Chart.registry.controllers.items['polarArea'],
+        isA<ControllerType>(),
+      );
     });
 
     testWidgets('should be constructed', (tester) async {

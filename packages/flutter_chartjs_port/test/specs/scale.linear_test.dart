@@ -33,7 +33,7 @@ import '../support/tick_label.dart';
 //   scale is `isNotNull`: Dart null stands for JS undefined.
 // - A property chain of the spec on an option object is a chain of
 //   `jsGet`.
-// - `typeof value === 'function'` is `isA<JsClass>()` for a class value and
+// - `typeof value === 'function'` is `isA<ScaleType>()` for a component and
 //   `isA<Function>()` for a callback. `jasmine.any(Function)` matches a
 //   value whose `typeof` is `'function'`.
 // - `toBeLessThanOrEqual(x)` is `lessThanOrEqualTo(x)`.
@@ -83,7 +83,7 @@ void main() {
     test('Should register the constructor with the registry', () {
       final constructor = Chart.registry.getScale('linear');
       expect(constructor, isNot(same(undefined)));
-      expect(constructor, isA<JsClass>());
+      expect(constructor, isA<ScaleType>());
     });
 
     test('Should have the correct default config', () {

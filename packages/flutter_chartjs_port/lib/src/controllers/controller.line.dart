@@ -31,8 +31,8 @@
 ///   The draw casts the dataset
 ///   element to `types.LineElement`, and [LineController.getMaxOverflow]
 ///   casts a point to `types.PointElement` at `size`.
-/// - [LineController.jsClass] is the class as a value with the statics
-///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
+/// - [LineController.component] is the class as a typed component with the
+///   statics `id`, `defaults` and `overrides` (Chart.js ADR 0204).
 ///
 /// This library imports `core.datasetController.dart`, which imports
 /// `core.animations.dart`. Thus it is not a pure layer.
@@ -89,8 +89,8 @@ final class _PointWrites({
         final PointElementWrites point when point.typedWrites => point,
         _ => null,
       };
-      // Each data element is an Element: the cast of `_insertElements`
-      // (row adapt-component-class-role).
+      // Each data element is an Element: `ElementType.create` gives one
+      // (row adapt-typed-components).
       _access = point as PropertyAccess;
     }
   }
@@ -181,11 +181,11 @@ final class _PointWrites({
 }
 
 /// controller.line.js:6 `LineController extends DatasetController`.
-class LineController(super.chart, super.datasetIndex, [super.newTarget])
+class LineController(super.chart, super.datasetIndex, [super.elements])
     extends DatasetController {
   /// `new LineController(chart, datasetIndex)`. Upstream declares no
-  /// constructor in this class. `newTarget` is `new.target` (Chart.js ADR
-  /// 0020, section 4).
+  /// constructor in this class. [elements] are the element types of the
+  /// chart type (Chart.js ADR 0204).
   this;
 
   /// Native support for the explicit data-only lifecycle.
@@ -213,21 +213,13 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
       ..jsWrite('_index_', ScaleOptionsScope()..type = 'category')
       ..jsWrite('_value_', ScaleOptionsScope()..type = 'linear'));
 
-  /// controller.line.js:6 `class LineController extends DatasetController`
-  /// as a value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [DatasetController.jsClass]. Its statics are `id`
-  /// (`'line'`), [defaults] and [overrides], in the upstream order of
-  /// declaration (:8-33). Its `construct` calls `LineController(chart,
-  /// datasetIndex, newTarget)` with the arguments of [controllerArgs].
-  static final JsClass jsClass = JsClass(
-    'LineController',
-    superclass: DatasetController.jsClass,
-    statics: {'id': id, 'defaults': defaults, 'overrides': overrides},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return LineController(chart, datasetIndex, newTarget);
-    },
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `overrides`, and the constructor.
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: defaults,
+    overrides: overrides,
+    create: LineController.new,
   );
 
   /// controller.line.js:35 `initialize()`.
@@ -381,7 +373,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     // DIVERGES(chartjs): adapt-native-line-resolution, loop-local source plan.
     NativePointResolution? resolution;
     NativePointContextReader? contextReader;
-    JsClass? resolutionClass;
+    ElementType? resolutionClass;
     Config? resolutionConfig;
     var resolutionDataset = index;
     var resolutionIndex = 0;

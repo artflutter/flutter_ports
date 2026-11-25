@@ -4,6 +4,7 @@ library;
 
 // The spec registers classes of flutter_chartjs_port, which does not export
 // lib/src yet.
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -14,18 +15,19 @@ import '../support/plugin_defaults.dart';
 // VM, because core.controller.dart reaches the platform layer (Chart.js ADR
 // 0020, section 10).
 //
-// A class `class X extends Y {}` of the spec is a class value: `JsClass('X',
-// superclass: Y.jsClass)`. A static property that the spec writes after the
-// class is a write with `operator []=` (Chart.js ADR 0020, section 8).
-// `Chart.DatasetController`, `Chart.Scale` and `Chart.Element` are the class
-// values `DatasetController.jsClass`, `Scale.jsClass` and `Element.jsClass`.
+// A class `class X extends Chart.DatasetController {}` of the spec is a
+// typed component: a `ControllerType`, a `ScaleType` or an `ElementType`
+// (Chart.js ADR 0204). The static properties that the spec writes after the
+// class are the arguments of its constructor, and a Map of options is a
+// typed scope (`scopeFromMap`). A class with no Dart class of its own
+// constructs its base class.
 //
-// A rest argument list is one List: `Chart.register(A, B)` is
-// `Chart.register([a, b])`, and `Chart.register([A, B])` is
-// `Chart.register([[a, b]])` (Chart.js ADR 0020, section 6). `new Error(m)`
-// is a StateError with the message m. `toEqual` of a class compares by
-// identity, and `toEqual` of an object compares the keys and values: `equals`
-// of the two Maps of `_plain`.
+// A rest argument list is one Iterable: `Chart.register(A, B)` is
+// `Chart.register([a, b])`. An array or an object of items has no typed
+// form: the cases `as array` and `as object` skip with `diverges:
+// adapt-typed-components`. `new Error(m)` is a StateError with the message
+// m. `toEqual` of a class compares by identity, and `toEqual` of an object
+// compares the keys and values: `equals` of the two Maps of `_plain`.
 // `not.toBeDefined()` is the `undefined` sentinel.
 //
 // A plugin is a native `Plugin` (Chart.js ADR 0144): a class value or a Map
@@ -57,23 +59,22 @@ Matcher _throwsError(String message) => throwsA(
 void main() {
   group('Chart.registry', () {
     test('should handle an ES6 controller extension', () {
-      final customController = JsClass(
-        'CustomController',
-        superclass: DatasetController.jsClass,
+      final customController = ControllerType(
+        id: 'custom',
+        defaults: scopeFromMap(GenericDatasetOptionsScope(), {'foo': 'bar'}),
+        overrides: scopeFromMap(ChartOptionsScope(), {'bar': 'foo'}),
+        create: DatasetController.new,
       );
-      customController['id'] = 'custom';
-      customController['defaults'] = <String, Object?>{'foo': 'bar'};
-      customController['overrides'] = <String, Object?>{'bar': 'foo'};
       Chart.register([customController]);
 
-      expect(Chart.registry.getController('custom'), customController);
+      expect(Chart.registry.getController('custom'), same(customController));
       expect(
         _plain(_defaults('datasets', 'custom')),
-        equals(_plain(customController['defaults'])),
+        equals(_plain(customController.defaults)),
       );
       expect(
         _plain(_overrides('custom')),
-        equals(_plain(customController['overrides'])),
+        equals(_plain(customController.overrides)),
       );
 
       Chart.unregister([customController]);
@@ -86,15 +87,17 @@ void main() {
     });
 
     test('should handle an ES6 scale extension', () {
-      final customScale = JsClass('CustomScale', superclass: Scale.jsClass);
-      customScale['id'] = 'es6Scale';
-      customScale['defaults'] = <String, Object?>{'foo': 'bar'};
+      final customScale = ScaleType(
+        id: 'es6Scale',
+        defaults: scopeFromMap(ScaleOptionsScope(), {'foo': 'bar'}),
+        create: Scale.new,
+      );
       Chart.register([customScale]);
 
-      expect(Chart.registry.getScale('es6Scale'), customScale);
+      expect(Chart.registry.getScale('es6Scale'), same(customScale));
       expect(
         _plain(_defaults('scales', 'es6Scale')),
-        equals(_plain(customScale['defaults'])),
+        equals(_plain(customScale.defaults)),
       );
 
       Chart.unregister([customScale]);
@@ -106,18 +109,17 @@ void main() {
     });
 
     test('should handle an ES6 element extension', () {
-      final customElement = JsClass(
-        'CustomElement',
-        superclass: Element.jsClass,
+      final customElement = ElementType(
+        id: 'es6element',
+        defaults: scopeFromMap(GenericElementOptionsScope(), {'foo': 'bar'}),
+        create: Element.new,
       );
-      customElement['id'] = 'es6element';
-      customElement['defaults'] = <String, Object?>{'foo': 'bar'};
       Chart.register([customElement]);
 
-      expect(Chart.registry.getElement('es6element'), customElement);
+      expect(Chart.registry.getElement('es6element'), same(customElement));
       expect(
         _plain(_defaults('elements', 'es6element')),
-        equals(_plain(customElement['defaults'])),
+        equals(_plain(customElement.defaults)),
       );
 
       Chart.unregister([customElement]);
@@ -157,26 +159,37 @@ void main() {
     );
 
     group('Should allow registering explicitly', () {
-      final customExtension = JsClass('customExtension');
-      customExtension['id'] = 'custom';
-      customExtension['defaults'] = <String, Object?>{'prop': true};
-      // The case `as plugin` registers a native plugin with the id and the
-      // defaults of customExtension: a class value is not a plugin
-      // (Chart.js ADR 0144).
-      final customPlugin = _CustomPlugin(
-        pluginDefaults(customExtension['defaults']! as Map<String, Object?>),
+      // `customExtension` of the spec has one typed component for each
+      // registry, with its id and its defaults. The case `as plugin`
+      // registers a native plugin with them (Chart.js ADR 0144).
+      final extensionDefaults = <String, Object?>{'prop': true};
+      final customController = ControllerType(
+        id: 'custom',
+        defaults: scopeFromMap(GenericDatasetOptionsScope(), extensionDefaults),
+        create: DatasetController.new,
       );
+      final customScale = ScaleType(
+        id: 'custom',
+        defaults: scopeFromMap(ScaleOptionsScope(), extensionDefaults),
+        create: Scale.new,
+      );
+      final customElement = ElementType(
+        id: 'custom',
+        defaults: scopeFromMap(GenericElementOptionsScope(), extensionDefaults),
+        create: Element.new,
+      );
+      final customPlugin = _CustomPlugin(pluginDefaults(extensionDefaults));
 
       test('as controller', () {
-        Chart.registry.addControllers([customExtension]);
+        Chart.registry.addControllers([customController]);
 
-        expect(Chart.registry.getController('custom'), customExtension);
+        expect(Chart.registry.getController('custom'), same(customController));
         expect(
           _plain(_defaults('datasets', 'custom')),
-          equals(_plain(customExtension['defaults'])),
+          equals(extensionDefaults),
         );
 
-        Chart.registry.removeControllers([customExtension]);
+        Chart.registry.removeControllers([customController]);
 
         expect(() {
           Chart.registry.getController('custom');
@@ -185,15 +198,15 @@ void main() {
       });
 
       test('as scale', () {
-        Chart.registry.addScales([customExtension]);
+        Chart.registry.addScales([customScale]);
 
-        expect(Chart.registry.getScale('custom'), customExtension);
+        expect(Chart.registry.getScale('custom'), same(customScale));
         expect(
           _plain(_defaults('scales', 'custom')),
-          equals(_plain(customExtension['defaults'])),
+          equals(extensionDefaults),
         );
 
-        Chart.registry.removeScales([customExtension]);
+        Chart.registry.removeScales([customScale]);
 
         expect(() {
           Chart.registry.getScale('custom');
@@ -202,15 +215,15 @@ void main() {
       });
 
       test('as element', () {
-        Chart.registry.addElements([customExtension]);
+        Chart.registry.addElements([customElement]);
 
-        expect(Chart.registry.getElement('custom'), customExtension);
+        expect(Chart.registry.getElement('custom'), same(customElement));
         expect(
           _plain(_defaults('elements', 'custom')),
-          equals(_plain(customExtension['defaults'])),
+          equals(extensionDefaults),
         );
 
-        Chart.registry.removeElements([customExtension]);
+        Chart.registry.removeElements([customElement]);
 
         expect(() {
           Chart.registry.getElement('custom');
@@ -242,40 +255,66 @@ void main() {
       var afterRegisterCount = 0;
       var beforeUnregisterCount = 0;
       var afterUnregisterCount = 0;
-      final custom = JsClass('custom');
-      custom['id'] = 'custom';
-      custom['beforeRegister'] = () => beforeRegisterCount++;
-      custom['afterRegister'] = () => afterRegisterCount++;
-      custom['beforeUnregister'] = () => beforeUnregisterCount++;
-      custom['afterUnregister'] = () => afterUnregisterCount++;
+      // `custom` of the spec has one typed component for each registry, with
+      // the same hooks.
+      void beforeRegister(ChartComponent _) => beforeRegisterCount++;
+      void afterRegister(ChartComponent _) => afterRegisterCount++;
+      void beforeUnregister(ChartComponent _) => beforeUnregisterCount++;
+      void afterUnregister(ChartComponent _) => afterUnregisterCount++;
+      final controller = ControllerType(
+        id: 'custom',
+        defaults: GenericDatasetOptionsScope(),
+        beforeRegister: beforeRegister,
+        afterRegister: afterRegister,
+        beforeUnregister: beforeUnregister,
+        afterUnregister: afterUnregister,
+        create: DatasetController.new,
+      );
+      final scale = ScaleType(
+        id: 'custom',
+        defaults: ScaleOptionsScope(),
+        beforeRegister: beforeRegister,
+        afterRegister: afterRegister,
+        beforeUnregister: beforeUnregister,
+        afterUnregister: afterUnregister,
+        create: Scale.new,
+      );
+      final element = ElementType(
+        id: 'custom',
+        defaults: GenericElementOptionsScope(),
+        beforeRegister: beforeRegister,
+        afterRegister: afterRegister,
+        beforeUnregister: beforeUnregister,
+        afterUnregister: afterUnregister,
+        create: Element.new,
+      );
 
-      Chart.registry.addControllers([custom]);
+      Chart.registry.addControllers([controller]);
       expect(beforeRegisterCount, 1, reason: 'beforeRegister');
       expect(afterRegisterCount, 1, reason: 'afterRegister');
-      Chart.registry.removeControllers([custom]);
+      Chart.registry.removeControllers([controller]);
       expect(beforeUnregisterCount, 1, reason: 'beforeUnregister');
       expect(afterUnregisterCount, 1, reason: 'afterUnregister');
 
-      Chart.registry.addScales([custom]);
+      Chart.registry.addScales([scale]);
       expect(beforeRegisterCount, 2, reason: 'beforeRegister');
       expect(afterRegisterCount, 2, reason: 'afterRegister');
-      Chart.registry.removeScales([custom]);
+      Chart.registry.removeScales([scale]);
       expect(beforeUnregisterCount, 2, reason: 'beforeUnregister');
       expect(afterUnregisterCount, 2, reason: 'afterUnregister');
 
-      Chart.registry.addElements([custom]);
+      Chart.registry.addElements([element]);
       expect(beforeRegisterCount, 3, reason: 'beforeRegister');
       expect(afterRegisterCount, 3, reason: 'afterRegister');
-      Chart.registry.removeElements([custom]);
+      Chart.registry.removeElements([element]);
       expect(beforeUnregisterCount, 3, reason: 'beforeUnregister');
       expect(afterUnregisterCount, 3, reason: 'afterUnregister');
 
-      // :198-203 `Chart.register(custom)` puts the class value into the
-      // registry of the plugins, the fallback registry. A plugin is a native
-      // `Plugin` (Chart.js ADR 0144), which has no `beforeRegister`,
-      // `afterRegister`, `beforeUnregister` and `afterUnregister`, and a class
-      // value there stops a debug build. Thus the case ends after the
-      // elements.
+      // :198-203 `Chart.register(custom)` puts the class into the registry of
+      // the plugins, the fallback registry. A plugin is a native `Plugin`
+      // (Chart.js ADR 0144), which has no `beforeRegister`, `afterRegister`,
+      // `beforeUnregister` and `afterUnregister`, and a typed component goes
+      // to the registry of its type. Thus the case ends after the elements.
       // DIVERGES(chartjs): adapt-typed-plugins, no class value as a plugin.
     });
 
@@ -289,19 +328,18 @@ void main() {
         'testC': false,
       };
 
-      final testController = JsClass(
-        'testController',
-        superclass: DatasetController.jsClass,
+      final testController = ControllerType(
+        id: 'test',
+        defaults: scopeFromMap(GenericDatasetOptionsScope(), {
+          'test1': false,
+          'test2': true,
+        }),
+        overrides: scopeFromMap(ChartOptionsScope(), {
+          'testA': false,
+          'testB': true,
+        }),
+        create: DatasetController.new,
       );
-      testController['id'] = 'test';
-      testController['defaults'] = <String, Object?>{
-        'test1': false,
-        'test2': true,
-      };
-      testController['overrides'] = <String, Object?>{
-        'testA': false,
-        'testB': true,
-      };
 
       Chart.register([testController]);
       expect(
@@ -327,15 +365,21 @@ void main() {
     });
 
     group('should handle multiple items', () {
-      final test1 = JsClass('test1', superclass: DatasetController.jsClass);
-      test1['id'] = 'test1';
-      final test2 = JsClass('test2', superclass: Scale.jsClass);
-      test2['id'] = 'test2';
+      final test1 = ControllerType(
+        id: 'test1',
+        defaults: GenericDatasetOptionsScope(),
+        create: DatasetController.new,
+      );
+      final test2 = ScaleType(
+        id: 'test2',
+        defaults: ScaleOptionsScope(),
+        create: Scale.new,
+      );
 
       test('separately', () {
         Chart.register([test1, test2]);
-        expect(Chart.registry.getController('test1'), test1);
-        expect(Chart.registry.getScale('test2'), test2);
+        expect(Chart.registry.getController('test1'), same(test1));
+        expect(Chart.registry.getScale('test2'), same(test2));
         Chart.unregister([test1, test2]);
         expect(() {
           Chart.registry.getController('test1');
@@ -345,39 +389,12 @@ void main() {
         }, throwsA(anything));
       });
 
-      test('as array', () {
-        Chart.register([
-          [test1, test2],
-        ]);
-        expect(Chart.registry.getController('test1'), test1);
-        expect(Chart.registry.getScale('test2'), test2);
-        Chart.unregister([
-          [test1, test2],
-        ]);
-        expect(() {
-          Chart.registry.getController('test1');
-        }, throwsA(anything));
-        expect(() {
-          Chart.registry.getScale('test2');
-        }, throwsA(anything));
-      });
+      // `Chart.register([test1, test2])` and `Chart.register({test1,
+      // test2})` give an array and an object of items. The registry takes
+      // items only (Chart.js ADR 0204).
+      test('as array', () {}, skip: 'diverges: adapt-typed-components');
 
-      test('as object', () {
-        Chart.register([
-          <String, Object?>{'test1': test1, 'test2': test2},
-        ]);
-        expect(Chart.registry.getController('test1'), test1);
-        expect(Chart.registry.getScale('test2'), test2);
-        Chart.unregister([
-          <String, Object?>{'test1': test1, 'test2': test2},
-        ]);
-        expect(() {
-          Chart.registry.getController('test1');
-        }, throwsA(anything));
-        expect(() {
-          Chart.registry.getScale('test2');
-        }, throwsA(anything));
-      });
+      test('as object', () {}, skip: 'diverges: adapt-typed-components');
     });
   });
 }

@@ -1,9 +1,6 @@
 # Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
-# - stringIndex 4: the constructor reads the object literal `cfg` of
-#   buildOrUpdateScales (core.controller.js:357-362) or of a user construct
-#   (core.scale.js:175-183).
-# - stringIndex 3: getLabels reads `data.xLabels`, `data.yLabels` and
+# - The constructor reads the record `ScaleConfig` (Chart.js ADR 0204).
+# - jsGet 3: getLabels reads `data.xLabels`, `data.yLabels` and
 #   `data.labels` of the data object of the user (core.scale.js:359-362), a
 #   raw object of the user (Chart.js ADR 0054 §5).
 jsGet 3
-stringIndex 4

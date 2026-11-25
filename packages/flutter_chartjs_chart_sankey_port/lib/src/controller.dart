@@ -11,8 +11,8 @@
 ///   Each option that the host holds as a Dart object has that object: the
 ///   interaction mode, the easing, the padding, the bounds of a scale, the
 ///   colors and the tooltip callbacks (row `adapt-sankey-native-defaults`).
-/// - [SankeyController.jsClass] is the class as a value (Chart.js ADR
-///   0020): the registry of the host takes it.
+/// - [SankeyController.component] is the class as a `ControllerType`
+///   (Chart.js ADR 0204): the registry of the host takes it.
 library;
 
 import 'dart:math';
@@ -360,80 +360,90 @@ List<String>? _tooltipTitle(TooltipModel tooltip, List<TooltipItem> items) =>
     const [];
 
 /// controller.ts:239 `class SankeyController extends DatasetController`.
-class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
+class SankeyController(super.chart, super.datasetIndex, [super.elements])
     extends DatasetController {
   /// `new SankeyController(chart, datasetIndex)`. Upstream declares no
-  /// constructor in this class. `newTarget` is `new.target` (Chart.js ADR
-  /// 0020).
+  /// constructor in this class. [elements] are the element types of the
+  /// chart type (Chart.js ADR 0204).
   this;
 
   /// controller.ts:240 `static readonly id = 'sankey'`.
   static const String id = 'sankey';
 
   /// controller.ts:242 `static readonly descriptors`.
-  static final Map<String, Object?> descriptors = <String, Object?>{
-    '_indexable': false,
-    '_scriptable': (Object? name) =>
-        !_nodeScopedOptions.contains(name) &&
-        !_hoverColorOptions.contains(name),
-    'nodeLabels': <String, Object?>{'_indexable': false, '_scriptable': false},
-  };
+  static final DescriptorsScope descriptors = _scope(
+    DescriptorsScope(),
+    <String, Object?>{
+      '_indexable': false,
+      '_scriptable': (Object? name) =>
+          !_nodeScopedOptions.contains(name) &&
+          !_hoverColorOptions.contains(name),
+      'nodeLabels': <String, Object?>{
+        '_indexable': false,
+        '_scriptable': false,
+      },
+    },
+  );
 
   /// controller.ts:251 `static readonly defaults`.
   // DIVERGES(sankey): adapt-sankey-native-defaults, the objects of the host.
   // DIVERGES(sankey): adapt-sankey-animation-type, no animation `type`.
-  static final Map<String, Object?> defaults = <String, Object?>{
-    'animations': <String, Object?>{
-      'colors': <String, Object?>{
-        'properties': <String>['colorFrom', 'colorTo'],
+  static final GenericDatasetOptionsScope defaults = _scope(
+    GenericDatasetOptionsScope(),
+    <String, Object?>{
+      'animations': <String, Object?>{
+        'colors': <String, Object?>{
+          'properties': <String>['colorFrom', 'colorTo'],
+        },
+        'numbers': <String, Object?>{
+          'properties': <String>['x', 'y', 'x2', 'y2', 'height', 'width'],
+        },
+        'progress': <String, Object?>{
+          'delay': _progressDelay,
+          'duration': _progressDuration,
+          'easing': Curves.linear,
+        },
       },
-      'numbers': <String, Object?>{
-        'properties': <String>['x', 'y', 'x2', 'y2', 'height', 'width'],
-      },
-      'progress': <String, Object?>{
-        'delay': _progressDelay,
-        'duration': _progressDuration,
-        'easing': Curves.linear,
-      },
-    },
-    'borderColor': _black,
-    'borderWidth': 1.0,
-    'color': _black,
-    'dataElementType': 'flow',
-    'modeX': SankeyModeX.edge,
-    'nodeMinSize': 0.0,
-    'nodePadding': 10.0,
-    'nodePaddingMode': SankeyNodePaddingMode.auto,
-    'nodeWidth': 10.0,
-    'orientation': SankeyOrientation.horizontal,
-    'transitions': <String, Object?>{
-      'hide': <String, Object?>{
-        'animations': <String, Object?>{
-          'colors': <String, Object?>{
-            'properties': <String>['colorFrom', 'colorTo'],
-            'to': _transparent,
+      'borderColor': _black,
+      'borderWidth': 1.0,
+      'color': _black,
+      'dataElementType': 'flow',
+      'modeX': SankeyModeX.edge,
+      'nodeMinSize': 0.0,
+      'nodePadding': 10.0,
+      'nodePaddingMode': SankeyNodePaddingMode.auto,
+      'nodeWidth': 10.0,
+      'orientation': SankeyOrientation.horizontal,
+      'transitions': <String, Object?>{
+        'hide': <String, Object?>{
+          'animations': <String, Object?>{
+            'colors': <String, Object?>{
+              'properties': <String>['colorFrom', 'colorTo'],
+              'to': _transparent,
+            },
+          },
+        },
+        'resize': <String, Object?>{
+          'animations': <String, Object?>{
+            'progress': <String, Object?>{'delay': 0.0, 'duration': 0.0},
+          },
+        },
+        'show': <String, Object?>{
+          'animations': <String, Object?>{
+            'colors': <String, Object?>{
+              'from': _transparent,
+              'properties': <String>['colorFrom', 'colorTo'],
+            },
           },
         },
       },
-      'resize': <String, Object?>{
-        'animations': <String, Object?>{
-          'progress': <String, Object?>{'delay': 0.0, 'duration': 0.0},
-        },
-      },
-      'show': <String, Object?>{
-        'animations': <String, Object?>{
-          'colors': <String, Object?>{
-            'from': _transparent,
-            'properties': <String>['colorFrom', 'colorTo'],
-          },
-        },
-      },
     },
-  };
+  );
 
   /// controller.ts:313 `static readonly overrides`.
   // DIVERGES(sankey): adapt-sankey-native-defaults, the objects of the host.
-  static final Map<String, Object?> overrides = <String, Object?>{
+  static final ChartOptionsScope
+  overrides = _scope(ChartOptionsScope(), <String, Object?>{
     'datasets': <String, Object?>{
       'clip': ChartClip.none,
       'parsing': <String, Object?>{'flow': 'flow', 'from': 'from', 'to': 'to'},
@@ -468,28 +478,16 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
         'type': 'linear',
       },
     },
-  };
+  });
 
-  /// controller.ts:239 `class SankeyController extends DatasetController`
-  /// as a value (Chart.js ADR 0020).
-  ///
-  /// It extends [DatasetController.jsClass]. Its statics are [id],
-  /// [descriptors], [defaults] and [overrides], in the upstream order of
-  /// declaration. Its `construct` calls [SankeyController.new] with the
-  /// chart and the dataset index of the arguments.
-  static final JsClass jsClass = JsClass(
-    'SankeyController',
-    superclass: DatasetController.jsClass,
-    statics: {
-      'id': id,
-      'descriptors': descriptors,
-      'defaults': defaults,
-      'overrides': overrides,
-    },
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return SankeyController(chart, datasetIndex, newTarget);
-    },
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `overrides`, `descriptors`, and the constructor.
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: defaults,
+    overrides: overrides,
+    descriptors: descriptors,
+    create: SankeyController.new,
   );
 
   /// controller.ts:365 `declare options: SankeyControllerDatasetOptions`:
@@ -869,4 +867,12 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
 
     _drawLabels();
   }
+}
+
+/// Writes each entry of [values] into [scope] by name and gives [scope]:
+/// the static objects of upstream as typed scopes, with the keys of the
+/// sankey options as extras (Chart.js ADR 0204).
+T _scope<T extends OptionScope>(T scope, Map<String, Object?> values) {
+  values.forEach(scope.jsWrite);
+  return scope;
 }

@@ -56,11 +56,13 @@ class _ReadList() extends ListBase<Object?> {
 
 class _ObservedCategory(super.cfg) extends CategoryScale {
   int matches = 0;
-  static final value = JsClass(
-    'ObservedBarCategory',
-    superclass: CategoryScale.jsClass,
-    statics: {'id': 'observed-bar-category'},
-    construct: (_, args) => _ObservedCategory(scaleCfgArg(args)),
+  static final value = ScaleType(
+    id: 'observed-bar-category',
+    defaults: CategoryScale.component.defaults,
+    defaultRoutes: CategoryScale.component.defaultRoutes,
+    descriptors: CategoryScale.component.descriptors,
+    parent: CategoryScale.component,
+    create: _ObservedCategory.new,
   );
   @override
   List<ChartMeta> getMatchingVisibleMetas([String? type]) {
@@ -69,17 +71,17 @@ class _ObservedCategory(super.cfg) extends CategoryScale {
   }
 }
 
-class _ValuesController(super.chart, super.datasetIndex, super.newTarget)
+class _ValuesController(super.chart, super.datasetIndex, super.elements)
     extends BarController {
   static List<double> values = [];
-  static final value = JsClass(
-    'BarValuesProbe',
-    superclass: BarController.jsClass,
-    statics: {'id': 'bar-values-probe'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _ValuesController(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'bar-values-probe',
+    defaults: BarController.component.defaults,
+    overrides: BarController.component.overrides,
+    defaultRoutes: BarController.component.defaultRoutes,
+    descriptors: BarController.component.descriptors,
+    parent: BarController.component,
+    create: _ValuesController.new,
   );
   @override
   List<double> getAllParsedValues(IScale scale) => values;
@@ -178,10 +180,10 @@ Object _observe(Chart chart, int datasets) => [
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
-    BarController.jsClass,
-    BarElement.jsClass,
-    CategoryScale.jsClass,
-    LinearScale.jsClass,
+    BarController.component,
+    BarElement.component,
+    CategoryScale.component,
+    LinearScale.component,
   ]);
 
   for (final horizontal in [false, true]) {

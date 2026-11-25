@@ -63,17 +63,14 @@ void main() {
 
     test('each constant is the id of a registered controller', () {
       for (final kind in kinds) {
-        expect((registry.getController(kind.name) as JsClass)['id'], kind.name);
+        expect(registry.getController(kind.name).id, kind.name);
       }
     });
 
     test('the constants are the 8 controllers of Chart.js', () {
       expect(
         [for (final kind in kinds) kind.name]..sort(),
-        [
-          for (final controller in controllers.values)
-            (controller! as JsClass)['id']! as String,
-        ]..sort(),
+        [for (final controller in controllers.values) controller.id]..sort(),
       );
     });
 

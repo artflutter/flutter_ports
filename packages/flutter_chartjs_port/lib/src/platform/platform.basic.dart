@@ -24,18 +24,6 @@ class BasicPlatform() extends BasePlatform {
   /// platform.basic.js:13 the implicit constructor.
   this;
 
-  /// platform.basic.js:13 `class BasicPlatform` as a value (Chart.js ADR
-  /// 0020, section 3).
-  ///
-  /// It extends [BasePlatform.jsClass]. It has no statics. A configuration
-  /// gives it as `config.platform`, which `core.controller.js:136`
-  /// constructs with `new` (`core.controller.tests.js:2331-2337`).
-  static final JsClass jsClass = JsClass(
-    'BasicPlatform',
-    superclass: BasePlatform.jsClass,
-    construct: (newTarget, args) => BasicPlatform(),
-  );
-
   /// platform.basic.js:14 `acquireContext(item)`.
   ///
   /// To prevent canvas fingerprinting, some add-ons undefine the getContext

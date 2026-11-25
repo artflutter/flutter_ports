@@ -14,7 +14,7 @@ import '../support/tick_label.dart';
 // `Chart.registry` and `Chart.defaults` of core.controller.dart. The
 // harness registers the built-in scales before `main()`
 // (`harness-register-builtins`). Thus `registry.getScale('category')` gives
-// the class value `CategoryScale.jsClass`.
+// the component `CategoryScale.component`.
 //
 // Each chart case of the spec makes a line or a bar chart. Thus it needs a
 // controller of phase 7, and it is a `testWidgets` case that calls
@@ -31,7 +31,7 @@ import '../support/tick_label.dart';
 // - `chart.scales.x` is `chart.scales['x']!`.
 // - A property chain of the spec, for example
 //   `Chart.defaults.scales.category`, is a chain of `jsGet`.
-// - `typeof Constructor === 'function'` is `isA<JsClass>()`.
+// - `typeof Constructor === 'function'` is `isA<ScaleType>()`.
 //   `not.toBe(undefined)` is `isNot(same(undefined))`.
 // - `toEqual` of an options object compares its `ownKeys` and the `raw` of
 //   the typed cell of each key. Jasmine compares functions by identity. The
@@ -72,7 +72,7 @@ void main() {
     test('Should register the constructor with the registry', () {
       final constructor = Chart.registry.getScale('category');
       expect(constructor, isNot(same(undefined)));
-      expect(constructor, isA<JsClass>());
+      expect(constructor, isA<ScaleType>());
     });
 
     test('Should have the correct default config', () {

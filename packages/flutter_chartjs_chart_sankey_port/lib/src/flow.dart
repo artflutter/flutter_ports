@@ -9,8 +9,8 @@
 /// - [Flow] follows the element protocol of the host (Chart.js ADR 0017):
 ///   each property has a typed member and the access by name, which the
 ///   animations and `Object.assign` use.
-/// - [Flow.jsClass] is the class as a value (Chart.js ADR 0020): the
-///   registry of the host takes it.
+/// - [Flow.component] is the class as an `ElementType` (Chart.js ADR
+///   0204): the registry of the host takes it.
 library;
 
 import 'dart:math' as math;
@@ -272,42 +272,47 @@ class Flow([Map<String, Object?>? cfg])
   static const String id = 'flow';
 
   /// flow.ts:135 `static override readonly defaults`.
-  static final Map<String, Object?> defaults = <String, Object?>{
-    'alpha': 0.5,
-    'colorFrom': const ChartPaint.solid(Color(0xFFFF0000)),
-    'colorMode': SankeyColorMode.gradient,
-    'colorTo': const ChartPaint.solid(Color(0xFF008000)),
-    'flowColor': null,
-    'flowLabels': <String, Object?>{
-      'borderRadius': 0.0,
-      'color': _black,
-      'display': false,
-      'padding': 4.0,
-      'position': SankeyLabelPosition.center,
+  static final GenericElementOptionsScope defaults = _scope(
+    GenericElementOptionsScope(),
+    <String, Object?>{
+      'alpha': 0.5,
+      'colorFrom': const ChartPaint.solid(Color(0xFFFF0000)),
+      'colorMode': SankeyColorMode.gradient,
+      'colorTo': const ChartPaint.solid(Color(0xFF008000)),
+      'flowColor': null,
+      'flowLabels': <String, Object?>{
+        'borderRadius': 0.0,
+        'color': _black,
+        'display': false,
+        'padding': 4.0,
+        'position': SankeyLabelPosition.center,
+      },
+      // The resolver of the host gives the options of the flow as the second
+      // argument: the function reads its one key by name, as upstream.
+      'hoverColorFrom': (Object? ctx, Object? options) =>
+          _getHoverColorOption(jsGet(options, 'colorFrom')),
+      'hoverColorTo': (Object? ctx, Object? options) =>
+          _getHoverColorOption(jsGet(options, 'colorTo')),
+      'orientation': SankeyOrientation.horizontal,
     },
-    // The resolver of the host gives the options of the flow as the second
-    // argument: the function reads its one key by name, as upstream.
-    'hoverColorFrom': (Object? ctx, Object? options) =>
-        _getHoverColorOption(jsGet(options, 'colorFrom')),
-    'hoverColorTo': (Object? ctx, Object? options) =>
-        _getHoverColorOption(jsGet(options, 'colorTo')),
-    'orientation': SankeyOrientation.horizontal,
-  };
+  );
 
   /// flow.ts:153 `static readonly descriptors`.
-  static final Map<String, Object?> descriptors = <String, Object?>{
-    '_scriptable': true,
-    'flowLabels': <String, Object?>{'_scriptable': true},
-  };
+  static final DescriptorsScope descriptors = _scope(
+    DescriptorsScope(),
+    <String, Object?>{
+      '_scriptable': true,
+      'flowLabels': <String, Object?>{'_scriptable': true},
+    },
+  );
 
-  /// flow.ts:133 `class Flow extends Element` as a value (Chart.js ADR
-  /// 0020): its statics are [id], [defaults] and [descriptors], and its
-  /// `construct` calls [Flow.new] with the `cfg` of its arguments.
-  static final JsClass jsClass = JsClass(
-    'Flow',
-    superclass: Element.jsClass,
-    statics: {'id': id, 'defaults': defaults, 'descriptors': descriptors},
-    construct: (newTarget, args) => Flow(elementCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `descriptors`, and the constructor.
+  static final ElementType component = ElementType(
+    id: id,
+    defaults: defaults,
+    descriptors: descriptors,
+    create: Flow.new,
   );
 
   static const int _flowBit = 1;
@@ -607,4 +612,12 @@ class Flow([Map<String, Object?>? cfg])
     if (axis is XAxis) return vertical ? width / 2 : 0.0;
     return vertical ? 0.0 : height / 2;
   }
+}
+
+/// Writes each entry of [values] into [scope] by name and gives [scope]:
+/// the static objects of upstream as typed scopes, with the keys of the
+/// sankey options as extras (Chart.js ADR 0204).
+T _scope<T extends OptionScope>(T scope, Map<String, Object?> values) {
+  values.forEach(scope.jsWrite);
+  return scope;
 }

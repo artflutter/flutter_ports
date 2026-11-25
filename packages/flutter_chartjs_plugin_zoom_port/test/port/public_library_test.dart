@@ -74,12 +74,12 @@ final List<Object> _values = [
 ];
 
 /// The components of a line chart on the default scales, and the plugin.
-final List<Object?> _components = [
-  LineController.jsClass,
-  LineElement.jsClass,
-  PointElement.jsClass,
-  CategoryScale.jsClass,
-  LinearScale.jsClass,
+final List<IChartComponent> _components = [
+  LineController.component,
+  LineElement.component,
+  PointElement.component,
+  CategoryScale.component,
+  LinearScale.component,
   zoomPlugin,
 ];
 

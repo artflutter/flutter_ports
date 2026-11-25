@@ -344,45 +344,45 @@ final class _ObservedList(final List<Object?> values)
 }
 
 /// A trivial user subclass of the pie controller.
-final class _PieChild(super.chart, super.datasetIndex, [super.newTarget])
+final class _PieChild(super.chart, super.datasetIndex, [super.elements])
     extends PieController;
 
-final JsClass _pieChild = JsClass(
-  'PieChild',
-  superclass: PieController.jsClass,
-  statics: {'id': 'pieChild'},
-  construct: (newTarget, args) {
-    final (:chart, :datasetIndex) = controllerArgs(args);
-    return _PieChild(chart, datasetIndex, newTarget);
-  },
+final ControllerType _pieChild = ControllerType(
+  id: 'pieChild',
+  defaults: PieController.component.defaults,
+  overrides: PieController.component.overrides,
+  defaultRoutes: PieController.component.defaultRoutes,
+  descriptors: PieController.component.descriptors,
+  parent: PieController.component,
+  create: _PieChild.new,
 );
 
 /// A trivial user subclass of the doughnut controller.
-final class _DoughnutChild(super.chart, super.datasetIndex, [super.newTarget])
+final class _DoughnutChild(super.chart, super.datasetIndex, [super.elements])
     extends DoughnutController;
 
-final JsClass _doughnutChild = JsClass(
-  'DoughnutChild',
-  superclass: DoughnutController.jsClass,
-  statics: {'id': 'doughnutChild'},
-  construct: (newTarget, args) {
-    final (:chart, :datasetIndex) = controllerArgs(args);
-    return _DoughnutChild(chart, datasetIndex, newTarget);
-  },
+final ControllerType _doughnutChild = ControllerType(
+  id: 'doughnutChild',
+  defaults: DoughnutController.component.defaults,
+  overrides: DoughnutController.component.overrides,
+  defaultRoutes: DoughnutController.component.defaultRoutes,
+  descriptors: DoughnutController.component.descriptors,
+  parent: DoughnutController.component,
+  create: _DoughnutChild.new,
 );
 
 /// A trivial user subclass of the polar area controller.
-final class _PolarChild(super.chart, super.datasetIndex, [super.newTarget])
+final class _PolarChild(super.chart, super.datasetIndex, [super.elements])
     extends PolarAreaController;
 
-final JsClass _polarChild = JsClass(
-  'PolarChild',
-  superclass: PolarAreaController.jsClass,
-  statics: {'id': 'polarChild'},
-  construct: (newTarget, args) {
-    final (:chart, :datasetIndex) = controllerArgs(args);
-    return _PolarChild(chart, datasetIndex, newTarget);
-  },
+final ControllerType _polarChild = ControllerType(
+  id: 'polarChild',
+  defaults: PolarAreaController.component.defaults,
+  overrides: PolarAreaController.component.overrides,
+  defaultRoutes: PolarAreaController.component.defaultRoutes,
+  descriptors: PolarAreaController.component.descriptors,
+  parent: PolarAreaController.component,
+  create: _PolarChild.new,
 );
 
 /// A trivial user subclass of the chart.

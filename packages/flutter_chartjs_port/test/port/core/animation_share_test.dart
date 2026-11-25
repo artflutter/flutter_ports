@@ -368,8 +368,8 @@ void main() {
     });
 
     testWidgets('a subclass of the controller', (tester) async {
-      Chart.register([_SubBarController.jsClass]);
-      addTearDown(() => Chart.unregister([_SubBarController.jsClass]));
+      Chart.register([_SubBarController.component]);
+      addTearDown(() => Chart.unregister([_SubBarController.component]));
       final run = await _run(
         (log, {required twin}) =>
             _bar()(log, twin: twin)..['type'] = _SubBarController.id,
@@ -474,23 +474,16 @@ void main() {
 }
 
 /// A subclass of [BarController] with its own id.
-final class _SubBarController(
-  super.chart,
-  super.datasetIndex, [
-  super.newTarget,
-]) extends BarController {
+final class _SubBarController(super.chart, super.datasetIndex, [super.elements])
+    extends BarController {
   static const String id = 'subbar';
 
-  static final JsClass jsClass = JsClass(
-    'SubBarController',
-    superclass: BarController.jsClass,
-    statics: {
-      'id': id,
-      'defaults': BarController.defaults,
-      'overrides': BarController.overrides,
-    },
-    construct: (newTarget, args) =>
-        _SubBarController(args[0]! as IChart, args[1]! as int, newTarget),
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: BarController.defaults,
+    overrides: BarController.overrides,
+    parent: BarController.component,
+    create: _SubBarController.new,
   );
 }
 

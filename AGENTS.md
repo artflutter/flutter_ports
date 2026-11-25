@@ -958,8 +958,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - A string union of an option is an enum (`SankeyOrientation`, `SankeyLabelPosition`,
       `SankeyColorMode`, `SankeyModeX`, `SankeyNodePaddingMode`, `SankeySize`, row
       `adapt-sankey-option-enums`); a name in a raw config stops a debug build. A color is a
-      `ChartPaint` or a `Color` (row `adapt-sankey-native-colors`). The static `defaults` and
-      `overrides` are Maps with the Dart objects of the host options (row
+      `ChartPaint` or a `Color` (row `adapt-sankey-native-colors`). The static `defaults`,
+      `descriptors` and `overrides` are typed scopes of the host with the sankey keys as extras
+      (Chart.js ADR 0204); their values are the Dart objects of the host options (row
       `adapt-sankey-native-defaults`).
     - `SankeyNode` has `inFlow` and `outFlow` for the upstream `in` and `out` (row
       `adapt-sankey-node-fields`). A data item is a `SankeyDataPoint`, or a Map that the keys of
@@ -1327,15 +1328,16 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   example an element (Chart.js ADR 0039 §10). `clone` and `mergeIf` keep an element as a leaf.
   Ported code tests for the sentinel with `identical(value, undefined)`. The runtime also has these
   parts:
-  - `JsClass` of `js_class.dart`: a JS class as a value (Chart.js ADR 0020). A read of a
-    static property follows the superclass chain. `jsConstruct` is `new target(...args)`.
-    `jsAssign` is `Object.assign` on a class value or a Map.
+  - The runtime has no class values (Chart.js ADR 0204). A component class of the registry is a
+    typed component: a `ControllerType`, a `ScaleType` or an `ElementType` with the statics and
+    a typed `create`, the `new` of the class. `IChartComponent` is what a registry reads from a
+    component or a plugin.
   - The runtime has no JS function call (Chart.js ADR 0173). An option function has a fixed Dart
     type, with no `this` and no JS arity (`lib/src/types/option_functions.dart`): a scriptable
     option is `(context) => value`, `(context, options) => value` or `() => value`, with an
     `Object?` context; a descriptor `_scriptable` or `_indexable` is `(name) => bool`; a function
     `_fallback` is `(name, value) => fallback`. Another type stops a debug build. `isFunction` of
-    `helpers.core` (`typeof value === 'function'`) is true for a Dart function and a class value.
+    `helpers.core` (`typeof value === 'function'`) is true for a Dart function.
     `each<T, K>` takes `(value, key)`, and `callback` calls with the exact arguments. A date adapter
     member and a registry hook take the adapter or the component as their first parameter, in
     place of `this`. A test of `typeof` is a Dart type test. A spec port that gives a function more
@@ -1598,7 +1600,7 @@ sankey ADRs are proposed. The doc paths are relative to
   `scaleLabelOf(scale, value)` (Chart.js ADR 0186).
 - A scale reference test in `test/port/scales/` builds each chart of its generator with
   `acquireChart` in a `testWidgets` case and compares it through `scale_chart_harness.dart`. Its
-  `main()` registers the test controller as a class value. The draw calls have the element draws:
+  `main()` registers the test controller as a `ControllerType`. The draw calls have the element draws:
   `drawCalls` puts the recording context in `chart.ctx`, in each `scale.ctx`, in the writable
   `DatasetController.ctx` (Chart.js ADR 0030), in the `ctx` of each `Title` box and in the `ctx` of
   the `Legend` box. A `Path2D` argument records as `{path, calls}`
@@ -1625,7 +1627,7 @@ sankey ADRs are proposed. The doc paths are relative to
   case turns off each other plugin (`unitPlugins` of `plugin_chart_common.mjs`), and a full case
   runs the plugins with their defaults (Chart.js ADR 0041 §3 and §4).
 - The test files of a controller unit register the controller in `main()`
-  (`Chart.register([<Name>Controller.jsClass])`) until the integration agent of its wave adds the
+  (`Chart.register([<Name>Controller.component])`) until the integration agent of its wave adds the
   controller to the namespace `controllers` (Chart.js ADR 0030 §3 item 4). Then
   `flutter_test_config.dart` registers it, and the line goes. A test-only controller subclass
   with its own id (the polar area subclass with option sharing) registers in the `setUp` of its

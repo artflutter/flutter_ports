@@ -221,39 +221,17 @@ void main() {
       expect(Element.defaultRoutes, _isUndefined);
     });
 
-    test('jsClass is PointElement as a value', () {
-      // From element.point.ts in Node.js v24.12.0 on x64: the own statics of
-      // PointElement are id, defaults and defaultRoutes, and its superclass is
-      // Element. 'descriptors' in PointElement is false. typeof PointElement is
-      // 'function'.
-      final c = PointElement.jsClass;
-      expect(c.name, 'PointElement');
-      expect(c.superclass, same(Element.jsClass));
+    test('component is PointElement as a typed component', () {
+      // The statics of element.point.ts are the typed fields of the component
+      // (Chart.js ADR 0204). It has no parent, and create is the
+      // constructor.
+      final c = PointElement.component;
       expect(c.id, 'point');
-      expect(c['id'], PointElement.id);
-      expect(c['defaults'], same(PointElement.defaults));
-      expect(c['defaultRoutes'], same(PointElement.defaultRoutes));
-      expect(c.has('descriptors'), isFalse);
-      expect(c.isSubclassOf(Element.jsClass), isTrue);
-      expect(c.isSubclassOf(c), isFalse);
-    });
-
-    test('jsConstruct of jsClass makes a PointElement with the cfg', () {
-      // new PointElement({x: 2}) and new PointElement() (Chart.js ADR 0020,
-      // section 3).
-      final element = jsConstruct(PointElement.jsClass, [
-        <String, Object?>{'x': 2},
-      ]);
-      expect(element, isA<PointElement>());
-      expect((element as PointElement)['x'], 2.0);
-      expect(jsConstruct(PointElement.jsClass, const []), isA<PointElement>());
-      // class My extends PointElement { static id = 'my'; }: the subclass value
-      // constructs a PointElement and reads the statics of PointElement.
-      final my = JsClass('My', superclass: PointElement.jsClass)..['id'] = 'my';
-      expect(jsConstruct(my, const []), isA<PointElement>());
-      expect(my.id, 'my');
-      expect(PointElement.jsClass.id, 'point');
-      expect(my['defaults'], same(PointElement.defaults));
+      expect(c.defaults, same(PointElement.defaults));
+      expect(c.defaultRoutes, same(PointElement.defaultRoutes));
+      expect(c.descriptors, isNull);
+      expect(c.parent, isNull);
+      expect(c.create(), isA<PointElement>());
     });
   });
 

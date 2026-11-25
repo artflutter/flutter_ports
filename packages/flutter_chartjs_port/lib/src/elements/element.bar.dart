@@ -387,23 +387,18 @@ class BarElement([AnyObject? cfg])
     ..pointStyleCell = optUndefined;
 
   /// element.bar.js:159 `static defaultRoutes`, in the upstream key order.
-  static final AnyObject defaultRoutes = {
+  static final Map<String, String> defaultRoutes = {
     'backgroundColor': 'backgroundColor',
     'borderColor': 'borderColor',
   };
 
-  /// element.bar.js:141 `class BarElement extends Element` as a value (Chart.js
-  /// ADR 0020, section 3).
-  ///
-  /// Its statics are [id], [defaults] and [defaultRoutes], in the upstream
-  /// order of declaration (element.bar.js:143-162). They are the objects of the
-  /// static fields. Its `construct` calls `BarElement(cfg)` with the `cfg` of
-  /// [elementCfgArg].
-  static final JsClass jsClass = JsClass(
-    'BarElement',
-    superclass: Element.jsClass,
-    statics: {'id': id, 'defaults': defaults, 'defaultRoutes': defaultRoutes},
-    construct: (newTarget, args) => BarElement(elementCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `defaultRoutes`, and the constructor.
+  static final ElementType component = ElementType(
+    id: id,
+    defaults: defaults,
+    defaultRoutes: defaultRoutes,
+    create: BarElement.new,
   );
 
   /// The value of [horizontal]. Dart `null` stands for JS `undefined`.

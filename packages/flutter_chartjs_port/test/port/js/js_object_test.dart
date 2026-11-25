@@ -154,22 +154,6 @@ void main() {
       expect(jsGet('abc', 'size'), same(undefined));
     });
 
-    test('reads the static properties of a class value', () {
-      // class A { static id = 'a'; static n = null; } class B extends A {}
-      // B.id is 'a', B.n is null and B.x is undefined.
-      final a = JsClass('A', statics: {'id': 'a', 'n': null});
-      final b = JsClass('B', superclass: a);
-      expect(jsGet(b, 'id'), 'a');
-      expect(jsGet(b, 'n'), isNull);
-      expect(jsGet(b, 'x'), same(undefined));
-      // ({1: 'one'})[1] reads the key '1' of a class value too.
-      b['1'] = 'one';
-      expect(jsGet(b, 1.0), 'one');
-      // A.name is 'A' in JavaScript. The function properties are not static
-      // properties of a class value (Chart.js ADR 0020, section 1).
-      expect(jsGet(a, 'name'), same(undefined));
-    });
-
     test('gives undefined for other values', () {
       // (5).x and true.x are undefined. (() => 0).length is 0 in
       // JavaScript, and undefined in the port.
@@ -254,9 +238,6 @@ void main() {
       // (5).x and true.x are undefined.
       expectKey(5.0, 'x', undefined);
       expectKey(true, 'x', undefined);
-      // class A { static id = 'a'; } class B extends A {}: B.id is 'a'.
-      final b = JsClass('B', superclass: JsClass('A', statics: {'id': 'a'}));
-      expectKey(b, 'id', 'a');
     });
 
     test('throws for null and undefined, as jsGet does', () {

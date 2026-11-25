@@ -17,109 +17,109 @@ const blue = ui.Color(0xff0000ff);
 const green = ui.Color(0xff00ff00);
 
 // Trivial user subclasses: the exact-class guards fail, with the same results.
-class _RefScatter(super.chart, super.datasetIndex, [super.newTarget])
+class _RefScatter(super.chart, super.datasetIndex, [super.elements])
     extends ScatterController {
-  static final value = JsClass(
-    'RefContextScatter',
-    superclass: ScatterController.jsClass,
-    statics: {'id': 'ref-scatter'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefScatter(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'ref-scatter',
+    defaults: ScatterController.component.defaults,
+    overrides: ScatterController.component.overrides,
+    defaultRoutes: ScatterController.component.defaultRoutes,
+    descriptors: ScatterController.component.descriptors,
+    parent: ScatterController.component,
+    create: _RefScatter.new,
   );
 }
 
-class _RefBubble(super.chart, super.datasetIndex, [super.newTarget])
+class _RefBubble(super.chart, super.datasetIndex, [super.elements])
     extends BubbleController {
-  static final value = JsClass(
-    'RefContextBubble',
-    superclass: BubbleController.jsClass,
-    statics: {'id': 'ref-bubble'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefBubble(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'ref-bubble',
+    defaults: BubbleController.component.defaults,
+    overrides: BubbleController.component.overrides,
+    defaultRoutes: BubbleController.component.defaultRoutes,
+    descriptors: BubbleController.component.descriptors,
+    parent: BubbleController.component,
+    create: _RefBubble.new,
   );
 }
 
-class _RefLine(super.chart, super.datasetIndex, [super.newTarget])
+class _RefLine(super.chart, super.datasetIndex, [super.elements])
     extends LineController {
-  static final value = JsClass(
-    'RefContextLine',
-    superclass: LineController.jsClass,
-    statics: {'id': 'ref-line'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefLine(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'ref-line',
+    defaults: LineController.component.defaults,
+    overrides: LineController.component.overrides,
+    defaultRoutes: LineController.component.defaultRoutes,
+    descriptors: LineController.component.descriptors,
+    parent: LineController.component,
+    create: _RefLine.new,
   );
 }
 
-class _RefBar(super.chart, super.datasetIndex, [super.newTarget])
+class _RefBar(super.chart, super.datasetIndex, [super.elements])
     extends BarController {
-  static final value = JsClass(
-    'RefContextBar',
-    superclass: BarController.jsClass,
-    statics: {'id': 'ref-bar'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefBar(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'ref-bar',
+    defaults: BarController.component.defaults,
+    overrides: BarController.component.overrides,
+    defaultRoutes: BarController.component.defaultRoutes,
+    descriptors: BarController.component.descriptors,
+    parent: BarController.component,
+    create: _RefBar.new,
   );
 }
 
-class _RefDoughnut(super.chart, super.datasetIndex, [super.newTarget])
+class _RefDoughnut(super.chart, super.datasetIndex, [super.elements])
     extends DoughnutController {
-  static final value = JsClass(
-    'RefContextDoughnut',
-    superclass: DoughnutController.jsClass,
-    statics: {'id': 'ref-doughnut'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefDoughnut(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'ref-doughnut',
+    defaults: DoughnutController.component.defaults,
+    overrides: DoughnutController.component.overrides,
+    defaultRoutes: DoughnutController.component.defaultRoutes,
+    descriptors: DoughnutController.component.descriptors,
+    parent: DoughnutController.component,
+    create: _RefDoughnut.new,
   );
 }
 
-class _RefPie(super.chart, super.datasetIndex, [super.newTarget])
+class _RefPie(super.chart, super.datasetIndex, [super.elements])
     extends PieController {
-  static final value = JsClass(
-    'RefContextPie',
-    superclass: PieController.jsClass,
-    statics: {'id': 'ref-pie'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefPie(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'ref-pie',
+    defaults: PieController.component.defaults,
+    overrides: PieController.component.overrides,
+    defaultRoutes: PieController.component.defaultRoutes,
+    descriptors: PieController.component.descriptors,
+    parent: PieController.component,
+    create: _RefPie.new,
   );
 }
 
-class _RefPolar(super.chart, super.datasetIndex, [super.newTarget])
+class _RefPolar(super.chart, super.datasetIndex, [super.elements])
     extends PolarAreaController {
-  static final value = JsClass(
-    'RefContextPolar',
-    superclass: PolarAreaController.jsClass,
-    statics: {'id': 'ref-polarArea'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefPolar(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'ref-polarArea',
+    defaults: PolarAreaController.component.defaults,
+    overrides: PolarAreaController.component.overrides,
+    defaultRoutes: PolarAreaController.component.defaultRoutes,
+    descriptors: PolarAreaController.component.descriptors,
+    parent: PolarAreaController.component,
+    create: _RefPolar.new,
   );
 }
 
 /// A subclass with its own context reader: each ordinary refresh reaches it.
-class _ReadingScatter(super.chart, super.datasetIndex, [super.newTarget])
+class _ReadingScatter(super.chart, super.datasetIndex, [super.elements])
     extends ScatterController {
   static int reads = 0;
-  static final value = JsClass(
-    'ReadingContextScatter',
-    superclass: ScatterController.jsClass,
-    statics: {'id': 'reading-scatter'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _ReadingScatter(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'reading-scatter',
+    defaults: ScatterController.component.defaults,
+    overrides: ScatterController.component.overrides,
+    defaultRoutes: ScatterController.component.defaultRoutes,
+    descriptors: ScatterController.component.descriptors,
+    parent: ScatterController.component,
+    create: _ReadingScatter.new,
   );
 
   @override

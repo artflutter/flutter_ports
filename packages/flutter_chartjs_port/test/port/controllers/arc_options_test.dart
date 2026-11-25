@@ -21,42 +21,42 @@ const blue = ChartPaint.solid(ui.Color(0xff0000ff));
 const green = ChartPaint.solid(ui.Color(0xff00ff00));
 
 // Trivial user subclasses: the same results, with no native loop.
-class _RefDoughnut(super.chart, super.datasetIndex, [super.newTarget])
+class _RefDoughnut(super.chart, super.datasetIndex, [super.elements])
     extends DoughnutController {
-  static final value = JsClass(
-    'RefDoughnut',
-    superclass: DoughnutController.jsClass,
-    statics: {'id': 'ref-doughnut'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefDoughnut(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'ref-doughnut',
+    defaults: DoughnutController.component.defaults,
+    overrides: DoughnutController.component.overrides,
+    defaultRoutes: DoughnutController.component.defaultRoutes,
+    descriptors: DoughnutController.component.descriptors,
+    parent: DoughnutController.component,
+    create: _RefDoughnut.new,
   );
 }
 
-class _RefPie(super.chart, super.datasetIndex, [super.newTarget])
+class _RefPie(super.chart, super.datasetIndex, [super.elements])
     extends PieController {
-  static final value = JsClass(
-    'RefPie',
-    superclass: PieController.jsClass,
-    statics: {'id': 'ref-pie'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefPie(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'ref-pie',
+    defaults: PieController.component.defaults,
+    overrides: PieController.component.overrides,
+    defaultRoutes: PieController.component.defaultRoutes,
+    descriptors: PieController.component.descriptors,
+    parent: PieController.component,
+    create: _RefPie.new,
   );
 }
 
-class _RefPolar(super.chart, super.datasetIndex, [super.newTarget])
+class _RefPolar(super.chart, super.datasetIndex, [super.elements])
     extends PolarAreaController {
-  static final value = JsClass(
-    'RefPolar',
-    superclass: PolarAreaController.jsClass,
-    statics: {'id': 'ref-polarArea'},
-    construct: (target, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _RefPolar(chart, datasetIndex, target);
-    },
+  static final value = ControllerType(
+    id: 'ref-polarArea',
+    defaults: PolarAreaController.component.defaults,
+    overrides: PolarAreaController.component.overrides,
+    defaultRoutes: PolarAreaController.component.defaultRoutes,
+    descriptors: PolarAreaController.component.descriptors,
+    parent: PolarAreaController.component,
+    create: _RefPolar.new,
   );
 }
 
@@ -114,11 +114,13 @@ class _UserArc(final List<Object?> trace) extends ArcElement {
 }
 
 class _UserElement() extends ArcElement {
-  static final value = JsClass(
-    'ArcUserElement',
-    superclass: ArcElement.jsClass,
-    statics: {'id': 'arc-user-element'},
-    construct: (_, _) => _UserElement(),
+  static final value = ElementType(
+    id: 'arc-user-element',
+    defaults: ArcElement.component.defaults,
+    defaultRoutes: ArcElement.component.defaultRoutes,
+    descriptors: ArcElement.component.descriptors,
+    parent: ArcElement.component,
+    create: _UserElement.new,
   );
 }
 
@@ -146,11 +148,13 @@ final class _UserScope() extends ChartOptionsScope;
 
 class _UserRadial(super.cfg) extends RadialLinearScale {
   static List<Object?> trace = [];
-  static final value = JsClass(
-    'ArcUserRadial',
-    superclass: RadialLinearScale.jsClass,
-    statics: {'id': 'arc-user-radial'},
-    construct: (_, args) => _UserRadial(scaleCfgArg(args)),
+  static final value = ScaleType(
+    id: 'arc-user-radial',
+    defaults: RadialLinearScale.component.defaults,
+    defaultRoutes: RadialLinearScale.component.defaultRoutes,
+    descriptors: RadialLinearScale.component.descriptors,
+    parent: RadialLinearScale.component,
+    create: _UserRadial.new,
   );
   @override
   double getDistanceFromCenterForValue(Object? value) {

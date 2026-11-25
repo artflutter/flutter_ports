@@ -243,11 +243,11 @@ void main() {
   // the snapshot of the restore (setUpSpecs). Thus each test finds the
   // entries of `defaults.elements` and `descriptors.elements`.
   [
-    ArcElement.jsClass,
-    BarElement.jsClass,
-    LineElement.jsClass,
-    PointElement.jsClass,
-  ].forEach(TypedRegistry(Element.jsClass, 'elements').register);
+    ArcElement.component,
+    BarElement.component,
+    LineElement.component,
+    PointElement.component,
+  ].forEach(TypedRegistry<ElementType>('elements').register);
 
   group('getIndexAxis', () {
     setUp(() {
@@ -525,7 +525,7 @@ void main() {
   group('getters and setters', () {
     test('platform, plugins and type read the raw config', () {
       final plugins = [Plugin<Object?>(id: 'p')];
-      void platform() {}
+      BasePlatform platform() => BasePlatform();
       final raw = <String, Object?>{
         'type': 'bar',
         'platform': platform,
@@ -538,7 +538,7 @@ void main() {
       config.type = 'line';
       expect([config.type, raw['type']], ['line', 'line']);
       final none = Config(<String, Object?>{});
-      expect(none.platform, same(undefined));
+      expect(none.platform, isNull);
       expect(none.plugins, isNull);
       expect(none.type, same(undefined));
     });
@@ -2129,7 +2129,7 @@ void main() {
       final names = namesOf(PointElement.id);
       (defaults['elements']! as JsObjectFace).jsDelete(PointElement.id);
       defaults.set('elements.point', <String, Object?>{'radius': 9.0});
-      TypedRegistry(Element.jsClass, 'elements').register(PointElement.jsClass);
+      TypedRegistry<ElementType>('elements').register(PointElement.component);
       final moved = namesOf(PointElement.id);
       expect(moved, ['radius', ...names.where((n) => n != 'radius')]);
       final scopes = scopesOf(

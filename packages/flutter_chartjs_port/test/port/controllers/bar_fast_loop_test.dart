@@ -39,12 +39,6 @@ class _UpstreamChart(super.item, super.userConfig) extends Chart {
 /// A platform that keeps the option `animation`: `BasicPlatform`, the
 /// platform of a chart with no host, writes `animation: false`.
 final class _AnimatedPlatform() extends BasicPlatform {
-  static final JsClass jsClass = JsClass(
-    'BulkAnimatedPlatform',
-    superclass: BasicPlatform.jsClass,
-    construct: (newTarget, args) => _AnimatedPlatform(),
-  );
-
   @override
   void updateConfig(ChartConfiguration config) {}
 }
@@ -216,13 +210,13 @@ void _step(List<ChartConfigurationScope> configs, int step) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
-    BarController.jsClass,
-    BarElement.jsClass,
-    LineController.jsClass,
-    LineElement.jsClass,
-    PointElement.jsClass,
-    CategoryScale.jsClass,
-    LinearScale.jsClass,
+    BarController.component,
+    BarElement.component,
+    LineController.component,
+    LineElement.component,
+    PointElement.component,
+    CategoryScale.component,
+    LinearScale.component,
   ]);
 
   group('update modes with animation false', () {
@@ -328,7 +322,7 @@ void main() {
         _config(animation: <String, Object?>{'duration': 0.0}),
         _config(animation: <String, Object?>{'duration': 400.0}),
       ]) {
-        cfg['platform'] = _AnimatedPlatform.jsClass;
+        cfg['platform'] = _AnimatedPlatform.new;
         final before = fastBarModesTaken;
         final a = _chart(cfg);
         _step([cfg], 0);
@@ -341,8 +335,8 @@ void main() {
     });
 
     test('the value false on a platform that keeps the option', () {
-      final ca = _config()..['platform'] = _AnimatedPlatform.jsClass;
-      final cb = _config()..['platform'] = _AnimatedPlatform.jsClass;
+      final ca = _config()..['platform'] = _AnimatedPlatform.new;
+      final cb = _config()..['platform'] = _AnimatedPlatform.new;
       final a = _chart(ca);
       final b = _chart(cb, reference: true);
       _step([ca, cb], 0);
@@ -808,7 +802,7 @@ void main() {
         animation: <String, Object?>{'duration': 0.0},
         indexScale: {'stacked': StackMode.on},
         valueScale: {'stacked': StackMode.on},
-      )..['platform'] = _AnimatedPlatform.jsClass;
+      )..['platform'] = _AnimatedPlatform.new;
       final ca = config();
       final cb = config();
       final a = _chart(ca);

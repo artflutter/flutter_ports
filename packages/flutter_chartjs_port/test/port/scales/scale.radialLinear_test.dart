@@ -30,7 +30,7 @@ import 'scale_radial_linear_reference.dart';
 // of null is at NaN. test/flutter_test_config.dart registers the six scales
 // and the four elements of lib/src/index.dart before main() (the row
 // harness-register-builtins). Thus main() registers only the test
-// controller, through its class value, before the snapshot of the defaults
+// controller, through its component, before the snapshot of the defaults
 // restore (Chart.js ADR 0020, section 8, and Chart.js ADR 0022, section 8).
 // The generator also registers the built-in components and the seven
 // plugins of the dist first (registerBuiltins, Chart.js ADR 0041, section
@@ -314,33 +314,30 @@ void main() {
     commit: scaleRadialLinearReferenceCommit,
   );
 
-  group('the class value (Chart.js ADR 0020)', () {
-    test('the registry gives the class value of the id radialLinear', () {
+  group('the component (Chart.js ADR 0204)', () {
+    test('the registry gives the component of the id radialLinear', () {
       expect(
         registry.getScale('radialLinear'),
-        same(RadialLinearScale.jsClass),
+        same(RadialLinearScale.component),
       );
-      final value = RadialLinearScale.jsClass;
-      expect(value.name, 'RadialLinearScale');
-      expect(value.superclass, same(LinearScaleBase.jsClass));
-      expect(value['id'], 'radialLinear');
-      expect(value['defaults'], same(RadialLinearScale.defaults));
-      expect(value['defaultRoutes'], same(RadialLinearScale.defaultRoutes));
-      expect(value['descriptors'], same(RadialLinearScale.descriptors));
+      final value = RadialLinearScale.component;
+      expect(value.parent, isNull);
+      expect(value.id, 'radialLinear');
+      expect(value.defaults, same(RadialLinearScale.defaults));
+      expect(value.defaultRoutes, same(RadialLinearScale.defaultRoutes));
+      expect(value.descriptors, same(RadialLinearScale.descriptors));
     });
 
-    testWidgets('jsConstruct makes a RadialLinearScale from the cfg object', (
+    testWidgets('create makes a RadialLinearScale from the cfg', (
       tester,
     ) async {
       final chart = _chart(['A'], [1.0]);
-      final scale = jsConstruct(RadialLinearScale.jsClass, [
-        <String, Object?>{
-          'id': 'z',
-          'type': 'radialLinear',
-          'ctx': null,
-          'chart': chart,
-        },
-      ]);
+      final scale = RadialLinearScale.component.create((
+        id: 'z',
+        type: 'radialLinear',
+        ctx: null,
+        chart: chart,
+      ));
       expect(scale, isA<RadialLinearScale>());
       final s = scale as RadialLinearScale;
       expect(s.id, 'z');

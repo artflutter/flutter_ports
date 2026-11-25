@@ -6,12 +6,13 @@
 /// The file keeps the upstream order and names. These parts have a Dart form
 /// of their own:
 /// - The statics of [Chart] follow Chart.js ADR 0020, section 6. A rest
-///   parameter `...items` is one `List<Object?>`:
-///   `Chart.register(A, B)` is `Chart.register([a, b])`. [Chart.instances]
-///   is a Map from the `ToString` of each chart [Chart.id].
-/// - `new ControllerClass(this, i)` and `new scaleClass({...})` are
-///   [jsConstruct] of a class value, with a cast to the class of the role
-///   (`adapt-component-class-role`, Chart.js ADR 0020, section 4).
+///   parameter `...items` is one `Iterable<IChartComponent>`:
+///   `Chart.register(A, B)` is `Chart.register([a, b])` (Chart.js ADR
+///   0204). [Chart.instances] is a Map from the `ToString` of each chart
+///   [Chart.id].
+/// - `new ControllerClass(this, i)` and `new scaleClass({...})` are the
+///   `create` calls of a [ControllerType] and a [ScaleType] (Chart.js ADR
+///   0204).
 /// - `resize` and `_eventHandler` are fields that hold a function
 ///   (`harness-method-fields`, Chart.js ADR 0022, section 5). A test
 ///   replaces the function of one chart, as it replaces a JS own property.
@@ -285,10 +286,10 @@ class Chart(
   /// raw configuration: a Map, or a falsy value (Chart.js ADR 0043).
   ///
   /// `new Error(message)` is a [StateError] with the upstream message, as in
-  /// `core.registry.dart`. `config.platform` is a class value
-  /// ([jsConstruct]). `new (_detectPlatform(initialCanvas))()` calls the
-  /// constructor tear-off of [detectPlatform] (Chart.js ADR 0037,
-  /// section 1).
+  /// `core.registry.dart`. `config.platform` and the result of
+  /// [detectPlatform] are constructor tear-offs: `new (config.platform ||
+  /// _detectPlatform(initialCanvas))()` calls one of them (Chart.js ADR
+  /// 0204, Chart.js ADR 0037, section 1).
   ///
   /// `console.error` is a `print` of the message.
   // eslint-disable-next-line max-statements
@@ -317,13 +318,8 @@ class Chart(
       getContext(),
     ) as OptionView;
 
-    // `new (config.platform || _detectPlatform(initialCanvas))()`. A class
-    // value of another role throws a TypeError at the cast. Upstream throws
-    // a TypeError at the call of updateConfig, the next line.
-    final configPlatform = config.platform;
-    platform = jsTruthy(configPlatform)
-        ? jsConstruct(configPlatform, const []) as BasePlatform
-        : detectPlatform(initialCanvas)();
+    // `new (config.platform || _detectPlatform(initialCanvas))()`.
+    platform = (config.platform ?? detectPlatform(initialCanvas))();
     platform.updateConfig(config);
 
     final context = platform.acquireContext(
@@ -407,46 +403,19 @@ class Chart(
 
   /// core.controller.js:112 `static register(...items)`.
   ///
-  /// The rest parameter is one List (Chart.js ADR 0020, section 6):
+  /// The rest parameter is one Iterable (Chart.js ADR 0204):
   /// `Chart.register(A, B)` is `Chart.register([a, b])`, and
   /// `Chart.register(...registerables)` is `Chart.register(registerables)`.
-  static void register(List<Object?> items) {
+  static void register(Iterable<IChartComponent> items) {
     registry.add(items);
     _invalidatePlugins();
   }
 
   /// core.controller.js:117 `static unregister(...items)`.
-  static void unregister(List<Object?> items) {
+  static void unregister(Iterable<IChartComponent> items) {
     registry.remove(items);
     _invalidatePlugins();
   }
-
-  /// core.controller.js:103 `class Chart` as a value (Chart.js ADR 0020,
-  /// section 3, and Chart.js ADR 0048, section 2).
-  ///
-  /// Its statics are the statics of :105-120 in their order: [defaults],
-  /// [instances], [overrides], [registry], [version], [getChart], [register]
-  /// and [unregister], the same objects as the Dart statics. Its `construct`
-  /// gives `Chart(item, userConfig)`, with [undefined] for an absent
-  /// argument. The port has no UMD bundle (Chart.js ADR 0120), so no code
-  /// writes the statics of `src/index.umd.ts:30-47` into it.
-  static final JsClass jsClass = JsClass(
-    'Chart',
-    statics: {
-      'defaults': defaults,
-      'instances': instances,
-      'overrides': overrides,
-      'registry': registry,
-      'version': version,
-      'getChart': getChart,
-      'register': register,
-      'unregister': unregister,
-    },
-    construct: (newTarget, args) => Chart(
-      args.isNotEmpty ? args[0] : undefined,
-      args.length > 1 ? args[1] : undefined,
-    ),
-  );
 
   /// core.controller.js:124 `config`: the `Config` of the configuration.
   @override
@@ -942,9 +911,12 @@ class Chart(
       final scaleOptions = item.options;
       final id = scaleOptions.readKey(OptionKey.id)! as String;
       final axis = determineAxis(id, [scaleOptions]);
-      final scaleType = valueOrDefault<Object?>(
-        scaleOptions.readKey(OptionKey.type),
-        item.dtype,
+      // The `ToPropertyKey` of the type, the key of the registry.
+      final scaleType = jsToString(
+        valueOrDefault<Object?>(
+          scaleOptions.readKey(OptionKey.type),
+          item.dtype,
+        ),
       );
 
       if (identical(scaleOptions.readKey(OptionKey.position), undefined) ||
@@ -962,15 +934,12 @@ class Chart(
         scale = scales[id];
       } else {
         final scaleClass = registry.getScale(scaleType);
-        // DIVERGES(chartjs): adapt-component-class-role, cast throws earlier.
-        scale = jsConstruct(scaleClass, [
-          <String, Object?>{
-            'id': id,
-            'type': scaleType,
-            'ctx': ctx,
-            'chart': this,
-          },
-        ]) as Scale;
+        scale = scaleClass.create((
+          id: id,
+          type: scaleType,
+          ctx: ctx,
+          chart: this,
+        ));
         scales[scale.id] = scale;
       }
 
@@ -1043,10 +1012,10 @@ class Chart(
 
   /// core.controller.js:415 `buildOrUpdateControllers()`.
   ///
-  /// `Object.assign(ControllerClass, {...})` is [jsAssign]. The map literal
-  /// keeps the key order of upstream: both `getElement` calls occur first.
-  /// `new ControllerClass(this, i)` is [jsConstruct] with the index as a
-  /// `double` (Chart.js ADR 0020, section 4).
+  /// `Object.assign(ControllerClass, {...})` and `new ControllerClass(this,
+  /// i)` are one call of [ControllerType.create] with the element types as
+  /// its last argument (Chart.js ADR 0204): the build writes nothing into the
+  /// registered component. Both `getElement` calls occur first, as upstream.
   List<DatasetController> buildOrUpdateControllers() {
     final newControllers = <DatasetController>[];
     final datasets = _datasets;
@@ -1089,15 +1058,14 @@ class Chart(
           datasetDefaults,
           OptionKey.dataElementType,
         );
-        jsAssign(controllerClass, {
-          'dataElementType': registry.getElement(dataElementType),
-          'datasetElementType': jsTruthy(datasetElementType)
-              ? registry.getElement(datasetElementType)
-              : datasetElementType,
-        });
-        // DIVERGES(chartjs): adapt-component-class-role, cast throws earlier.
-        meta.controller =
-            jsConstruct(controllerClass, [this, i]) as DatasetController;
+        final elements = (
+          data: registry.getElement(jsToString(dataElementType)),
+          dataset: jsTruthy(datasetElementType)
+              ? registry.getElement(jsToString(datasetElementType))
+              : null,
+        );
+        // DIVERGES(chartjs): adapt-typed-components, the types as arguments.
+        meta.controller = controllerClass.create(this, i, elements);
         newControllers.add(meta.controller!);
       }
     }

@@ -295,19 +295,6 @@ class LinearScaleBase(super.cfg) extends Scale {
   /// `cfg` is the object `{id, type, ctx, chart}` of [Scale.new].
   this;
 
-  /// scale.linearbase.js:154 `class LinearScaleBase` as a value (Chart.js
-  /// ADR 0020, section 3).
-  ///
-  /// It extends [Scale.jsClass]. It has no own statics: upstream declares
-  /// none. Thus `'id' in LinearScaleBase` is false, and the registry does
-  /// not register it as a component. The linear and the radial linear
-  /// scales give it as their superclass.
-  static final JsClass jsClass = JsClass(
-    'LinearScaleBase',
-    superclass: Scale.jsClass,
-    construct: (newTarget, args) => LinearScaleBase(scaleCfgArg(args)),
-  );
-
   /// scale.linearbase.js:160 `start`. NaN stands for JS `undefined`, the
   /// start value.
   double start = double.nan;

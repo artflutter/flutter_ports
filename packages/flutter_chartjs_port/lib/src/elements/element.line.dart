@@ -841,7 +841,7 @@ class LineElement([AnyObject? cfg])
     ..tension = 0.0;
 
   /// element.line.js:267 `static defaultRoutes`.
-  static final AnyObject defaultRoutes = {
+  static final Map<String, String> defaultRoutes = {
     'backgroundColor': 'backgroundColor',
     'borderColor': 'borderColor',
   };
@@ -856,23 +856,14 @@ class LineElement([AnyObject? cfg])
   static bool _indexableDescriptor(String name) =>
       name != 'borderDash' && name != 'fill';
 
-  /// element.line.js:243 `class LineElement extends Element` as a value
-  /// (Chart.js ADR 0020, section 3).
-  ///
-  /// Its statics are [id], [defaults], [defaultRoutes] and [descriptors], in
-  /// the upstream order of declaration (element.line.js:245-276). They are the
-  /// objects of the static fields. Its `construct` calls `LineElement(cfg)`
-  /// with the `cfg` of [elementCfgArg].
-  static final JsClass jsClass = JsClass(
-    'LineElement',
-    superclass: Element.jsClass,
-    statics: {
-      'id': id,
-      'defaults': defaults,
-      'defaultRoutes': defaultRoutes,
-      'descriptors': descriptors,
-    },
-    construct: (newTarget, args) => LineElement(elementCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `defaultRoutes`, `descriptors`, and the constructor.
+  static final ElementType component = ElementType(
+    id: id,
+    defaults: defaults,
+    defaultRoutes: defaultRoutes,
+    descriptors: descriptors,
+    create: LineElement.new,
   );
 
   /// element.line.js:282 `animated = true`.

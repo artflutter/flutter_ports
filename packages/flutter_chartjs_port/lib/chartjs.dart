@@ -10,7 +10,7 @@
 /// `Tooltip`, the names that Flutter also has.
 ///
 /// Register the components before the first chart:
-/// `Chart.register(registerables)`, or a List of the class values and the
+/// `Chart.register(registerables)`, or a List of the components and the
 /// plugins that the app needs (Chart.js ADR 0048, section 3).
 library;
 

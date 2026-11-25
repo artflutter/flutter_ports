@@ -30,9 +30,9 @@
 /// - The static `overrides` hold the tear-offs of the legend functions
 ///   `_generateLabels` and `_onClick` (Chart.js ADR 0028, section 6). The
 ///   legend plugin calls them.
-/// - [DoughnutController.jsClass] is the class as a value with the statics
-///   `id`, `defaults`, `descriptors` and `overrides` (Chart.js ADR 0020,
-///   section 3).
+/// - [DoughnutController.component] is the class as a typed component with
+///   the statics `id`, `defaults`, `descriptors` and `overrides` (Chart.js
+///   ADR 0204).
 /// - `getDataVisibility` stays an upstream call for each arc (Chart.js ADR
 ///   0036, section 8).
 ///
@@ -103,11 +103,12 @@ Object? _lengthOf(Object? value) => switch (value) {
 };
 
 /// controller.doughnut.js:37 `DoughnutController extends DatasetController`.
-class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
+class DoughnutController(super.chart, super.datasetIndex, [super.elements])
     extends DatasetController {
   /// controller.doughnut.js:133 `constructor(chart, datasetIndex)`.
   ///
-  /// `newTarget` is `new.target` (Chart.js ADR 0020, section 4). The body
+  /// [elements] are the element types of the chart type (Chart.js ADR
+  /// 0204). The body
   /// runs after the constructor of [DatasetController], as the statements
   /// after `super(chart, datasetIndex)` do.
   this {
@@ -215,27 +216,14 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
         onClick: _onClick,
       ));
 
-  /// controller.doughnut.js:37 `class DoughnutController extends
-  /// DatasetController` as a value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [DatasetController.jsClass]. Its statics are `id`
-  /// (`'doughnut'`), [defaults], [descriptors] and [overrides], in the
-  /// upstream order of declaration (:39-131). Its `construct` calls
-  /// `DoughnutController(chart, datasetIndex, newTarget)` with the arguments
-  /// of [controllerArgs].
-  static final JsClass jsClass = JsClass(
-    'DoughnutController',
-    superclass: DatasetController.jsClass,
-    statics: {
-      'id': id,
-      'defaults': defaults,
-      'descriptors': descriptors,
-      'overrides': overrides,
-    },
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return DoughnutController(chart, datasetIndex, newTarget);
-    },
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `overrides`, `descriptors`, and the constructor.
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: defaults,
+    overrides: overrides,
+    descriptors: descriptors,
+    create: DoughnutController.new,
   );
 
   /// controller.doughnut.js:137 `innerRadius`. Dart `null` stands for the

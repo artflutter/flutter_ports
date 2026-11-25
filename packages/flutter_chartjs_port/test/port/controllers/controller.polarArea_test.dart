@@ -127,7 +127,7 @@ Object? _noLegend(Chart chart) {
 final class _SharingController(
   super.chart,
   super.datasetIndex, [
-  super.newTarget,
+  super.elements,
 ]) extends PolarAreaController {
   @override
   void initialize() {
@@ -139,14 +139,14 @@ final class _SharingController(
 /// `class PolarAreaSharing extends PolarAreaController { static id =
 /// 'polarAreaSharing'; }` as a value. `defaults` and `overrides` come from
 /// the superclass chain.
-final JsClass _sharingClass = JsClass(
-  'PolarAreaSharing',
-  superclass: PolarAreaController.jsClass,
-  statics: {'id': 'polarAreaSharing'},
-  construct: (newTarget, args) {
-    final (:chart, :datasetIndex) = controllerArgs(args);
-    return _SharingController(chart, datasetIndex, newTarget);
-  },
+final ControllerType _sharingClass = ControllerType(
+  id: 'polarAreaSharing',
+  defaults: PolarAreaController.component.defaults,
+  overrides: PolarAreaController.component.overrides,
+  defaultRoutes: PolarAreaController.component.defaultRoutes,
+  descriptors: PolarAreaController.component.descriptors,
+  parent: PolarAreaController.component,
+  create: _SharingController.new,
 );
 
 /// Whether the case [c] uses the test subclass.

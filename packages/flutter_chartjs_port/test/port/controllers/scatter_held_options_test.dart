@@ -16,20 +16,16 @@ const _red = ChartPaint.solid(ui.Color(0xffff0000));
 const _blue = ChartPaint.solid(ui.Color(0xff0000ff));
 
 /// A subclass of the scatter controller: its loop keeps the ordinary call.
-class _SubScatter(super.chart, super.datasetIndex, [super.newTarget])
+class _SubScatter(super.chart, super.datasetIndex, [super.elements])
     extends ScatterController {
-  static final JsClass value = JsClass(
-    'HeldSubScatter',
-    superclass: ScatterController.jsClass,
-    statics: {
-      'id': 'heldSubScatter',
-      'defaults': ScatterController.defaults,
-      'overrides': ScatterController.overrides,
-    },
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return _SubScatter(chart, datasetIndex, newTarget);
-    },
+  static final ControllerType value = ControllerType(
+    id: 'heldSubScatter',
+    defaults: ScatterController.defaults,
+    overrides: ScatterController.overrides,
+    defaultRoutes: ScatterController.component.defaultRoutes,
+    descriptors: ScatterController.component.descriptors,
+    parent: ScatterController.component,
+    create: _SubScatter.new,
   );
 }
 
@@ -308,7 +304,7 @@ void main() {
             'data': _hookData(6, () => armed, () {
               armed = false;
               chart.getDatasetMeta(0).controller!.dataElementType =
-                  ArcElement.jsClass;
+                  ArcElement.component;
             }),
           },
         ),

@@ -68,15 +68,20 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // DIVERGES(sankey): harness-register-builtins, the imports of setup.js.
   setUpBuiltins(
     () {
-      Chart.register([controllers, scales, elements, plugins]);
+      Chart.register([
+        ...controllers.values,
+        ...scales.values,
+        ...elements.values,
+        ...plugins.values,
+      ]);
       Chart.register(sankeyRegisterables);
     },
     () => Chart.unregister([
       ...sankeyRegisterables,
-      controllers,
-      scales,
-      elements,
-      plugins,
+      ...controllers.values,
+      ...scales.values,
+      ...elements.values,
+      ...plugins.values,
     ]),
   );
 

@@ -1,5 +1,14 @@
 ## Unreleased
 
+- BREAKING: the registry holds typed components, not class values (Chart.js ADR 0204). Each controller, scale
+  and element has a static `component` (a `ControllerType`, `ScaleType` or `ElementType`) in place of
+  `jsClass`: write `Chart.register([LineController.component, LineElement.component])`. `Chart.register`
+  takes an `Iterable<IChartComponent>` with no nested List or Map; `registerables` is the list of the items.
+  `getController`, `getScale` and `getElement` take a `String` and give the typed component. A scale takes the
+  record `ScaleConfig`, a controller of another package takes `[super.elements]` in place of
+  `[super.newTarget]`, and the option `platform` holds a constructor tear-off (`platform: MyPlatform.new`).
+  `JsClass`, `jsConstruct`, `jsAssign`, `jsObjectClass`, `controllerArgs`, `scaleCfgArg` and `elementCfgArg`
+  are gone.
 - BREAKING: the date adapter has typed members (Chart.js ADR 0203): a timestamp is a `double`, a format a
   `String?` and an ISO weekday an `int`. `DateAdapterBase.override`, `DateAdapterBase.prototype` and
   `dateAdapterMembers` are gone. An app gives its adapter as a subclass of `DefaultDateAdapter` and writes its

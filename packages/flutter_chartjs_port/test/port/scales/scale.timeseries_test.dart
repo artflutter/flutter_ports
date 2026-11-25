@@ -38,7 +38,7 @@ import 'scale_timeseries_reference.dart';
 
 /// The cartesian test controller `timeseriesTest` of the generator:
 /// timeseries on the index axis and linear on the value axis.
-final JsClass _timeseriesTestController = cartesianTestController(
+final ControllerType _timeseriesTestController = cartesianTestController(
   'timeseriesTest',
   {
     'scales': <String, Object?>{
@@ -106,8 +106,8 @@ void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
   Chart.register([
-    TimeSeriesScale.jsClass,
-    LinearScale.jsClass,
+    TimeSeriesScale.component,
+    LinearScale.component,
     _timeseriesTestController,
   ]);
 
@@ -119,13 +119,13 @@ void main() {
   );
   testAdapterOrigin(scaleTimeseriesReferenceAdapter);
 
-  group('the class value (Chart.js ADR 0020)', () {
-    test('the registry gives the class values of timeseries and of its '
+  group('the component (Chart.js ADR 0204)', () {
+    test('the registry gives the components of timeseries and of its '
         'parent time', () {
-      expect(registry.getScale('timeseries'), same(TimeSeriesScale.jsClass));
-      expect(registry.getScale('time'), same(TimeScale.jsClass));
-      expect(TimeSeriesScale.jsClass['id'], 'timeseries');
-      expect(TimeSeriesScale.jsClass['defaults'], same(TimeScale.defaults));
+      expect(registry.getScale('timeseries'), same(TimeSeriesScale.component));
+      expect(registry.getScale('time'), same(TimeScale.component));
+      expect(TimeSeriesScale.component.id, 'timeseries');
+      expect(TimeSeriesScale.component.defaults, same(TimeScale.defaults));
     });
   });
 

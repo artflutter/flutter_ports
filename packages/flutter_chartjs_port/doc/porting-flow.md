@@ -573,7 +573,8 @@ and the items that stay open. In short:
   specs and tests run on the VM, with dart2js and with dart2wasm.
 - [Chart.js ADR 0020](adr/0020-registry-and-component-classes.md) §3 answers the Open item on how
   the registry reads the static members. `Element` and each element class have a static `jsClass`,
-  the class as a value (2.16).
+  the class as a value (2.16). [Chart.js ADR 0204](adr/0204-typed-chart-components.md) later
+  replaces it with the typed `component`.
 
 ### 2.15 Chart.js ADR 0054: The typed internal model (gate 4)
 
@@ -611,6 +612,8 @@ short:
 - The port-only, pure `JsClass` of `lib/src/js/js_class.dart` stands for a JS class value: its
   name, its superclass and its static members, with `jsConstruct`, `jsAssign` and
   `jsObjectClass`. Each class that the registry takes gets `static final JsClass jsClass`.
+  [Chart.js ADR 0204](adr/0204-typed-chart-components.md) later replaces the class values with
+  typed components and removes `js_class.dart`.
 - `TypedRegistry` and `Registry` are line-by-line ports. `isForType` tests the superclass chain
   of the class value. `Chart.register` takes one `List`, and the static `Chart.registry` stays.
 - A plugin is a Map or a class value. `_notify` reads each hook by name at each call.

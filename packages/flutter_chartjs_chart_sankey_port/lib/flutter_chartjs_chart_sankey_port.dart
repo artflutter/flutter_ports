@@ -44,12 +44,12 @@ export 'package:flutter_chartjs_chart_sankey_port/src/sankey_dataset.dart';
 export 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
 export 'package:flutter_chartjs_chart_sankey_port/src/upstream.dart';
 
-/// The two components of the chart type, for `Chart.register`: the class
-/// values of the controller `sankey` and of the element `flow`.
+/// The two components of the chart type, for `Chart.register`: the
+/// [ControllerType] of the controller `sankey` and the [ElementType] of the
+/// element `flow` (Chart.js ADR 0204).
 ///
 /// Upstream registers them at the import of its script entry
 /// (`src/index.ts:6`). A Dart import runs no code.
-final List<JsClass> sankeyRegisterables = List.unmodifiable([
-  SankeyController.jsClass,
-  Flow.jsClass,
-]);
+final List<ChartComponent> sankeyRegisterables = List.unmodifiable(
+  <ChartComponent>[SankeyController.component, Flow.component],
+);

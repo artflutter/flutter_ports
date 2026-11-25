@@ -30,7 +30,7 @@ import 'scale_time_reference.dart';
 // The cartesian test controller `timeTest` has the time scale on the index
 // axis and the linear scale on the value axis. lib/src/index.dart does not
 // register the scales yet. Thus main() registers the time scale, the linear
-// scale and the test controller through their class values, before the
+// scale and the test controller through their components, before the
 // snapshot of the defaults restore (Chart.js ADR 0020, section 8, and
 // Chart.js ADR 0022, section 8).
 //
@@ -54,7 +54,7 @@ import 'scale_time_reference.dart';
 
 /// The cartesian test controller `timeTest` of the generator: time on the
 /// index axis and linear on the value axis.
-final JsClass _timeTestController = cartesianTestController('timeTest', {
+final ControllerType _timeTestController = cartesianTestController('timeTest', {
   'scales': <String, Object?>{
     '_index_': <String, Object?>{'type': 'time'},
     '_value_': <String, Object?>{'type': 'linear'},
@@ -193,7 +193,11 @@ void _lineTwin(String name, void Function() body) =>
 void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
-  Chart.register([TimeScale.jsClass, LinearScale.jsClass, _timeTestController]);
+  Chart.register([
+    TimeScale.component,
+    LinearScale.component,
+    _timeTestController,
+  ]);
 
   testReferenceOrigin(
     node: scaleTimeReferenceNode,
@@ -203,12 +207,12 @@ void main() {
   );
   testAdapterOrigin(scaleTimeReferenceAdapter);
 
-  group('the class value (Chart.js ADR 0020)', () {
-    test('the registry gives the class value of the id time', () {
-      expect(registry.getScale('time'), same(TimeScale.jsClass));
-      expect(TimeScale.jsClass['id'], 'time');
-      expect(TimeScale.jsClass['defaults'], same(TimeScale.defaults));
-      expect(TimeScale.jsClass.superclass, same(Scale.jsClass));
+  group('the component (Chart.js ADR 0204)', () {
+    test('the registry gives the component of the id time', () {
+      expect(registry.getScale('time'), same(TimeScale.component));
+      expect(TimeScale.component.id, 'time');
+      expect(TimeScale.component.defaults, same(TimeScale.defaults));
+      expect(TimeScale.component.parent, isNull);
     });
 
     test('defaults.scales.time has the static defaults', () {
@@ -233,7 +237,7 @@ void main() {
 
     test('the timeseries scale shares the defaults Map', () {
       expect(TimeSeriesScale.defaults, same(TimeScale.defaults));
-      expect(TimeSeriesScale.jsClass.superclass, same(TimeScale.jsClass));
+      expect(TimeSeriesScale.component.parent, same(TimeScale.component));
     });
   });
 

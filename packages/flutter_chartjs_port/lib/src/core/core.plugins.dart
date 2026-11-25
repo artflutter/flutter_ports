@@ -323,8 +323,9 @@ A _noArgs<A extends Object>(PluginHook<A> hook) =>
   final localIds = <String, bool>{};
   final plugins = <Plugin<Object?>>[];
   final items = registry.plugins.items;
+  // The `Object.keys` order: an integer-like id comes first.
   for (final key in jsObjectKeys(items)) {
-    plugins.add(items[key]! as Plugin<Object?>);
+    plugins.add(items[key]!);
   }
 
   // The inline plugins of the config of the user: a List of native plugins

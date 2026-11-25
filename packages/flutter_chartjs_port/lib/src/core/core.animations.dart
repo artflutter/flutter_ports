@@ -57,21 +57,6 @@ class Animations(
     if (_modeItems != null || _chartItems != null) _addBaseOptions(base);
   }
 
-  /// core.animations.js:6 `class Animations` as a value (Chart.js ADR 0020,
-  /// section 3, and Chart.js ADR 0048, section 2).
-  ///
-  /// It has no statics. Its `construct` gives `Animations(chart, config)`,
-  /// with [undefined] for an absent argument. A chart that is not a
-  /// `types.Chart` throws a [TypeError] at the cast. `src/index.umd.ts:33`
-  /// keeps the class as `Chart.Animations`.
-  static final JsClass jsClass = JsClass(
-    'Animations',
-    construct: (newTarget, args) => Animations(
-      (args.isNotEmpty ? args[0] : undefined)! as IChart,
-      args.length > 1 ? args[1] : undefined,
-    ),
-  );
-
   /// core.animations.js:9 `_properties`, a JS `Map` from each property to
   /// its animation options, in the insertion order. The key of a name is
   /// its [AnimatedProp]: the object of a built-in property, or a property

@@ -1,5 +1,5 @@
 # Native legend items read fields directly. Remaining user-object reads:
-# jsGet: the class-value config (3), the `textAlign` of the element options
+# jsGet: the `textAlign` of the element options
 # of a style, a key that no built-in element option has (1, Chart.js ADR
 # 0193), chart.data.datasets (1), and the application dataset label (1).
-jsGet 6
+jsGet 3

@@ -144,7 +144,7 @@ class Legend(
   /// @param {{ ctx: any; options: any; chart: any; }} config
   ///
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
-  /// 4). The `construct` closure of [jsClass] reads it from a JS value.
+  /// 4).
   this {
     final options = config.options;
     assert(
@@ -153,17 +153,6 @@ class Legend(
     );
     super.options = options is LegendOptions ? options : null;
   }
-
-  /// plugin.legend.js:41 `class Legend` as a value (Chart.js ADR 0020,
-  /// section 3).
-  ///
-  /// Its superclass is [Element.jsClass]. It has no static property. Its
-  /// `construct` reads the `config` argument with [_legendConfig].
-  static final JsClass jsClass = JsClass(
-    'Legend',
-    superclass: Element.jsClass,
-    construct: (newTarget, args) => Legend(_legendConfig(args)),
-  );
 
   /// plugin.legend.js:49 `_added`. Upstream writes it and never reads it.
   // ignore: unused_field
@@ -1486,31 +1475,6 @@ final class _RoundedRect({
   @override required final BorderRadius radius,
 }) implements RoundedRect;
 
-/// The `config` of `new Legend(config)` from the arguments [args] of the
-/// `construct` closure of [Legend.jsClass]: the reads `config.chart`,
-/// `config.options` and `config.ctx` of plugin.legend.js:62-64.
-///
-/// An absent argument, [undefined] and JS `null` throw the [TypeError] of
-/// the read `config.chart`, as upstream. A member with the value
-/// [undefined] gives Dart `null`. A `chart` that is not a `types.Chart`, an
-/// `options` that is not a [LegendOptions] (Chart.js ADR 0193) and a `ctx`
-/// that is not a context throw a [TypeError]. Upstream stores such a value
-/// and reads its members later.
-// DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
-({IChart chart, Object? options, CanvasRenderingContext2D? ctx}) _legendConfig(
-  List<Object?> args,
-) {
-  final config = args.isEmpty ? undefined : args[0];
-  return (
-    chart: _orNull(jsGet(config, 'chart'))! as IChart,
-    options: _orNull(jsGet(config, 'options')) as LegendOptions?,
-    ctx: _orNull(jsGet(config, 'ctx')) as CanvasRenderingContext2D?,
-  );
-}
-
-/// Dart `null` for the [undefined] sentinel, else [value].
-Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
-
 /// plugin.legend.js:645 the default `onClick(e, legendItem, legend)`: a
 /// callback that will handle.
 ///
@@ -1743,7 +1707,7 @@ void _afterEvent(IChart chart, EventHookArgs args, LegendOptions _) {
 ///
 /// A native [Plugin] with the upstream keys in the upstream order (Chart.js
 /// ADR 0144). The key `_element: Legend` of plugin.legend.js:599 is for the
-/// tests: they read `Legend.jsClass`.
+/// tests: they construct `Legend` directly.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
 final legend = LegendPlugin();
 

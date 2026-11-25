@@ -24,7 +24,6 @@ bool nativeArcScale(Object? scale) =>
 bool nativeArcElement(Object? arc) =>
     arc is NativeArcElement && arc.supportsNativeArcOptions;
 
-/// Native class metadata only, as `nativePointClass`. Unknown class objects are
-/// never inspected merely to qualify a shortcut.
-bool nativeArcClass(Object? value) =>
-    value is JsClass && value.id is String && value.id == 'arc';
+/// Native class metadata only, as `nativePointClass`: the element type of
+/// the id `arc`.
+bool nativeArcClass(ElementType? value) => value?.id == 'arc';

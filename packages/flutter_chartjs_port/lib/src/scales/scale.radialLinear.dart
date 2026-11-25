@@ -874,7 +874,7 @@ class RadialLinearScale(super.cfg)
   this;
 
   // scale.radialLinear.js:340 `static id = 'radialLinear'`. Scale has the
-  // instance field `id`. Thus the value is only in the statics of jsClass.
+  // instance field `id`. Thus the value is only in [component].
 
   /// Whether this object is of the class itself. `super.runtimeType` is the
   /// class of the object also when a user subclass overrides `runtimeType`.
@@ -978,7 +978,7 @@ class RadialLinearScale(super.cfg)
   ) => label;
 
   /// scale.radialLinear.js:400 `static defaultRoutes`.
-  static final AnyObject defaultRoutes = {
+  static final Map<String, String> defaultRoutes = {
     'angleLines.color': 'borderColor',
     'pointLabels.color': 'color',
     'ticks.color': 'color',
@@ -989,24 +989,14 @@ class RadialLinearScale(super.cfg)
   static final DescriptorsScope descriptors = DescriptorsScope()
     ..jsWrite('angleLines', DescriptorsScope()..descFallback = 'grid');
 
-  /// scale.radialLinear.js:338 `class RadialLinearScale extends
-  /// LinearScaleBase` as a value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [LinearScaleBase.jsClass]. Its statics are `id`
-  /// (`'radialLinear'`), [defaults], [defaultRoutes] and [descriptors], in
-  /// the upstream order of declaration (scale.radialLinear.js:340-410). Its
-  /// `construct` calls `RadialLinearScale(cfg)` with the `cfg` of
-  /// [scaleCfgArg].
-  static final JsClass jsClass = JsClass(
-    'RadialLinearScale',
-    superclass: LinearScaleBase.jsClass,
-    statics: {
-      'id': 'radialLinear',
-      'defaults': defaults,
-      'defaultRoutes': defaultRoutes,
-      'descriptors': descriptors,
-    },
-    construct: (newTarget, args) => RadialLinearScale(scaleCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `defaultRoutes`, `descriptors`, and the constructor.
+  static final ScaleType component = ScaleType(
+    id: 'radialLinear',
+    defaults: defaults,
+    defaultRoutes: defaultRoutes,
+    descriptors: descriptors,
+    create: RadialLinearScale.new,
   );
 
   /// The options of the scale: the radial linear scale options

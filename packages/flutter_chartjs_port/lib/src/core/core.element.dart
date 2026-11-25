@@ -113,10 +113,8 @@ import 'package:meta/meta.dart';
 ///   before [assign].
 /// - Its static members `id`, `defaults`, `defaultRoutes` and `descriptors`
 ///   are static fields (Chart.js ADR 0017, section 2).
-/// - Its static field `jsClass` is the class as a value (Chart.js ADR 0020,
-///   section 3). Its `superclass` is [Element.jsClass]. Its `statics` hold
-///   the static fields in the upstream order of declaration. Its `construct`
-///   calls the constructor with [elementCfgArg].
+/// - Its static field `component` is the class as an [ElementType]
+///   (Chart.js ADR 0204): the static fields and the constructor tear-off.
 ///
 /// ```dart
 /// class BoxElement extends Element implements types.VisualElement {
@@ -178,20 +176,6 @@ class Element() implements IElement, PropertyAccess, ElementProps {
   /// core.element.ts:9 `static defaultRoutes = undefined`: the [undefined]
   /// sentinel.
   static const Object defaultRoutes = undefined;
-
-  /// core.element.ts:6 `class Element` as a value (Chart.js ADR 0020,
-  /// section 3).
-  ///
-  /// Its statics are [defaults] and [defaultRoutes], with the [undefined]
-  /// sentinel as an own value (core.element.ts:8-9). It has no `id`. Its
-  /// `construct` ignores the arguments, as the implicit constructor of
-  /// `Element` does. A class value that extends it without a `construct` of
-  /// its own constructs an [Element].
-  static final JsClass jsClass = JsClass(
-    'Element',
-    statics: {'defaults': defaults, 'defaultRoutes': defaultRoutes},
-    construct: (newTarget, args) => Element(),
-  );
 
   /// The bit of [x] in [_undefinedXY].
   static const int _xBit = 1;
@@ -618,31 +602,6 @@ class Element() implements IElement, PropertyAccess, ElementProps {
     final value = extras[prop];
     return value == null && !extras.containsKey(prop) ? undefined : value;
   }
-}
-
-/// The `cfg` of `new XElement(cfg)` from the arguments [args] of the
-/// `construct` closure of an element class value (Chart.js ADR 0020, section
-/// 3): the first item of [args].
-///
-/// The element constructors copy `cfg` with `if (cfg) Object.assign(this,
-/// cfg)` (element.point.ts:57-59, element.line.js:294-296,
-/// element.bar.js:174-176, element.arc.ts:424-426). Thus an absent argument,
-/// [undefined], JS `null` and the other falsy values give Dart `null`, the
-/// default of the Dart constructor. A Map gives itself. Another value throws
-/// a [TypeError]. Upstream copies the own enumerable properties of such a
-/// value, for example the characters of a string.
-///
-/// `chartjs.dart` exports it: the class value of an element of another
-/// package reads its argument with it (Chart.js ADR 0133).
-// DIVERGES(chartjs): adapt-component-class-role, a non-Map cfg throws.
-AnyObject? elementCfgArg(List<Object?> args) {
-  final cfg = args.isEmpty ? undefined : args[0];
-  return switch (cfg) {
-    final AnyObject map => map,
-    _ when !jsTruthy(cfg) => null,
-    // A JavaScript value that the port does not copy into an element.
-    _ => throw TypeError(),
-  };
 }
 
 /// The property `x` of an element: the typed field of [Element].

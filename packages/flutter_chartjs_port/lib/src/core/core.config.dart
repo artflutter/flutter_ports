@@ -488,9 +488,20 @@ class Config([Object? config]) implements ChartConfiguration {
   );
 
   /// core.config.js:165 `get platform()`: the `platform` of the raw
-  /// configuration, a class value, or [undefined].
-  Object? get platform {
-    return jsGet(_config, 'platform');
+  /// configuration, the constructor tear-off of a platform class
+  /// (`platform: MyPlatform.new`, Chart.js ADR 0204), or Dart `null`.
+  ///
+  /// A value of another type stops a debug build, and a release build takes
+  /// no platform.
+  // DIVERGES(chartjs): adapt-typed-components, a constructor tear-off.
+  BasePlatform Function()? get platform {
+    final value = jsGet(_config, 'platform');
+    if (value is BasePlatform Function()) return value;
+    assert(
+      !jsTruthy(value),
+      'The option platform is a BasePlatform Function(), not $value.',
+    );
+    return null;
   }
 
   /// core.config.js:169 `get type()`: the chart type, or [undefined].
@@ -1030,8 +1041,7 @@ class Config([Object? config]) implements ChartConfiguration {
   /// @param {string} elementType
   /// @return {string[][]}
   ///
-  /// [elementType] is the `id` of an element class value (Chart.js ADR
-  /// 0020, section 4): any value.
+  /// [elementType] is the `id` of an element type: any value.
   List<List<String>> datasetElementScopeKeys(
     Object? datasetType,
     Object? elementType,

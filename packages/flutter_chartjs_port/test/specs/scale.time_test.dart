@@ -20,7 +20,7 @@ import '../support/tick_label.dart';
 // `Chart.registry` and `Chart.defaults` of core.controller.dart.
 // flutter_test_config.dart registers the built-in components before
 // `main()` (`harness-register-builtins`). Thus `registry.getScale('time')`
-// gives the class value `TimeScale.jsClass`, and `defaults.scales.time` has
+// gives the component `TimeScale.component`, and `defaults.scales.time` has
 // the defaults of the time scale.
 //
 // The specs load moment 2.29.4 and chartjs-adapter-moment 1.0.1
@@ -55,7 +55,7 @@ import '../support/tick_label.dart';
 // - `Chart._adapters._date` is `adapters.date` of core.adapters.dart, the
 //   constructor of the adapter. `_date.override(members)` is a subclass of
 //   `DefaultDateAdapter` in `adapters.date` (row adapt-date-adapter-class).
-// - `typeof Constructor === 'function'` is `isA<JsClass>()`.
+// - `typeof Constructor === 'function'` is `isA<ScaleType>()`.
 //   `not.toBe(undefined)` is `isNot(same(undefined))`.
 // - A `beforeEach` of a `describe` that writes no chart is a `setUp`.
 //
@@ -188,7 +188,7 @@ void main() {
     test('should register the constructor with the registry', () {
       final constructor = Chart.registry.getScale('time');
       expect(constructor, isNot(same(undefined)));
-      expect(constructor, isA<JsClass>());
+      expect(constructor, isA<ScaleType>());
     });
 
     test('should have the correct default config', () {

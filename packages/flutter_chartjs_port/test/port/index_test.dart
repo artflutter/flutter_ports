@@ -7,7 +7,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The namespaces and `registerables` of src/index.ts:8-25 (Chart.js ADR
-// 0020, section 6). In the published bundle, a namespace is a frozen object
+// 0204). In the published bundle, a namespace is a frozen object
 // with the export names in code unit order. `Chart.register(
 // ...registerables)` then registers the element classes in the order arc,
 // bar, line, point (Chart.js ADR 0020, probe 2). The source order of
@@ -34,12 +34,15 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   removeBuiltins();
 
-  test('registerables is the List of the four namespaces', () {
-    expect(registerables, hasLength(4));
-    expect(registerables[0], same(controllers));
-    expect(registerables[1], same(elements));
-    expect(registerables[2], same(plugins));
-    expect(registerables[3], same(scales));
+  test('registerables is the List of the items of the four namespaces', () {
+    // The items, not the namespaces (Chart.js ADR 0204).
+    expect(registerables, [
+      ...controllers.values,
+      ...elements.values,
+      ...plugins.values,
+      ...scales.values,
+    ]);
+    expect(() => registerables.add(colors), throwsA(isA<UnsupportedError>()));
   });
 
   test('the namespace elements has the export names in code unit order', () {
@@ -49,10 +52,10 @@ void main() {
       'LineElement',
       'PointElement',
     ]);
-    expect(elements['ArcElement'], same(ArcElement.jsClass));
-    expect(elements['BarElement'], same(BarElement.jsClass));
-    expect(elements['LineElement'], same(LineElement.jsClass));
-    expect(elements['PointElement'], same(PointElement.jsClass));
+    expect(elements['ArcElement'], same(ArcElement.component));
+    expect(elements['BarElement'], same(BarElement.component));
+    expect(elements['LineElement'], same(LineElement.component));
+    expect(elements['PointElement'], same(PointElement.component));
   });
 
   test('the namespace scales has the export names in code unit order', () {
@@ -67,12 +70,12 @@ void main() {
       'TimeScale',
       'TimeSeriesScale',
     ]);
-    expect(scales['CategoryScale'], same(CategoryScale.jsClass));
-    expect(scales['LinearScale'], same(LinearScale.jsClass));
-    expect(scales['LogarithmicScale'], same(LogarithmicScale.jsClass));
-    expect(scales['RadialLinearScale'], same(RadialLinearScale.jsClass));
-    expect(scales['TimeScale'], same(TimeScale.jsClass));
-    expect(scales['TimeSeriesScale'], same(TimeSeriesScale.jsClass));
+    expect(scales['CategoryScale'], same(CategoryScale.component));
+    expect(scales['LinearScale'], same(LinearScale.component));
+    expect(scales['LogarithmicScale'], same(LogarithmicScale.component));
+    expect(scales['RadialLinearScale'], same(RadialLinearScale.component));
+    expect(scales['TimeScale'], same(TimeScale.component));
+    expect(scales['TimeSeriesScale'], same(TimeSeriesScale.component));
   });
 
   test('the namespace controllers has the export names in code unit order', () {
@@ -91,19 +94,22 @@ void main() {
       'RadarController',
       'ScatterController',
     ]);
-    expect(controllers['BarController'], same(BarController.jsClass));
-    expect(controllers['BubbleController'], same(BubbleController.jsClass));
-    expect(controllers['DoughnutController'], same(DoughnutController.jsClass));
-    expect(controllers['LineController'], same(LineController.jsClass));
-    expect(controllers['PieController'], same(PieController.jsClass));
+    expect(controllers['BarController'], same(BarController.component));
+    expect(controllers['BubbleController'], same(BubbleController.component));
+    expect(
+      controllers['DoughnutController'],
+      same(DoughnutController.component),
+    );
+    expect(controllers['LineController'], same(LineController.component));
+    expect(controllers['PieController'], same(PieController.component));
     expect(
       controllers['PolarAreaController'],
-      same(PolarAreaController.jsClass),
+      same(PolarAreaController.component),
     );
-    expect(controllers['RadarController'], same(RadarController.jsClass));
-    expect(controllers['ScatterController'], same(ScatterController.jsClass));
+    expect(controllers['RadarController'], same(RadarController.component));
+    expect(controllers['ScatterController'], same(ScatterController.component));
     expect(
-      () => controllers['X'] = BarController.jsClass,
+      () => controllers['X'] = BarController.component,
       throwsA(isA<UnsupportedError>()),
     );
   });
@@ -134,7 +140,7 @@ void main() {
 
   test('a namespace is unmodifiable, as a frozen object', () {
     expect(
-      () => elements['X'] = ArcElement.jsClass,
+      () => elements['X'] = ArcElement.component,
       throwsA(isA<UnsupportedError>()),
     );
   });
@@ -168,8 +174,8 @@ void main() {
     ]);
     // The controllers register in the order bar, bubble, doughnut, line,
     // pie, polarArea, radar, scatter. Each one adds its defaults to
-    // `defaults.datasets` and its overrides to `overrides`. The pie reads
-    // its overrides through the superclass chain of its class value.
+    // `defaults.datasets` and its overrides to `overrides`. The pie gives
+    // the overrides of the doughnut (Chart.js ADR 0204).
     const ids = [
       'bar',
       'bubble',
@@ -181,26 +187,29 @@ void main() {
       'scatter',
     ];
     expect(jsObjectKeys(registry.controllers.items), ids);
-    expect(registry.controllers.items['bar'], same(BarController.jsClass));
+    expect(registry.controllers.items['bar'], same(BarController.component));
     expect(
       registry.controllers.items['bubble'],
-      same(BubbleController.jsClass),
+      same(BubbleController.component),
     );
     // controller.doughnut.tests.js:4-7.
     expect(
       registry.controllers.items['doughnut'],
-      same(DoughnutController.jsClass),
+      same(DoughnutController.component),
     );
-    expect(registry.controllers.items['line'], same(LineController.jsClass));
-    expect(registry.controllers.items['pie'], same(PieController.jsClass));
+    expect(registry.controllers.items['line'], same(LineController.component));
+    expect(registry.controllers.items['pie'], same(PieController.component));
     expect(
       registry.controllers.items['polarArea'],
-      same(PolarAreaController.jsClass),
+      same(PolarAreaController.component),
     );
-    expect(registry.controllers.items['radar'], same(RadarController.jsClass));
+    expect(
+      registry.controllers.items['radar'],
+      same(RadarController.component),
+    );
     expect(
       registry.controllers.items['scatter'],
-      same(ScatterController.jsClass),
+      same(ScatterController.component),
     );
     expect(jsObjectKeys(defaults.get('datasets')), ids);
     expect(jsObjectKeys(Chart.overrides), ids);
@@ -220,25 +229,13 @@ void main() {
     expect(jsObjectKeys(registry.plugins.items), pluginIds);
     expect(jsObjectKeys(defaults.get('plugins')), pluginIds);
     for (final name in jsObjectKeys(plugins)) {
-      final plugin = plugins[name]! as Plugin<Object?>;
+      final plugin = plugins[name]!;
       expect(
         registry.plugins.items[plugin.id],
         same(plugin),
         reason: 'the registry item of $name',
       );
     }
-  });
-
-  test('Chart.register([registerables]) throws at the first namespace', () {
-    // Upstream throws a TypeError: the namespaces of the bundle have a null
-    // prototype, and `'id' in null` throws. Here the namespace reaches the
-    // registry of the plugins, and a debug build stops there: a plugin is a
-    // Plugin (Chart.js ADR 0144). Both stop before a write (Chart.js ADR
-    // 0020, section 6).
-    expect(
-      () => Chart.register([registerables]),
-      throwsA(isA<AssertionError>()),
-    );
   });
 
   test('the library exports the names of src/core/index.ts', () {
@@ -250,13 +247,13 @@ void main() {
     expect(Interaction.evaluateInteractionItems, isNotNull);
     expect(adapters.date, same(DefaultDateAdapter.new));
     expect(ticks, contains('formatters'));
-    expect(DatasetController.jsClass.name, 'DatasetController');
-    expect(Element.jsClass.name, 'Element');
-    expect(Scale.jsClass.name, 'Scale');
+    expect(DatasetController.new, isNotNull);
+    expect(Element.new, isNotNull);
+    expect(Scale.new, isNotNull);
     expect(PluginService.new, isNotNull);
     expect(Animations.new, isNotNull);
     expect(Animation.new, isNotNull);
-    expect(BasicPlatform.jsClass.name, 'BasicPlatform');
+    expect(BasicPlatform.new, isNotNull);
     expect(detectPlatform, isNotNull);
   });
 }

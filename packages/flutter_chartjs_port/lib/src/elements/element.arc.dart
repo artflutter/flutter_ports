@@ -901,7 +901,9 @@ class ArcElement([AnyObject? cfg])
     ..selfJoin = false;
 
   /// element.arc.ts:393 `static defaultRoutes`.
-  static final AnyObject defaultRoutes = {'backgroundColor': 'backgroundColor'};
+  static final Map<String, String> defaultRoutes = {
+    'backgroundColor': 'backgroundColor',
+  };
 
   /// element.arc.ts:397 `static descriptors`, a typed scope of the kind
   /// `Descriptors` (Chart.js ADR 0054 §3). The `_indexable` function is a
@@ -919,23 +921,14 @@ class ArcElement([AnyObject? cfg])
   // DIVERGES(chartjs): adapt-arc-native-options, native element contract.
   bool get supportsNativeArcOptions => _builtIn;
 
-  /// element.arc.ts:373 `class ArcElement extends Element` as a value (Chart.js
-  /// ADR 0020, section 3).
-  ///
-  /// Its statics are [id], [defaults], [defaultRoutes] and [descriptors], in
-  /// the upstream order of declaration (element.arc.ts:375-400). They are the
-  /// objects of the static fields. Its `construct` calls `ArcElement(cfg)` with
-  /// the `cfg` of [elementCfgArg].
-  static final JsClass jsClass = JsClass(
-    'ArcElement',
-    superclass: Element.jsClass,
-    statics: {
-      'id': id,
-      'defaults': defaults,
-      'defaultRoutes': defaultRoutes,
-      'descriptors': descriptors,
-    },
-    construct: (newTarget, args) => ArcElement(elementCfgArg(args)),
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `defaultRoutes`, `descriptors`, and the constructor.
+  static final ElementType component = ElementType(
+    id: id,
+    defaults: defaults,
+    defaultRoutes: defaultRoutes,
+    descriptors: descriptors,
+    create: ArcElement.new,
   );
 
   /// The bit of [circumference] in [_undefinedBits].

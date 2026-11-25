@@ -24,7 +24,7 @@ import 'scale_linear_reference.dart';
 // `scaleTest2` with the same overrides (a dataset of this type gets its own
 // stacks), and `linearTest` (linear on both axes). lib/src/index.dart does
 // not register the scales yet. Thus main() registers the category scale, the
-// linear scale and the test controllers through their class values, before
+// linear scale and the test controllers through their components, before
 // the snapshot of the defaults restore (Chart.js ADR 0020, section 8, and
 // Chart.js ADR 0022, section 8). The generator registers the built-in
 // components and the seven plugins of the dist first (registerBuiltins,
@@ -38,20 +38,26 @@ import 'scale_linear_reference.dart';
 
 /// The test controller `scaleTest2` of the generator: the overrides of
 /// `scaleTest`.
-final JsClass _scaleTest2Controller = cartesianTestController('scaleTest2', {
-  'scales': <String, Object?>{
-    '_index_': <String, Object?>{'type': 'category'},
-    '_value_': <String, Object?>{'type': 'linear'},
+final ControllerType _scaleTest2Controller = cartesianTestController(
+  'scaleTest2',
+  {
+    'scales': <String, Object?>{
+      '_index_': <String, Object?>{'type': 'category'},
+      '_value_': <String, Object?>{'type': 'linear'},
+    },
   },
-});
+);
 
 /// The test controller `linearTest` of the generator: linear on both axes.
-final JsClass _linearTestController = cartesianTestController('linearTest', {
-  'scales': <String, Object?>{
-    '_index_': <String, Object?>{'type': 'linear'},
-    '_value_': <String, Object?>{'type': 'linear'},
+final ControllerType _linearTestController = cartesianTestController(
+  'linearTest',
+  {
+    'scales': <String, Object?>{
+      '_index_': <String, Object?>{'type': 'linear'},
+      '_value_': <String, Object?>{'type': 'linear'},
+    },
   },
-});
+);
 
 /// The values of the observation `pixelForValue`: `pixelValues` of the
 /// generator. The integers below 1e6 are Dart `int` values: they take the
@@ -195,8 +201,8 @@ void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
   Chart.register([
-    CategoryScale.jsClass,
-    LinearScale.jsClass,
+    CategoryScale.component,
+    LinearScale.component,
     scaleTestController,
     _scaleTest2Controller,
     _linearTestController,
@@ -209,15 +215,15 @@ void main() {
     commit: scaleLinearReferenceCommit,
   );
 
-  group('the class value (Chart.js ADR 0020)', () {
-    test('the registry gives the class value of the id linear', () {
+  group('the component (Chart.js ADR 0204)', () {
+    test('the registry gives the component of the id linear', () {
       // scale.linear.tests.js:8-12.
       final scale = registry.getScale('linear');
-      expect(scale, same(LinearScale.jsClass));
-      expect(scale, isA<JsClass>());
-      expect(LinearScale.jsClass['id'], 'linear');
-      expect(LinearScale.jsClass['defaults'], same(LinearScale.defaults));
-      expect(LinearScale.jsClass.superclass, same(LinearScaleBase.jsClass));
+      expect(scale, same(LinearScale.component));
+      expect(scale, isA<ScaleType>());
+      expect(LinearScale.component.id, 'linear');
+      expect(LinearScale.component.defaults, same(LinearScale.defaults));
+      expect(LinearScale.component.parent, isNull);
     });
 
     test('defaults.scales.linear has the numeric tick callback', () {
@@ -232,18 +238,14 @@ void main() {
       expect(ticks['callback'], isA<Function>());
     });
 
-    testWidgets('jsConstruct makes a LinearScale from the cfg object', (
-      tester,
-    ) async {
+    testWidgets('create makes a LinearScale from the cfg', (tester) async {
       final chart = _linearChart(_scatter());
-      final scale = jsConstruct(LinearScale.jsClass, [
-        <String, Object?>{
-          'id': 'z',
-          'type': 'linear',
-          'ctx': null,
-          'chart': chart,
-        },
-      ]);
+      final scale = LinearScale.component.create((
+        id: 'z',
+        type: 'linear',
+        ctx: null,
+        chart: chart,
+      ));
       expect(scale, isA<LinearScale>());
       expect((scale as LinearScale).id, 'z');
       expect(scale.startValue, isNaN);

@@ -368,24 +368,13 @@ void Function(NativeEvent) createProxyAndListen(
 /// platform.dom.js:260 `DomPlatform`, as the Flutter platform.
 ///
 /// Platform class for charts that a chart host shows (Chart.js ADR 0037).
-/// `detectPlatform` gives it for a canvas whose parent node is a host.
+/// `detectPlatform` gives it for a canvas whose parent node is a host. Its
+/// name is `FlutterPlatform`. The spec `platform.dom` reads it as
+/// `DomPlatform` (`platform-dom-platform-class`).
+// DIVERGES(chartjs): platform-dom-platform-class, the class of DomPlatform.
 class FlutterPlatform() extends BasePlatform {
   /// platform.dom.js:260 the implicit constructor.
   this;
-
-  /// platform.dom.js:260 `class DomPlatform` as a value, as the Flutter
-  /// platform (Chart.js ADR 0037, section 1, and Chart.js ADR 0048, section
-  /// 7).
-  ///
-  /// It extends [BasePlatform.jsClass] and has no statics, as
-  /// `BasicPlatform.jsClass`. Its name is `FlutterPlatform`. The spec
-  /// `platform.dom` reads it as `DomPlatform` (`platform-dom-platform-class`).
-  // DIVERGES(chartjs): platform-dom-platform-class, the class of DomPlatform.
-  static final JsClass jsClass = JsClass(
-    'FlutterPlatform',
-    superclass: BasePlatform.jsClass,
-    construct: (newTarget, args) => FlutterPlatform(),
-  );
 
   /// The canvas of the last [acquireContext] call, whose host gives
   /// [getDevicePixelRatio].

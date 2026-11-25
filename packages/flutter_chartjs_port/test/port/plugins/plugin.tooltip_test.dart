@@ -435,9 +435,6 @@ const List<String> _callbackNames = [
   'afterFooter',
 ];
 
-/// `new Tooltip(config)` through the class value.
-Object? _construct(List<Object?> args) => jsConstruct(Tooltip.jsClass, args);
-
 /// A chart that is a `types.Chart` and nothing else. A member that a test
 /// does not stub throws a `NoSuchMethodError`.
 final class _FakeChart() implements IChart {
@@ -891,17 +888,6 @@ void main() {
   });
 
   group('class value', () {
-    test('the superclass is Element.jsClass', () {
-      expect(Tooltip.jsClass.superclass, same(Element.jsClass));
-    });
-
-    test('the class has no table of positioners', () {
-      // Upstream: `tooltip.positioners`, `Tooltip.positioners` and the
-      // registered plugin share one object (the probe `samePositioners`).
-      // The native plugin (Chart.js ADR 0144) has no field for it.
-      expect(identical(Tooltip.jsClass['positioners'], undefined), isTrue);
-    });
-
     test('new Tooltip(config) keeps the chart and the resolved options', () {
       // Upstream keeps `config.options` itself. The port keeps the
       // TooltipOptions with the fallbacks of Tooltip._resolved (Chart.js ADR
@@ -909,11 +895,7 @@ void main() {
       // Chart.defaults.font.
       final chart = _CacheChart();
       const options = TooltipOptions(enabled: true, caretSize: 3);
-      final constructed = _construct([
-        <String, Object?>{'chart': chart, 'options': options},
-      ]);
-      expect(constructed, isA<Tooltip>());
-      final value = constructed! as Tooltip;
+      final value = Tooltip((chart: chart, options: options));
       expect(value.chart, same(chart));
       final resolved = value.options! as TooltipOptions;
       expect(resolved.enabled, isTrue);
@@ -922,18 +904,11 @@ void main() {
       expect(resolved.boxHeight, 12);
     });
 
-    test('new Tooltip() and new Tooltip(undefined) throw a TypeError', () {
-      // Upstream: the read config.chart of undefined and null.
-      expect(() => _construct(const []), throwsA(isA<TypeError>()));
-      expect(() => _construct([undefined]), throwsA(isA<TypeError>()));
-      expect(() => _construct([null]), throwsA(isA<TypeError>()));
-    });
-
     test('the plugin has the hooks and the keys of the upstream object', () {
       // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
       // object are its hooks, and `id`, `defaults` and
       // `additionalOptionScopes` its fields. `_element` is no field: the
-      // class is `Tooltip.jsClass`. The port has no table of positioners
+      // class is `Tooltip`. The port has no table of positioners
       // (row `adapt-tooltip-positioner-objects`). The upstream keys
       // `defaultRoutes` and `descriptors` have no field: their fallbacks are
       // Dart code of Tooltip._resolved (Chart.js ADR 0192).
@@ -955,27 +930,6 @@ void main() {
         expect(value != null, set, reason: key);
       }
       expect(_callbackNamesOf(defaults.callbacks!), _callbackNames);
-    });
-  });
-
-  group('adapt-component-class-role', () {
-    test('a chart that is not a types.Chart throws a TypeError', () {
-      // Upstream stores the value and reads its members later.
-      expect(
-        () => _construct([
-          <String, Object?>{'chart': <String, Object?>{}},
-        ]),
-        throwsA(isA<TypeError>()),
-      );
-    });
-
-    test('options that are not a Map throw a TypeError', () {
-      expect(
-        () => _construct([
-          <String, Object?>{'chart': _FakeChart(), 'options': 5},
-        ]),
-        throwsA(isA<TypeError>()),
-      );
     });
   });
 

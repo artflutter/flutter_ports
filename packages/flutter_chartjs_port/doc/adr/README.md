@@ -22,7 +22,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0017](0017-element-properties.md) Element properties: accepted, superseded in part by 0054, 0145, 0174.
 - [0018](0018-typed-element-options.md) Typed element options: accepted, superseded by 0054.
 - [0019](0019-animation.md) Animation: accepted, superseded in part by 0145, 0171, 0172.
-- [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted, superseded in part by 0173, 0181.
+- [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted, superseded in part by 0173, 0181, 0204.
 - [0021](0021-typed-options-in-the-resolver.md) Typed options in the resolver: accepted, superseded by 0054.
 - [0022](0022-chart-test-harness.md) Chart test harness on Flutter: accepted, superseded in part by 0108, 0200.
 - [0023](0023-underscore-member-collisions.md) Underscore members with a colliding name: accepted.
@@ -135,7 +135,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0130](0130-native-callback-options.md) Native callback options: accepted, supersedes 0052, 0095, superseded in part by 0131, 0193.
 - [0131](0131-native-point-labels.md) Native point labels: accepted, supersedes 0130.
 - [0132](0132-exports-for-add-on-chart-types.md) Exports for add-on chart types: accepted, supersedes 0048, 0108.
-- [0133](0133-construct-helpers-and-meta-for-add-on-chart-types.md) The construct helpers, the meta and a recording context for add-on chart types: accepted, supersedes 0048.
+- [0133](0133-construct-helpers-and-meta-for-add-on-chart-types.md) The construct helpers, the meta and a recording context for add-on chart types: accepted, supersedes 0048, superseded in part by 0204.
 - [0134](0134-dart-math-max-min.md) `Math.max` and `Math.min` are `dart:math` `max` and `min` on doubles: accepted, supersedes 0045, superseded by 0146.
 - [0135](0135-math-hypot-as-sqrt.md) `Math.hypot` is `math.sqrt(a * a + b * b)`: accepted, supersedes 0108, superseded by 0146.
 - [0136](0136-math-pow-square.md) `Math.pow(x, 2)` is `dart:math` `pow`: accepted, supersedes 0045, superseded by 0146.
@@ -197,4 +197,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0201](0201-remove-extra.md) No extra Map in the typed API: accepted, supersedes 0052.
 - [0202](0202-no-string-data.md) No string data: accepted, supersedes 0036.
 - [0203](0203-typed-date-adapter.md) A typed date adapter: accepted, supersedes 0024, 0173.
+- [0204](0204-typed-chart-components.md) Typed chart components: accepted, supersedes 0020, 0133.
 <!-- adr-index:end -->

@@ -835,31 +835,22 @@ void _adr0021Tests() {
         expect(() => o.jsDelete(r'$shared'), _throwsTypeError);
       });
 
-      test('Object.assign into frozen options throws a TypeError', () {
+      test('a write by name into frozen options throws a TypeError', () {
         // Object.assign(o, {radius: 3}) of a frozen object throws a
-        // TypeError.
+        // TypeError: each write of a key throws.
         final o = options()..freeze();
-        expect(
-          () => jsAssign(o, <String, Object?>{c.keyA: 3.0}),
-          _throwsTypeError,
-        );
-        expect(
-          () => jsAssign(o, <String, Object?>{'absent': 1.0}),
-          _throwsTypeError,
-        );
+        expect(() => o.jsWrite(c.keyA, 3.0), _throwsTypeError);
+        expect(() => o.jsWrite('absent', 1.0), _throwsTypeError);
       });
 
       test('the operations that write nothing do not throw', () {
-        // `delete o.absentKey` of a frozen object returns true, and
-        // Object.assign(o, {}) returns o.
+        // `delete o.absentKey` of a frozen object returns true.
         final o = options()..freeze();
         final keys = o.jsKeys();
         expect(o.jsDelete('absentKey'), isFalse);
         expect(o.jsDelete(c.keyB), isFalse);
-        expect(jsAssign(o, const <String, Object?>{}), same(o));
         expect(o.jsKeys(), keys);
         final empty = c.create()..freeze();
-        expect(jsAssign(empty, const <String, Object?>{}), same(empty));
         expect(empty.ownKeyCount, 0);
       });
 

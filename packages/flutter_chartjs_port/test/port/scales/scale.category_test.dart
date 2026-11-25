@@ -30,7 +30,7 @@ import 'scale_chart_harness.dart';
 // them (`harness-register-builtins`). The generator registers the same
 // built-in components and the seven plugins of the dist (registerBuiltins,
 // Chart.js ADR 0041, section 1). main() registers
-// only the test scale and the test controller through their class values,
+// only the test scale and the test controller through their components,
 // before the snapshot of the defaults restore (Chart.js ADR 0020, section 8,
 // and Chart.js ADR 0022, section 8).
 //
@@ -72,16 +72,15 @@ final class _TestLinearScale(super.cfg) extends Scale {
 }
 
 /// `class TestLinearScale extends Scale` of the generator.
-final JsClass _testLinearScale = JsClass(
-  'TestLinearScale',
-  superclass: Scale.jsClass,
-  statics: {'id': 'testLinear', 'defaults': <String, Object?>{}},
-  construct: (newTarget, args) => _TestLinearScale(scaleCfgArg(args)),
+final ScaleType _testLinearScale = ScaleType(
+  id: 'testLinear',
+  defaults: ScaleOptionsScope(),
+  create: _TestLinearScale.new,
 );
 
 /// The cartesian test controller `categoryTest` of the generator: category
 /// on the index axis and `testLinear` on the value axis.
-final JsClass _categoryTestController = cartesianTestController(
+final ControllerType _categoryTestController = cartesianTestController(
   'categoryTest',
   {
     'scales': <String, Object?>{
@@ -381,12 +380,12 @@ void main() {
     commit: scaleCategoryReferenceCommit,
   );
 
-  group('the class value (Chart.js ADR 0020)', () {
-    test('the registry gives the class value of the id category', () {
-      expect(registry.getScale('category'), same(CategoryScale.jsClass));
-      expect(CategoryScale.jsClass['id'], 'category');
-      expect(CategoryScale.jsClass['defaults'], same(CategoryScale.defaults));
-      expect(CategoryScale.jsClass.superclass, same(Scale.jsClass));
+  group('the component (Chart.js ADR 0204)', () {
+    test('the registry gives the component of the id category', () {
+      expect(registry.getScale('category'), same(CategoryScale.component));
+      expect(CategoryScale.component.id, 'category');
+      expect(CategoryScale.component.defaults, same(CategoryScale.defaults));
+      expect(CategoryScale.component.parent, isNull);
     });
 
     test('defaults.scales.category has the tick callback only', () {

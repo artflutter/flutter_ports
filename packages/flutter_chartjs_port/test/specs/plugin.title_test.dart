@@ -21,11 +21,10 @@ import '../fixtures/index.dart' as fixture;
 // chartjs_test_utils. A recorded call is a Map with the keys 'name' and
 // 'args'. `toEqual` of the calls is `equals`.
 //
-// `Title` of :3, the plugin entry `_element`, is the class value
-// `Title.jsClass` (Chart.js ADR 0038, section 4): the native plugin `title`
-// has no key `_element` (Chart.js ADR 0144). `new Title(config)` is
-// jsConstruct with the config object, and the result is the Dart class Title
-// of plugin.title.dart.
+// `Title` of :3, the plugin entry `_element`, is the Dart class Title of
+// plugin.title.dart: the native plugin `title` has no key `_element`
+// (Chart.js ADR 0144). `new Title(config)` is the constructor with the
+// config record (Chart.js ADR 0038, section 4, and Chart.js ADR 0204).
 //
 // The cases of `config update` build charts. Thus the file runs on the VM,
 // and each chart case is a `testWidgets` case with the harness of Chart.js
@@ -34,14 +33,17 @@ import '../fixtures/index.dart' as fixture;
 // write through `operator []=` of the option resolver, the `set` trap of
 // upstream.
 
-/// `Chart.registry.getPlugin('title')._element` (:3): the class value of
-/// [Title].
-// DIVERGES(chartjs): adapt-typed-plugins, the class value of Title.
-JsClass _titleClass() => Title.jsClass;
-
-/// `new Title(config)`.
-Title _newTitle(AnyObject config) =>
-    jsConstruct(_titleClass(), [config]) as Title;
+/// `new Title(config)`, with the class
+/// `Chart.registry.getPlugin('title')._element` (:3).
+// DIVERGES(chartjs): adapt-typed-plugins, the class Title.
+Title _newTitle(
+  ({
+    Object? chart,
+    TitleBoxOptions<Object?>? options,
+    CanvasRenderingContext2D? ctx,
+  })
+  config,
+) => Title(config);
 
 /// `Chart.defaults.plugins.title`: one [TitleOptions] (Chart.js ADR 0197).
 TitleOptions _titleDefaults() =>
@@ -141,10 +143,8 @@ void main() {
         const TitleOptions(text: ['My title']),
       );
 
-      final title = _newTitle(<String, Object?>{
-        'chart': chart,
-        'options': options,
-      })..update(400, 200);
+      final title = _newTitle((chart: chart, options: options, ctx: null))
+        ..update(400, 200);
 
       expect(title.width, 0);
       expect(title.height, 0);
@@ -165,10 +165,8 @@ void main() {
         const TitleOptions(text: ['My title'], position: ChartPosition.left),
       );
 
-      final title = _newTitle(<String, Object?>{
-        'chart': chart,
-        'options': options,
-      })..update(200, 400);
+      final title = _newTitle((chart: chart, options: options, ctx: null))
+        ..update(200, 400);
 
       expect(title.width, 0);
       expect(title.height, 0);
@@ -197,10 +195,8 @@ void main() {
           ),
         );
 
-        final title = _newTitle(<String, Object?>{
-          'chart': chart,
-          'options': options,
-        })..update(200, 400);
+        final title = _newTitle((chart: chart, options: options, ctx: null))
+          ..update(200, 400);
 
         expect(title.width, 56);
         expect(title.height, 400);
@@ -215,14 +211,9 @@ void main() {
         const TitleOptions(text: ['My title']),
       );
 
-      final title =
-          _newTitle(<String, Object?>{
-              'chart': chart,
-              'options': options,
-              'ctx': context,
-            })
-            ..update(400, 200)
-            ..draw();
+      final title = _newTitle((chart: chart, options: options, ctx: context))
+        ..update(400, 200)
+        ..draw();
 
       expect(context.getCalls(), equals(<Object?>[]));
 
@@ -248,14 +239,9 @@ void main() {
         const TitleOptions(text: ['My title'], position: ChartPosition.left),
       );
 
-      final title =
-          _newTitle(<String, Object?>{
-              'chart': chart,
-              'options': options,
-              'ctx': context,
-            })
-            ..update(200, 400)
-            ..draw();
+      final title = _newTitle((chart: chart, options: options, ctx: context))
+        ..update(200, 400)
+        ..draw();
 
       expect(context.getCalls(), equals(<Object?>[]));
 

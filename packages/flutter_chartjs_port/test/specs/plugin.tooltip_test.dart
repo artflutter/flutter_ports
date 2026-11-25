@@ -46,12 +46,6 @@ import '../fixtures/index.dart' as fixture;
 // `toEqual` is an [ActiveElement]: its `==` compares the indexes and the
 // identity of the element.
 
-/// :2-3 `Chart.registry.getPlugin('tooltip')._element`: the class value of
-/// [Tooltip]. The native plugin `tooltip` has no key `_element` (Chart.js
-/// ADR 0144).
-// DIVERGES(chartjs): adapt-typed-plugins, the class value of Tooltip.
-JsClass _tooltipClass() => Tooltip.jsClass;
-
 /// `Chart.defaults`.
 JsObjectFace _defaults() => Chart.defaults;
 
@@ -1729,9 +1723,10 @@ void main() {
       // `var` of the describe body. The chart is a `types.Chart` stub with
       // `getContext` and `options` (Chart.js ADR 0039, section 15).
       final mockContext = createMockContext();
-      late final tooltip = jsConstruct(_tooltipClass(), [
-        <String, Object?>{'chart': _TextAlignChart()},
-      ]) as Tooltip;
+      // :2-3 `Chart.registry.getPlugin('tooltip')._element` is the class
+      // Tooltip: the native plugin has no key `_element` (Chart.js ADR 0144).
+      // DIVERGES(chartjs): adapt-typed-plugins, the class Tooltip.
+      late final tooltip = Tooltip((chart: _TextAlignChart(), options: null));
 
       test('Should go left', () {
         mockContext.resetCalls();

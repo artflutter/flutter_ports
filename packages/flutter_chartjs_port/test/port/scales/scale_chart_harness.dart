@@ -87,7 +87,7 @@ import '../helpers/rounded_rect_upstream.dart';
 final class ScaleTestController(
   super.chart,
   super.datasetIndex, [
-  super.newTarget,
+  super.elements,
 ]) extends DatasetController {
   /// The controller of the dataset `datasetIndex` of `chart`.
   this;
@@ -135,34 +135,31 @@ final class ScaleTestController(
   }
 }
 
-/// The class value of a [ScaleTestController] with the id [id] and the
+/// The component of a [ScaleTestController] with the id [id] and the
 /// overrides [overrides]: `cartesianTestController(id, overrides)` of the
 /// generators.
-JsClass cartesianTestController(String id, AnyObject overrides) => JsClass(
-  'ScaleTestController',
-  superclass: DatasetController.jsClass,
-  statics: {
-    'id': id,
-    'defaults': <String, Object?>{
-      'datasetElementType': false,
-      'dataElementType': 'point',
-    },
-    'overrides': overrides,
-  },
-  construct: (newTarget, args) {
-    final (:chart, :datasetIndex) = controllerArgs(args);
-    return ScaleTestController(chart, datasetIndex, newTarget);
-  },
-);
+ControllerType cartesianTestController(String id, AnyObject overrides) =>
+    ControllerType(
+      id: id,
+      defaults: scopeFromMap(GenericDatasetOptionsScope(), {
+        'datasetElementType': false,
+        'dataElementType': 'point',
+      }),
+      overrides: scopeFromMap(ChartOptionsScope(), overrides),
+      create: ScaleTestController.new,
+    );
 
 /// The test controller `scaleTest` of the generators: category on the index
 /// axis and linear on the value axis.
-final JsClass scaleTestController = cartesianTestController('scaleTest', {
-  'scales': <String, Object?>{
-    '_index_': <String, Object?>{'type': 'category'},
-    '_value_': <String, Object?>{'type': 'linear'},
+final ControllerType scaleTestController = cartesianTestController(
+  'scaleTest',
+  {
+    'scales': <String, Object?>{
+      '_index_': <String, Object?>{'type': 'category'},
+      '_value_': <String, Object?>{'type': 'linear'},
+    },
   },
-});
+);
 
 /// The result of `getPointPositionForValue(index, value)` of a radial scale.
 typedef RadialPointPosition = ({double x, double y, double angle});
@@ -200,7 +197,7 @@ final class RadialTestController(
 
   /// The call of `getPointPositionForValue` on the scale r.
   final RadialPointPositionOf pointPosition, [
-  super.newTarget,
+  super.elements,
 ]) extends DatasetController {
   /// The controller of the dataset `datasetIndex` of `chart`.
   this;
@@ -231,41 +228,36 @@ final class RadialTestController(
   }
 }
 
-/// The class value of a [RadialTestController] with the id [id] and the
+/// The component of a [RadialTestController] with the id [id] and the
 /// overrides [overrides]: `radialTestController(id, overrides)` of the
 /// generators. [pointPosition] calls `getPointPositionForValue` on the
 /// scale r.
-JsClass radialTestController(
+ControllerType radialTestController(
   String id,
   AnyObject overrides,
   RadialPointPositionOf pointPosition,
-) => JsClass(
-  'RadialTestController',
-  superclass: DatasetController.jsClass,
-  statics: {
-    'id': id,
-    'defaults': <String, Object?>{
-      'datasetElementType': false,
-      'dataElementType': 'point',
-      'indexAxis': const RAxis(),
-    },
-    'overrides': overrides,
-  },
-  construct: (newTarget, args) {
-    final (:chart, :datasetIndex) = controllerArgs(args);
-    return RadialTestController(chart, datasetIndex, pointPosition, newTarget);
-  },
+) => ControllerType(
+  id: id,
+  defaults: scopeFromMap(GenericDatasetOptionsScope(), {
+    'datasetElementType': false,
+    'dataElementType': 'point',
+    'indexAxis': const RAxis(),
+  }),
+  overrides: scopeFromMap(ChartOptionsScope(), overrides),
+  create: (chart, datasetIndex, elements) =>
+      RadialTestController(chart, datasetIndex, pointPosition, elements),
 );
 
 /// The test controller `radialTest` of the generators: radialLinear on the
 /// axis r, and the aspect ratio 1 (controller.radar.js:45-52).
-JsClass radialLinearTestController(RadialPointPositionOf pointPosition) =>
-    radialTestController('radialTest', {
-      'aspectRatio': 1.0,
-      'scales': <String, Object?>{
-        'r': <String, Object?>{'type': 'radialLinear'},
-      },
-    }, pointPosition);
+ControllerType radialLinearTestController(
+  RadialPointPositionOf pointPosition,
+) => radialTestController('radialTest', {
+  'aspectRatio': 1.0,
+  'scales': <String, Object?>{
+    'r': <String, Object?>{'type': 'radialLinear'},
+  },
+}, pointPosition);
 
 // ---------------------------------------------------------------------------
 // The draw calls.

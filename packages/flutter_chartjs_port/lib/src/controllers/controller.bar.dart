@@ -29,8 +29,8 @@
 ///   `lib/src/types/` and imports no concrete scale, element or chart
 ///   module (Chart.js ADR 0028, section 1). The draw casts each bar to
 ///   `types.VisualElement`, as `DatasetController.draw` does.
-/// - [BarController.jsClass] is the class as a value with the statics `id`,
-///   `defaults` and `overrides` (Chart.js ADR 0020, section 3).
+/// - [BarController.component] is the class as a typed component with the
+///   statics `id`, `defaults` and `overrides` (Chart.js ADR 0204).
 /// - The memo of `_getAxis`, `getFirstScaleIdForIndexAxis` and `_getStacks`
 ///   for each bar, the `skipNull` find and the empty object of
 ///   `(parsed._stacks || {})` are ported literally (Chart.js ADR 0036,
@@ -590,12 +590,12 @@ void _setInflateAmount(
 }
 
 /// controller.bar.js:258 `BarController extends DatasetController`.
-class BarController(super.chart, super.datasetIndex, [super.newTarget])
+class BarController(super.chart, super.datasetIndex, [super.elements])
     extends DatasetController
     implements NativeBarIndexReads {
   /// `new BarController(chart, datasetIndex)`. Upstream declares no
-  /// constructor in this class. `newTarget` is `new.target` (Chart.js ADR
-  /// 0020, section 4).
+  /// constructor in this class. [elements] are the element types of the
+  /// chart type (Chart.js ADR 0204).
   this;
 
   /// Native support for the explicit data-only lifecycle.
@@ -639,21 +639,13 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
           ..beginAtZero = true,
       ));
 
-  /// controller.bar.js:258 `class BarController extends DatasetController`
-  /// as a value (Chart.js ADR 0020, section 3).
-  ///
-  /// It extends [DatasetController.jsClass]. Its statics are `id`
-  /// (`'bar'`), [defaults] and [overrides], in the upstream order of
-  /// declaration (:260-298). Its `construct` calls `BarController(chart,
-  /// datasetIndex, newTarget)` with the arguments of [controllerArgs].
-  static final JsClass jsClass = JsClass(
-    'BarController',
-    superclass: DatasetController.jsClass,
-    statics: {'id': id, 'defaults': defaults, 'overrides': overrides},
-    construct: (newTarget, args) {
-      final (:chart, :datasetIndex) = controllerArgs(args);
-      return BarController(chart, datasetIndex, newTarget);
-    },
+  /// The class as a typed component (Chart.js ADR 0204): the statics
+  /// `id`, `defaults`, `overrides`, and the constructor.
+  static final ControllerType component = ControllerType(
+    id: id,
+    defaults: defaults,
+    overrides: overrides,
+    create: BarController.new,
   );
 
   late final bool _nativeBarIndexReads = runtimeType == BarController;
@@ -1128,10 +1120,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     if (super.runtimeType != BarController) return false;
     final elementClass = dataElementType;
     if (individualOptions &&
-        (type != 'bar' ||
-            elementClass is! JsClass ||
-            elementClass.id is! String ||
-            elementClass.id != 'bar')) {
+        (type != 'bar' || elementClass == null || elementClass.id != 'bar')) {
       return false;
     }
     final owner = chart;
