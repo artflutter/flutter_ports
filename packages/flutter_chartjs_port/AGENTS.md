@@ -405,7 +405,10 @@ repository.
       `meta.parsed` is a `List<ParsedItem?>` (row `adapt-parsed-data-items`): the doughnut and the pie keep
       their number in `r`, and with `parsing: false` each data item is a `ParsedItem` (a `List<DataPoint>`
       is the parsed List with no copy; another item stops a debug build). `getParsed` gives a `ParsedItem?`,
-      and a parsed item reads with `parsedValueOf` (`@internal`, the `ScaleAxis` of the scale). A `_stacks`
+      and a parsed item reads with `parsedValueOf` (`@internal`, the `ScaleAxis` of the scale), which
+      gives a `double?`: `x`, `y` and `r` of a parsed item are numbers or null, and an absent key is
+      null (Chart.js ADR 0205, row `adapt-typed-parsed-values`). A data item with a text `x` is a
+      `LabelPoint` (`DatasetData.labelPoints`), which is no parsed item. A `_stacks`
       object that user code wrote by name reads with `jsGetKey`. `applyStack` gives a `double?` (row
       `adapt-apply-stack-number`). `parsing` is a `ParsingKeys?` (Dart `null` for `parsing: false`, row
       `adapt-parsing-keys`), and `datasetElementType` and `dataElementType` are an `ElementType?` (row
@@ -654,7 +657,8 @@ repository.
       `adapt-decimation-data-accessor`). On a typed dataset scope, the accessor uses its typed keys
       `_data` and `_decimated`. `lttbDecimation` and `minMaxDecimation` are `@internal`:
       the pure test `test/port/plugins/plugin.decimation_algorithms_test.dart` calls them. They read
-      the data items with the JS operators (`jsAdd`, `jsToNumber`, `jsToInt32`, `jsLessThan`). Data
+      the parsed numbers of the data items (Chart.js ADR 0205): a `null` value is 0 in the
+      arithmetic and the compares, and `|` is `jsToInt32`. Data
       that is not a List throws a `TypeError` (row `js-semantics-decimation-data`). The option
       `algorithm` holds a `DecimationAlgorithm` (row `adapt-decimation-algorithm-objects`), the
       field `DecimationOptions.algorithm`: an object with the method `decimate`.

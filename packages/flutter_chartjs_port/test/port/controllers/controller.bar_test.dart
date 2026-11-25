@@ -119,6 +119,10 @@ void _expectSameBars(
 /// adapt-parsing-keys), and a data item of `parsing: false` that is not a
 /// ParsedItem stops a debug build (row adapt-parsed-data-items).
 const Map<String, String> _skips = {
+  // An absent value key is null, where upstream keeps `undefined` (Chart.js
+  // ADR 0205).
+  'parsed: parsing false, an absent value key and a null value':
+      'diverges: adapt-typed-parsed-values',
   "parsed: barThickness '20'": 'diverges: adapt-bar-thickness-class',
   'parsed: xAxisKey null': 'diverges: adapt-parsing-keys',
   'parsed: xAxisKey 5': 'diverges: adapt-parsing-keys',

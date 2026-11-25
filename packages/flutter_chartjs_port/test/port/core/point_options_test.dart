@@ -115,7 +115,7 @@ void main() {
         ..x = 1.0
         ..y = double.nan;
       expect(guard.accepts(parsed), isTrue);
-      parsed.y = undefined;
+      parsed.y = null;
       expect(guard.accepts(parsed), isTrue);
       expect(guard.accepts(Object()), isFalse);
     },

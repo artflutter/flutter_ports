@@ -1997,22 +1997,22 @@ void main() {
       final spy = _spyOnChart();
       Future<List<Object?>> run({required bool dataOnly}) async {
         final labels = <Object>['a', 'b'];
-        ChartConfig line(List<DataPoint> points) => ChartConfig(
+        ChartConfig line(DatasetData data) => ChartConfig(
           labels: labels,
-          datasets: [LineDataset(data: .points(points))],
+          datasets: [LineDataset(data: data)],
           scales: _categoryAxes,
           animation: ChartAnimation.none,
         );
-        List<DataPoint> numbers(double y) => <DataPoint>[
-          DataPoint(0, y),
-          DataPoint(1, 20),
-        ];
-        Widget view(List<DataPoint> points) =>
-            _view(line(points), dataOnly: dataOnly);
+        DatasetData numbers(double y) =>
+            .points(<DataPoint>[DataPoint(0, y), DataPoint(1, 20)]);
+        Widget view(DatasetData data) => _view(line(data), dataOnly: dataOnly);
         await _warm(tester, (step) => view(numbers(10.0 + step)));
         final seen = <Object?>[];
         await tester.pumpWidget(
-          view(<DataPoint>[DataPoint.label('new', 10), DataPoint(1, 20)]),
+          // A label point and the label of the index 1 (Chart.js ADR 0205).
+          view(
+            const .labelPoints([LabelPoint('new', 10), LabelPoint('b', 20)]),
+          ),
         );
         seen.add(List<Object>.of(labels));
 

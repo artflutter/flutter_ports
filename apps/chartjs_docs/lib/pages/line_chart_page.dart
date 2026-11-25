@@ -992,9 +992,9 @@ DocPageContent lineChartPage() => DocPageContent(
         const DocParagraph(
           DocText(
             'The form `.points(...)` holds `DataPoint` items. Use `DataPoint` '
-            'with a number on a `LinearAxis`, `DataPoint.time` with a '
-            '`DateTime` on a time axis, and `DataPoint.label` with a '
-            'category.',
+            'with a number on a `LinearAxis`, and `DataPoint.time` with a '
+            '`DateTime` on a time axis. The form `.labelPoints(...)` holds '
+            '`LabelPoint` items with a category label.',
           ),
         ),
         const DocParagraph(

@@ -1296,9 +1296,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `jsAdd` (the operator `a + b` on a raw option value: a string operand joins, else the numbers
   add), `jsGetKey` (the read `object[key]` of a parsed item, a data item or a stack object, with the
   `jsGet` result; a read of a resolver stays `jsGet`), `jsGetIndex` (the read `object[index]` with a
-  number index: a List gives the item at a whole index in range, else `undefined`), `jsLessThan` (the operator `a < b` on raw values: two strings
-  compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036) and the
-  `undefined` sentinel (Chart.js ADR 0043). `Math.hypot(a, b)` has no runtime function: it is
+  number index: a List gives the item at a whole index in range, else `undefined`) (Chart.js ADR
+  0036) and the `undefined` sentinel (Chart.js ADR 0043). `Math.hypot(a, b)` has no runtime function: it is
   `math.sqrt(a * a + b * b)` (Chart.js ADR 0146 §4). `Math.round(x)` is `x.roundToDouble()` (Chart.js
   ADR 0146 §7), and `Math.pow(x, 2)` is `math.pow(x, 2.0)` (Chart.js ADR 0146 §4). `Math.max` and
   `Math.min` have no

@@ -217,26 +217,6 @@ class _ObservedMap(final Map<String, Object?> fields)
   void clear() => fields.clear();
 }
 
-/// A y value whose `ToNumber` (its `toString`) runs [onRead]: user code in
-/// the read of a parsed item, which runs none in its own reads (row
-/// `adapt-parsed-data-items`).
-class _ReadingValue(final double value) {
-  void Function()? onRead;
-  @override
-  String toString() {
-    onRead?.call();
-    return '$value';
-  }
-}
-
-/// A copy of the parsed item [item] with [y] as its y value.
-ParsedItem _withY(Object? item, Object? y) {
-  final source = item! as ParsedItem;
-  return ParsedItem()
-    ..x = source.x
-    ..y = y;
-}
-
 const _length = 12;
 
 Object? _plain(Object? value) {
@@ -679,58 +659,6 @@ void main() {
       expect(native, reference);
     });
 
-    test('a public update in the read of a first item keeps every write', () {
-      List<Object?> run(String id) {
-        final seen = <Object?>[];
-        var armed = false;
-        var ran = false;
-        final config = _config(
-          'scatter',
-          id: id,
-          options: {'parsing': false},
-          plugins: [
-            Plugin<Object?>(
-              id: 'arm',
-              beforeDatasetUpdate: (c, a, o) {
-                armed = !ran;
-                return true;
-              },
-            ),
-          ],
-        );
-        final chart = _chart(config);
-        ran = false;
-        armed = false;
-        final data = config['data']! as ChartDataScope;
-        final dataset =
-            (data['datasets']! as List<Object?>)[0]! as Map<String, Object?>;
-        final items = List<Object?>.of(dataset['data']! as List<Object?>);
-        final observed = _ReadingValue((items[0]! as ParsedItem).y! as double);
-        items[0] = _withY(items[0], observed);
-        dataset['data'] = items;
-        observed.onRead = () {
-          if (!armed) return;
-          armed = false;
-          ran = true;
-          final meta = chart.getDatasetMeta(0);
-          meta.controller!.update(UpdateMode.none);
-          seen.add([
-            for (final point in meta.data)
-              contextField((point as Element).$context, 'mode'),
-          ]);
-        };
-        chart.update(UpdateMode.none);
-        return seen
-          ..add(ran)
-          ..add(_results(chart));
-      }
-
-      final native = run('scatter');
-      expect(native[1], isTrue);
-      expect((native[0]! as List<Object?>).skip(2), everyElement('none'));
-      expect(native, run('ref-scatter'));
-    });
-
     test('showLine keeps the loop as the last writer', () {
       _expectTwin('scatter', dataset: {'showLine': true});
     });
@@ -858,39 +786,6 @@ void main() {
         }
       },
     );
-
-    test('a foreign coordinate reads the waiting contexts', () {
-      List<String> run(String id) {
-        final seen = <String>[];
-        final config = _config('scatter', id: id, options: {'parsing': false});
-        final chart = _chart(config);
-        final data = config['data']! as ChartDataScope;
-        final dataset =
-            (data['datasets']! as List<Object?>)[0]! as Map<String, Object?>;
-        final items = List<Object?>.of(dataset['data']! as List<Object?>);
-        final observed = _ReadingValue((items[8]! as ParsedItem).y! as double);
-        items[8] = _withY(items[8], observed);
-        dataset['data'] = items;
-        chart.update(UpdateMode.none);
-        var busy = false;
-        observed.onRead = () {
-          if (busy) return;
-          busy = true;
-          seen.add(_state(chart));
-          busy = false;
-        };
-        chart.update(UpdateMode.none);
-        seen
-          ..add('end ${_state(chart)}')
-          ..add(_results(chart));
-        return seen;
-      }
-
-      final native = run('scatter');
-      final reference = run('ref-scatter');
-      expect(native.length, greaterThan(2));
-      expect(native, reference);
-    });
 
     test('a partial loop keeps its writes: the visible range', () {
       void steps(Chart chart, ChartConfigurationScope cfg, String type) {

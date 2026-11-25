@@ -438,13 +438,13 @@ void main() {
         isFalse,
       );
     });
-    test('a point with a value that is not a number falls back', () {
-      final label = typed.DataPoint.label('a', 1);
+    test('a label point falls back, and a time point is a number', () {
+      // A time point stores its time value (Chart.js ADR 0205).
+      const label = typed.LabelPoint('a', 1);
       final time = typed.DataPoint.time(DateTime.utc(2026), 1);
       expect(dataUpdateValues(<Object?>[point, label]), isNull);
       expect(dataUpdateValues(<Object?>[label, point]), isNull);
-      expect(dataUpdateValues(<Object?>[point, time]), isNull);
-      expect(dataUpdateValues(<Object?>[point, point, time, point]), isNull);
+      expect(dataUpdateValues(<Object?>[point, time]), isNotNull);
     });
     test('another class after a point falls back', () {
       expect(dataUpdateValues(<Object?>[point, Object()]), isNull);

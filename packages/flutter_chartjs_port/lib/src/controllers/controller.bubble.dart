@@ -323,7 +323,11 @@ class BubbleController(super.chart, super.datasetIndex, [super.elements])
       if (!jsTruthy(item)) {
         r = item;
       } else {
-        final value = item is ParsedItem ? item.r : jsGetKey(item, 'r');
+        // An absent `r` of a parsed item is the JS `undefined`, which takes
+        // the default radius below.
+        final value = item is ParsedItem
+            ? (item.hasSlot(2) ? item.r : undefined)
+            : jsGetKey(item, 'r');
         radii.objectRadius(value);
         r = jsTruthy(value) ? jsToNumber(value) : value;
       }
@@ -520,12 +524,12 @@ class BubbleController(super.chart, super.datasetIndex, [super.elements])
       final iPixel = reset
           ? iScale.getPixelForDecimal(0.5)
           : iScale.getPixelForValue(
-              scaleValueOf(iScale, parsedValueOf(parsed, iAxis)),
+              scaleNumberOf(iScale, parsedValueOf(parsed, iAxis)),
             );
       final vPixel = reset
           ? vScale.getBasePixel()
           : vScale.getPixelForValue(
-              scaleValueOf(vScale, parsedValueOf(parsed, vAxis)),
+              scaleNumberOf(vScale, parsedValueOf(parsed, vAxis)),
             );
 
       final skip = iPixel.isNaN || vPixel.isNaN;

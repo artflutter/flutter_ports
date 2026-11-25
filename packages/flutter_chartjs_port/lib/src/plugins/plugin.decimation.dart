@@ -23,11 +23,9 @@
 /// typed dataset scope, read and written through its face (Chart.js ADR
 /// 0054 §5).
 ///
-/// The two algorithms read the data items with the JavaScript operators:
-/// `+=` with [jsAdd], the arithmetic through [jsToNumber], `|` through
-/// [jsToInt32], and the compare of the raw `y` values through [jsLessThan]
-/// (Chart.js ADRs 0036 and 0146). For number items, these are the `double`
-/// operations.
+/// The two algorithms read the parsed numbers of the data items (Chart.js ADR
+/// 0205): a `null` value is 0 in the arithmetic and the compares, as the JS
+/// operators read it, and `|` is [jsToInt32] (Chart.js ADR 0146).
 ///
 /// A pure layer (Chart.js ADR 0038, section 9): it imports only pure
 /// helpers, the JS runtime and the type interfaces.
@@ -138,8 +136,8 @@ List<ParsedItem?> lttbDecimation(
   decimated.add(_itemAt(data, a));
 
   for (var i = 0.0; i < samples - 2; i++) {
-    Object? avgX = 0.0;
-    Object? avgY = 0.0;
+    var avgX = 0.0;
+    var avgY = 0.0;
 
     // Adding offset
     final avgRangeStart = ((i + 1) * bucketWidth).floorToDouble() + 1 + start;
@@ -148,12 +146,12 @@ List<ParsedItem?> lttbDecimation(
     final avgRangeLength = avgRangeEnd - avgRangeStart;
 
     for (var j = avgRangeStart; j < avgRangeEnd; j++) {
-      avgX = jsAdd(avgX, _itemAt(data, j)!.x);
-      avgY = jsAdd(avgY, _itemAt(data, j)!.y);
+      avgX += _n(_itemAt(data, j)!.x);
+      avgY += _n(_itemAt(data, j)!.y);
     }
 
-    final avgXValue = jsToNumber(avgX) / avgRangeLength;
-    final avgYValue = jsToNumber(avgY) / avgRangeLength;
+    final avgXValue = avgX / avgRangeLength;
+    final avgYValue = avgY / avgRangeLength;
 
     // Adding offset
     final rangeOffs = (i * bucketWidth).floorToDouble() + 1 + start;
@@ -162,8 +160,8 @@ List<ParsedItem?> lttbDecimation(
     // `const {x: pointAx, y: pointAy} = data[a]`: an `undefined` a reads
     // `data[undefined]`.
     final pointA = _itemAt(data, a ?? double.nan)!;
-    final pointAx = jsToNumber(pointA.x);
-    final pointAy = jsToNumber(pointA.y);
+    final pointAx = _n(pointA.x);
+    final pointAy = _n(pointA.y);
 
     // Note that this is changed from the original algorithm which
     // initializes these values to 1. The reason for this change is that if
@@ -177,8 +175,8 @@ List<ParsedItem?> lttbDecimation(
       final point = _itemAt(data, j)!;
       area =
           0.5 *
-          ((pointAx - avgXValue) * (jsToNumber(point.y) - pointAy) -
-                  (pointAx - jsToNumber(point.x)) * (avgYValue - pointAy))
+          ((pointAx - avgXValue) * (_n(point.y) - pointAy) -
+                  (pointAx - _n(point.x)) * (avgYValue - pointAy))
               .abs();
 
       if (area > maxArea) {
@@ -207,14 +205,18 @@ ParsedItem? _itemAt(List<ParsedItem?> data, double index) {
   return null;
 }
 
+/// The JS `ToNumber` of a parsed value in the arithmetic and the compares
+/// of the algorithms: Dart `null` (the JS `null`) is 0 (Chart.js ADR 0205).
+double _n(double? value) => value ?? 0.0;
+
 /// plugin.decimation.js:82 `minMaxDecimation(data, start, count,
 /// availableWidth)`.
 ///
 /// Upstream does not export the function. It is public here with
 /// `@internal` for the tests of the algorithm (Chart.js ADR 0012).
 ///
-/// The `y` values stay raw until the compare of `:101` and `:104`, which
-/// compares two strings by their code units ([jsLessThan]). A new item of
+/// The `y` values are numbers (Chart.js ADR 0205): the compares of `:101`
+/// and `:104` read a `null` value as 0, as the JS `<` does. A new item of
 /// `:124-133` is a new [ParsedItem] with the own keys of the item and `x`
 /// ([_withX]).
 List<ParsedItem?> minMaxDecimation(
@@ -230,35 +232,35 @@ List<ParsedItem?> minMaxDecimation(
   double? minIndex;
   double? maxIndex;
   double? startIndex;
-  Object? minY;
-  Object? maxY;
+  var minY = 0.0;
+  var maxY = 0.0;
   final decimated = <ParsedItem?>[];
   final endIndex = start + count - 1;
 
   final xMin = _itemAt(data, start)!.x;
   final xMax = _itemAt(data, endIndex)!.x;
-  final dx = jsToNumber(xMax) - jsToNumber(xMin);
+  final dx = _n(xMax) - _n(xMin);
 
   for (var i = start; i < start + count; ++i) {
     final point = _itemAt(data, i)!;
-    final pointX = point.x;
-    final x = (jsToNumber(pointX) - jsToNumber(xMin)) / dx * availableWidth;
-    final y = point.y;
+    final pointX = _n(point.x);
+    final x = (pointX - _n(xMin)) / dx * availableWidth;
+    final y = _n(point.y);
     final truncX = jsToInt32(x);
 
     if (truncX == prevX) {
       // Determine `minY` / `maxY` and `avgX` while we stay within same
       // x-position
-      if (jsLessThan(y, minY)) {
+      if (y < minY) {
         minY = y;
         minIndex = i;
-      } else if (jsLessThan(maxY, y)) {
+      } else if (maxY < y) {
         maxY = y;
         maxIndex = i;
       }
       // For first point in group, countX is `0`, so average will be `x` / 1.
       // Use point.x here because we're computing the average data `x` value
-      avgX = jsToNumber(jsAdd(countX * avgX, pointX)) / ++countX;
+      avgX = (countX * avgX + pointX) / ++countX;
     } else {
       // Push up to 4 points, 3 for the last interval and the first point for
       // this interval

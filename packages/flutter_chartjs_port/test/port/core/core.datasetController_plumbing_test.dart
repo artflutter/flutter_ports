@@ -395,7 +395,6 @@ void main() {
         typed.DataPoint(1, 2),
         typed.DataPoint(1, null),
         typed.DataPoint.time(DateTime.utc(2026), 2),
-        typed.DataPoint.label('a', 2),
         typed.DataPoint.bubble(1, 2, 3),
       ];
       for (final item in items) {
@@ -404,13 +403,20 @@ void main() {
           (YAxis(), 'y'),
           (RAxis(), 'r'),
         ]) {
+          // An absent key reads `undefined` by name and null typed
+          // (Chart.js ADR 0205).
           final value = parsedValueOf(item, axis);
-          expect(value, same(jsGetKey(item, key)), reason: '$item $key');
+          final byName = jsGetKey(item, key);
+          expect(
+            value,
+            byName is Undefined ? isNull : same(byName),
+            reason: '$item $key',
+          );
         }
       }
       expect(parsedValueOf(items[1], const YAxis()), isNull);
-      expect(parsedValueOf(items[0], const RAxis()), same(undefined));
-      expect(parsedValueOf(items[4], const RAxis()), 3);
+      expect(parsedValueOf(items[0], const RAxis()), isNull);
+      expect(parsedValueOf(items[3], const RAxis()), 3);
     });
 
     test('a parsed item reads its fields, and null throws', () {
@@ -418,12 +424,12 @@ void main() {
         () => parsedValueOf(null, const XAxis()),
         throwsA(isA<TypeError>()),
       );
-      final parsed = ParsedItem.of(const XAxis(), 1.0, const YAxis(), null);
+      final parsed = ParsedItem.of(const XAxis(), 1, const YAxis(), null);
       expect(parsedValueOf(parsed, const XAxis()), 1.0);
       expect(parsedValueOf(parsed, const YAxis()), isNull);
-      expect(parsedValueOf(parsed, const RAxis()), same(undefined));
+      expect(parsedValueOf(parsed, const RAxis()), isNull);
       // An axis of another class has no field (row adapt-axis-objects).
-      expect(parsedValueOf(parsed, _OtherAxis()), same(undefined));
+      expect(parsedValueOf(parsed, _OtherAxis()), isNull);
     });
 
     test('a chart of points and of Maps with extra keys draw the same', () {
@@ -530,7 +536,7 @@ void main() {
 
   group('stacksOf', () {
     test('a parsed item without stacks gives undefined', () {
-      final item = ParsedItem.of(const XAxis(), 1.0, const YAxis(), 2.0);
+      final item = ParsedItem.of(const XAxis(), 1, const YAxis(), 2);
       expect(stacksOf(item), same(undefined));
       expect(item['_stacks'], same(undefined));
     });

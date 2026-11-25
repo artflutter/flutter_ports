@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../support/color_json.dart';
 import '../../support/data_scope.dart';
 import '../../support/font_record.dart';
+import '../../support/raw_scale_label.dart';
 import '../../support/tick_label.dart';
 import 'scale_reference.dart';
 
@@ -843,7 +844,7 @@ void main() {
       // The label is the text of the number (Chart.js ADR 0186): upstream
       // gives the value as it is.
       expect(scale.getLabelForValue(12), '12');
-      expect(scaleLabelOf(scale, 'a'), 'NaN');
+      expect(rawScaleLabelOf(scale, 'a'), 'NaN');
       expect(scale.parse(12), 12);
       expect(scale.getPixelForTick(0), isNull);
       expect(scale.getTicks(), same(scale.ticks));

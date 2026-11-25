@@ -296,7 +296,7 @@ void main() {
             case 1:
               jsSet(data[4], 'y', null);
             case 2:
-              jsSet(data[4], 'y', '2');
+              jsSet(data[4], 'y', 2.0);
             case 3:
               ds['data'] = parsedItemsOf([
                 for (var i = 0; i < 12; i++)
@@ -351,7 +351,7 @@ void main() {
         ChartPaint hover(ScriptableContext context) {
           calls.add(context.dataIndex);
           if (fail) throw StateError('hover failure');
-          jsSet((ds['data']! as List<Object?>)[6], 'y', '3');
+          jsSet((ds['data']! as List<Object?>)[6], 'y', 3.0);
           (ds['backgroundColor']! as List<ChartPaint>)[0] = green;
           return green;
         }

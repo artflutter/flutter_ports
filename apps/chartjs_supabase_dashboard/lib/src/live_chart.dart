@@ -184,9 +184,7 @@ class _LiveChartState()
       // before it.
       if (start > 0 && all[start].y == null) start--;
       _shown = start == 0 ? all : all.sublist(start);
-      _shownStart = start == 0
-          ? double.negativeInfinity
-          : _shown.first.x! as double;
+      _shownStart = start == 0 ? double.negativeInfinity : _shown.first.x!;
     } else {
       if (_shownFollow == false && _shownPages == _series.pages) return _shown;
       _shown = all;
@@ -247,7 +245,7 @@ class _LiveChartState()
     var high = points.length;
     while (low < high) {
       final mid = (low + high) >> 1;
-      if ((points[mid].x! as double) < x.min) {
+      if (points[mid].x! < x.min) {
         low = mid + 1;
       } else {
         high = mid;
@@ -260,14 +258,14 @@ class _LiveChartState()
     // before the view and ends in it or after it.
     for (var i = math.max(1, low - 1); i < points.length - 1; i++) {
       final gap = points[i];
-      if ((gap.x! as double) > x.max) break;
+      if (gap.x! > x.max) break;
       if (gap.y != null) continue;
       final from = points[i - 1];
       final to = points[i + 1];
-      final fromValue = from.y as double?;
-      final toValue = to.y as double?;
+      final fromValue = from.y;
+      final toValue = to.y;
       if (fromValue == null || toValue == null) continue;
-      if ((to.x! as double) - (from.x! as double) > longest) continue;
+      if (to.x! - from.x! > longest) continue;
       final x0 = x.getPixelForValue(scaleValueOf(x, from.x));
       final y0 = y.getPixelForValue(fromValue);
       final dx = x.getPixelForValue(scaleValueOf(x, to.x)) - x0;

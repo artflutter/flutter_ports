@@ -109,11 +109,13 @@ List<ParsedItem?> parsedDataItems(Object? data) {
 
 /// `meta._parsed[index]` of a controller that parses one number for each
 /// item, the doughnut and the pie (U `controller.doughnut.js:153-165`): the
-/// [ParsedItem.r] of the item, or [undefined] for an index that names no
-/// parsed item and for a hole (row `adapt-parsed-data-items`).
-Object? parsedNumberOf(List<ParsedItem?> parsed, int index) {
+/// [ParsedItem.r] of the item, or NaN for an index that names no parsed
+/// item and for a hole: the `ToNumber` of the JS `undefined` there, which
+/// differs from a `null` value (row `adapt-parsed-data-items`, Chart.js ADR
+/// 0205).
+double? parsedNumberOf(List<ParsedItem?> parsed, int index) {
   final item = index >= 0 && index < parsed.length ? parsed[index] : null;
-  return item == null ? undefined : item.r;
+  return item == null ? double.nan : item.r;
 }
 
 /// The parsed item of a data item [item] of `parsing: false` that is not a
@@ -132,11 +134,12 @@ ParsedItem _foreignDataItem(Object? item) {
 /// the object that `getParsed(index)` gives each time, and that a
 /// scriptable option can write into (`ctx.parsed`).
 ///
-/// The fields are `x`, `y` and `r` (`Object?`: the type of a parse result
-/// is `unknown`, U `index.d.ts:1385`), `_custom` ([custom]: a number for a
+/// The fields are `x`, `y` and `r`, the numbers of the parse of the scales
+/// (`double?`, Chart.js ADR 0205), `_custom` ([custom]: a number for a
 /// bubble, a [FloatingBar] for a floating bar) and `_stacks` ([stacks]).
-/// A typed getter gives [undefined] for an absent field. Another key is an
-/// extra.
+/// Dart `null` stands for the JS `null` and for an absent field. Another key
+/// is an extra.
+// DIVERGES(chartjs): adapt-typed-parsed-values, a number or null.
 final class ParsedItem extends TypedRecord {
   /// An item without own keys.
   new();
@@ -146,7 +149,7 @@ final class ParsedItem extends TypedRecord {
   /// with the second value. The axes [XAxis], [YAxis] and [RAxis] write
   /// their fields at once. Another axis class has no field: its value goes
   /// (row `adapt-axis-objects`).
-  new of(ScaleAxis a, Object? aValue, ScaleAxis b, Object? bValue) {
+  new of(ScaleAxis a, double? aValue, ScaleAxis b, double? bValue) {
     final aSlot = _axisSlot(a);
     final bSlot = _axisSlot(b);
     if (aSlot < 0 || bSlot < 0) {
@@ -182,32 +185,32 @@ final class ParsedItem extends TypedRecord {
     _ => -1,
   };
 
-  Object? _x;
-  Object? _y;
-  Object? _r;
+  double? _x;
+  double? _y;
+  double? _r;
   Object? _custom;
   ItemStacks? _stacks;
 
-  /// `x`, or [undefined] when absent.
-  Object? get x => hasSlot(0) ? _x : undefined;
+  /// `x`, or Dart `null` when absent.
+  double? get x => _x;
 
-  set x(Object? value) {
+  set x(double? value) {
     _x = value;
     touchSlot(0);
   }
 
-  /// `y`, or [undefined] when absent.
-  Object? get y => hasSlot(1) ? _y : undefined;
+  /// `y`, or Dart `null` when absent.
+  double? get y => _y;
 
-  set y(Object? value) {
+  set y(double? value) {
     _y = value;
     touchSlot(1);
   }
 
-  /// `r`, or [undefined] when absent.
-  Object? get r => hasSlot(2) ? _r : undefined;
+  /// `r`, or Dart `null` when absent.
+  double? get r => _r;
 
-  set r(Object? value) {
+  set r(double? value) {
     _r = value;
     touchSlot(2);
   }
@@ -229,7 +232,7 @@ final class ParsedItem extends TypedRecord {
   }
 
   /// The field of the axis [axis], with no change of the own keys.
-  void _setAxisField(ScaleAxis axis, Object? value) {
+  void _setAxisField(ScaleAxis axis, double? value) {
     switch (axis) {
       case XAxis():
         _x = value;
@@ -241,16 +244,16 @@ final class ParsedItem extends TypedRecord {
   }
 
   /// The value of the axis [axis]: `item[axis]`. An axis class with no field
-  /// gives [undefined].
-  Object? valueOf(ScaleAxis axis) => switch (axis) {
-    XAxis() => x,
-    YAxis() => y,
-    RAxis() => r,
-    _ => undefined,
+  /// gives Dart `null`.
+  double? valueOf(ScaleAxis axis) => switch (axis) {
+    XAxis() => _x,
+    YAxis() => _y,
+    RAxis() => _r,
+    _ => null,
   };
 
   /// `item[axis] = value`. An axis class with no field takes no write.
-  void setValue(ScaleAxis axis, Object? value) {
+  void setValue(ScaleAxis axis, double? value) {
     switch (axis) {
       case XAxis():
         x = value;
@@ -274,11 +277,11 @@ final class ParsedItem extends TypedRecord {
   bool writeSlot(int slot, Object? value) {
     switch (slot) {
       case 0:
-        _x = value;
+        _x = _number(value);
       case 1:
-        _y = value;
+        _y = _number(value);
       case 2:
-        _r = value;
+        _r = _number(value);
       case 3:
         _custom = value;
       default:
@@ -294,6 +297,18 @@ final class ParsedItem extends TypedRecord {
 
   @override
   void clearSlot(int slot) => writeSlot(slot, null);
+
+  /// The number of a write by name into `x`, `y` or `r`: a number, or Dart
+  /// `null` for `null` and [undefined]. Another value stops a debug build,
+  /// and a release build stores Dart `null` (Chart.js ADR 0205).
+  static double? _number(Object? value) {
+    if (value is num) return value.toDouble();
+    assert(
+      value == null || value is Undefined,
+      'A parsed value is a number or null, not $value.',
+    );
+    return null;
+  }
 }
 
 /// A data item in the object form `{x, y}` or `{x, y, r}`
@@ -307,7 +322,9 @@ final class ParsedItem extends TypedRecord {
 ///
 /// A number is a `double`, as each number of Chart.js. A `null` [y] is a
 /// gap in the line. A bubble keeps its radius in [r], for the parse, and in
-/// [custom], the parsed form `_custom` of `parsing: false`.
+/// [custom], the parsed form `_custom` of `parsing: false`. A time is its
+/// time value in milliseconds. A label or another text `x` is a
+/// [LabelPoint], which is no parsed item (Chart.js ADR 0205).
 ///
 /// ```dart
 /// final points = [DataPoint(1, 2), DataPoint(2, null), DataPoint(3, 4)];
@@ -322,19 +339,12 @@ final class DataPoint extends ParsedItem {
       ..y = y == null ? null : _double(y);
   }
 
-  /// `{x, y}` with a time [x], for a time or a time series x axis.
+  /// `{x, y}` with a time [x], for a time or a time series x axis: `x` is
+  /// the time value of [x], the parsed value of a time scale.
+  // DIVERGES(chartjs): adapt-typed-parsed-values, the time value.
   new time(DateTime x, num? y) : super() {
     this
-      ..x = x
-      ..y = y == null ? null : _double(y);
-  }
-
-  /// `{x, y}` with a label [x], for a category x axis. A label that is not
-  /// in the labels of the chart becomes a new label: the category scale adds
-  /// it to `data.labels`.
-  new label(String x, num? y) : super() {
-    this
-      ..x = x
+      ..x = x.millisecondsSinceEpoch.toDouble()
       ..y = y == null ? null : _double(y);
   }
 
@@ -360,6 +370,42 @@ final class DataPoint extends ParsedItem {
     final r = this.r;
     return r is double ? 'DataPoint($x, $y, $r)' : 'DataPoint($x, $y)';
   }
+}
+
+/// A data item `{x, y}` with a text [x]: a label of a category x axis, or a
+/// time text of a time x axis (`docs/general/data-structures.md`,
+/// "Object[]").
+///
+/// A label point is input for the parse only: it is no [ParsedItem]. With
+/// `parsing: false`, a data item must be a parsed item, so a label point
+/// stops a debug build there (Chart.js ADR 0205). A label that is not in the
+/// labels of the chart becomes a new label: the category scale adds it to
+/// `data.labels`.
+///
+/// ```dart
+/// LineDataset(data: .labelPoints([LabelPoint('a', 1), LabelPoint('b', 2)]))
+/// ```
+// DIVERGES(chartjs): adapt-typed-parsed-values, a text x is no parsed item.
+@immutable
+final class const LabelPoint(
+  /// `x`: the label or the time text.
+  final String x,
+
+  /// `y`, or Dart `null` for a gap in the line.
+  final double? y,
+) {
+  /// The point `{x: [x], y: [y]}`.
+  this;
+
+  @override
+  bool operator ==(Object other) =>
+      other is LabelPoint && other.x == x && other.y == y;
+
+  @override
+  int get hashCode => Object.hash(x, y);
+
+  @override
+  String toString() => 'LabelPoint($x, $y)';
 }
 
 /// `item._stacks` (U `core.datasetController.js:152-175`): the stack

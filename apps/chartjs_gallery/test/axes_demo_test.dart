@@ -167,7 +167,7 @@ void main() {
     // parsing: true gives the parsed items of the scales.
     final parsed = chart.getDatasetMeta(0).controller!.getParsed(3);
     expect(jsGet(parsed, 'x'), 4);
-    expect(jsGet(parsed, 'y'), state.dataOf(0)[3]['y']);
+    expect(jsGet(parsed, 'y'), _field(state.dataOf(0)[3], 'y'));
     _expectOnScales(chart);
     expect(
       tester.widget<ChartHost>(_host).canvas.getContext2d().isEmpty,
@@ -397,7 +397,7 @@ void main() {
     expect(identical(category, linear), isFalse);
     expect(category.getLabels(), [for (var i = 1; i <= 12; i++) 'P$i']);
     // The category parse gives the index of the label.
-    expect(state.dataOf(0)[3]['x'], 'P4');
+    expect(_field(state.dataOf(0)[3], 'x'), 'P4');
     expect(jsGet(chart.getDatasetMeta(0).controller!.getParsed(3), 'x'), 3);
     expect(category.ticks, hasLength(12));
     expect(_row(state, 'x'), startsWith('category · P1 to P12 · 12 ticks'));
@@ -407,7 +407,7 @@ void main() {
     final time = _scale(chart, 'x');
     expect(time, isA<TimeScale>());
     // The default date adapter parses the ISO dates (Chart.js ADR 0024).
-    expect(state.dataOf(0)[3]['x'], '2024-01-04');
+    expect(_field(state.dataOf(0)[3], 'x'), '2024-01-04');
     expect(
       jsGet(chart.getDatasetMeta(0).controller!.getParsed(3), 'x'),
       DateTime(2024, 1, 4).millisecondsSinceEpoch,
@@ -425,7 +425,7 @@ void main() {
     final y = _scale(chart, 'y');
     expect(y, isA<LogarithmicScale>());
     for (final item in state.dataOf(1)) {
-      expect(item['y'], inInclusiveRange(1, 10000));
+      expect(_field(item, 'y'), inInclusiveRange(1, 10000));
     }
     expect(_row(state, 'y'), startsWith('logarithmic · '));
     _expectOnScales(chart);
@@ -604,9 +604,9 @@ void main() {
     final state = await _pumpAxes(tester);
     final chart = state.chart!;
     await _tap(tester, 'axes.x.type.category');
-    final y = state.dataOf(0).first['y'];
+    final y = _field(state.dataOf(0).first, 'y');
     await _tap(tester, 'axes.data.randomize');
-    expect(state.dataOf(0).first['y'], isNot(y));
+    expect(_field(state.dataOf(0).first, 'y'), isNot(y));
     _expectOnScales(chart);
 
     await _tap(tester, 'axes.data.add');
@@ -662,7 +662,10 @@ void main() {
     final y = _scale(chart, 'y');
     final value = y.getValueForPixel(py)!;
     final perPixel = (y.max - y.min) / chart.chartArea!.height;
-    expect(value, closeTo(state.dataOf(0)[5]['y']! as double, perPixel));
+    expect(
+      value,
+      closeTo(_field(state.dataOf(0)[5], 'y')! as double, perPixel),
+    );
     expect(
       _row(state, 'pointer y'),
       '${py.toStringAsFixed(1)} px → ${value.toStringAsFixed(2)} → '
@@ -726,3 +729,11 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 }
+
+/// The `x` or the `y` of a data item of the demo: a `DataPoint` on a linear x
+/// axis, else a `LabelPoint`.
+Object? _field(Object item, String key) => switch (item) {
+  final DataPoint point => key == 'x' ? point.x : point.y,
+  final LabelPoint point => key == 'x' ? point.x : point.y,
+  _ => throw ArgumentError.value(item, 'item'),
+};

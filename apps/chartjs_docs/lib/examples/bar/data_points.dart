@@ -6,15 +6,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // #docregion bar-data-points
-final pointsBar = ChartConfig(
+const pointsBar = ChartConfig(
   datasets: [
     BarDataset(
       label: 'A label and a value for each item',
-      data: .points([
-        DataPoint.label('Mon', 20),
-        DataPoint.label('Tue', 10),
-        DataPoint.label('Wed', 30),
-        DataPoint.label('Thu', 25),
+      data: .labelPoints([
+        LabelPoint('Mon', 20),
+        LabelPoint('Tue', 10),
+        LabelPoint('Wed', 30),
+        LabelPoint('Thu', 25),
       ]),
     ),
   ],
@@ -24,12 +24,12 @@ final pointsBar = ChartConfig(
 void main() {
   Chart.register(registerables);
   runApp(
-    Directionality(
+    const Directionality(
       textDirection: TextDirection.ltr,
       child: ColoredBox(
-        color: const Color(0xFFFFFFFF),
+        color: Color(0xFFFFFFFF),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16),
           child: Center(child: ChartView(config: pointsBar)),
         ),
       ),

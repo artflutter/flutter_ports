@@ -18,9 +18,8 @@
 ///   [ArcProperties] (Chart.js ADR 0054 §9). The exact controller in a direct
 ///   mode writes a built-in arc with its typed setters, with no object (row
 ///   `adapt-direct-element-writes`, Chart.js ADR 0102).
-/// - `getMinMax` keeps the raw parsed values of the range and compares them
-///   with [jsLessThan], as upstream compares with `<` and `>` (Chart.js ADR
-///   0036, section 7). Two string values compare as strings.
+/// - `getMinMax` compares the parsed numbers with `<` and `>`: a parsed value
+///   is a number or null (Chart.js ADR 0205).
 /// - The controller reads the members of other modules through
 ///   `lib/src/types/` and imports no concrete scale, element or chart
 ///   module (Chart.js ADR 0028, section 1). `updateElements` casts the scale
@@ -248,10 +247,9 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.elements])
     // The data object of the user.
     final labelsValue = jsGet(chart.data, 'labels');
     final labels = jsTruthy(labelsValue) ? labelsValue : const <Object?>[];
+    // `formatNumber` reads a `null` value as 0, as its `ToNumber` does.
     final value = formatNumber(
-      jsToNumber(
-        parsedValueOf(meta.parsed.elementAtOrNull(index), const RAxis()),
-      ),
+      parsedValueOf(meta.parsed.elementAtOrNull(index), const RAxis()) ?? 0.0,
       localeOf(readOption(chart.options, OptionKey.locale)),
     );
 
@@ -301,39 +299,39 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.elements])
   /// not read. The caller is `Scale.getMinMax` (core.scale.js:303), at
   /// core.scale.js:313.
   ///
-  /// `range = {min: +Infinity, max: -Infinity}` keeps the raw parsed values,
-  /// as upstream stores `parsed` unchanged. `parsed < range.min` and
-  /// `parsed > range.max` are [jsLessThan]. Thus `[{r: '10'}, {r: '9'},
-  /// {r: '30'}]` gives the range `'10'..'9'` (Chart.js ADR 0036, section 7).
-  /// The record holds the `ToNumber` of each end: the only caller,
-  /// core.scale.js:315 and :318, applies `Math.min` and `Math.max` to them.
+  /// A parsed value is a number or null (Chart.js ADR 0205). `isNaN`, `<`
+  /// and `>` read a `null` value as 0, as the JS operators do, and the range
+  /// stores it as 0: the only caller, core.scale.js:315 and :318, applies
+  /// `Math.min` and `Math.max` to the ends.
   @override
   ({double min, double max}) getMinMax(IScale scale, [bool? canStack]) {
     final meta = cachedMeta;
     // :125 `range = {min: Number.POSITIVE_INFINITY, max:
     // Number.NEGATIVE_INFINITY}`.
-    Object? min = double.infinity;
-    Object? max = double.negativeInfinity;
+    var min = double.infinity;
+    var max = double.negativeInfinity;
 
     // `meta.data.forEach((element, index) => ...)`: the callback has no
     // `return` that stops the loop.
     for (var index = 0; index < meta.data.length; index++) {
       // One read of `this.getParsed(index).r` (:128), as upstream.
-      final parsed = parsedValueOf(getParsed(index), const RAxis());
+      // `isNaN`, `<` and `>` read a `null` value as 0, and the result gives
+      // it as 0 (Chart.js ADR 0205).
+      final parsed = parsedValueOf(getParsed(index), const RAxis()) ?? 0.0;
 
-      if (!jsIsNaN(parsed) && chart.getDataVisibility(index)) {
-        if (jsLessThan(parsed, min)) {
+      if (!parsed.isNaN && chart.getDataVisibility(index)) {
+        if (parsed < min) {
           min = parsed;
         }
 
         // :135 `parsed > range.max`.
-        if (jsLessThan(max, parsed)) {
+        if (max < parsed) {
           max = parsed;
         }
       }
     }
 
-    return (min: jsToNumber(min), max: jsToNumber(max));
+    return (min: min, max: max);
   }
 
   /// controller.polarArea.js:147 `_updateRadius()`.
@@ -619,8 +617,9 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.elements])
 
     // `meta.data.forEach((element, index) => ...)`.
     for (var index = 0; index < meta.data.length; index++) {
-      if (!jsIsNaN(parsedValueOf(getParsed(index), const RAxis())) &&
-          chart.getDataVisibility(index)) {
+      // `isNaN(null)` is false.
+      final value = parsedValueOf(getParsed(index), const RAxis());
+      if ((value == null || !value.isNaN) && chart.getDataVisibility(index)) {
         count++;
       }
     }

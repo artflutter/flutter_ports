@@ -197,6 +197,16 @@ List<Object?> _arcs(Chart chart) => [
     ],
 ];
 
+/// The cases of `parsing: false` with a string r or an absent r: a parsed
+/// value is a number or null, and an absent r is null, where upstream keeps
+/// `undefined` (Chart.js ADR 0205).
+const Map<String, String> _typedValueSkips = {
+  'parsing false': 'diverges: adapt-typed-parsed-values',
+  "parsed: parsing false, [1, '2', null]":
+      'diverges: adapt-typed-parsed-values',
+  'parsed: parsing false, object items': 'diverges: adapt-typed-parsed-values',
+};
+
 void main() {
   group('hit probes stay off platform-sensitive ties', () {
     // Windows shard 1 of CI run 43391456447 selected different arcs at these
@@ -266,6 +276,7 @@ void main() {
       // A parsing key is a String: a number key stops a debug build.
       'parsed: object items with the parsing key 5':
           'diverges: adapt-parsing-keys',
+      ..._typedValueSkips,
     },
   );
 
@@ -281,6 +292,7 @@ void main() {
       ],
       extras: _extras,
       theme: compileLightTheme(),
+      skips: _typedValueSkips,
     );
   });
 
@@ -314,14 +326,14 @@ void main() {
       );
     });
 
-    testWidgets("parsing false with the r of [1, '2', null] gives the arcs "
+    testWidgets('parsing false with the r of [1, 2, null] gives the arcs '
         'of [1, 2, null] and keeps the data List', (tester) async {
       final chart = acquireChartRoot(
         _one(
           <String, Object?>{'parsing': false},
           <ParsedItem?>[
             ParsedItem()..r = 1.0,
-            ParsedItem()..r = '2',
+            ParsedItem()..r = 2.0,
             ParsedItem()..r = null,
           ],
         ),

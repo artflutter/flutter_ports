@@ -2,8 +2,7 @@
 
 /// The JavaScript coercions `ToNumber`, `ToBoolean` and `ToString`, the
 /// global `isNaN`, the
-/// form `value || 0`, the operator `+` and the relational comparison `a < b`
-/// ([jsLessThan], Chart.js ADR 0036) over the Dart values that stand for
+/// form `value || 0` and the operator `+` over the Dart values that stand for
 /// JavaScript values (Chart.js ADR 0146).
 ///
 /// The value mapping: `null` is JS `null`, [undefined] is JS `undefined`
@@ -91,28 +90,6 @@ Object jsAdd(Object? a, Object? b) {
 /// boolean or a number.
 bool _isNumberPrimitive(Object? value) =>
     value == null || value is Undefined || value is bool || value is num;
-
-/// The JavaScript relational comparison `a < b` (ECMAScript IsLessThan):
-/// two numbers compare as numbers, two strings by their code units, and
-/// other values by the `ToNumber` of their `ToPrimitive` with the hint
-/// `number`. `a > b` is `jsLessThan(b, a)` (Chart.js ADR 0036).
-bool jsLessThan(Object? a, Object? b) {
-  if (a is num && b is num) return a < b;
-  final pa = _toPrimitiveNumber(a);
-  final pb = _toPrimitiveNumber(b);
-  if (pa is String && pb is String) return pa.compareTo(pb) < 0;
-  return jsToNumber(pa) < jsToNumber(pb);
-}
-
-/// `ToPrimitive(value, number)`: a `DateTime` (a JS `Date`) gives its time
-/// value (`valueOf`); another object gives its [jsToString]. Thus an array
-/// that contains a `DateTime` gives the `Date.prototype.toString` text of
-/// that item: `[new Date(0)] < 'A'` is false.
-Object? _toPrimitiveNumber(Object? value) => switch (value) {
-  null || Undefined() || bool() || num() || String() => value,
-  final DateTime date => jsToNumber(date),
-  _ => jsToString(value),
-};
 
 /// ECMAScript `ToString(value)`, the coercion of `'' + value`, of a template
 /// literal and of `String(value)`.

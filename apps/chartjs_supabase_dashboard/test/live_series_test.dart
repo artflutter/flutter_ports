@@ -109,7 +109,7 @@ void main() {
     await series.start(pump: false);
     await series.loadOlder();
 
-    final times = [for (final point in series.points) point.x! as double];
+    final times = [for (final point in series.points) point.x!];
     expect(times, hasLength(151));
     expect(times, orderedEquals([...times]..sort()));
     expect(series.pointIndexAt(at(151).millisecondsSinceEpoch.toDouble()), 51);

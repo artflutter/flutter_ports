@@ -299,7 +299,7 @@ class CoreDemoState() extends State<CoreDemo> {
   void _randomize() => setState(() {
     _data = [
       for (final data in _data)
-        [for (final item in data) DataPoint(item.x! as double, _value())],
+        [for (final item in data) DataPoint(item.x!, _value())],
     ];
   });
 
@@ -311,7 +311,7 @@ class CoreDemoState() extends State<CoreDemo> {
       _data = [
         for (final data in _data)
           _spreadPoints([
-            for (final item in data) item.y as double?,
+            for (final item in data) item.y,
             if (add) _value(),
           ], add ? data.length + 1 : math.max(data.length - 1, 1)),
       ];

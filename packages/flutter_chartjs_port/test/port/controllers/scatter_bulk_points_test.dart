@@ -284,21 +284,5 @@ void main() {
       );
       expect(counts.bulk, greaterThan(0));
     });
-
-    testWidgets('a value that is not a number ends the run', (tester) async {
-      // Map items of one class: the item test of the run passes them by their
-      // class, so the run tests each value. A string y is not `null`: upstream
-      // takes the pixel of its number, not the base pixel.
-      final counts = _twins(() {
-        final cfg = _config(form: 'map', spanGaps: 2);
-        final data = _dataset(cfg)['data']! as List<Object?>;
-        data[8] = <String, Object?>{'x': 12.0, 'y': '5'};
-        data[10] = <String, Object?>{'x': '14', 'y': 7.25};
-        return cfg;
-      }, (chart, cfg) => chart.update(UpdateMode.none));
-      expect(counts.bulk, greaterThan(0));
-      final skip8 = (counts.observed[8]! as List)[2];
-      expect(skip8, isFalse, reason: 'the string y is not null data');
-    });
   });
 }

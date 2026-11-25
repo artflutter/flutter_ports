@@ -728,16 +728,16 @@ void main() {
     _lineTwin('should round to isoWeekday', () {
       final chart = acquireChartRoot(
         lowerForTest(
-          ChartConfig(
+          const ChartConfig(
             datasets: [
               LineDataset(
-                data: .points([
-                  DataPoint.label('2020-04-12T20:00:00', 1),
-                  DataPoint.label('2020-04-13T20:00:00', 2),
+                data: .labelPoints([
+                  LabelPoint('2020-04-12T20:00:00', 1),
+                  LabelPoint('2020-04-13T20:00:00', 2),
                 ]),
               ),
             ],
-            scales: const [
+            scales: [
               TimeAxis(
                 .x,
                 unit: TimeUnit.week,
@@ -825,19 +825,19 @@ void main() {
         /// scale.time.tests.js:668-694 `beforeEach`.
         Chart dataChart() => acquireChartRoot(
           lowerForTest(
-            ChartConfig(
+            const ChartConfig(
               datasets: [
-                const LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
+                LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
                 LineDataset(
-                  data: .points([
-                    DataPoint.label('2018', 6),
-                    DataPoint.label('2020', 7),
-                    DataPoint.label('2043', 8),
+                  data: .labelPoints([
+                    LabelPoint('2018', 6),
+                    LabelPoint('2020', 7),
+                    LabelPoint('2043', 8),
                   ]),
                 ),
               ],
-              labels: const ['2017', '2019', '2020', '2025', '2042'],
-              scales: const [
+              labels: ['2017', '2019', '2020', '2025', '2042'],
+              scales: [
                 TimeAxis(
                   .x,
                   ticks: AxisTicks(source: TickSource.data),

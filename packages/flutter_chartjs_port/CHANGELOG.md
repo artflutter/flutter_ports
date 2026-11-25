@@ -1,5 +1,9 @@
 ## Unreleased
 
+- BREAKING: a parsed value is a number (Chart.js ADR 0205): `x`, `y` and `r` of a `ParsedItem` (also of a
+  `DataPoint`) are `double?`, so `point.x` needs no `as double`. `DataPoint.time` stores the time value in
+  milliseconds. `DataPoint.label` is gone: write `data: .labelPoints([LabelPoint('Mon', 20)])`. With
+  `parsing: false`, a string or a `DateTime` in a parsed item stops a debug build. `jsLessThan` is gone.
 - BREAKING: the registry holds typed components, not class values (Chart.js ADR 0204). Each controller, scale
   and element has a static `component` (a `ControllerType`, `ScaleType` or `ElementType`) in place of
   `jsClass`: write `Chart.register([LineController.component, LineElement.component])`. `Chart.register`

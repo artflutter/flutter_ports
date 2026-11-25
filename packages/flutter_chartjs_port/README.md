@@ -159,8 +159,10 @@ ChartConfig(
 
 The `data` of a bar, line or scatter dataset is a `DatasetData` in one of two forms.
 `.values(...)` takes a `List<num?>` with one value for each label, and `null` is a gap.
-`.points(...)` takes a `List<DataPoint>` with `x` and `y` values. The `data` of a bubble dataset
-is a `List<DataPoint>` with the radius `r` of each bubble. A `DataPoint.time` needs a `TimeAxis` for `x` ([Axes](#axes)):
+`.points(...)` takes a `List<DataPoint>` with `x` and `y` values. `.labelPoints(...)` takes a
+`List<LabelPoint>` with a text `x`: a label of a category axis or a time text of a time axis. The
+`data` of a bubble dataset is a `List<DataPoint>` with the radius `r` of each bubble. A
+`DataPoint.time` needs a `TimeAxis` for `x` ([Axes](#axes)):
 
 ```dart
 ScatterDataset(
@@ -177,6 +179,10 @@ LineDataset(
     DataPoint.time(DateTime.utc(2026, 3, 2), 3),
     DataPoint.time(DateTime.utc(2026, 3, 3), 5),
   ]),
+)
+BarDataset(
+  label: 'Visits',
+  data: .labelPoints([LabelPoint('Mon', 20), LabelPoint('Tue', 10)]),
 )
 ```
 

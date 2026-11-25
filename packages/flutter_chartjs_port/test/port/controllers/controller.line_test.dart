@@ -148,6 +148,10 @@ void _expectLinePoints(Chart chart) {
 /// no number for `isNumber` (Chart.js ADR 0175).
 const Map<String, String> _typedNumberSkips = {
   "parsed: spanGaps '2'": 'diverges: adapt-typed-number-test',
+  // An absent x is null, where upstream keeps `undefined` (Chart.js ADR
+  // 0205).
+  'parsed: parsing false, x.min 1, an item without x':
+      'diverges: adapt-typed-parsed-values',
   // With parsing: false, each data item is a ParsedItem: a number or a List
   // item stops a debug build.
   'parsed: parsing false, a number item with segment':

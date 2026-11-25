@@ -201,44 +201,6 @@ void main() {
       );
     });
 
-    test('lttb string values', () {
-      final data = <ParsedItem?>[
-        for (var i = 0; i < 20; i++) _p('$i', '${_wave(i)}'),
-      ];
-      _expectItems(lttbDecimation(data, 0, 20, 100, _lttb(6)), [
-        _p('0', '0'),
-        _p('4', '10'),
-        _p('8', '20'),
-        _p('10', '2'),
-        _p('18', '22'),
-        _p('19', '13'),
-      ]);
-    });
-
-    test('lttb no y in the first bucket, samples 3', () {
-      final data = parsedItemsOf([
-        for (var i = 0; i < 9; i++)
-          if (i < 5) <String, Object?>{'x': i} else _p(i, i),
-      ]);
-      _expectItems(lttbDecimation(data, 0, 9, 100, _lttb(3)), [
-        <String, Object?>{'x': 0},
-        undefined,
-        _p(8, 8),
-      ]);
-    });
-
-    test('lttb no y in the first bucket, samples 4', () {
-      final data = parsedItemsOf([
-        for (var i = 0; i < 9; i++)
-          if (i < 4) <String, Object?>{'x': i} else _p(i, i),
-      ]);
-      // `a` is undefined in the second pass: the read of `data[a]` throws.
-      expect(
-        () => lttbDecimation(data, 0, 9, 100, _lttb(4)),
-        throwsA(isA<TypeError>()),
-      );
-    });
-
     test('lttb a null item', () {
       expect(
         () => lttbDecimation(
@@ -309,62 +271,6 @@ void main() {
         _p(60, 9),
         _p(60.25, 0),
       ]);
-    });
-
-    test('min-max string y', () {
-      // Two strings compare by their code units: '10' < '5' and '30' > '9'.
-      _expectItems(
-        minMaxDecimation(
-          [
-            _p(0, '5'),
-            _p(0.1, '10'),
-            _p(0.2, '9'),
-            _p(0.3, '2'),
-            _p(0.4, '30'),
-            _p(5, '1'),
-            _p(10, '7'),
-          ],
-          0,
-          7,
-          2,
-        ),
-        [
-          _p(0, '5'),
-          _p(0.25, '10'),
-          _p(0.25, '9'),
-          _p(0.4, '30'),
-          _p(5, '1'),
-          _p(10, '7'),
-        ],
-      );
-    });
-
-    test('min-max string x', () {
-      // `countX * avgX + point.x` joins a string x: '00.1', then '0.10.2'
-      // (NaN).
-      _expectItems(
-        minMaxDecimation(
-          [
-            _p('0', 5),
-            _p('0.1', 10),
-            _p('0.2', 1),
-            _p('0.3', 3),
-            _p('5', 1),
-            _p('10', 7),
-          ],
-          0,
-          6,
-          2,
-        ),
-        [
-          _p('0', 5),
-          _p(double.nan, 10),
-          _p(double.nan, 1),
-          _p('0.3', 3),
-          _p('5', 1),
-          _p('10', 7),
-        ],
-      );
     });
 
     test('min-max key order', () {

@@ -8,6 +8,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/raw_scale_label.dart';
 import '../../support/test_dataset.dart';
 import 'scale_category_reference.dart';
 import 'scale_chart_harness.dart';
@@ -105,7 +106,7 @@ Map<String, Object?> _categoryObservations(Scale scale, Chart chart) {
     'labels': labels,
     'labelForValue': [
       for (final v in <Object?>[0, 1, 1.5, '1', -1, n, 'x', true, null])
-        scaleLabelOf(scale, v),
+        rawScaleLabelOf(scale, v),
     ],
     'parse': [
       for (final v in <Object?>[
@@ -367,6 +368,11 @@ final class _CountingLabels(List<String> labels) extends ListBase<String> {
   void add(String element) => _labels.add(element);
 }
 
+/// The cases of `parsing: false` with a string or an absent value: a parsed
+/// value is a number or null (row `adapt-typed-parsed-values`, Chart.js ADR
+/// 0205).
+const Set<String> _typedValueCases = {'parsing false with label strings'};
+
 void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
@@ -411,7 +417,9 @@ void main() {
     });
 
     for (final c in scaleCategoryReference(_functions)) {
-      testWidgets(c.name, (tester) async {
+      testWidgets(c.name, skip: _typedValueCases.contains(c.name), (
+        tester,
+      ) async {
         final chart = acquireReferenceChart(
           c.config,
           c.options,

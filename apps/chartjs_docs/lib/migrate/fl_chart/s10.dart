@@ -70,8 +70,8 @@ class _Sample10State() extends State<Sample10> {
       children: [
         const SizedBox(height: 12),
         _Label('x: ${_x.toStringAsFixed(1)}', Fl.white70),
-        _Label('sin: ${(_sin.last.y! as double).toStringAsFixed(1)}', Fl.blue),
-        _Label('cos: ${(_cos.last.y! as double).toStringAsFixed(1)}', Fl.pink),
+        _Label('sin: ${_sin.last.y!.toStringAsFixed(1)}', Fl.blue),
+        _Label('cos: ${_cos.last.y!.toStringAsFixed(1)}', Fl.pink),
         const SizedBox(height: 12),
         AspectRatio(
           aspectRatio: 1.5,
@@ -88,8 +88,8 @@ class _Sample10State() extends State<Sample10> {
                   scales: [
                     LinearAxis(
                       .x,
-                      min: _sin.first.x! as double,
-                      max: _sin.last.x! as double,
+                      min: _sin.first.x,
+                      max: _sin.last.x,
                       grid: const AxisGrid(display: false),
                       ticks: const AxisTicks(display: false),
                       border: Fl.noBorder,

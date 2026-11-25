@@ -992,30 +992,30 @@ DocPageContent barChartPage() => DocPageContent(
         ),
       ],
     ),
-    DocSection(
+    const DocSection(
       id: 'data-structure',
-      title: const Text('Data Structure'),
+      title: Text('Data Structure'),
       body: [
-        const DocParagraph(
+        DocParagraph(
           DocText(
             'A `BarDataset` takes its data in `data`, a `DatasetData` of '
             'one of two forms. The form `.values(...)` holds one value for '
             'each label. A `null` value is a gap.',
           ),
         ),
-        const DocParagraph(
+        DocParagraph(
           DocText(
-            'The form `.points(...)` holds `DataPoint` items. Use '
-            '`DataPoint.label` with a category, `DataPoint` with a number on a '
-            '`LinearAxis`, and `DataPoint.time` with a `DateTime` on a time '
-            'axis.',
+            'The form `.labelPoints(...)` holds `LabelPoint` items with a '
+            'category label. The form `.points(...)` holds `DataPoint` items: '
+            'use `DataPoint` with a number on a `LinearAxis`, and '
+            '`DataPoint.time` with a `DateTime` on a time axis.',
           ),
         ),
         LiveExample(
           id: 'data',
           description: 'A bar chart of two data forms',
           variants: [
-            const ExampleVariant(
+            ExampleVariant(
               name: 'data',
               label: Text('values'),
               config: valuesBar,
@@ -1026,16 +1026,16 @@ DocPageContent barChartPage() => DocPageContent(
             ),
             ExampleVariant(
               name: 'points',
-              label: const Text('points'),
+              label: Text('points'),
               config: pointsBar,
-              region: const CodeRegion(
+              region: CodeRegion(
                 '$barExamples/data_points.dart',
                 'bar-data-points',
               ),
             ),
           ],
         ),
-        const DocParagraph(
+        DocParagraph(
           DocText(
             'A floating bar takes a pair `[start, end]` for each label: '
             '`data: .ranges([(1, 5), (2, 6)])`.',

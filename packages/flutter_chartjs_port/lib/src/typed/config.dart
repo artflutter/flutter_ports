@@ -60,7 +60,7 @@ final class const ChartConfig({
   ///
   /// The List goes to the chart by reference. The category scale adds a
   /// label to it for a data item with a label that is not in the List:
-  /// `DataPoint.label` and `CategoryAxis.min` can do that. A `const` List
+  /// `LabelPoint` and `CategoryAxis.min` can do that. A `const` List
   /// then throws an `UnsupportedError`.
   final List<Object>? labels,
 

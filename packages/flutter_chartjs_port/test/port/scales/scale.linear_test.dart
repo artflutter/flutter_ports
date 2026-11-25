@@ -197,6 +197,11 @@ LinearScale _scale(Chart chart, String id) => chart.scales[id]! as LinearScale;
 /// A matcher of [pixel]: [isNaN] for NaN, else [equals].
 Matcher _samePixel(double pixel) => pixel.isNaN ? isNaN : equals(pixel);
 
+/// The cases of `parsing: false` with a string or an absent value: a parsed
+/// value is a number or null (row `adapt-typed-parsed-values`, Chart.js ADR
+/// 0205).
+const Set<String> _typedValueCases = {'raw values with parsing false'};
+
 void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
@@ -260,7 +265,9 @@ void main() {
     });
 
     for (final c in scaleLinearReference(_functions)) {
-      testWidgets(c.name, (tester) async {
+      testWidgets(c.name, skip: _typedValueCases.contains(c.name), (
+        tester,
+      ) async {
         final chart = acquireReferenceChart(
           c.config,
           c.options,

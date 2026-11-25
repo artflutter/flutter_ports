@@ -216,6 +216,12 @@ void main() {
       // stops a debug build.
       'parsed: parsing false, Lists': 'diverges: adapt-parsed-data-items',
       'parsed: parsing false, numbers': 'diverges: adapt-parsed-data-items',
+      // A parsed value is a number or null, and an absent r is null
+      // (Chart.js ADR 0205).
+      'parsed: parsing false, an absent r':
+          'diverges: adapt-typed-parsed-values',
+      'parsed: parsing false, string r values':
+          'diverges: adapt-typed-parsed-values',
     },
   );
 
@@ -272,7 +278,7 @@ void main() {
   // generated value. The generated cases `parsed: ...` give the upstream
   // values of the same configs.
   group('parsed data', () {
-    testWidgets("string r values keep the range '10'..'9' of upstream", (
+    testWidgets('number r values give the range of the numbers', (
       tester,
     ) async {
       ({double min, double max}) range(List<Object?> data) {
@@ -289,14 +295,8 @@ void main() {
         return meta.controller!.getMinMax(meta.rScale!);
       }
 
-      expect(
-        range(<Object?>[
-          <String, Object?>{'r': '10'},
-          <String, Object?>{'r': '9'},
-          <String, Object?>{'r': '30'},
-        ]),
-        (min: 10.0, max: 9.0),
-      );
+      // A parsed value is a number or null (Chart.js ADR 0205): the string
+      // r values of upstream, which compare as strings, have no form.
       expect(
         range(<Object?>[
           <String, Object?>{'r': 10.0},

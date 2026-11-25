@@ -560,15 +560,15 @@ class ScatterController(super.chart, super.datasetIndex, [super.elements])
       writes.begin(point);
       // :128, also :130 (one-read rule).
       final vValue = parsedValueOf(parsed, vAxis);
-      final nullData = isNullOrUndef(vValue);
+      final nullData = vValue == null;
       // :129, also :133 (one-read rule).
       final iValue = parsedValueOf(parsed, iAxis);
-      final iPixel = iScale.getPixelForValue(scaleValueOf(iScale, iValue), i);
+      final iPixel = iScale.getPixelForValue(scaleNumberOf(iScale, iValue), i);
       writes.axis(iAxis, iPixel);
       final vPixel = reset || nullData
           ? vScale.getBasePixel()
           : vScale.getPixelForValue(
-              scaleValueOf(
+              scaleNumberOf(
                 vScale,
                 hasStack ? applyStack(vScale, parsed!, stacked) : vValue,
               ),
@@ -589,8 +589,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.elements])
         ..stop(
           held ??
               (i > 0 &&
-                  (jsToNumber(iValue) -
-                              jsToNumber(parsedValueOf(prevParsed, iAxis)))
+                  ((iValue ?? 0.0) - (parsedValueOf(prevParsed, iAxis) ?? 0.0))
                           .abs() >
                       maxGapLength),
         );
@@ -707,18 +706,12 @@ class ScatterController(super.chart, super.datasetIndex, [super.elements])
       // :128 and :129, one read each.
       final vValue = parsedValueOf(parsed, const YAxis());
       final iValue = parsedValueOf(parsed, const XAxis());
-      if (iValue is! num ||
-          !(vValue == null || vValue is Undefined || vValue is num)) {
-        break;
-      }
-      // `toDouble()` on a num is a call in an AOT build (performance.md §72).
-      final x = iValue is double ? iValue : (iValue as int) * 1.0;
+      if (iValue == null) break;
+      final x = iValue;
       final iPixel = iPixels.pixelOf(x);
       point.x = iPixel;
-      final nullData = vValue is! num;
-      final vPixel = nullData
-          ? vScale.getBasePixel()
-          : vPixels.pixelOf(vValue is double ? vValue : (vValue as int) * 1.0);
+      final nullData = vValue == null;
+      final vPixel = nullData ? vScale.getBasePixel() : vPixels.pixelOf(vValue);
       point
         ..y = vPixel
         ..skip = iPixel.isNaN || vPixel.isNaN || nullData

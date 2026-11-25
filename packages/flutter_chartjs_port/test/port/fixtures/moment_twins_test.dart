@@ -123,11 +123,11 @@ FixtureRun _examine(String path, int datasets, Set<double> named) => (chart) {
       if (scale is! Scale || !_timeTypes.contains(scale.type)) continue;
       for (final item in meta.parsed) {
         final time = parsedValueOf(item, scale.axis);
-        if (time is! num || !time.isFinite) {
+        if (time == null || !time.isFinite) {
           unparsed++;
         } else if (!differs) {
           expect(
-            named.contains(time.toDouble()),
+            named.contains(time),
             isTrue,
             reason:
                 '$path: the dataset $i has the time value $time, which no '

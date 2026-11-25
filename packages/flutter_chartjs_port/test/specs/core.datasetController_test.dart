@@ -537,23 +537,33 @@ void main() {
     });
 
     group('labels array synchronization', () {
-      // DIVERGES(chartjs): adapt-parsed-data-items, the items are parsed
-      // items, which each form of `parsing` reads.
-      final data1 = parsedItemsOf([
+      final data1 = <Object?>[
         <String, Object?>{'x': 'One', 'name': 'One', 'y': 1, 'value': 1},
         <String, Object?>{'x': 'Two', 'name': 'Two', 'y': 2, 'value': 2},
-      ]);
-      final data2 = parsedItemsOf([
+      ];
+      final data2 = <Object?>[
         <String, Object?>{'x': 'Three', 'name': 'Three', 'y': 3, 'value': 3},
         <String, Object?>{'x': 'Four', 'name': 'Four', 'y': 4, 'value': 4},
         <String, Object?>{'x': 'Five', 'name': 'Five', 'y': 5, 'value': 5},
-      ]);
-      List<Object?> xOf(List<Object?> data) => [
-        for (final n in data) (n! as ParsedItem).x,
       ];
+      List<Object?> xOf(List<Object?> data) => [
+        for (final n in data) (n! as Map<String, Object?>)['x'],
+      ];
+      // DIVERGES(chartjs): adapt-typed-parsed-values, a parsed value is a
+      // number or null: the data items of `parsing: false` with a label x
+      // have no form (Chart.js ADR 0205).
+      group('when parsing is false', () {
+        for (final name in const [
+          'should remove old labels when data is updated',
+          'should not remove any user added labels',
+          'should not remove any user defined labels',
+          'should keep up with multiple datasets',
+        ]) {
+          test(name, () {}, skip: 'diverges: adapt-typed-parsed-values');
+        }
+      });
       for (final parsing in <Object?>[
         true,
-        false,
         <String, Object?>{'xAxisKey': 'name', 'yAxisKey': 'value'},
       ]) {
         group('when parsing is ${jsonEncode(parsing)}', () {

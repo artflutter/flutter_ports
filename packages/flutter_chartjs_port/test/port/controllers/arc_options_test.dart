@@ -216,7 +216,7 @@ class _ObservedList(final List<Object?> values, final List<Object?> reads)
 /// parsed form of a doughnut, pie or polar area item (row
 /// `adapt-parsed-data-items`).
 List<ParsedItem?> _rItems(List<Object?> values) => <ParsedItem?>[
-  for (final value in values) ParsedItem()..r = value,
+  for (final value in values) ParsedItem()..r = parsedNumber(value),
 ];
 
 Map<String, Object?> _dataset([Map<String, Object?>? fields]) => {
@@ -786,7 +786,7 @@ void main() {
         'parsing': false,
         'data': type.endsWith('polarArea')
             ? _rItems([for (var i = 0; i < 8; i++) i.toDouble()])
-            : _rItems([1.0, '2', 3.0, 4.0, null, 6.0, 7.0, 8.0]),
+            : _rItems([1.0, 2.0, 3.0, 4.0, null, 6.0, 7.0, 8.0]),
       }),
     ]),
   );

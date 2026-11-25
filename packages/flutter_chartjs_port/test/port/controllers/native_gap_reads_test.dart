@@ -169,18 +169,6 @@ class _WritingScale(super.cfg) extends LinearScale {
   }
 }
 
-/// A y value of a user class: its `ToNumber` (`toString`) is user code that
-/// writes the x 1 and 100 in turn into the item 1 of [data].
-class _WritingValue(final List<Object?> data) {
-  var _calls = 0;
-  @override
-  String toString() {
-    jsSet(data[1], 'x', _calls.isEven ? 100.0 : 1.0);
-    _calls++;
-    return '5';
-  }
-}
-
 /// A point of a user class: its writes go by name, and its write of `y`
 /// calls [onY], user code.
 class _UserPoint([final void Function()? onY]) extends PointElement {
@@ -381,23 +369,6 @@ void main() {
         ]);
       });
 
-      test('a value whose ToNumber runs user code keeps the read', () {
-        final twins = _twins(() {
-          final data = <Object?>[for (final p in _points) _item('map', p)];
-          jsSet(data[2], 'y', _WritingValue(data));
-          return _config(
-            type,
-            form: 'map',
-            spanGaps: 50,
-            data: data,
-            dataset: options,
-          );
-        });
-        // The pass 2 and the pass 3 after it read `prevParsed[iAxis]`. The
-        // plan of the scatter ends at the pass 2.
-        expect(twins.takes, line ? 4 : 0);
-      });
-
       test('a point of a user class ends the proof at its pass', () {
         final twins = _twins(
           () => _config(type, form: 'map', spanGaps: 1.5, dataset: options),
@@ -475,37 +446,35 @@ void main() {
     test('qualifies the native item classes with a number x', () {
       final meta = chart.getDatasetMeta(0);
       final gaps = NativeGapReads.of(meta, double.infinity)!;
-      final parsed = ParsedItem.of(const XAxis(), 1.0, const YAxis(), 2.0);
-      expect(gaps.qualify(parsed, 1.0, 2.0), 1.0);
+      final parsed = ParsedItem.of(const XAxis(), 1, const YAxis(), 2);
+      expect(gaps.qualify(parsed, 1, 2), 1.0);
       expect(gaps.qualify(<String, Object?>{'x': 1}, 1, null), 1.0);
-      expect(gaps.qualify(<String, double>{'x': 1}, 1.0, undefined), 1.0);
-      expect(gaps.qualify(DataPoint(1, 2), 1.0, 2.0), 1.0);
-      // An x or a value that is not a number, `null` or `undefined`.
-      expect(gaps.qualify(parsed, '1', 2.0), isNull);
-      expect(gaps.qualify(parsed, null, 2.0), isNull);
-      expect(gaps.qualify(parsed, 1.0, '2'), isNull);
+      expect(gaps.qualify(<String, double>{'x': 1}, 1, null), 1.0);
+      expect(gaps.qualify(DataPoint(1, 2), 1, 2), 1.0);
+      // A null x (a parsed value is a number or null, Chart.js ADR 0205).
+      expect(gaps.qualify(parsed, null, 2), isNull);
       // Items whose reads can run user code, or of no native class.
-      expect(gaps.qualify(_LoggedMap({}, []), 1.0, 2.0), isNull);
+      expect(gaps.qualify(_LoggedMap({}, []), 1, 2), isNull);
       expect(
         gaps.qualify(
           LinkedHashMap<String, Object?>(equals: (a, b) => a == b),
-          1.0,
-          2.0,
+          1,
+          2,
         ),
         isNull,
       );
       expect(
-        gaps.qualify(LinkedHashMap<String, Object?>.identity(), 1.0, 2.0),
+        gaps.qualify(LinkedHashMap<String, Object?>.identity(), 1, 2),
         isNull,
       );
-      expect(gaps.qualify(HashMap<String, Object?>(), 1.0, 2.0), isNull);
-      expect(gaps.qualify(<Object?>[1.0, 2.0], 1.0, 2.0), isNull);
-      expect(gaps.qualify(null, 1.0, 2.0), isNull);
+      expect(gaps.qualify(HashMap<String, Object?>(), 1, 2), isNull);
+      expect(gaps.qualify(<Object?>[1.0, 2.0], 1, 2), isNull);
+      expect(gaps.qualify(null, 1, 2), isNull);
       // A native map after a user one, and the reverse.
-      expect(gaps.qualify(<String, Object?>{}, 1.0, 2.0), 1.0);
+      expect(gaps.qualify(<String, Object?>{}, 1, 2), 1.0);
       // A new parsed list of the meta ends the proof.
       meta.parsed = <ParsedItem?>[...meta.parsed];
-      expect(gaps.qualify(parsed, 1.0, 2.0), isNull);
+      expect(gaps.qualify(parsed, 1, 2), isNull);
     });
 
     test('a parsed list of a user class gives no gap reads', () {

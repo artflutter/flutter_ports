@@ -690,6 +690,8 @@ items that stay open. It supersedes Chart.js ADR 0027. In short:
   appends at the length (Chart.js ADR 0175), and `jsLessThan` is the operator `a < b`
   on raw values (two strings by their code units, a `DateTime` by its time value). They replace
   the private index helpers of `core.datasetController` and `core.controller`.
+  [Chart.js ADR 0205](adr/0205-typed-parsed-values.md) later types the parsed values and removes
+  `jsLessThan`.
 - `core.datasetController` reads parsed items and stack objects with `jsGetKey`. The reads that
   test with `isFinite` or the truthiness keep `_parsedValue`. `stacksOf` (`@internal`) reads
   `item._stacks`: a List, a `DateTime` or a function item keeps it in an `Expando`, and a

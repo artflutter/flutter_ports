@@ -1067,6 +1067,10 @@ void main() {
     // and a data item of `parsing: false` that is not a parsed item.
     'stacked strings with parsing false': 'diverges: adapt-apply-stack-number',
     'parsing false with primitive data': 'diverges: adapt-parsed-data-items',
+    // An absent value is null, where upstream keeps `undefined` (Chart.js
+    // ADR 0205).
+    'clearStacks continues after an item without a value':
+        'diverges: adapt-typed-parsed-values',
     'parsing false with stacked primitive data':
         'diverges: adapt-parsed-data-items',
   };

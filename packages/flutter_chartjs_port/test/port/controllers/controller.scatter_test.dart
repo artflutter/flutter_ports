@@ -124,6 +124,10 @@ void _expectLinePoints(Chart chart) {
 /// no number for `isNumber` (Chart.js ADR 0175).
 const Map<String, String> _typedNumberSkips = {
   "parsed: spanGaps '2'": 'diverges: adapt-typed-number-test',
+  // A parsed value is a number or null: an absent x is null, where upstream
+  // keeps `undefined` (Chart.js ADR 0205).
+  'parsed: parsing false, a logarithmic x, an item without x':
+      'diverges: adapt-typed-parsed-values',
 };
 
 void main() {
@@ -189,6 +193,7 @@ void main() {
       controllerScatterReference(_functions),
       functions: _functions,
       theme: compileLightTheme(),
+      skips: _typedNumberSkips,
     );
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
@@ -230,9 +235,10 @@ void main() {
       );
     });
 
-    testWidgets('a logarithmic x and parsing false: an item without x gives '
-        'the min pixel and skip false, an item with x null gives NaN and '
-        'skip true', (tester) async {
+    // An absent x is null (Chart.js ADR 0205). Upstream gives an item
+    // without x the min pixel and skip false.
+    testWidgets('a logarithmic x and parsing false: an item without x and an '
+        'item with x null give NaN and skip true', (tester) async {
       Chart chart(AnyObject first) => acquireChartRoot(
         _scatter(
           <Object?>[
@@ -255,8 +261,8 @@ void main() {
 
       final without = chart(<String, Object?>{'y': 5.0});
       final point = without.getDatasetMeta(0).data[0] as ElementPropertyRead;
-      expect(point['x'], without.scales['x']!.getPixelForDecimal(0));
-      expect(point['skip'], isFalse);
+      expect(point['x'], isNaN);
+      expect(point['skip'], isTrue);
 
       final withNull = chart(<String, Object?>{'x': null, 'y': 5.0});
       final nullPoint =

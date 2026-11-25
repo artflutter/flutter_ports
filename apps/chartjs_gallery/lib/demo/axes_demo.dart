@@ -195,8 +195,10 @@ class AxesDemoState() extends State<AxesDemo> {
       [for (var i = 0; i < _count; i++) _random.nextDouble()],
   ];
 
-  /// The data of each dataset. [_fillData] gives new Lists.
-  late final List<List<DataPoint>> _data = [
+  /// The data of each dataset: a `List<DataPoint>` on a numeric x axis, else
+  /// a `List<LabelPoint>` with the label or the date text. [_fillData] gives
+  /// new Lists.
+  late final List<List<Object>> _data = [
     for (var d = 0; d < _datasetStyles.length; d++) <DataPoint>[],
   ];
 
@@ -227,7 +229,7 @@ class AxesDemoState() extends State<AxesDemo> {
 
   /// The data objects of the dataset [index].
   @visibleForTesting
-  List<DataPoint> dataOf(int index) => _data[index];
+  List<Object> dataOf(int index) => _data[index];
 
   /// The rows of the readout: name and value.
   @visibleForTesting
@@ -293,8 +295,8 @@ class AxesDemoState() extends State<AxesDemo> {
 
   /// The data object `{x, y}` of the point [i]: the `x` of the x scale
   /// type, a number, a label or an ISO date text, which the scale parses.
-  DataPoint _item(int i, double fraction) => switch (_xValue(i)) {
-    final String x => DataPoint.label(x, _yValue(fraction)),
+  Object _item(int i, double fraction) => switch (_xValue(i)) {
+    final String x => LabelPoint(x, _yValue(fraction)),
     final x => DataPoint(x as double, _yValue(fraction)),
   };
 
@@ -303,9 +305,12 @@ class AxesDemoState() extends State<AxesDemo> {
   void _fillData() {
     for (var d = 0; d < _data.length; d++) {
       final fractions = _fractions[d];
-      _data[d] = [
+      final items = [
         for (var i = 0; i < fractions.length; i++) _item(i, fractions[i]),
       ];
+      _data[d] = items.every((item) => item is DataPoint)
+          ? items.cast<DataPoint>().toList()
+          : items.cast<LabelPoint>().toList();
     }
     _labels = <Object>[
       if (_xType == 'category')
@@ -399,7 +404,10 @@ class AxesDemoState() extends State<AxesDemo> {
       for (var d = 0; d < _datasetStyles.length; d++)
         LineDataset(
           label: _datasetStyles[d].label,
-          data: .points(_data[d]),
+          data: switch (_data[d]) {
+            final List<DataPoint> points => .points(points),
+            final points => .labelPoints(points as List<LabelPoint>),
+          },
           backgroundColor: .constant(.solid(_datasetStyles[d].background)),
           borderColor: .constant(.solid(_datasetStyles[d].border)),
           pointStyle: .constant(_datasetStyles[d].style),
@@ -453,7 +461,14 @@ class AxesDemoState() extends State<AxesDemo> {
       final fractions = _fractions[d];
       final data = dataOf(d);
       for (var i = 0; i < data.length; i++) {
-        data[i].y = _yValue(fractions[i] = _random.nextDouble());
+        final y = _yValue(fractions[i] = _random.nextDouble());
+        // A label point is immutable: a new point takes its place.
+        switch (data[i]) {
+          case final DataPoint point:
+            point.y = y;
+          case final LabelPoint point:
+            data[i] = LabelPoint(point.x, y);
+        }
       }
     }
     _chart?.update();

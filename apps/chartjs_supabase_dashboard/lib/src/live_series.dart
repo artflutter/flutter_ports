@@ -356,7 +356,7 @@ final class LiveSeries(
     var high = _points.length;
     while (low < high) {
       final mid = (low + high) >> 1;
-      if ((_points[mid].x! as double) < ms) {
+      if (_points[mid].x! < ms) {
         low = mid + 1;
       } else {
         high = mid;

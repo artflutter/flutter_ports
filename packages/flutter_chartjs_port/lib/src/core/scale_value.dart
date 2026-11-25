@@ -46,37 +46,31 @@ double scaleValueOf(IScale scale, Object? value) => switch (value) {
   _ => _numberOf(scale, jsToNumber(value)),
 };
 
+/// The number of the parsed value [value] for the value methods of [scale]
+/// (Chart.js ADR 0205): [value] itself, or for Dart `null` the `nullValue` of
+/// a [NullValueScale], else NaN, as [scaleValueOf] gives.
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+double scaleNumberOf(IScale scale, double? value) =>
+    value ?? (scale is NullValueScale ? scale.nullValue : double.nan);
+
 double _numberOf(IScale scale, double number) =>
     number.isNaN && scale is NullValueScale ? scale.nanValue : number;
 
-/// The label of [value] on [scale], the `'' + scale.getLabelForValue(value)`
-/// of upstream for a value of the user.
+/// The label of the parsed value [value] on [scale], the `'' +
+/// scale.getLabelForValue(value)` of upstream (Chart.js ADR 0205).
 ///
-/// A number gives `getLabelForValue`. Upstream gives another value to the
-/// label method as it is: the category scale reads the label at the key
-/// `ToString(value)` when `ToNumber(value)` is an index, else it gives the
-/// value itself; another scale applies `ToNumber` to it. A time scale gives
-/// `null` to its adapter, which formats an invalid date: the port gives NaN.
-String scaleLabelOf(IScale scale, Object? value) {
-  if (value is num) {
-    return scale.getLabelForValue(value.toDouble());
-  }
-  if (value == null && scale is NullValueScale) {
-    return scale.getLabelForValue(double.nan);
-  }
+/// A number gives `getLabelForValue`. For Dart `null` (the JS `null`),
+/// upstream gives `null` to the label method: a time scale formats an
+/// invalid date (the port gives NaN), the category scale reads
+/// `labels['null']` when `ToNumber(null)`, 0, is an index, else it gives the
+/// text `'null'`, and another scale applies `ToNumber`, which gives 0.
+String scaleLabelOf(IScale scale, double? value) {
+  if (value != null) return scale.getLabelForValue(value);
+  if (scale is NullValueScale) return scale.getLabelForValue(double.nan);
   if (scale is LabelIndexScale) {
-    final labels = scale.getLabels();
-    final number = jsToNumber(value);
-    if (number >= 0 && number < labels.length) {
-      // `labels[value]`: the key `ToString(value)` reads an item only when it
-      // is the text of an index, for example `'1'`.
-      final key = jsToString(value);
-      final index = int.tryParse(key);
-      return jsToString(
-        index != null && '$index' == key ? labels[index] : undefined,
-      );
-    }
-    return jsToString(value);
+    return scale.getLabels().isNotEmpty ? 'undefined' : 'null';
   }
-  return scale.getLabelForValue(jsToNumber(value));
+  return scale.getLabelForValue(0);
 }

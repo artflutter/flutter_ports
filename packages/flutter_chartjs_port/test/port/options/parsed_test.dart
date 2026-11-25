@@ -7,9 +7,9 @@ void main() {
   // The typed parsed data of Chart.js ADR 0054 §8 and the base TypedRecord.
   group('ParsedItem', () {
     test('keeps the key order of the writes', () {
-      final item = ParsedItem.of(const YAxis(), 1.0, const XAxis(), 'a');
+      final item = ParsedItem.of(const YAxis(), 1, const XAxis(), 2);
       expect(jsObjectKeys(item), ['y', 'x']);
-      expect([item.x, item.y, item.r], ['a', 1.0, same(undefined)]);
+      expect([item.x, item.y, item.r], [2.0, 1.0, isNull]);
       item
         ..custom = 3.0
         ..['foo'] = 'bar'
@@ -50,9 +50,9 @@ void main() {
       axes.forEach((aName, a) {
         axes.forEach((bName, b) {
           final reason = '$aName $bName';
-          final fast = ParsedItem.of(a, 1.0, b, null);
+          final fast = ParsedItem.of(a, 1, b, null);
           final writes = ParsedItem()
-            ..setValue(a, 1.0)
+            ..setValue(a, 1)
             ..setValue(b, null);
           expect(state(fast), state(writes), reason: reason);
           // A later key goes to the end, and a key of the two stays in place.
@@ -72,21 +72,21 @@ void main() {
     });
 
     test('of keeps the second value of two equal keys', () {
-      final item = ParsedItem.of(const RAxis(), true, const RAxis(), 4.0);
+      final item = ParsedItem.of(const RAxis(), null, const RAxis(), 4);
       expect(item.jsKeys(), ['r']);
       expect(item.r, 4.0);
-      expect(item.x, same(undefined));
+      expect(item.x, isNull);
       expect(item.ownKeyCount, 1);
     });
 
     test('reads by axis class and by name', () {
       final item = ParsedItem()
-        ..setValue(const XAxis(), 1.0)
-        ..setValue(_OtherAxis(), 2.0)
+        ..setValue(const XAxis(), 1)
+        ..setValue(_OtherAxis(), 2)
         ..['u'] = 2.0;
       expect(item.valueOf(const XAxis()), 1.0);
-      expect(item.valueOf(_OtherAxis()), same(undefined));
-      expect(item.valueOf(const YAxis()), same(undefined));
+      expect(item.valueOf(_OtherAxis()), isNull);
+      expect(item.valueOf(const YAxis()), isNull);
       expect(item.jsKeys(), ['x', 'u']);
       expect(jsGet(item, 'u'), 2.0);
       expect(jsGet(item, 'y'), same(undefined));
@@ -94,16 +94,30 @@ void main() {
       expect(item.jsHas('y'), isFalse);
     });
 
-    test('stores undefined and null as values', () {
+    test('stores null as a value', () {
       final item = ParsedItem()
-        ..x = undefined
+        ..x = null
         ..y = null;
       expect(item.jsHas('x'), isTrue);
-      expect(item['x'], same(undefined));
-      expect(item.x, same(undefined));
+      expect(item['x'], isNull);
+      expect(item.x, isNull);
       expect(item['y'], isNull);
       expect(jsGet(item, 'y'), isNull);
       expect(jsObjectKeys(item), ['x', 'y']);
+    });
+
+    // A parsed value is a number or null (Chart.js ADR 0205).
+    test('a write by name stores a number, or null for undefined', () {
+      final item = ParsedItem()
+        ..['x'] = 3
+        ..['y'] = undefined;
+      expect(item.x, 3.0);
+      expect(item.y, isNull);
+      expect(item.jsHas('y'), isTrue);
+    });
+
+    test('a write by name of another value stops a debug build', () {
+      expect(() => ParsedItem()['x'] = 'a', throwsA(isA<AssertionError>()));
     });
 
     test('a _stacks of another class is foreign', () {
@@ -135,13 +149,14 @@ void main() {
       expect(item.jsDelete('nothing'), isFalse);
       item.jsKeys().forEach(item.jsDelete);
       expect(item.ownKeyCount, 0);
-      expect(item.x, same(undefined));
+      expect(item.x, isNull);
     });
 
     test('more than 7 keys keep their order, and indices come first', () {
       final item = ParsedItem();
-      for (final name in ['x', 'k1', 'k2', 'y', 'k3', 'k4', 'r', 'k5', '7']) {
-        item[name] = name;
+      final names = ['x', 'k1', 'k2', 'y', 'k3', 'k4', 'r', 'k5', '7'];
+      for (var i = 0; i < names.length; i++) {
+        item[names[i]] = i;
       }
       expect(item.ownKeyCount, 9);
       expect(jsObjectKeys(item), [
@@ -157,7 +172,7 @@ void main() {
       ]);
       expect(item.jsDelete('k2'), isTrue);
       expect(item.jsKeys(), ['7', 'x', 'k1', 'y', 'k3', 'k4', 'r', 'k5']);
-      expect(item.r, 'r');
+      expect(item.r, 6.0);
     });
   });
 

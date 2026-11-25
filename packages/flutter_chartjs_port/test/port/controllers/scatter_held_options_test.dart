@@ -154,28 +154,6 @@ JsObjectFace _dataset(ChartConfigurationScope cfg) =>
   return (held: held, gaps: gaps);
 }
 
-/// A y value whose `ToNumber` (its `toString`) runs [onRead]: user code
-/// between two option calls of the loop. A parsed item runs no user code in
-/// its reads (row `adapt-parsed-data-items`), so the hook is in the value.
-class _HookValue(final double value, final void Function() onRead) {
-  @override
-  String toString() {
-    onRead();
-    return '$value';
-  }
-}
-
-/// The data of [_data]: the `ToNumber` of the y value of the item [at] runs
-/// [onRead] while [armed] gives true.
-List<Object?> _hookData(int at, bool Function() armed, void Function() onRead) {
-  final data = _data(12);
-  final item = data[at]! as ParsedItem;
-  item.y = _HookValue(item.y! as double, () {
-    if (armed()) onRead();
-  });
-  return data;
-}
-
 void _newData(Chart chart, ChartConfigurationScope cfg) {
   _dataset(cfg)['data'] = _data(12, shift: 0.5);
   chart.update(UpdateMode.none);
@@ -263,80 +241,6 @@ void main() {
         chart.update(UpdateMode.none);
       });
       expect(counts.held, 33);
-    });
-  });
-
-  group('user code between two calls of the loop', () {
-    // Each case arms a hook in the read of `x` of one item for one update in
-    // the mode `none`. The hook runs inside the loop, between the option calls
-    // of two points: each later point must read the cache as upstream does.
-    late Chart chart;
-    var armed = false;
-    void update(Chart c, ChartConfigurationScope cfg) {
-      chart = c;
-      armed = true;
-      c.update(UpdateMode.none);
-      armed = false;
-    }
-
-    testWidgets('a clear of the cache ends the hold', (tester) async {
-      late JsObjectFace dataset;
-      final counts = _twins(() {
-        final cfg = _config(
-          dataset: <String, Object?>{
-            'data': _hookData(6, () => armed, () {
-              armed = false;
-              dataset['pointRadius'] = 6;
-              chart.getDatasetMeta(0).controller!.configure();
-            }),
-          },
-        );
-        dataset = _dataset(cfg);
-        return cfg;
-      }, update);
-      expect(counts.held, greaterThan(0));
-    });
-
-    testWidgets('a new data element type ends the hold', (tester) async {
-      final counts = _twins(
-        () => _config(
-          dataset: <String, Object?>{
-            'data': _hookData(6, () => armed, () {
-              armed = false;
-              chart.getDatasetMeta(0).controller!.dataElementType =
-                  ArcElement.component;
-            }),
-          },
-        ),
-        update,
-      );
-      expect(counts.held, greaterThan(0));
-    });
-
-    testWidgets('an active point reads the entry of its mode', (tester) async {
-      // The hook reads the options of the active point inside the loop,
-      // before the hover styles of the update write them again: the reads of
-      // each twin.
-      final seen = <List<Object?>>[];
-      final counts = _twins(
-        () => _config(
-          dataset: <String, Object?>{
-            'data': _hookData(8, () => armed, () {
-              final options = chart.getDatasetMeta(0).data[5].options;
-              seen.last.add(_options(options));
-            }),
-          },
-        ),
-        (c, cfg) {
-          seen.add([]);
-          c.setActiveElements([const ActiveElement(datasetIndex: 0, index: 5)]);
-          update(c, cfg);
-        },
-      );
-      expect(counts.held, greaterThan(0));
-      expect(seen, hasLength(2));
-      expect(seen[0], isNotEmpty);
-      expect(seen[0], seen[1]);
     });
   });
 }

@@ -6,6 +6,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/raw_scale_label.dart';
 import '../../support/test_dataset.dart';
 import 'scale_chart_harness.dart';
 import 'scale_logarithmic_reference.dart';
@@ -126,7 +127,7 @@ Map<String, Object?> _logObservations(Scale scale, Chart chart) {
         true,
         0,
       ])
-        scaleLabelOf(scale, _logValue(v)),
+        rawScaleLabelOf(scale, _logValue(v)),
     ],
     'parse': [
       for (final v in <Object?>[
@@ -229,6 +230,14 @@ LogarithmicScale _y(Chart chart) => chart.scales['y']! as LogarithmicScale;
 /// A matcher of [pixel]: [isNaN] for NaN, else [equals].
 Matcher _samePixel(double pixel) => pixel.isNaN ? isNaN : equals(pixel);
 
+/// The cases of `parsing: false` with a string or an absent value: a parsed
+/// value is a number or null (row `adapt-typed-parsed-values`, Chart.js ADR
+/// 0205).
+const Set<String> _typedValueCases = {
+  'parsing false with an absent x',
+  'parsing false with zero, negative and string values',
+};
+
 void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
@@ -295,7 +304,9 @@ void main() {
     });
 
     for (final c in scaleLogarithmicReference(_functions)) {
-      testWidgets(c.name, (tester) async {
+      testWidgets(c.name, skip: _typedValueCases.contains(c.name), (
+        tester,
+      ) async {
         final chart = acquireReferenceChart(
           c.config,
           c.options,
@@ -432,7 +443,7 @@ void main() {
       expect(jsGet(parsed[0], 'y'), isNaN);
       expect(y.parse(0), isNaN);
       expect(y.parse(-0.0), isNaN);
-      expect(scaleLabelOf(y, undefined), '0');
+      expect(rawScaleLabelOf(y, undefined), '0');
       // The point of the 0 is at the pixel of min.
       expect(chart.getDatasetMeta(0).data[0].y, y.getPixelForValue(y.min));
     });

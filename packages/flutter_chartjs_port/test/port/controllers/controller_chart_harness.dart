@@ -1035,7 +1035,10 @@ void _doughnutDataItems(AnyObject config) {
     // A List of parsed items: the parsed List is the data List itself.
     dataset['data'] = <ParsedItem?>[
       for (final item in items)
-        if (item is Map) parsedItemOf(item) else ParsedItem()..r = item,
+        if (item is Map)
+          parsedItemOf(item)
+        else
+          ParsedItem()..r = parsedNumber(item),
     ];
   }
 }
@@ -1052,7 +1055,7 @@ List<Object?> _dataValues(List<Object?> data, List<Object?> values) => _like(
             if (value is Map || value is ParsedItem)
               parsedItemOf(value)
             else
-              ParsedItem()..r = value,
+              ParsedItem()..r = parsedNumber(value),
         ]
       : values,
 );

@@ -254,9 +254,12 @@ void _parseFloatBar(Object? entry, ParsedItem item, IScale vScale, int i) {
 /// [endValue]. Its `barEnd` is the parsed value of the item. The native
 /// parse of a pair of numbers (Chart.js ADR 0157) calls it too.
 // DIVERGES(chartjs): adapt-native-floating-parse, one body for both parses.
-FloatingBar _floatingBarOf(Object? startValue, Object? endValue) {
-  final min = math.min(jsToNumber(startValue), jsToNumber(endValue));
-  final max = math.max(jsToNumber(startValue), jsToNumber(endValue));
+FloatingBar _floatingBarOf(double? startValue, double? endValue) {
+  // `Math.min` and `Math.max` read the JS `null` of a parse result as 0.
+  final start = startValue ?? 0.0;
+  final end = endValue ?? 0.0;
+  final min = math.min(start, end);
+  final max = math.max(start, end);
   var barStart = min;
   var barEnd = max;
 
@@ -315,12 +318,13 @@ List<ParsedItem> _parseArrayOrPrimitive(
 
   for (var i = start, ilen = start + count; i < ilen; ++i) {
     final entry = jsGetIndex(data, i);
-    // :164 `singleScale || iScale.parse(labels[i], i)`: the value of `||`,
-    // `true` for a single scale.
+    // :164 `singleScale || iScale.parse(labels[i], i)`. For a single scale
+    // the value of `||` is `true`, and the write of the value axis, the same
+    // key, replaces it: the item starts with no value.
     final item = ParsedItem()
       ..setValue(
         iScale.axis,
-        singleScale ? true : iScale.parse(jsGetIndex(labels, i), i),
+        singleScale ? null : iScale.parse(jsGetIndex(labels, i), i),
       );
     parsed.add(_parseValue(entry, item, vScale!, i));
   }
@@ -344,11 +348,12 @@ Object? _userCustomValue(Object? custom, String key) => jsGetKey(custom, key);
 ParsedItem? _findParsed(
   List<ParsedItem?> parsed,
   ScaleAxis axis,
-  Object? value,
+  double? value,
 ) {
   for (final item in parsed) {
     assert(BarSkipNullIndex.debugCountVisit(), 'counts the visit');
-    if (_strictEquals(parsedValueOf(item, axis), value)) return item;
+    // `===` of two numbers or nulls is `==` (NaN is equal to no value).
+    if (parsedValueOf(item, axis) == value) return item;
   }
   return null;
 }
@@ -799,7 +804,7 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
 
   /// `parsed[scale.axis]`: [parsedValueOf] with the key of the axis of
   /// [scale].
-  static Object? _axisValueOf(ParsedItem? parsed, IScale scale) {
+  static double? _axisValueOf(ParsedItem? parsed, IScale scale) {
     final axis = scale.axis;
     return parsedValueOf(parsed, axis);
   }
@@ -1004,7 +1009,7 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
 
     for (var i = start; i < start + count; i++) {
       final parsed = getParsed(i);
-      final vpixels = reset || isNullOrUndef(parsedValueOf(parsed, vAxis))
+      final vpixels = reset || parsedValueOf(parsed, vAxis) == null
           ? (size: double.nan, base: base, head: base, center: double.nan)
           : _calculateBarValuePixels(i, stackIndexes);
       final ipixels = _calculateBarIndexPixels(i, ruler, plan);
@@ -1229,15 +1234,8 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
       }
       // Data-only updates preflight native prepared values before these reads.
       final value = parsedValueOf(item, valueAxis);
-      // The type tests come first: `isFinite` and `toDouble()` on a num are
-      // calls in an AOT build (performance.md §72).
-      if (value is double) {
-        if (!value.isFinite) return false;
-        values[i - begin] = value;
-        continue;
-      }
-      if (value is! int) return false;
-      values[i - begin] = value * 1.0;
+      if (value == null || !value.isFinite) return false;
+      values[i - begin] = value;
     }
     // DIVERGES(chartjs): adapt-bulk-bar-update, one axis and stack search.
     final stackIndex = layout.stackIndex;
@@ -1471,13 +1469,15 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
         ? null
         : cachedMeta.controller!.getParsed(dataIndex);
     final iAxis = iScale.axis;
-    // `getParsed(index)` of an index that names no item is `undefined`.
     final iScaleValue = currentParsed != null
         ? parsedValueOf(currentParsed, iAxis)
-        : undefined;
+        : null;
 
     // :443-450: `true`, or Dart `null` for the JS `undefined` of no return.
     bool? skipNull(ChartMeta meta) {
+      // `getParsed(index)` of an index that names no item is `undefined`,
+      // and no parsed item has the index value `undefined`: no item matches.
+      if (currentParsed == null) return true;
       // `Array.prototype.find` gives `undefined` when no item matches.
       // DIVERGES(chartjs): adapt-bar-skip-null-index, the item of a proven
       // positional list, else the upstream search.
@@ -1490,7 +1490,7 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
           : _findParsed(meta.parsed, iAxis, iScaleValue);
       final val = parsed != null ? _axisValueOf(parsed, meta.vScale!) : null;
 
-      if (isNullOrUndef(val) || jsIsNaN(val)) {
+      if (val == null || val.isNaN) {
         return true;
       }
       return null;
@@ -1656,7 +1656,7 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
 
     for (var i = 0; i < ilen; ++i) {
       pixels[i] = iScale!.getPixelForValue(
-        scaleValueOf(iScale, parsedValueOf(getParsed(i), iScale.axis)),
+        scaleNumberOf(iScale, parsedValueOf(getParsed(i), iScale.axis)),
         i,
       );
     }
@@ -1732,7 +1732,7 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
     final floating = _isFloatBar(custom);
     final vAxis = vScale!.axis;
     var value = parsedValueOf(parsed, vAxis);
-    Object? start = 0.0;
+    var start = 0.0;
     var length = value;
     double head;
     double size;
@@ -1744,7 +1744,8 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
       // `length !== value`: Dart `null` is the JS `undefined` of a `null`
       // value, which differs from each value.
       if (stackedValue == null || stackedValue != value) {
-        start = (stackedValue ?? double.nan) - jsToNumber(value);
+        // The JS `-` reads a `null` value as 0.
+        start = (stackedValue ?? double.nan) - (value ?? 0.0);
         length = value;
       }
     }
@@ -1754,22 +1755,22 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
       // an object have no side effect.
       // A FloatingBar with a value that user code wrote by name reads its
       // raw values, as a user object does.
-      final Object? barStart;
-      final Object? barEnd;
+      final double barStart;
+      final double barEnd;
       if (custom is FloatingBar && !custom.hasForeign) {
         barStart = custom.barStart;
         barEnd = custom.barEnd;
       } else {
-        barStart = _userCustomValue(custom, 'barStart');
-        barEnd = _userCustomValue(custom, 'barEnd');
+        barStart = jsToNumber(_userCustomValue(custom, 'barStart'));
+        barEnd = jsToNumber(_userCustomValue(custom, 'barEnd'));
       }
       value = barStart;
-      length = jsToNumber(barEnd) - jsToNumber(barStart);
+      length = barEnd - barStart;
       // bars crossing origin are not stacked
-      if (value != 0 && sign(jsToNumber(value)) != sign(jsToNumber(barEnd))) {
+      if (value != 0 && sign(value) != sign(barEnd)) {
         start = 0.0;
       }
-      start = jsAdd(start, value);
+      start += value;
     }
 
     final startValue = !isNullOrUndef(baseValue) && !floating
@@ -1778,9 +1779,8 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
     var base = vScale.getPixelForValue(scaleValueOf(vScale, startValue));
 
     if (chart.getDataVisibility(index)) {
-      head = vScale.getPixelForValue(
-        scaleValueOf(vScale, jsAdd(start, length)),
-      );
+      // The JS `+` reads a `null` length as 0.
+      head = vScale.getPixelForValue(start + (length ?? 0.0));
     } else {
       // When not visible, no height
       head = base;
@@ -1917,7 +1917,7 @@ class BarController(super.chart, super.datasetIndex, [super.elements])
     } else {
       // For non-grouped bar charts, exact pixel values are used
       center = scale.getPixelForValue(
-        scaleValueOf(scale, _axisValueOf(getParsed(index), scale)),
+        scaleNumberOf(scale, _axisValueOf(getParsed(index), scale)),
         index,
       );
       size = math.min(maxBarThickness, jsToNumber(ruler.min) * ruler.ratio);

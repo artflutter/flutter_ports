@@ -432,7 +432,10 @@ List<Object?> _parsedFor(Object? options, List<Object?> data) =>
     options != null && jsGet(options, 'parsing') == false
     ? <ParsedItem?>[
         for (final value in data)
-          if (value is Map) parsedItemOf(value) else ParsedItem()..r = value,
+          if (value is Map)
+            parsedItemOf(value)
+          else
+            ParsedItem()..r = parsedNumber(value),
       ]
     : data;
 

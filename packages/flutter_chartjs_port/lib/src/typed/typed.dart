@@ -56,7 +56,12 @@ export 'package:flutter_chartjs_port/src/typed/chart_value.dart'
 export 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartConfig, ChartKind;
 export 'package:flutter_chartjs_port/src/typed/dataset_data.dart'
-    show DatasetData, DatasetPoints, DatasetRanges, DatasetValues;
+    show
+        DatasetData,
+        DatasetLabelPoints,
+        DatasetPoints,
+        DatasetRanges,
+        DatasetValues;
 export 'package:flutter_chartjs_port/src/typed/datasets.dart'
     show
         BarDataset,

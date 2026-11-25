@@ -32,6 +32,16 @@ sealed class const DatasetData._() {
   /// (`docs/general/data-structures.md`).
   const factory points(List<DataPoint> points) = DatasetPoints;
 
+  /// `data` in the object form `{x, y}` with a text `x`: a label of a
+  /// category x axis, or a time text of a time x axis. The chart parses each
+  /// item; a label point is no parsed item, so `parsing: false` does not
+  /// take it (Chart.js ADR 0205).
+  ///
+  /// ```dart
+  /// LineDataset(data: .labelPoints([LabelPoint('a', 1), LabelPoint('b', 2)]))
+  /// ```
+  const factory labelPoints(List<LabelPoint> points) = DatasetLabelPoints;
+
   /// One range for each label of the chart, the floating bars of a
   /// [BarDataset]: `data: [[1, 5], [2, 6]]` (`docs/charts/bar.md`, "Floating
   /// Bars"). A `null` range is a gap.
@@ -77,6 +87,25 @@ final class const DatasetPoints(
 
   @override
   String toString() => 'DatasetData.points($points)';
+}
+
+/// [DatasetData.labelPoints]: the label points, by identity.
+final class const DatasetLabelPoints(
+  /// The label points, the `data` of the dataset.
+  final List<LabelPoint> points,
+) extends DatasetData {
+  /// The label points [points].
+  this : super._();
+
+  @override
+  bool operator ==(Object other) =>
+      other is DatasetLabelPoints && identical(points, other.points);
+
+  @override
+  int get hashCode => Object.hash(DatasetLabelPoints, identityHashCode(points));
+
+  @override
+  String toString() => 'DatasetData.labelPoints($points)';
 }
 
 /// The [DatasetData] of one range for each label of the chart.

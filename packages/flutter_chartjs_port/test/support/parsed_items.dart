@@ -23,6 +23,15 @@ ParsedItem? parsedItemOf(Object? item) {
   throw StateError('No parsed item of $item');
 }
 
+/// The parsed value of the raw value [value] of a reference case: a number,
+/// or Dart `null` for `null` and `undefined`. A parsed value is a number or
+/// null (Chart.js ADR 0205): another value is a [StateError].
+double? parsedNumber(Object? value) => switch (value) {
+  final num number => number.toDouble(),
+  null || Undefined() => null,
+  _ => throw StateError('No parsed value of $value'),
+};
+
 /// The parsed items of the plain data objects [items] ([parsedItemOf]).
 List<ParsedItem?> parsedItemsOf(List<Object?> items) => [
   for (final item in items) parsedItemOf(item),

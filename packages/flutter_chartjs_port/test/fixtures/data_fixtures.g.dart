@@ -1600,64 +1600,80 @@ FixtureConfig _controller_bar_bar_thickness_max_icu() => FixtureConfig.typed(
 );
 
 /// `controller.bar/bar-thickness-min-interval-multi.json`.
-FixtureConfig
-_controller_bar_bar_thickness_min_interval_multi() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        barPercentage: 1,
-        categoryPercentage: 1,
-        data: .points([DataPoint.label('2001', 1), DataPoint.label('2099', 5)]),
+FixtureConfig _controller_bar_bar_thickness_min_interval_multi() =>
+    FixtureConfig.typed(
+      ChartConfig(
+        datasets: [
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+            barPercentage: 1,
+            categoryPercentage: 1,
+            data: .labelPoints([LabelPoint('2001', 1), LabelPoint('2099', 5)]),
+          ),
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFF8463FF))),
+            barPercentage: 1,
+            categoryPercentage: 1,
+            data: .labelPoints([LabelPoint('2019', 2), LabelPoint('2020', 3)]),
+          ),
+        ],
+        responsive: false,
+        scales: [
+          raw(
+            TimeAxis(
+              CartesianAxis.x,
+              display: ScaleDisplay.off,
+              parser: 'YYYY',
+            ),
+            <String, Object?>{'min': '2000', 'max': '2100'},
+          ),
+          LinearAxis(
+            CartesianAxis.y,
+            display: ScaleDisplay.off,
+            beginAtZero: true,
+          ),
+        ],
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF8463FF))),
-        barPercentage: 1,
-        categoryPercentage: 1,
-        data: .points([DataPoint.label('2019', 2), DataPoint.label('2020', 3)]),
-      ),
-    ],
-    responsive: false,
-    scales: [
-      raw(
-        TimeAxis(CartesianAxis.x, display: ScaleDisplay.off, parser: 'YYYY'),
-        <String, Object?>{'min': '2000', 'max': '2100'},
-      ),
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
-    ],
-  ),
-  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
-);
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
+    );
 
 /// The ICU twin of `controller.bar/bar-thickness-min-interval-multi.json`.
-FixtureConfig
-_controller_bar_bar_thickness_min_interval_multi_icu() => FixtureConfig.typed(
-  ChartConfig(
-    datasets: [
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        barPercentage: 1,
-        categoryPercentage: 1,
-        data: .points([DataPoint.label('2001', 1), DataPoint.label('2099', 5)]),
+FixtureConfig _controller_bar_bar_thickness_min_interval_multi_icu() =>
+    FixtureConfig.typed(
+      ChartConfig(
+        datasets: [
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
+            barPercentage: 1,
+            categoryPercentage: 1,
+            data: .labelPoints([LabelPoint('2001', 1), LabelPoint('2099', 5)]),
+          ),
+          BarDataset(
+            backgroundColor: .constant(ChartPaint.solid(Color(0xFF8463FF))),
+            barPercentage: 1,
+            categoryPercentage: 1,
+            data: .labelPoints([LabelPoint('2019', 2), LabelPoint('2020', 3)]),
+          ),
+        ],
+        responsive: false,
+        scales: [
+          raw(
+            TimeAxis(
+              CartesianAxis.x,
+              display: ScaleDisplay.off,
+              parser: 'yyyy',
+            ),
+            <String, Object?>{'min': '2000', 'max': '2100'},
+          ),
+          LinearAxis(
+            CartesianAxis.y,
+            display: ScaleDisplay.off,
+            beginAtZero: true,
+          ),
+        ],
       ),
-      BarDataset(
-        backgroundColor: .constant(ChartPaint.solid(Color(0xFF8463FF))),
-        barPercentage: 1,
-        categoryPercentage: 1,
-        data: .points([DataPoint.label('2019', 2), DataPoint.label('2020', 3)]),
-      ),
-    ],
-    responsive: false,
-    scales: [
-      raw(
-        TimeAxis(CartesianAxis.x, display: ScaleDisplay.off, parser: 'yyyy'),
-        <String, Object?>{'min': '2000', 'max': '2100'},
-      ),
-      LinearAxis(CartesianAxis.y, display: ScaleDisplay.off, beginAtZero: true),
-    ],
-  ),
-  options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
-);
+      options: AcquireOptions(canvas: HarnessCanvas(width: 512, height: 256)),
+    );
 
 /// `controller.bar/bar-thickness-min-interval.json`.
 FixtureConfig _controller_bar_bar_thickness_min_interval() =>
@@ -2271,7 +2287,7 @@ FixtureConfig _controller_bar_bar_thickness_single_xy() => FixtureConfig.typed(
         barPercentage: 1,
         categoryPercentage: 1,
         backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-        data: .points([DataPoint.label('2022', 42)]),
+        data: .labelPoints([LabelPoint('2022', 42)]),
       ),
     ],
     labels: <Object>['2016', '2018', '2020', '2024', '2030'],
@@ -2299,7 +2315,7 @@ FixtureConfig _controller_bar_bar_thickness_single_xy_icu() =>
             barPercentage: 1,
             categoryPercentage: 1,
             backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF6384))),
-            data: .points([DataPoint.label('2022', 42)]),
+            data: .labelPoints([LabelPoint('2022', 42)]),
           ),
         ],
         labels: <Object>['2016', '2018', '2020', '2024', '2030'],
@@ -3482,35 +3498,35 @@ FixtureConfig _controller_bar_not_grouped_on_time() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
       BarDataset(
-        data: .points([
-          DataPoint.label('2017-11-02T20:30:00', 27),
-          DataPoint.label('2017-11-03T20:53:00', 30),
-          DataPoint.label('2017-11-06T05:46:00', 19),
-          DataPoint.label('2017-11-06T21:03:00', 28),
-          DataPoint.label('2017-11-07T20:49:00', 29),
-          DataPoint.label('2017-11-08T21:52:00', 33),
+        data: .labelPoints([
+          LabelPoint('2017-11-02T20:30:00', 27),
+          LabelPoint('2017-11-03T20:53:00', 30),
+          LabelPoint('2017-11-06T05:46:00', 19),
+          LabelPoint('2017-11-06T21:03:00', 28),
+          LabelPoint('2017-11-07T20:49:00', 29),
+          LabelPoint('2017-11-08T21:52:00', 33),
         ]),
         backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
       ),
       BarDataset(
-        data: .points([
-          DataPoint.label('2017-11-03T13:07:00', 45),
-          DataPoint.label('2017-11-04T04:50:00', 40),
-          DataPoint.label('2017-11-06T12:48:00', 38),
-          DataPoint.label('2017-11-07T12:28:00', 42),
-          DataPoint.label('2017-11-08T12:45:00', 51),
-          DataPoint.label('2017-11-09T05:23:00', 57),
+        data: .labelPoints([
+          LabelPoint('2017-11-03T13:07:00', 45),
+          LabelPoint('2017-11-04T04:50:00', 40),
+          LabelPoint('2017-11-06T12:48:00', 38),
+          LabelPoint('2017-11-07T12:28:00', 42),
+          LabelPoint('2017-11-08T12:45:00', 51),
+          LabelPoint('2017-11-09T05:23:00', 57),
         ]),
         backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
       ),
       BarDataset(
-        data: .points([
-          DataPoint.label('2017-11-03T16:30:00', 32),
-          DataPoint.label('2017-11-04T11:50:00', 34),
-          DataPoint.label('2017-11-06T18:30:00', 28),
-          DataPoint.label('2017-11-07T15:51:00', 31),
-          DataPoint.label('2017-11-08T17:27:00', 36),
-          DataPoint.label('2017-11-09T06:53:00', 31),
+        data: .labelPoints([
+          LabelPoint('2017-11-03T16:30:00', 32),
+          LabelPoint('2017-11-04T11:50:00', 34),
+          LabelPoint('2017-11-06T18:30:00', 28),
+          LabelPoint('2017-11-07T15:51:00', 31),
+          LabelPoint('2017-11-08T17:27:00', 36),
+          LabelPoint('2017-11-09T06:53:00', 31),
         ]),
         backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FF00))),
       ),
@@ -8159,21 +8175,21 @@ FixtureConfig _scale_time_offset_with_1_tick() => FixtureConfig.typed(
       raw(
         BarDataset(
           backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-          data: .points([DataPoint.label('2021-03-24', 464)]),
+          data: .labelPoints([LabelPoint('2021-03-24', 464)]),
         ),
         <String, Object?>{'label': 6},
       ),
       raw(
         BarDataset(
           backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-          data: .points([DataPoint.label('2021-03-24', 464)]),
+          data: .labelPoints([LabelPoint('2021-03-24', 464)]),
         ),
         <String, Object?>{'label': 1},
       ),
       raw(
         BarDataset(
           backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-          data: .points([DataPoint.label('2021-03-24', 390)]),
+          data: .labelPoints([LabelPoint('2021-03-24', 390)]),
         ),
         <String, Object?>{'label': 17},
       ),
@@ -8194,42 +8210,42 @@ FixtureConfig _scale_time_offset_with_2_ticks() => FixtureConfig.typed(
       raw(
         BarDataset(
           backgroundColor: .constant(ChartPaint.solid(Color(0xFFFFA500))),
-          data: .points([DataPoint.label('2021-03-24', 464)]),
+          data: .labelPoints([LabelPoint('2021-03-24', 464)]),
         ),
         <String, Object?>{'label': 1},
       ),
       raw(
         BarDataset(
           backgroundColor: .constant(ChartPaint.solid(Color(0xFFFF0000))),
-          data: .points([DataPoint.label('2021-03-24', 464)]),
+          data: .labelPoints([LabelPoint('2021-03-24', 464)]),
         ),
         <String, Object?>{'label': 2},
       ),
       raw(
         BarDataset(
           backgroundColor: .constant(ChartPaint.solid(Color(0xFF0000FF))),
-          data: .points([DataPoint.label('2021-03-24', 390)]),
+          data: .labelPoints([LabelPoint('2021-03-24', 390)]),
         ),
         <String, Object?>{'label': 3},
       ),
       raw(
         BarDataset(
           backgroundColor: .constant(ChartPaint.solid(Color(0xFF800080))),
-          data: .points([DataPoint.label('2021-03-25', 464)]),
+          data: .labelPoints([LabelPoint('2021-03-25', 464)]),
         ),
         <String, Object?>{'label': 4},
       ),
       raw(
         BarDataset(
           backgroundColor: .constant(ChartPaint.solid(Color(0xFF000000))),
-          data: .points([DataPoint.label('2021-03-25', 464)]),
+          data: .labelPoints([LabelPoint('2021-03-25', 464)]),
         ),
         <String, Object?>{'label': 5},
       ),
       raw(
         BarDataset(
           backgroundColor: .constant(ChartPaint.solid(Color(0xFF00FFFF))),
-          data: .points([DataPoint.label('2021-03-25', 390)]),
+          data: .labelPoints([LabelPoint('2021-03-25', 390)]),
         ),
         <String, Object?>{'label': 6},
       ),
@@ -8700,12 +8716,12 @@ FixtureConfig _scale_timeseries_normalize() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
       LineDataset(
-        data: .points([
-          DataPoint.label('2017', null),
-          DataPoint.label('2018', 1),
-          DataPoint.label('2019', 2),
-          DataPoint.label('2020', 3),
-          DataPoint.label('2021', 4),
+        data: .labelPoints([
+          LabelPoint('2017', null),
+          LabelPoint('2018', 1),
+          LabelPoint('2019', 2),
+          LabelPoint('2020', 3),
+          LabelPoint('2021', 4),
         ]),
         fill: FillTarget.none,
       ),
@@ -8727,12 +8743,12 @@ FixtureConfig _scale_timeseries_normalize_icu() => FixtureConfig.typed(
   ChartConfig(
     datasets: [
       LineDataset(
-        data: .points([
-          DataPoint.label('2017', null),
-          DataPoint.label('2018', 1),
-          DataPoint.label('2019', 2),
-          DataPoint.label('2020', 3),
-          DataPoint.label('2021', 4),
+        data: .labelPoints([
+          LabelPoint('2017', null),
+          LabelPoint('2018', 1),
+          LabelPoint('2019', 2),
+          LabelPoint('2020', 3),
+          LabelPoint('2021', 4),
         ]),
         fill: FillTarget.none,
       ),

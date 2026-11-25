@@ -137,9 +137,9 @@ final class BarSkipNullIndex(
   /// The first item of the parsed list of [meta] whose value of [axis] is
   /// `===` [value], or `undefined` when a proven list has no such item, or
   /// [scan] when this object cannot prove the answer.
-  Object? find(ChartMeta meta, ScaleAxis axis, Object? value) {
-    // `===` of a value that is not a number: the upstream search decides.
-    if (_dropped || value is! num) return scan;
+  Object? find(ChartMeta meta, ScaleAxis axis, double? value) {
+    // `===` of a `null` value: the upstream search decides.
+    if (_dropped || value == null) return scan;
     if (!_started) {
       _started = true;
       if (!qualify()) {
@@ -184,14 +184,13 @@ final class BarSkipNullIndex(
     assert(debugCountVisit(), 'counts the read');
     if (item is ParsedItem) {
       final live = item.valueOf(axis);
-      if (live is num) {
-        // The item at the position still has the index value: it is the
-        // first match.
-        if (live == value) return item;
-      } else if (live == null || identical(live, undefined)) {
+      if (live == null) {
         // The one item that can match has no index value.
         return undefined;
       }
+      // The item at the position still has the index value: it is the
+      // first match.
+      if (live == value) return item;
     }
     // Some code wrote this slot of the list since the pass.
     _dropped = true;
@@ -222,21 +221,11 @@ final class BarSkipNullIndex(
       // A Map or another object of the app: its read runs code of the app.
       // A foreign value of a field can reach the code of the app too.
       if (item is! ParsedItem || item.hasForeign) return _unsafe;
-      if (!_plain(item.valueOf(vAxis))) return _unsafe;
+      // A parsed value is a number or null (Chart.js ADR 0205): its `===`
+      // runs no code of the app.
       final value = item.valueOf(axis);
-      if (value is num) {
-        if (value != i) positional = false;
-      } else if (value != null && !identical(value, undefined)) {
-        // `===` of an object is identity, but the value can reach other
-        // reads of the loop: the index declines it.
-        return _unsafe;
-      }
+      if (value != null && value != i) positional = false;
     }
     return positional ? length : -1;
   }
-
-  /// Whether [value] is a number, `null` or `undefined`: a value whose
-  /// `jsIsNaN` and `===` run no code of the app.
-  static bool _plain(Object? value) =>
-      value is num || value == null || identical(value, undefined);
 }

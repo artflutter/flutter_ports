@@ -1038,7 +1038,14 @@ final class FixtureEmitter(
           if (point == null) return null;
           points.add(point);
         }
-        return '.points([${points.map(_comma).join()}])';
+        // A text x is a `LabelPoint`, which is no `DataPoint` (Chart.js ADR
+        // 0205): one List holds one of the two kinds.
+        final labels = items.where(_hasTextX).length;
+        if (labels == 0) return '.points([${points.map(_comma).join()}])';
+        if (labels == items.length) {
+          return '.labelPoints([${points.map(_comma).join()}])';
+        }
+        return null;
     }
   }
 
@@ -1072,11 +1079,14 @@ final class FixtureEmitter(
     final yText = literalOf(y);
     return switch (x) {
       FixtureNumber(:final text) => 'DataPoint($text, $yText)',
-      FixtureString(value: final s) =>
-        'DataPoint.label(${dartString(s)}, $yText)',
+      FixtureString(value: final s) => 'LabelPoint(${dartString(s)}, $yText)',
       _ => null,
     };
   }
+
+  /// Whether the data item [item] has a text `x`: a `LabelPoint`.
+  static bool _hasTextX(FixtureValue item) =>
+      item is FixtureMap && item['x'] is FixtureString;
 }
 
 /// A converter of a typed parameter: the source of [value] of the option

@@ -306,10 +306,9 @@ class RadarController(super.chart, super.datasetIndex, [super.elements])
         final item = parsed[i];
         if (item is! ParsedItem) break;
         final value = item.r;
-        if (value is! double && value != null && value is! Undefined) break;
         final position = positions.positionAt(
           i,
-          value is double ? positions.distanceOf(value) : double.nan,
+          value == null ? double.nan : positions.distanceOf(value),
         );
         final x = position.x;
         final y = position.y;

@@ -483,6 +483,7 @@ final class const BarDataset({
   List<Object?>? get chartData => switch (data) {
     DatasetValues(:final values) => values,
     DatasetPoints(:final points) => points,
+    DatasetLabelPoints(:final points) => points,
     final DatasetRanges ranges => ranges.chartData,
     null => null,
   };
@@ -1014,6 +1015,7 @@ final class const LineDataset({
   List<Object?>? get chartData => switch (data) {
     DatasetValues(:final values) => values,
     DatasetPoints(:final points) => points,
+    DatasetLabelPoints(:final points) => points,
     final DatasetRanges ranges => ranges.chartData,
     null => null,
   };
@@ -1313,6 +1315,7 @@ final class const ScatterDataset({
   List<Object?>? get chartData => switch (data) {
     DatasetValues(:final values) => values,
     DatasetPoints(:final points) => points,
+    DatasetLabelPoints(:final points) => points,
     final DatasetRanges ranges => ranges.chartData,
     null => null,
   };

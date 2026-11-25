@@ -453,7 +453,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.elements])
       return 0;
     }
     return calculateCircumference(
-      jsToNumber(parsedNumberOf(meta.parsed, i)) * circumference / tau,
+      parsedNumberOf(meta.parsed, i)! * circumference / tau,
     );
   }
 
@@ -653,10 +653,10 @@ class DoughnutController(super.chart, super.datasetIndex, [super.elements])
     for (i = 0; i < metaData.length; i++) {
       final value = parsedNumberOf(meta.parsed, i);
       if (value != null &&
-          !jsIsNaN(value) &&
+          !value.isNaN &&
           chart.getDataVisibility(i) &&
           !metaData[i].hidden) {
-        total += jsToNumber(value).abs();
+        total += value.abs();
       }
     }
 
@@ -685,8 +685,9 @@ class DoughnutController(super.chart, super.datasetIndex, [super.elements])
     // `chart.data.labels || []`
     final labelsValue = jsGet(chart.data, 'labels');
     final labels = jsTruthy(labelsValue) ? labelsValue : const <Object?>[];
+    // `formatNumber` reads a `null` value as 0, as its `ToNumber` does.
     final value = formatNumber(
-      jsToNumber(parsedNumberOf(meta.parsed, index)),
+      parsedNumberOf(meta.parsed, index) ?? 0.0,
       localeOf(readOption(chart.options, OptionKey.locale)),
     );
 

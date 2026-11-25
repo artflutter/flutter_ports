@@ -464,7 +464,7 @@ void main() {
     final item = line.data[2]! as ParsedItem;
     expect([item.x, item.y], [field.x[2], field.y[2]]);
     final bubble = StressChartScene(StressChartType.bubble, 4, field);
-    final r = (bubble.data[1]! as ParsedItem).r! as double;
+    final r = (bubble.data[1]! as ParsedItem).r!;
     final v = field.vx[1] / 0.3;
     expect(r, 2 + 4 * v * v);
     final bar = StressChartScene(StressChartType.bar, 4, field);

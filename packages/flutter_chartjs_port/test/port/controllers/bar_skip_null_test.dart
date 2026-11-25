@@ -96,15 +96,6 @@ final class _CustomMap(final Map<String, Object?> _inner)
   Object? remove(Object? key) => _inner.remove(key);
 }
 
-/// A value of the app whose text calls [hook] (a review probe).
-final class _ReadingValue(final void Function() hook) {
-  @override
-  String toString() {
-    hook();
-    return '5';
-  }
-}
-
 Map<String, Object?> _wrap(bool custom, Map<String, Object?> map) =>
     custom ? _CustomMap(map) : map;
 
@@ -469,9 +460,9 @@ void main() {
         if (calls >= 0 && ++calls > 2 && writes) {
           chart.getDatasetMeta(1).parsed[0] = ParsedItem.of(
             const XAxis(),
-            3.0,
+            3,
             const YAxis(),
-            5.0,
+            5,
           );
         }
         return value;
@@ -527,99 +518,6 @@ void main() {
         // The write changes the bars: item 0 answers the search for 3.
         final quiet = run(writer: writer, writes: false, mode: UpdateMode.none);
         expect(fast.seen, isNot(quiet.seen));
-      });
-    }
-  });
-
-  group('code of the app inside the search of a list', () {
-    // The review probes of 2026-11-17. Dataset 1 has `parsing: false`: its
-    // parsed list is the data List of the app. The search of that list runs
-    // code of the app, through the `operator []` of a Map of the app or
-    // through the `toString` of a value (`jsIsNaN`). That code writes slot 1
-    // of the proven list of dataset 0, in place, with the index value 5. The
-    // first item of that list with the index value 5 is then item 1 (y 5),
-    // not item 5 (y null). The JS function count does not change.
-    Object run(String reader, UpdateMode? mode, {required bool writes}) {
-      late final Chart chart;
-      var armed = false;
-      var fired = false;
-      void onRead(Object? key, double x) {
-        if (!writes || fired || !armed) return;
-        if (key == 'x' && x == 3.0) {
-          fired = true;
-          chart.getDatasetMeta(0).parsed[1] = ParsedItem.of(
-            const XAxis(),
-            5.0,
-            const YAxis(),
-            5.0,
-          );
-        }
-      }
-
-      List<Object?> plain(int d) => <Object?>[
-        for (var i = 0; i < 12; i++)
-          if (d == 0 && i == 5) null else ((i * 7 + d) % 13) + 1.0,
-      ];
-      // A data item of `parsing: false` is a ParsedItem (row
-      // adapt-parsed-data-items): its `y` runs code of the app in its
-      // `toString`.
-      Object item(int i) => <String, Object?>{
-        'x': i * 1.0,
-        'y': i == 3 ? _ReadingValue(() => onRead('x', 3)) : i + 2.0,
-      };
-      final cfg = <String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': _labels(12),
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': plain(0),
-              'skipNull': true,
-              'borderWidth': 0.0,
-            },
-            <String, Object?>{
-              'parsing': false,
-              'skipNull': true,
-              'borderWidth': 0.0,
-              'data': <Object?>[for (var i = 0; i < 12; i++) item(i)],
-            },
-            <String, Object?>{
-              'data': plain(2),
-              'skipNull': true,
-              'borderWidth': 0.0,
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': false,
-          'animation': false,
-          'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category'},
-            'y': <String, Object?>{'type': 'linear', 'min': -10.0, 'max': 60.0},
-          },
-        },
-      };
-      chart = _chart(cfg);
-      armed = true;
-      if (mode == null) {
-        chart.update();
-      } else {
-        chart.update(mode);
-      }
-      expect(fired, writes);
-      return _observe(chart, 3);
-    }
-
-    for (final reader in ['toString']) {
-      test('a write from the $reader of a parsing:false item equals the '
-          'search', () {
-        final fast = run(reader, UpdateMode.none, writes: true);
-        final scan = run(reader, null, writes: true);
-        expect(fast, scan);
-        // The write changes the bars.
-        final quiet = run(reader, UpdateMode.none, writes: false);
-        expect(scan, isNot(quiet));
       });
     }
   });
@@ -785,7 +683,7 @@ void main() {
 
     List<ParsedItem?> positional([int count = 6]) => <ParsedItem?>[
       for (var i = 0; i < count; i++)
-        ParsedItem.of(x, i == 2 ? null : i * 1.0, y, 1.0),
+        ParsedItem.of(x, i == 2 ? null : i * 1.0, y, 1),
     ];
 
     test('find gives the item at the position of a positional list', () {
@@ -794,49 +692,42 @@ void main() {
       final index = BarSkipNullIndex(() => true);
       expect(index.proved, isFalse);
       final before = BarSkipNullIndex.debugVisits;
-      expect(index.find(meta, x, 4.0), same(items[4]));
+      expect(index.find(meta, x, 4), same(items[4]));
       expect(index.proved, isTrue);
       // One pass of 6 items and one read.
       expect(BarSkipNullIndex.debugVisits - before, 7);
       expect(index.find(meta, x, 4), same(items[4]));
-      expect(index.find(meta, x, -0.0), same(items[0]));
+      expect(index.find(meta, x, -0), same(items[0]));
       // No item can match: `find` gives `undefined`.
-      expect(index.find(meta, x, 6.0), same(undefined));
-      expect(index.find(meta, x, -1.0), same(undefined));
+      expect(index.find(meta, x, 6), same(undefined));
+      expect(index.find(meta, x, -1), same(undefined));
       expect(index.find(meta, x, 1.5), same(undefined));
       expect(index.find(meta, x, double.nan), same(undefined));
       expect(index.find(meta, x, double.infinity), same(undefined));
       // The one item that can match has no index value.
-      expect(index.find(meta, x, 2.0), same(undefined));
+      expect(index.find(meta, x, 2), same(undefined));
       // 3 reads since the first search: no second pass.
       expect(BarSkipNullIndex.debugVisits - before, 10);
     });
 
-    test('a search value that is no number keeps the search', () {
+    test('a null search value keeps the search', () {
       final meta = metaOf(positional());
       final index = BarSkipNullIndex(() => true);
-      expect(index.find(meta, x, 'c1'), same(BarSkipNullIndex.scan));
       expect(index.find(meta, x, null), same(BarSkipNullIndex.scan));
-      expect(index.find(meta, x, undefined), same(BarSkipNullIndex.scan));
-      expect(
-        index.find(meta, x, DateTime.utc(2026)),
-        same(BarSkipNullIndex.scan),
-      );
       expect(index.proved, isFalse);
     });
 
     test('a list that is not positional keeps the search', () {
       for (final items in <List<ParsedItem?>>[
-        [ParsedItem.of(x, 0.0, y, 1.0), ParsedItem.of(x, 0.0, y, 1.0)],
-        [ParsedItem.of(x, 1.0, y, 1.0), ParsedItem.of(x, 0.0, y, 1.0)],
-        [ParsedItem.of(x, 0.0, y, 1.0), ParsedItem.of(x, double.nan, y, 1.0)],
-        [ParsedItem.of(x, 0.0, y, 1.0), ParsedItem.of(x, '1', y, 1.0)],
-        [ParsedItem.of(x, 0.0, y, 1.0), null],
+        [ParsedItem.of(x, 0, y, 1), ParsedItem.of(x, 0, y, 1)],
+        [ParsedItem.of(x, 1, y, 1), ParsedItem.of(x, 0, y, 1)],
+        [ParsedItem.of(x, 0, y, 1), ParsedItem.of(x, double.nan, y, 1)],
+        [ParsedItem.of(x, 0, y, 1), null],
       ]) {
         final index = BarSkipNullIndex(() => true);
         final meta = metaOf(items);
-        expect(index.find(meta, x, 0.0), same(BarSkipNullIndex.scan));
-        expect(index.find(meta, x, 1.0), same(BarSkipNullIndex.scan));
+        expect(index.find(meta, x, 0), same(BarSkipNullIndex.scan));
+        expect(index.find(meta, x, 1), same(BarSkipNullIndex.scan));
       }
     });
 
@@ -847,7 +738,7 @@ void main() {
       ]) {
         final index = BarSkipNullIndex(() => true);
         expect(
-          index.find(metaOf(items), x, 1.0),
+          index.find(metaOf(items), x, 1),
           same(BarSkipNullIndex.scan),
           reason: '${items.runtimeType}',
         );
@@ -868,29 +759,26 @@ void main() {
       expect(meta.controller!.parsing, isNull);
       meta.parsed = positional();
       final index = BarSkipNullIndex(() => true);
-      expect(index.find(meta, x, 1.0), same(BarSkipNullIndex.scan));
+      expect(index.find(meta, x, 1), same(BarSkipNullIndex.scan));
       // The same list with parsing on: a new chart (its creation calls
       // functions), so a new index.
       final other = metaOf(positional());
-      expect(
-        BarSkipNullIndex(() => true).find(other, x, 1.0),
-        isA<ParsedItem>(),
-      );
+      expect(BarSkipNullIndex(() => true).find(other, x, 1), isA<ParsedItem>());
     });
 
     test('a call of a function value ends the proofs', () {
       final items = positional();
       final meta = metaOf(items);
       final index = BarSkipNullIndex(() => true);
-      expect(index.find(meta, x, 4.0), same(items[4]));
+      expect(index.find(meta, x, 4), same(items[4]));
       // Each call of an option function counts: a scriptable option of any
       // scope, a descriptor, a fallback.
       final before = appFunctionCalls;
       callScriptable((Object? v) => v, 1.0);
       expect(appFunctionCalls, greaterThan(before));
-      expect(index.find(meta, x, 4.0), same(BarSkipNullIndex.scan));
+      expect(index.find(meta, x, 4), same(BarSkipNullIndex.scan));
       // Also after it: the search takes the rest of the update.
-      expect(index.find(meta, x, 3.0), same(BarSkipNullIndex.scan));
+      expect(index.find(meta, x, 3), same(BarSkipNullIndex.scan));
       expect(index.dropped, isTrue);
     });
 
@@ -910,19 +798,19 @@ void main() {
         calls++;
         return true;
       });
-      // A search value that is no number makes no proof and no test.
-      expect(index.find(meta, x, 'c1'), same(BarSkipNullIndex.scan));
+      // A null search value makes no proof and no test.
+      expect(index.find(meta, x, null), same(BarSkipNullIndex.scan));
       expect(calls, 0);
-      expect(index.find(meta, x, 4.0), same(items[4]));
-      expect(index.find(meta, x, 3.0), same(items[3]));
+      expect(index.find(meta, x, 4), same(items[4]));
+      expect(index.find(meta, x, 3), same(items[3]));
       expect(calls, 1);
     });
 
     test('a failed test of the chart keeps the search', () {
       final meta = metaOf(positional());
       final index = BarSkipNullIndex(() => false);
-      expect(index.find(meta, x, 4.0), same(BarSkipNullIndex.scan));
-      expect(index.find(meta, x, 3.0), same(BarSkipNullIndex.scan));
+      expect(index.find(meta, x, 4), same(BarSkipNullIndex.scan));
+      expect(index.find(meta, x, 3), same(BarSkipNullIndex.scan));
       expect(index.proved, isFalse);
       expect(index.dropped, isTrue);
     });
@@ -931,70 +819,51 @@ void main() {
       final items = positional();
       final meta = metaOf(items);
       final index = BarSkipNullIndex(() => true);
-      expect(index.find(meta, x, 4.0), same(items[4]));
-      items.insert(0, ParsedItem.of(x, 4.0, y, 1.0));
-      expect(index.find(meta, x, 4.0), same(BarSkipNullIndex.scan));
+      expect(index.find(meta, x, 4), same(items[4]));
+      items.insert(0, ParsedItem.of(x, 4, y, 1));
+      expect(index.find(meta, x, 4), same(BarSkipNullIndex.scan));
       items.removeAt(0);
-      expect(index.find(meta, x, 4.0), same(BarSkipNullIndex.scan));
+      expect(index.find(meta, x, 4), same(BarSkipNullIndex.scan));
     });
 
     test('another item at the position ends the proofs', () {
-      for (final other in <ParsedItem?>[ParsedItem.of(x, 1.0, y, 1.0), null]) {
+      for (final other in <ParsedItem?>[ParsedItem.of(x, 1, y, 1), null]) {
         final items = positional();
         final meta = metaOf(items);
         final index = BarSkipNullIndex(() => true);
-        expect(index.find(meta, x, 3.0), same(items[3]));
+        expect(index.find(meta, x, 3), same(items[3]));
         items[4] = other;
-        expect(index.find(meta, x, 4.0), same(BarSkipNullIndex.scan));
-        expect(index.find(meta, x, 3.0), same(BarSkipNullIndex.scan));
+        expect(index.find(meta, x, 4), same(BarSkipNullIndex.scan));
+        expect(index.find(meta, x, 3), same(BarSkipNullIndex.scan));
       }
     });
 
     test('a new parsed list of the meta gets its own proof', () {
       final meta = metaOf(positional());
       final index = BarSkipNullIndex(() => true);
-      expect(index.find(meta, x, 1.0), isA<ParsedItem>());
+      expect(index.find(meta, x, 1), isA<ParsedItem>());
       final repeated = <ParsedItem?>[
-        ParsedItem.of(x, 1.0, y, 1.0),
-        ParsedItem.of(x, 1.0, y, 1.0),
+        ParsedItem.of(x, 1, y, 1),
+        ParsedItem.of(x, 1, y, 1),
       ];
       meta.parsed = repeated;
-      expect(index.find(meta, x, 1.0), same(BarSkipNullIndex.scan));
-    });
-
-    test('a list whose search can run code of the app ends the proofs', () {
-      for (final unsafe in <List<ParsedItem?>>[
-        // An object as the value: `jsIsNaN` calls its `toString`.
-        [ParsedItem.of(x, 0.0, y, _ReadingValue(() {}))],
-        // An object as the index value.
-        [ParsedItem.of(x, _ReadingValue(() {}), y, 1.0)],
-      ]) {
-        final items = positional();
-        final index = BarSkipNullIndex(() => true);
-        expect(index.find(metaOf(items), x, 4.0), same(items[4]));
-        final other = metaOf(unsafe);
-        expect(index.find(other, x, 0.0), same(BarSkipNullIndex.scan));
-        expect(index.dropped, isTrue);
-        // No later answer relies on the proof of the first list.
-        expect(index.find(metaOf(items), x, 4.0), same(BarSkipNullIndex.scan));
-      }
+      expect(index.find(meta, x, 1), same(BarSkipNullIndex.scan));
     });
 
     test('proveAll declines a list whose read can run code of the app', () {
       final clean = metaOf(positional());
       final notPositional = metaOf(<ParsedItem?>[
-        ParsedItem.of(x, 1.0, y, 1.0),
-        ParsedItem.of(x, 1.0, y, 1.0),
+        ParsedItem.of(x, 1, y, 1),
+        ParsedItem.of(x, 1, y, 1),
       ]);
       expect(
         BarSkipNullIndex(() => true).proveAll([clean, notPositional], x),
         isTrue,
       );
-      final foreign = ParsedItem.of(x, 0.0, y, 1.0)..jsWrite('_stacks', 'text');
+      final foreign = ParsedItem.of(x, 0, y, 1)..jsWrite('_stacks', 'text');
       expect(foreign.hasForeign, isTrue);
       for (final unsafe in <List<ParsedItem?>>[
         [foreign],
-        [ParsedItem.of(x, 0.0, y, _ReadingValue(() {}))],
         UnmodifiableListView(positional()),
       ]) {
         expect(
@@ -1007,18 +876,18 @@ void main() {
     test('another index axis ends the proofs', () {
       final meta = metaOf(positional());
       final index = BarSkipNullIndex(() => true);
-      expect(index.find(meta, x, 1.0), isA<ParsedItem>());
-      expect(index.find(meta, y, 1.0), same(BarSkipNullIndex.scan));
-      expect(index.find(meta, x, 1.0), same(BarSkipNullIndex.scan));
+      expect(index.find(meta, x, 1), isA<ParsedItem>());
+      expect(index.find(meta, y, 1), same(BarSkipNullIndex.scan));
+      expect(index.find(meta, x, 1), same(BarSkipNullIndex.scan));
     });
 
     test('an option read ends the proofs, and only after a proof', () {
       final items = positional();
       final meta = metaOf(items);
       final index = BarSkipNullIndex(() => true)..optionRead();
-      expect(index.find(meta, x, 4.0), same(items[4]));
+      expect(index.find(meta, x, 4), same(items[4]));
       index.optionRead();
-      expect(index.find(meta, x, 4.0), same(BarSkipNullIndex.scan));
+      expect(index.find(meta, x, 4), same(BarSkipNullIndex.scan));
     });
 
     test('applies only to a direct mode and the exact category and linear '

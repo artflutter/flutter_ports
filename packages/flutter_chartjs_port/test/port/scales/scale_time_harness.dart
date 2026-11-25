@@ -32,6 +32,7 @@ import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/raw_scale_label.dart';
 import 'scale_chart_harness.dart';
 
 /// One day in ms.
@@ -127,7 +128,7 @@ Map<String, Object?> timeObservations(Scale scale, Chart chart) {
         scale.getValueForPixel(p),
     ],
     'labelForValue': [
-      for (final v in <Object?>[min, max, mid, null]) scaleLabelOf(scale, v),
+      for (final v in <Object?>[min, max, mid, null]) rawScaleLabelOf(scale, v),
     ],
     'format': [
       scale.format(min),

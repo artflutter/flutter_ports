@@ -38,7 +38,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0033](0033-radial-scale-centers.md) Radial scale centers before the first layout: accepted, supersedes 0025.
 - [0034](0034-no-display-only-js-exactness.md) No display-only JS exactness: accepted, supersedes 0009, superseded in part by 0178.
 - [0035](0035-third-party-sources.md) Third-party sources: accepted, supersedes 0011, superseded in part by 0122, 0146, 0178.
-- [0036](0036-parsed-data.md) Parsed data in the controllers: accepted, supersedes 0027, superseded in part by 0054, 0109, 0202.
+- [0036](0036-parsed-data.md) Parsed data in the controllers: accepted, supersedes 0027, superseded in part by 0054, 0109, 0202, 0205.
 - [0037](0037-legend-and-tooltip-input-path.md) Legend and tooltip input path: accepted, supersedes 0014, superseded in part by 0108, 0200.
 - [0038](0038-plugin-modules-class-values-and-interfaces.md) Plugin modules, class values and interfaces: accepted, superseded in part by 0054, 0145.
 - [0039](0039-tooltip-model-and-animation.md) Tooltip model and animation: accepted, superseded in part by 0145.
@@ -54,9 +54,9 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0049](0049-chart-view-widget.md) The ChartView widget and reduced motion: accepted, superseded in part by 0052.
 - [0050](0050-public-theme-api.md) The public theme API, the presets, the theme switch and the touch sizes: accepted, supersedes 0042, superseded by 0147, superseded in part by 0054, 0057, 0116, 0117, 0118, 0141.
 - [0051](0051-input-events-and-interaction-state.md) Input events and interaction state: accepted, superseded in part by 0108.
-- [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144, 0145, 0170, 0189, 0190, 0191, 0192, 0193, 0194, 0195, 0196, 0197, 0201.
+- [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144, 0145, 0170, 0189, 0190, 0191, 0192, 0193, 0194, 0195, 0196, 0197, 0201, 0205.
 - [0053](0053-resolver-fast-paths.md) The resolver fast paths: rejected.
-- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147, 0165, 0183, 0192, 0193, 0194, 0196, 0197.
+- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147, 0165, 0183, 0192, 0193, 0194, 0196, 0197, 0205.
 - [0055](0055-native-draw-path.md) The native draw path of the canvas layer: accepted, supersedes 0013, superseded in part by 0106, 0200.
 - [0056](0056-color-performance.md) Profile-guided color implementation: proposed.
 - [0057](0057-direct-typed-colors.md) Color-only inputs: implemented, supersedes 0050, 0052, 0054, superseded in part by 0061, 0128, 0147.
@@ -198,4 +198,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0202](0202-no-string-data.md) No string data: accepted, supersedes 0036.
 - [0203](0203-typed-date-adapter.md) A typed date adapter: accepted, supersedes 0024, 0173.
 - [0204](0204-typed-chart-components.md) Typed chart components: accepted, supersedes 0020, 0133.
+- [0205](0205-typed-parsed-values.md) Typed parsed values: accepted, supersedes 0036, 0052, 0054.
 <!-- adr-index:end -->

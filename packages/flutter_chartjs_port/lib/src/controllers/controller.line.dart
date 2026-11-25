@@ -438,18 +438,18 @@ class LineController(super.chart, super.datasetIndex, [super.elements])
       if (colors != null && !coordinates.accepts(parsed, i)) colors = null;
       // :99, also :101 (one-read rule).
       final vValue = parsedValueOf(parsed, vAxis);
-      final nullData = isNullOrUndef(vValue);
+      final nullData = vValue == null;
       // :100, also :104 (one-read rule).
       final iValue = parsedValueOf(parsed, iAxis);
       final iPixel = iScale.getPixelForValue(
-        scaleValueOf(iScale, iValue),
+        scaleNumberOf(iScale, iValue),
         index,
       );
       writes.axis(iAxis, iPixel);
       final vPixel = reset || nullData
           ? vScale.getBasePixel()
           : vScale.getPixelForValue(
-              scaleValueOf(
+              scaleNumberOf(
                 vScale,
                 hasStack ? applyStack(vScale, parsed!, stacked) : vValue,
               ),
@@ -470,8 +470,7 @@ class LineController(super.chart, super.datasetIndex, [super.elements])
         ..stop(
           held ??
               (i > 0 &&
-                  (jsToNumber(iValue) -
-                              jsToNumber(parsedValueOf(prevParsed, iAxis)))
+                  ((iValue ?? 0.0) - (parsedValueOf(prevParsed, iAxis) ?? 0.0))
                           .abs() >
                       maxGapLength),
         );

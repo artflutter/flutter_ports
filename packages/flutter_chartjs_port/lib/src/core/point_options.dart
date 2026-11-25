@@ -341,19 +341,17 @@ final class NativeGapReads._(
   /// The x of a pass as a double, or Dart `null` unless the pass qualifies:
   /// `getParsed` read [item] from the native parsed list, [item] is a native
   /// item ([ParsedItem], a registered immutable typed item, or a native map),
-  /// its x [iValue] is a number, and its value [vValue] is a number, `null` or
-  /// `undefined`. Then the reads of the item and the pixel conversions of both
-  /// values run no user code. The caller has the other per-pass guard: the
-  /// typed writes of an exact point.
-  double? qualify(Object? item, Object? iValue, Object? vValue) {
-    if (iValue is! num ||
-        !_number(vValue) ||
+  /// and its x [iValue] is a number (a parsed value is a number or null,
+  /// Chart.js ADR 0205). Then the reads of the item and the pixel conversions
+  /// of both values run no user code. The caller has the other per-pass
+  /// guard: the typed writes of an exact point.
+  double? qualify(Object? item, double? iValue, double? vValue) {
+    if (iValue == null ||
         !identical(_meta.parsed, _parsed) ||
         !_nativeItem(item)) {
       return null;
     }
-    // `toDouble()` on a num is a call in an AOT build (performance.md §72).
-    return iValue is double ? iValue : (iValue as int) * 1.0;
+    return iValue;
   }
 
   /// Whether [item], read by `getParsed` from the native parsed list, is a
