@@ -28,8 +28,10 @@ and in [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
   [`flutter_d3_interpolate_port`](../../flutter_d3_interpolate_port/README.md), with its
   differences and its speed figures in its `doc/` folder, d3-scale-chromatic is
   [`flutter_d3_scale_chromatic_port`](../../flutter_d3_scale_chromatic_port/README.md), with its
-  differences and its speed figures in its `doc/` folder, and d3-path is
+  differences and its speed figures in its `doc/` folder, d3-path is
   [`flutter_d3_path_port`](../../flutter_d3_path_port/README.md), with its differences and its
+  speed figures in its `doc/` folder, and d3-shape is
+  [`flutter_d3_shape_port`](../../flutter_d3_shape_port/README.md), with its differences and its
   speed figures in its `doc/` folder.
 - **Upstream after the pins:** [upstream-ledger.md](upstream-ledger.md) lists the upstream commits
   after each pinned tag, with one section for each repository.

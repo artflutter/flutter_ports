@@ -1,0 +1,136 @@
+# The projects that packages/flutter_d3_shape_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-shape. The package depends
+# on flutter_d3_path_port; flutter_d3_port depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-shape
+
+sources:
+  - header: d3-shape
+    version: "v3.2.0"
+    version_source: d3ShapeVersion in packages/flutter_d3_shape_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-shape
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-shape
+      ref: "v3.2.0"
+      commit: 8ec82658454750cfa29efb1e0ea514e3dd9b2297
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_shape_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_shape_port/test/
+    files:
+      - src/arc.js
+      - src/area.js
+      - src/areaRadial.js
+      - src/array.js
+      - src/constant.js
+      - src/curve/basis.js
+      - src/curve/basisClosed.js
+      - src/curve/basisOpen.js
+      - src/curve/bump.js
+      - src/curve/bundle.js
+      - src/curve/cardinal.js
+      - src/curve/cardinalClosed.js
+      - src/curve/cardinalOpen.js
+      - src/curve/catmullRom.js
+      - src/curve/catmullRomClosed.js
+      - src/curve/catmullRomOpen.js
+      - src/curve/linear.js
+      - src/curve/linearClosed.js
+      - src/curve/monotone.js
+      - src/curve/natural.js
+      - src/curve/radial.js
+      - src/curve/step.js
+      - src/descending.js
+      - src/identity.js
+      - src/index.js
+      - src/line.js
+      - src/lineRadial.js
+      - src/link.js
+      - src/math.js
+      - src/noop.js
+      - src/offset/diverging.js
+      - src/offset/expand.js
+      - src/offset/none.js
+      - src/offset/silhouette.js
+      - src/offset/wiggle.js
+      - src/order/appearance.js
+      - src/order/ascending.js
+      - src/order/descending.js
+      - src/order/insideOut.js
+      - src/order/none.js
+      - src/order/reverse.js
+      - src/path.js
+      - src/pie.js
+      - src/point.js
+      - src/pointRadial.js
+      - src/stack.js
+      - src/symbol.js
+      - src/symbol/asterisk.js
+      - src/symbol/circle.js
+      - src/symbol/cross.js
+      - src/symbol/diamond.js
+      - src/symbol/diamond2.js
+      - src/symbol/plus.js
+      - src/symbol/square.js
+      - src/symbol/square2.js
+      - src/symbol/star.js
+      - src/symbol/times.js
+      - src/symbol/triangle.js
+      - src/symbol/triangle2.js
+      - src/symbol/wye.js
+      - test/arc-test.js
+      - test/area-test.js
+      - test/areaRadial-test.js
+      - test/asserts.js
+      - test/curve/basis-test.js
+      - test/curve/basisClosed-test.js
+      - test/curve/basisOpen-test.js
+      - test/curve/bumpX-test.js
+      - test/curve/bumpY-test.js
+      - test/curve/bundle-test.js
+      - test/curve/cardinal-test.js
+      - test/curve/cardinalClosed-test.js
+      - test/curve/cardinalOpen-test.js
+      - test/curve/catmullRom-test.js
+      - test/curve/catmullRomClosed-test.js
+      - test/curve/catmullRomOpen-test.js
+      - test/curve/linear-test.js
+      - test/curve/linearClosed-test.js
+      - test/curve/monotoneX-test.js
+      - test/curve/monotoneY-test.js
+      - test/curve/natural-test.js
+      - test/curve/step-test.js
+      - test/curve/stepAfter-test.js
+      - test/curve/stepBefore-test.js
+      - test/line-test.js
+      - test/lineRadial-test.js
+      - test/link-test.js
+      - test/offset/diverging-test.js
+      - test/offset/expand-test.js
+      - test/offset/none-test.js
+      - test/offset/silhouette-test.js
+      - test/offset/wiggle-test.js
+      - test/order/appearance-test.js
+      - test/order/ascending-test.js
+      - test/order/descending-test.js
+      - test/order/insideOut-test.js
+      - test/order/none-test.js
+      - test/order/reverse-test.js
+      - test/pie-test.js
+      - test/polygonContext.js
+      - test/stack-test.js
+      - test/symbol-test.js
+      - test/symbols-test.js

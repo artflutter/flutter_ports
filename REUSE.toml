@@ -16,6 +16,7 @@ SPDX-PackageDownloadLocation = "https://github.com/artflutter/flutter_ports"
 # packages/flutter_d3_interpolate_port ports third_party/d3-interpolate.
 # packages/flutter_d3_scale_chromatic_port ports third_party/d3-scale-chromatic.
 # packages/flutter_d3_path_port ports third_party/d3-path.
+# packages/flutter_d3_shape_port ports third_party/d3-shape.
 
 [[annotations]]
 path = "**"
@@ -126,6 +127,15 @@ SPDX-License-Identifier = "ISC"
 path = "packages/flutter_d3_path_port/**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["2015-2022 Mike Bostock", "2026 Vasiliy Ditsyak"]
+SPDX-License-Identifier = "ISC"
+
+# The d3-shape port: Dart ports of d3-shape 3.2.0 (ISC), the D3 shape module as
+# a package of its own, as on npm (D3 ADR 0008). This table keeps the upstream
+# notice with ours. The code of the port is ISC too.
+[[annotations]]
+path = "packages/flutter_d3_shape_port/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2010-2022 Mike Bostock", "2026 Vasiliy Ditsyak"]
 SPDX-License-Identifier = "ISC"
 
 # The 35 ColorBrewer scheme files of d3-scale-chromatic (D3 ADR 0001 items 10

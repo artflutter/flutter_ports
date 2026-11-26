@@ -4,6 +4,7 @@ import 'package:d3_demo/pages/chromatic_page.dart';
 import 'package:d3_demo/pages/color_page.dart';
 import 'package:d3_demo/pages/interpolate_page.dart';
 import 'package:d3_demo/pages/path_page.dart';
+import 'package:d3_demo/pages/shape_page.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
@@ -11,21 +12,22 @@ void main() {
     'interpolate' => 1,
     'chromatic' => 2,
     'path' => 3,
+    'shape' => 4,
     _ => 0,
   };
   runApp(D3DemoApp(initialTab: tab));
 }
 
 /// Interactive showcase for `flutter_d3_color_port`,
-/// `flutter_d3_interpolate_port`, `flutter_d3_scale_chromatic_port` and
-/// `flutter_d3_path_port`.
+/// `flutter_d3_interpolate_port`, `flutter_d3_scale_chromatic_port`,
+/// `flutter_d3_path_port` and `flutter_d3_shape_port`.
 class const D3DemoApp({
   /// Initial destination index (`0` = Color, `1` = Interpolate,
-  /// `2` = Chromatic, `3` = Path).
+  /// `2` = Chromatic, `3` = Path, `4` = Shape).
   final int initialTab = 0,
   super.key,
 }) extends StatefulWidget {
-  /// Creates the demo app starting on [initialTab] (`0..3`).
+  /// Creates the demo app starting on [initialTab] (`0..4`).
   this;
 
   @override
@@ -33,7 +35,7 @@ class const D3DemoApp({
 }
 
 class _D3DemoAppState() extends State<D3DemoApp> {
-  late int _index = widget.initialTab.clamp(0, 3);
+  late int _index = widget.initialTab.clamp(0, 4);
   ThemeMode _themeMode = ThemeMode.light;
 
   static const _destinations = <(String, String, IconData, IconData)>[
@@ -51,6 +53,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
       Icons.gradient,
     ),
     ('Path', 'd3-path', Icons.timeline_outlined, Icons.timeline),
+    ('Shape', 'd3-shape', Icons.pie_chart_outline, Icons.pie_chart),
   ];
 
   @override
@@ -83,6 +86,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
               InterpolateDemoPage(),
               ChromaticDemoPage(),
               PathDemoPage(),
+              ShapeDemoPage(),
             ],
           );
           final (_, pkg, _, _) = _destinations[_index];

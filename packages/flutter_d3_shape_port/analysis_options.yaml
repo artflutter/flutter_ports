@@ -1,0 +1,15 @@
+# The rules of the root analysis_options.yaml. pana formats the package with
+# the formatter setting of very_good_analysis only through this file.
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/build/**"
+    - build/**
+
+linter:
+  rules:
+    # Upstream d3-shape 3.2.0 keeps deprecated aliases radialLine, radialArea,
+    # and symbols, so the port keeps them too (as in flutter_d3_color_port).
+    remove_deprecations_in_breaking_versions: false
+    use_primary_constructors: true

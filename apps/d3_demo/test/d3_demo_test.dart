@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all three D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all five D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -83,5 +83,28 @@ void main() {
     await tester.tap(find.text('pathRound(0)'));
     await tester.pump();
     expect(find.textContaining('M'), findsWidgets);
+
+    // Tab 4: Shape demo.
+    await tester.tap(find.text('Shape'));
+    await tester.pump();
+    expect(
+      find.text('Curves, Arcs, Streamgraph Stacks, Symbols & Links'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Arc & Pie'));
+    await tester.pump();
+    expect(find.text('Inner radius'), findsOneWidget);
+
+    await tester.tap(find.text('Streamgraph Stack'));
+    await tester.pump();
+    expect(find.text('Stack offset'), findsOneWidget);
+
+    await tester.tap(find.text('Symbols & Links'));
+    await tester.pump();
+    expect(
+      find.text('All 13 Built-In Symbols (7 Fill + 7 Stroke)'),
+      findsOneWidget,
+    );
   });
 }

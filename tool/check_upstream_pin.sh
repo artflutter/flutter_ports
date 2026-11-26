@@ -530,7 +530,40 @@ if [ "$d3path_seen" = 0 ]; then
   failed=1
 fi
 
-# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, ECharts, zoom and sankey entries. This loop finds a
+# d3-shape (D3 ADR 0008). A release pin: the gitlink is the commit of the tag
+# "v<d3ShapeVersion>" and the "commit" of the entry.
+d3shape_upstream=packages/flutter_d3_shape_port/lib/src/upstream.dart
+d3shape_sources=packages/flutter_d3_shape_port/tool/port_sources.yaml
+d3shape_path=third_party/d3-shape
+d3shape_version=$(sed -n "s/^const String d3ShapeVersion = '\(.*\)';\$/\1/p" "$d3shape_upstream")
+if [ -z "$d3shape_version" ]; then
+  echo "d3ShapeVersion not found in $d3shape_upstream" >&2
+  exit 1
+fi
+if [ ! -f "$d3shape_sources" ]; then
+  echo "$d3shape_sources not found" >&2
+  exit 1
+fi
+d3shape_seen=0
+while read -r path ref recorded <&3; do
+  if [ "$path" != "$d3shape_path" ]; then
+    echo "$d3shape_sources pins $path. It must pin only $d3shape_path." >&2
+    failed=1
+    continue
+  fi
+  d3shape_seen=1
+  if [ "$ref" != "v$d3shape_version" ]; then
+    echo "$d3shape_sources gives ref $ref for $path, but d3ShapeVersion is $d3shape_version." >&2
+    failed=1
+  fi
+  check_pin "$path" "v$d3shape_version" "$recorded" "$d3shape_sources"
+done 3< <(read_pins "$d3shape_sources")
+if [ "$d3shape_seen" = 0 ]; then
+  echo "$d3shape_sources has no entry for $d3shape_path" >&2
+  failed=1
+fi
+
+# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, ECharts, zoom and sankey entries. This loop finds a
 # submodule without an entry. Each port lists its submodules in its own
 # tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
 listed=$(awk '/^[^[:space:]]/ { next } $1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)

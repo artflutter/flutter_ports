@@ -3,11 +3,12 @@
 # tool/port_sources.yaml of that package: d3-color in
 # packages/flutter_d3_color_port, d3-interpolate in
 # packages/flutter_d3_interpolate_port, d3-scale-chromatic in
-# packages/flutter_d3_scale_chromatic_port and d3-path in
-# packages/flutter_d3_path_port.
+# packages/flutter_d3_scale_chromatic_port, d3-path in
+# packages/flutter_d3_path_port and d3-shape in
+# packages/flutter_d3_shape_port.
 # Each "// Ported from" header must name a project of this file, with the
 # same license and holder. The first entry is the d3 bundle, the upstream
-# repository of ADR 0005. The other 30 entries are the D3 module
+# repository of ADR 0005. The other 29 entries are the D3 module
 # repositories and the three repositories outside the d3 organization. They
 # are the "other projects" of the port, as in Chart.js ADR 0035.
 #
@@ -439,24 +440,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3-selection/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-selection/
-
-  - header: d3-shape
-    version: "v3.2.0"
-    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:62 on 2026-10-20. The d3 v7.9.0 yarn.lock:1091-1092 also locks 3.2.0.
-    url: https://github.com/d3/d3-shape
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-shape
-      ref: "v3.2.0"
-      commit: 8ec82658454750cfa29efb1e0ea514e3dd9b2297
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-shape/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-shape/
 
   - header: d3-time
     version: "v3.1.0"

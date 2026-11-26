@@ -99,4 +99,31 @@ void main() {
     expect('$r', 'M1.23,6.79');
     expect(d3PathVersion, '3.1.0');
   });
+
+  test('the bundle exports the names of d3-shape', () {
+    final l = line<(double, double)>()
+      ..x = ((d, _, _) => d.$1)
+      ..y = ((d, _, _) => d.$2)
+      ..curve = curveMonotoneX;
+    expect(l([(0, 0), (10, 20), (20, 10)]), startsWith('M0,0C'));
+    final slices = pie<double>()([1, 2, 3]);
+    expect(slices, hasLength(3));
+    final a = arc<PieArc<double>>()
+      ..innerRadiusConst(20)
+      ..outerRadiusConst(50);
+    expect(a(slices.first), startsWith('M'));
+    expect(symbol<Object?>(symbolStar, 64)(), startsWith('M'));
+    expect(symbolsFill, hasLength(7));
+    expect(symbolsStroke, hasLength(7));
+    final stacked =
+        (stack<Map<String, double>, String>()
+          ..keysConst(['a', 'b'])
+          ..offset = stackOffsetWiggle
+          ..order = stackOrderInsideOut)([
+          {'a': 10, 'b': 20},
+          {'a': 15, 'b': 25},
+        ]);
+    expect(stacked, hasLength(2));
+    expect(d3ShapeVersion, '3.2.0');
+  });
 }

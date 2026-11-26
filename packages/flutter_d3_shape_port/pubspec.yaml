@@ -1,0 +1,29 @@
+name: flutter_d3_shape_port
+description: >-
+  A native Dart port of d3-shape 3.2.0: arcs, pies, lines, areas, radial
+  shapes, links, symbols, stacks, and all 18 curves, drawing to SVG or directly
+  to Flutter Canvas via UiPathContext.
+version: 0.1.0
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_shape_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - d3
+  - shape
+  - charts
+  - canvas
+  - visualization
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_d3_path_port: ^0.1.1
+
+dev_dependencies:
+  test: ^1.32.0
+  very_good_analysis: ^11.0.0
