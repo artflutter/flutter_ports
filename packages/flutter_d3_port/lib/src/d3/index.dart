@@ -9,3 +9,4 @@ library;
 
 export 'package:flutter_d3_color_port/d3_color.dart';
 export 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
+export 'package:flutter_d3_scale_chromatic_port/d3_scale_chromatic.dart';

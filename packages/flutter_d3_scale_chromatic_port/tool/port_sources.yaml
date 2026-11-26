@@ -1,0 +1,139 @@
+# The projects that packages/flutter_d3_scale_chromatic_port ports code from
+# (D3 ADR 0008). Each "// Ported from" header must name a project of this file,
+# with the same license and holder. The only entry is d3-scale-chromatic. The
+# package depends on flutter_d3_color_port and flutter_d3_interpolate_port, as
+# the npm package d3-scale-chromatic depends on d3-color and d3-interpolate.
+# flutter_d3_port depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+#
+# Top-level keys before "sources":
+# - marker: the tag of the DIVERGES markers, "// DIVERGES(d3-scale-chromatic):
+#   <row id>, <reason>". The rows are in doc/differences.md.
+#
+# The keys of an entry are those of packages/flutter_d3_port/tool/
+# port_sources.yaml. The pin is a release pin: "version" is
+# "v<d3ScaleChromaticVersion>", and "ref" is the tag. "files" lists the ported
+# source paths at the pin, so the header check needs no checkout of the
+# submodule.
+#
+# All paths are relative to the repository root, except "source" and
+# "files", which are relative to the project root.
+
+marker: d3-scale-chromatic
+
+sources:
+  - header: d3-scale-chromatic
+    version: "v3.1.0"
+    version_source: d3ScaleChromaticVersion in packages/flutter_d3_scale_chromatic_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-scale-chromatic
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-scale-chromatic
+      ref: "v3.1.0"
+      commit: 2c52792197299346b7bdb94322bb4dff8f554fea
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_scale_chromatic_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_scale_chromatic_port/test/
+    files:
+      - src/categorical/Accent.js
+      - src/categorical/Dark2.js
+      - src/categorical/Paired.js
+      - src/categorical/Pastel1.js
+      - src/categorical/Pastel2.js
+      - src/categorical/Set1.js
+      - src/categorical/Set2.js
+      - src/categorical/Set3.js
+      - src/categorical/Tableau10.js
+      - src/categorical/category10.js
+      - src/categorical/observable10.js
+      - src/colors.js
+      - src/diverging/BrBG.js
+      - src/diverging/PRGn.js
+      - src/diverging/PiYG.js
+      - src/diverging/PuOr.js
+      - src/diverging/RdBu.js
+      - src/diverging/RdGy.js
+      - src/diverging/RdYlBu.js
+      - src/diverging/RdYlGn.js
+      - src/diverging/Spectral.js
+      - src/index.js
+      - src/ramp.js
+      - src/rampClosed.js
+      - src/sequential-multi/BuGn.js
+      - src/sequential-multi/BuPu.js
+      - src/sequential-multi/GnBu.js
+      - src/sequential-multi/OrRd.js
+      - src/sequential-multi/PuBu.js
+      - src/sequential-multi/PuBuGn.js
+      - src/sequential-multi/PuRd.js
+      - src/sequential-multi/RdPu.js
+      - src/sequential-multi/YlGn.js
+      - src/sequential-multi/YlGnBu.js
+      - src/sequential-multi/YlOrBr.js
+      - src/sequential-multi/YlOrRd.js
+      - src/sequential-multi/cividis.js
+      - src/sequential-multi/cubehelix.js
+      - src/sequential-multi/rainbow.js
+      - src/sequential-multi/sinebow.js
+      - src/sequential-multi/turbo.js
+      - src/sequential-multi/viridis.js
+      - src/sequential-single/Blues.js
+      - src/sequential-single/Greens.js
+      - src/sequential-single/Greys.js
+      - src/sequential-single/Oranges.js
+      - src/sequential-single/Purples.js
+      - src/sequential-single/Reds.js
+      - test/index-test.js
+    notices:
+      - project: ColorBrewer
+        url: http://colorbrewer2.org
+        spdx: Apache-2.0
+        holder: Cynthia Brewer, Mark Harrower, and The Pennsylvania State University
+        evidence: LICENSE:15-28
+        files:
+          - src/categorical/Accent.js
+          - src/categorical/Dark2.js
+          - src/categorical/Paired.js
+          - src/categorical/Pastel1.js
+          - src/categorical/Pastel2.js
+          - src/categorical/Set1.js
+          - src/categorical/Set2.js
+          - src/categorical/Set3.js
+          - src/diverging/BrBG.js
+          - src/diverging/PRGn.js
+          - src/diverging/PiYG.js
+          - src/diverging/PuOr.js
+          - src/diverging/RdBu.js
+          - src/diverging/RdGy.js
+          - src/diverging/RdYlBu.js
+          - src/diverging/RdYlGn.js
+          - src/diverging/Spectral.js
+          - src/sequential-multi/BuGn.js
+          - src/sequential-multi/BuPu.js
+          - src/sequential-multi/GnBu.js
+          - src/sequential-multi/OrRd.js
+          - src/sequential-multi/PuBu.js
+          - src/sequential-multi/PuBuGn.js
+          - src/sequential-multi/PuRd.js
+          - src/sequential-multi/RdPu.js
+          - src/sequential-multi/YlGn.js
+          - src/sequential-multi/YlGnBu.js
+          - src/sequential-multi/YlOrBr.js
+          - src/sequential-multi/YlOrRd.js
+          - src/sequential-single/Blues.js
+          - src/sequential-single/Greens.js
+          - src/sequential-single/Greys.js
+          - src/sequential-single/Oranges.js
+          - src/sequential-single/Purples.js
+          - src/sequential-single/Reds.js

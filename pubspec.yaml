@@ -15,6 +15,7 @@ workspace:
   - packages/flutter_kurkle_color_port
   - packages/flutter_d3_color_port
   - packages/flutter_d3_interpolate_port
+  - packages/flutter_d3_scale_chromatic_port
   - apps/chartjs_gallery
   - apps/chart_benchmark_lab
   - apps/chartjs_docs
@@ -73,7 +74,7 @@ melos:
         dirExists: test
     test:web:
       run: dart run packages/flutter_chartjs_port/tool/test_web.dart
-      description: Run the flutter_chartjs_port, chartjs_test_utils, flutter_kurkle_color_port, flutter_d3_port, flutter_d3_color_port and flutter_d3_interpolate_port tests that are not @TestOn('vm') through Flutter in Chrome, with JavaScript and WebAssembly.
+      description: Run the flutter_chartjs_port, chartjs_test_utils, flutter_kurkle_color_port, flutter_d3_port, flutter_d3_color_port, flutter_d3_interpolate_port and flutter_d3_scale_chromatic_port tests that are not @TestOn('vm') through Flutter in Chrome, with JavaScript and WebAssembly.
     test:goldens:
       run: cd packages/flutter_chartjs_port && flutter test --tags golden test/port/theme/goldens_test.dart
       description: Run the theme goldens of flutter_chartjs_port (Chart.js ADR 0147). They skip unless CHART_GOLDENS=1. Only the CI job fixtures on ubuntu-24.04 sets it. Options go after "--", for example "dart run melos run test:goldens -- --update-goldens" (write the golden files; only the workflow_dispatch run of CI with update_goldens does this).
@@ -81,8 +82,8 @@ melos:
     # The per-module tools of packages/flutter_chartjs_port/doc/porting-flow.md section 4.
     # check:headers also examines the add-on ports flutter_chartjs_plugin_zoom_port and flutter_chartjs_chart_sankey_port (ADR 0009 item 6).
     check:headers:
-      run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_plugin_zoom_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_chart_sankey_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_kurkle_color_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_color_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_interpolate_port
-      description: Fail on flutter_chartjs_port, chartjs_test_utils, flutter_chartjs_plugin_zoom_port, flutter_chartjs_chart_sankey_port, flutter_kurkle_color_port, flutter_d3_port, flutter_d3_color_port and flutter_d3_interpolate_port file headers, DIVERGES markers or port_sources.yaml entries that break the rules. Each add-on package, the color packages, the D3 package and the D3 module packages run as their own home package.
+      run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_plugin_zoom_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_chart_sankey_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_kurkle_color_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_color_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_interpolate_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_scale_chromatic_port
+      description: Fail on flutter_chartjs_port, chartjs_test_utils, flutter_chartjs_plugin_zoom_port, flutter_chartjs_chart_sankey_port, flutter_kurkle_color_port, flutter_d3_port, flutter_d3_color_port, flutter_d3_interpolate_port and flutter_d3_scale_chromatic_port file headers, DIVERGES markers or port_sources.yaml entries that break the rules. Each add-on package, the color packages, the D3 package and the D3 module packages run as their own home package.
     options:gen:
       run: dart run packages/flutter_chartjs_port/tool/options_gen.dart
       description: Write the typed option scopes of flutter_chartjs_port (lib/src/options/*.g.dart) from tool/options_schema.yaml, formatted (Chart.js ADR 0054).
@@ -133,7 +134,7 @@ melos:
       description: Check out every pinned third_party/ submodule (Chart.js, @kurkle/color, chartjs-test-utils, d3 and the 33 other D3 repositories, Apache ECharts, zrender, chartjs-plugin-zoom and chartjs-chart-sankey). Reference for porting, not shipped.
     upstream:check:
       run: bash tool/check_upstream_pin.sh
-      description: Fail unless third_party/Chart.js is pinned to the release tag named by chartJsVersion (for a commit pin <last version>+<sha8>, to a commit that starts with <sha8>), third_party/d3 to the release tag named by d3Version, each other D3 submodule to the commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml, third_party/echarts and third_party/zrender to the release tags named by echartsVersion and zrenderVersion, third_party/chartjs-plugin-zoom to the commit of chartjsPluginZoomVersion (a commit pin <last version>+<sha8>, after the tag v<last version>), third_party/chartjs-chart-sankey to the release tag named by chartjsChartSankeyVersion, third_party/d3-color to the release tag named by d3ColorVersion, and third_party/d3-interpolate to the release tag named by d3InterpolateVersion.
+      description: Fail unless third_party/Chart.js is pinned to the release tag named by chartJsVersion (for a commit pin <last version>+<sha8>, to a commit that starts with <sha8>), third_party/d3 to the release tag named by d3Version, each other D3 submodule to the commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml, third_party/echarts and third_party/zrender to the release tags named by echartsVersion and zrenderVersion, third_party/chartjs-plugin-zoom to the commit of chartjsPluginZoomVersion (a commit pin <last version>+<sha8>, after the tag v<last version>), third_party/chartjs-chart-sankey to the release tag named by chartjsChartSankeyVersion, third_party/d3-color to the release tag named by d3ColorVersion, third_party/d3-interpolate to the release tag named by d3InterpolateVersion, and third_party/d3-scale-chromatic to the release tag named by d3ScaleChromaticVersion.
     upstream:manifest:
       run: cd packages/flutter_chartjs_port && node tool/upstream_manifest/upstream_manifest.mjs --src ../../third_party/Chart.js --out doc/upstream/manifest.json
       description: Write packages/flutter_chartjs_port/doc/upstream/manifest.json and fixtures.json from third_party/Chart.js (tool 4). Needs Node.js 22.18 or later (CI uses 24.12.0) and the submodule (melos run upstream).

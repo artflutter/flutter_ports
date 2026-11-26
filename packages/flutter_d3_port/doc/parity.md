@@ -8,7 +8,9 @@ d3-color is the first ported repository (2026-11-15), in the native Dart forms o
 [D3 ADR 0007](adr/0007-native-dart-forms.md), as the package `flutter_d3_color_port`
 ([D3 ADR 0008](adr/0008-module-packages.md)). d3-interpolate is the second (2026-11-16), as the
 package `flutter_d3_interpolate_port`, in the native forms of
-[D3 ADR 0011](adr/0011-interpolate-native-forms.md). The other rows have the status `not started`. Until
+[D3 ADR 0011](adr/0011-interpolate-native-forms.md). d3-scale-chromatic is the third (2026-11-26),
+as the package `flutter_d3_scale_chromatic_port`, in the native forms of
+[D3 ADR 0012](adr/0012-scale-chromatic-native-forms.md). The other rows have the status `not started`. Until
 phase 2, this file has one row for each repository. A person writes it by hand. The status unit is one upstream source file
 (D3 ADR 0001). Thus the status of a repository row applies to each of its source files.
 
@@ -72,7 +74,7 @@ The columns:
 | [d3-quadtree](https://github.com/d3/d3-quadtree/tree/v3.0.1) | v3.0.1 | 15 | 413 | 13 | 62 | 2 | not started |
 | [d3-random](https://github.com/d3/d3-random/tree/v3.0.1) | v3.0.1 | 20 | 370 | 18 | 67 | 2 | not started |
 | [d3-scale](https://github.com/d3/d3-scale/tree/v4.0.2) | v4.0.2 | 24 | 1302 | 19 | 433 | 3 | not started |
-| [d3-scale-chromatic](https://github.com/d3/d3-scale-chromatic/tree/v3.1.0) | v3.1.0 | 48 | 557 | 1 | 1 | 2 | not started |
+| [d3-scale-chromatic](https://github.com/d3/d3-scale-chromatic/tree/v3.1.0) | v3.1.0 | 48 | 557 | 1 | 1 | 2 | ported in the package `flutter_d3_scale_chromatic_port` ([D3 ADR 0012](adr/0012-scale-chromatic-native-forms.md)), ahead of phase 2: all 76 schemes and interpolators pass on the VM, DDC and dart2wasm. `src/rampClosed.js`: `n/a: unused upstream file; no file of d3-scale-chromatic imports it` |
 | [d3-selection](https://github.com/d3/d3-selection/tree/v3.0.0) | v3.0.0 | 54 | 1057 | 42 | 236 | 7 | not started |
 | [d3-shape](https://github.com/d3/d3-shape/tree/v3.2.0) | v3.2.0 | 60 | 2193 | 41 | 268 | 4 | not started |
 | [d3-time](https://github.com/d3/d3-time/tree/v3.1.0) | v3.1.0 | 12 | 488 | 36 | 465 | 3 | not started |

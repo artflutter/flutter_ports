@@ -63,4 +63,27 @@ void main() {
     expect(parts, isA<TransformParts>());
     expect(parts.translateX, 24);
   });
+
+  test('the bundle exports the names of d3-scale-chromatic', () {
+    expect(schemeCategory10, hasLength(10));
+    expect(schemeCategory10.first.formatHex(), '#1f77b4');
+    expect(schemeTableau10, hasLength(10));
+    expect(schemeBrBG[5], hasLength(5));
+    expect(schemeBlues[9], hasLength(9));
+    expect(interpolateBrBG(0.5), isA<Rgb>());
+    expect(interpolateBlues(0.5), isA<Rgb>());
+    expect(interpolateViridis(0).formatHex(), '#440154');
+    expect(interpolateViridis(1).formatHex(), '#fde725');
+    expect(interpolateMagma(0.5), isA<Rgb>());
+    expect(interpolateInferno(0.5), isA<Rgb>());
+    expect(interpolatePlasma(0.5), isA<Rgb>());
+    expect(interpolateCividis(0.5), isA<Rgb>());
+    expect(interpolateTurbo(0.5), isA<Rgb>());
+    expect(interpolateSinebow(0.5), isA<Rgb>());
+    expect(interpolateRainbow(0.5), isA<Cubehelix>());
+    expect(interpolateWarm(0.5), isA<Cubehelix>());
+    expect(interpolateCool(0.5), isA<Cubehelix>());
+    expect(interpolateCubehelixDefault(0.5), isA<Cubehelix>());
+    expect(d3ScaleChromaticVersion, '3.1.0');
+  });
 }
