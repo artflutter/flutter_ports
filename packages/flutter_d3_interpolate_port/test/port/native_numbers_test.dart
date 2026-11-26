@@ -27,9 +27,10 @@ void main() {
     test('interpolateRgb.gamma(0) and gamma(-0) give 1 for each channel '
         'that differs, where upstream gives NaN', () {
       for (final y in [0.0, -0.0]) {
-        final c = interpolateRgb.gamma(y)(Rgb(10, 20, 30), Rgb(200, 100, 50))(
-          0.5,
-        );
+        final c = interpolateRgb.gamma(y)(
+          const Rgb(10, 20, 30),
+          const Rgb(200, 100, 50),
+        )(0.5);
         if (_jsNumbers) {
           expect(c.r, isNaN, reason: 'gamma $y');
           expect(c.g, isNaN, reason: 'gamma $y');
@@ -52,7 +53,10 @@ void main() {
         (double.nan, 'rgb(0, 0, 0)'),
       ];
       for (final (y, text) in expected) {
-        final i = interpolateRgb.gamma(y)(Rgb(1, 20, 30), Rgb(200, 1, 50));
+        final i = interpolateRgb.gamma(y)(
+          const Rgb(1, 20, 30),
+          const Rgb(200, 1, 50),
+        );
         for (final t in [0.0, 0.5, 1.0]) {
           expect(i(t).toString(), text, reason: 'gamma $y, t $t');
         }
@@ -61,10 +65,10 @@ void main() {
 
     test('interpolateCubehelix.gamma of NaN or ±Infinity gives the end '
         'lightness at t = 1, where upstream gives NaN', () {
-      final end = Rgb(200, 1, 50);
+      const end = Rgb(200, 1, 50);
       final endL = Cubehelix.from(end).l;
       for (final y in [double.nan, double.infinity, double.negativeInfinity]) {
-        final c = interpolateCubehelix.gamma(y)(Rgb(1, 20, 30), end)(1);
+        final c = interpolateCubehelix.gamma(y)(const Rgb(1, 20, 30), end)(1);
         if (_jsNumbers) {
           expect(c.l, isNaN, reason: 'gamma $y');
           expect(c.toString(), 'rgb(0, 0, 0)', reason: 'gamma $y');
@@ -77,10 +81,10 @@ void main() {
 
     test('interpolateCubehelix.gamma of ±Infinity gives the end lightness at '
         't = -1, where upstream gives NaN', () {
-      final end = Rgb(200, 1, 50);
+      const end = Rgb(200, 1, 50);
       final endL = Cubehelix.from(end).l;
       for (final y in [double.infinity, double.negativeInfinity]) {
-        final c = interpolateCubehelix.gamma(y)(Rgb(1, 20, 30), end)(-1);
+        final c = interpolateCubehelix.gamma(y)(const Rgb(1, 20, 30), end)(-1);
         if (_jsNumbers) {
           expect(c.l, isNaN, reason: 'gamma $y');
           expect(c.toString(), 'rgb(0, 0, 0)', reason: 'gamma $y');

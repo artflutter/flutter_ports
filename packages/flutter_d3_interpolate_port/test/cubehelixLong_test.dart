@@ -104,12 +104,12 @@ void main() {
     'interpolateCubehelixLong(a, b) uses a’s hue when b’s hue is undefined',
     () {
       expect(
-        interpolateCubehelixLong(color('#f60')!, Hcl(nan, nan, 0))(0.5)
+        interpolateCubehelixLong(color('#f60')!, const Hcl(nan, nan, 0))(0.5)
             .toString(),
         'rgb(162, 41, 0)',
       );
       expect(
-        interpolateCubehelixLong(color('#6f0')!, Hcl(nan, nan, 0))(0.5)
+        interpolateCubehelixLong(color('#6f0')!, const Hcl(nan, nan, 0))(0.5)
             .toString(),
         'rgb(3, 173, 0)',
       );
@@ -120,12 +120,12 @@ void main() {
     'interpolateCubehelixLong(a, b) uses b’s hue when a’s hue is undefined',
     () {
       expect(
-        interpolateCubehelixLong(Hcl(nan, nan, 0), color('#f60')!)(0.5)
+        interpolateCubehelixLong(const Hcl(nan, nan, 0), color('#f60')!)(0.5)
             .toString(),
         'rgb(162, 41, 0)',
       );
       expect(
-        interpolateCubehelixLong(Hcl(nan, nan, 0), color('#6f0')!)(0.5)
+        interpolateCubehelixLong(const Hcl(nan, nan, 0), color('#6f0')!)(0.5)
             .toString(),
         'rgb(3, 173, 0)',
       );
@@ -135,12 +135,12 @@ void main() {
   test('interpolateCubehelixLong(a, b) uses a’s chroma when b’s chroma is '
       'undefined', () {
     expect(
-      interpolateCubehelixLong(color('#ccc')!, Hcl(nan, nan, 0))(0.5)
+      interpolateCubehelixLong(color('#ccc')!, const Hcl(nan, nan, 0))(0.5)
           .toString(),
       'rgb(102, 102, 102)',
     );
     expect(
-      interpolateCubehelixLong(color('#f00')!, Hcl(nan, nan, 0))(0.5)
+      interpolateCubehelixLong(color('#f00')!, const Hcl(nan, nan, 0))(0.5)
           .toString(),
       'rgb(147, 0, 0)',
     );
@@ -149,12 +149,12 @@ void main() {
   test('interpolateCubehelixLong(a, b) uses b’s chroma when a’s chroma is '
       'undefined', () {
     expect(
-      interpolateCubehelixLong(Hcl(nan, nan, 0), color('#ccc')!)(0.5)
+      interpolateCubehelixLong(const Hcl(nan, nan, 0), color('#ccc')!)(0.5)
           .toString(),
       'rgb(102, 102, 102)',
     );
     expect(
-      interpolateCubehelixLong(Hcl(nan, nan, 0), color('#f00')!)(0.5)
+      interpolateCubehelixLong(const Hcl(nan, nan, 0), color('#f00')!)(0.5)
           .toString(),
       'rgb(147, 0, 0)',
     );
@@ -164,8 +164,8 @@ void main() {
       'is undefined', () {
     expect(
       interpolateCubehelixLong(
-        Cubehelix(nan, nan, nan, nan),
-        Cubehelix(20, 1.5, 0.5),
+        const Cubehelix(nan, nan, nan, nan),
+        const Cubehelix(20, 1.5, 0.5),
       )(0.5).toString(),
       'rgb(248, 93, 0)',
     );
@@ -175,8 +175,8 @@ void main() {
       'is undefined', () {
     expect(
       interpolateCubehelixLong(
-        Cubehelix(20, 1.5, 0.5),
-        Cubehelix(nan, nan, nan, nan),
+        const Cubehelix(20, 1.5, 0.5),
+        const Cubehelix(nan, nan, nan, nan),
       )(0.5).toString(),
       'rgb(248, 93, 0)',
     );

@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 void main() {
   group('toUiColor', () {
     test('maps the channels to [0, 1] with no rounding', () {
-      final c = Rgb(70.5, 130, 180, 0.4).toUiColor();
+      final c = const Rgb(70.5, 130, 180, 0.4).toUiColor();
       expect(c.colorSpace, ui.ColorSpace.sRGB);
       expect(c.r, 70.5 / 255);
       expect(c.g, 130 / 255);
@@ -16,9 +16,9 @@ void main() {
     });
 
     test('clamps the channels and the opacity', () {
-      final c = Rgb(-10, 300, 128, 1.5).toUiColor();
+      final c = const Rgb(-10, 300, 128, 1.5).toUiColor();
       expect([c.r, c.g, c.b, c.a], [0, 1, 128 / 255, 1]);
-      expect(Rgb(0, 0, 0, -0.2).toUiColor().a, 0);
+      expect(const Rgb(0, 0, 0, -0.2).toUiColor().a, 0);
     });
 
     test('reads an undefined channel as 0 and an undefined opacity as 1', () {
@@ -30,10 +30,10 @@ void main() {
 
     test('converts each color space through rgb()', () {
       for (final source in <Color>[
-        Hsl(210, 0.68, 0.8),
-        Lab(50, 4, -5, 0.4),
-        Hcl(120, 30, 50),
-        Cubehelix(300, 0.5, 0.5),
+        const Hsl(210, 0.68, 0.8),
+        const Lab(50, 4, -5, 0.4),
+        const Hcl(120, 30, 50),
+        const Cubehelix(300, 0.5, 0.5),
       ]) {
         final rgb = source.rgb();
         final c = source.toUiColor();
@@ -82,7 +82,7 @@ void main() {
     });
 
     test('round-trips with toUiColor', () {
-      final c = Rgb(12.25, 34.5, 56.75, 0.5);
+      const c = Rgb(12.25, 34.5, 56.75, 0.5);
       final back = c.toUiColor().toD3Rgb();
       expect(back.r, closeTo(c.r, 1e-12));
       expect(back.g, closeTo(c.g, 1e-12));

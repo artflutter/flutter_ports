@@ -12,4 +12,7 @@ import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 /// `[0, 1]`, returning a new [Cubehelix] at each call.
 // DIVERGES(d3-scale-chromatic): platform-chromatic-math-last-bit, libm trig.
 final Cubehelix Function(double t) interpolateCubehelixDefault =
-    interpolateCubehelixLong(Cubehelix(300, 0.5, 0), Cubehelix(-240, 0.5, 1));
+    interpolateCubehelixLong(
+      const Cubehelix(300, 0.5, 0),
+      const Cubehelix(-240, 0.5, 1),
+    );

@@ -1,3 +1,12 @@
+## 0.2.0
+
+- **Breaking:** `Color`, `Rgb`, `Hsl`, `Lab`, `Hcl`, and `Cubehelix` are now immutable value
+  classes with `final` channel fields and `const` constructors (D3 ADR 0013). Derive modified
+  colors with `copy(...)`.
+- Zero-allocation reuse in `rgbConvert`, `hslConvert`, `labConvert`, `hclConvert`,
+  `cubehelixConvert` (same-space conversions and `null` NaN colors), and named CSS color lookups
+  (`parse.named` 1.13× faster in AOT, 1.09× in dart2js).
+
 ## 0.1.2
 
 - Remove an ignore comment that pana reports as `unnecessary_ignore` in a version that is not breaking.

@@ -37,7 +37,7 @@ const double _nan = double.nan;
 
 /// color.js:229 `rgbConvert(o)`.
 Rgb _rgbConvert(Color? o) {
-  if (o == null) return Rgb(_nan, _nan, _nan, _nan);
+  if (o == null) return const Rgb(_nan, _nan, _nan, _nan);
   final c = o.rgb();
   return Rgb(c.r, c.g, c.b, c.opacity);
 }
@@ -142,7 +142,7 @@ final class _Counting() extends Color {
   @override
   Rgb rgb() {
     calls++;
-    return Rgb(12, 134, 56, 0.4);
+    return const Rgb(12, 134, 56, 0.4);
   }
 
   @override
@@ -237,7 +237,7 @@ void main() {
 
     final colors = _colors();
     for (final o in [...colors, null]) {
-      final text = '${_channels(o ?? Rgb(0, 0, 0))} ${o.runtimeType}';
+      final text = '${_channels(o ?? const Rgb(0, 0, 0))} ${o.runtimeType}';
       compare('labConvert($text)', labConvert(o), _labConvert(o));
       compare('hclConvert($text)', hclConvert(o), _hclConvert(o));
       compare(
@@ -261,7 +261,7 @@ void main() {
       Cubehelix.from,
     ]) {
       final o = _Counting();
-      final expected = convert(Rgb(12, 134, 56, 0.4));
+      final expected = convert(const Rgb(12, 134, 56, 0.4));
       final actual = convert(o);
       expect(o.calls, 1);
       expect(_channels(actual), _channels(expected));

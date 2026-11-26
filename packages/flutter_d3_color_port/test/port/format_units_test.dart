@@ -75,9 +75,9 @@ final class _NestedRgb() extends Rgb {
 
   @override
   double get r {
-    Rgb(200, 100, 50, 0.5).formatRgb();
-    Rgb(1, 2, 3).formatHex8();
-    Hsl(120.25, 0.123456789, 0.5, 0.75).formatHsl();
+    const Rgb(200, 100, 50, 0.5).formatRgb();
+    const Rgb(1, 2, 3).formatHex8();
+    const Hsl(120.25, 0.123456789, 0.5, 0.75).formatHsl();
     return 12.5;
   }
 }

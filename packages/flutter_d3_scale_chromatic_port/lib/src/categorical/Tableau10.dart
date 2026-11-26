@@ -6,11 +6,19 @@
 library;
 
 import 'package:flutter_d3_color_port/d3_color.dart';
-import 'package:flutter_d3_scale_chromatic_port/d3_scale_chromatic.dart';
 
 /// categorical/Tableau10.js:3 the default export (`schemeTableau10` of index.js): an
 /// unmodifiable list of 10 categorical [Rgb] colors.
 // DIVERGES(d3-scale-chromatic): adapt-chromatic-public-names, named export.
-final List<Rgb> schemeTableau10 = colors(
-  '4e79a7f28e2ce1575976b7b259a14fedc949af7aa1ff9da79c755fbab0ab',
-);
+const List<Rgb> schemeTableau10 = [
+  Rgb(78, 121, 167),
+  Rgb(242, 142, 44),
+  Rgb(225, 87, 89),
+  Rgb(118, 183, 178),
+  Rgb(89, 161, 79),
+  Rgb(237, 201, 73),
+  Rgb(175, 122, 161),
+  Rgb(255, 157, 167),
+  Rgb(156, 117, 95),
+  Rgb(186, 176, 171),
+];

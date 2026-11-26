@@ -37,13 +37,23 @@ const double _eb = _e * _b;
 /// cubehelix.js:12 `BC_DA`.
 const double _bcDa = _b * _c - _d * _a;
 
-/// cubehelix.js:14 `cubehelixConvert(o)`: a new [Cubehelix] with the
-/// channels of [o] in Cubehelix. A null [o] gives undefined channels and an
-/// undefined opacity.
+/// Undefined Cubehelix color returned for an unparseable specifier.
+const Cubehelix _nanCubehelix = Cubehelix(
+  double.nan,
+  double.nan,
+  double.nan,
+  double.nan,
+);
+
+/// cubehelix.js:14 `cubehelixConvert(o)`: a [Cubehelix] with the channels of
+/// [o] in Cubehelix. Returns [o] directly when it is already a [Cubehelix].
+/// A null [o] gives undefined channels and an undefined opacity.
 Cubehelix cubehelixConvert(Color? o) {
-  if (o is Cubehelix) return Cubehelix(o.h, o.s, o.l, o.opacity);
+  // DIVERGES(d3-color): adapt-color-immutable, reuse immutable Cubehelix.
+  if (o is Cubehelix) return o;
+  if (o == null) return _nanCubehelix;
   // DIVERGES(d3-color): adapt-color-convert-locals, o.rgb() with no copy.
-  final c = o is Rgb ? o : (o == null ? rgbConvert(o) : o.rgb());
+  final c = o is Rgb ? o : o.rgb();
   final r = c.r / 255.0;
   final g = c.g / 255.0;
   final b = c.b / 255.0;
@@ -59,18 +69,19 @@ Cubehelix cubehelixConvert(Color? o) {
 }
 
 /// cubehelix.js:32 `Cubehelix` and the factory `cubehelix` (cubehelix.js:28):
-/// a color in the Cubehelix space. The hue is in degrees.
+/// an immutable color in the Cubehelix space. The hue is in degrees.
 // DIVERGES(d3-color): adapt-color-factories, constructors for the overloads.
-class Cubehelix(
+// DIVERGES(d3-color): adapt-color-immutable, immutable const color classes.
+class const Cubehelix(
   /// The hue in degrees.
-  var double h,
+  final double h,
 
   /// The saturation.
-  var double s,
+  final double s,
 
   /// The lightness.
-  var double l, [
-  @override var double opacity = 1,
+  final double l, [
+  @override final double opacity = 1,
 ]) extends Color {
   /// `cubehelix(h, s, l[, opacity])`.
   this;

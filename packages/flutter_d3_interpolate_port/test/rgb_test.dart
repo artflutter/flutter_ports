@@ -46,40 +46,48 @@ void main() {
   test('interpolateRgb(a, b) uses b’s channel value when a’s channel value is '
       'undefined', () {
     expect(
-      interpolateRgb(Rgb(nan, nan, nan, nan), Rgb(20, 40, 60))(0.5).toString(),
-      Rgb(20, 40, 60).toString(),
+      interpolateRgb(const Rgb(nan, nan, nan, nan), const Rgb(20, 40, 60))(0.5)
+          .toString(),
+      const Rgb(20, 40, 60).toString(),
     );
     expect(
-      interpolateRgb(Rgb(nan, 20, 40), Rgb(60, 80, 100))(0.5).toString(),
-      Rgb(60, 50, 70).toString(),
+      interpolateRgb(const Rgb(nan, 20, 40), const Rgb(60, 80, 100))(0.5)
+          .toString(),
+      const Rgb(60, 50, 70).toString(),
     );
     expect(
-      interpolateRgb(Rgb(20, nan, 40), Rgb(60, 80, 100))(0.5).toString(),
-      Rgb(40, 80, 70).toString(),
+      interpolateRgb(const Rgb(20, nan, 40), const Rgb(60, 80, 100))(0.5)
+          .toString(),
+      const Rgb(40, 80, 70).toString(),
     );
     expect(
-      interpolateRgb(Rgb(20, 40, nan), Rgb(60, 80, 100))(0.5).toString(),
-      Rgb(40, 60, 100).toString(),
+      interpolateRgb(const Rgb(20, 40, nan), const Rgb(60, 80, 100))(0.5)
+          .toString(),
+      const Rgb(40, 60, 100).toString(),
     );
   });
 
   test('interpolateRgb(a, b) uses a’s channel value when b’s channel value is '
       'undefined', () {
     expect(
-      interpolateRgb(Rgb(20, 40, 60), Rgb(nan, nan, nan, nan))(0.5).toString(),
-      Rgb(20, 40, 60).toString(),
+      interpolateRgb(const Rgb(20, 40, 60), const Rgb(nan, nan, nan, nan))(0.5)
+          .toString(),
+      const Rgb(20, 40, 60).toString(),
     );
     expect(
-      interpolateRgb(Rgb(60, 80, 100), Rgb(nan, 20, 40))(0.5).toString(),
-      Rgb(60, 50, 70).toString(),
+      interpolateRgb(const Rgb(60, 80, 100), const Rgb(nan, 20, 40))(0.5)
+          .toString(),
+      const Rgb(60, 50, 70).toString(),
     );
     expect(
-      interpolateRgb(Rgb(60, 80, 100), Rgb(20, nan, 40))(0.5).toString(),
-      Rgb(40, 80, 70).toString(),
+      interpolateRgb(const Rgb(60, 80, 100), const Rgb(20, nan, 40))(0.5)
+          .toString(),
+      const Rgb(40, 80, 70).toString(),
     );
     expect(
-      interpolateRgb(Rgb(60, 80, 100), Rgb(20, 40, nan))(0.5).toString(),
-      Rgb(40, 60, 100).toString(),
+      interpolateRgb(const Rgb(60, 80, 100), const Rgb(20, 40, nan))(0.5)
+          .toString(),
+      const Rgb(40, 60, 100).toString(),
     );
   });
 

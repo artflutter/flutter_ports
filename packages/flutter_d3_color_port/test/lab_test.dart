@@ -11,7 +11,7 @@ final class _TestColor() extends Color {
   double opacity = double.nan;
 
   @override
-  Rgb rgb() => Rgb(12, 34, 56, 0.4);
+  Rgb rgb() => const Rgb(12, 34, 56, 0.4);
 
   @override
   String toString() => throw StateError('should use rgb, not toString');
@@ -28,7 +28,7 @@ final class _TestColor() extends Color {
 
 void main() {
   test('lab(…) returns an instance of lab and color', () {
-    final c = Lab(120, 40, 50);
+    const c = Lab(120, 40, 50);
     expect(c, isA<Lab>());
     expect(c, isA<Color>());
   });
@@ -52,43 +52,51 @@ void main() {
       'rgba(102, 102, 0, 0.4)',
     );
     expect(Lab.parse('rgb(12, 34, 56)').toString(), 'rgb(12, 34, 56)');
-    expect(Lab.from(Rgb(12, 34, 56)).toString(), 'rgb(12, 34, 56)');
-    expect(Lab.from(Hsl(60, 1, 0.2)).toString(), 'rgb(102, 102, 0)');
-    expect(Lab.from(Hsl(60, 1, 0.2, 0.4)).toString(), 'rgba(102, 102, 0, 0.4)');
+    expect(Lab.from(const Rgb(12, 34, 56)).toString(), 'rgb(12, 34, 56)');
+    expect(Lab.from(const Hsl(60, 1, 0.2)).toString(), 'rgb(102, 102, 0)');
+    expect(
+      Lab.from(const Hsl(60, 1, 0.2, 0.4)).toString(),
+      'rgba(102, 102, 0, 0.4)',
+    );
   });
 
   test('lab.toString() reflects l, a and b channel values and opacity', () {
-    final c = Lab.parse('#abc')
-      ..l += 10
-      ..a -= 10
-      ..b += 10
-      ..opacity = 0.4;
-    expect(c.toString(), 'rgba(184, 220, 213, 0.4)');
+    final c = Lab.parse('#abc');
+    final modified = c.copy(
+      l: c.l + 10,
+      a: c.a - 10,
+      b: c.b + 10,
+      opacity: 0.4,
+    );
+    expect(modified.toString(), 'rgba(184, 220, 213, 0.4)');
   });
 
   test('lab.toString() treats undefined channel values as 0', () {
     expect(Lab.parse('invalid').toString(), 'rgb(0, 0, 0)');
-    expect(Lab(double.nan, 0, 0).toString(), 'rgb(0, 0, 0)');
-    expect(Lab(50, double.nan, 0).toString(), 'rgb(119, 119, 119)');
-    expect(Lab(50, 0, double.nan).toString(), 'rgb(119, 119, 119)');
-    expect(Lab(50, double.nan, double.nan).toString(), 'rgb(119, 119, 119)');
+    expect(const Lab(double.nan, 0, 0).toString(), 'rgb(0, 0, 0)');
+    expect(const Lab(50, double.nan, 0).toString(), 'rgb(119, 119, 119)');
+    expect(const Lab(50, 0, double.nan).toString(), 'rgb(119, 119, 119)');
+    expect(
+      const Lab(50, double.nan, double.nan).toString(),
+      'rgb(119, 119, 119)',
+    );
   });
 
   test('lab.toString() treats undefined opacity as 1', () {
-    final c = Lab.parse('#abc')..opacity = double.nan;
+    final c = Lab.parse('#abc').copy(opacity: double.nan);
     expect(c.toString(), 'rgb(170, 187, 204)');
   });
 
   test('lab(l, a, b) does not clamp l channel value', () {
-    assertLabEqual(Lab(-10, 1, 2), -10, 1, 2, 1);
-    assertLabEqual(Lab(0, 1, 2), 0, 1, 2, 1);
-    assertLabEqual(Lab(100, 1, 2), 100, 1, 2, 1);
-    assertLabEqual(Lab(110, 1, 2), 110, 1, 2, 1);
+    assertLabEqual(const Lab(-10, 1, 2), -10, 1, 2, 1);
+    assertLabEqual(const Lab(0, 1, 2), 0, 1, 2, 1);
+    assertLabEqual(const Lab(100, 1, 2), 100, 1, 2, 1);
+    assertLabEqual(const Lab(110, 1, 2), 110, 1, 2, 1);
   });
 
   test('lab(l, a, b, opacity) does not clamp opacity to [0,1]', () {
-    assertLabEqual(Lab(50, 10, 20, -0.2), 50, 10, 20, -0.2);
-    assertLabEqual(Lab(50, 10, 20, 1.2), 50, 10, 20, 1.2);
+    assertLabEqual(const Lab(50, 10, 20, -0.2), 50, 10, 20, -0.2);
+    assertLabEqual(const Lab(50, 10, 20, 1.2), 50, 10, 20, 1.2);
   });
 
   test('lab(l, a, b) coerces channel values to numbers', () {
@@ -102,23 +110,23 @@ void main() {
   test('lab(l, a, b) allows undefined channel values', () {
     // `lab(undefined, NaN, "foo")`: undefined and "foo" are NaN channels.
     assertLabEqual(
-      Lab(double.nan, double.nan, double.nan),
+      const Lab(double.nan, double.nan, double.nan),
       double.nan,
       double.nan,
       double.nan,
       1,
     );
     // An undefined channel is NaN.
-    assertLabEqual(Lab(double.nan, 4, -5), double.nan, 4, -5, 1);
-    assertLabEqual(Lab(42, double.nan, -5), 42, double.nan, -5, 1);
-    assertLabEqual(Lab(42, 4, double.nan), 42, 4, double.nan, 1);
+    assertLabEqual(const Lab(double.nan, 4, -5), double.nan, 4, -5, 1);
+    assertLabEqual(const Lab(42, double.nan, -5), 42, double.nan, -5, 1);
+    assertLabEqual(const Lab(42, 4, double.nan), 42, 4, double.nan, 1);
   });
 
   test('lab(l, a, b, opacity) converts undefined opacity to 1', () {
     // `lab(10, 20, 30, null)` and `lab(10, 20, 30, undefined)`: an omitted
     // opacity is 1.
-    assertLabEqual(Lab(10, 20, 30), 10, 20, 30, 1);
-    assertLabEqual(Lab(10, 20, 30), 10, 20, 30, 1);
+    assertLabEqual(const Lab(10, 20, 30), 10, 20, 30, 1);
+    assertLabEqual(const Lab(10, 20, 30), 10, 20, 30, 1);
   });
 
   test('lab(format) parses the specified format and converts to Lab', () {
@@ -191,21 +199,21 @@ void main() {
   });
 
   test('lab(lab) copies a Lab color', () {
-    final c1 = Lab(50, 4, -5, 0.4);
+    // DIVERGES(d3-color): adapt-color-immutable, immutable Lab reused directly.
+    const c1 = Lab(50, 4, -5, 0.4);
     final c2 = Lab.from(c1);
+    expect(identical(c1, c2), isTrue);
     assertLabEqual(c1, 50, 4, -5, 0.4);
-    c1.l = c1.a = c1.b = c1.opacity = 0;
-    assertLabEqual(c1, 0, 0, 0, 0);
     assertLabEqual(c2, 50, 4, -5, 0.4);
   });
 
   test('lab(hcl(lab)) doesn’t lose a and b channels if luminance is zero', () {
-    assertLabEqual(Lab.from(Hcl.from(Lab(0, 10, 0))), 0, 10, 0, 1);
+    assertLabEqual(Lab.from(Hcl.from(const Lab(0, 10, 0))), 0, 10, 0, 1);
   });
 
   test('lab(rgb) converts from RGB', () {
     assertLabEqual(
-      Lab.from(Rgb(255, 0, 0, 0.4)),
+      Lab.from(const Rgb(255, 0, 0, 0.4)),
       54.29173376861782,
       80.8124553179771,
       69.88504032350531,
@@ -340,7 +348,7 @@ void main() {
   });
 
   test('lab.rgb() converts to RGB', () {
-    final c = Lab(50, 4, -5, 0.4);
+    const c = Lab(50, 4, -5, 0.4);
     assertRgbApproxEqual(c.rgb(), 123, 117, 128, 0.4);
   });
 }

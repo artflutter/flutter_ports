@@ -53,7 +53,7 @@ Rgb Function(double t) ramp(List<List<Rgb>?> scheme) {
       x = t;
       i = (t * n).toInt();
     } else {
-      return Rgb(double.nan, double.nan, double.nan);
+      return const Rgb(double.nan, double.nan, double.nan);
     }
     final t1 = (x - i / n) * n;
     final t2 = t1 * t1;

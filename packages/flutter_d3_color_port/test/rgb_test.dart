@@ -11,7 +11,7 @@ final class _TestColor() extends Color {
   double opacity = double.nan;
 
   @override
-  Rgb rgb() => Rgb(12, 34, 56, 0.4);
+  Rgb rgb() => const Rgb(12, 34, 56, 0.4);
 
   @override
   String toString() => throw StateError('should use rgb, not toString');
@@ -28,7 +28,7 @@ final class _TestColor() extends Color {
 
 void main() {
   test('rgb(…) returns an instance of rgb and color', () {
-    final c = Rgb(70, 130, 180);
+    const c = Rgb(70, 130, 180);
     expect(c, isA<Rgb>());
     expect(c, isA<Color>());
   });
@@ -49,8 +49,8 @@ void main() {
     expect(Rgb.parse('moccasin').toString(), 'rgb(255, 228, 181)');
     expect(Rgb.parse('hsl(60, 100%, 20%)').toString(), 'rgb(102, 102, 0)');
     expect(Rgb.parse('rgb(12, 34, 56)').toString(), 'rgb(12, 34, 56)');
-    expect(Rgb.from(Rgb(12, 34, 56)).toString(), 'rgb(12, 34, 56)');
-    expect(Rgb.from(Hsl(60, 1, 0.2)).toString(), 'rgb(102, 102, 0)');
+    expect(Rgb.from(const Rgb(12, 34, 56)).toString(), 'rgb(12, 34, 56)');
+    expect(Rgb.from(const Hsl(60, 1, 0.2)).toString(), 'rgb(102, 102, 0)');
     expect(
       Rgb.parse('rgba(12, 34, 56, 0.4)').toString(),
       'rgba(12, 34, 56, 0.4)',
@@ -123,64 +123,63 @@ void main() {
   });
 
   test('rgb.toString() reflects r, g and b channel values and opacity', () {
-    final c = Rgb.parse('#abc')
-      ..r += 1
-      ..g += 1
-      ..b += 1
-      ..opacity = 0.5;
-    expect(c.toString(), 'rgba(171, 188, 205, 0.5)');
+    final c = Rgb.parse('#abc');
+    final modified = c.copy(r: c.r + 1, g: c.g + 1, b: c.b + 1, opacity: 0.5);
+    expect(modified.toString(), 'rgba(171, 188, 205, 0.5)');
   });
 
   test('rgb.toString() treats undefined channel values as 0', () {
     expect(Rgb.parse('invalid').toString(), 'rgb(0, 0, 0)');
-    expect(Rgb(double.nan, 12, 34).toString(), 'rgb(0, 12, 34)');
+    expect(const Rgb(double.nan, 12, 34).toString(), 'rgb(0, 12, 34)');
   });
 
   test('rgb.toString() treats undefined opacity as 1', () {
-    final c = Rgb.parse('#abc')
-      ..r += 1
-      ..g += 1
-      ..b += 1
-      ..opacity = double.nan;
-    expect(c.toString(), 'rgb(171, 188, 205)');
+    final c = Rgb.parse('#abc');
+    final modified = c.copy(
+      r: c.r + 1,
+      g: c.g + 1,
+      b: c.b + 1,
+      opacity: double.nan,
+    );
+    expect(modified.toString(), 'rgb(171, 188, 205)');
   });
 
   test('rgb.toString() clamps r, g, b and opacity channel values', () {
-    expect(Rgb(-1, 2, 3).toString(), 'rgb(0, 2, 3)');
-    expect(Rgb(2, -1, 3).toString(), 'rgb(2, 0, 3)');
-    expect(Rgb(2, 3, -1).toString(), 'rgb(2, 3, 0)');
-    expect(Rgb(2, 3, -1, -0.2).toString(), 'rgba(2, 3, 0, 0)');
-    expect(Rgb(2, 3, -1, 1.2).toString(), 'rgb(2, 3, 0)');
+    expect(const Rgb(-1, 2, 3).toString(), 'rgb(0, 2, 3)');
+    expect(const Rgb(2, -1, 3).toString(), 'rgb(2, 0, 3)');
+    expect(const Rgb(2, 3, -1).toString(), 'rgb(2, 3, 0)');
+    expect(const Rgb(2, 3, -1, -0.2).toString(), 'rgba(2, 3, 0, 0)');
+    expect(const Rgb(2, 3, -1, 1.2).toString(), 'rgb(2, 3, 0)');
   });
 
   test('rgb.toString() rounds r, g and b channel values', () {
-    expect(Rgb(0.5, 2, 3).toString(), 'rgb(1, 2, 3)');
-    expect(Rgb(2, 0.5, 3).toString(), 'rgb(2, 1, 3)');
-    expect(Rgb(2, 3, 0.5).toString(), 'rgb(2, 3, 1)');
+    expect(const Rgb(0.5, 2, 3).toString(), 'rgb(1, 2, 3)');
+    expect(const Rgb(2, 0.5, 3).toString(), 'rgb(2, 1, 3)');
+    expect(const Rgb(2, 3, 0.5).toString(), 'rgb(2, 3, 1)');
   });
 
   test('rgb(r, g, b) does not round channel values', () {
-    assertRgbEqual(Rgb(1.2, 2.6, 42.9), 1.2, 2.6, 42.9, 1);
+    assertRgbEqual(const Rgb(1.2, 2.6, 42.9), 1.2, 2.6, 42.9, 1);
   });
 
   test('rgb(r, g, b) does not clamp channel values', () {
-    assertRgbApproxEqual(Rgb(-10, -20, -30), -10, -20, -30, 1);
-    assertRgbApproxEqual(Rgb(300, 400, 500), 300, 400, 500, 1);
+    assertRgbApproxEqual(const Rgb(-10, -20, -30), -10, -20, -30, 1);
+    assertRgbApproxEqual(const Rgb(300, 400, 500), 300, 400, 500, 1);
   });
 
   test('rgb(r, g, b).clamp() rounds and clamps channel values', () {
-    assertRgbApproxEqual(Rgb(-10, -20, -30).clamp(), 0, 0, 0, 1);
-    assertRgbApproxEqual(Rgb(10.5, 20.5, 30.5).clamp(), 11, 21, 31, 1);
-    assertRgbApproxEqual(Rgb(300, 400, 500).clamp(), 255, 255, 255, 1);
-    expect(Rgb(10.5, 20.5, 30.5, -1).clamp().opacity, 0);
-    expect(Rgb(10.5, 20.5, 30.5, 0.5).clamp().opacity, 0.5);
-    expect(Rgb(10.5, 20.5, 30.5, 2).clamp().opacity, 1);
-    expect(Rgb(10.5, 20.5, 30.5, double.nan).clamp().opacity, 1);
+    assertRgbApproxEqual(const Rgb(-10, -20, -30).clamp(), 0, 0, 0, 1);
+    assertRgbApproxEqual(const Rgb(10.5, 20.5, 30.5).clamp(), 11, 21, 31, 1);
+    assertRgbApproxEqual(const Rgb(300, 400, 500).clamp(), 255, 255, 255, 1);
+    expect(const Rgb(10.5, 20.5, 30.5, -1).clamp().opacity, 0);
+    expect(const Rgb(10.5, 20.5, 30.5, 0.5).clamp().opacity, 0.5);
+    expect(const Rgb(10.5, 20.5, 30.5, 2).clamp().opacity, 1);
+    expect(const Rgb(10.5, 20.5, 30.5, double.nan).clamp().opacity, 1);
   });
 
   test('rgb(r, g, b, opacity) does not clamp opacity', () {
-    assertRgbApproxEqual(Rgb(-10, -20, -30, -0.2), -10, -20, -30, -0.2);
-    assertRgbApproxEqual(Rgb(300, 400, 500, 1.2), 300, 400, 500, 1.2);
+    assertRgbApproxEqual(const Rgb(-10, -20, -30, -0.2), -10, -20, -30, -0.2);
+    assertRgbApproxEqual(const Rgb(300, 400, 500, 1.2), 300, 400, 500, 1.2);
   });
 
   test('rgb(r, g, b) coerces channel values to numbers', () {
@@ -195,23 +194,23 @@ void main() {
     // `rgb(undefined, NaN, "foo")`: undefined and the text "foo" give a NaN
     // channel upstream; a channel is a double in Dart, so each is NaN.
     assertRgbApproxEqual(
-      Rgb(double.nan, double.nan, double.nan),
+      const Rgb(double.nan, double.nan, double.nan),
       double.nan,
       double.nan,
       double.nan,
       1,
     );
     // An undefined channel is NaN.
-    assertRgbApproxEqual(Rgb(double.nan, 42, 56), double.nan, 42, 56, 1);
-    assertRgbApproxEqual(Rgb(42, double.nan, 56), 42, double.nan, 56, 1);
-    assertRgbApproxEqual(Rgb(42, 56, double.nan), 42, 56, double.nan, 1);
+    assertRgbApproxEqual(const Rgb(double.nan, 42, 56), double.nan, 42, 56, 1);
+    assertRgbApproxEqual(const Rgb(42, double.nan, 56), 42, double.nan, 56, 1);
+    assertRgbApproxEqual(const Rgb(42, 56, double.nan), 42, 56, double.nan, 1);
   });
 
   test('rgb(r, g, b, opacity) converts undefined opacity to 1', () {
     // `rgb(10, 20, 30, null)` and `rgb(10, 20, 30, undefined)`: an omitted
     // opacity is 1.
-    assertRgbApproxEqual(Rgb(10, 20, 30), 10, 20, 30, 1);
-    assertRgbApproxEqual(Rgb(10, 20, 30), 10, 20, 30, 1);
+    assertRgbApproxEqual(const Rgb(10, 20, 30), 10, 20, 30, 1);
+    assertRgbApproxEqual(const Rgb(10, 20, 30), 10, 20, 30, 1);
   });
 
   test('rgb(format) parses the specified format and converts to RGB', () {
@@ -252,17 +251,17 @@ void main() {
   });
 
   test('rgb(rgb) copies an RGB color', () {
+    // DIVERGES(d3-color): adapt-color-immutable, immutable Rgb reused directly.
     final c1 = Rgb.parse('rgba(70, 130, 180, 0.4)');
     final c2 = Rgb.from(c1);
+    expect(identical(c1, c2), isTrue);
     assertRgbApproxEqual(c1, 70, 130, 180, 0.4);
-    c1.r = c1.g = c1.b = c1.opacity = 0;
-    assertRgbApproxEqual(c1, 0, 0, 0, 0);
     assertRgbApproxEqual(c2, 70, 130, 180, 0.4);
   });
 
   test('rgb(hsl) converts from HSL', () {
-    assertRgbApproxEqual(Rgb.from(Hsl(0, 1, 0.5)), 255, 0, 0, 1);
-    assertRgbApproxEqual(Rgb.from(Hsl(0, 1, 0.5, 0.4)), 255, 0, 0, 0.4);
+    assertRgbApproxEqual(Rgb.from(const Hsl(0, 1, 0.5)), 255, 0, 0, 1);
+    assertRgbApproxEqual(Rgb.from(const Hsl(0, 1, 0.5, 0.4)), 255, 0, 0, 0.4);
   });
 
   test('rgb(color) converts from another colorspace via rgb()', () {
@@ -275,15 +274,15 @@ void main() {
     expect(Rgb.parse('red').displayable(), true);
     expect(Rgb.parse('black').displayable(), true);
     expect(Rgb.parse('invalid').displayable(), false);
-    expect(Rgb(-1, 0, 0).displayable(), false);
-    expect(Rgb(0, -1, 0).displayable(), false);
-    expect(Rgb(0, 0, -1).displayable(), false);
-    expect(Rgb(256, 0, 0).displayable(), false);
-    expect(Rgb(0, 256, 0).displayable(), false);
-    expect(Rgb(0, 0, 256).displayable(), false);
-    expect(Rgb(0, 0, 255, 0).displayable(), true);
-    expect(Rgb(0, 0, 255, 1.2).displayable(), false);
-    expect(Rgb(0, 0, 255, -0.2).displayable(), false);
+    expect(const Rgb(-1, 0, 0).displayable(), false);
+    expect(const Rgb(0, -1, 0).displayable(), false);
+    expect(const Rgb(0, 0, -1).displayable(), false);
+    expect(const Rgb(256, 0, 0).displayable(), false);
+    expect(const Rgb(0, 256, 0).displayable(), false);
+    expect(const Rgb(0, 0, 256).displayable(), false);
+    expect(const Rgb(0, 0, 255, 0).displayable(), true);
+    expect(const Rgb(0, 0, 255, 1.2).displayable(), false);
+    expect(const Rgb(0, 0, 255, -0.2).displayable(), false);
   });
 
   test('rgb.brighter(k) returns a brighter color if k > 0', () {
@@ -350,12 +349,12 @@ void main() {
   });
 
   test('rgb.rgb() returns this', () {
-    final c = Rgb(70, 130, 180);
+    const c = Rgb(70, 130, 180);
     expect(c.rgb(), same(c));
   });
 
   test('rgb.copy(…) returns a new rgb with the specified channel values', () {
-    final c = Rgb(70, 130, 180);
+    const c = Rgb(70, 130, 180);
     expect(c.copy(), isA<Rgb>());
     expect(c.copy().toString(), 'rgb(70, 130, 180)');
     expect(c.copy(opacity: 0.2).toString(), 'rgba(70, 130, 180, 0.2)');

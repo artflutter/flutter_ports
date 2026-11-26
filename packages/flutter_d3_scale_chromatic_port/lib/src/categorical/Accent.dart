@@ -6,11 +6,17 @@
 library;
 
 import 'package:flutter_d3_color_port/d3_color.dart';
-import 'package:flutter_d3_scale_chromatic_port/d3_scale_chromatic.dart';
 
 /// categorical/Accent.js:3 the default export (`schemeAccent` of index.js): an
 /// unmodifiable list of 8 categorical [Rgb] colors.
 // DIVERGES(d3-scale-chromatic): adapt-chromatic-public-names, named export.
-final List<Rgb> schemeAccent = colors(
-  '7fc97fbeaed4fdc086ffff99386cb0f0027fbf5b17666666',
-);
+const List<Rgb> schemeAccent = [
+  Rgb(127, 201, 127),
+  Rgb(190, 174, 212),
+  Rgb(253, 192, 134),
+  Rgb(255, 255, 153),
+  Rgb(56, 108, 176),
+  Rgb(240, 2, 127),
+  Rgb(191, 91, 23),
+  Rgb(102, 102, 102),
+];

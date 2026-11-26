@@ -5,11 +5,19 @@
 library;
 
 import 'package:flutter_d3_color_port/d3_color.dart';
-import 'package:flutter_d3_scale_chromatic_port/d3_scale_chromatic.dart';
 
 /// categorical/category10.js:3 the default export (`schemeCategory10` of index.js): an
 /// unmodifiable list of 10 categorical [Rgb] colors.
 // DIVERGES(d3-scale-chromatic): adapt-chromatic-public-names, named export.
-final List<Rgb> schemeCategory10 = colors(
-  '1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf',
-);
+const List<Rgb> schemeCategory10 = [
+  Rgb(31, 119, 180),
+  Rgb(255, 127, 14),
+  Rgb(44, 160, 44),
+  Rgb(214, 39, 40),
+  Rgb(148, 103, 189),
+  Rgb(140, 86, 75),
+  Rgb(227, 119, 194),
+  Rgb(127, 127, 127),
+  Rgb(188, 189, 34),
+  Rgb(23, 190, 207),
+];

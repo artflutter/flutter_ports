@@ -34,13 +34,22 @@ const double _t2 = 3 * _t1 * _t1;
 /// lab.js:13 `t3`.
 const double _t3 = _t1 * _t1 * _t1;
 
-/// lab.js:15 `labConvert(o)`: a new [Lab] with the channels of [o] in Lab.
-/// A null [o] gives undefined channels and an undefined opacity.
+/// Undefined Lab color returned for an unparseable specifier.
+const Lab _nanLab = Lab(double.nan, double.nan, double.nan, double.nan);
+
+/// Undefined HCL color returned for an unparseable specifier.
+const Hcl _nanHcl = Hcl(double.nan, double.nan, double.nan, double.nan);
+
+/// lab.js:15 `labConvert(o)`: a [Lab] with the channels of [o] in Lab.
+/// Returns [o] directly when it is already a [Lab]. A null [o] gives
+/// undefined channels and an undefined opacity.
 Lab labConvert(Color? o) {
-  if (o is Lab) return Lab(o.l, o.a, o.b, o.opacity);
+  // DIVERGES(d3-color): adapt-color-immutable, reuse immutable Lab directly.
+  if (o is Lab) return o;
   if (o is Hcl) return hcl2lab(o);
+  if (o == null) return _nanLab;
   // DIVERGES(d3-color): adapt-color-convert-locals, o.rgb() with no copy.
-  final c = o is Rgb ? o : (o == null ? rgbConvert(o) : o.rgb());
+  final c = o is Rgb ? o : o.rgb();
   final (l, a, b) = _rgb2lab(c.r, c.g, c.b);
   return Lab(l, a, b, c.opacity);
 }
@@ -70,19 +79,21 @@ Lab labConvert(Color? o) {
 /// `a` and `b` 0.
 Lab gray(double l, [double opacity = 1]) => Lab(l, 0, 0, opacity);
 
-/// lab.js:38 `Lab` and the factory `lab` (lab.js:34): a color in the CIELAB
-/// space. The lightness [l] is in [0, 100] for a color in the gamut.
+/// lab.js:38 `Lab` and the factory `lab` (lab.js:34): an immutable color in
+/// the CIELAB space. The lightness [l] is in [0, 100] for a color in the
+/// gamut.
 // DIVERGES(d3-color): adapt-color-factories, constructors for the overloads.
-class Lab(
+// DIVERGES(d3-color): adapt-color-immutable, immutable const color classes.
+class const Lab(
   /// The lightness.
-  var double l,
+  final double l,
 
   /// The green-red axis.
-  var double a,
+  final double a,
 
   /// The blue-yellow axis.
-  var double b, [
-  @override var double opacity = 1,
+  final double b, [
+  @override final double opacity = 1,
 ]) extends Color {
   /// `lab(l, a, b[, opacity])`. The channels do not clamp.
   this;
@@ -180,10 +191,13 @@ final Float64List _lrgbTable = Float64List.fromList([
   for (var i = 0; i < 256; i++) _lrgbPow(i / 255.0),
 ]);
 
-/// lab.js:84 `hclConvert(o)`: a new [Hcl] with the channels of [o] in HCL. A
-/// null [o] gives undefined channels and an undefined opacity.
+/// lab.js:84 `hclConvert(o)`: an [Hcl] with the channels of [o] in HCL.
+/// Returns [o] directly when it is already an [Hcl]. A null [o] gives
+/// undefined channels and an undefined opacity.
 Hcl hclConvert(Color? o) {
-  if (o is Hcl) return Hcl(o.h, o.c, o.l, o.opacity);
+  // DIVERGES(d3-color): adapt-color-immutable, reuse immutable Hcl directly.
+  if (o is Hcl) return o;
+  if (o == null) return _nanHcl;
   double l;
   double a;
   double b;
@@ -192,7 +206,7 @@ Hcl hclConvert(Color? o) {
     (l, a, b, opacity) = (o.l, o.a, o.b, o.opacity);
   } else {
     // DIVERGES(d3-color): adapt-color-convert-locals, Lab in locals.
-    final c = o is Rgb ? o : (o == null ? rgbConvert(o) : o.rgb());
+    final c = o is Rgb ? o : o.rgb();
     (l, a, b) = _rgb2lab(c.r, c.g, c.b);
     opacity = c.opacity;
   }
@@ -210,19 +224,20 @@ Hcl hclConvert(Color? o) {
 Hcl lch(double l, double c, double h, [double opacity = 1]) =>
     Hcl(h, c, l, opacity);
 
-/// lab.js:100 `Hcl` and the factory `hcl` (lab.js:96): a color in the
-/// cylindrical form of CIELAB. The hue is in degrees.
+/// lab.js:100 `Hcl` and the factory `hcl` (lab.js:96): an immutable color in
+/// the cylindrical form of CIELAB. The hue is in degrees.
 // DIVERGES(d3-color): adapt-color-factories, constructors for the overloads.
-class Hcl(
+// DIVERGES(d3-color): adapt-color-immutable, immutable const color classes.
+class const Hcl(
   /// The hue in degrees.
-  var double h,
+  final double h,
 
   /// The chroma.
-  var double c,
+  final double c,
 
   /// The lightness.
-  var double l, [
-  @override var double opacity = 1,
+  final double l, [
+  @override final double opacity = 1,
 ]) extends Color {
   /// `hcl(h, c, l[, opacity])`. The hue does not wrap and the channels do
   /// not clamp.

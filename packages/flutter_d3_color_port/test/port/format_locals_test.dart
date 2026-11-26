@@ -224,11 +224,11 @@ void main() {
 /// An [Hsl] whose rgb() gives a fixed gray.
 final class _GrayHsl(super.h, super.s, super.l) extends Hsl {
   @override
-  Rgb rgb() => Rgb(7, 7, 7);
+  Rgb rgb() => const Rgb(7, 7, 7);
 }
 
 /// An [Hcl] whose rgb() gives a fixed gray.
 final class _GrayHcl(super.h, super.c, super.l) extends Hcl {
   @override
-  Rgb rgb() => Rgb(7, 7, 7);
+  Rgb rgb() => const Rgb(7, 7, 7);
 }

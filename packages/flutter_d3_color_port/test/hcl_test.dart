@@ -11,7 +11,7 @@ final class _TestColor() extends Color {
   double opacity = double.nan;
 
   @override
-  Rgb rgb() => Rgb(12, 34, 56, 0.4);
+  Rgb rgb() => const Rgb(12, 34, 56, 0.4);
 
   @override
   String toString() => throw StateError('should use rgb, not toString');
@@ -28,7 +28,7 @@ final class _TestColor() extends Color {
 
 void main() {
   test('hcl(…) returns an instance of hcl and color', () {
-    final c = Hcl(120, 40, 50);
+    const c = Hcl(120, 40, 50);
     expect(c, isA<Hcl>());
     expect(c, isA<Color>());
   });
@@ -71,20 +71,18 @@ void main() {
     expect(Hcl.parse('moccasin').toString(), 'rgb(255, 228, 181)');
     expect(Hcl.parse('hsl(60, 100%, 20%)').toString(), 'rgb(102, 102, 0)');
     expect(Hcl.parse('rgb(12, 34, 56)').toString(), 'rgb(12, 34, 56)');
-    expect(Hcl.from(Rgb(12, 34, 56)).toString(), 'rgb(12, 34, 56)');
-    expect(Hcl.from(Hsl(60, 1, 0.2)).toString(), 'rgb(102, 102, 0)');
+    expect(Hcl.from(const Rgb(12, 34, 56)).toString(), 'rgb(12, 34, 56)');
+    expect(Hcl.from(const Hsl(60, 1, 0.2)).toString(), 'rgb(102, 102, 0)');
   });
 
   test('hcl.toString() reflects h, c and l channel values', () {
-    final c = Hcl.parse('#abc')
-      ..h += 10
-      ..c += 1
-      ..l -= 1;
-    expect(c.toString(), 'rgb(170, 183, 204)');
+    final c = Hcl.parse('#abc');
+    final modified = c.copy(h: c.h + 10, c: c.c + 1, l: c.l - 1);
+    expect(modified.toString(), 'rgb(170, 183, 204)');
   });
 
   test('hcl.toString() treats undefined opacity as 1', () {
-    final c = Hcl.parse('#abc')..opacity = double.nan;
+    final c = Hcl.parse('#abc').copy(opacity: double.nan);
     expect(c.toString(), 'rgb(170, 187, 204)');
   });
 
@@ -94,13 +92,13 @@ void main() {
     expect(Hcl.parse('#ccc').toString(), 'rgb(204, 204, 204)');
     expect(Hcl.parse('#fff').toString(), 'rgb(255, 255, 255)');
     // equivalent to hcl(*, *, 40)
-    expect(Hcl(double.nan, 20, 40).toString(), 'rgb(94, 94, 94)');
-    expect(Hcl(120, double.nan, 40).toString(), 'rgb(94, 94, 94)');
-    expect(Hcl(0, double.nan, 40).toString(), 'rgb(94, 94, 94)');
+    expect(const Hcl(double.nan, 20, 40).toString(), 'rgb(94, 94, 94)');
+    expect(const Hcl(120, double.nan, 40).toString(), 'rgb(94, 94, 94)');
+    expect(const Hcl(0, double.nan, 40).toString(), 'rgb(94, 94, 94)');
     // equivalent to hcl(*, *, 0)
-    expect(Hcl(120, 50, double.nan).toString(), 'rgb(0, 0, 0)');
-    expect(Hcl(0, 50, double.nan).toString(), 'rgb(0, 0, 0)');
-    expect(Hcl(120, 0, double.nan).toString(), 'rgb(0, 0, 0)');
+    expect(const Hcl(120, 50, double.nan).toString(), 'rgb(0, 0, 0)');
+    expect(const Hcl(0, 50, double.nan).toString(), 'rgb(0, 0, 0)');
+    expect(const Hcl(120, 0, double.nan).toString(), 'rgb(0, 0, 0)');
   });
 
   test('hcl(yellow) is displayable', () {
@@ -109,22 +107,22 @@ void main() {
   });
 
   test('hcl(h, c, l) does not wrap hue to [0,360)', () {
-    assertHclEqual(Hcl(-10, 40, 50), -10, 40, 50, 1);
-    assertHclEqual(Hcl(0, 40, 50), 0, 40, 50, 1);
-    assertHclEqual(Hcl(360, 40, 50), 360, 40, 50, 1);
-    assertHclEqual(Hcl(370, 40, 50), 370, 40, 50, 1);
+    assertHclEqual(const Hcl(-10, 40, 50), -10, 40, 50, 1);
+    assertHclEqual(const Hcl(0, 40, 50), 0, 40, 50, 1);
+    assertHclEqual(const Hcl(360, 40, 50), 360, 40, 50, 1);
+    assertHclEqual(const Hcl(370, 40, 50), 370, 40, 50, 1);
   });
 
   test('hcl(h, c, l) does not clamp l channel value', () {
-    assertHclEqual(Hcl(120, 20, -10), 120, 20, -10, 1);
-    assertHclEqual(Hcl(120, 20, 0), 120, 20, 0, 1);
-    assertHclEqual(Hcl(120, 20, 100), 120, 20, 100, 1);
-    assertHclEqual(Hcl(120, 20, 110), 120, 20, 110, 1);
+    assertHclEqual(const Hcl(120, 20, -10), 120, 20, -10, 1);
+    assertHclEqual(const Hcl(120, 20, 0), 120, 20, 0, 1);
+    assertHclEqual(const Hcl(120, 20, 100), 120, 20, 100, 1);
+    assertHclEqual(const Hcl(120, 20, 110), 120, 20, 110, 1);
   });
 
   test('hcl(h, c, l, opacity) does not clamp opacity to [0,1]', () {
-    assertHclEqual(Hcl(120, 20, 100, -0.2), 120, 20, 100, -0.2);
-    assertHclEqual(Hcl(120, 20, 110, 1.2), 120, 20, 110, 1.2);
+    assertHclEqual(const Hcl(120, 20, 100, -0.2), 120, 20, 100, -0.2);
+    assertHclEqual(const Hcl(120, 20, 110, 1.2), 120, 20, 110, 1.2);
   });
 
   test('hcl(h, c, l) coerces channel values to numbers', () {
@@ -139,25 +137,25 @@ void main() {
     // `hcl(undefined, NaN, "foo")`: an undefined channel and the string
     // "foo" are NaN as numbers.
     assertHclEqual(
-      Hcl(double.nan, double.nan, double.nan),
+      const Hcl(double.nan, double.nan, double.nan),
       double.nan,
       double.nan,
       double.nan,
       1,
     );
     // `hcl(undefined, 40, 50)`: an undefined channel is NaN.
-    assertHclEqual(Hcl(double.nan, 40, 50), double.nan, 40, 50, 1);
+    assertHclEqual(const Hcl(double.nan, 40, 50), double.nan, 40, 50, 1);
     // `hcl(42, undefined, 50)`: an undefined channel is NaN.
-    assertHclEqual(Hcl(42, double.nan, 50), 42, double.nan, 50, 1);
+    assertHclEqual(const Hcl(42, double.nan, 50), 42, double.nan, 50, 1);
     // `hcl(42, 40, undefined)`: an undefined channel is NaN.
-    assertHclEqual(Hcl(42, 40, double.nan), 42, 40, double.nan, 1);
+    assertHclEqual(const Hcl(42, 40, double.nan), 42, 40, double.nan, 1);
   });
 
   test('hcl(h, c, l, opacity) converts undefined opacity to 1', () {
     // `hcl(10, 20, 30, null)`: an omitted opacity is 1.
-    assertHclEqual(Hcl(10, 20, 30), 10, 20, 30, 1);
+    assertHclEqual(const Hcl(10, 20, 30), 10, 20, 30, 1);
     // `hcl(10, 20, 30, undefined)`: an omitted opacity is 1.
-    assertHclEqual(Hcl(10, 20, 30), 10, 20, 30, 1);
+    assertHclEqual(const Hcl(10, 20, 30), 10, 20, 30, 1);
   });
 
   test('hcl(format) parses the specified format and converts to HCL', () {
@@ -230,29 +228,35 @@ void main() {
   });
 
   test('hcl(hcl) copies an HCL color', () {
-    final c1 = Hcl(120, 30, 50, 0.4);
+    // DIVERGES(d3-color): adapt-color-immutable, immutable Hcl reused directly.
+    const c1 = Hcl(120, 30, 50, 0.4);
     final c2 = Hcl.from(c1);
+    expect(identical(c1, c2), isTrue);
     assertHclEqual(c1, 120, 30, 50, 0.4);
-    c1.h = c1.c = c1.l = c1.opacity = 0;
-    assertHclEqual(c1, 0, 0, 0, 0);
     assertHclEqual(c2, 120, 30, 50, 0.4);
   });
 
   test('hcl(lab) returns h = NaN if a and b are zero', () {
-    assertHclEqual(Hcl.from(Lab(0, 0, 0)), double.nan, double.nan, 0, 1);
-    assertHclEqual(Hcl.from(Lab(50, 0, 0)), double.nan, 0, 50, 1);
-    assertHclEqual(Hcl.from(Lab(100, 0, 0)), double.nan, double.nan, 100, 1);
-    assertHclEqual(Hcl.from(Lab(0, 10, 0)), 0, 10, 0, 1);
-    assertHclEqual(Hcl.from(Lab(50, 10, 0)), 0, 10, 50, 1);
-    assertHclEqual(Hcl.from(Lab(100, 10, 0)), 0, 10, 100, 1);
-    assertHclEqual(Hcl.from(Lab(0, 0, 10)), 90, 10, 0, 1);
-    assertHclEqual(Hcl.from(Lab(50, 0, 10)), 90, 10, 50, 1);
-    assertHclEqual(Hcl.from(Lab(100, 0, 10)), 90, 10, 100, 1);
+    assertHclEqual(Hcl.from(const Lab(0, 0, 0)), double.nan, double.nan, 0, 1);
+    assertHclEqual(Hcl.from(const Lab(50, 0, 0)), double.nan, 0, 50, 1);
+    assertHclEqual(
+      Hcl.from(const Lab(100, 0, 0)),
+      double.nan,
+      double.nan,
+      100,
+      1,
+    );
+    assertHclEqual(Hcl.from(const Lab(0, 10, 0)), 0, 10, 0, 1);
+    assertHclEqual(Hcl.from(const Lab(50, 10, 0)), 0, 10, 50, 1);
+    assertHclEqual(Hcl.from(const Lab(100, 10, 0)), 0, 10, 100, 1);
+    assertHclEqual(Hcl.from(const Lab(0, 0, 10)), 90, 10, 0, 1);
+    assertHclEqual(Hcl.from(const Lab(50, 0, 10)), 90, 10, 50, 1);
+    assertHclEqual(Hcl.from(const Lab(100, 0, 10)), 90, 10, 100, 1);
   });
 
   test('hcl(rgb) converts from RGB', () {
     assertHclEqual(
-      Hcl.from(Rgb(255, 0, 0, 0.4)),
+      Hcl.from(const Rgb(255, 0, 0, 0.4)),
       40.85261277607024,
       106.83899941284552,
       54.29173376861782,
@@ -387,7 +391,7 @@ void main() {
   });
 
   test('hcl.rgb() converts to RGB', () {
-    final c = Hcl(120, 30, 50, 0.4);
+    const c = Hcl(120, 30, 50, 0.4);
     assertRgbApproxEqual(c.rgb(), 105, 126, 73, 0.4);
   });
 }

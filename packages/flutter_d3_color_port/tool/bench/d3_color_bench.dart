@@ -206,12 +206,9 @@ List<Case> cases(Inputs p) {
     (
       'pipe.hclTick',
       (i) {
-        // The tick of an HCL interpolator: write the channels, then print.
+        // The tick of an HCL interpolator: a new hue, then print.
         final c = p.hclColors[i & m];
-        final h = c.h;
-        c.h = h + 0.5;
-        sink += c.toString().length;
-        c.h = h;
+        sink += c.copy(h: c.h + 0.5).toString().length;
       },
     ),
     (

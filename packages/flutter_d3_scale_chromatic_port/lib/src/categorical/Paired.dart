@@ -6,11 +6,21 @@
 library;
 
 import 'package:flutter_d3_color_port/d3_color.dart';
-import 'package:flutter_d3_scale_chromatic_port/d3_scale_chromatic.dart';
 
 /// categorical/Paired.js:3 the default export (`schemePaired` of index.js): an
 /// unmodifiable list of 12 categorical [Rgb] colors.
 // DIVERGES(d3-scale-chromatic): adapt-chromatic-public-names, named export.
-final List<Rgb> schemePaired = colors(
-  'a6cee31f78b4b2df8a33a02cfb9a99e31a1cfdbf6fff7f00cab2d66a3d9affff99b15928',
-);
+const List<Rgb> schemePaired = [
+  Rgb(166, 206, 227),
+  Rgb(31, 120, 180),
+  Rgb(178, 223, 138),
+  Rgb(51, 160, 44),
+  Rgb(251, 154, 153),
+  Rgb(227, 26, 28),
+  Rgb(253, 191, 111),
+  Rgb(255, 127, 0),
+  Rgb(202, 178, 214),
+  Rgb(106, 61, 154),
+  Rgb(255, 255, 153),
+  Rgb(177, 89, 40),
+];

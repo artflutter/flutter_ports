@@ -13,18 +13,58 @@ import 'package:flutter_d3_scale_chromatic_port/d3_scale_chromatic.dart';
 /// ColorBrewer palettes indexed by class count (3 to 9);
 /// indices 0, 1 and 2 are null.
 // DIVERGES(d3-scale-chromatic): adapt-chromatic-public-names, named export.
-final List<List<Rgb>?> schemeOranges = List<List<Rgb>?>.unmodifiable([
+const List<List<Rgb>?> schemeOranges = [
   null,
   null,
   null,
-  colors('fee6cefdae6be6550d'),
-  colors('feeddefdbe85fd8d3cd94701'),
-  colors('feeddefdbe85fd8d3ce6550da63603'),
-  colors('feeddefdd0a2fdae6bfd8d3ce6550da63603'),
-  colors('feeddefdd0a2fdae6bfd8d3cf16913d948018c2d04'),
-  colors('fff5ebfee6cefdd0a2fdae6bfd8d3cf16913d948018c2d04'),
-  colors('fff5ebfee6cefdd0a2fdae6bfd8d3cf16913d94801a636037f2704'),
-]);
+  [Rgb(254, 230, 206), Rgb(253, 174, 107), Rgb(230, 85, 13)],
+  [Rgb(254, 237, 222), Rgb(253, 190, 133), Rgb(253, 141, 60), Rgb(217, 71, 1)],
+  [
+    Rgb(254, 237, 222),
+    Rgb(253, 190, 133),
+    Rgb(253, 141, 60),
+    Rgb(230, 85, 13),
+    Rgb(166, 54, 3),
+  ],
+  [
+    Rgb(254, 237, 222),
+    Rgb(253, 208, 162),
+    Rgb(253, 174, 107),
+    Rgb(253, 141, 60),
+    Rgb(230, 85, 13),
+    Rgb(166, 54, 3),
+  ],
+  [
+    Rgb(254, 237, 222),
+    Rgb(253, 208, 162),
+    Rgb(253, 174, 107),
+    Rgb(253, 141, 60),
+    Rgb(241, 105, 19),
+    Rgb(217, 72, 1),
+    Rgb(140, 45, 4),
+  ],
+  [
+    Rgb(255, 245, 235),
+    Rgb(254, 230, 206),
+    Rgb(253, 208, 162),
+    Rgb(253, 174, 107),
+    Rgb(253, 141, 60),
+    Rgb(241, 105, 19),
+    Rgb(217, 72, 1),
+    Rgb(140, 45, 4),
+  ],
+  [
+    Rgb(255, 245, 235),
+    Rgb(254, 230, 206),
+    Rgb(253, 208, 162),
+    Rgb(253, 174, 107),
+    Rgb(253, 141, 60),
+    Rgb(241, 105, 19),
+    Rgb(217, 72, 1),
+    Rgb(166, 54, 3),
+    Rgb(127, 39, 4),
+  ],
+];
 
 /// sequential-single/Oranges.js the default export (`interpolateOranges` of index.js): the
 /// continuous RGB B-spline interpolator for [schemeOranges].

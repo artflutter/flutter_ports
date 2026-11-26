@@ -12,10 +12,8 @@ void main() {
   print(steelblue.formatHex()); // #4682b4
 
   // Rotate the hue by 90°, bump up the saturation and fade the color.
-  final c = Hsl.from(steelblue)
-    ..h += 90
-    ..s += 0.2
-    ..opacity = 0.8;
+  final hsl = Hsl.from(steelblue);
+  final c = hsl.copy(h: hsl.h + 90, s: hsl.s + 0.2, opacity: 0.8);
   print(c); // rgba(198, 45, 205, 0.8)
 
   // A brighter color in CIELCh: the lightness goes up by 18.
@@ -23,5 +21,5 @@ void main() {
 
   // A gray of CIELAB lightness 50, and a Cubehelix color.
   print(gray(50).formatRgb()); // rgb(119, 119, 119)
-  print(Cubehelix(300, 0.5, 0.5).formatHex()); // #ae629f
+  print(const Cubehelix(300, 0.5, 0.5).formatHex()); // #ae629f
 }

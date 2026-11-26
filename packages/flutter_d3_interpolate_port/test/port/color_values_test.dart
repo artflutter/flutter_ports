@@ -35,40 +35,32 @@ void main() {
     ),
   ];
 
-  test('each call returns a new color of the class of the space', () {
+  test('repeated calls return equal immutable colors of the space', () {
     for (final (name, i, type) in interpolators()) {
       final x = i(0.3);
       final y = i(0.3);
       expect(x.runtimeType, type, reason: name);
-      expect(identical(x, y), isFalse, reason: name);
       expect(x.toString(), y.toString(), reason: name);
     }
   });
 
-  test('a write into a result does not change the next result', () {
-    for (final (name, i, _) in interpolators()) {
-      final text = i(0.6).toString();
-      i(0.6).opacity = 0;
-      expect(i(0.6).toString(), text, reason: name);
-    }
-  });
-
-  test('an interpolator does not change its colors and does not read them '
-      'again', () {
-    final start = Rgb(70, 130, 180);
-    final end = Hsl(0, 0.59, 0.41);
-    final i = interpolateRgb(start, end);
-    final text = i(0.5).toString();
-    expect(start.toString(), 'rgb(70, 130, 180)');
-    start
-      ..r = 0
-      ..opacity = 0.5;
-    end.l = 1;
-    expect(i(0.5).toString(), text);
-  });
+  test(
+    'an interpolator captures its endpoints and returns consistent results',
+    () {
+      const start = Rgb(70, 130, 180);
+      const end = Hsl(0, 0.59, 0.41);
+      final i = interpolateRgb(start, end);
+      final text = i(0.5).toString();
+      expect(start.toString(), 'rgb(70, 130, 180)');
+      expect(i(0.5).toString(), text);
+    },
+  );
 
   test('the RGB splines have the opacity 1 and need a color', () {
-    final i = interpolateRgbBasis([Rgb(10, 20, 30, 0.2), Rgb(40, 50, 60, 0.4)]);
+    final i = interpolateRgbBasis([
+      const Rgb(10, 20, 30, 0.2),
+      const Rgb(40, 50, 60, 0.4),
+    ]);
     expect(i(0.5).opacity, 1);
     expect(i(0.5).toString(), 'rgb(25, 35, 45)');
     expect(() => interpolateRgbBasis(const []), throwsArgumentError);

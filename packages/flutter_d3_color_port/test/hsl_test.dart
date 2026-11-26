@@ -11,7 +11,7 @@ final class _TestColor() extends Color {
   double opacity = double.nan;
 
   @override
-  Rgb rgb() => Rgb(12, 34, 56, 0.4);
+  Rgb rgb() => const Rgb(12, 34, 56, 0.4);
 
   @override
   String toString() => throw StateError('should use rgb, not toString');
@@ -28,7 +28,7 @@ final class _TestColor() extends Color {
 
 void main() {
   test('hsl(…) returns an instance of hsl and color', () {
-    final c = Hsl(120, 0.4, 0.5);
+    const c = Hsl(120, 0.4, 0.5);
     expect(c, isA<Hsl>());
     expect(c, isA<Color>());
   });
@@ -47,9 +47,12 @@ void main() {
       'rgba(102, 102, 0, 0.4)',
     );
     expect(Hsl.parse('rgb(12, 34, 56)').toString(), 'rgb(12, 34, 56)');
-    expect(Hsl.from(Rgb(12, 34, 56)).toString(), 'rgb(12, 34, 56)');
-    expect(Hsl.from(Hsl(60, 1, 0.2)).toString(), 'rgb(102, 102, 0)');
-    expect(Hsl.from(Hsl(60, 1, 0.2, 0.4)).toString(), 'rgba(102, 102, 0, 0.4)');
+    expect(Hsl.from(const Rgb(12, 34, 56)).toString(), 'rgb(12, 34, 56)');
+    expect(Hsl.from(const Hsl(60, 1, 0.2)).toString(), 'rgb(102, 102, 0)');
+    expect(
+      Hsl.from(const Hsl(60, 1, 0.2, 0.4)).toString(),
+      'rgba(102, 102, 0, 0.4)',
+    );
   });
 
   test('hsl.formatRgb() formats as rgb(…) or rgba(…)', () {
@@ -82,10 +85,10 @@ void main() {
   });
 
   test('hsl.formatHsl() clamps to the expected range', () {
-    expect(Hsl(180, -100, -50).formatHsl(), 'hsl(180, 0%, 0%)');
-    expect(Hsl(180, 150, 200).formatHsl(), 'hsl(180, 100%, 100%)');
-    expect(Hsl(-90, 50, 50).formatHsl(), 'hsl(270, 100%, 100%)');
-    expect(Hsl(420, 50, 50).formatHsl(), 'hsl(60, 100%, 100%)');
+    expect(const Hsl(180, -100, -50).formatHsl(), 'hsl(180, 0%, 0%)');
+    expect(const Hsl(180, 150, 200).formatHsl(), 'hsl(180, 100%, 100%)');
+    expect(const Hsl(-90, 50, 50).formatHsl(), 'hsl(270, 100%, 100%)');
+    expect(const Hsl(420, 50, 50).formatHsl(), 'hsl(60, 100%, 100%)');
   });
 
   test('hsl.formatHex() formats as #rrggbb', () {
@@ -96,12 +99,14 @@ void main() {
   });
 
   test('hsl.toString() reflects h, s and l channel values and opacity', () {
-    final c = Hsl.parse('#abc')
-      ..h += 10
-      ..s += 0.01
-      ..l -= 0.01
-      ..opacity = 0.4;
-    expect(c.toString(), 'rgba(166, 178, 203, 0.4)');
+    final c = Hsl.parse('#abc');
+    final modified = c.copy(
+      h: c.h + 10,
+      s: c.s + 0.01,
+      l: c.l - 0.01,
+      opacity: 0.4,
+    );
+    expect(modified.toString(), 'rgba(166, 178, 203, 0.4)');
   });
 
   test('hsl.toString() treats undefined channel values as 0', () {
@@ -110,47 +115,50 @@ void main() {
     expect(Hsl.parse('#ccc').toString(), 'rgb(204, 204, 204)');
     expect(Hsl.parse('#fff').toString(), 'rgb(255, 255, 255)');
     // equivalent to hsl(*, 0, 0.4)
-    expect(Hsl(double.nan, 0.5, 0.4).toString(), 'rgb(102, 102, 102)');
-    expect(Hsl(120, double.nan, 0.4).toString(), 'rgb(102, 102, 102)');
-    expect(Hsl(double.nan, double.nan, 0.4).toString(), 'rgb(102, 102, 102)');
+    expect(const Hsl(double.nan, 0.5, 0.4).toString(), 'rgb(102, 102, 102)');
+    expect(const Hsl(120, double.nan, 0.4).toString(), 'rgb(102, 102, 102)');
+    expect(
+      const Hsl(double.nan, double.nan, 0.4).toString(),
+      'rgb(102, 102, 102)',
+    );
     // equivalent to hsl(120, 0.5, 0)
-    expect(Hsl(120, 0.5, double.nan).toString(), 'rgb(0, 0, 0)');
+    expect(const Hsl(120, 0.5, double.nan).toString(), 'rgb(0, 0, 0)');
   });
 
   test('hsl.toString() treats undefined opacity as 1', () {
-    final c = Hsl.parse('#abc')..opacity = double.nan;
+    final c = Hsl.parse('#abc').copy(opacity: double.nan);
     expect(c.toString(), 'rgb(170, 187, 204)');
   });
 
   test('hsl(h, s, l) does not wrap hue to [0,360)', () {
-    assertHslEqual(Hsl(-10, 0.4, 0.5), -10, 0.4, 0.5, 1);
-    assertHslEqual(Hsl(0, 0.4, 0.5), 0, 0.4, 0.5, 1);
-    assertHslEqual(Hsl(360, 0.4, 0.5), 360, 0.4, 0.5, 1);
-    assertHslEqual(Hsl(370, 0.4, 0.5), 370, 0.4, 0.5, 1);
+    assertHslEqual(const Hsl(-10, 0.4, 0.5), -10, 0.4, 0.5, 1);
+    assertHslEqual(const Hsl(0, 0.4, 0.5), 0, 0.4, 0.5, 1);
+    assertHslEqual(const Hsl(360, 0.4, 0.5), 360, 0.4, 0.5, 1);
+    assertHslEqual(const Hsl(370, 0.4, 0.5), 370, 0.4, 0.5, 1);
   });
 
   test('hsl(h, s, l) does not clamp s and l channel values to [0,1]', () {
-    assertHslEqual(Hsl(120, -0.1, 0.5), 120, -0.1, 0.5, 1);
-    assertHslEqual(Hsl(120, 1.1, 0.5), 120, 1.1, 0.5, 1);
-    assertHslEqual(Hsl(120, 0.2, -0.1), 120, 0.2, -0.1, 1);
-    assertHslEqual(Hsl(120, 0.2, 1.1), 120, 0.2, 1.1, 1);
+    assertHslEqual(const Hsl(120, -0.1, 0.5), 120, -0.1, 0.5, 1);
+    assertHslEqual(const Hsl(120, 1.1, 0.5), 120, 1.1, 0.5, 1);
+    assertHslEqual(const Hsl(120, 0.2, -0.1), 120, 0.2, -0.1, 1);
+    assertHslEqual(const Hsl(120, 0.2, 1.1), 120, 0.2, 1.1, 1);
   });
 
   test('hsl(h, s, l).clamp() clamps channel values', () {
-    assertHslEqual(Hsl(120, -0.1, -0.2).clamp(), 120, 0, 0, 1);
-    assertHslEqual(Hsl(120, 1.1, 1.2).clamp(), 120, 1, 1, 1);
-    assertHslEqual(Hsl(120, 2.1, 2.2).clamp(), 120, 1, 1, 1);
-    assertHslEqual(Hsl(420, -0.1, -0.2).clamp(), 60, 0, 0, 1);
-    assertHslEqual(Hsl(-420, -0.1, -0.2).clamp(), 300, 0, 0, 1);
-    expect(Hsl(-420, -0.1, -0.2, double.nan).clamp().opacity, 1);
-    expect(Hsl(-420, -0.1, -0.2, 0.5).clamp().opacity, 0.5);
-    expect(Hsl(-420, -0.1, -0.2, -1).clamp().opacity, 0);
-    expect(Hsl(-420, -0.1, -0.2, 2).clamp().opacity, 1);
+    assertHslEqual(const Hsl(120, -0.1, -0.2).clamp(), 120, 0, 0, 1);
+    assertHslEqual(const Hsl(120, 1.1, 1.2).clamp(), 120, 1, 1, 1);
+    assertHslEqual(const Hsl(120, 2.1, 2.2).clamp(), 120, 1, 1, 1);
+    assertHslEqual(const Hsl(420, -0.1, -0.2).clamp(), 60, 0, 0, 1);
+    assertHslEqual(const Hsl(-420, -0.1, -0.2).clamp(), 300, 0, 0, 1);
+    expect(const Hsl(-420, -0.1, -0.2, double.nan).clamp().opacity, 1);
+    expect(const Hsl(-420, -0.1, -0.2, 0.5).clamp().opacity, 0.5);
+    expect(const Hsl(-420, -0.1, -0.2, -1).clamp().opacity, 0);
+    expect(const Hsl(-420, -0.1, -0.2, 2).clamp().opacity, 1);
   });
 
   test('hsl(h, s, l, opacity) does not clamp opacity to [0,1]', () {
-    assertHslEqual(Hsl(120, 0.1, 0.5, -0.2), 120, 0.1, 0.5, -0.2);
-    assertHslEqual(Hsl(120, 0.9, 0.5, 1.2), 120, 0.9, 0.5, 1.2);
+    assertHslEqual(const Hsl(120, 0.1, 0.5, -0.2), 120, 0.1, 0.5, -0.2);
+    assertHslEqual(const Hsl(120, 0.9, 0.5, 1.2), 120, 0.9, 0.5, 1.2);
   });
 
   test('hsl(h, s, l) coerces channel values to numbers', () {
@@ -165,40 +173,40 @@ void main() {
     // `hsl(undefined, NaN, "foo")`: undefined and the string "foo" give NaN
     // channels, and a Dart channel is a double, so each is NaN here.
     assertHslEqual(
-      Hsl(double.nan, double.nan, double.nan),
+      const Hsl(double.nan, double.nan, double.nan),
       double.nan,
       double.nan,
       double.nan,
       1,
     );
     // An undefined channel is NaN.
-    assertHslEqual(Hsl(double.nan, 0.4, 0.5), double.nan, 0.4, 0.5, 1);
+    assertHslEqual(const Hsl(double.nan, 0.4, 0.5), double.nan, 0.4, 0.5, 1);
     // An undefined channel is NaN.
-    assertHslEqual(Hsl(42, double.nan, 0.5), 42, double.nan, 0.5, 1);
+    assertHslEqual(const Hsl(42, double.nan, 0.5), 42, double.nan, 0.5, 1);
     // An undefined channel is NaN.
-    assertHslEqual(Hsl(42, 0.4, double.nan), 42, 0.4, double.nan, 1);
+    assertHslEqual(const Hsl(42, 0.4, double.nan), 42, 0.4, double.nan, 1);
   });
 
   test('hsl(h, s, l, opacity) converts undefined opacity to 1', () {
     // `hsl(10, 0.2, 0.3, null)`: an omitted opacity is 1.
-    assertHslEqual(Hsl(10, 0.2, 0.3), 10, 0.2, 0.3, 1);
+    assertHslEqual(const Hsl(10, 0.2, 0.3), 10, 0.2, 0.3, 1);
     // `hsl(10, 0.2, 0.3, undefined)`: an omitted opacity is 1.
-    assertHslEqual(Hsl(10, 0.2, 0.3), 10, 0.2, 0.3, 1);
+    assertHslEqual(const Hsl(10, 0.2, 0.3), 10, 0.2, 0.3, 1);
   });
 
   test('hsl(h, s, l) preserves explicit hue, even for grays', () {
-    assertHslEqual(Hsl(0, 0, 0), 0, 0, 0, 1);
-    assertHslEqual(Hsl(42, 0, 0.5), 42, 0, 0.5, 1);
-    assertHslEqual(Hsl(118, 0, 1), 118, 0, 1, 1);
+    assertHslEqual(const Hsl(0, 0, 0), 0, 0, 0, 1);
+    assertHslEqual(const Hsl(42, 0, 0.5), 42, 0, 0.5, 1);
+    assertHslEqual(const Hsl(118, 0, 1), 118, 0, 1, 1);
   });
 
   test(
     'hsl(h, s, l) preserves explicit saturation, even for white or black',
     () {
-      assertHslEqual(Hsl(0, 0, 0), 0, 0, 0, 1);
-      assertHslEqual(Hsl(0, 0.18, 0), 0, 0.18, 0, 1);
-      assertHslEqual(Hsl(0, 0.42, 1), 0, 0.42, 1, 1);
-      assertHslEqual(Hsl(0, 1, 1), 0, 1, 1, 1);
+      assertHslEqual(const Hsl(0, 0, 0), 0, 0, 0, 1);
+      assertHslEqual(const Hsl(0, 0.18, 0), 0, 0.18, 0, 1);
+      assertHslEqual(const Hsl(0, 0.42, 1), 0, 0.42, 1, 1);
+      assertHslEqual(const Hsl(0, 1, 1), 0, 1, 1, 1);
     },
   );
 
@@ -282,16 +290,16 @@ void main() {
   });
 
   test('hsl(hsl) copies an HSL color', () {
+    // DIVERGES(d3-color): adapt-color-immutable, immutable Hsl reused directly.
     final c1 = Hsl.parse('hsla(120,30%,50%,0.4)');
     final c2 = Hsl.from(c1);
+    expect(identical(c1, c2), isTrue);
     assertHslEqual(c1, 120, 0.3, 0.5, 0.4);
-    c1.h = c1.s = c1.l = c1.opacity = 0;
-    assertHslEqual(c1, 0, 0, 0, 0);
     assertHslEqual(c2, 120, 0.3, 0.5, 0.4);
   });
 
   test('hsl(rgb) converts from RGB', () {
-    assertHslEqual(Hsl.from(Rgb(255, 0, 0, 0.4)), 0, 1, 0.5, 0.4);
+    assertHslEqual(Hsl.from(const Rgb(255, 0, 0, 0.4)), 0, 1, 0.5, 0.4);
   });
 
   test(
@@ -327,14 +335,14 @@ void main() {
       expect(Hsl.parse('red').displayable(), true);
       expect(Hsl.parse('black').displayable(), true);
       expect(Hsl.parse('invalid').displayable(), false);
-      expect(Hsl(double.nan, double.nan, 1).displayable(), true);
-      expect(Hsl(double.nan, double.nan, 1.5).displayable(), false);
-      expect(Hsl(120, -0.5, 0).displayable(), false);
-      expect(Hsl(120, 1.5, 0).displayable(), false);
-      expect(Hsl(0, 1, 1, 0).displayable(), true);
-      expect(Hsl(0, 1, 1, 1).displayable(), true);
-      expect(Hsl(0, 1, 1, -0.2).displayable(), false);
-      expect(Hsl(0, 1, 1, 1.2).displayable(), false);
+      expect(const Hsl(double.nan, double.nan, 1).displayable(), true);
+      expect(const Hsl(double.nan, double.nan, 1.5).displayable(), false);
+      expect(const Hsl(120, -0.5, 0).displayable(), false);
+      expect(const Hsl(120, 1.5, 0).displayable(), false);
+      expect(const Hsl(0, 1, 1, 0).displayable(), true);
+      expect(const Hsl(0, 1, 1, 1).displayable(), true);
+      expect(const Hsl(0, 1, 1, -0.2).displayable(), false);
+      expect(const Hsl(0, 1, 1, 1.2).displayable(), false);
     },
   );
 
@@ -402,12 +410,12 @@ void main() {
   });
 
   test('hsl.rgb() converts to RGB', () {
-    final c = Hsl(120, 0.3, 0.5, 0.4);
+    const c = Hsl(120, 0.3, 0.5, 0.4);
     assertRgbApproxEqual(c.rgb(), 89, 166, 89, 0.4);
   });
 
   test('hsl.copy(…) returns a new hsl with the specified channel values', () {
-    final c = Hsl(120, 0.3, 0.5, 0.4);
+    const c = Hsl(120, 0.3, 0.5, 0.4);
     expect(c.copy(), isA<Hsl>());
     expect(c.copy().formatHsl(), 'hsla(120, 30%, 50%, 0.4)');
     expect(c.copy(opacity: 1).formatHsl(), 'hsl(120, 30%, 50%)');

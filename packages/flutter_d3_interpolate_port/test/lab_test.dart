@@ -46,40 +46,48 @@ void main() {
   test('interpolateLab(a, b) uses b’s channel value when a’s channel value is '
       'undefined', () {
     expect(
-      interpolateLab(Lab(nan, nan, nan, nan), Lab(20, 40, 60))(0.5).toString(),
-      Lab(20, 40, 60).toString(),
+      interpolateLab(const Lab(nan, nan, nan, nan), const Lab(20, 40, 60))(0.5)
+          .toString(),
+      const Lab(20, 40, 60).toString(),
     );
     expect(
-      interpolateLab(Lab(nan, 20, 40), Lab(60, 80, 100))(0.5).toString(),
-      Lab(60, 50, 70).toString(),
+      interpolateLab(const Lab(nan, 20, 40), const Lab(60, 80, 100))(0.5)
+          .toString(),
+      const Lab(60, 50, 70).toString(),
     );
     expect(
-      interpolateLab(Lab(20, nan, 40), Lab(60, 80, 100))(0.5).toString(),
-      Lab(40, 80, 70).toString(),
+      interpolateLab(const Lab(20, nan, 40), const Lab(60, 80, 100))(0.5)
+          .toString(),
+      const Lab(40, 80, 70).toString(),
     );
     expect(
-      interpolateLab(Lab(20, 40, nan), Lab(60, 80, 100))(0.5).toString(),
-      Lab(40, 60, 100).toString(),
+      interpolateLab(const Lab(20, 40, nan), const Lab(60, 80, 100))(0.5)
+          .toString(),
+      const Lab(40, 60, 100).toString(),
     );
   });
 
   test('interpolateLab(a, b) uses a’s channel value when b’s channel value is '
       'undefined', () {
     expect(
-      interpolateLab(Lab(20, 40, 60), Lab(nan, nan, nan, nan))(0.5).toString(),
-      Lab(20, 40, 60).toString(),
+      interpolateLab(const Lab(20, 40, 60), const Lab(nan, nan, nan, nan))(0.5)
+          .toString(),
+      const Lab(20, 40, 60).toString(),
     );
     expect(
-      interpolateLab(Lab(60, 80, 100), Lab(nan, 20, 40))(0.5).toString(),
-      Lab(60, 50, 70).toString(),
+      interpolateLab(const Lab(60, 80, 100), const Lab(nan, 20, 40))(0.5)
+          .toString(),
+      const Lab(60, 50, 70).toString(),
     );
     expect(
-      interpolateLab(Lab(60, 80, 100), Lab(20, nan, 40))(0.5).toString(),
-      Lab(40, 80, 70).toString(),
+      interpolateLab(const Lab(60, 80, 100), const Lab(20, nan, 40))(0.5)
+          .toString(),
+      const Lab(40, 80, 70).toString(),
     );
     expect(
-      interpolateLab(Lab(60, 80, 100), Lab(20, 40, nan))(0.5).toString(),
-      Lab(40, 60, 100).toString(),
+      interpolateLab(const Lab(60, 80, 100), const Lab(20, 40, nan))(0.5)
+          .toString(),
+      const Lab(40, 60, 100).toString(),
     );
   });
 }

@@ -23,16 +23,15 @@ final c = d3.Hsl.parse('steelblue'); // h 207.27…, s 0.44, l 0.4902…, opacit
 Now rotate the hue by 90°, bump up the saturation, and format as a string for CSS:
 
 ```dart
-c.h += 90;
-c.s += 0.2;
-c.toString(); // rgb(198, 45, 205)
+final rotated = c.copy(h: c.h + 90, s: c.s + 0.2);
+rotated.toString(); // rgb(198, 45, 205)
 ```
 
 To fade the color slightly:
 
 ```dart
-c.opacity = 0.8;
-c.toString(); // rgba(198, 45, 205, 0.8)
+final faded = rotated.copy(opacity: 0.8);
+faded.toString(); // rgba(198, 45, 205, 0.8)
 ```
 
 In addition to the ubiquitous and machine-friendly RGB and HSL color space, d3-color supports
@@ -156,8 +155,8 @@ returned instance.
 `d3.Rgb(r, g, b)` takes the channel values of the returned color; an *opacity* may also be
 specified. `d3.Rgb.parse(specifier)` parses a CSS Color Module Level 3 *specifier* string and then
 converts it to the RGB color space. See d3.color for examples. `d3.Rgb.from(color)` converts a
-*color* instance to the RGB color space using *color*.rgb. Note that unlike *color*.rgb this
-method *always* returns a new instance, even if *color* is already an RGB color.
+*color* instance to the RGB color space using *color*.rgb (reusing *color* directly when it is
+already an `Rgb`, since colors are immutable).
 
 ### *rgb*.clamp()
 
@@ -241,6 +240,8 @@ channel is 0, and an undefined opacity is 1, as `formatRgb()` reads them.
 
 ## Differences from d3-color
 
+- Colors (`Color`, `Rgb`, `Hsl`, `Lab`, `Hcl`, `Cubehelix`) are immutable with `final` channel
+  fields and `const` constructors (D3 ADR 0013). Use `color.copy(...)` to derive modified colors.
 - The d3-color factories `rgb`, `hsl`, `lab`, `hcl`, `lch` and `cubehelix` change with their
   argument count. In Dart, each form has its own constructor: `d3.Rgb(70, 130, 180)`,
   `d3.Rgb.parse('steelblue')` and `d3.Rgb.from(color)`.

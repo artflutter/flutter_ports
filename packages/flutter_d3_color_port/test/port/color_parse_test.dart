@@ -617,6 +617,6 @@ Color? _reference(String specifier) {
   final named = _named[format];
   if (named != null) return _rgbn(named);
   return format == 'transparent'
-      ? Rgb(double.nan, double.nan, double.nan, 0)
+      ? const Rgb(double.nan, double.nan, double.nan, 0)
       : null;
 }

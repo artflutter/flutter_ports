@@ -12,7 +12,7 @@ void main() {
       expect(list[0].formatHex(), '#ff0000');
       expect(list[1].formatHex(), '#00ff00');
       expect(list[2].formatHex(), '#0000ff');
-      expect(() => list.add(Rgb(0, 0, 0)), throwsUnsupportedError);
+      expect(() => list.add(const Rgb(0, 0, 0)), throwsUnsupportedError);
     });
 
     test('truncates trailing partial characters as upstream', () {
@@ -22,7 +22,7 @@ void main() {
     });
   });
 
-  group('fresh color objects per call', () {
+  group('immutable color objects per call', () {
     final interpolators = <String, Color Function(double)>{
       'interpolateBrBG': interpolateBrBG,
       'interpolateBlues': interpolateBlues,
@@ -41,20 +41,24 @@ void main() {
     };
 
     for (final entry in interpolators.entries) {
-      test('${entry.key} returns a distinct Color object on each call', () {
+      test('${entry.key} returns consistent immutable Color values', () {
         final a = entry.value(0.5);
         final b = entry.value(0.5);
-        expect(identical(a, b), isFalse);
+        expect(a.runtimeType, b.runtimeType);
         expect(a.toString(), b.toString());
-        if (a is Rgb) {
-          a.r = -999;
-          expect((entry.value(0.5) as Rgb).r, isNot(-999));
-        } else if (a is Cubehelix) {
-          a.h = -999;
-          expect((entry.value(0.5) as Cubehelix).h, isNot(-999));
-        }
       });
     }
+
+    test('viridis family returns shared const Rgb instances directly', () {
+      for (final fn in [
+        interpolateViridis,
+        interpolateMagma,
+        interpolateInferno,
+        interpolatePlasma,
+      ]) {
+        expect(identical(fn(0.5), fn(0.5)), isTrue);
+      }
+    });
   });
 
   group('edge inputs (clamping, wrapping, NaN, infinities)', () {

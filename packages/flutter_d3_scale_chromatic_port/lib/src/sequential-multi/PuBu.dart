@@ -12,18 +12,63 @@ import 'package:flutter_d3_scale_chromatic_port/d3_scale_chromatic.dart';
 /// ColorBrewer palettes indexed by class count (3 to 9);
 /// indices 0, 1 and 2 are null.
 // DIVERGES(d3-scale-chromatic): adapt-chromatic-public-names, named export.
-final List<List<Rgb>?> schemePuBu = List<List<Rgb>?>.unmodifiable([
+const List<List<Rgb>?> schemePuBu = [
   null,
   null,
   null,
-  colors('ece7f2a6bddb2b8cbe'),
-  colors('f1eef6bdc9e174a9cf0570b0'),
-  colors('f1eef6bdc9e174a9cf2b8cbe045a8d'),
-  colors('f1eef6d0d1e6a6bddb74a9cf2b8cbe045a8d'),
-  colors('f1eef6d0d1e6a6bddb74a9cf3690c00570b0034e7b'),
-  colors('fff7fbece7f2d0d1e6a6bddb74a9cf3690c00570b0034e7b'),
-  colors('fff7fbece7f2d0d1e6a6bddb74a9cf3690c00570b0045a8d023858'),
-]);
+  [Rgb(236, 231, 242), Rgb(166, 189, 219), Rgb(43, 140, 190)],
+  [
+    Rgb(241, 238, 246),
+    Rgb(189, 201, 225),
+    Rgb(116, 169, 207),
+    Rgb(5, 112, 176),
+  ],
+  [
+    Rgb(241, 238, 246),
+    Rgb(189, 201, 225),
+    Rgb(116, 169, 207),
+    Rgb(43, 140, 190),
+    Rgb(4, 90, 141),
+  ],
+  [
+    Rgb(241, 238, 246),
+    Rgb(208, 209, 230),
+    Rgb(166, 189, 219),
+    Rgb(116, 169, 207),
+    Rgb(43, 140, 190),
+    Rgb(4, 90, 141),
+  ],
+  [
+    Rgb(241, 238, 246),
+    Rgb(208, 209, 230),
+    Rgb(166, 189, 219),
+    Rgb(116, 169, 207),
+    Rgb(54, 144, 192),
+    Rgb(5, 112, 176),
+    Rgb(3, 78, 123),
+  ],
+  [
+    Rgb(255, 247, 251),
+    Rgb(236, 231, 242),
+    Rgb(208, 209, 230),
+    Rgb(166, 189, 219),
+    Rgb(116, 169, 207),
+    Rgb(54, 144, 192),
+    Rgb(5, 112, 176),
+    Rgb(3, 78, 123),
+  ],
+  [
+    Rgb(255, 247, 251),
+    Rgb(236, 231, 242),
+    Rgb(208, 209, 230),
+    Rgb(166, 189, 219),
+    Rgb(116, 169, 207),
+    Rgb(54, 144, 192),
+    Rgb(5, 112, 176),
+    Rgb(4, 90, 141),
+    Rgb(2, 56, 88),
+  ],
+];
 
 /// sequential-multi/PuBu.js the default export (`interpolatePuBu` of index.js): the
 /// continuous RGB B-spline interpolator for [schemePuBu].

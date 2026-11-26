@@ -25,9 +25,9 @@ dependencies:
     sdk: flutter
   # The D3 modules, one package each, as on npm (D3 ADR 0008). The bundle
   # index re-exports each of them.
-  flutter_d3_color_port: ^0.1.0
-  flutter_d3_interpolate_port: ^0.1.0
-  flutter_d3_scale_chromatic_port: ^0.1.0
+  flutter_d3_color_port: ^0.2.0
+  flutter_d3_interpolate_port: ^0.2.0
+  flutter_d3_scale_chromatic_port: ^0.2.0
 
 dev_dependencies:
   # The tests use package:test. The constraint is the test constraint of

@@ -64,6 +64,20 @@ Optimizations applied (row `adapt-chromatic-fast-forms`):
 | `parse.colors10` | 109.05 | 399.51 | 180.97 (0.45x) | 939.21 | 133.21 (0.14x) | 498.50 | 89.05 (0.18x) |
 | `parse.colors256` | 2487.34 | 9945.80 | 4647.22 (0.47x) | 26432.62 | 3019.41 (0.11x) | 11903.81 | 1838.13 (0.15x) |
 
+## 2b. Immutable `const` colors upgrade (v0.2.0, D3 ADR 0013)
+
+Making `flutter_d3_color_port`'s color classes immutable (`final` fields + `const` constructors)
+eliminated the per-call `Rgb` allocation in `viridis.dart` (direct lookup from compile-time
+`const List<Rgb>` tables) and eliminated startup hex parsing across all 38 discrete schemes:
+
+| Case | Node.js | AOT v0.1 → v0.2 | AOT speedup | dart2js v0.1 → v0.2 | dart2wasm v0.1 → v0.2 |
+|---|---:|---:|---:|---:|---:|
+| `call.viridis` | 2.42 | 6.98 → **1.56** | **4.47×** *(1.55× faster than Node)* | 5.84 → **2.80** (2.09×) | 2.25 → **2.04** (1.10×) |
+| `call.magma` | 2.38 | 6.89 → **2.00** | **3.44×** *(1.19× faster than Node)* | 6.05 → 6.04 (1.00×) | 2.26 → **2.05** (1.10×) |
+| `text.viridis` | 2.37 | 20.66 → **14.93** | **1.38×** | 28.53 → **21.46** (1.33×) | 22.41 → 21.67 (1.03×) |
+
+All other `call.*` and `text.*` cases remained within measurement noise of v0.1.x.
+
 ## 3. Native macOS Flutter AOT and Desktop Browsers (ns/op)
 
 Each browser cell shows `upstream JS / dart2js / dart2wasm`.

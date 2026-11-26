@@ -8,7 +8,7 @@ import 'dart:collection';
 
 import 'package:flutter_d3_color_port/d3_color.dart';
 
-final Rgb _placeholder = Rgb(0, 0, 0);
+const Rgb _placeholder = Rgb(0, 0, 0);
 
 /// colors.js:1 the default export: parses [specifier], a concatenation of
 /// 6-character hexadecimal RGB strings (`rrggbb`), into an unmodifiable list

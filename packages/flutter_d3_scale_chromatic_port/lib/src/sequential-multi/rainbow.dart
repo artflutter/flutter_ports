@@ -11,15 +11,15 @@ import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 /// Cubehelix rotation from purple to yellow.
 // DIVERGES(d3-scale-chromatic): platform-chromatic-math-last-bit, libm trig.
 final Cubehelix Function(double t) interpolateWarm = interpolateCubehelixLong(
-  Cubehelix(-100, 0.75, 0.35),
-  Cubehelix(80, 1.5, 0.8),
+  const Cubehelix(-100, 0.75, 0.35),
+  const Cubehelix(80, 1.5, 0.8),
 );
 
 /// rainbow.js:6 `cool` (`interpolateCool` of index.js:41): a 180-degree
 /// Cubehelix rotation from purple to green.
 final Cubehelix Function(double t) interpolateCool = interpolateCubehelixLong(
-  Cubehelix(260, 0.75, 0.35),
-  Cubehelix(80, 1.5, 0.8),
+  const Cubehelix(260, 0.75, 0.35),
+  const Cubehelix(80, 1.5, 0.8),
 );
 
 /// rainbow.js:10 the default export (`interpolateRainbow` of index.js:41):

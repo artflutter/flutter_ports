@@ -210,15 +210,16 @@ const Map<String, int> _named = {
 /// color.js:3 `Color`, the base class of each color space. The upstream
 /// factory `color` is also this class: `x instanceof color` is `x is Color`.
 ///
-/// A color is mutable: each channel is a field that code can write, as
-/// upstream.
+/// Colors are immutable value objects with `const` constructors (D3 ADR 0013).
+/// Use [copy] to derive a color with changed channels.
 // DIVERGES(d3-color): adapt-color-base-class, abstract members, typed copy.
-abstract class Color() {
+// DIVERGES(d3-color): adapt-color-immutable, immutable const color classes.
+abstract class const Color() {
   /// A color with no channels: each subclass declares its channels.
   this;
 
   /// The opacity in [0, 1]. NaN is undefined, and the formats read it as 1.
-  abstract double opacity;
+  double get opacity;
 
   /// color.js:171 `copy(channels)`: a new color of the same space with the
   /// channels of this color, and the given channels in place of them.
@@ -565,11 +566,7 @@ final class _NamedTable() {
       keys.add(name);
       hashes.add(h);
       final value = _named[name];
-      colors.add(
-        value == null
-            ? Rgb(double.nan, double.nan, double.nan, 0)
-            : rgbn(value),
-      );
+      colors.add(value == null ? _transparentRgb : rgbn(value));
     }
   }
 
@@ -584,7 +581,7 @@ final class _NamedTable() {
   /// The hash of each entry.
   final List<int> hashes = [];
 
-  /// The color of each entry, which [color] copies.
+  /// The immutable color of each entry.
   final List<Rgb> colors = [];
 
   /// The hash of the code units of [s] from [p] to [end], each lowercase.
@@ -634,9 +631,7 @@ Color? _scanNamed(String s, int p, int end) {
   }
   final table = _namedTable;
   final e = table.find(s, p, end, h);
-  if (e < 0) return null;
-  final c = table.colors[e];
-  return Rgb(c.r, c.g, c.b, c.opacity);
+  return e < 0 ? null : table.colors[e];
 }
 
 /// The upstream lines of color.js:201 `color(format)`, for a text with a
@@ -714,9 +709,7 @@ Color? _colorRegExp(String specifier) {
   }
   final named = _named[format];
   if (named != null) return rgbn(named);
-  return format == 'transparent'
-      ? Rgb(double.nan, double.nan, double.nan, 0)
-      : null;
+  return format == 'transparent' ? _transparentRgb : null;
 }
 
 /// Whether [text] has one of the two characters where Dart `trim()` and
@@ -749,28 +742,35 @@ Rgb rgbn(int n) => Rgb(
 Rgb rgba(double r, double g, double b, double a) =>
     a <= 0 ? Rgb(double.nan, double.nan, double.nan, a) : Rgb(r, g, b, a);
 
-/// color.js:229 `rgbConvert(o)`: a new [Rgb] with the channels of [o] in
-/// RGB. A null [o] (a CSS text that did not parse) gives undefined channels
-/// and an undefined opacity.
-Rgb rgbConvert(Color? o) {
-  if (o == null) return Rgb(double.nan, double.nan, double.nan, double.nan);
-  final c = o.rgb();
-  return Rgb(c.r, c.g, c.b, c.opacity);
-}
+/// Undefined RGB color returned for an unparseable specifier.
+const Rgb _nanRgb = Rgb(double.nan, double.nan, double.nan, double.nan);
 
-/// color.js:240 `Rgb` and the factory `rgb` (color.js:236): a color in the
-/// sRGB space. Each channel is in [0, 255] for a color in the gamut.
+/// CSS `transparent`: undefined RGB channels with opacity 0.
+const Rgb _transparentRgb = Rgb(double.nan, double.nan, double.nan, 0);
+
+/// Undefined HSL color returned for an unparseable specifier.
+const Hsl _nanHsl = Hsl(double.nan, double.nan, double.nan, double.nan);
+
+/// color.js:229 `rgbConvert(o)`: an [Rgb] with the channels of [o] in RGB.
+/// Returns [o] directly when it is already an [Rgb]. A null [o] (a CSS text
+/// that did not parse) gives undefined channels and an undefined opacity.
+// DIVERGES(d3-color): adapt-color-immutable, reuse immutable Rgb directly.
+Rgb rgbConvert(Color? o) => o == null ? _nanRgb : o.rgb();
+
+/// color.js:240 `Rgb` and the factory `rgb` (color.js:236): an immutable color
+/// in the sRGB space. Each channel is in [0, 255] for a color in the gamut.
 // DIVERGES(d3-color): adapt-color-factories, constructors for the overloads.
-class Rgb(
+// DIVERGES(d3-color): adapt-color-immutable, immutable const color classes.
+class const Rgb(
   /// The red channel.
-  var double r,
+  final double r,
 
   /// The green channel.
-  var double g,
+  final double g,
 
   /// The blue channel.
-  var double b, [
-  @override var double opacity = 1,
+  final double b, [
+  @override final double opacity = 1,
 ]) extends Color {
   /// `rgb(r, g, b[, opacity])`. The channels are not rounded or clamped.
   this;
@@ -1132,11 +1132,13 @@ Hsl hsla(double h, double s, double l, double a) {
   return Hsl(h, s, l, a);
 }
 
-/// color.js:308 `hslConvert(o)`: a new [Hsl] with the channels of [o] in
-/// HSL. A null [o] gives undefined channels and an undefined opacity.
+/// color.js:308 `hslConvert(o)`: an [Hsl] with the channels of [o] in HSL.
+/// Returns [o] directly when it is already an [Hsl]. A null [o] gives
+/// undefined channels and an undefined opacity.
 Hsl hslConvert(Color? o) {
-  if (o is Hsl) return Hsl(o.h, o.s, o.l, o.opacity);
-  if (o == null) return Hsl(double.nan, double.nan, double.nan, double.nan);
+  // DIVERGES(d3-color): adapt-color-immutable, reuse immutable Hsl directly.
+  if (o is Hsl) return o;
+  if (o == null) return _nanHsl;
   final c = o.rgb();
   final r = c.r / 255.0;
   final g = c.g / 255.0;
@@ -1163,20 +1165,21 @@ Hsl hslConvert(Color? o) {
   return Hsl(h, s, l, c.opacity);
 }
 
-/// color.js:338 `Hsl` and the factory `hsl` (color.js:334): a color in the
-/// HSL space. The hue is in degrees, the saturation and the lightness in
-/// [0, 1].
+/// color.js:338 `Hsl` and the factory `hsl` (color.js:334): an immutable color
+/// in the HSL space. The hue is in degrees, the saturation and the lightness
+/// in [0, 1].
 // DIVERGES(d3-color): adapt-color-factories, constructors for the overloads.
-class Hsl(
+// DIVERGES(d3-color): adapt-color-immutable, immutable const color classes.
+class const Hsl(
   /// The hue in degrees.
-  var double h,
+  final double h,
 
   /// The saturation.
-  var double s,
+  final double s,
 
   /// The lightness.
-  var double l, [
-  @override var double opacity = 1,
+  final double l, [
+  @override final double opacity = 1,
 ]) extends Color {
   /// `hsl(h, s, l[, opacity])`. The hue does not wrap and the channels do
   /// not clamp.

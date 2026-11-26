@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-11-26): its code and the tests of section Tests pass.
 - Date: 2026-11-26
+- Superseded in part by: [D3 ADR 0013](0013-immutable-color-values.md) for §2, shared immutable `const` color values (2026-11-26)
 - Related: [D3 ADR 0007](0007-native-dart-forms.md), [D3 ADR 0008](0008-module-packages.md), [D3 ADR 0010](0010-native-values-and-factories.md), [D3 ADR 0011](0011-interpolate-native-forms.md), [ADR 0011](../../../../docs/adr/0011-public-library-exports-every-file.md)
 
 ## Context

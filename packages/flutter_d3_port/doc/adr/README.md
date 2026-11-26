@@ -14,5 +14,6 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0009](0009-native-spec-harness.md) Native spec harness: accepted, supersedes 0004.
 - [0010](0010-native-values-and-factories.md) Native values and factories: accepted, supersedes 0006, superseded in part by 0011.
 - [0011](0011-interpolate-native-forms.md) Native forms of d3-interpolate: accepted, supersedes 0010.
-- [0012](0012-scale-chromatic-native-forms.md) Native forms of d3-scale-chromatic: accepted.
+- [0012](0012-scale-chromatic-native-forms.md) Native forms of d3-scale-chromatic: accepted, superseded in part by 0013.
+- [0013](0013-immutable-color-values.md) Immutable `const` color values: accepted, supersedes 0012.
 <!-- adr-index:end -->

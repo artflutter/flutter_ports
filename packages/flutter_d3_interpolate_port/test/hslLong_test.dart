@@ -107,8 +107,9 @@ void main() {
   test('interpolateHslLong(a, b) uses b’s lightness when a’s lightness is '
       'undefined', () {
     expect(
-      interpolateHslLong(Hsl(nan, nan, nan, nan), Hsl(20, 1, 0.5))(0.5)
-          .toString(),
+      interpolateHslLong(const Hsl(nan, nan, nan, nan), const Hsl(20, 1, 0.5))(
+        0.5,
+      ).toString(),
       'rgb(255, 85, 0)',
     );
   });
@@ -116,8 +117,9 @@ void main() {
   test('interpolateHslLong(a, b) uses a’s lightness when b’s lightness is '
       'undefined', () {
     expect(
-      interpolateHslLong(Hsl(20, 1, 0.5), Hsl(nan, nan, nan, nan))(0.5)
-          .toString(),
+      interpolateHslLong(const Hsl(20, 1, 0.5), const Hsl(nan, nan, nan, nan))(
+        0.5,
+      ).toString(),
       'rgb(255, 85, 0)',
     );
   });

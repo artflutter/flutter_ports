@@ -45,7 +45,7 @@ void main() {
 
   test('interpolateHcl(a, b) uses the shortest path when interpolating hue '
       'difference greater than 180°', () {
-    final i = interpolateHcl(Hcl(10, 50, 50), Hcl(350, 50, 50));
+    final i = interpolateHcl(const Hcl(10, 50, 50), const Hcl(350, 50, 50));
     expect(i(0).toString(), 'rgb(194, 78, 107)');
     expect(i(0.2).toString(), 'rgb(194, 78, 113)');
     expect(i(0.4).toString(), 'rgb(193, 78, 118)');
@@ -56,7 +56,7 @@ void main() {
 
   test('interpolateHcl(a, b) uses the shortest path when interpolating hue '
       'difference greater than 360°', () {
-    final i = interpolateHcl(Hcl(10, 50, 50), Hcl(380, 50, 50));
+    final i = interpolateHcl(const Hcl(10, 50, 50), const Hcl(380, 50, 50));
     expect(i(0).toString(), 'rgb(194, 78, 107)');
     expect(i(0.2).toString(), 'rgb(194, 78, 104)');
     expect(i(0.4).toString(), 'rgb(194, 79, 101)');
@@ -67,7 +67,7 @@ void main() {
 
   test('interpolateHcl(a, b) uses the shortest path when interpolating hue '
       'difference greater than 540°', () {
-    final i = interpolateHcl(Hcl(10, 50, 50), Hcl(710, 50, 50));
+    final i = interpolateHcl(const Hcl(10, 50, 50), const Hcl(710, 50, 50));
     expect(i(0).toString(), 'rgb(194, 78, 107)');
     expect(i(0.2).toString(), 'rgb(194, 78, 113)');
     expect(i(0.4).toString(), 'rgb(193, 78, 118)');
@@ -78,7 +78,7 @@ void main() {
 
   test('interpolateHcl(a, b) uses the shortest path when interpolating hue '
       'difference greater than 720°', () {
-    final i = interpolateHcl(Hcl(10, 50, 50), Hcl(740, 50, 50));
+    final i = interpolateHcl(const Hcl(10, 50, 50), const Hcl(740, 50, 50));
     expect(i(0).toString(), 'rgb(194, 78, 107)');
     expect(i(0.2).toString(), 'rgb(194, 78, 104)');
     expect(i(0.4).toString(), 'rgb(194, 79, 101)');
@@ -89,44 +89,44 @@ void main() {
 
   test('interpolateHcl(a, b) uses a’s hue when b’s hue is undefined', () {
     expect(
-      interpolateHcl(color('#f60')!, Hcl(nan, nan, 0))(0.5).toString(),
+      interpolateHcl(color('#f60')!, const Hcl(nan, nan, 0))(0.5).toString(),
       'rgb(155, 0, 0)',
     );
     expect(
-      interpolateHcl(color('#6f0')!, Hcl(nan, nan, 0))(0.5).toString(),
+      interpolateHcl(color('#6f0')!, const Hcl(nan, nan, 0))(0.5).toString(),
       'rgb(0, 129, 0)',
     );
   });
 
   test('interpolateHcl(a, b) uses b’s hue when a’s hue is undefined', () {
     expect(
-      interpolateHcl(Hcl(nan, nan, 0), color('#f60')!)(0.5).toString(),
+      interpolateHcl(const Hcl(nan, nan, 0), color('#f60')!)(0.5).toString(),
       'rgb(155, 0, 0)',
     );
     expect(
-      interpolateHcl(Hcl(nan, nan, 0), color('#6f0')!)(0.5).toString(),
+      interpolateHcl(const Hcl(nan, nan, 0), color('#6f0')!)(0.5).toString(),
       'rgb(0, 129, 0)',
     );
   });
 
   test('interpolateHcl(a, b) uses a’s chroma when b’s chroma is undefined', () {
     expect(
-      interpolateHcl(color('#ccc')!, Hcl(nan, nan, 0))(0.5).toString(),
+      interpolateHcl(color('#ccc')!, const Hcl(nan, nan, 0))(0.5).toString(),
       'rgb(97, 97, 97)',
     );
     expect(
-      interpolateHcl(color('#f00')!, Hcl(nan, nan, 0))(0.5).toString(),
+      interpolateHcl(color('#f00')!, const Hcl(nan, nan, 0))(0.5).toString(),
       'rgb(166, 0, 0)',
     );
   });
 
   test('interpolateHcl(a, b) uses b’s chroma when a’s chroma is undefined', () {
     expect(
-      interpolateHcl(Hcl(nan, nan, 0), color('#ccc')!)(0.5).toString(),
+      interpolateHcl(const Hcl(nan, nan, 0), color('#ccc')!)(0.5).toString(),
       'rgb(97, 97, 97)',
     );
     expect(
-      interpolateHcl(Hcl(nan, nan, 0), color('#f00')!)(0.5).toString(),
+      interpolateHcl(const Hcl(nan, nan, 0), color('#f00')!)(0.5).toString(),
       'rgb(166, 0, 0)',
     );
   });
@@ -135,8 +135,9 @@ void main() {
     'interpolateHcl(a, b) uses b’s luminance when a’s luminance is undefined',
     () {
       expect(
-        interpolateHcl(Hcl(nan, nan, nan, nan), Hcl(20, 80, 50))(0.5)
-            .toString(),
+        interpolateHcl(const Hcl(nan, nan, nan, nan), const Hcl(20, 80, 50))(
+          0.5,
+        ).toString(),
         'rgb(230, 13, 79)',
       );
     },
@@ -146,8 +147,9 @@ void main() {
     'interpolateHcl(a, b) uses a’s luminance when b’s luminance is undefined',
     () {
       expect(
-        interpolateHcl(Hcl(20, 80, 50), Hcl(nan, nan, nan, nan))(0.5)
-            .toString(),
+        interpolateHcl(const Hcl(20, 80, 50), const Hcl(nan, nan, nan, nan))(
+          0.5,
+        ).toString(),
         'rgb(230, 13, 79)',
       );
     },
