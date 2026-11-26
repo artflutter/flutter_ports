@@ -9,7 +9,7 @@ of its own, as on npm (D3 ADR 0008): d3-color 3.1.0 → `packages/flutter_d3_col
 d3-interpolate 3.0.1 → `packages/flutter_d3_interpolate_port` (D3 ADRs 0011 and 0013, version
 0.3.0, on pub.dev), d3-scale-chromatic 3.1.0 → `packages/flutter_d3_scale_chromatic_port`
 (D3 ADRs 0012 and 0013, version 0.3.0, on pub.dev), and d3-path 3.1.0 →
-`packages/flutter_d3_path_port` (D3 ADR 0014, version 0.1.0, on pub.dev). Third port: Apache
+`packages/flutter_d3_path_port` (D3 ADR 0014, version 0.1.1, on pub.dev). Third port: Apache
 ECharts 6.1.0 with its renderer zrender 6.1.0 → `packages/flutter_echarts_port`, in phase 0
 (scaffold and design, no ported code). Fourth port: chartjs-plugin-zoom 2.2.0+fb81d331, an add-on
 of the Chart.js port (ADR 0009) → `packages/flutter_chartjs_plugin_zoom_port`, phases 1-4 done
