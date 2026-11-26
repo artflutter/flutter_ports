@@ -21,6 +21,7 @@ workspace:
   - apps/chartjs_docs
   - apps/chartjs_supabase_dashboard
   - apps/chartjs_ergonomics
+  - apps/d3_demo
 
 dev_dependencies:
   commitlint_cli: ^0.8.1
@@ -55,6 +56,13 @@ melos:
     docs:build:web:
       run: cd apps/chartjs_docs && flutter build web --wasm --web-content-hash
       description: Build the documentation site for the web (WebAssembly with a JavaScript fallback, content-hashed file names).
+    d3:demo:
+      run: cd apps/d3_demo && flutter run -d chrome --web-browser-flag=--enable-blink-features=ExtendedTextMetrics
+      stdio: inherit
+      description: Run the combined D3 demo app in Chrome.
+    d3:demo:build:web:
+      run: cd apps/d3_demo && flutter build web --wasm --web-content-hash
+      description: Build the combined D3 demo app for the web (WebAssembly with a JavaScript fallback, content-hashed file names).
     format:
       run: dart format .
       description: Format all Dart code.

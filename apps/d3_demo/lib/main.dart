@@ -1,0 +1,171 @@
+// Original code, not ported from D3: entry point of the combined D3 demo app.
+
+import 'package:d3_demo/pages/chromatic_page.dart';
+import 'package:d3_demo/pages/color_page.dart';
+import 'package:d3_demo/pages/interpolate_page.dart';
+import 'package:material_ui/material_ui.dart';
+
+void main() {
+  final tab = switch (Uri.base.queryParameters['tab']) {
+    'interpolate' => 1,
+    'chromatic' => 2,
+    _ => 0,
+  };
+  runApp(D3DemoApp(initialTab: tab));
+}
+
+/// Interactive showcase for `flutter_d3_color_port`,
+/// `flutter_d3_interpolate_port` and `flutter_d3_scale_chromatic_port`.
+class const D3DemoApp({
+  /// Initial destination index (`0` = Color, `1` = Interpolate,
+  /// `2` = Chromatic).
+  final int initialTab = 0,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the demo app starting on [initialTab] (`0..2`).
+  this;
+
+  @override
+  State<D3DemoApp> createState() => _D3DemoAppState();
+}
+
+class _D3DemoAppState() extends State<D3DemoApp> {
+  late int _index = widget.initialTab.clamp(0, 2);
+  ThemeMode _themeMode = ThemeMode.light;
+
+  static const _destinations = <(String, String, IconData, IconData)>[
+    ('Color', 'd3-color', Icons.palette_outlined, Icons.palette),
+    (
+      'Interpolate',
+      'd3-interpolate',
+      Icons.animation_outlined,
+      Icons.animation,
+    ),
+    (
+      'Chromatic',
+      'd3-scale-chromatic',
+      Icons.gradient_outlined,
+      Icons.gradient,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final lightTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6D28D9)),
+    );
+    final darkTheme = ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF8B5CF6),
+        brightness: Brightness.dark,
+      ),
+    );
+
+    return MaterialApp(
+      title: 'D3 for Flutter',
+      debugShowCheckedModeBanner: false,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: _themeMode,
+      home: LayoutBuilder(
+        builder: (context, constraints) {
+          final wide = constraints.maxWidth >= 780;
+          final body = IndexedStack(
+            index: _index,
+            children: const [
+              ColorDemoPage(),
+              InterpolateDemoPage(),
+              ChromaticDemoPage(),
+            ],
+          );
+          final (_, pkg, _, _) = _destinations[_index];
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Row(
+                children: [
+                  const Text('D3 for Flutter'),
+                  const SizedBox(width: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      pkg,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                IconButton(
+                  tooltip: _themeMode == ThemeMode.dark
+                      ? 'Switch to light theme'
+                      : 'Switch to dark theme',
+                  icon: Icon(
+                    _themeMode == ThemeMode.dark
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _themeMode = _themeMode == ThemeMode.dark
+                          ? ThemeMode.light
+                          : ThemeMode.dark;
+                    });
+                  },
+                ),
+                const SizedBox(width: 8),
+              ],
+            ),
+            body: wide
+                ? Row(
+                    children: [
+                      NavigationRail(
+                        selectedIndex: _index,
+                        labelType: NavigationRailLabelType.all,
+                        onDestinationSelected: (i) =>
+                            setState(() => _index = i),
+                        destinations: [
+                          for (final (label, _, icon, active) in _destinations)
+                            NavigationRailDestination(
+                              icon: Icon(icon),
+                              selectedIcon: Icon(active),
+                              label: Text(label),
+                            ),
+                        ],
+                      ),
+                      const VerticalDivider(width: 1),
+                      Expanded(child: body),
+                    ],
+                  )
+                : body,
+            bottomNavigationBar: wide
+                ? null
+                : NavigationBar(
+                    selectedIndex: _index,
+                    onDestinationSelected: (i) => setState(() => _index = i),
+                    destinations: [
+                      for (final (label, _, icon, active) in _destinations)
+                        NavigationDestination(
+                          icon: Icon(icon),
+                          selectedIcon: Icon(active),
+                          label: label,
+                        ),
+                    ],
+                  ),
+          );
+        },
+      ),
+    );
+  }
+}

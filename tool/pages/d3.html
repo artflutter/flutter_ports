@@ -1,0 +1,156 @@
+<!doctype html>
+<!--
+  The page of the combined D3 demo app on the GitHub Pages site, at
+  d3/index.html. The job deploy of .github/workflows/pages.yaml fills in the
+  names in double braces. Each channel has its build in d3/<channel>/, and
+  web/flutter_bootstrap.js of the app reads the query parameter build.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive Flutter showcase of flutter_d3_color_port, flutter_d3_interpolate_port and flutter_d3_scale_chromatic_port on each Flutter channel.">
+  <meta name="theme-color" content="#f5f4fa">
+  <title>D3 for Flutter</title>
+  <link rel="icon" type="image/png" href="master/favicon.png">
+  <style>
+    :root { color-scheme: light; --accent: #6d28d9; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; min-height: 100dvh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: clamp(20px, 5vw, 56px);
+      background: #f5f4fa; color: #1b1730;
+      font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+    main { width: 100%; max-width: 960px; margin: 0 auto; }
+    header {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: clamp(20px, 4vw, 32px);
+    }
+    .logo {
+      flex: none; display: grid; place-items: center;
+      width: 56px; height: 56px; border-radius: 16px;
+      background: var(--accent); color: #fff;
+    }
+    h1 {
+      margin: 0; font-size: clamp(25px, 5vw, 36px); line-height: 1.15;
+      font-weight: 700; letter-spacing: -.01em;
+    }
+    header p { margin: 4px 0 0; color: #5b5870; font-size: 15px; }
+    .about {
+      margin: 0 0 clamp(20px, 4vw, 28px); max-width: 70ch; color: #3c3752;
+      font-size: 15px;
+    }
+    .channels {
+      list-style: none; margin: 0; padding: 0;
+      display: grid; gap: 16px; grid-template-columns: 1fr;
+    }
+    @media (min-width: 820px) {
+      .channels { grid-template-columns: repeat(3, 1fr); }
+      .card { min-height: 216px; }
+    }
+    .card {
+      display: flex; flex-direction: column; height: 100%; padding: 22px;
+      background: #fff; border: 1px solid #dfdcf0; border-radius: 20px;
+    }
+    .name {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 21px; font-weight: 650;
+    }
+    .dot {
+      flex: none; width: 11px; height: 11px; border-radius: 50%;
+      background: var(--channel);
+    }
+    .what { margin: 6px 0 18px; color: #5b5870; font-size: 14px; }
+    .flutter {
+      margin: auto 0 0; font-size: 14px; font-weight: 600;
+      font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+    }
+    .builds { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
+    .builds a {
+      flex: 1 1 0; display: flex; align-items: center; justify-content: space-between;
+      gap: 6px; min-height: 44px; padding: 8px 14px;
+      border: 1px solid #dfdcf0; border-radius: 12px;
+      color: inherit; text-decoration: none; font-size: 14px; font-weight: 600;
+      transition: border-color .15s, color .15s, background-color .15s;
+    }
+    .builds a:hover {
+      border-color: var(--channel); color: var(--channel); background: #faf9fe;
+    }
+    .builds a:focus-visible { outline: 3px solid var(--channel); outline-offset: 2px; }
+    footer {
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px;
+      margin-top: clamp(20px, 4vw, 28px); color: #5b5870; font-size: 13px;
+    }
+    footer a { color: inherit; text-underline-offset: 3px; }
+    footer a:hover { color: var(--accent); }
+    @media (prefers-reduced-motion: reduce) {
+      .builds a { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="logo">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 3a9 9 0 0 1 0 18"/>
+          <path d="M12 7v10"/>
+          <path d="M7 12h10"/>
+        </svg>
+      </div>
+      <div>
+        <h1>D3 for Flutter</h1>
+        <p>flutter_d3_color_port · flutter_d3_interpolate_port · flutter_d3_scale_chromatic_port</p>
+      </div>
+    </header>
+    <p class="about">
+      Interactive showcase of the native Dart/Flutter D3 ports: CIELCh/Lab gamut slicer and CSS
+      color inspector, van Wijk &amp; Nuij smooth pan-and-zoom flight, perceptual color interpolation
+      showdown, 2D affine transform animator, and a live 60fps heatmap with color-vision simulation
+      across all 76 d3-scale-chromatic palettes.
+    </p>
+    <ul class="channels">
+      <li>
+        <div class="card" style="--channel: #16a34a">
+          <span class="name"><span class="dot"></span>Stable</span>
+          <p class="what">The newest stable release of Flutter.</p>
+          <p class="flutter">{{stable}}</p>
+          <p class="builds">
+            <a href="stable/?build=wasm">WebAssembly<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a href="stable/?build=js">JavaScript<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </p>
+        </div>
+      </li>
+      <li>
+        <div class="card" style="--channel: #d97706">
+          <span class="name"><span class="dot"></span>Beta</span>
+          <p class="what">The newest beta release of Flutter.</p>
+          <p class="flutter">{{beta}}</p>
+          <p class="builds">
+            <a href="beta/?build=wasm">WebAssembly<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a href="beta/?build=js">JavaScript<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </p>
+        </div>
+      </li>
+      <li>
+        <div class="card" style="--channel: #6d28d9">
+          <span class="name"><span class="dot"></span>Master</span>
+          <p class="what">The head of the Flutter master branch.</p>
+          <p class="flutter">{{master}}</p>
+          <p class="builds">
+            <a href="master/?build=wasm">WebAssembly<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a href="master/?build=js">JavaScript<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </p>
+        </div>
+      </li>
+    </ul>
+    <footer>
+      <span>Built {{built}}</span>
+      <a href="https://github.com/artflutter/flutter_ports/tree/main/apps/d3_demo">Source on GitHub</a>
+    </footer>
+  </main>
+</body>
+</html>

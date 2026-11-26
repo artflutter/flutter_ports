@@ -18,6 +18,11 @@ name: pages
 # Its build reads the URL and the publishable key of the Supabase project from
 # the repository variables SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY.
 #
+# Deploys the combined D3 demo app on the newest build of each Flutter channel,
+# with its own page (tool/pages/d3.html):
+#   https://artflutter.github.io/flutter_ports/d3/
+#   https://artflutter.github.io/flutter_ports/d3/stable/ (also beta/ and master/)
+#
 # These builds do not read .fvmrc. Each run takes the newest release of stable
 # and of beta, and the head of the branch master.
 #
@@ -55,12 +60,21 @@ on:
       - apps/chartjs_supabase_dashboard/lib/**
       - apps/chartjs_supabase_dashboard/pubspec.yaml
       - apps/chartjs_supabase_dashboard/web/**
+      - apps/d3_demo/lib/**
+      - apps/d3_demo/pubspec.yaml
+      - apps/d3_demo/web/**
       - packages/flutter_chartjs_chart_sankey_port/lib/**
       - packages/flutter_chartjs_chart_sankey_port/pubspec.yaml
       - packages/flutter_chartjs_plugin_zoom_port/lib/**
       - packages/flutter_chartjs_plugin_zoom_port/pubspec.yaml
       - packages/flutter_chartjs_port/lib/**
       - packages/flutter_chartjs_port/pubspec.yaml
+      - packages/flutter_d3_color_port/lib/**
+      - packages/flutter_d3_color_port/pubspec.yaml
+      - packages/flutter_d3_interpolate_port/lib/**
+      - packages/flutter_d3_interpolate_port/pubspec.yaml
+      - packages/flutter_d3_scale_chromatic_port/lib/**
+      - packages/flutter_d3_scale_chromatic_port/pubspec.yaml
       - pubspec.lock
       - tool/pages/**
   workflow_dispatch:
@@ -280,8 +294,43 @@ jobs:
           path: site
           if-no-files-found: error
 
+  build-d3:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [stable, beta, master]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.channel }}
+          cache: ${{ matrix.channel != 'master' }}
+      - name: Resolve the D3 demo alone
+        working-directory: apps/d3_demo
+        run: |
+          sed -i '/^resolution: workspace$/d' pubspec.yaml
+          printf 'dependency_overrides:\n  flutter_d3_color_port:\n    path: ../../packages/flutter_d3_color_port\n  flutter_d3_interpolate_port:\n    path: ../../packages/flutter_d3_interpolate_port\n  flutter_d3_scale_chromatic_port:\n    path: ../../packages/flutter_d3_scale_chromatic_port\n' >> pubspec.yaml
+          cp ../../pubspec.lock pubspec.lock
+          flutter pub get
+      - name: Build the D3 demo for the web (WebAssembly + JavaScript fallback)
+        working-directory: apps/d3_demo
+        run: |
+          flutter build web --wasm --web-content-hash \
+            --base-href /flutter_ports/d3/${{ matrix.channel }}/
+      - name: Put the build into its folder
+        run: |
+          mkdir -p site/d3
+          cp -R apps/d3_demo/build/web site/d3/${{ matrix.channel }}
+          flutter --version --machine > site/d3/${{ matrix.channel }}/flutter.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: d3-${{ matrix.channel }}
+          path: site
+          if-no-files-found: error
+
   deploy:
-    needs: [version, build, build-docs, build-ergonomics, build-dashboard]
+    needs: [version, build, build-docs, build-ergonomics, build-dashboard, build-d3]
     # A build that failed does not stop the other pages.
     if: ${{ !cancelled() && needs.version.result == 'success' }}
     runs-on: ubuntu-latest
@@ -319,6 +368,12 @@ jobs:
         continue-on-error: true
         with:
           pattern: dashboard-*
+          merge-multiple: true
+          path: site
+      - uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          pattern: d3-*
           merge-multiple: true
           path: site
       - name: Assemble the site
@@ -380,6 +435,23 @@ jobs:
                 "$channel" "$RUN_URL" > "site/dashboard/$channel/index.html"
             fi
             sed -i "s|{{$channel}}|$status|" site/dashboard/index.html
+          done
+          # The combined D3 demo: its own page, and one folder for each channel.
+          mkdir -p site/d3
+          sed "s|{{built}}|from ${GITHUB_SHA::8} in run $GITHUB_RUN_NUMBER|" \
+            tool/pages/d3.html > site/d3/index.html
+          for channel in stable beta master; do
+            if [ -d "site/d3/$channel" ]; then
+              version=$(jq -r '.frameworkVersion // "unknown"' "site/d3/$channel/flutter.json" 2>/dev/null) || version=unknown
+              status="Flutter $version"
+            else
+              echo "::warning::The D3 demo did not build on $channel in this run."
+              status='Did not build in this run'
+              mkdir -p "site/d3/$channel"
+              printf '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n<title>D3 for Flutter</title>\n<p>The D3 demo did not build on the newest Flutter %s. <a href="%s">Read the run</a>.</p>\n</html>\n' \
+                "$channel" "$RUN_URL" > "site/d3/$channel/index.html"
+            fi
+            sed -i "s|{{$channel}}|$status|" site/d3/index.html
           done
           # The old address of the lab goes to the root page.
           mkdir site/lab
