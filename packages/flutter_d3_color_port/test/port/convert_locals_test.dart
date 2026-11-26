@@ -146,7 +146,7 @@ final class _Counting() extends Color {
   }
 
   @override
-  Color copy({double? opacity}) => throw UnimplementedError();
+  Color copyWith({double? opacity}) => throw UnimplementedError();
 
   @override
   Color brighter([double? k]) => throw UnimplementedError();

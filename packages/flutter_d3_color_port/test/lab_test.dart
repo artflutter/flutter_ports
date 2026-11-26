@@ -17,7 +17,7 @@ final class _TestColor() extends Color {
   String toString() => throw StateError('should use rgb, not toString');
 
   @override
-  Color copy({double? opacity}) => throw UnimplementedError();
+  Color copyWith({double? opacity}) => throw UnimplementedError();
 
   @override
   Color brighter([double? k]) => throw UnimplementedError();
@@ -62,7 +62,7 @@ void main() {
 
   test('lab.toString() reflects l, a and b channel values and opacity', () {
     final c = Lab.parse('#abc');
-    final modified = c.copy(
+    final modified = c.copyWith(
       l: c.l + 10,
       a: c.a - 10,
       b: c.b + 10,
@@ -83,7 +83,7 @@ void main() {
   });
 
   test('lab.toString() treats undefined opacity as 1', () {
-    final c = Lab.parse('#abc').copy(opacity: double.nan);
+    final c = Lab.parse('#abc').copyWith(opacity: double.nan);
     expect(c.toString(), 'rgb(170, 187, 204)');
   });
 

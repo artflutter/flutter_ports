@@ -19,16 +19,16 @@ In Dart and Flutter, mutable color classes carry two steep costs:
    could not be `const`, forcing runtime hex decoding on startup and preventing use in `const`
    Flutter widgets and themes.
 
-Meanwhile, `Color.copy(...)` already exists across all five color spaces for functional updates, and
-no code in `flutter_d3_color_port`, `flutter_d3_interpolate_port`, or
-`flutter_d3_scale_chromatic_port` mutates colors in place.
+Meanwhile, `Color.copyWith(...)` (Flutter-idiomatic rename of upstream `copy`) covers functional
+updates across all five color spaces, and no code in `flutter_d3_color_port`,
+`flutter_d3_interpolate_port`, or `flutter_d3_scale_chromatic_port` mutates colors in place.
 
 ## Decision
 
 1. **Immutable `const` color classes in `flutter_d3_color_port`.** `Color`, `Rgb`, `Hsl`, `Lab`,
    `Hcl` and `Cubehelix` declare `final double` channel fields and `const` primary constructors
    (`abstract class const Color()`, `class const Rgb(...)`, etc.). `Color.opacity` is a read-only
-   getter (`double get opacity`). Callers derive modified colors with `copy(...)`.
+   getter (`double get opacity`). Callers derive modified colors with `copyWith(...)`.
 2. **Zero-allocation identity reuse.** Because color values are immutable:
    - `rgbConvert`, `hslConvert`, `labConvert`, `hclConvert` and `cubehelixConvert` return the
      existing instance directly when `o` is already of that color space (`o.rgb()` / `o is X`), and
@@ -52,7 +52,8 @@ no code in `flutter_d3_color_port`, `flutter_d3_interpolate_port`, or
 ## Consequences
 
 - Breaking API change in `flutter_d3_color_port`: channel fields (`r`, `g`, `b`, `h`, `s`, `l`,
-  `a`, `c`, `opacity`) are `final`. Code that mutated channels in place switches to `c.copy(...)`.
+  `a`, `c`, `opacity`) are `final`. Code that mutated channels in place switches to
+  `c.copyWith(...)`.
 - `Rgb`, `Hsl`, `Lab`, `Hcl`, `Cubehelix` and all `flutter_d3_scale_chromatic_port` palettes can be
   used in `const` expressions and Flutter `const` widgets.
 - Zero per-call heap allocations in `interpolateViridis`/`Magma`/`Inferno`/`Plasma`, named CSS color

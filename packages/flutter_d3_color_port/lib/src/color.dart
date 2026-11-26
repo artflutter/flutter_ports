@@ -211,8 +211,8 @@ const Map<String, int> _named = {
 /// factory `color` is also this class: `x instanceof color` is `x is Color`.
 ///
 /// Colors are immutable value objects with `const` constructors (D3 ADR 0013).
-/// Use [copy] to derive a color with changed channels.
-// DIVERGES(d3-color): adapt-color-base-class, abstract members, typed copy.
+/// Use [copyWith] to derive a color with changed channels.
+// DIVERGES(d3-color): adapt-color-base-class, abstract members, copyWith.
 // DIVERGES(d3-color): adapt-color-immutable, immutable const color classes.
 abstract class const Color() {
   /// A color with no channels: each subclass declares its channels.
@@ -223,7 +223,7 @@ abstract class const Color() {
 
   /// color.js:171 `copy(channels)`: a new color of the same space with the
   /// channels of this color, and the given channels in place of them.
-  Color copy({double? opacity});
+  Color copyWith({double? opacity});
 
   /// color.js:174 `displayable()`: whether the color is in the RGB gamut and
   /// the opacity is in [0, 1].
@@ -786,7 +786,7 @@ class const Rgb(
   }
 
   @override
-  Rgb copy({double? r, double? g, double? b, double? opacity}) =>
+  Rgb copyWith({double? r, double? g, double? b, double? opacity}) =>
       Rgb(r ?? this.r, g ?? this.g, b ?? this.b, opacity ?? this.opacity);
 
   /// color.js:248 `brighter(k)`.
@@ -1196,7 +1196,7 @@ class const Hsl(
   }
 
   @override
-  Hsl copy({double? h, double? s, double? l, double? opacity}) =>
+  Hsl copyWith({double? h, double? s, double? l, double? opacity}) =>
       Hsl(h ?? this.h, s ?? this.s, l ?? this.l, opacity ?? this.opacity);
 
   /// color.js:346 `brighter(k)`.

@@ -1,0 +1,71 @@
+{
+  "mcpServers": {
+    "dart": {
+      "command": "dart",
+      "args": [
+        "mcp-server",
+        "--enable",
+        "flutter_app_lifecycle",
+        "--enable",
+        "run_tests"
+      ]
+    },
+    "devtools-profiler": {
+      "command": "devtools-profiler",
+      "args": [
+        "mcp"
+      ]
+    },
+    "flutter-profile": {
+      "command": "flutter-profile-mcp",
+      "args": []
+    },
+    "sleuth": {
+      "command": "sleuth_mcp",
+      "args": []
+    },
+    "marionette": {
+      "command": "marionette_mcp",
+      "args": []
+    },
+    "perfetto": {
+      "command": "/opt/homebrew/bin/perfetto-mcp-rs",
+      "args": []
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@1.11.0",
+        "--no-usage-statistics",
+        "--no-performance-crux",
+        "--memoryDebugging"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@0.0.83",
+        "--browser",
+        "chrome",
+        "--caps=vision"
+      ]
+    },
+    "perfetto-android": {
+      "command": "/Users/vasilich/.local/bin/uvx",
+      "args": [
+        "--with",
+        "mcp<2",
+        "perfetto-mcp==0.1.4"
+      ]
+    },
+    "xctrace-analyzer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@xctrace-analyzer/mcp-server@0.1.7"
+      ]
+    }
+  }
+}

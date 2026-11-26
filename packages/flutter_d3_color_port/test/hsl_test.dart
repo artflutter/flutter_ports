@@ -17,7 +17,7 @@ final class _TestColor() extends Color {
   String toString() => throw StateError('should use rgb, not toString');
 
   @override
-  Color copy({double? opacity}) => throw UnimplementedError();
+  Color copyWith({double? opacity}) => throw UnimplementedError();
 
   @override
   Color brighter([double? k]) => throw UnimplementedError();
@@ -100,7 +100,7 @@ void main() {
 
   test('hsl.toString() reflects h, s and l channel values and opacity', () {
     final c = Hsl.parse('#abc');
-    final modified = c.copy(
+    final modified = c.copyWith(
       h: c.h + 10,
       s: c.s + 0.01,
       l: c.l - 0.01,
@@ -126,7 +126,7 @@ void main() {
   });
 
   test('hsl.toString() treats undefined opacity as 1', () {
-    final c = Hsl.parse('#abc').copy(opacity: double.nan);
+    final c = Hsl.parse('#abc').copyWith(opacity: double.nan);
     expect(c.toString(), 'rgb(170, 187, 204)');
   });
 
@@ -416,10 +416,10 @@ void main() {
 
   test('hsl.copy(…) returns a new hsl with the specified channel values', () {
     const c = Hsl(120, 0.3, 0.5, 0.4);
-    expect(c.copy(), isA<Hsl>());
-    expect(c.copy().formatHsl(), 'hsla(120, 30%, 50%, 0.4)');
-    expect(c.copy(opacity: 1).formatHsl(), 'hsl(120, 30%, 50%)');
-    expect(c.copy(h: 20).formatHsl(), 'hsla(20, 30%, 50%, 0.4)');
-    expect(c.copy(h: 20, s: 0.4).formatHsl(), 'hsla(20, 40%, 50%, 0.4)');
+    expect(c.copyWith(), isA<Hsl>());
+    expect(c.copyWith().formatHsl(), 'hsla(120, 30%, 50%, 0.4)');
+    expect(c.copyWith(opacity: 1).formatHsl(), 'hsl(120, 30%, 50%)');
+    expect(c.copyWith(h: 20).formatHsl(), 'hsla(20, 30%, 50%, 0.4)');
+    expect(c.copyWith(h: 20, s: 0.4).formatHsl(), 'hsla(20, 40%, 50%, 0.4)');
   });
 }

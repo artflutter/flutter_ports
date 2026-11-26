@@ -13,7 +13,7 @@ void main() {
 
   // Rotate the hue by 90°, bump up the saturation and fade the color.
   final hsl = Hsl.from(steelblue);
-  final c = hsl.copy(h: hsl.h + 90, s: hsl.s + 0.2, opacity: 0.8);
+  final c = hsl.copyWith(h: hsl.h + 90, s: hsl.s + 0.2, opacity: 0.8);
   print(c); // rgba(198, 45, 205, 0.8)
 
   // A brighter color in CIELCh: the lightness goes up by 18.

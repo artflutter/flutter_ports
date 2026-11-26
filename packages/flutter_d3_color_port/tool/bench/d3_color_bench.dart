@@ -208,7 +208,7 @@ List<Case> cases(Inputs p) {
       (i) {
         // The tick of an HCL interpolator: a new hue, then print.
         final c = p.hclColors[i & m];
-        sink += c.copy(h: c.h + 0.5).toString().length;
+        sink += c.copyWith(h: c.h + 0.5).toString().length;
       },
     ),
     (

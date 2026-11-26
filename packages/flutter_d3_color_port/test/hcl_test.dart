@@ -17,7 +17,7 @@ final class _TestColor() extends Color {
   String toString() => throw StateError('should use rgb, not toString');
 
   @override
-  Color copy({double? opacity}) => throw UnimplementedError();
+  Color copyWith({double? opacity}) => throw UnimplementedError();
 
   @override
   Color brighter([double? k]) => throw UnimplementedError();
@@ -77,12 +77,12 @@ void main() {
 
   test('hcl.toString() reflects h, c and l channel values', () {
     final c = Hcl.parse('#abc');
-    final modified = c.copy(h: c.h + 10, c: c.c + 1, l: c.l - 1);
+    final modified = c.copyWith(h: c.h + 10, c: c.c + 1, l: c.l - 1);
     expect(modified.toString(), 'rgb(170, 183, 204)');
   });
 
   test('hcl.toString() treats undefined opacity as 1', () {
-    final c = Hcl.parse('#abc').copy(opacity: double.nan);
+    final c = Hcl.parse('#abc').copyWith(opacity: double.nan);
     expect(c.toString(), 'rgb(170, 187, 204)');
   });
 

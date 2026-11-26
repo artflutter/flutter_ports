@@ -1,3 +1,8 @@
+## 0.3.0
+
+- **Breaking:** Rename `Color.copy(...)` to `Color.copyWith(...)` across `Color`, `Rgb`, `Hsl`,
+  `Lab`, `Hcl`, and `Cubehelix` to follow standard Dart/Flutter immutable value conventions.
+
 ## 0.2.0
 
 - **Breaking:** `Color`, `Rgb`, `Hsl`, `Lab`, `Hcl`, and `Cubehelix` are now immutable value

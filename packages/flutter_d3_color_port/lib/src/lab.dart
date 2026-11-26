@@ -106,7 +106,7 @@ class const Lab(
   factory parse(String specifier) => labConvert(color(specifier));
 
   @override
-  Lab copy({double? l, double? a, double? b, double? opacity}) =>
+  Lab copyWith({double? l, double? a, double? b, double? opacity}) =>
       Lab(l ?? this.l, a ?? this.a, b ?? this.b, opacity ?? this.opacity);
 
   /// lab.js:46 `brighter(k)`.
@@ -253,7 +253,7 @@ class const Hcl(
   factory parse(String specifier) => hclConvert(color(specifier));
 
   @override
-  Hcl copy({double? h, double? c, double? l, double? opacity}) =>
+  Hcl copyWith({double? h, double? c, double? l, double? opacity}) =>
       Hcl(h ?? this.h, c ?? this.c, l ?? this.l, opacity ?? this.opacity);
 
   /// lab.js:114 `brighter(k)`.

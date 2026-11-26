@@ -1,3 +1,7 @@
+## 0.3.0
+
+- **Breaking:** Upgrade `flutter_d3_color_port` to `^0.3.0` (`Color.copyWith(...)`).
+
 ## 0.2.0
 
 - **Breaking:** Upgrade `flutter_d3_color_port` to `^0.2.0` (immutable `const` color classes,

@@ -17,7 +17,7 @@ final class _TestColor() extends Color {
   String toString() => throw StateError('should use rgb, not toString');
 
   @override
-  Color copy({double? opacity}) => throw UnimplementedError();
+  Color copyWith({double? opacity}) => throw UnimplementedError();
 
   @override
   Color brighter([double? k]) => throw UnimplementedError();
@@ -124,7 +124,12 @@ void main() {
 
   test('rgb.toString() reflects r, g and b channel values and opacity', () {
     final c = Rgb.parse('#abc');
-    final modified = c.copy(r: c.r + 1, g: c.g + 1, b: c.b + 1, opacity: 0.5);
+    final modified = c.copyWith(
+      r: c.r + 1,
+      g: c.g + 1,
+      b: c.b + 1,
+      opacity: 0.5,
+    );
     expect(modified.toString(), 'rgba(171, 188, 205, 0.5)');
   });
 
@@ -135,7 +140,7 @@ void main() {
 
   test('rgb.toString() treats undefined opacity as 1', () {
     final c = Rgb.parse('#abc');
-    final modified = c.copy(
+    final modified = c.copyWith(
       r: c.r + 1,
       g: c.g + 1,
       b: c.b + 1,
@@ -355,10 +360,10 @@ void main() {
 
   test('rgb.copy(…) returns a new rgb with the specified channel values', () {
     const c = Rgb(70, 130, 180);
-    expect(c.copy(), isA<Rgb>());
-    expect(c.copy().toString(), 'rgb(70, 130, 180)');
-    expect(c.copy(opacity: 0.2).toString(), 'rgba(70, 130, 180, 0.2)');
-    expect(c.copy(r: 20).toString(), 'rgb(20, 130, 180)');
-    expect(c.copy(r: 20, g: 40).toString(), 'rgb(20, 40, 180)');
+    expect(c.copyWith(), isA<Rgb>());
+    expect(c.copyWith().toString(), 'rgb(70, 130, 180)');
+    expect(c.copyWith(opacity: 0.2).toString(), 'rgba(70, 130, 180, 0.2)');
+    expect(c.copyWith(r: 20).toString(), 'rgb(20, 130, 180)');
+    expect(c.copyWith(r: 20, g: 40).toString(), 'rgb(20, 40, 180)');
   });
 }

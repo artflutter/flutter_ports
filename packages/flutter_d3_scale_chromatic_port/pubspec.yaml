@@ -2,7 +2,7 @@ name: flutter_d3_scale_chromatic_port
 description: >-
   A native Dart port of d3-scale-chromatic 3.1.0: sequential, diverging and
   categorical color schemes of D3, with Flutter Color conversions.
-version: 0.2.0
+version: 0.3.0
 repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_scale_chromatic_port
 issue_tracker: https://github.com/artflutter/flutter_ports/issues
 topics:
@@ -26,8 +26,8 @@ dependencies:
     sdk: flutter
   # d3-scale-chromatic depends on d3-color and d3-interpolate (its
   # package.json), so the port depends on their ports (D3 ADR 0008).
-  flutter_d3_color_port: ^0.2.0
-  flutter_d3_interpolate_port: ^0.2.0
+  flutter_d3_color_port: ^0.3.0
+  flutter_d3_interpolate_port: ^0.3.0
 
 dev_dependencies:
   # The tests use package:test; flutter test runs them on the VM and in

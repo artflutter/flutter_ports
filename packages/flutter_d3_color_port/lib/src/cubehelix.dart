@@ -96,7 +96,7 @@ class const Cubehelix(
   factory parse(String specifier) => cubehelixConvert(color(specifier));
 
   @override
-  Cubehelix copy({double? h, double? s, double? l, double? opacity}) =>
+  Cubehelix copyWith({double? h, double? s, double? l, double? opacity}) =>
       Cubehelix(h ?? this.h, s ?? this.s, l ?? this.l, opacity ?? this.opacity);
 
   /// cubehelix.js:40 `brighter(k)`.

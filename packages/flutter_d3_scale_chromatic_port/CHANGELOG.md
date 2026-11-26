@@ -1,3 +1,8 @@
+## 0.3.0
+
+- **Breaking:** Upgrade `flutter_d3_color_port` and `flutter_d3_interpolate_port` to `^0.3.0`
+  (`Color.copyWith(...)`).
+
 ## 0.2.0
 
 - **Breaking:** Upgrade `flutter_d3_color_port` and `flutter_d3_interpolate_port` to `^0.2.0`

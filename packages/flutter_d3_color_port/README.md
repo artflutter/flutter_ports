@@ -23,14 +23,14 @@ final c = d3.Hsl.parse('steelblue'); // h 207.27…, s 0.44, l 0.4902…, opacit
 Now rotate the hue by 90°, bump up the saturation, and format as a string for CSS:
 
 ```dart
-final rotated = c.copy(h: c.h + 90, s: c.s + 0.2);
+final rotated = c.copyWith(h: c.h + 90, s: c.s + 0.2);
 rotated.toString(); // rgb(198, 45, 205)
 ```
 
 To fade the color slightly:
 
 ```dart
-final faded = rotated.copy(opacity: 0.8);
+final faded = rotated.copyWith(opacity: 0.8);
 faded.toString(); // rgba(198, 45, 205, 0.8)
 ```
 
@@ -91,13 +91,13 @@ This color’s opacity, typically in the range [0, 1].
 
 Returns the RGB equivalent of this color. For RGB colors, that’s `this`.
 
-### *color*.copy({…})
+### *color*.copyWith({…})
 
 Returns a copy of this color. Each channel that is given as a named argument replaces that channel
 in the new returned color. For example, to derive a copy of a *color* with opacity 0.5, say
 
 ```dart
-color.copy(opacity: 0.5)
+color.copyWith(opacity: 0.5)
 ```
 
 ### *color*.brighter([*k*])
@@ -241,13 +241,13 @@ channel is 0, and an undefined opacity is 1, as `formatRgb()` reads them.
 ## Differences from d3-color
 
 - Colors (`Color`, `Rgb`, `Hsl`, `Lab`, `Hcl`, `Cubehelix`) are immutable with `final` channel
-  fields and `const` constructors (D3 ADR 0013). Use `color.copy(...)` to derive modified colors.
+  fields and `const` constructors (D3 ADR 0013). Use `color.copyWith(...)` to derive modified colors.
 - The d3-color factories `rgb`, `hsl`, `lab`, `hcl`, `lch` and `cubehelix` change with their
   argument count. In Dart, each form has its own constructor: `d3.Rgb(70, 130, 180)`,
   `d3.Rgb.parse('steelblue')` and `d3.Rgb.from(color)`.
 - A channel is a `double`. A string channel, for example `rgb("12", "34", "56")`, does not
   compile. An omitted opacity is 1. NaN is an undefined channel, as in d3-color.
-- `copy` takes named arguments: `color.copy(opacity: 0.5)`.
+- `copyWith` (upstream `copy`) takes named arguments: `color.copyWith(opacity: 0.5)`.
 - The CIELAB and HCL conversions use `atan2`, `sin` and `cos` of `dart:math`. On a native
   platform, their last bit can differ from the browser. A channel exactly on a .5 boundary can
   then round to the other integer in `formatRgb()`.

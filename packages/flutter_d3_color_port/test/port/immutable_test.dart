@@ -50,4 +50,12 @@ void main() {
     expect(identical(hclConvert(null), hclConvert(null)), isTrue);
     expect(identical(cubehelixConvert(null), cubehelixConvert(null)), isTrue);
   });
+
+  test('copyWith derives new immutable instances in every color space', () {
+    expect(const Rgb(1, 2, 3).copyWith(g: 20, opacity: 0.5).g, 20);
+    expect(const Hsl(10, 0.2, 0.3).copyWith(s: 0.8).s, 0.8);
+    expect(const Lab(50, 10, -20).copyWith(a: 5).a, 5);
+    expect(const Hcl(120, 30, 50).copyWith(c: 40).c, 40);
+    expect(const Cubehelix(300, 0.5, 0.5).copyWith(l: 0.7).l, 0.7);
+  });
 }

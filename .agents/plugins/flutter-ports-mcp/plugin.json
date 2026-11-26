@@ -1,0 +1,6 @@
+{
+  "name": "flutter-ports-mcp",
+  "displayName": "flutter_ports MCP servers",
+  "version": "1.0.0",
+  "description": "Repo-scoped MCP servers migrated from .mcp.json."
+}
