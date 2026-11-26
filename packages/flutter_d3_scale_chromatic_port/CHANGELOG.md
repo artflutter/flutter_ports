@@ -1,3 +1,9 @@
+## 0.1.1
+
+- `LICENSE`: include the full Apache License 2.0 text for the ColorBrewer
+  component alongside the ISC license so pub.dev (`pana`) recognizes both
+  `ISC` and `Apache-2.0`.
+
 ## 0.1.0
 
 - A native Dart port of d3-scale-chromatic 3.1.0, with no JavaScript runtime
