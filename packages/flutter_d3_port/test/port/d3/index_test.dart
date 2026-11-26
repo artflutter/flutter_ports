@@ -126,4 +126,20 @@ void main() {
     expect(stacked, hasLength(2));
     expect(d3ShapeVersion, '3.2.0');
   });
+
+  test('the bundle exports the names of d3-format', () {
+    expect(format('.3s')(145500000), '146M');
+    expect(format(r'+$,.2f')(-1234.56), r'−$1,234.56');
+    expect(formatPrefix(',.1', 1e6)(4.2e6), '4.2M');
+    expect(formatSpecifier('08d').width, 8);
+    expect(
+      formatLocale(localeFrFR).format(r'$,.2f')(1234.56),
+      '1\u00a0234,56\u00a0€',
+    );
+    expect(formatLocales, hasLength(59));
+    expect(precisionFixed(0.05), 2);
+    expect(precisionPrefix(1e-9, 1e-6), 3);
+    expect(precisionRound(0.01, 1.01), 3);
+    expect(d3FormatVersion, '3.1.2');
+  });
 }

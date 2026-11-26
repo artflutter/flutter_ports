@@ -32,6 +32,7 @@ rules:
       - flutter_d3_scale_chromatic_port
       - flutter_d3_path_port
       - flutter_d3_shape_port
+      - flutter_d3_format_port
       - ci
       - deps
       - docs

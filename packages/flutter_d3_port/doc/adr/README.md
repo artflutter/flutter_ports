@@ -18,4 +18,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0013](0013-immutable-color-values.md) Immutable `const` color values: accepted, supersedes 0012.
 - [0014](0014-path-native-forms.md) Native forms of d3-path and CanvasPath: accepted, supersedes 0005.
 - [0015](0015-shape-native-forms.md) Native forms of d3-shape: accepted, supersedes 0006.
+- [0016](0016-format-native-forms.md) Native forms of d3-format: accepted.
 <!-- adr-index:end -->

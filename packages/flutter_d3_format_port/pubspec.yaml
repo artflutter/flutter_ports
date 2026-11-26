@@ -1,0 +1,23 @@
+name: flutter_d3_format_port
+description: >-
+  A native Dart port of d3-format 3.1.2: human-readable number formatting with
+  SI prefixes, currency, percentages, grouping, custom numerals, precision
+  helpers, and all 59 built-in locales.
+version: 0.1.0
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_format_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - d3
+  - format
+  - number-formatting
+  - locale
+  - visualization
+
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace
+
+dev_dependencies:
+  test: ^1.32.0
+  very_good_analysis: ^11.0.0

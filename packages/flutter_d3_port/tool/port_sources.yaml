@@ -4,8 +4,8 @@
 # packages/flutter_d3_color_port, d3-interpolate in
 # packages/flutter_d3_interpolate_port, d3-scale-chromatic in
 # packages/flutter_d3_scale_chromatic_port, d3-path in
-# packages/flutter_d3_path_port and d3-shape in
-# packages/flutter_d3_shape_port.
+# packages/flutter_d3_path_port, d3-shape in packages/flutter_d3_shape_port
+# and d3-format in packages/flutter_d3_format_port.
 # Each "// Ported from" header must name a project of this file, with the
 # same license and holder. The first entry is the d3 bundle, the upstream
 # repository of ADR 0005. The other 29 entries are the D3 module
@@ -296,24 +296,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3-force/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-force/
-
-  - header: d3-format
-    version: "v3.1.2"
-    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:51 on 2026-10-20. The d3 v7.9.0 yarn.lock:1018-1019 locks 3.1.0.
-    url: https://github.com/d3/d3-format
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-format
-      ref: "v3.1.2"
-      commit: ebdc2d530277df379157f82fee6ea5623d179bd7
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-format/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-format/
 
   - header: d3-geo
     version: "v3.1.1"

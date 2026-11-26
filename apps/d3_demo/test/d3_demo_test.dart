@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all five D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all six D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -106,5 +106,26 @@ void main() {
       find.text('All 13 Built-In Symbols (7 Fill + 7 Stroke)'),
       findsOneWidget,
     );
+
+    // Tab 5: Format demo.
+    await tester.tap(find.text('Format'));
+    await tester.pump();
+    expect(
+      find.text(
+        'Number Formatting, Specifier Playground & 59 Built-In Locales',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text(r'+$1,234,567.89'), findsOneWidget);
+
+    await tester.tap(find.text('SI prefix (.3s)'));
+    await tester.pump();
+    expect(find.text('1.23M'), findsWidgets);
+
+    await tester.ensureVisible(find.text('fr-FR'));
+    await tester.pump();
+    await tester.tap(find.text('fr-FR'));
+    await tester.pump();
+    expect(find.text('1,23M'), findsWidgets);
   });
 }
