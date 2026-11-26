@@ -7,7 +7,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0002](0002-file-naming-and-layout.md) File naming and package layout: proposed, superseded in part by 0008.
 - [0003](0003-number-to-string.md) Number to string and number formatting: proposed, superseded by 0007.
 - [0004](0004-spec-harness.md) Spec harness: proposed, superseded in part by 0009.
-- [0005](0005-path-context.md) Path context and drawing: proposed.
+- [0005](0005-path-context.md) Path context and drawing: proposed, superseded by 0014.
 - [0006](0006-generators-accessors-and-js-values.md) Generators, accessors and JS values: proposed, superseded in part by 0010.
 - [0007](0007-native-dart-forms.md) Native Dart forms, no JS runtime: accepted, supersedes 0003.
 - [0008](0008-module-packages.md) One package for each D3 module: accepted, supersedes 0002.
@@ -16,4 +16,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0011](0011-interpolate-native-forms.md) Native forms of d3-interpolate: accepted, supersedes 0010.
 - [0012](0012-scale-chromatic-native-forms.md) Native forms of d3-scale-chromatic: accepted, superseded in part by 0013.
 - [0013](0013-immutable-color-values.md) Immutable `const` color values: accepted, supersedes 0012.
+- [0014](0014-path-native-forms.md) Native forms of d3-path and CanvasPath: accepted, supersedes 0005.
 <!-- adr-index:end -->

@@ -86,4 +86,17 @@ void main() {
     expect(interpolateCubehelixDefault(0.5), isA<Cubehelix>());
     expect(d3ScaleChromaticVersion, '3.1.0');
   });
+
+  test('the bundle exports the names of d3-path', () {
+    final p = path()
+      ..moveTo(0, 0)
+      ..lineTo(10, 20)
+      ..closePath();
+    expect(p, isA<Path>());
+    expect(p, isA<CanvasPath>());
+    expect('$p', 'M0,0L10,20Z');
+    final r = pathRound(2)..moveTo(1.2345, 6.7891);
+    expect('$r', 'M1.23,6.79');
+    expect(d3PathVersion, '3.1.0');
+  });
 }

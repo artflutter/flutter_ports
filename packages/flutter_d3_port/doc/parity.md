@@ -10,7 +10,9 @@ d3-color is the first ported repository (2026-11-15), in the native Dart forms o
 package `flutter_d3_interpolate_port`, in the native forms of
 [D3 ADR 0011](adr/0011-interpolate-native-forms.md). d3-scale-chromatic is the third (2026-11-26),
 as the package `flutter_d3_scale_chromatic_port`, in the native forms of
-[D3 ADR 0012](adr/0012-scale-chromatic-native-forms.md). The other rows have the status `not started`. Until
+[D3 ADR 0012](adr/0012-scale-chromatic-native-forms.md). d3-path is the fourth (2026-11-26), as the
+package `flutter_d3_path_port`, in the native forms of
+[D3 ADR 0014](adr/0014-path-native-forms.md). The other rows have the status `not started`. Until
 phase 2, this file has one row for each repository. A person writes it by hand. The status unit is one upstream source file
 (D3 ADR 0001). Thus the status of a repository row applies to each of its source files.
 
@@ -69,7 +71,7 @@ The columns:
 | [d3-geo](https://github.com/d3/d3-geo/tree/v3.1.1) | v3.1.1 | 58 | 3280 | 32 | 343 | 5 | not started |
 | [d3-hierarchy](https://github.com/d3/d3-hierarchy/tree/v3.1.2) | v3.1.2 | 34 | 1414 | 18 | 83 | 2 | not started |
 | [d3-interpolate](https://github.com/d3/d3-interpolate/tree/v3.0.1) | v3.0.1 | 26 | 595 | 22 | 149 | 2: the other files. 6: `zoom.js` (1 file, 71 lines, 5 cases). 7: `transform/` (3 files, 107 lines, 0 cases) | ported in the package `flutter_d3_interpolate_port` ([D3 ADR 0011](adr/0011-interpolate-native-forms.md)), ahead of phases 2, 6 and 7: 114 cases pass and 35 skip, 34 as `diverges: adapt-interpolate-typed-values` and 1 as `diverges: adapt-interpolate-date-value`, on the VM, DDC and dart2wasm. `src/object.js` and `src/string.js`: `n/a: interpolate takes typed values only`. `src/transform/parse.js`: `n/a: no transform text; the Flutter layer reads a Matrix4` |
-| [d3-path](https://github.com/d3/d3-path/tree/v3.1.0) | v3.1.0 | 2 | 157 | 2 | 64 | 1 | not started |
+| [d3-path](https://github.com/d3/d3-path/tree/v3.1.0) | v3.1.0 | 2 | 157 | 2 | 64 | 1 | ported in the package `flutter_d3_path_port` ([D3 ADR 0014](adr/0014-path-native-forms.md)): 61 cases pass and 3 skip as `diverges: adapt-path-typed-args`, on the VM, DDC and dart2wasm, plus native Flutter `UiPathContext`. |
 | [d3-polygon](https://github.com/d3/d3-polygon/tree/v3.0.1) | v3.0.1 | 7 | 135 | 5 | 23 | 2 | not started |
 | [d3-quadtree](https://github.com/d3/d3-quadtree/tree/v3.0.1) | v3.0.1 | 15 | 413 | 13 | 62 | 2 | not started |
 | [d3-random](https://github.com/d3/d3-random/tree/v3.0.1) | v3.0.1 | 20 | 370 | 18 | 67 | 2 | not started |

@@ -1,6 +1,7 @@
 # D3 ADR 0005: Path context and drawing
 
 - Status: proposed
+- Superseded by: [D3 ADR 0014](0014-path-native-forms.md) (2026-11-26)
 - Date: 2026-10-20
 - Gate: D3 phase 1 for the pure interface, because the d3-path pilot implements it. D3 phase 4
   for the `dart:ui` builder, because d3-shape and the gallery draw with it.

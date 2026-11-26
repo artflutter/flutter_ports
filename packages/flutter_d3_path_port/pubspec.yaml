@@ -1,0 +1,32 @@
+name: flutter_d3_path_port
+description: >-
+  A native Dart port of d3-path 3.1.0: serialize Canvas 2D path commands to SVG
+  path strings, with a direct Flutter dart:ui Path builder.
+version: 0.1.0
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_path_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - d3
+  - path
+  - svg
+  - canvas
+  - visualization
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  # The Flutter layer (lib/src/ui/) builds a native dart:ui Path directly from
+  # CanvasPath commands. lib/d3_path.dart imports no Flutter library.
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  # The tests use package:test; flutter test runs them on the VM and in
+  # Chrome. The constraint matches the workspace packages.
+  test: ^1.32.0
+  # analysis_options.yaml includes its rules, as the root file does.
+  very_good_analysis: ^11.0.0

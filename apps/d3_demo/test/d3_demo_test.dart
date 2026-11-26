@@ -65,5 +65,23 @@ void main() {
     await tester.tap(find.text('Cyclical (2)'));
     await tester.pump();
     expect(find.text('Rainbow (wraps 0 ≡ 1)'), findsOneWidget);
+
+    // Tab 3: Path demo.
+    await tester.tap(find.text('Path'));
+    await tester.pump();
+    expect(
+      find.text('CanvasPath Studio, Live SVG Serializer & Native dart:ui.Path'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.text('Gauge Arc (arc)'));
+    await tester.pump();
+    expect(find.text('Sweep angle'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('pathRound(0)'));
+    await tester.pump();
+    await tester.tap(find.text('pathRound(0)'));
+    await tester.pump();
+    expect(find.textContaining('M'), findsWidgets);
   });
 }

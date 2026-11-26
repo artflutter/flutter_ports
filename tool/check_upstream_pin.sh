@@ -46,6 +46,10 @@
 # (packages/flutter_d3_scale_chromatic_port/lib/src/upstream.dart, D3 ADR 0008)
 # and the "commit" of its entry in
 # packages/flutter_d3_scale_chromatic_port/tool/port_sources.yaml.
+# Also fails unless the third_party/d3-path gitlink is the commit of the tag
+# "v<d3PathVersion>" (packages/flutter_d3_path_port/lib/src/upstream.dart,
+# D3 ADR 0008) and the "commit" of its entry in
+# packages/flutter_d3_path_port/tool/port_sources.yaml.
 # Also fails on a submodule of .gitmodules that no entry of a
 # packages/*/tool/port_sources.yaml file pins.
 # Reads the gitlinks from the index. Thus it needs no submodule checkout. It
@@ -493,7 +497,40 @@ if [ "$d3chrom_seen" = 0 ]; then
   failed=1
 fi
 
-# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, ECharts, zoom and sankey entries. This loop finds a
+# d3-path (D3 ADR 0008). A release pin: the gitlink is the commit of the tag
+# "v<d3PathVersion>" and the "commit" of the entry.
+d3path_upstream=packages/flutter_d3_path_port/lib/src/upstream.dart
+d3path_sources=packages/flutter_d3_path_port/tool/port_sources.yaml
+d3path_path=third_party/d3-path
+d3path_version=$(sed -n "s/^const String d3PathVersion = '\(.*\)';\$/\1/p" "$d3path_upstream")
+if [ -z "$d3path_version" ]; then
+  echo "d3PathVersion not found in $d3path_upstream" >&2
+  exit 1
+fi
+if [ ! -f "$d3path_sources" ]; then
+  echo "$d3path_sources not found" >&2
+  exit 1
+fi
+d3path_seen=0
+while read -r path ref recorded <&3; do
+  if [ "$path" != "$d3path_path" ]; then
+    echo "$d3path_sources pins $path. It must pin only $d3path_path." >&2
+    failed=1
+    continue
+  fi
+  d3path_seen=1
+  if [ "$ref" != "v$d3path_version" ]; then
+    echo "$d3path_sources gives ref $ref for $path, but d3PathVersion is $d3path_version." >&2
+    failed=1
+  fi
+  check_pin "$path" "v$d3path_version" "$recorded" "$d3path_sources"
+done 3< <(read_pins "$d3path_sources")
+if [ "$d3path_seen" = 0 ]; then
+  echo "$d3path_sources has no entry for $d3path_path" >&2
+  failed=1
+fi
+
+# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, ECharts, zoom and sankey entries. This loop finds a
 # submodule without an entry. Each port lists its submodules in its own
 # tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
 listed=$(awk '/^[^[:space:]]/ { next } $1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)

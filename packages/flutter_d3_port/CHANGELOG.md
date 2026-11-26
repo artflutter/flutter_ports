@@ -5,6 +5,7 @@
   0011).
 - Re-exports `flutter_d3_scale_chromatic_port`, the port of d3-scale-chromatic 3.1.0 (D3 ADRs 0008
   and 0012).
+- Re-exports `flutter_d3_path_port`, the port of d3-path 3.1.0 (D3 ADRs 0008 and 0014).
 
 ## 0.0.1
 

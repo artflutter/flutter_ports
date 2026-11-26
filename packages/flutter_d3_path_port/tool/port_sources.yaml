@@ -1,0 +1,50 @@
+# The projects that packages/flutter_d3_path_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-path. The package imports
+# no other port: flutter_d3_port depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+#
+# Top-level keys before "sources":
+# - marker: the tag of the DIVERGES markers, "// DIVERGES(d3-path): <row id>,
+#   <reason>". The rows are in doc/differences.md.
+#
+# The keys of an entry are those of packages/flutter_d3_port/tool/
+# port_sources.yaml. The pin is a release pin: "version" is
+# "v<d3PathVersion>", and "ref" is the tag. "files" lists the ported source
+# paths at the pin, so the header check needs no checkout of the submodule.
+#
+# All paths are relative to the repository root, except "source" and
+# "files", which are relative to the project root.
+
+marker: d3-path
+
+sources:
+  - header: d3-path
+    version: "v3.1.0"
+    version_source: d3PathVersion in packages/flutter_d3_path_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-path
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-path
+      ref: "v3.1.0"
+      commit: 58bce7a53df2b03f70092a9b00b78055c4ffee04
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_path_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_path_port/test/
+    files:
+      - src/index.js
+      - src/path.js
+      - test/asserts.js
+      - test/path-test.js
+      - test/pathRound-test.js

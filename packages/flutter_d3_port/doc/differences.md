@@ -13,8 +13,9 @@ repository, the path, the tag and the lines, for example `d3-array src/ticks.js@
 
 Each ported D3 module is a package of its own ([D3 ADR 0008](adr/0008-module-packages.md)), with
 its own `doc/differences.md`: [the d3-color rows](../../flutter_d3_color_port/doc/differences.md),
-[the d3-interpolate rows](../../flutter_d3_interpolate_port/doc/differences.md) and
-[the d3-scale-chromatic rows](../../flutter_d3_scale_chromatic_port/doc/differences.md). This table has
+[the d3-interpolate rows](../../flutter_d3_interpolate_port/doc/differences.md),
+[the d3-scale-chromatic rows](../../flutter_d3_scale_chromatic_port/doc/differences.md) and
+[the d3-path rows](../../flutter_d3_path_port/doc/differences.md). This table has
 the rows of the files of `packages/flutter_d3_port`. It has no rows yet.
 
 | ID | Dart file and symbol | Upstream file@version:lines | Category | Reason | Upstream reference | Pinning test | Re-check on bump |

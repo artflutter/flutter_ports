@@ -92,6 +92,7 @@ Future<void> main(List<String> args) async {
     'flutter_d3_color_port',
     'flutter_d3_interpolate_port',
     'flutter_d3_scale_chromatic_port',
+    'flutter_d3_path_port',
   ]) {
     final directory = '$repository/packages/$name';
     final files = browserTestFiles(directory);
