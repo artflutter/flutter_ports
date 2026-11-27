@@ -19,7 +19,6 @@ workspace:
   - packages/flutter_d3_path_port
   - packages/flutter_d3_shape_port
   - packages/flutter_d3_format_port
-  - packages/flutter_d3_geo_port
   - packages/flutter_d3_array_port
   - packages/flutter_d3_chord_port
   - packages/flutter_d3_contour_port
