@@ -1,0 +1,23 @@
+name: flutter_d3_quadtree_port
+description: >-
+  A native, fully statically typed pure-Dart port of d3-quadtree 3.0.1:
+  2D recursive spatial subdivision, sealed QuadtreeNode hierarchy, nearest-
+  neighbor find, pre/post-order visit/visitAfter, and range queries.
+version: 0.1.0
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_quadtree_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - d3
+  - quadtree
+  - spatial-index
+  - geometry
+  - visualization
+
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace
+
+dev_dependencies:
+  test: ^1.32.0
+  very_good_analysis: ^11.0.0

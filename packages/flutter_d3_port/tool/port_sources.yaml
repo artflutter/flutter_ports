@@ -5,8 +5,9 @@
 # packages/flutter_d3_interpolate_port, d3-scale-chromatic in
 # packages/flutter_d3_scale_chromatic_port, d3-path in
 # packages/flutter_d3_path_port, d3-shape in packages/flutter_d3_shape_port,
-# d3-format in packages/flutter_d3_format_port and d3-array in
-# packages/flutter_d3_array_port.
+# d3-format in packages/flutter_d3_format_port, d3-array in
+# packages/flutter_d3_array_port and d3-quadtree in
+# packages/flutter_d3_quadtree_port.
 # Each "// Ported from" header must name a project of this file, with the
 # same license and holder. The first entry is the d3 bundle, the upstream
 # repository of ADR 0005. The other 28 entries are the D3 module
@@ -313,24 +314,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3-polygon/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-polygon/
-
-  - header: d3-quadtree
-    version: "v3.0.1"
-    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:57 on 2026-10-20. The d3 v7.9.0 yarn.lock:1052-1053 also locks 3.0.1.
-    url: https://github.com/d3/d3-quadtree
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-quadtree
-      ref: "v3.0.1"
-      commit: 24d7ea88ea7099407cdce67e7fe548a3a1893d92
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-quadtree/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-quadtree/
 
   - header: d3-random
     version: "v3.0.1"

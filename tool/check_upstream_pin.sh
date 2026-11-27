@@ -662,7 +662,40 @@ if [ "$d3contour_seen" = 0 ]; then
   failed=1
 fi
 
-# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-contour, ECharts, zoom and sankey entries. This loop finds a
+# d3-quadtree (D3 ADR 0008). A release pin: the gitlink is the commit of the tag
+# "v<d3QuadtreeVersion>" and the "commit" of the entry.
+d3quadtree_upstream=packages/flutter_d3_quadtree_port/lib/src/upstream.dart
+d3quadtree_sources=packages/flutter_d3_quadtree_port/tool/port_sources.yaml
+d3quadtree_path=third_party/d3-quadtree
+d3quadtree_version=$(sed -n "s/^const String d3QuadtreeVersion = '\(.*\)';\$/\1/p" "$d3quadtree_upstream")
+if [ -z "$d3quadtree_version" ]; then
+  echo "d3QuadtreeVersion not found in $d3quadtree_upstream" >&2
+  exit 1
+fi
+if [ ! -f "$d3quadtree_sources" ]; then
+  echo "$d3quadtree_sources not found" >&2
+  exit 1
+fi
+d3quadtree_seen=0
+while read -r path ref recorded <&3; do
+  if [ "$path" != "$d3quadtree_path" ]; then
+    echo "$d3quadtree_sources pins $path. It must pin only $d3quadtree_path." >&2
+    failed=1
+    continue
+  fi
+  d3quadtree_seen=1
+  if [ "$ref" != "v$d3quadtree_version" ]; then
+    echo "$d3quadtree_sources gives ref $ref for $path, but d3QuadtreeVersion is $d3quadtree_version." >&2
+    failed=1
+  fi
+  check_pin "$path" "v$d3quadtree_version" "$recorded" "$d3quadtree_sources"
+done 3< <(read_pins "$d3quadtree_sources")
+if [ "$d3quadtree_seen" = 0 ]; then
+  echo "$d3quadtree_sources has no entry for $d3quadtree_path" >&2
+  failed=1
+fi
+
+# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-contour, d3-quadtree, ECharts, zoom and sankey entries. This loop finds a
 # submodule without an entry. Each port lists its submodules in its own
 # tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
 listed=$(awk '/^[^[:space:]]/ { next } $1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)

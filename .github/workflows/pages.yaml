@@ -81,6 +81,8 @@ on:
       - packages/flutter_d3_interpolate_port/pubspec.yaml
       - packages/flutter_d3_path_port/lib/**
       - packages/flutter_d3_path_port/pubspec.yaml
+      - packages/flutter_d3_quadtree_port/lib/**
+      - packages/flutter_d3_quadtree_port/pubspec.yaml
       - packages/flutter_d3_scale_chromatic_port/lib/**
       - packages/flutter_d3_scale_chromatic_port/pubspec.yaml
       - packages/flutter_d3_shape_port/lib/**
@@ -320,7 +322,7 @@ jobs:
         working-directory: apps/d3_demo
         run: |
           sed -i '/^resolution: workspace$/d' pubspec.yaml
-          printf 'dependency_overrides:\n  flutter_d3_array_port:\n    path: ../../packages/flutter_d3_array_port\n  flutter_d3_color_port:\n    path: ../../packages/flutter_d3_color_port\n  flutter_d3_contour_port:\n    path: ../../packages/flutter_d3_contour_port\n  flutter_d3_format_port:\n    path: ../../packages/flutter_d3_format_port\n  flutter_d3_interpolate_port:\n    path: ../../packages/flutter_d3_interpolate_port\n  flutter_d3_path_port:\n    path: ../../packages/flutter_d3_path_port\n  flutter_d3_scale_chromatic_port:\n    path: ../../packages/flutter_d3_scale_chromatic_port\n  flutter_d3_shape_port:\n    path: ../../packages/flutter_d3_shape_port\n' >> pubspec.yaml
+          printf 'dependency_overrides:\n  flutter_d3_array_port:\n    path: ../../packages/flutter_d3_array_port\n  flutter_d3_color_port:\n    path: ../../packages/flutter_d3_color_port\n  flutter_d3_contour_port:\n    path: ../../packages/flutter_d3_contour_port\n  flutter_d3_format_port:\n    path: ../../packages/flutter_d3_format_port\n  flutter_d3_interpolate_port:\n    path: ../../packages/flutter_d3_interpolate_port\n  flutter_d3_path_port:\n    path: ../../packages/flutter_d3_path_port\n  flutter_d3_quadtree_port:\n    path: ../../packages/flutter_d3_quadtree_port\n  flutter_d3_scale_chromatic_port:\n    path: ../../packages/flutter_d3_scale_chromatic_port\n  flutter_d3_shape_port:\n    path: ../../packages/flutter_d3_shape_port\n' >> pubspec.yaml
           cp ../../pubspec.lock pubspec.lock
           flutter pub get
       - name: Build the D3 demo for the web (WebAssembly + JavaScript fallback)

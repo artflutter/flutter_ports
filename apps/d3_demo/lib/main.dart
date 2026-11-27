@@ -7,6 +7,7 @@ import 'package:d3_demo/pages/contour_page.dart';
 import 'package:d3_demo/pages/format_page.dart';
 import 'package:d3_demo/pages/interpolate_page.dart';
 import 'package:d3_demo/pages/path_page.dart';
+import 'package:d3_demo/pages/quadtree_page.dart';
 import 'package:d3_demo/pages/shape_page.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -19,6 +20,7 @@ void main() {
     'format' => 5,
     'array' => 6,
     'contour' => 7,
+    'quadtree' => 8,
     _ => 0,
   };
   runApp(D3DemoApp(initialTab: tab));
@@ -27,16 +29,16 @@ void main() {
 /// Interactive showcase for `flutter_d3_color_port`,
 /// `flutter_d3_interpolate_port`, `flutter_d3_scale_chromatic_port`,
 /// `flutter_d3_path_port`, `flutter_d3_shape_port`,
-/// `flutter_d3_format_port`, `flutter_d3_array_port` and
-/// `flutter_d3_contour_port`.
+/// `flutter_d3_format_port`, `flutter_d3_array_port`,
+/// `flutter_d3_contour_port` and `flutter_d3_quadtree_port`.
 class const D3DemoApp({
   /// Initial destination index (`0` = Color, `1` = Interpolate,
   /// `2` = Chromatic, `3` = Path, `4` = Shape, `5` = Format, `6` = Array,
-  /// `7` = Contour).
+  /// `7` = Contour, `8` = Quadtree).
   final int initialTab = 0,
   super.key,
 }) extends StatefulWidget {
-  /// Creates the demo app starting on [initialTab] (`0..7`).
+  /// Creates the demo app starting on [initialTab] (`0..8`).
   this;
 
   @override
@@ -44,7 +46,7 @@ class const D3DemoApp({
 }
 
 class _D3DemoAppState() extends State<D3DemoApp> {
-  late int _index = widget.initialTab.clamp(0, 7);
+  late int _index = widget.initialTab.clamp(0, 8);
   ThemeMode _themeMode = ThemeMode.light;
 
   static const _destinations = <(String, String, IconData, IconData)>[
@@ -66,6 +68,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
     ('Format', 'd3-format', Icons.pin_outlined, Icons.pin),
     ('Array', 'd3-array', Icons.bar_chart_outlined, Icons.bar_chart),
     ('Contour', 'd3-contour', Icons.terrain_outlined, Icons.terrain),
+    ('Quadtree', 'd3-quadtree', Icons.grid_4x4_outlined, Icons.grid_4x4),
   ];
 
   @override
@@ -102,6 +105,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
               FormatDemoPage(),
               ArrayDemoPage(),
               ContourDemoPage(),
+              QuadtreeDemoPage(),
             ],
           );
           final (_, pkg, _, _) = _destinations[_index];

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all eight D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all nine D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -181,5 +181,23 @@ void main() {
     expect(find.textContaining('Bandwidth:'), findsOneWidget);
     expect(find.textContaining('Cell size:'), findsOneWidget);
     expect(find.text('Peak density'), findsOneWidget);
+
+    // Tab 8: Quadtree demo.
+    await tester.tap(find.text('Quadtree'));
+    await tester.pump();
+    expect(
+      find.text(
+        '2D Spatial Subdivision, Nearest-Neighbor & Pruned Range Queries',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Points: 1200'), findsOneWidget);
+    expect(find.textContaining('visited ·'), findsOneWidget);
+
+    await tester.tap(find.text('Spiral'));
+    await tester.pump();
+    await tester.tap(find.text('Unbounded radius'));
+    await tester.pump();
+    expect(find.text('Radius: ∞'), findsOneWidget);
   });
 }

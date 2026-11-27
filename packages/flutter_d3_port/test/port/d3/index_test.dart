@@ -169,4 +169,12 @@ void main() {
     expect(d(const <(double, double)>[(50, 50)]), isNotEmpty);
     expect(d3ContourVersion, '4.0.2');
   });
+
+  test('the bundle exports the names of d3-quadtree', () {
+    final q = quadtree(const <(double, double)>[(0, 0), (10, 10), (5, 5)]);
+    expect(q.size(), 3);
+    expect(q.find(4.8, 5.1), (5.0, 5.0));
+    expect(q.root, isA<QuadtreeInternalNode<(double, double)>>());
+    expect(d3QuadtreeVersion, '3.0.1');
+  });
 }

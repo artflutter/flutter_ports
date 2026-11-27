@@ -1,0 +1,61 @@
+# The projects that packages/flutter_d3_quadtree_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-quadtree. flutter_d3_port
+# depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-quadtree
+
+sources:
+  - header: d3-quadtree
+    version: "v3.0.1"
+    version_source: d3QuadtreeVersion in packages/flutter_d3_quadtree_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-quadtree
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-quadtree
+      ref: "v3.0.1"
+      commit: 24d7ea88ea7099407cdce67e7fe548a3a1893d92
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_quadtree_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_quadtree_port/test/
+    files:
+      - src/add.js
+      - src/cover.js
+      - src/data.js
+      - src/extent.js
+      - src/find.js
+      - src/index.js
+      - src/quad.js
+      - src/quadtree.js
+      - src/remove.js
+      - src/root.js
+      - src/size.js
+      - src/visit.js
+      - src/visitAfter.js
+      - src/x.js
+      - src/y.js
+      - test/add-test.js
+      - test/addAll-test.js
+      - test/copy-test.js
+      - test/cover-test.js
+      - test/data-test.js
+      - test/extent-test.js
+      - test/find-test.js
+      - test/quadtree-test.js
+      - test/remove-test.js
+      - test/size-test.js
+      - test/visit-test.js
+      - test/x-test.js
+      - test/y-test.js

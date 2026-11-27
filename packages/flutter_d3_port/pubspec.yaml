@@ -31,6 +31,7 @@ dependencies:
   flutter_d3_format_port: ^0.1.0
   flutter_d3_interpolate_port: ^0.3.0
   flutter_d3_path_port: ^0.1.0
+  flutter_d3_quadtree_port: ^0.1.0
   flutter_d3_scale_chromatic_port: ^0.3.0
   flutter_d3_shape_port: ^0.1.0
 
