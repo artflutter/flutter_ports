@@ -40,7 +40,7 @@ class _FormatDemoPageState() extends State<FormatDemoPage> {
     'ja-JP',
     'ar-AE',
     'de-CH',
-    'ru-RU',
+    'uk-UA',
     'zh-CN',
   ];
 
@@ -167,6 +167,10 @@ class _FormatDemoPageState() extends State<FormatDemoPage> {
                           border: const OutlineInputBorder(),
                           errorText: parseError,
                           isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
                         ),
                         onChanged: (v) => setState(() => _specText = v),
                       ),
@@ -180,6 +184,10 @@ class _FormatDemoPageState() extends State<FormatDemoPage> {
                           hintText: 'e.g. 1234567.89 or NaN',
                           border: OutlineInputBorder(),
                           isDense: true,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
                         ),
                         onChanged: (v) {
                           final trimmed = v.trim().toLowerCase();
@@ -205,7 +213,7 @@ class _FormatDemoPageState() extends State<FormatDemoPage> {
                           isDense: true,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 12,
-                            vertical: 4,
+                            vertical: 12,
                           ),
                         ),
                         child: DropdownButtonHideUnderline(

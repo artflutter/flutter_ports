@@ -118,6 +118,14 @@ void main() {
     );
     expect(find.text(r'+$1,234,567.89'), findsOneWidget);
 
+    final decorators = find.byType(InputDecorator);
+    expect(decorators, findsNWidgets(3));
+    final specHeight = tester.getSize(decorators.at(0)).height;
+    final valueHeight = tester.getSize(decorators.at(1)).height;
+    final localeHeight = tester.getSize(decorators.at(2)).height;
+    expect(valueHeight, closeTo(specHeight, 1.0));
+    expect(localeHeight, closeTo(specHeight, 1.0));
+
     await tester.tap(find.text('SI prefix (.3s)'));
     await tester.pump();
     expect(find.text('1.23M'), findsWidgets);
