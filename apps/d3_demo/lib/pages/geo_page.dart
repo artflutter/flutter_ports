@@ -314,22 +314,20 @@ const d3g.GeoMultiPolygon _worldLand = d3g.GeoMultiPolygon(
         (132, -1),
       ],
     ],
-    // Antarctica
+    // Antarctica (true spherical ring enclosing the South Pole, no ±180° seam)
     <List<d3g.GeoPosition>>[
       <d3g.GeoPosition>[
-        (-180, -72),
+        (-160, -74),
         (-120, -73),
+        (-80, -73),
         (-60, -64),
         (-40, -72),
         (0, -70),
-        (60, -67),
+        (40, -68),
+        (80, -67),
         (120, -67),
         (165, -72),
-        (180, -72),
-        (180, -85),
-        (0, -85),
-        (-180, -85),
-        (-180, -72),
+        (-160, -74),
       ],
     ],
   ],
