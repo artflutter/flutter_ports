@@ -26,7 +26,10 @@ package `flutter_d3_hierarchy_port`, in the native forms of
 package `flutter_d3_quadtree_port`, in the native forms of
 [D3 ADR 0019](adr/0019-quadtree-native-forms.md). d3-chord is ported as the
 package `flutter_d3_chord_port`, in the native forms of
-[D3 ADR 0023](adr/0023-chord-native-forms.md). The other rows have the status `not started`. Until
+[D3 ADR 0023](adr/0023-chord-native-forms.md). d3-delaunay (bundling delaunator
+and robust-predicates `orient2d`) is ported as the package
+`flutter_d3_delaunay_port`, in the native forms of
+[D3 ADR 0022](adr/0022-delaunay-native-forms.md). The other rows have the status `not started`. Until
 phase 2, this file has one row for each repository. A person writes it by hand. The status unit is one upstream source file
 (D3 ADR 0001). Thus the status of a repository row applies to each of its source files.
 
@@ -74,7 +77,7 @@ The columns:
 | [d3-chord](https://github.com/d3/d3-chord/tree/v3.0.1) | v3.0.1 | 6 | 272 | 2 | 8 | 4 | ported in the package `flutter_d3_chord_port` ([D3 ADR 0023](adr/0023-chord-native-forms.md)): all 8 upstream cases pass (plus comprehensive unit, Node.js reference parity, faster-form twin, and `UiPathContext` tests), on the VM, DDC and dart2wasm. |
 | [d3-color](https://github.com/d3/d3-color/tree/v3.1.0) | v3.1.0 | 6 | 595 | 8 | 170 | 2 | ported in the package `flutter_d3_color_port` ([D3 ADR 0008](adr/0008-module-packages.md)): 162 cases pass and 8 skip as `diverges: adapt-color-factories`, on the VM, DDC and dart2wasm. `src/define.js`: `n/a: Dart classes take the place of the prototype helper` |
 | [d3-contour](https://github.com/d3/d3-contour/tree/v4.0.2) | v4.0.2 | 9 | 416 | 3 | 23 | 5 | ported in the package `flutter_d3_contour_port` ([D3 ADR 0020](adr/0020-contour-native-forms.md)): all 23 upstream cases pass (13 `contours`, 8 `density`, 2 `snapshot` geometry) on the VM, DDC and dart2wasm. |
-| [d3-delaunay](https://github.com/d3/d3-delaunay/tree/v6.0.4) | v6.0.4 | 5 | 636 | 2 | 41 | 5 | not started |
+| [d3-delaunay](https://github.com/d3/d3-delaunay/tree/v6.0.4) | v6.0.4 | 5 | 636 | 2 | 41 | 5 | ported in the package `flutter_d3_delaunay_port` ([D3 ADR 0022](adr/0022-delaunay-native-forms.md)): all 41 upstream cases pass (plus Node.js reference parity, faster-form twin, and `UiPathContext` tests), on the VM, DDC and dart2wasm. |
 | [d3-dispatch](https://github.com/d3/d3-dispatch/tree/v3.0.1) | v3.0.1 | 2 | 85 | 1 | 36 | 2 | not started |
 | [d3-drag](https://github.com/d3/d3-drag/tree/v3.0.0) | v3.0.0 | 6 | 266 | 1 | 1 | 7 | not started |
 | [d3-dsv](https://github.com/d3/d3-dsv/tree/v3.0.1) | v3.0.1 | 5 | 209 | 4 | 136 | 3 | not started |
@@ -98,9 +101,9 @@ The columns:
 | [d3-timer](https://github.com/d3/d3-timer/tree/v3.0.1) | v3.0.1 | 4 | 151 | 5 | 42 | 6 | not started |
 | [d3-transition](https://github.com/d3/d3-transition/tree/v3.0.1) | v3.0.1 | 29 | 953 | 33 | 180 | 7 | not started |
 | [d3-zoom](https://github.com/d3/d3-zoom/tree/v3.0.0) | v3.0.0 | 6 | 523 | 4 | 25 | 6: `transform.js` (1 file, 51 lines, 10 cases). 7: the other files | not started |
-| [delaunator](https://github.com/mapbox/delaunator/tree/v5.1.0) | v5.1.0 | 1 | 607 | 1 | 14 | 5 | not started |
+| [delaunator](https://github.com/mapbox/delaunator/tree/v5.1.0) | v5.1.0 | 1 | 607 | 1 | 14 | 5 | ported in the package `flutter_d3_delaunay_port` ([D3 ADR 0022](adr/0022-delaunay-native-forms.md)): all 14 upstream cases (including all 8 JSON fixtures) pass on the VM. |
 | [internmap](https://github.com/mbostock/internmap/tree/v2.0.3) | v2.0.3 | 1 | 61 | 2 | 8 | 2 | not started |
-| [robust-predicates](https://github.com/mourner/robust-predicates/tree/v3.0.3) | v3.0.3 | 5 | 1085 | 1 | 8 | 5: `orient2d.js` and `util.js` (2 files, 183 lines). The other three files are `n/a` ([Notes](#notes)) | not started |
+| [robust-predicates](https://github.com/mourner/robust-predicates/tree/v3.0.3) | v3.0.3 | 5 | 1085 | 1 | 8 | 5: `orient2d.js` and `util.js` (2 files, 183 lines). The other three files are `n/a` ([Notes](#notes)) | ported in the package `flutter_d3_delaunay_port` ([D3 ADR 0022](adr/0022-delaunay-native-forms.md)): `src/orient2d.js` and `src/util.js` ported (2 `orient2d`/`orient2dfast` cases including 128×128 grid and 1,000 hard fixtures pass on the VM); `src/incircle.js`, `src/insphere.js` and `src/orient3d.js` are `n/a: unused by d3-delaunay and delaunator` (6 upstream cases skip). |
 | **All 34 repositories** | | **568** | **22216** | **434** | **3837** | | |
 | **Without the `d3` bundle** | | **567** | **22186** | **432** | **3835** | | |
 

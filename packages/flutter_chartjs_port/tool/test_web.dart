@@ -98,6 +98,7 @@ Future<void> main(List<String> args) async {
     'flutter_d3_array_port',
     'flutter_d3_chord_port',
     'flutter_d3_contour_port',
+    'flutter_d3_delaunay_port',
     'flutter_d3_hierarchy_port',
     'flutter_d3_quadtree_port',
   ]) {

@@ -1,0 +1,90 @@
+# The projects that packages/flutter_d3_delaunay_port ports code from (D3 ADR
+# 0008, D3 ADR 0022). Each "// Ported from" header must name a project of this
+# file, with the same license and holder. The package ports d3-delaunay and its
+# two internal pure-math dependencies delaunator and robust-predicates
+# (orient2d / util). The package depends on flutter_d3_path_port;
+# flutter_d3_port depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-delaunay
+
+sources:
+  - header: d3-delaunay
+    version: "v6.0.4"
+    version_source: d3DelaunayVersion in packages/flutter_d3_delaunay_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-delaunay
+    language: js
+    spdx: ISC
+    holder: Observable, Inc.
+    pin:
+      kind: submodule
+      path: third_party/d3-delaunay
+      ref: "v6.0.4"
+      commit: c5a08b375cd57f4a314b07979e25e3e30387943f
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_delaunay_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_delaunay_port/test/
+    files:
+      - src/delaunay.js
+      - src/index.js
+      - src/path.js
+      - src/polygon.js
+      - src/voronoi.js
+      - test/context.js
+      - test/delaunay-test.js
+      - test/voronoi-test.js
+
+  - header: delaunator
+    version: "v5.1.0"
+    version_source: delaunatorVersion in packages/flutter_d3_delaunay_port/lib/src/upstream.dart
+    url: https://github.com/mapbox/delaunator
+    language: js
+    spdx: ISC
+    holder: Mapbox
+    pin:
+      kind: submodule
+      path: third_party/delaunator
+      ref: "v5.1.0"
+      commit: 3ce65210ba78a8f02ec6e73cf202838d7df14051
+    targets:
+      - source: index.js
+        dart: packages/flutter_d3_delaunay_port/lib/src/delaunator/index.dart
+      - source: test/
+        dart: packages/flutter_d3_delaunay_port/test/delaunator/
+      - source: test/test.js
+        dart: packages/flutter_d3_delaunay_port/test/delaunator/test_test.dart
+    files:
+      - index.js
+      - test/test.js
+
+  - header: robust-predicates
+    version: "v3.0.3"
+    version_source: robustPredicatesVersion in packages/flutter_d3_delaunay_port/lib/src/upstream.dart
+    url: https://github.com/mourner/robust-predicates
+    language: js
+    spdx: Unlicense
+    holder: Vladimir Agafonkin
+    pin:
+      kind: submodule
+      path: third_party/robust-predicates
+      ref: "v3.0.3"
+      commit: 8bed7fadb4284911e1111876e54a6f8acfa445cd
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_delaunay_port/lib/src/robust_predicates/
+      - source: test/
+        dart: packages/flutter_d3_delaunay_port/test/robust_predicates/
+      - source: test/test.js
+        dart: packages/flutter_d3_delaunay_port/test/robust_predicates/test_test.dart
+    files:
+      - src/orient2d.js
+      - src/util.js
+      - test/test.js

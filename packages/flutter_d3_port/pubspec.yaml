@@ -29,6 +29,7 @@ dependencies:
   flutter_d3_chord_port: ^0.1.0
   flutter_d3_color_port: ^0.3.0
   flutter_d3_contour_port: ^0.1.0
+  flutter_d3_delaunay_port: ^0.1.0
   flutter_d3_format_port: ^0.1.0
   flutter_d3_hierarchy_port: ^0.1.0
   flutter_d3_interpolate_port: ^0.3.0

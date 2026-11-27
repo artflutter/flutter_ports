@@ -42,8 +42,11 @@ and in [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
   [`flutter_d3_hierarchy_port`](../../flutter_d3_hierarchy_port/README.md), with its differences and
   its speed figures in its `doc/` folder, d3-quadtree is
   [`flutter_d3_quadtree_port`](../../flutter_d3_quadtree_port/README.md), with its differences and
-  its speed figures in its `doc/` folder, and d3-chord is
+  its speed figures in its `doc/` folder, d3-chord is
   [`flutter_d3_chord_port`](../../flutter_d3_chord_port/README.md), with its differences and
+  its speed figures in its `doc/` folder, and d3-delaunay (bundling delaunator and
+  robust-predicates `orient2d`) is
+  [`flutter_d3_delaunay_port`](../../flutter_d3_delaunay_port/README.md), with its differences and
   its speed figures in its `doc/` folder.
 - **Upstream after the pins:** [upstream-ledger.md](upstream-ledger.md) lists the upstream commits
   after each pinned tag, with one section for each repository.

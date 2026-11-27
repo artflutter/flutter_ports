@@ -224,4 +224,23 @@ void main() {
     expect(chordTranspose()(matrix).groups, hasLength(4));
     expect(d3ChordVersion, '3.0.1');
   });
+
+  test('the bundle exports the names of d3-delaunay', () {
+    final delaunay = Delaunay.fromCoords(const <(double, double)>[
+      (0, 0),
+      (10, 0),
+      (0, 10),
+      (10, 10),
+    ]);
+    expect(delaunay.find(9, 9), 3);
+    expect(delaunay.neighbors(0).toList(), isNotEmpty);
+    final voronoi = delaunay.voronoi((0, 0, 10, 10));
+    expect(voronoi.contains(0, 1, 1), isTrue);
+    expect(voronoi.cellPolygon(0), isNotNull);
+    expect(voronoi.renderToSvg(), startsWith('M'));
+    expect(orient2d(0, 0, 1, 0, 0, 1), lessThan(0));
+    expect(d3DelaunayVersion, '6.0.4');
+    expect(delaunatorVersion, '5.1.0');
+    expect(robustPredicatesVersion, '3.0.3');
+  });
 }

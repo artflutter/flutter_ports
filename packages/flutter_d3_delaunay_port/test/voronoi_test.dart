@@ -1,0 +1,316 @@
+// Ported from d3-delaunay v6.0.4 test/voronoi-test.js (ISC, Observable, Inc.).
+
+import 'dart:typed_data';
+
+import 'package:flutter_d3_delaunay_port/d3_delaunay.dart';
+import 'package:test/test.dart';
+
+import 'context.dart';
+
+void main() {
+  test('voronoi.renderCell(i, context) is a noop for coincident points', () {
+    final voronoi = Delaunay.fromCoords(const <(double, double)>[
+      (0, 0),
+      (1, 0),
+      (0, 1),
+      (1, 0),
+    ]).voronoi((-1, -1, 2, 2));
+    final ctx = TestContext();
+    voronoi.renderCell(3, ctx);
+    expect(ctx.toString(), '');
+    expect(voronoi.renderCellToSvg(3), isNull);
+  });
+
+  test('voronoi.renderCell(i, context) handles midpoint coincident with '
+      'circumcenter', () {
+    final voronoi = Delaunay.fromCoords(const <(double, double)>[
+      (0, 0),
+      (1, 0),
+      (0, 1),
+    ]).voronoi((-1, -1, 2, 2));
+    final context = TestContext();
+    voronoi.renderCell(0, context);
+    expect(context.toString(), 'M-1,-1L0.5,-1L0.5,0.5L-1,0.5Z');
+    voronoi.renderCell(1, context);
+    expect(context.toString(), 'M2,-1L2,2L0.5,0.5L0.5,-1Z');
+    voronoi.renderCell(2, context);
+    expect(context.toString(), 'M-1,2L-1,0.5L0.5,0.5L2,2Z');
+  });
+
+  test('voronoi.contains(i, x, y) is false for coincident points', () {
+    final voronoi = Delaunay.fromCoords(const <(double, double)>[
+      (0, 0),
+      (1, 0),
+      (0, 1),
+      (1, 0),
+    ]).voronoi((-1, -1, 2, 2));
+    expect(voronoi.contains(3, 1, 0), isFalse);
+    expect(voronoi.contains(1, 1, 0), isTrue);
+  });
+
+  test('voronoi.update() updates the voronoi', () {
+    final delaunay = Delaunay.fromCoords(const <(double, double)>[
+      (0, 0),
+      (300, 0),
+      (0, 300),
+      (300, 300),
+      (100, 100),
+    ]);
+    final voronoi = delaunay.voronoi((-500, -500, 500, 500));
+    for (var i = 0; i < delaunay.points.length; i++) {
+      delaunay.points[i] = 10 - delaunay.points[i];
+    }
+    final p = voronoi.update().cellPolygon(1);
+    expect(p, const <(double, double)>[
+      (-500, 500),
+      (-500, -140),
+      (-240, -140),
+      (-140, 60),
+      (-140, 500),
+      (-500, 500),
+    ]);
+  });
+
+  test('voronoi.update() updates a degenerate voronoi', () {
+    const pts = <double>[10, 10, -290, 10, 10, -290, -290, -290, -90, -90];
+    final delaunay = Delaunay(Float64List(pts.length));
+    final voronoi = delaunay.voronoi((-500, -500, 500, 500));
+    expect(voronoi.cellPolygon(0), const <(double, double)>[
+      (500, -500),
+      (500, 500),
+      (-500, 500),
+      (-500, -500),
+      (500, -500),
+    ]);
+    expect(voronoi.cellPolygon(1), isNull);
+    for (var i = 0; i < delaunay.points.length; i++) {
+      delaunay.points[i] = pts[i];
+    }
+    final p = voronoi.update().cellPolygon(1);
+    expect(p, const <(double, double)>[
+      (-500, 500),
+      (-500, -140),
+      (-240, -140),
+      (-140, 60),
+      (-140, 500),
+      (-500, 500),
+    ]);
+  });
+
+  test('zero-length edges are removed', () {
+    final voronoi1 = Delaunay.fromCoords(const <(double, double)>[
+      (50, 10),
+      (10, 50),
+      (10, 10),
+      (200, 100),
+    ]).voronoi((40, 40, 440, 180));
+    expect(voronoi1.cellPolygon(0)!.length, 4);
+    final voronoi2 = Delaunay.fromCoords(const <(double, double)>[
+      (10, 10),
+      (20, 10),
+    ]).voronoi((0, 0, 30, 20));
+    expect(voronoi2.cellPolygon(0), const <(double, double)>[
+      (0, 20),
+      (0, 0),
+      (15, 0),
+      (15, 20),
+      (0, 20),
+    ]);
+  });
+
+  test('voronoi neighbors are clipped', () {
+    final voronoi = Delaunay.fromCoords(const <(double, double)>[
+      (300, 10),
+      (200, 100),
+      (300, 100),
+      (10, 10),
+      (350, 200),
+      (350, 400),
+    ]).voronoi((0, 0, 500, 150));
+    expect(
+      [for (var i = 0; i < 6; i++) voronoi.neighbors(i).toList()..sort()],
+      const [
+        [1, 2],
+        [0, 2, 3],
+        [0, 1, 4],
+        [1],
+        [2],
+        <int>[],
+      ],
+    );
+  });
+
+  test('unnecessary points on the corners are avoided (#88)', () {
+    const cases = <(List<(double, double)>, List<int>)>[
+      ([(289, 25), (3, 22), (93, 165), (282, 184), (65, 89)], [6, 4, 6, 5, 6]),
+      (
+        [(189, 13), (197, 26), (47, 133), (125, 77), (288, 15)],
+        [4, 6, 5, 6, 5],
+      ),
+      (
+        [(44, 42), (210, 193), (113, 103), (185, 43), (184, 37)],
+        [5, 5, 7, 5, 6],
+      ),
+    ];
+    for (final (points, lengths) in cases) {
+      final voronoi = Delaunay.fromCoords(points).voronoi((0, 0, 290, 190));
+      expect(voronoi.cellPolygons().map((d) => d.length).toList(), lengths);
+    }
+  });
+
+  test('a degenerate triangle is avoided', () {
+    const pts = <(double, double)>[
+      (424.75, 253.75),
+      (424.75, 253.74999999999997),
+      (407.17640687119285, 296.17640687119285),
+      (364.75, 313.75),
+      (322.32359312880715, 296.17640687119285),
+      (304.75, 253.75),
+      (322.32359312880715, 211.32359312880715),
+      (364.75, 193.75),
+      (407.17640687119285, 211.32359312880715),
+      (624.75, 253.75),
+      (607.1764068711929, 296.17640687119285),
+      (564.75, 313.75),
+      (522.3235931288071, 296.17640687119285),
+      (504.75, 253.75),
+      (564.75, 193.75),
+    ];
+    final voronoi = Delaunay.fromCoords(pts).voronoi((10, 10, 960, 500));
+    expect(voronoi.cellPolygon(0)!.length, 4);
+  });
+
+  test('cellPolygons filter out empty cells and expose the cell index', () {
+    const pts = <(double, double)>[(0, 0), (3, 3), (1, 1), (-3, -2)];
+    final voronoi = Delaunay.fromCoords(pts).voronoi((0, 0, 2, 2));
+    final indexed = voronoi.cellPolygonsIndexed().toList();
+    expect(indexed, hasLength(2));
+    expect(indexed[0].index, 0);
+    expect(indexed[0].polygon, const <(double, double)>[
+      (0, 0),
+      (1, 0),
+      (0, 1),
+      (0, 0),
+    ]);
+    expect(indexed[1].index, 2);
+    expect(indexed[1].polygon, const <(double, double)>[
+      (2, 2),
+      (0, 2),
+      (0, 1),
+      (1, 0),
+      (2, 0),
+      (2, 2),
+    ]);
+  });
+
+  test('voronoi.neighbors returns the correct neighbors', () {
+    const points = <(double, double)>[(10, 10), (36, 27), (90, 19), (50, 75)];
+    final voronoi = Delaunay.fromCoords(points).voronoi((0, 0, 100, 90));
+    expect(
+      [for (var i = 0; i < 4; i++) voronoi.neighbors(i).toList()..sort()],
+      const [
+        [1],
+        [0, 2, 3],
+        [1, 3],
+        [1, 2],
+      ],
+    );
+  });
+
+  test(
+    'voronoi.neighbors returns the correct neighbors, flipped vertically',
+    () {
+      const points = <(double, double)>[
+        (10, -10),
+        (36, -27),
+        (90, -19),
+        (50, -75),
+      ];
+      final voronoi = Delaunay.fromCoords(points).voronoi((0, -90, 100, 0));
+      expect(
+        [for (var i = 0; i < 4; i++) voronoi.neighbors(i).toList()..sort()],
+        const [
+          [1],
+          [0, 2, 3],
+          [1, 3],
+          [1, 2],
+        ],
+      );
+    },
+  );
+
+  test(
+    'voronoi.neighbors returns the correct neighbors, flipped horizontally',
+    () {
+      const points = <(double, double)>[
+        (-10, 10),
+        (-36, 27),
+        (-90, 19),
+        (-50, 75),
+      ];
+      final voronoi = Delaunay.fromCoords(points).voronoi((-100, 0, 0, 90));
+      expect(
+        [for (var i = 0; i < 4; i++) voronoi.neighbors(i).toList()..sort()],
+        const [
+          [1],
+          [0, 2, 3],
+          [1, 3],
+          [1, 2],
+        ],
+      );
+    },
+  );
+
+  test('voronoi.neighbors returns the correct neighbors, rotated', () {
+    const points = <(double, double)>[
+      (-10, -10),
+      (-36, -27),
+      (-90, -19),
+      (-50, -75),
+    ];
+    final voronoi = Delaunay.fromCoords(points).voronoi((-100, -90, 0, 0));
+    expect(
+      [for (var i = 0; i < 4; i++) voronoi.neighbors(i).toList()..sort()],
+      const [
+        [1],
+        [0, 2, 3],
+        [1, 3],
+        [1, 2],
+      ],
+    );
+  });
+
+  test('voronoi returns the expected result (#136)', () {
+    const points = <(double, double)>[
+      (447.27981036477433, 698.9400262172304),
+      (485.27830313288746, 668.9946483670656),
+      (611.9525697080425, 397.71056371206487),
+      (491.44637766366105, 692.071157339428),
+      (697.553622336339, 692.071157339428),
+      (497.00778156318086, 667.1990851383492),
+      (691.9922184368191, 667.1990851383492),
+      (544.9897579870977, 407.0828550310619),
+      (543.1738215956482, 437.35879519252677),
+    ];
+    final voronoi = Delaunay.fromCoords(points).voronoi((0, 0, 1000, 1000));
+    expect(voronoi.cellPolygon(3)!.length, 6);
+  });
+
+  test('voronoi returns the expected result (#141)', () {
+    final points = <(double, double)>[
+      (10, 190),
+      for (var i = 0; i < 7; i++) (i * 80.0, (i * 50.0) / 7.0),
+    ];
+    final voronoi = Delaunay.fromCoords(points).voronoi((1, 1, 499, 199));
+    expect(voronoi.cellPolygons().map((d) => d.length).toList(), const [
+      7,
+      5,
+      5,
+      5,
+      6,
+      5,
+      5,
+      5,
+    ]);
+  });
+}

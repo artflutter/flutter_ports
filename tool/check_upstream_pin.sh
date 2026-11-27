@@ -761,7 +761,57 @@ if [ "$d3chord_seen" = 0 ]; then
   failed=1
 fi
 
-# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-chord, d3-contour, d3-hierarchy, d3-quadtree, ECharts, zoom and sankey entries. This loop finds a
+# d3-delaunay (D3 ADRs 0008 and 0022). Three release pins in one package:
+# d3-delaunay (v<d3DelaunayVersion>), delaunator (v<delaunatorVersion>) and
+# robust-predicates (v<robustPredicatesVersion>).
+d3delaunay_upstream=packages/flutter_d3_delaunay_port/lib/src/upstream.dart
+d3delaunay_sources=packages/flutter_d3_delaunay_port/tool/port_sources.yaml
+d3delaunay_version=$(sed -n "s/^const String d3DelaunayVersion = '\(.*\)';\$/\1/p" "$d3delaunay_upstream")
+delaunator_version=$(sed -n "s/^const String delaunatorVersion = '\(.*\)';\$/\1/p" "$d3delaunay_upstream")
+robustpredicates_version=$(sed -n "s/^const String robustPredicatesVersion = '\(.*\)';\$/\1/p" "$d3delaunay_upstream")
+if [ -z "$d3delaunay_version" ] || [ -z "$delaunator_version" ] || [ -z "$robustpredicates_version" ]; then
+  echo "d3DelaunayVersion, delaunatorVersion or robustPredicatesVersion not found in $d3delaunay_upstream" >&2
+  exit 1
+fi
+if [ ! -f "$d3delaunay_sources" ]; then
+  echo "$d3delaunay_sources not found" >&2
+  exit 1
+fi
+d3delaunay_seen=0
+delaunator_seen=0
+robustpredicates_seen=0
+while read -r path ref recorded <&3; do
+  case "$path" in
+    third_party/d3-delaunay)
+      d3delaunay_seen=1
+      expected_ref="v$d3delaunay_version"
+      ;;
+    third_party/delaunator)
+      delaunator_seen=1
+      expected_ref="v$delaunator_version"
+      ;;
+    third_party/robust-predicates)
+      robustpredicates_seen=1
+      expected_ref="v$robustpredicates_version"
+      ;;
+    *)
+      echo "$d3delaunay_sources pins unexpected path $path." >&2
+      failed=1
+      continue
+      ;;
+  esac
+  if [ "$ref" != "$expected_ref" ]; then
+    echo "$d3delaunay_sources gives ref $ref for $path, but $d3delaunay_upstream gives $expected_ref." >&2
+    failed=1
+  fi
+  check_pin "$path" "$expected_ref" "$recorded" "$d3delaunay_sources"
+done 3< <(read_pins "$d3delaunay_sources")
+if [ "$d3delaunay_seen" = 0 ] || [ "$delaunator_seen" = 0 ] || [ "$robustpredicates_seen" = 0 ]; then
+  echo "$d3delaunay_sources needs entries for third_party/d3-delaunay, third_party/delaunator and third_party/robust-predicates" >&2
+  failed=1
+fi
+
+# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-chord, d3-contour, d3-delaunay (with delaunator and robust-predicates), d3-hierarchy, d3-quadtree, ECharts, zoom and sankey entries. This loop finds a
 # submodule without an entry. Each port lists its submodules in its own
 # tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
 listed=$(awk '/^[^[:space:]]/ { next } $1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)

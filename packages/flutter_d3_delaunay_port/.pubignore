@@ -1,0 +1,5 @@
+doc/
+test/
+tool/
+build/
+.dart_tool/

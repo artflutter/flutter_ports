@@ -1,0 +1,32 @@
+name: flutter_d3_delaunay_port
+description: >-
+  A native, fully statically typed Dart/Flutter port of d3-delaunay 6.0.4
+  (with delaunator 5.1.0 and robust-predicates 3.0.3 orient2d): fast Delaunay
+  triangulation, clipped Voronoi diagrams, nearest-neighbor queries, and direct
+  Flutter Canvas rendering via UiPathContext.
+version: 0.1.0
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_delaunay_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - d3
+  - delaunay
+  - voronoi
+  - geometry
+  - visualization
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_d3_path_port: ^0.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  test: ^1.32.0
+  very_good_analysis: ^11.0.0
