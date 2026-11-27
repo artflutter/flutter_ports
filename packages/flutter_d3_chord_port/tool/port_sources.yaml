@@ -1,0 +1,42 @@
+# The projects that packages/flutter_d3_chord_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-chord. The package depends
+# on flutter_d3_path_port; flutter_d3_port depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-chord
+
+sources:
+  - header: d3-chord
+    version: "v3.0.1"
+    version_source: d3ChordVersion in packages/flutter_d3_chord_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-chord
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-chord
+      ref: "v3.0.1"
+      commit: 57ac4d9029e66c025117356ae58ab36c7457a2d1
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_chord_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_chord_port/test/
+    files:
+      - src/array.js
+      - src/chord.js
+      - src/constant.js
+      - src/index.js
+      - src/math.js
+      - src/ribbon.js
+      - test/asserts.js
+      - test/chord-test.js
+      - test/ribbon-test.js

@@ -24,7 +24,9 @@ package `flutter_d3_contour_port`, in the native forms of
 package `flutter_d3_hierarchy_port`, in the native forms of
 [D3 ADR 0018](adr/0018-hierarchy-native-forms.md). d3-quadtree is ported as the
 package `flutter_d3_quadtree_port`, in the native forms of
-[D3 ADR 0019](adr/0019-quadtree-native-forms.md). The other rows have the status `not started`. Until
+[D3 ADR 0019](adr/0019-quadtree-native-forms.md). d3-chord is ported as the
+package `flutter_d3_chord_port`, in the native forms of
+[D3 ADR 0023](adr/0023-chord-native-forms.md). The other rows have the status `not started`. Until
 phase 2, this file has one row for each repository. A person writes it by hand. The status unit is one upstream source file
 (D3 ADR 0001). Thus the status of a repository row applies to each of its source files.
 
@@ -69,7 +71,7 @@ The columns:
 | [d3-array](https://github.com/d3/d3-array/tree/v3.2.4) | v3.2.4 | 61 | 1384 | 65 | 530 | 1: `ticks.js`, `nice.js` and `range.js` (3 files, 86 lines, 42 cases). 2: the other files | ported in the package `flutter_d3_array_port` ([D3 ADR 0017](adr/0017-array-native-forms.md)): 450 upstream cases pass and 81 skip (80 as `diverges: adapt-array-typed-api`, 1 upstream `it.skip`), on the VM, DDC and dart2wasm. |
 | [d3-axis](https://github.com/d3/d3-axis/tree/v3.0.0) | v3.0.0 | 3 | 183 | 2 | 10 | 7 | not started |
 | [d3-brush](https://github.com/d3/d3-brush/tree/v3.0.0) | v3.0.0 | 5 | 652 | 1 | 1 | 7 | not started |
-| [d3-chord](https://github.com/d3/d3-chord/tree/v3.0.1) | v3.0.1 | 6 | 272 | 2 | 8 | 4 | not started |
+| [d3-chord](https://github.com/d3/d3-chord/tree/v3.0.1) | v3.0.1 | 6 | 272 | 2 | 8 | 4 | ported in the package `flutter_d3_chord_port` ([D3 ADR 0023](adr/0023-chord-native-forms.md)): all 8 upstream cases pass (plus comprehensive unit, Node.js reference parity, faster-form twin, and `UiPathContext` tests), on the VM, DDC and dart2wasm. |
 | [d3-color](https://github.com/d3/d3-color/tree/v3.1.0) | v3.1.0 | 6 | 595 | 8 | 170 | 2 | ported in the package `flutter_d3_color_port` ([D3 ADR 0008](adr/0008-module-packages.md)): 162 cases pass and 8 skip as `diverges: adapt-color-factories`, on the VM, DDC and dart2wasm. `src/define.js`: `n/a: Dart classes take the place of the prototype helper` |
 | [d3-contour](https://github.com/d3/d3-contour/tree/v4.0.2) | v4.0.2 | 9 | 416 | 3 | 23 | 5 | ported in the package `flutter_d3_contour_port` ([D3 ADR 0020](adr/0020-contour-native-forms.md)): all 23 upstream cases pass (13 `contours`, 8 `density`, 2 `snapshot` geometry) on the VM, DDC and dart2wasm. |
 | [d3-delaunay](https://github.com/d3/d3-delaunay/tree/v6.0.4) | v6.0.4 | 5 | 636 | 2 | 41 | 5 | not started |

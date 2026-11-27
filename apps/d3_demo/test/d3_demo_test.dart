@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all ten D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all twelve D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -230,6 +230,52 @@ void main() {
     await tester.tap(find.text('Dendrogram (cluster)'));
     await tester.pump();
     await tester.tap(find.text('Radial (linkRadial)'));
+    await tester.pump();
+
+    // Tab 10: Chord demo.
+    await tester.tap(find.text('Chord'));
+    await tester.pump();
+    expect(
+      find.text('Circular Flow Diagrams & Directed Ribbons'),
+      findsOneWidget,
+    );
+    expect(find.text('Undirected (chord)'), findsOneWidget);
+
+    await tester.tap(find.text('Directed (ribbonArrow)'));
+    await tester.pump();
+    expect(find.textContaining('Arrowhead radius:'), findsOneWidget);
+
+    await tester.tap(find.text('Transpose (chordTranspose)'));
+    await tester.pump();
+
+    await tester.tap(find.text('Circos (4)'));
+    await tester.pump();
+    await tester.ensureVisible(find.text('Black'));
+    await tester.pump();
+    expect(find.text('Black'), findsOneWidget);
+
+    await tester.tap(find.text('Black'));
+    await tester.pump();
+    expect(find.textContaining('Black:'), findsOneWidget);
+
+    // Tab 11: Delaunay demo.
+    await tester.ensureVisible(find.text('Delaunay'));
+    await tester.pump();
+    await tester.tap(find.text('Delaunay'));
+    await tester.pump();
+    expect(
+      find.text('Delaunay Triangulation, Clipped Voronoi & Lloyd Relaxation'),
+      findsOneWidget,
+    );
+    expect(find.text('Sites: 120'), findsOneWidget);
+
+    await tester.tap(find.text("Lloyd's step"));
+    await tester.pump();
+    expect(find.text("Lloyd's step (1)"), findsOneWidget);
+
+    await tester.tap(find.text('Circumcenters'));
+    await tester.pump();
+    await tester.tap(find.text('Viridis'));
     await tester.pump();
   });
 }

@@ -8,6 +8,7 @@
 /// The `doc/` folder of this package has the roadmap and the parity tracker.
 library;
 
+export 'package:flutter_d3_chord_port/flutter_d3_chord_port.dart';
 export 'package:flutter_d3_color_port/flutter_d3_color_port.dart';
 export 'package:flutter_d3_contour_port/flutter_d3_contour_port.dart';
 export 'package:flutter_d3_format_port/flutter_d3_format_port.dart';

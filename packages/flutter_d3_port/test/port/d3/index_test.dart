@@ -205,4 +205,23 @@ void main() {
     expect(treemapResquarify, isNotNull);
     expect(d3HierarchyVersion, '3.1.2');
   });
+
+  test('the bundle exports the names of d3-chord', () {
+    const matrix = <List<double>>[
+      [11975, 5871, 8916, 2868],
+      [1951, 10048, 2060, 6171],
+      [8010, 16145, 8090, 8045],
+      [1013, 990, 940, 6907],
+    ];
+    final res = chord(padAngle: 0.05)(matrix);
+    expect(res, isA<Chords>());
+    expect(res.groups, hasLength(4));
+    expect(res, hasLength(10));
+    expect(ribbon(radius: 200)(res.first), startsWith('M'));
+    final directed = chordDirected()(matrix);
+    expect(directed, hasLength(16));
+    expect(ribbonArrow(radius: 200)(directed.first), contains('L'));
+    expect(chordTranspose()(matrix).groups, hasLength(4));
+    expect(d3ChordVersion, '3.0.1');
+  });
 }

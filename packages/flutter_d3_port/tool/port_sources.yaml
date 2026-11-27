@@ -6,8 +6,8 @@
 # packages/flutter_d3_scale_chromatic_port, d3-path in
 # packages/flutter_d3_path_port, d3-shape in packages/flutter_d3_shape_port,
 # d3-format in packages/flutter_d3_format_port, d3-array in
-# packages/flutter_d3_array_port, d3-contour in
-# packages/flutter_d3_contour_port, d3-hierarchy in
+# packages/flutter_d3_array_port, d3-chord in packages/flutter_d3_chord_port,
+# d3-contour in packages/flutter_d3_contour_port, d3-hierarchy in
 # packages/flutter_d3_hierarchy_port and d3-quadtree in
 # packages/flutter_d3_quadtree_port.
 # Each "// Ported from" header must name a project of this file, with the
@@ -118,42 +118,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3-brush/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-brush/
-
-  - header: d3-chord
-    version: "v3.0.1"
-    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:41 on 2026-10-20. The d3 v7.9.0 yarn.lock:949-950 also locks 3.0.1.
-    url: https://github.com/d3/d3-chord
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-chord
-      ref: "v3.0.1"
-      commit: 57ac4d9029e66c025117356ae58ab36c7457a2d1
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-chord/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-chord/
-
-  - header: d3-delaunay
-    version: "v6.0.4"
-    version_source: the newest release tag in the range "6" of the d3 v7.9.0 package.json:44 on 2026-10-20. The d3 v7.9.0 yarn.lock:968-969 also locks 6.0.4.
-    url: https://github.com/d3/d3-delaunay
-    language: js
-    spdx: ISC
-    holder: Observable, Inc.
-    pin:
-      kind: submodule
-      path: third_party/d3-delaunay
-      ref: "v6.0.4"
-      commit: c5a08b375cd57f4a314b07979e25e3e30387943f
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-delaunay/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-delaunay/
 
   - header: d3-dispatch
     version: "v3.0.1"
@@ -462,43 +426,3 @@ sources:
         dart: packages/flutter_d3_port/lib/src/internmap/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/internmap/
-
-  - header: delaunator
-    version: "v5.1.0"
-    version_source: the newest release tag in the range "5" of the d3-delaunay v6.0.4 package.json:45 on 2026-10-20. The d3 v7.9.0 yarn.lock:1197-1198 locks 5.0.1.
-    url: https://github.com/mapbox/delaunator
-    language: js
-    spdx: ISC
-    holder: Mapbox
-    pin:
-      kind: submodule
-      path: third_party/delaunator
-      ref: "v5.1.0"
-      commit: 3ce65210ba78a8f02ec6e73cf202838d7df14051
-    targets:
-      - source: index.js
-        dart: packages/flutter_d3_port/lib/src/delaunator/index.dart
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/delaunator/
-      - source: test/test.js
-        dart: packages/flutter_d3_port/test/specs/delaunator/test_test.dart
-
-  - header: robust-predicates
-    version: "v3.0.3"
-    version_source: the newest release tag in the range "^3.0.2" of the delaunator v5.1.0 package.json:13 on 2026-10-20. The d3 v7.9.0 yarn.lock:1949-1950 locks 3.0.2.
-    url: https://github.com/mourner/robust-predicates
-    language: js
-    spdx: Unlicense
-    holder: Vladimir Agafonkin
-    pin:
-      kind: submodule
-      path: third_party/robust-predicates
-      ref: "v3.0.3"
-      commit: 8bed7fadb4284911e1111876e54a6f8acfa445cd
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/robust-predicates/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/robust-predicates/
-      - source: test/test.js
-        dart: packages/flutter_d3_port/test/specs/robust-predicates/test_test.dart
