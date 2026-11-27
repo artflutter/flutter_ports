@@ -36,9 +36,8 @@ void main() {
 
   test('quadtree.find(x, y, null) treats the given radius as Infinity', () {
     final q = quadtree(const [(0, 0), (100, 0), (0, 100), (100, 100)]);
+    double? noRadius;
     expect(q.find(20, 20), (0.0, 0.0));
-    // Upstream find-test.js explicitly passes null for radius.
-    // ignore: avoid_redundant_argument_values
-    expect(q.find(20, 20, null), (0.0, 0.0));
+    expect(q.find(20, 20, noRadius), (0.0, 0.0));
   });
 }
