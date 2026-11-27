@@ -5,6 +5,7 @@ import 'package:d3_demo/pages/chromatic_page.dart';
 import 'package:d3_demo/pages/color_page.dart';
 import 'package:d3_demo/pages/contour_page.dart';
 import 'package:d3_demo/pages/format_page.dart';
+import 'package:d3_demo/pages/hierarchy_page.dart';
 import 'package:d3_demo/pages/interpolate_page.dart';
 import 'package:d3_demo/pages/path_page.dart';
 import 'package:d3_demo/pages/quadtree_page.dart';
@@ -21,6 +22,7 @@ void main() {
     'array' => 6,
     'contour' => 7,
     'quadtree' => 8,
+    'hierarchy' => 9,
     _ => 0,
   };
   runApp(D3DemoApp(initialTab: tab));
@@ -30,15 +32,16 @@ void main() {
 /// `flutter_d3_interpolate_port`, `flutter_d3_scale_chromatic_port`,
 /// `flutter_d3_path_port`, `flutter_d3_shape_port`,
 /// `flutter_d3_format_port`, `flutter_d3_array_port`,
-/// `flutter_d3_contour_port` and `flutter_d3_quadtree_port`.
+/// `flutter_d3_contour_port`, `flutter_d3_quadtree_port` and
+/// `flutter_d3_hierarchy_port`.
 class const D3DemoApp({
   /// Initial destination index (`0` = Color, `1` = Interpolate,
   /// `2` = Chromatic, `3` = Path, `4` = Shape, `5` = Format, `6` = Array,
-  /// `7` = Contour, `8` = Quadtree).
+  /// `7` = Contour, `8` = Quadtree, `9` = Hierarchy).
   final int initialTab = 0,
   super.key,
 }) extends StatefulWidget {
-  /// Creates the demo app starting on [initialTab] (`0..8`).
+  /// Creates the demo app starting on [initialTab] (`0..9`).
   this;
 
   @override
@@ -46,7 +49,7 @@ class const D3DemoApp({
 }
 
 class _D3DemoAppState() extends State<D3DemoApp> {
-  late int _index = widget.initialTab.clamp(0, 8);
+  late int _index = widget.initialTab.clamp(0, 9);
   ThemeMode _themeMode = ThemeMode.light;
 
   static const _destinations = <(String, String, IconData, IconData)>[
@@ -69,6 +72,12 @@ class _D3DemoAppState() extends State<D3DemoApp> {
     ('Array', 'd3-array', Icons.bar_chart_outlined, Icons.bar_chart),
     ('Contour', 'd3-contour', Icons.terrain_outlined, Icons.terrain),
     ('Quadtree', 'd3-quadtree', Icons.grid_4x4_outlined, Icons.grid_4x4),
+    (
+      'Hierarchy',
+      'd3-hierarchy',
+      Icons.account_tree_outlined,
+      Icons.account_tree,
+    ),
   ];
 
   @override
@@ -106,6 +115,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
               ArrayDemoPage(),
               ContourDemoPage(),
               QuadtreeDemoPage(),
+              HierarchyDemoPage(),
             ],
           );
           final (_, pkg, _, _) = _destinations[_index];

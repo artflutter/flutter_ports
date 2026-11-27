@@ -20,7 +20,9 @@ package `flutter_d3_format_port`, in the native forms of
 package `flutter_d3_array_port`, in the native forms of
 [D3 ADR 0017](adr/0017-array-native-forms.md). d3-contour is ported as the
 package `flutter_d3_contour_port`, in the native forms of
-[D3 ADR 0020](adr/0020-contour-native-forms.md). d3-quadtree is ported as the
+[D3 ADR 0020](adr/0020-contour-native-forms.md). d3-hierarchy is ported as the
+package `flutter_d3_hierarchy_port`, in the native forms of
+[D3 ADR 0018](adr/0018-hierarchy-native-forms.md). d3-quadtree is ported as the
 package `flutter_d3_quadtree_port`, in the native forms of
 [D3 ADR 0019](adr/0019-quadtree-native-forms.md). The other rows have the status `not started`. Until
 phase 2, this file has one row for each repository. A person writes it by hand. The status unit is one upstream source file
@@ -79,7 +81,7 @@ The columns:
 | [d3-force](https://github.com/d3/d3-force/tree/v3.0.0) | v3.0.0 | 12 | 693 | 5 | 16 | 6 | not started |
 | [d3-format](https://github.com/d3/d3-format/tree/v3.1.2) | v3.1.2 | 16 | 344 | 24 | 168 | 1 | ported in the package `flutter_d3_format_port` ([D3 ADR 0016](adr/0016-format-native-forms.md)): 167 upstream cases pass and 1 skips as `diverges: adapt-format-typed-api`, on the VM, DDC and dart2wasm, plus all 59 upstream locales as `const` Dart objects. |
 | [d3-geo](https://github.com/d3/d3-geo/tree/v3.1.1) | v3.1.1 | 58 | 3280 | 32 | 343 | 5 | not started |
-| [d3-hierarchy](https://github.com/d3/d3-hierarchy/tree/v3.1.2) | v3.1.2 | 34 | 1414 | 18 | 83 | 2 | not started |
+| [d3-hierarchy](https://github.com/d3/d3-hierarchy/tree/v3.1.2) | v3.1.2 | 34 | 1414 | 18 | 83 | 2 | ported in the package `flutter_d3_hierarchy_port` ([D3 ADR 0018](adr/0018-hierarchy-native-forms.md)): 77 upstream cases pass and 6 skip as `diverges: adapt-hierarchy-typed-api`, on the VM, DDC and dart2wasm. |
 | [d3-interpolate](https://github.com/d3/d3-interpolate/tree/v3.0.1) | v3.0.1 | 26 | 595 | 22 | 149 | 2: the other files. 6: `zoom.js` (1 file, 71 lines, 5 cases). 7: `transform/` (3 files, 107 lines, 0 cases) | ported in the package `flutter_d3_interpolate_port` ([D3 ADR 0011](adr/0011-interpolate-native-forms.md)), ahead of phases 2, 6 and 7: 114 cases pass and 35 skip, 34 as `diverges: adapt-interpolate-typed-values` and 1 as `diverges: adapt-interpolate-date-value`, on the VM, DDC and dart2wasm. `src/object.js` and `src/string.js`: `n/a: interpolate takes typed values only`. `src/transform/parse.js`: `n/a: no transform text; the Flutter layer reads a Matrix4` |
 | [d3-path](https://github.com/d3/d3-path/tree/v3.1.0) | v3.1.0 | 2 | 157 | 2 | 64 | 1 | ported in the package `flutter_d3_path_port` ([D3 ADR 0014](adr/0014-path-native-forms.md)): 61 cases pass and 3 skip as `diverges: adapt-path-typed-args`, on the VM, DDC and dart2wasm, plus native Flutter `UiPathContext`. |
 | [d3-polygon](https://github.com/d3/d3-polygon/tree/v3.0.1) | v3.0.1 | 7 | 135 | 5 | 23 | 2 | not started |

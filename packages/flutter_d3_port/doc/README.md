@@ -38,7 +38,9 @@ and in [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
   [`flutter_d3_array_port`](../../flutter_d3_array_port/README.md), with its differences and its
   speed figures in its `doc/` folder, d3-contour is
   [`flutter_d3_contour_port`](../../flutter_d3_contour_port/README.md), with its differences and its
-  speed figures in its `doc/` folder, and d3-quadtree is
+  speed figures in its `doc/` folder, d3-hierarchy is
+  [`flutter_d3_hierarchy_port`](../../flutter_d3_hierarchy_port/README.md), with its differences and
+  its speed figures in its `doc/` folder, and d3-quadtree is
   [`flutter_d3_quadtree_port`](../../flutter_d3_quadtree_port/README.md), with its differences and
   its speed figures in its `doc/` folder.
 - **Upstream after the pins:** [upstream-ledger.md](upstream-ledger.md) lists the upstream commits

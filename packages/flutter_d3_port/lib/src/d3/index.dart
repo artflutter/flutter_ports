@@ -11,6 +11,7 @@ export 'package:flutter_d3_array_port/d3_array.dart';
 export 'package:flutter_d3_color_port/d3_color.dart';
 export 'package:flutter_d3_contour_port/d3_contour.dart';
 export 'package:flutter_d3_format_port/d3_format.dart';
+export 'package:flutter_d3_hierarchy_port/d3_hierarchy.dart';
 export 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 export 'package:flutter_d3_path_port/d3_path.dart';
 export 'package:flutter_d3_quadtree_port/d3_quadtree.dart';

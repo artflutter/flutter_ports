@@ -1,0 +1,86 @@
+# The projects that packages/flutter_d3_hierarchy_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-hierarchy. flutter_d3_port
+# depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-hierarchy
+
+sources:
+  - header: d3-hierarchy
+    version: "v3.1.2"
+    version_source: d3HierarchyVersion in packages/flutter_d3_hierarchy_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-hierarchy
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-hierarchy
+      ref: "v3.1.2"
+      commit: 7bea49efdc1093b28a8d60d2f8717d8a17803564
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_hierarchy_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_hierarchy_port/test/
+    files:
+      - src/accessors.js
+      - src/array.js
+      - src/cluster.js
+      - src/constant.js
+      - src/hierarchy/ancestors.js
+      - src/hierarchy/count.js
+      - src/hierarchy/descendants.js
+      - src/hierarchy/each.js
+      - src/hierarchy/eachAfter.js
+      - src/hierarchy/eachBefore.js
+      - src/hierarchy/find.js
+      - src/hierarchy/index.js
+      - src/hierarchy/iterator.js
+      - src/hierarchy/leaves.js
+      - src/hierarchy/links.js
+      - src/hierarchy/path.js
+      - src/hierarchy/sort.js
+      - src/hierarchy/sum.js
+      - src/index.js
+      - src/lcg.js
+      - src/pack/enclose.js
+      - src/pack/index.js
+      - src/pack/siblings.js
+      - src/partition.js
+      - src/stratify.js
+      - src/tree.js
+      - src/treemap/binary.js
+      - src/treemap/dice.js
+      - src/treemap/index.js
+      - src/treemap/resquarify.js
+      - src/treemap/round.js
+      - src/treemap/slice.js
+      - src/treemap/sliceDice.js
+      - src/treemap/squarify.js
+      - test/hierarchy/copy-test.js
+      - test/hierarchy/each-test.js
+      - test/hierarchy/find-test.js
+      - test/hierarchy/index-test.js
+      - test/hierarchy/links-test.js
+      - test/pack/deterministic-test.js
+      - test/pack/enclose-test.js
+      - test/pack/flare-test.js
+      - test/pack/siblings-test.js
+      - test/stratify-test.js
+      - test/treemap/binary-test.js
+      - test/treemap/dice-test.js
+      - test/treemap/flare-test.js
+      - test/treemap/index-test.js
+      - test/treemap/resquarify-test.js
+      - test/treemap/round.js
+      - test/treemap/slice-test.js
+      - test/treemap/sliceDice-test.js
+      - test/treemap/squarify-test.js

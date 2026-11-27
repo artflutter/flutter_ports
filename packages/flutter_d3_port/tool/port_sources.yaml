@@ -6,7 +6,9 @@
 # packages/flutter_d3_scale_chromatic_port, d3-path in
 # packages/flutter_d3_path_port, d3-shape in packages/flutter_d3_shape_port,
 # d3-format in packages/flutter_d3_format_port, d3-array in
-# packages/flutter_d3_array_port and d3-quadtree in
+# packages/flutter_d3_array_port, d3-contour in
+# packages/flutter_d3_contour_port, d3-hierarchy in
+# packages/flutter_d3_hierarchy_port and d3-quadtree in
 # packages/flutter_d3_quadtree_port.
 # Each "// Ported from" header must name a project of this file, with the
 # same license and holder. The first entry is the d3 bundle, the upstream
@@ -278,24 +280,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3-geo/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-geo/
-
-  - header: d3-hierarchy
-    version: "v3.1.2"
-    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:53 on 2026-10-20. The d3 v7.9.0 yarn.lock:1030-1031 also locks 3.1.2.
-    url: https://github.com/d3/d3-hierarchy
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-hierarchy
-      ref: "v3.1.2"
-      commit: 7bea49efdc1093b28a8d60d2f8717d8a17803564
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-hierarchy/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-hierarchy/
 
   - header: d3-polygon
     version: "v3.0.1"

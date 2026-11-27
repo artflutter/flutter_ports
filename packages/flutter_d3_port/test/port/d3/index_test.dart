@@ -177,4 +177,32 @@ void main() {
     expect(q.root, isA<QuadtreeInternalNode<(double, double)>>());
     expect(d3QuadtreeVersion, '3.0.1');
   });
+
+  test('the bundle exports the names of d3-hierarchy', () {
+    final root = hierarchy<String>(
+      'root',
+      (d) => d == 'root' ? const ['a', 'b'] : null,
+    )..sum((d) => d == 'a' ? 10 : (d == 'b' ? 20 : 0));
+    expect(root.value, 30);
+    expect(treemap<String>(size: (100, 100))(root).x1, 100);
+    expect(partition<String>(size: (100, 100))(root).y1, 50);
+    expect(pack<String>(size: (100, 100))(root).r, greaterThan(0));
+    expect(tree<String>(size: (100, 100))(root).links(), hasLength(2));
+    expect(cluster<String>(size: (100, 100))(root).leaves(), hasLength(2));
+    expect(
+      stratifyPath<String>(['/a/b', '/a/c'], (s) => s).leaves(),
+      hasLength(2),
+    );
+    expect(
+      packEnclose(packSiblings([PackCircle(r: 10), PackCircle(r: 10)]))!.r,
+      closeTo(20, 1e-6),
+    );
+    expect(treemapBinary, isNotNull);
+    expect(treemapDice, isNotNull);
+    expect(treemapSlice, isNotNull);
+    expect(treemapSliceDice, isNotNull);
+    expect(treemapSquarify, isNotNull);
+    expect(treemapResquarify, isNotNull);
+    expect(d3HierarchyVersion, '3.1.2');
+  });
 }

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all nine D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all ten D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -199,5 +199,37 @@ void main() {
     await tester.tap(find.text('Unbounded radius'));
     await tester.pump();
     expect(find.text('Radius: ∞'), findsOneWidget);
+
+    // Tab 9: Hierarchy demo.
+    await tester.tap(find.text('Hierarchy'));
+    await tester.pump();
+    expect(
+      find.text('Treemap, Sunburst, Circle Packing & Tidy Tree Layouts'),
+      findsOneWidget,
+    );
+    expect(find.text('Tiling algorithm'), findsOneWidget);
+
+    await tester.tap(find.text('Binary'));
+    await tester.pump();
+    await tester.tap(find.text('Resquarify'));
+    await tester.pump();
+
+    await tester.tap(find.text('Sunburst'));
+    await tester.pump();
+    expect(find.text('Center hole'), findsOneWidget);
+
+    await tester.tap(find.text('Circle Packing'));
+    await tester.pump();
+    expect(find.text('Depth highlight'), findsOneWidget);
+    await tester.tap(find.text('Leaves'));
+    await tester.pump();
+
+    await tester.tap(find.text('Tidy Tree / Dendrogram'));
+    await tester.pump();
+    expect(find.text('Layout algorithm'), findsOneWidget);
+    await tester.tap(find.text('Dendrogram (cluster)'));
+    await tester.pump();
+    await tester.tap(find.text('Radial (linkRadial)'));
+    await tester.pump();
   });
 }
