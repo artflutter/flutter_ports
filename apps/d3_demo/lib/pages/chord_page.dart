@@ -216,6 +216,10 @@ class _ChordDemoPageState() extends State<ChordDemoPage> {
     final elapsedLabel = elapsedUs >= 1000
         ? '${(elapsedUs / 1000).toStringAsFixed(2)} ms'
         : '$elapsedUs µs';
+    final activeLabel = safeActive == null
+        ? null
+        : '${data.labels[safeActive]}: '
+              '${chords.groups[safeActive].value.round()} ${data.unit}';
 
     return ListView(
       padding: const EdgeInsets.all(20),
@@ -391,43 +395,93 @@ class _ChordDemoPageState() extends State<ChordDemoPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 8,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      '${chords.groups.length} groups · ${chords.length} '
-                      '${_mode == _ChordMode.directed ? 'arrows' : 'chords'} '
-                      '· layout $elapsedLabel',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: cs.primary,
-                      ),
-                    ),
-                    if (safeActive != null)
-                      Chip(
-                        avatar: CircleAvatar(
-                          backgroundColor: colors[safeActive % colors.length],
-                        ),
-                        label: Text(
-                          '${data.labels[safeActive]}: '
-                          '${chords.groups[safeActive].value.round()} '
-                          '${data.unit}',
-                        ),
-                        onDeleted: () => setState(() {
-                          _pinnedGroup = null;
-                          _hoveredGroup = null;
-                        }),
-                      )
-                    else
+                SizedBox(
+                  height: 28,
+                  child: Row(
+                    children: [
                       Text(
-                        'Hover or tap any outer arc or legend chip to isolate '
-                        'its ribbons',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: cs.onSurfaceVariant,
+                        '${chords.groups.length} groups · ${chords.length} '
+                        '${_mode == _ChordMode.directed ? 'arrows' : 'chords'} '
+                        '· layout $elapsedLabel',
+                        maxLines: 1,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: cs.primary,
                         ),
                       ),
-                  ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: safeActive != null
+                            ? Align(
+                                alignment: Alignment.centerLeft,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: cs.surfaceContainerHighest
+                                        .withValues(alpha: 0.6),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: cs.outlineVariant,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 3,
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          width: 10,
+                                          height: 10,
+                                          child: DecoratedBox(
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  colors[safeActive %
+                                                      colors.length],
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Flexible(
+                                          child: Text(
+                                            activeLabel!,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: theme.textTheme.labelMedium,
+                                          ),
+                                        ),
+                                        if (_pinnedGroup != null) ...[
+                                          const SizedBox(width: 4),
+                                          GestureDetector(
+                                            onTap: () => setState(() {
+                                              _pinnedGroup = null;
+                                              _hoveredGroup = null;
+                                            }),
+                                            child: Icon(
+                                              Icons.close,
+                                              size: 14,
+                                              color: cs.onSurfaceVariant,
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                'Hover or tap any outer arc or legend chip to '
+                                'isolate its ribbons',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: cs.onSurfaceVariant,
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 12),
                 LayoutBuilder(
@@ -490,6 +544,7 @@ class _ChordDemoPageState() extends State<ChordDemoPage> {
                   children: [
                     for (var i = 0; i < data.labels.length; ++i)
                       FilterChip(
+                        showCheckmark: false,
                         avatar: CircleAvatar(
                           backgroundColor: colors[i % colors.length],
                         ),
