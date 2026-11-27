@@ -20,7 +20,6 @@ SPDX-PackageDownloadLocation = "https://github.com/artflutter/flutter_ports"
 # packages/flutter_d3_array_port ports third_party/d3-array.
 # packages/flutter_d3_chord_port ports third_party/d3-chord.
 # packages/flutter_d3_contour_port ports third_party/d3-contour.
-# packages/flutter_d3_delaunay_port ports third_party/d3-delaunay, third_party/delaunator and third_party/robust-predicates.
 # packages/flutter_d3_hierarchy_port ports third_party/d3-hierarchy.
 # packages/flutter_d3_quadtree_port ports third_party/d3-quadtree.
 
@@ -196,35 +195,6 @@ path = "packages/flutter_d3_chord_port/**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2010-2021 Mike Bostock"
 SPDX-License-Identifier = "ISC"
-
-# The d3-delaunay port: Dart ports of d3-delaunay 6.0.4 (ISC), bundling
-# delaunator 5.1.0 (ISC) and robust-predicates 3.0.3 orient2d/util (Unlicense),
-# as a package of its own (D3 ADRs 0008 and 0022). This table keeps the
-# upstream d3-delaunay notices; the override tables below carry the delaunator
-# and robust-predicates notices for their sub-paths.
-[[annotations]]
-path = "packages/flutter_d3_delaunay_port/**"
-precedence = "aggregate"
-SPDX-FileCopyrightText = ["2018-2021 Observable, Inc.", "2021 Mapbox"]
-SPDX-License-Identifier = "ISC"
-
-[[annotations]]
-path = [
-  "packages/flutter_d3_delaunay_port/lib/src/delaunator/**",
-  "packages/flutter_d3_delaunay_port/test/delaunator/**",
-]
-precedence = "override"
-SPDX-FileCopyrightText = "2026 Mapbox"
-SPDX-License-Identifier = "ISC"
-
-[[annotations]]
-path = [
-  "packages/flutter_d3_delaunay_port/lib/src/robust_predicates/**",
-  "packages/flutter_d3_delaunay_port/test/robust_predicates/**",
-]
-precedence = "override"
-SPDX-FileCopyrightText = "Vladimir Agafonkin"
-SPDX-License-Identifier = "Unlicense"
 
 # The 35 ColorBrewer scheme files of d3-scale-chromatic (D3 ADR 0001 items 10
 # and 12): Apache-2.0 for ColorBrewer, with the ISC notice of
