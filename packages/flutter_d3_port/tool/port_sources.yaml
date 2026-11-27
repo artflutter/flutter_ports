@@ -10,7 +10,8 @@
 # d3-contour in packages/flutter_d3_contour_port, d3-delaunay (with delaunator
 # and robust-predicates) in packages/flutter_d3_delaunay_port, d3-hierarchy in
 # packages/flutter_d3_hierarchy_port, d3-quadtree in
-# packages/flutter_d3_quadtree_port, d3-time in
+# packages/flutter_d3_quadtree_port, d3-random in
+# packages/flutter_d3_random_port, d3-time in
 # packages/flutter_d3_time_port and d3-time-format in
 # packages/flutter_d3_time_format_port.
 # Each "// Ported from" header must name a project of this file, with the
@@ -265,24 +266,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3-polygon/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-polygon/
-
-  - header: d3-random
-    version: "v3.0.1"
-    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:58 on 2026-10-20. The d3 v7.9.0 yarn.lock:1057-1058 also locks 3.0.1.
-    url: https://github.com/d3/d3-random
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-random
-      ref: "v3.0.1"
-      commit: 4a8ed7dd38cac562f924d69f475f9f058366240b
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-random/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-random/
 
   - header: d3-scale
     version: "v4.0.2"

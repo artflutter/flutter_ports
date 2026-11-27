@@ -17,6 +17,7 @@ export 'package:flutter_d3_hierarchy_port/d3_hierarchy.dart';
 export 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 export 'package:flutter_d3_path_port/d3_path.dart';
 export 'package:flutter_d3_quadtree_port/d3_quadtree.dart';
+export 'package:flutter_d3_random_port/d3_random.dart';
 export 'package:flutter_d3_scale_chromatic_port/d3_scale_chromatic.dart';
 export 'package:flutter_d3_shape_port/d3_shape.dart';
 export 'package:flutter_d3_time_format_port/d3_time_format.dart';

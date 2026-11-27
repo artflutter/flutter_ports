@@ -39,6 +39,7 @@ rules:
       - flutter_d3_delaunay_port
       - flutter_d3_hierarchy_port
       - flutter_d3_quadtree_port
+      - flutter_d3_random_port
       - flutter_d3_time_port
       - flutter_d3_time_format_port
       - d3_demo

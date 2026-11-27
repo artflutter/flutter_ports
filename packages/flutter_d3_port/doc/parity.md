@@ -33,7 +33,9 @@ and robust-predicates `orient2d`) is ported as the package
 `flutter_d3_time_port`, in the native forms of
 [D3 ADR 0021](adr/0021-time-native-forms.md). d3-time-format is ported as the package
 `flutter_d3_time_format_port`, in the native forms of
-[D3 ADR 0025](adr/0025-time-format-native-forms.md). The other rows have the status `not started`. Until
+[D3 ADR 0025](adr/0025-time-format-native-forms.md). d3-random is ported as the package
+`flutter_d3_random_port`, in the native forms of
+[D3 ADR 0026](adr/0026-random-native-forms.md). The other rows have the status `not started`. Until
 phase 2, this file has one row for each repository. A person writes it by hand. The status unit is one upstream source file
 (D3 ADR 0001). Thus the status of a repository row applies to each of its source files.
 
@@ -95,7 +97,7 @@ The columns:
 | [d3-path](https://github.com/d3/d3-path/tree/v3.1.0) | v3.1.0 | 2 | 157 | 2 | 64 | 1 | ported in the package `flutter_d3_path_port` ([D3 ADR 0014](adr/0014-path-native-forms.md)): 61 cases pass and 3 skip as `diverges: adapt-path-typed-args`, on the VM, DDC and dart2wasm, plus native Flutter `UiPathContext`. |
 | [d3-polygon](https://github.com/d3/d3-polygon/tree/v3.0.1) | v3.0.1 | 7 | 135 | 5 | 23 | 2 | not started |
 | [d3-quadtree](https://github.com/d3/d3-quadtree/tree/v3.0.1) | v3.0.1 | 15 | 413 | 13 | 62 | 2 | ported in the package `flutter_d3_quadtree_port` ([D3 ADR 0019](adr/0019-quadtree-native-forms.md)): all 62 upstream cases pass (plus 21 port, Node.js reference parity, and faster-form twin tests), on the VM, DDC and dart2wasm. |
-| [d3-random](https://github.com/d3/d3-random/tree/v3.0.1) | v3.0.1 | 20 | 370 | 18 | 67 | 2 | not started |
+| [d3-random](https://github.com/d3/d3-random/tree/v3.0.1) | v3.0.1 | 20 | 370 | 18 | 67 | 2 | ported in the package `flutter_d3_random_port` ([D3 ADR 0026](adr/0026-random-native-forms.md)): all 67 upstream cases pass (plus Node.js bit-exact LCG & seeded draw reference parity and faster-form twin tests), on the VM, DDC and dart2wasm. |
 | [d3-scale](https://github.com/d3/d3-scale/tree/v4.0.2) | v4.0.2 | 24 | 1302 | 19 | 433 | 3 | not started |
 | [d3-scale-chromatic](https://github.com/d3/d3-scale-chromatic/tree/v3.1.0) | v3.1.0 | 48 | 557 | 1 | 1 | 2 | ported in the package `flutter_d3_scale_chromatic_port` ([D3 ADR 0012](adr/0012-scale-chromatic-native-forms.md)), ahead of phase 2: all 76 schemes and interpolators pass on the VM, DDC and dart2wasm. `src/rampClosed.js`: `n/a: unused upstream file; no file of d3-scale-chromatic imports it` |
 | [d3-selection](https://github.com/d3/d3-selection/tree/v3.0.0) | v3.0.0 | 54 | 1057 | 42 | 236 | 7 | not started |

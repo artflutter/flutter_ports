@@ -1,0 +1,73 @@
+# The projects that packages/flutter_d3_random_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-random. flutter_d3_port
+# depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-random
+
+sources:
+  - header: d3-random
+    version: "v3.0.1"
+    version_source: d3RandomVersion in packages/flutter_d3_random_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-random
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-random
+      ref: "v3.0.1"
+      commit: 4a8ed7dd38cac562f924d69f475f9f058366240b
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_random_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_random_port/test/
+    files:
+      - src/bates.js
+      - src/bernoulli.js
+      - src/beta.js
+      - src/binomial.js
+      - src/cauchy.js
+      - src/defaultSource.js
+      - src/exponential.js
+      - src/gamma.js
+      - src/geometric.js
+      - src/index.js
+      - src/int.js
+      - src/irwinHall.js
+      - src/lcg.js
+      - src/logistic.js
+      - src/logNormal.js
+      - src/normal.js
+      - src/pareto.js
+      - src/poisson.js
+      - src/uniform.js
+      - src/weibull.js
+      - test/asserts.js
+      - test/bates-test.js
+      - test/bernoulli-test.js
+      - test/beta-test.js
+      - test/binomial-test.js
+      - test/cauchy-test.js
+      - test/exponential-test.js
+      - test/gamma-test.js
+      - test/geometric-test.js
+      - test/int-test.js
+      - test/irwinHall-test.js
+      - test/lcg-test.js
+      - test/logistic-test.js
+      - test/logNormal-test.js
+      - test/normal-test.js
+      - test/pareto-test.js
+      - test/poisson-test.js
+      - test/statistics.js
+      - test/uniform-test.js
+      - test/weibull-test.js

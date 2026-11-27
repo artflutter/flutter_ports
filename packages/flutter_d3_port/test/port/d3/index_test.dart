@@ -269,4 +269,21 @@ void main() {
     expect(timeFormatLocales, hasLength(34));
     expect(d3TimeFormatVersion, '4.1.0');
   });
+
+  test('the bundle exports the names of d3-random', () {
+    final rng = randomLcg(0.42);
+    expect(rng(), closeTo(0.7359439560677856, 1e-12));
+    expect(
+      randomUniform.source(randomLcg(0.42))(1, 5)(),
+      inInclusiveRange(1, 5),
+    );
+    expect(randomInt.source(randomLcg(0.42))(1, 7)(), inInclusiveRange(1, 6));
+    expect(randomNormal.source(randomLcg(0.42))()().isFinite, isTrue);
+    expect(randomGamma.source(randomLcg(0.42))(2)(), greaterThan(0));
+    expect(
+      randomPoisson.source(randomLcg(0.42))(10)(),
+      greaterThanOrEqualTo(0),
+    );
+    expect(d3RandomVersion, '3.0.1');
+  });
 }

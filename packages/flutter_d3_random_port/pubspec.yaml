@@ -1,0 +1,26 @@
+name: flutter_d3_random_port
+description: >-
+  A native, fully statically typed pure-Dart port of d3-random 3.0.1: all 17
+  probability distributions (uniform, int, normal, logNormal, bates, irwinHall,
+  exponential, pareto, bernoulli, geometric, binomial, gamma, beta, weibull,
+  cauchy, logistic, poisson) with typed .source(RandomSource) factories and
+  bit-exact randomLcg PRNG. Zero runtime dependencies.
+version: 0.1.0
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_random_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - d3
+  - random
+  - statistics
+  - probability
+  - visualization
+
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace
+
+dev_dependencies:
+  flutter_d3_array_port: ^0.1.1
+  test: ^1.32.0
+  very_good_analysis: ^11.0.0

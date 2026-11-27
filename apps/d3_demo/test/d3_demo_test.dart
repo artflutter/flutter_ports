@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all fourteen D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all fifteen D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -327,6 +327,31 @@ void main() {
     await tester.tap(find.text('Locale (%c)'));
     await tester.pump();
     expect(find.text('samedi 15 juin 2024 à 14:37:22'), findsWidgets);
+
+    // Tab 14: Random demo.
+    await tester.ensureVisible(find.text('Random'));
+    await tester.pump();
+    await tester.tap(find.text('Random'));
+    await tester.pump();
+    expect(
+      find.text(
+        'Probability Distributions, Seeded LCG & Live Histogram Sampler',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Normal Histogram (n = 4000)'), findsOneWidget);
+
+    await tester.tap(find.text('Gamma'));
+    await tester.pump();
+    expect(find.text('Gamma Histogram (n = 4000)'), findsOneWidget);
+
+    await tester.tap(find.text('Poisson'));
+    await tester.pump();
+    expect(find.text('Poisson Histogram (n = 4000)'), findsOneWidget);
+    expect(find.text('int (discrete)'), findsOneWidget);
+
+    await tester.tap(find.text('Reseed'));
+    await tester.pump();
   });
 
   testWidgets('preserves active page button state across width breakpoint', (

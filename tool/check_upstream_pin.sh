@@ -877,7 +877,40 @@ if [ "$d3timeformat_seen" = 0 ]; then
   failed=1
 fi
 
-# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-chord, d3-contour, d3-delaunay (with delaunator and robust-predicates), d3-hierarchy, d3-quadtree, d3-time, d3-time-format, ECharts, zoom and sankey entries. This loop finds a
+# d3-random (D3 ADRs 0008 and 0026). A release pin: the gitlink is the commit
+# of the tag "v<d3RandomVersion>" and the "commit" of the entry.
+d3random_upstream=packages/flutter_d3_random_port/lib/src/upstream.dart
+d3random_sources=packages/flutter_d3_random_port/tool/port_sources.yaml
+d3random_path=third_party/d3-random
+d3random_version=$(sed -n "s/^const String d3RandomVersion = '\(.*\)';\$/\1/p" "$d3random_upstream")
+if [ -z "$d3random_version" ]; then
+  echo "d3RandomVersion not found in $d3random_upstream" >&2
+  exit 1
+fi
+if [ ! -f "$d3random_sources" ]; then
+  echo "$d3random_sources not found" >&2
+  exit 1
+fi
+d3random_seen=0
+while read -r path ref recorded <&3; do
+  if [ "$path" != "$d3random_path" ]; then
+    echo "$d3random_sources pins $path. It must pin only $d3random_path." >&2
+    failed=1
+    continue
+  fi
+  d3random_seen=1
+  if [ "$ref" != "v$d3random_version" ]; then
+    echo "$d3random_sources gives ref $ref for $path, but d3RandomVersion is $d3random_version." >&2
+    failed=1
+  fi
+  check_pin "$path" "v$d3random_version" "$recorded" "$d3random_sources"
+done 3< <(read_pins "$d3random_sources")
+if [ "$d3random_seen" = 0 ]; then
+  echo "$d3random_sources has no entry for $d3random_path" >&2
+  failed=1
+fi
+
+# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-chord, d3-contour, d3-delaunay (with delaunator and robust-predicates), d3-hierarchy, d3-quadtree, d3-random, d3-time, d3-time-format, ECharts, zoom and sankey entries. This loop finds a
 # submodule without an entry. Each port lists its submodules in its own
 # tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
 listed=$(awk '/^[^[:space:]]/ { next } $1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)
