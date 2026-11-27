@@ -4,7 +4,8 @@ description: >-
   flutter_d3_scale_chromatic_port, flutter_d3_path_port, flutter_d3_shape_port,
   flutter_d3_format_port, flutter_d3_array_port, flutter_d3_contour_port,
   flutter_d3_delaunay_port, flutter_d3_quadtree_port,
-  flutter_d3_hierarchy_port, flutter_d3_chord_port and flutter_d3_time_port.
+  flutter_d3_hierarchy_port, flutter_d3_chord_port, flutter_d3_time_port and
+  flutter_d3_time_format_port.
 publish_to: none
 version: 0.1.0+1
 
@@ -29,6 +30,7 @@ dependencies:
   flutter_d3_quadtree_port: ^0.1.0
   flutter_d3_scale_chromatic_port: ^0.3.0
   flutter_d3_shape_port: ^0.1.0
+  flutter_d3_time_format_port: ^0.1.0
   flutter_d3_time_port: ^0.1.0
   material_ui: ^1.10.0
 

@@ -18,8 +18,9 @@ d3-interpolate 3.0.1 → `packages/flutter_d3_interpolate_port` (D3 ADRs 0011 an
 `packages/flutter_d3_quadtree_port` (D3 ADR 0019, version 0.1.0, on pub.dev), d3-chord 3.0.1 →
 `packages/flutter_d3_chord_port` (D3 ADR 0023, version 0.1.0, on pub.dev), d3-delaunay 6.0.4 →
 `packages/flutter_d3_delaunay_port` (bundling delaunator 5.1.0 and robust-predicates 3.0.3, D3 ADR
-0022, version 0.1.0, on pub.dev), and d3-time 3.1.0 → `packages/flutter_d3_time_port` (D3 ADR 0021,
-version 0.1.0, on pub.dev). Third port: Apache
+0022, version 0.1.0, on pub.dev), d3-time 3.1.0 → `packages/flutter_d3_time_port` (D3 ADR 0021,
+version 0.1.0, on pub.dev), and d3-time-format 4.1.0 → `packages/flutter_d3_time_format_port`
+(D3 ADR 0025, version 0.1.0, on pub.dev). Third port: Apache
 ECharts 6.1.0 with its renderer zrender 6.1.0 → `packages/flutter_echarts_port`, in phase 0
 (scaffold and design, no ported code). Fourth port: chartjs-plugin-zoom 2.2.0+fb81d331, an add-on
 of the Chart.js port (ADR 0009) → `packages/flutter_chartjs_plugin_zoom_port`, phases 1-4 done
@@ -61,14 +62,14 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   them. Delete these folders before `format:check`. package:test puts a part of the tests of each
   file in each shard, in the order of the file ([Tests](#tests)). A shard with no tests fails. On
   ubuntu, CI also fetches the three Chart.js submodules, `third_party/d3`, `third_party/d3-color`,
-  `third_party/d3-interpolate`, `third_party/d3-scale-chromatic`, `third_party/d3-path`, `third_party/d3-shape`, `third_party/d3-format`, `third_party/d3-array`, `third_party/d3-chord`, `third_party/d3-contour`, `third_party/d3-delaunay`, `third_party/delaunator`, `third_party/robust-predicates`, `third_party/d3-hierarchy`, `third_party/d3-quadtree`, `third_party/d3-time`, the two ECharts submodules, `third_party/chartjs-plugin-zoom` and
+  `third_party/d3-interpolate`, `third_party/d3-scale-chromatic`, `third_party/d3-path`, `third_party/d3-shape`, `third_party/d3-format`, `third_party/d3-array`, `third_party/d3-chord`, `third_party/d3-contour`, `third_party/d3-delaunay`, `third_party/delaunator`, `third_party/robust-predicates`, `third_party/d3-hierarchy`, `third_party/d3-quadtree`, `third_party/d3-time`, `third_party/d3-time-format`, the two ECharts submodules, `third_party/chartjs-plugin-zoom` and
   `third_party/chartjs-chart-sankey` by path in each shard, for the `test/upstream_test.dart` of
   `flutter_chartjs_port`, `flutter_d3_port`, `flutter_d3_color_port`,
-  `flutter_d3_interpolate_port`, `flutter_d3_scale_chromatic_port`, `flutter_d3_path_port`, `flutter_d3_shape_port`, `flutter_d3_format_port`, `flutter_d3_array_port`, `flutter_d3_chord_port`, `flutter_d3_contour_port`, `flutter_d3_delaunay_port`, `flutter_d3_hierarchy_port`, `flutter_d3_quadtree_port`, `flutter_d3_time_port`, `flutter_echarts_port`, `flutter_chartjs_plugin_zoom_port` and
+  `flutter_d3_interpolate_port`, `flutter_d3_scale_chromatic_port`, `flutter_d3_path_port`, `flutter_d3_shape_port`, `flutter_d3_format_port`, `flutter_d3_array_port`, `flutter_d3_chord_port`, `flutter_d3_contour_port`, `flutter_d3_delaunay_port`, `flutter_d3_hierarchy_port`, `flutter_d3_quadtree_port`, `flutter_d3_time_port`, `flutter_d3_time_format_port`, `flutter_echarts_port`, `flutter_chartjs_plugin_zoom_port` and
   `flutter_chartjs_chart_sankey_port`.
 - `dart run melos run test:web`: the `flutter_chartjs_port`, `chartjs_test_utils`,
   `flutter_kurkle_color_port`, `flutter_d3_port`, `flutter_d3_color_port`,
-  `flutter_d3_interpolate_port`, `flutter_d3_scale_chromatic_port`, `flutter_d3_path_port`, `flutter_d3_shape_port`, `flutter_d3_format_port`, `flutter_d3_array_port`, `flutter_d3_chord_port`, `flutter_d3_contour_port`, `flutter_d3_delaunay_port`, `flutter_d3_hierarchy_port`, `flutter_d3_quadtree_port` and `flutter_d3_time_port` tests without
+  `flutter_d3_interpolate_port`, `flutter_d3_scale_chromatic_port`, `flutter_d3_path_port`, `flutter_d3_shape_port`, `flutter_d3_format_port`, `flutter_d3_array_port`, `flutter_d3_chord_port`, `flutter_d3_contour_port`, `flutter_d3_delaunay_port`, `flutter_d3_hierarchy_port`, `flutter_d3_quadtree_port`, `flutter_d3_time_port` and `flutter_d3_time_format_port` tests without
   `@TestOn('vm')`, in Chrome through Flutter (JavaScript/DDC and WebAssembly). `tool/test_web.dart`
   selects browser-capable files before compilation. A leg fails when it ends by a signal or exits
   with 0 without the summary of a run that passed: `flutter test` exits with 0 when a SIGTERM stops
@@ -84,7 +85,7 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   Each check can also run alone:
   - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of the home
     package and of each package that a `dart` target of its `tool/port_sources.yaml` names. The
-    script runs it eighteen times: `flutter_chartjs_port` with `chartjs_test_utils`, then
+    script runs it nineteen times: `flutter_chartjs_port` with `chartjs_test_utils`, then
     `packages/flutter_chartjs_plugin_zoom_port` alone, then
     `packages/flutter_chartjs_chart_sankey_port` alone, then `packages/flutter_kurkle_color_port`
     alone, then `packages/flutter_d3_port` alone, then `packages/flutter_d3_color_port` alone, then
@@ -94,10 +95,10 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
     alone, then `packages/flutter_d3_chord_port` alone, then `packages/flutter_d3_contour_port`
     alone, then `packages/flutter_d3_delaunay_port` alone, then `packages/flutter_d3_hierarchy_port`
     alone, then `packages/flutter_d3_quadtree_port` alone, then `packages/flutter_d3_time_port`
-    alone. The primary project of the home is the
+    alone, then `packages/flutter_d3_time_format_port` alone. The primary project of the home is the
     entry whose `version_source` is `<constant> in <home>/lib/src/upstream.dart` (Chart.js,
     chartjs-plugin-zoom, chartjs-chart-sankey, @kurkle/color, d3, d3-color, d3-interpolate,
-    d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-chord, d3-contour, d3-delaunay, d3-hierarchy, d3-quadtree, d3-time). Its `version` is `v<constant value>`, the port-only marker names it, and
+    d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-chord, d3-contour, d3-delaunay, d3-hierarchy, d3-quadtree, d3-time, d3-time-format). Its `version` is `v<constant value>`, the port-only marker names it, and
     a backport line names the `<owner>/<repo>` of its `url`. The top-level key `marker` of the file
     gives the tag of the `DIVERGES(<tag>)` markers (default `chartjs`). The top-level key `project`
     gives the project name of the port-only marker when it is not the `header` of the primary

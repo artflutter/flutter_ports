@@ -102,6 +102,7 @@ Future<void> main(List<String> args) async {
     'flutter_d3_hierarchy_port',
     'flutter_d3_quadtree_port',
     'flutter_d3_time_port',
+    'flutter_d3_time_format_port',
   ]) {
     final directory = '$repository/packages/$name';
     final files = browserTestFiles(directory);

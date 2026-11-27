@@ -31,7 +31,9 @@ and robust-predicates `orient2d`) is ported as the package
 `flutter_d3_delaunay_port`, in the native forms of
 [D3 ADR 0022](adr/0022-delaunay-native-forms.md). d3-time is ported as the package
 `flutter_d3_time_port`, in the native forms of
-[D3 ADR 0021](adr/0021-time-native-forms.md). The other rows have the status `not started`. Until
+[D3 ADR 0021](adr/0021-time-native-forms.md). d3-time-format is ported as the package
+`flutter_d3_time_format_port`, in the native forms of
+[D3 ADR 0025](adr/0025-time-format-native-forms.md). The other rows have the status `not started`. Until
 phase 2, this file has one row for each repository. A person writes it by hand. The status unit is one upstream source file
 (D3 ADR 0001). Thus the status of a repository row applies to each of its source files.
 
@@ -99,7 +101,7 @@ The columns:
 | [d3-selection](https://github.com/d3/d3-selection/tree/v3.0.0) | v3.0.0 | 54 | 1057 | 42 | 236 | 7 | not started |
 | [d3-shape](https://github.com/d3/d3-shape/tree/v3.2.0) | v3.2.0 | 60 | 2193 | 41 | 268 | 4 | ported in the package `flutter_d3_shape_port` ([D3 ADR 0015](adr/0015-shape-native-forms.md)): 231 upstream cases pass and 37 skip as `diverges: adapt-shape-typed-api`, on the VM, DDC and dart2wasm, plus direct Flutter `Canvas` rendering via `UiPathContext`. |
 | [d3-time](https://github.com/d3/d3-time/tree/v3.1.0) | v3.1.0 | 12 | 488 | 36 | 465 | 3 | ported in the package `flutter_d3_time_port` ([D3 ADR 0021](adr/0021-time-native-forms.md)): 453 upstream cases pass and 12 skip as `diverges: adapt-time-typed-api` (plus all 32 POSIX IANA timezone checks in `test/test_time_zones_test.dart`, Node.js reference parity, and faster-form twin tests), on the VM, DDC and dart2wasm. |
-| [d3-time-format](https://github.com/d3/d3-time-format/tree/v4.1.0) | v4.1.0 | 5 | 754 | 8 | 146 | 3 | not started |
+| [d3-time-format](https://github.com/d3/d3-time-format/tree/v4.1.0) | v4.1.0 | 5 | 754 | 8 | 146 | 3 | ported in the package `flutter_d3_time_format_port` ([D3 ADR 0025](adr/0025-time-format-native-forms.md)): 142 upstream cases pass and 4 skip as `diverges: adapt-time-format-typed-api` (plus all 34 upstream locales as `const` Dart objects, POSIX IANA TZ checks, Node.js reference parity, and faster-form twin tests), on the VM, DDC and dart2wasm. |
 | [d3-timer](https://github.com/d3/d3-timer/tree/v3.0.1) | v3.0.1 | 4 | 151 | 5 | 42 | 6 | not started |
 | [d3-transition](https://github.com/d3/d3-transition/tree/v3.0.1) | v3.0.1 | 29 | 953 | 33 | 180 | 7 | not started |
 | [d3-zoom](https://github.com/d3/d3-zoom/tree/v3.0.0) | v3.0.0 | 6 | 523 | 4 | 25 | 6: `transform.js` (1 file, 51 lines, 10 cases). 7: the other files | not started |

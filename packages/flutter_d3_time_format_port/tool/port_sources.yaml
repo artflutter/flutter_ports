@@ -1,0 +1,47 @@
+# The projects that packages/flutter_d3_time_format_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-time-format. flutter_d3_port
+# depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-time-format
+
+sources:
+  - header: d3-time-format
+    version: "v4.1.0"
+    version_source: d3TimeFormatVersion in packages/flutter_d3_time_format_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-time-format
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-time-format
+      ref: "v4.1.0"
+      commit: 76cfef1da81b70404c0226ec9db9b0d56fa09461
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_time_format_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_time_format_port/test/
+    files:
+      - src/defaultLocale.js
+      - src/index.js
+      - src/isoFormat.js
+      - src/isoParse.js
+      - src/locale.js
+      - test/date.js
+      - test/defaultLocale-test.js
+      - test/format-test.js
+      - test/isoFormat-test.js
+      - test/isoParse-test.js
+      - test/locale-test.js
+      - test/parse-test.js
+      - test/utcFormat-test.js
+      - test/utcParse-test.js

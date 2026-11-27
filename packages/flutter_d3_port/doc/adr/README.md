@@ -26,4 +26,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0021](0021-time-native-forms.md) Native forms of d3-time: accepted.
 - [0022](0022-delaunay-native-forms.md) Native forms of d3-delaunay, delaunator, and robust-predicates: accepted.
 - [0023](0023-chord-native-forms.md) Native forms of d3-chord: accepted.
+- [0025](0025-time-format-native-forms.md) Native forms of d3-time-format: accepted.
 <!-- adr-index:end -->

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all thirteen D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all fourteen D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -304,6 +304,29 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Step +1'));
     await tester.pump();
+
+    // Tab 13: Time Format demo.
+    await tester.ensureVisible(find.text('TimeFmt'));
+    await tester.pump();
+    await tester.tap(find.text('TimeFmt'));
+    await tester.pump();
+    expect(
+      find.text(
+        'Directive Playground, 34 Built-In Locales & Multi-Scale Tick Labels',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('6/15/2024, 2:37:22 PM'), findsWidgets);
+
+    await tester.tap(find.text('ISO week (%G-W%V-%u)'));
+    await tester.pump();
+    expect(find.text('2024-W24-6'), findsWidgets);
+
+    await tester.tap(find.text('fr-FR').first);
+    await tester.pump();
+    await tester.tap(find.text('Locale (%c)'));
+    await tester.pump();
+    expect(find.text('samedi 15 juin 2024 à 14:37:22'), findsWidgets);
   });
 
   testWidgets('preserves active page button state across width breakpoint', (

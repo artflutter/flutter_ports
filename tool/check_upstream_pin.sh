@@ -844,7 +844,40 @@ if [ "$d3time_seen" = 0 ]; then
   failed=1
 fi
 
-# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-chord, d3-contour, d3-delaunay (with delaunator and robust-predicates), d3-hierarchy, d3-quadtree, d3-time, ECharts, zoom and sankey entries. This loop finds a
+# d3-time-format (D3 ADRs 0008 and 0025). A release pin: the gitlink is the
+# commit of the tag "v<d3TimeFormatVersion>" and the "commit" of the entry.
+d3timeformat_upstream=packages/flutter_d3_time_format_port/lib/src/upstream.dart
+d3timeformat_sources=packages/flutter_d3_time_format_port/tool/port_sources.yaml
+d3timeformat_path=third_party/d3-time-format
+d3timeformat_version=$(sed -n "s/^const String d3TimeFormatVersion = '\(.*\)';\$/\1/p" "$d3timeformat_upstream")
+if [ -z "$d3timeformat_version" ]; then
+  echo "d3TimeFormatVersion not found in $d3timeformat_upstream" >&2
+  exit 1
+fi
+if [ ! -f "$d3timeformat_sources" ]; then
+  echo "$d3timeformat_sources not found" >&2
+  exit 1
+fi
+d3timeformat_seen=0
+while read -r path ref recorded <&3; do
+  if [ "$path" != "$d3timeformat_path" ]; then
+    echo "$d3timeformat_sources pins $path. It must pin only $d3timeformat_path." >&2
+    failed=1
+    continue
+  fi
+  d3timeformat_seen=1
+  if [ "$ref" != "v$d3timeformat_version" ]; then
+    echo "$d3timeformat_sources gives ref $ref for $path, but d3TimeFormatVersion is $d3timeformat_version." >&2
+    failed=1
+  fi
+  check_pin "$path" "v$d3timeformat_version" "$recorded" "$d3timeformat_sources"
+done 3< <(read_pins "$d3timeformat_sources")
+if [ "$d3timeformat_seen" = 0 ]; then
+  echo "$d3timeformat_sources has no entry for $d3timeformat_path" >&2
+  failed=1
+fi
+
+# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-chord, d3-contour, d3-delaunay (with delaunator and robust-predicates), d3-hierarchy, d3-quadtree, d3-time, d3-time-format, ECharts, zoom and sankey entries. This loop finds a
 # submodule without an entry. Each port lists its submodules in its own
 # tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
 listed=$(awk '/^[^[:space:]]/ { next } $1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)

@@ -1,0 +1,26 @@
+name: flutter_d3_time_format_port
+description: >-
+  A native, fully statically typed pure-Dart port of d3-time-format 4.1.0:
+  strftime/strptime date formatting and parsing for local and UTC DateTime,
+  isoFormat/isoParse, and all 34 built-in const locales.
+version: 0.1.0
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_time_format_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - d3
+  - time
+  - format
+  - strftime
+  - visualization
+
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace
+
+dependencies:
+  flutter_d3_time_port: ^0.1.0
+
+dev_dependencies:
+  test: ^1.32.0
+  very_good_analysis: ^11.0.0

@@ -10,8 +10,9 @@
 # d3-contour in packages/flutter_d3_contour_port, d3-delaunay (with delaunator
 # and robust-predicates) in packages/flutter_d3_delaunay_port, d3-hierarchy in
 # packages/flutter_d3_hierarchy_port, d3-quadtree in
-# packages/flutter_d3_quadtree_port and d3-time in
-# packages/flutter_d3_time_port.
+# packages/flutter_d3_quadtree_port, d3-time in
+# packages/flutter_d3_time_port and d3-time-format in
+# packages/flutter_d3_time_format_port.
 # Each "// Ported from" header must name a project of this file, with the
 # same license and holder. The first entry is the d3 bundle, the upstream
 # repository of ADR 0005. The other 28 entries are the D3 module
@@ -318,24 +319,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3-selection/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-selection/
-
-  - header: d3-time-format
-    version: "v4.1.0"
-    version_source: the newest release tag in the range "4" of the d3 v7.9.0 package.json:64 on 2026-10-20. The d3 v7.9.0 yarn.lock:1098-1099 also locks 4.1.0.
-    url: https://github.com/d3/d3-time-format
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-time-format
-      ref: "v4.1.0"
-      commit: 76cfef1da81b70404c0226ec9db9b0d56fa09461
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-time-format/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-time-format/
 
   - header: d3-timer
     version: "v3.0.1"

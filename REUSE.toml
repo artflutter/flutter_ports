@@ -236,6 +236,16 @@ precedence = "aggregate"
 SPDX-FileCopyrightText = "2010-2022 Mike Bostock"
 SPDX-License-Identifier = "ISC"
 
+# The d3-time-format port: Dart ports of d3-time-format 4.1.0 (ISC), the D3
+# time formatting and parsing module as a package of its own, as on npm (D3
+# ADRs 0008 and 0025). This table keeps the upstream notice. The code of the
+# port is ISC too.
+[[annotations]]
+path = "packages/flutter_d3_time_format_port/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2010-2021 Mike Bostock"
+SPDX-License-Identifier = "ISC"
+
 # The 35 ColorBrewer scheme files of d3-scale-chromatic (D3 ADR 0001 items 10
 # and 12): Apache-2.0 for ColorBrewer, with the ISC notice of
 # d3-scale-chromatic.

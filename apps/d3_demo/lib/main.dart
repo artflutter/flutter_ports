@@ -12,6 +12,7 @@ import 'package:d3_demo/pages/interpolate_page.dart';
 import 'package:d3_demo/pages/path_page.dart';
 import 'package:d3_demo/pages/quadtree_page.dart';
 import 'package:d3_demo/pages/shape_page.dart';
+import 'package:d3_demo/pages/time_format_page.dart';
 import 'package:d3_demo/pages/time_page.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -29,6 +30,7 @@ void main() {
     'chord' => 10,
     'delaunay' => 11,
     'time' => 12,
+    'time-format' => 13,
     _ => 0,
   };
   runApp(D3DemoApp(initialTab: tab));
@@ -40,16 +42,17 @@ void main() {
 /// `flutter_d3_format_port`, `flutter_d3_array_port`,
 /// `flutter_d3_contour_port`, `flutter_d3_quadtree_port`,
 /// `flutter_d3_hierarchy_port`, `flutter_d3_chord_port`,
-/// `flutter_d3_delaunay_port` and `flutter_d3_time_port`.
+/// `flutter_d3_delaunay_port`, `flutter_d3_time_port` and
+/// `flutter_d3_time_format_port`.
 class const D3DemoApp({
   /// Initial destination index (`0` = Color, `1` = Interpolate,
   /// `2` = Chromatic, `3` = Path, `4` = Shape, `5` = Format, `6` = Array,
   /// `7` = Contour, `8` = Quadtree, `9` = Hierarchy, `10` = Chord,
-  /// `11` = Delaunay, `12` = Time).
+  /// `11` = Delaunay, `12` = Time, `13` = Time Format).
   final int initialTab = 0,
   super.key,
 }) extends StatefulWidget {
-  /// Creates the demo app starting on [initialTab] (`0..12`).
+  /// Creates the demo app starting on [initialTab] (`0..13`).
   this;
 
   @override
@@ -58,7 +61,7 @@ class const D3DemoApp({
 
 class _D3DemoAppState() extends State<D3DemoApp> {
   final GlobalKey _bodyKey = GlobalKey();
-  late int _index = widget.initialTab.clamp(0, 12);
+  late int _index = widget.initialTab.clamp(0, 13);
   ThemeMode _themeMode = ThemeMode.light;
 
   static const _destinations = <(String, String, IconData, IconData)>[
@@ -90,6 +93,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
     ('Chord', 'd3-chord', Icons.donut_large_outlined, Icons.donut_large),
     ('Delaunay', 'd3-delaunay', Icons.hub_outlined, Icons.hub),
     ('Time', 'd3-time', Icons.schedule_outlined, Icons.schedule),
+    ('TimeFmt', 'd3-time-format', Icons.event_note_outlined, Icons.event_note),
   ];
 
   @override
@@ -132,6 +136,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
               ChordDemoPage(),
               DelaunayDemoPage(),
               TimeDemoPage(),
+              TimeFormatDemoPage(),
             ],
           );
           final (_, pkg, _, _) = _destinations[_index];

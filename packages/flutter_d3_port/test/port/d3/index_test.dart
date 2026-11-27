@@ -255,4 +255,18 @@ void main() {
     expect(utcMonths(DateTime.utc(2024), DateTime.utc(2024, 4)), hasLength(3));
     expect(d3TimeVersion, '3.1.0');
   });
+
+  test('the bundle exports the names of d3-time-format', () {
+    final sample = DateTime.utc(2024, 6, 15, 14, 37, 22, 432);
+    expect(utcFormat('%Y-%m-%d')(sample), '2024-06-15');
+    expect(utcParse('%Y-%m-%d')('2024-06-15'), DateTime.utc(2024, 6, 15));
+    expect(isoFormat(sample), '2024-06-15T14:37:22.432Z');
+    expect(isoParse('2024-06-15T14:37:22.432Z'), sample);
+    expect(
+      timeFormatLocale(timeLocaleFrFR).utcFormat('%c')(sample),
+      'samedi 15 juin 2024 à 14:37:22',
+    );
+    expect(timeFormatLocales, hasLength(34));
+    expect(d3TimeFormatVersion, '4.1.0');
+  });
 }

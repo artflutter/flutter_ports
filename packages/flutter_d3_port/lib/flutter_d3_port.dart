@@ -20,4 +20,5 @@ export 'package:flutter_d3_port/d3.dart';
 export 'package:flutter_d3_quadtree_port/flutter_d3_quadtree_port.dart';
 export 'package:flutter_d3_scale_chromatic_port/flutter_d3_scale_chromatic_port.dart';
 export 'package:flutter_d3_shape_port/flutter_d3_shape_port.dart';
+export 'package:flutter_d3_time_format_port/flutter_d3_time_format_port.dart';
 export 'package:flutter_d3_time_port/flutter_d3_time_port.dart';
