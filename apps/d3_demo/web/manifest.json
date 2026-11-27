@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#f5f4fa",
     "theme_color": "#6d28d9",
-    "description": "Interactive showcase of flutter_d3_color_port, flutter_d3_interpolate_port and flutter_d3_scale_chromatic_port.",
+    "description": "Interactive showcase of the native Dart and Flutter D3 module ports.",
     "prefer_related_applications": false,
     "icons": [
         {

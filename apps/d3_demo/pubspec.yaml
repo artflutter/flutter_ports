@@ -1,11 +1,5 @@
 name: d3_demo
-description: >-
-  Interactive showcase of flutter_d3_color_port, flutter_d3_interpolate_port,
-  flutter_d3_scale_chromatic_port, flutter_d3_path_port, flutter_d3_shape_port,
-  flutter_d3_format_port, flutter_d3_array_port, flutter_d3_contour_port,
-  flutter_d3_delaunay_port, flutter_d3_quadtree_port,
-  flutter_d3_hierarchy_port, flutter_d3_chord_port, flutter_d3_time_port,
-  flutter_d3_time_format_port, flutter_d3_random_port and flutter_d3_geo_port.
+description: Interactive showcase of the native Dart and Flutter D3 module ports.
 publish_to: none
 version: 0.1.0+1
 

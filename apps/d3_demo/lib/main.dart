@@ -40,15 +40,7 @@ void main() {
   runApp(D3DemoApp(initialTab: tab));
 }
 
-/// Interactive showcase for `flutter_d3_color_port`,
-/// `flutter_d3_interpolate_port`, `flutter_d3_scale_chromatic_port`,
-/// `flutter_d3_path_port`, `flutter_d3_shape_port`,
-/// `flutter_d3_format_port`, `flutter_d3_array_port`,
-/// `flutter_d3_contour_port`, `flutter_d3_quadtree_port`,
-/// `flutter_d3_hierarchy_port`, `flutter_d3_chord_port`,
-/// `flutter_d3_delaunay_port`, `flutter_d3_time_port`,
-/// `flutter_d3_time_format_port`, `flutter_d3_random_port` and
-/// `flutter_d3_geo_port`.
+/// Interactive showcase for the native Dart and Flutter D3 module ports.
 class const D3DemoApp({
   /// Initial destination index (`0` = Color, `1` = Interpolate,
   /// `2` = Chromatic, `3` = Path, `4` = Shape, `5` = Format, `6` = Array,
