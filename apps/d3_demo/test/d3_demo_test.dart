@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all seven D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all eight D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -160,5 +160,26 @@ void main() {
     await tester.tap(find.text('2D blur2'));
     await tester.pump();
     expect(find.textContaining('24×16 scalar field'), findsOneWidget);
+
+    // Tab 7: Contour demo.
+    await tester.tap(find.text('Contour'));
+    await tester.pump();
+    expect(
+      find.text('Marching-Squares Contours & 2D Kernel Density'),
+      findsOneWidget,
+    );
+    expect(find.text('Scalar Field Contours'), findsOneWidget);
+    expect(find.text('Volcano & Caldera'), findsOneWidget);
+
+    await tester.tap(find.text('Turbo'));
+    await tester.pump();
+    await tester.tap(find.text('Twin Peaks'));
+    await tester.pump();
+
+    await tester.tap(find.text('2D Kernel Density'));
+    await tester.pump();
+    expect(find.textContaining('Bandwidth:'), findsOneWidget);
+    expect(find.textContaining('Cell size:'), findsOneWidget);
+    expect(find.text('Peak density'), findsOneWidget);
   });
 }

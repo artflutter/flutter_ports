@@ -629,7 +629,40 @@ if [ "$d3array_seen" = 0 ]; then
   failed=1
 fi
 
-# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, ECharts, zoom and sankey entries. This loop finds a
+# d3-contour (D3 ADR 0008). A release pin: the gitlink is the commit of the tag
+# "v<d3ContourVersion>" and the "commit" of the entry.
+d3contour_upstream=packages/flutter_d3_contour_port/lib/src/upstream.dart
+d3contour_sources=packages/flutter_d3_contour_port/tool/port_sources.yaml
+d3contour_path=third_party/d3-contour
+d3contour_version=$(sed -n "s/^const String d3ContourVersion = '\(.*\)';\$/\1/p" "$d3contour_upstream")
+if [ -z "$d3contour_version" ]; then
+  echo "d3ContourVersion not found in $d3contour_upstream" >&2
+  exit 1
+fi
+if [ ! -f "$d3contour_sources" ]; then
+  echo "$d3contour_sources not found" >&2
+  exit 1
+fi
+d3contour_seen=0
+while read -r path ref recorded <&3; do
+  if [ "$path" != "$d3contour_path" ]; then
+    echo "$d3contour_sources pins $path. It must pin only $d3contour_path." >&2
+    failed=1
+    continue
+  fi
+  d3contour_seen=1
+  if [ "$ref" != "v$d3contour_version" ]; then
+    echo "$d3contour_sources gives ref $ref for $path, but d3ContourVersion is $d3contour_version." >&2
+    failed=1
+  fi
+  check_pin "$path" "v$d3contour_version" "$recorded" "$d3contour_sources"
+done 3< <(read_pins "$d3contour_sources")
+if [ "$d3contour_seen" = 0 ]; then
+  echo "$d3contour_sources has no entry for $d3contour_path" >&2
+  failed=1
+fi
+
+# The loops above examine the D3, d3-color, d3-interpolate, d3-scale-chromatic, d3-path, d3-shape, d3-format, d3-array, d3-contour, ECharts, zoom and sankey entries. This loop finds a
 # submodule without an entry. Each port lists its submodules in its own
 # tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
 listed=$(awk '/^[^[:space:]]/ { next } $1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)

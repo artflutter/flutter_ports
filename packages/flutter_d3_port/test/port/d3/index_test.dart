@@ -158,4 +158,15 @@ void main() {
     expect(bin<double>()([0, 1, 2, 10]), isNotEmpty);
     expect(d3ArrayVersion, '3.2.4');
   });
+
+  test('the bundle exports the names of d3-contour', () {
+    final c = contours(size: (3, 3), thresholdsValues: <double>[0.5]);
+    final polys = c(<double>[0, 0, 0, 0, 1, 0, 0, 0, 0]);
+    expect(polys, hasLength(1));
+    expect(polys[0].type, 'MultiPolygon');
+    expect(polys[0].coordinates, hasLength(1));
+    final d = contourDensityPoints(size: (100, 100), thresholdsCount: 4);
+    expect(d(const <(double, double)>[(50, 50)]), isNotEmpty);
+    expect(d3ContourVersion, '4.0.2');
+  });
 }

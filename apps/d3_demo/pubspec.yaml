@@ -2,7 +2,7 @@ name: d3_demo
 description: >-
   Interactive showcase of flutter_d3_color_port, flutter_d3_interpolate_port,
   flutter_d3_scale_chromatic_port, flutter_d3_path_port, flutter_d3_shape_port,
-  flutter_d3_format_port and flutter_d3_array_port.
+  flutter_d3_format_port, flutter_d3_array_port and flutter_d3_contour_port.
 publish_to: none
 version: 0.1.0+1
 
@@ -17,6 +17,7 @@ dependencies:
     sdk: flutter
   flutter_d3_array_port: ^0.1.0
   flutter_d3_color_port: ^0.3.0
+  flutter_d3_contour_port: ^0.1.0
   flutter_d3_format_port: ^0.1.0
   flutter_d3_interpolate_port: ^0.3.0
   flutter_d3_path_port: ^0.1.0

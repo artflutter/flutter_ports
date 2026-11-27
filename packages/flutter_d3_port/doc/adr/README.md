@@ -20,4 +20,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0015](0015-shape-native-forms.md) Native forms of d3-shape: accepted, supersedes 0006.
 - [0016](0016-format-native-forms.md) Native forms of d3-format: accepted.
 - [0017](0017-array-native-forms.md) Native forms of d3-array: accepted.
+- [0020](0020-contour-native-forms.md) Native forms of d3-contour: accepted.
 <!-- adr-index:end -->

@@ -27,6 +27,7 @@ dependencies:
   # index re-exports each of them.
   flutter_d3_array_port: ^0.1.0
   flutter_d3_color_port: ^0.3.0
+  flutter_d3_contour_port: ^0.1.0
   flutter_d3_format_port: ^0.1.0
   flutter_d3_interpolate_port: ^0.3.0
   flutter_d3_path_port: ^0.1.0

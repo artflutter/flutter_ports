@@ -1,0 +1,48 @@
+# The projects that packages/flutter_d3_contour_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-contour. flutter_d3_port
+# depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-contour
+
+sources:
+  - header: d3-contour
+    version: "v4.0.2"
+    version_source: d3ContourVersion in packages/flutter_d3_contour_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-contour
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-contour
+      ref: "v4.0.2"
+      commit: 0ba2dd047ce4cc2980025eff5c4fea989bf2da85
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_contour_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_contour_port/test/
+      - source: test/snapshot.js
+        dart: packages/flutter_d3_contour_port/test/snapshot_test.dart
+    files:
+      - src/area.js
+      - src/array.js
+      - src/ascending.js
+      - src/constant.js
+      - src/contains.js
+      - src/contours.js
+      - src/density.js
+      - src/index.js
+      - src/noop.js
+      - test/asserts.js
+      - test/contours-test.js
+      - test/density-test.js
+      - test/snapshot.js

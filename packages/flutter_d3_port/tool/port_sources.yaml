@@ -134,26 +134,6 @@ sources:
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-chord/
 
-  - header: d3-contour
-    version: "v4.0.2"
-    version_source: the newest release tag in the range "4" of the d3 v7.9.0 package.json:43 on 2026-10-20. The d3 v7.9.0 yarn.lock:961-962 also locks 4.0.2.
-    url: https://github.com/d3/d3-contour
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-contour
-      ref: "v4.0.2"
-      commit: 0ba2dd047ce4cc2980025eff5c4fea989bf2da85
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-contour/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-contour/
-      - source: test/snapshot.js
-        dart: packages/flutter_d3_port/test/specs/d3-contour/snapshot_test.dart
-
   - header: d3-delaunay
     version: "v6.0.4"
     version_source: the newest release tag in the range "6" of the d3 v7.9.0 package.json:44 on 2026-10-20. The d3 v7.9.0 yarn.lock:968-969 also locks 6.0.4.

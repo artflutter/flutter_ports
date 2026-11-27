@@ -18,7 +18,9 @@ package `flutter_d3_shape_port`, in the native forms of
 package `flutter_d3_format_port`, in the native forms of
 [D3 ADR 0016](adr/0016-format-native-forms.md). d3-array is the seventh (2026-11-27), as the
 package `flutter_d3_array_port`, in the native forms of
-[D3 ADR 0017](adr/0017-array-native-forms.md). The other rows have the status `not started`. Until
+[D3 ADR 0017](adr/0017-array-native-forms.md). d3-contour is ported as the
+package `flutter_d3_contour_port`, in the native forms of
+[D3 ADR 0020](adr/0020-contour-native-forms.md). The other rows have the status `not started`. Until
 phase 2, this file has one row for each repository. A person writes it by hand. The status unit is one upstream source file
 (D3 ADR 0001). Thus the status of a repository row applies to each of its source files.
 
@@ -65,7 +67,7 @@ The columns:
 | [d3-brush](https://github.com/d3/d3-brush/tree/v3.0.0) | v3.0.0 | 5 | 652 | 1 | 1 | 7 | not started |
 | [d3-chord](https://github.com/d3/d3-chord/tree/v3.0.1) | v3.0.1 | 6 | 272 | 2 | 8 | 4 | not started |
 | [d3-color](https://github.com/d3/d3-color/tree/v3.1.0) | v3.1.0 | 6 | 595 | 8 | 170 | 2 | ported in the package `flutter_d3_color_port` ([D3 ADR 0008](adr/0008-module-packages.md)): 162 cases pass and 8 skip as `diverges: adapt-color-factories`, on the VM, DDC and dart2wasm. `src/define.js`: `n/a: Dart classes take the place of the prototype helper` |
-| [d3-contour](https://github.com/d3/d3-contour/tree/v4.0.2) | v4.0.2 | 9 | 416 | 3 | 23 | 5 | not started |
+| [d3-contour](https://github.com/d3/d3-contour/tree/v4.0.2) | v4.0.2 | 9 | 416 | 3 | 23 | 5 | ported in the package `flutter_d3_contour_port` ([D3 ADR 0020](adr/0020-contour-native-forms.md)): all 23 upstream cases pass (13 `contours`, 8 `density`, 2 `snapshot` geometry) on the VM, DDC and dart2wasm. |
 | [d3-delaunay](https://github.com/d3/d3-delaunay/tree/v6.0.4) | v6.0.4 | 5 | 636 | 2 | 41 | 5 | not started |
 | [d3-dispatch](https://github.com/d3/d3-dispatch/tree/v3.0.1) | v3.0.1 | 2 | 85 | 1 | 36 | 2 | not started |
 | [d3-drag](https://github.com/d3/d3-drag/tree/v3.0.0) | v3.0.0 | 6 | 266 | 1 | 1 | 7 | not started |

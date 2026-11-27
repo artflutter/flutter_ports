@@ -18,6 +18,7 @@ SPDX-PackageDownloadLocation = "https://github.com/artflutter/flutter_ports"
 # packages/flutter_d3_shape_port ports third_party/d3-shape.
 # packages/flutter_d3_format_port ports third_party/d3-format.
 # packages/flutter_d3_array_port ports third_party/d3-array.
+# packages/flutter_d3_contour_port ports third_party/d3-contour.
 
 [[annotations]]
 path = "**"
@@ -154,6 +155,15 @@ SPDX-License-Identifier = "ISC"
 path = "packages/flutter_d3_array_port/**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2010-2026 Mike Bostock"
+SPDX-License-Identifier = "ISC"
+
+# The d3-contour port: Dart ports of d3-contour 4.0.2 (ISC), the D3 contour
+# module as a package of its own, as on npm (D3 ADR 0008). This table keeps
+# the upstream notice. The code of the port is ISC too.
+[[annotations]]
+path = "packages/flutter_d3_contour_port/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2012-2023 Mike Bostock"
 SPDX-License-Identifier = "ISC"
 
 # The 35 ColorBrewer scheme files of d3-scale-chromatic (D3 ADR 0001 items 10

@@ -34,8 +34,10 @@ and in [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
   [`flutter_d3_shape_port`](../../flutter_d3_shape_port/README.md), with its differences and its
   speed figures in its `doc/` folder, d3-format is
   [`flutter_d3_format_port`](../../flutter_d3_format_port/README.md), with its differences and its
-  speed figures in its `doc/` folder, and d3-array is
+  speed figures in its `doc/` folder, d3-array is
   [`flutter_d3_array_port`](../../flutter_d3_array_port/README.md), with its differences and its
+  speed figures in its `doc/` folder, and d3-contour is
+  [`flutter_d3_contour_port`](../../flutter_d3_contour_port/README.md), with its differences and its
   speed figures in its `doc/` folder.
 - **Upstream after the pins:** [upstream-ledger.md](upstream-ledger.md) lists the upstream commits
   after each pinned tag, with one section for each repository.
