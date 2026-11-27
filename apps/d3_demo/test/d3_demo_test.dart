@@ -254,9 +254,16 @@ void main() {
     await tester.pump();
     expect(find.text('Black'), findsOneWidget);
 
+    final chordCanvasFinder = find.descendant(
+      of: find.byType(MouseRegion),
+      matching: find.byType(CustomPaint),
+    );
+    final topBefore = tester.getTopLeft(chordCanvasFinder.first).dy;
+
     await tester.tap(find.text('Black'));
     await tester.pump();
     expect(find.textContaining('Black:'), findsOneWidget);
+    expect(tester.getTopLeft(chordCanvasFinder.first).dy, topBefore);
 
     // Tab 11: Delaunay demo.
     await tester.ensureVisible(find.text('Delaunay'));
@@ -277,5 +284,29 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Viridis'));
     await tester.pump();
+  });
+
+  testWidgets('preserves active page button state across width breakpoint', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1000, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(const D3DemoApp(initialTab: 9));
+    expect(find.text('Tiling algorithm'), findsOneWidget);
+
+    await tester.tap(find.text('Sunburst'));
+    await tester.pump();
+    expect(find.text('Center hole'), findsOneWidget);
+
+    // Cross the 780 px breakpoint from wide (NavigationRail) to narrow.
+    await tester.binding.setSurfaceSize(const Size(600, 800));
+    await tester.pump();
+    expect(find.text('Center hole'), findsOneWidget);
+
+    // Cross back from narrow to wide.
+    await tester.binding.setSurfaceSize(const Size(1000, 800));
+    await tester.pump();
+    expect(find.text('Center hole'), findsOneWidget);
   });
 }

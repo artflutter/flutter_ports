@@ -55,6 +55,7 @@ class const D3DemoApp({
 }
 
 class _D3DemoAppState() extends State<D3DemoApp> {
+  final GlobalKey _bodyKey = GlobalKey();
   late int _index = widget.initialTab.clamp(0, 11);
   ThemeMode _themeMode = ThemeMode.light;
 
@@ -112,6 +113,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
         builder: (context, constraints) {
           final wide = constraints.maxWidth >= 780;
           final body = IndexedStack(
+            key: _bodyKey,
             index: _index,
             children: const [
               ColorDemoPage(),
