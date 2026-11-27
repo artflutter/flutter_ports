@@ -23,6 +23,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0018](0018-hierarchy-native-forms.md) Native forms of d3-hierarchy: accepted.
 - [0019](0019-quadtree-native-forms.md) Native forms of d3-quadtree: accepted.
 - [0020](0020-contour-native-forms.md) Native forms of d3-contour: accepted.
+- [0021](0021-time-native-forms.md) Native forms of d3-time: accepted.
 - [0022](0022-delaunay-native-forms.md) Native forms of d3-delaunay, delaunator, and robust-predicates: accepted.
 - [0023](0023-chord-native-forms.md) Native forms of d3-chord: accepted.
 <!-- adr-index:end -->

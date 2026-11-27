@@ -9,8 +9,9 @@
 # packages/flutter_d3_array_port, d3-chord in packages/flutter_d3_chord_port,
 # d3-contour in packages/flutter_d3_contour_port, d3-delaunay (with delaunator
 # and robust-predicates) in packages/flutter_d3_delaunay_port, d3-hierarchy in
-# packages/flutter_d3_hierarchy_port and d3-quadtree in
-# packages/flutter_d3_quadtree_port.
+# packages/flutter_d3_hierarchy_port, d3-quadtree in
+# packages/flutter_d3_quadtree_port and d3-time in
+# packages/flutter_d3_time_port.
 # Each "// Ported from" header must name a project of this file, with the
 # same license and holder. The first entry is the d3 bundle, the upstream
 # repository of ADR 0005. The other 28 entries are the D3 module
@@ -317,26 +318,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3-selection/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-selection/
-
-  - header: d3-time
-    version: "v3.1.0"
-    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:63 on 2026-10-20. The d3 v7.9.0 yarn.lock:1105-1106 also locks 3.1.0.
-    url: https://github.com/d3/d3-time
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-time
-      ref: "v3.1.0"
-      commit: d66bba6f83801b2f3a3e6440dba8df3357669c73
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-time/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-time/
-      - source: test/test-time-zones
-        dart: packages/flutter_d3_port/test/specs/d3-time/test-time-zones_test.dart
 
   - header: d3-time-format
     version: "v4.1.0"

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all twelve D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all thirteen D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -283,6 +283,26 @@ void main() {
     await tester.tap(find.text('Circumcenters'));
     await tester.pump();
     await tester.tap(find.text('Viridis'));
+    await tester.pump();
+
+    // Tab 12: Time demo.
+    await tester.ensureVisible(find.text('Time'));
+    await tester.pump();
+    await tester.tap(find.text('Time'));
+    await tester.pump();
+    expect(
+      find.text('Calendar Time Intervals, Ticks & Local/UTC Timeline Explorer'),
+      findsOneWidget,
+    );
+    expect(find.text('Target ticks: 8'), findsOneWidget);
+
+    await tester.tap(find.text('3 Decades'));
+    await tester.pump();
+    await tester.tap(find.text('Local'));
+    await tester.pump();
+    await tester.ensureVisible(find.text('Step +1'));
+    await tester.pump();
+    await tester.tap(find.text('Step +1'));
     await tester.pump();
   });
 

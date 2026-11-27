@@ -29,7 +29,9 @@ package `flutter_d3_chord_port`, in the native forms of
 [D3 ADR 0023](adr/0023-chord-native-forms.md). d3-delaunay (bundling delaunator
 and robust-predicates `orient2d`) is ported as the package
 `flutter_d3_delaunay_port`, in the native forms of
-[D3 ADR 0022](adr/0022-delaunay-native-forms.md). The other rows have the status `not started`. Until
+[D3 ADR 0022](adr/0022-delaunay-native-forms.md). d3-time is ported as the package
+`flutter_d3_time_port`, in the native forms of
+[D3 ADR 0021](adr/0021-time-native-forms.md). The other rows have the status `not started`. Until
 phase 2, this file has one row for each repository. A person writes it by hand. The status unit is one upstream source file
 (D3 ADR 0001). Thus the status of a repository row applies to each of its source files.
 
@@ -96,7 +98,7 @@ The columns:
 | [d3-scale-chromatic](https://github.com/d3/d3-scale-chromatic/tree/v3.1.0) | v3.1.0 | 48 | 557 | 1 | 1 | 2 | ported in the package `flutter_d3_scale_chromatic_port` ([D3 ADR 0012](adr/0012-scale-chromatic-native-forms.md)), ahead of phase 2: all 76 schemes and interpolators pass on the VM, DDC and dart2wasm. `src/rampClosed.js`: `n/a: unused upstream file; no file of d3-scale-chromatic imports it` |
 | [d3-selection](https://github.com/d3/d3-selection/tree/v3.0.0) | v3.0.0 | 54 | 1057 | 42 | 236 | 7 | not started |
 | [d3-shape](https://github.com/d3/d3-shape/tree/v3.2.0) | v3.2.0 | 60 | 2193 | 41 | 268 | 4 | ported in the package `flutter_d3_shape_port` ([D3 ADR 0015](adr/0015-shape-native-forms.md)): 231 upstream cases pass and 37 skip as `diverges: adapt-shape-typed-api`, on the VM, DDC and dart2wasm, plus direct Flutter `Canvas` rendering via `UiPathContext`. |
-| [d3-time](https://github.com/d3/d3-time/tree/v3.1.0) | v3.1.0 | 12 | 488 | 36 | 465 | 3 | not started |
+| [d3-time](https://github.com/d3/d3-time/tree/v3.1.0) | v3.1.0 | 12 | 488 | 36 | 465 | 3 | ported in the package `flutter_d3_time_port` ([D3 ADR 0021](adr/0021-time-native-forms.md)): 453 upstream cases pass and 12 skip as `diverges: adapt-time-typed-api` (plus all 32 POSIX IANA timezone checks in `test/test_time_zones_test.dart`, Node.js reference parity, and faster-form twin tests), on the VM, DDC and dart2wasm. |
 | [d3-time-format](https://github.com/d3/d3-time-format/tree/v4.1.0) | v4.1.0 | 5 | 754 | 8 | 146 | 3 | not started |
 | [d3-timer](https://github.com/d3/d3-timer/tree/v3.0.1) | v3.0.1 | 4 | 151 | 5 | 42 | 6 | not started |
 | [d3-transition](https://github.com/d3/d3-transition/tree/v3.0.1) | v3.0.1 | 29 | 953 | 33 | 180 | 7 | not started |

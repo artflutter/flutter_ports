@@ -243,4 +243,16 @@ void main() {
     expect(delaunatorVersion, '5.1.0');
     expect(robustPredicatesVersion, '3.0.3');
   });
+
+  test('the bundle exports the names of d3-time', () {
+    expect(
+      utcDay.floor(DateTime.utc(2024, 6, 15, 14, 30)),
+      DateTime.utc(2024, 6, 15),
+    );
+    expect(utcDay.count(DateTime.utc(2024), DateTime.utc(2024, 2)), 31);
+    expect(utcTicks(DateTime.utc(2024), DateTime.utc(2025), 4), isNotEmpty);
+    expect(timeTickInterval(DateTime(2024), DateTime(2025), 4), isNotNull);
+    expect(utcMonths(DateTime.utc(2024), DateTime.utc(2024, 4)), hasLength(3));
+    expect(d3TimeVersion, '3.1.0');
+  });
 }

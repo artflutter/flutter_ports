@@ -1,0 +1,85 @@
+# The projects that packages/flutter_d3_time_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-time. flutter_d3_port
+# depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-time
+
+sources:
+  - header: d3-time
+    version: "v3.1.0"
+    version_source: d3TimeVersion in packages/flutter_d3_time_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-time
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-time
+      ref: "v3.1.0"
+      commit: d66bba6f83801b2f3a3e6440dba8df3357669c73
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_time_port/lib/src/
+      - source: test/test-time-zones
+        dart: packages/flutter_d3_time_port/test/test_time_zones_test.dart
+      - source: test/
+        dart: packages/flutter_d3_time_port/test/
+    files:
+      - src/day.js
+      - src/duration.js
+      - src/hour.js
+      - src/index.js
+      - src/interval.js
+      - src/millisecond.js
+      - src/minute.js
+      - src/month.js
+      - src/second.js
+      - src/ticks.js
+      - src/week.js
+      - src/year.js
+      - test/date.js
+      - test/day-test.js
+      - test/friday-test.js
+      - test/hour-test.js
+      - test/interval-test.js
+      - test/millisecond-test.js
+      - test/minute-test.js
+      - test/monday-test.js
+      - test/month-test.js
+      - test/multiYear-test.js
+      - test/saturday-test.js
+      - test/second-test.js
+      - test/sunday-test.js
+      - test/test-time-zones
+      - test/thursday-test.js
+      - test/ticks-test.js
+      - test/tuesday-test.js
+      - test/unixDay-test.js
+      - test/utcDay-test.js
+      - test/utcFriday-test.js
+      - test/utcHour-test.js
+      - test/utcMillisecond-test.js
+      - test/utcMinute-test.js
+      - test/utcMonday-test.js
+      - test/utcMonth-test.js
+      - test/utcMultiYear-test.js
+      - test/utcSaturday-test.js
+      - test/utcSecond-test.js
+      - test/utcSunday-test.js
+      - test/utcThursday-test.js
+      - test/utcTicks-test.js
+      - test/utcTuesday-test.js
+      - test/utcWednesday-test.js
+      - test/utcWeek-test.js
+      - test/utcYear-test.js
+      - test/wednesday-test.js
+      - test/week-test.js
+      - test/year-test.js

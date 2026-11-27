@@ -23,6 +23,7 @@ SPDX-PackageDownloadLocation = "https://github.com/artflutter/flutter_ports"
 # packages/flutter_d3_delaunay_port ports third_party/d3-delaunay, third_party/delaunator and third_party/robust-predicates.
 # packages/flutter_d3_hierarchy_port ports third_party/d3-hierarchy.
 # packages/flutter_d3_quadtree_port ports third_party/d3-quadtree.
+# packages/flutter_d3_time_port ports third_party/d3-time.
 
 [[annotations]]
 path = "**"
@@ -225,6 +226,15 @@ path = [
 precedence = "override"
 SPDX-FileCopyrightText = "Vladimir Agafonkin"
 SPDX-License-Identifier = "Unlicense"
+
+# The d3-time port: Dart ports of d3-time 3.1.0 (ISC), the D3 time interval
+# module as a package of its own, as on npm (D3 ADRs 0008 and 0021). This table
+# keeps the upstream notice. The code of the port is ISC too.
+[[annotations]]
+path = "packages/flutter_d3_time_port/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2010-2022 Mike Bostock"
+SPDX-License-Identifier = "ISC"
 
 # The 35 ColorBrewer scheme files of d3-scale-chromatic (D3 ADR 0001 items 10
 # and 12): Apache-2.0 for ColorBrewer, with the ISC notice of

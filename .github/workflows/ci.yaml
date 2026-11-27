@@ -92,12 +92,14 @@ jobs:
       # packages/flutter_d3_hierarchy_port/test/upstream_test.dart compares
       # d3HierarchyVersion with third_party/d3-hierarchy/package.json.
       # packages/flutter_d3_quadtree_port/test/upstream_test.dart compares
-      # d3QuadtreeVersion with third_party/d3-quadtree/package.json. Each shard runs a
+      # d3QuadtreeVersion with third_party/d3-quadtree/package.json.
+      # packages/flutter_d3_time_port/test/upstream_test.dart compares
+      # d3TimeVersion with third_party/d3-time/package.json. Each shard runs a
       # part of the tests of each upstream_test.dart. Thus each ubuntu leg makes
       # the checkout.
-      - name: Check out the Chart.js submodules, third_party/d3, third_party/d3-color, third_party/d3-interpolate, third_party/d3-scale-chromatic, third_party/d3-path, third_party/d3-shape, third_party/d3-format, third_party/d3-array, third_party/d3-chord, third_party/d3-contour, third_party/d3-delaunay, third_party/delaunator, third_party/robust-predicates, third_party/d3-hierarchy, third_party/d3-quadtree, the ECharts submodules, chartjs-plugin-zoom and chartjs-chart-sankey
+      - name: Check out the Chart.js submodules, third_party/d3, third_party/d3-color, third_party/d3-interpolate, third_party/d3-scale-chromatic, third_party/d3-path, third_party/d3-shape, third_party/d3-format, third_party/d3-array, third_party/d3-chord, third_party/d3-contour, third_party/d3-delaunay, third_party/delaunator, third_party/robust-predicates, third_party/d3-hierarchy, third_party/d3-quadtree, third_party/d3-time, the ECharts submodules, chartjs-plugin-zoom and chartjs-chart-sankey
         if: matrix.os == 'ubuntu-latest'
-        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3 third_party/d3-color third_party/d3-interpolate third_party/d3-scale-chromatic third_party/d3-path third_party/d3-shape third_party/d3-format third_party/d3-array third_party/d3-chord third_party/d3-contour third_party/d3-delaunay third_party/delaunator third_party/robust-predicates third_party/d3-hierarchy third_party/d3-quadtree third_party/echarts third_party/zrender third_party/chartjs-plugin-zoom third_party/chartjs-chart-sankey
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3 third_party/d3-color third_party/d3-interpolate third_party/d3-scale-chromatic third_party/d3-path third_party/d3-shape third_party/d3-format third_party/d3-array third_party/d3-chord third_party/d3-contour third_party/d3-delaunay third_party/delaunator third_party/robust-predicates third_party/d3-hierarchy third_party/d3-quadtree third_party/d3-time third_party/echarts third_party/zrender third_party/chartjs-plugin-zoom third_party/chartjs-chart-sankey
       - uses: ./.github/actions/setup
       # Melos gives the options after "--" to each flutter test call.
       # --experimental-faster-testing compiles the test files of a package
