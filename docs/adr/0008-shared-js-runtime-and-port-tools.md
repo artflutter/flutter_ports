@@ -127,7 +127,7 @@ changes Chart.js ADR 0032 §1. A changed decision needs a new ADR. The deferred 
      `package:flutter_chartjs_port/src/js/` to `package:js_semantics/` with a prefix replacement.
    - The package stays `publish_to: none`. The release model is open (see Consequences).
    - The package `LICENSE` keeps the notices that the copied files have now:
-     - the MIT text with `2014-2024 Chart.js Contributors` and `2026 Vasiliy Ditsyak` (the
+     - the MIT text with `2014-2024 Chart.js Contributors` (the
        `packages/flutter_chartjs_port/**` table of `REUSE.toml`)
      - the SunPro component of the two fdlibm ports
 

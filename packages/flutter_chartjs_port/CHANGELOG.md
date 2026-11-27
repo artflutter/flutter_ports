@@ -1,4 +1,6 @@
-## Unreleased
+## 0.1.0-beta.5
+
+- `LICENSE`: keep only the upstream copyright notice.
 
 - BREAKING: a parsed value is a number (Chart.js ADR 0205): `x`, `y` and `r` of a `ParsedItem` (also of a
   `DataPoint`) are `double?`, so `point.x` needs no `as double`. `DataPoint.time` stores the time value in

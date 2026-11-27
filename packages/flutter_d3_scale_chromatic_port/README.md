@@ -89,5 +89,5 @@ palettes are compile-time `const` lists (0 ns startup).
 
 ## License
 
-ISC (Mike Bostock, Vasiliy Ditsyak), with Apache-2.0 notice for the ColorBrewer color schemes
+ISC (Mike Bostock), with Apache-2.0 notice for the ColorBrewer color schemes
 (Cynthia Brewer, Mark Harrower, and The Pennsylvania State University). See [LICENSE](LICENSE).

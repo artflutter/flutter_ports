@@ -1,5 +1,4 @@
 flutter_echarts_port
-Copyright 2026 Vasiliy Ditsyak
 
 This package is a Dart port of Apache ECharts. It contains the following
 notice of Apache ECharts 6.1.0, unchanged:

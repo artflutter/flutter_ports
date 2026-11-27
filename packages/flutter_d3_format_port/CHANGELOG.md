@@ -1,3 +1,7 @@
+## 0.1.1
+
+- `LICENSE`: keep only the upstream copyright notice.
+
 ## 0.1.0
 
 - Initial release: native Dart port of `d3-format` v3.1.2 (`format`, `formatPrefix`,

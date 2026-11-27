@@ -1,3 +1,7 @@
+## 0.3.1
+
+- `LICENSE`: keep only the upstream copyright notice.
+
 ## 0.3.0
 
 - **Breaking:** Upgrade `flutter_d3_color_port` to `^0.3.0` (`Color.copyWith(...)`).

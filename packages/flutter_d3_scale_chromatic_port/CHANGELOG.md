@@ -1,3 +1,7 @@
+## 0.3.1
+
+- `LICENSE` and `README.md`: keep only the upstream copyright notices.
+
 ## 0.3.0
 
 - **Breaking:** Upgrade `flutter_d3_color_port` and `flutter_d3_interpolate_port` to `^0.3.0`

@@ -261,12 +261,11 @@ them is the package name of ADR 0007 item 9. Thus the acceptance also waits for 
       comment block verbatim after its header lines (item 11). Dart accepts the `/* */` form.
       Thus the block stays byte for byte.
     - **4(d), the NOTICE.** `packages/flutter_echarts_port/NOTICE` starts with
-      `flutter_echarts_port` and `Copyright 2026 Vasiliy Ditsyak`. One sentence states that the
-      package is a Dart port of Apache ECharts. Then `echarts/NOTICE:1-5` follows unchanged.
+      `flutter_echarts_port`. One sentence states that the package is a Dart port of Apache
+      ECharts. Then `echarts/NOTICE:1-5` follows unchanged.
     - `REUSE.toml` has the table `packages/flutter_echarts_port/**` (`REUSE.toml:47-57`). Its
-      license is `Apache-2.0`. Its copyrights are `2017-2026 The Apache Software Foundation` and
-      `2026 Vasiliy Ditsyak`. The table comes after the D3 table. The tables of item 12 come after
-      it.
+      license is `Apache-2.0`. Its copyright is `2017-2026 The Apache Software Foundation`. The
+      table comes after the D3 table. The tables of item 12 come after it.
     - Phase 0 adds `LICENSES/Apache-2.0.txt`. `LICENSES/BSD-3-Clause.txt` and `LICENSES/MIT.txt`
       are present.
     - **Holder source.** The shared tool 2 of ADR 0008 stage 1 reads the holder from the package

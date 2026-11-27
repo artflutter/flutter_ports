@@ -1,3 +1,7 @@
+## 0.3.1
+
+- `LICENSE`: keep only the upstream copyright notice.
+
 ## 0.3.0
 
 - **Breaking:** Rename `Color.copy(...)` to `Color.copyWith(...)` across `Color`, `Rgb`, `Hsl`,

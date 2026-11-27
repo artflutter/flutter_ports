@@ -88,11 +88,11 @@ host pin is in the range of the tests and of the peer dependency.
      pin, the gitlink must be the commit of the tag `v<version>`.
    - The ubuntu legs of the CI job `test` check out the submodule for the upstream test.
 4. **The license.** The code of the port is MIT, the license of upstream. The package `LICENSE`
-   has the MIT text with `Copyright (c) 2013-2024 chartjs-plugin-zoom contributors` and
-   `Copyright (c) 2026 Vasiliy Ditsyak`. `REUSE.toml` has a table for
-   `packages/flutter_chartjs_plugin_zoom_port/**` with both holders, after the ECharts table. The
-   holder string of the headers and of `port_sources.yaml` is `chartjs-plugin-zoom contributors`.
-   The package ports no Chart.js code. Thus its `LICENSE` has no Chart.js notice.
+   has the MIT text with `Copyright (c) 2013-2024 chartjs-plugin-zoom contributors`. `REUSE.toml`
+   has a table for `packages/flutter_chartjs_plugin_zoom_port/**` with the upstream holder, after
+   the ECharts table. The holder string of the headers and of `port_sources.yaml` is
+   `chartjs-plugin-zoom contributors`. The package ports no Chart.js code. Thus its `LICENSE` has
+   no Chart.js notice.
 5. **The harness.** The zoom tests use `packages/chartjs_test_utils` as the port of
    chartjs-test-utils `^0.5.0`. The `src/` of 0.4.0 and of 0.5.0 are the same. Thus the port of
    0.4.0 serves the tests, and no second submodule is necessary.

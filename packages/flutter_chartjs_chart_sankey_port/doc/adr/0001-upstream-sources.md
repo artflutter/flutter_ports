@@ -59,10 +59,9 @@ the port of chartjs-test-utils 0.4.0, whose `src/` is the same.
    - `tool/check_upstream_pin.sh` (`upstream:check`) fails unless the gitlink is the commit of the
      tag `v<chartjsChartSankeyVersion>` and the `commit` of the entry.
 4. **The license.** The code of the port is MIT, the license of upstream. The package `LICENSE` has
-   the MIT text with `Copyright (c) 2019-2026 Jukka Kurkela` and `Copyright (c) 2026 Vasiliy
-   Ditsyak`. `REUSE.toml` has a table for `packages/flutter_chartjs_chart_sankey_port/**` with both
-   holders. The holder string of the headers and of `port_sources.yaml` is `Jukka Kurkela`. The
-   package ports no Chart.js code.
+   the MIT text with `Copyright (c) 2019-2026 Jukka Kurkela`. `REUSE.toml` has a table for
+   `packages/flutter_chartjs_chart_sankey_port/**` with the upstream holder. The holder string of
+   the headers and of `port_sources.yaml` is `Jukka Kurkela`. The package ports no Chart.js code.
 5. **The harness.** The tests use `packages/chartjs_test_utils` for the chart helpers that
    `test/utils/chart.js` copies from chartjs-test-utils. The other files of `test/utils/` compare
    images and have no Dart file (Sankey ADR 0002 item 5).

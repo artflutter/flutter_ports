@@ -5,14 +5,14 @@ libraries. First port: Chart.js v4.6.1 →
 `packages/flutter_chartjs_port`. Second port: D3 v7.9.0 →
 `packages/flutter_d3_port`, in phase 0 (scaffold and design). Each ported D3 module is a package
 of its own, as on npm (D3 ADR 0008): d3-color 3.1.0 → `packages/flutter_d3_color_port` (version
-0.3.0, on pub.dev), ported in native Dart forms (D3 ADRs 0007, 0009, 0010 and 0013),
+0.3.1, on pub.dev), ported in native Dart forms (D3 ADRs 0007, 0009, 0010 and 0013),
 d3-interpolate 3.0.1 → `packages/flutter_d3_interpolate_port` (D3 ADRs 0011 and 0013, version
-0.3.0, on pub.dev), d3-scale-chromatic 3.1.0 → `packages/flutter_d3_scale_chromatic_port`
-(D3 ADRs 0012 and 0013, version 0.3.0, on pub.dev), d3-path 3.1.0 →
-`packages/flutter_d3_path_port` (D3 ADR 0014, version 0.1.1, on pub.dev), d3-shape 3.2.0 →
-`packages/flutter_d3_shape_port` (D3 ADR 0015, version 0.1.0, on pub.dev), d3-format 3.1.2 →
-`packages/flutter_d3_format_port` (D3 ADR 0016, version 0.1.0, on pub.dev), and d3-array 3.2.4 →
-`packages/flutter_d3_array_port` (D3 ADR 0017, version 0.1.0, on pub.dev). Third port: Apache
+0.3.1, on pub.dev), d3-scale-chromatic 3.1.0 → `packages/flutter_d3_scale_chromatic_port`
+(D3 ADRs 0012 and 0013, version 0.3.1, on pub.dev), d3-path 3.1.0 →
+`packages/flutter_d3_path_port` (D3 ADR 0014, version 0.1.2, on pub.dev), d3-shape 3.2.0 →
+`packages/flutter_d3_shape_port` (D3 ADR 0015, version 0.1.1, on pub.dev), d3-format 3.1.2 →
+`packages/flutter_d3_format_port` (D3 ADR 0016, version 0.1.1, on pub.dev), and d3-array 3.2.4 →
+`packages/flutter_d3_array_port` (D3 ADR 0017, version 0.1.1, on pub.dev). Third port: Apache
 ECharts 6.1.0 with its renderer zrender 6.1.0 → `packages/flutter_echarts_port`, in phase 0
 (scaffold and design, no ported code). Fourth port: chartjs-plugin-zoom 2.2.0+fb81d331, an add-on
 of the Chart.js port (ADR 0009) → `packages/flutter_chartjs_plugin_zoom_port`, phases 1-4 done
@@ -21,7 +21,7 @@ next. Fifth port: chartjs-chart-sankey 0.19.1, an add-on of the Chart.js port an
 type of another package → `packages/flutter_chartjs_chart_sankey_port`, phases 0-4 done (each
 file of `src/` ported; the unit tests, the specs and the fixtures pass; a gallery page), phase 5
 next. Sixth port: @kurkle/color 0.3.2, the color library of the Chart.js port →
-`packages/flutter_kurkle_color_port`, a package of its own (version 0.2.0, on pub.dev), with no
+`packages/flutter_kurkle_color_port`, a package of its own (version 0.2.1, on pub.dev), with no
 import of another port.
 
 ## Commands
@@ -230,7 +230,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 
 ## Layout
 
-- `packages/flutter_chartjs_port`: the Chart.js port (library, version 0.1.0-beta.4, on pub.dev as a beta). Its layout, its internal
+- `packages/flutter_chartjs_port`: the Chart.js port (library, version 0.1.0-beta.5, on pub.dev as a beta). Its layout, its internal
   rules, its tests and its docs are in `packages/flutter_chartjs_port/AGENTS.md`. Read that file before a
   change in the package, in `packages/chartjs_test_utils`, in an add-on port or in an app that uses the
   port.
@@ -1805,22 +1805,20 @@ sankey ADRs are proposed. The doc paths are relative to
 
 ## Licensing
 
-- Chart.js is MIT. `packages/flutter_chartjs_port/LICENSE` lists both copyright holders and
+- Chart.js is MIT. `packages/flutter_chartjs_port/LICENSE` lists the upstream copyright holder and
   `REUSE.toml` annotates the paths. CI runs `reuse lint`.
 - D3 is ISC. `packages/flutter_d3_port/LICENSE` is the ISC text with
-  `Copyright 2010-2026 Mike Bostock` and `Copyright 2026 Vasiliy Ditsyak`. `LICENSES/ISC.txt` has
+  `Copyright 2010-2026 Mike Bostock`. `LICENSES/ISC.txt` has
   the license text. The `packages/flutter_d3_port/**` table of `REUSE.toml` comes after the
   `chartjs_test_utils` table. D3 ADR 0001 items 8 and 10 give the other components and their
   holder strings. Examples are d3-ease (BSD-3-Clause), ColorBrewer in d3-scale-chromatic
   (Apache-2.0), delaunator (`Mapbox`) and robust-predicates (Unlicense). The change that ports
   the first file of a component adds that component by the three steps below.
 - d3-color is ISC. `packages/flutter_d3_color_port/LICENSE` is the ISC text with
-  `Copyright 2010-2022 Mike Bostock` (the `LICENSE` of `third_party/d3-color` at `v3.1.0`) and
-  `Copyright 2026 Vasiliy Ditsyak`. The `packages/flutter_d3_color_port/**` table of `REUSE.toml`
+  `Copyright 2010-2022 Mike Bostock` (the `LICENSE` of `third_party/d3-color` at `v3.1.0`). The `packages/flutter_d3_color_port/**` table of `REUSE.toml`
   comes after the kurkle table.
 - d3-interpolate is ISC. `packages/flutter_d3_interpolate_port/LICENSE` is the ISC text with
-  `Copyright 2010-2021 Mike Bostock` (the `LICENSE` of `third_party/d3-interpolate` at `v3.0.1`)
-  and `Copyright 2026 Vasiliy Ditsyak`. The `packages/flutter_d3_interpolate_port/**` table of
+  `Copyright 2010-2021 Mike Bostock` (the `LICENSE` of `third_party/d3-interpolate` at `v3.0.1`). The `packages/flutter_d3_interpolate_port/**` table of
   `REUSE.toml` comes after the d3-color table.
 - d3-scale-chromatic is ISC with an Apache-2.0 ColorBrewer component (D3 ADR 0001 items 10 and 12).
   `packages/flutter_d3_scale_chromatic_port/LICENSE` carries both notices, and `REUSE.toml` has
@@ -1835,18 +1833,17 @@ sankey ADRs are proposed. The doc paths are relative to
   component adds that component by the three steps below.
 - chartjs-chart-sankey is MIT. The code of the sankey port is MIT too.
   `packages/flutter_chartjs_chart_sankey_port/LICENSE` is the MIT text with
-  `Copyright (c) 2019-2026 Jukka Kurkela` and `Copyright (c) 2026 Vasiliy Ditsyak`. The
+  `Copyright (c) 2019-2026 Jukka Kurkela`. The
   `packages/flutter_chartjs_chart_sankey_port/**` table of `REUSE.toml` comes after the zoom table.
   The last table annotates the gallery samples `apps/chartjs_gallery/lib/docs/sankey/**`. The
   package ports no Chart.js code (Sankey ADR 0001).
 - chartjs-plugin-zoom is MIT. The code of the zoom port is MIT too.
   `packages/flutter_chartjs_plugin_zoom_port/LICENSE` is the MIT text with
-  `Copyright (c) 2013-2024 chartjs-plugin-zoom contributors` and `Copyright (c) 2026 Vasiliy
-  Ditsyak`. The `packages/flutter_chartjs_plugin_zoom_port/**` table of `REUSE.toml` comes after
+  `Copyright (c) 2013-2024 chartjs-plugin-zoom contributors`. The `packages/flutter_chartjs_plugin_zoom_port/**` table of `REUSE.toml` comes after
   the ECharts table. The package ports no Chart.js code (Zoom ADR 0001).
 - @kurkle/color is MIT. The code of the color port is MIT too.
   `packages/flutter_kurkle_color_port/LICENSE` is the MIT text with
-  `Copyright (c) 2018-2021 Jukka Kurkela` and `Copyright (c) 2026 Vasiliy Ditsyak`. The
+  `Copyright (c) 2018-2021 Jukka Kurkela`. The
   `packages/flutter_kurkle_color_port/**` table of `REUSE.toml` comes after the sankey table. The
   package ports no Chart.js code, and `packages/flutter_chartjs_port/LICENSE` no longer lists
   Jukka Kurkela.

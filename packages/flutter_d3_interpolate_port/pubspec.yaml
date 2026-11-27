@@ -2,7 +2,7 @@ name: flutter_d3_interpolate_port
 description: >-
   A native Dart port of d3-interpolate 3.0.1: numbers, colors, dates, arrays,
   splines, zoom and 2D transforms of D3, with Flutter Matrix4 conversions.
-version: 0.3.0
+version: 0.3.1
 repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_interpolate_port
 issue_tracker: https://github.com/artflutter/flutter_ports/issues
 topics:

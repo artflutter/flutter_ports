@@ -1,4 +1,7 @@
-## Unreleased
+## 0.1.0-beta.2
+
+- On `flutter_chartjs_port` 0.1.0-beta.5.
+- `LICENSE`: keep only the upstream copyright notice.
 
 - BREAKING: `sankeyRegisterables` is a `List<ChartComponent>` of `SankeyController.component` and
   `Flow.component` (Chart.js ADR 0204 of flutter_chartjs_port): the `jsClass` of both classes is gone. The

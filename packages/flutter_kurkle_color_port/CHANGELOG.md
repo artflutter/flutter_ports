@@ -1,3 +1,7 @@
+## 0.2.1
+
+- `LICENSE`: keep only the upstream copyright notice.
+
 ## 0.2.0
 
 - The methods of the upstream `Color` class are the extension `KurkleColor` on the Flutter `Color` (Chart.js ADR 0171). Each method returns a new color. The class `Color` is gone.

@@ -1,4 +1,7 @@
-## Unreleased
+## 0.1.0-beta.4
+
+- On `flutter_chartjs_port` 0.1.0-beta.5.
+- `LICENSE`: keep only the upstream copyright notice.
 
 - BREAKING: the options `mode`, `scaleMode` and `overScaleMode` of `ZoomOptions` and `PanOptions` are a
   sealed `ModeOption` (Zoom ADR 0008): a `Mode`, or a `ModeFromChart` that holds a `ModeFn`. A `Mode`

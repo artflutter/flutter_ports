@@ -2,7 +2,7 @@ name: flutter_d3_color_port
 description: >-
   A native Dart port of d3-color 3.1.0: CSS color parsing and the RGB, HSL,
   CIELAB, HCL and Cubehelix color spaces of D3, with Flutter Color conversions.
-version: 0.3.0
+version: 0.3.1
 repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_color_port
 issue_tracker: https://github.com/artflutter/flutter_ports/issues
 topics:

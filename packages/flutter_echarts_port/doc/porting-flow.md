@@ -98,9 +98,8 @@ Terms:
    `// Ported from zrender 6.1.0 src/core/matrix.ts (BSD-3-Clause, Baidu Inc.).`
 4. **Licensing** (AGENTS.md Licensing, [ECharts ADR 0001](adr/0001-upstream-sources.md)). The
    code of the port is Apache-2.0. The package `LICENSE` of phase 0 is the plain Apache-2.0 text.
-   The package `NOTICE` has the port line `Copyright 2026 Vasiliy Ditsyak` and the ECharts
-   `NOTICE` unchanged. The change that ports code of another license component adds that
-   component:
+   The package `NOTICE` keeps the ECharts `NOTICE` unchanged. The change that ports code of another
+   license component adds that component:
    - its notice in the package `LICENSE`
    - a `REUSE.toml` table, last, with every holder of its paths
    - for a new license, the file `LICENSES/<SPDX-ID>.txt`

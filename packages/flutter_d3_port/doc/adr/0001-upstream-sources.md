@@ -255,15 +255,14 @@ the design. The ADR stays `proposed` until the maintainer accepts it.
    For robust-predicates, the `REUSE.toml` table lists `Vladimir Agafonkin` with no year. This
    text names the author of the dedication. It makes no copyright claim.
 9. **License of the port's code.** The port's own code is ISC.
-   - In phase 0, `packages/flutter_d3_port/LICENSE` starts with the line `ISC License`. Two
-     copyright lines follow: `Copyright 2010-2026 Mike Bostock` and
-     `Copyright 2026 Vasiliy Ditsyak`. The ISC text of the 32 ISC repositories comes last.
+   - In phase 0, `packages/flutter_d3_port/LICENSE` starts with the line `ISC License`. The
+     copyright line `Copyright 2010-2026 Mike Bostock` follows. The ISC text of the 32 ISC
+     repositories comes last.
    - The line of Mike Bostock merges the ten year ranges of the pins into one line. Item 4 keeps
      the exact line of each repository. The union 2010-2026 covers every range. All other lines
      stay verbatim, as Chart.js ADR 0035 item 6 asks.
    - The `REUSE.toml` table for `packages/flutter_d3_port/**` has `SPDX-License-Identifier = "ISC"`
-     and the copyrights `2010-2026 Mike Bostock` and `2026 Vasiliy Ditsyak`. It replaces the MIT
-     table `**` for the package.
+     and the copyright `2010-2026 Mike Bostock`. It replaces the MIT table `**` for the package.
    - Phase 0 adds `LICENSES/ISC.txt` and no other `LICENSES/` file.
 10. **Other license components.** Each component is part of the change that ports the first file
     that it covers (AGENTS.md Licensing). A new `LICENSES/` file is part of the change with its

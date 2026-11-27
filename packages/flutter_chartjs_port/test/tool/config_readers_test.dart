@@ -526,10 +526,7 @@ SPDX-License-Identifier = "SunPro AND (MIT OR ISC)"
       );
       expect(
         harness?.copyrights,
-        containsAll([
-          contains('chartjs-test-utils Contributors'),
-          contains('Vasiliy Ditsyak'),
-        ]),
+        contains(contains('chartjs-test-utils Contributors')),
       );
       expect(harness?.licenseIds, ['MIT']);
     });

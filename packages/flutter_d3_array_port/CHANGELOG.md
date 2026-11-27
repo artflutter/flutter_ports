@@ -1,3 +1,7 @@
+## 0.1.1
+
+- `LICENSE`: keep only the upstream copyright notice.
+
 ## 0.1.0
 
 - Initial release: native, fully statically typed pure-Dart port of `d3-array` v3.2.4

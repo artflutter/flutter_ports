@@ -1,6 +1,5 @@
 version = 1
 SPDX-PackageName = "flutter_ports"
-SPDX-PackageSupplier = "Vasiliy Ditsyak <vasilich6107@users.noreply.github.com>"
 SPDX-PackageDownloadLocation = "https://github.com/artflutter/flutter_ports"
 
 # When several annotations match a path, the last one wins, so each table lists
@@ -23,144 +22,143 @@ SPDX-PackageDownloadLocation = "https://github.com/artflutter/flutter_ports"
 [[annotations]]
 path = "**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 Vasiliy Ditsyak"
+SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "MIT"
 
 # The Chart.js port, and the gallery code where ported Chart.js samples live:
-# derived from Chart.js (MIT), so the upstream notice is kept alongside ours.
+# derived from Chart.js (MIT), so the upstream notice is kept.
 [[annotations]]
 path = ["packages/flutter_chartjs_port/**", "apps/chartjs_gallery/lib/**", "apps/chartjs_gallery/test/**", "apps/chartjs_docs/lib/**", "apps/chartjs_docs/test/**"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2014-2024 Chart.js Contributors", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2014-2024 Chart.js Contributors"
 SPDX-License-Identifier = "MIT"
 
 # The test harness: a port of chartjs-test-utils 0.4.0 (MIT), so its notice is
-# kept alongside ours (porting-flow.md section 3).
+# kept (porting-flow.md section 3).
 [[annotations]]
 path = "packages/chartjs_test_utils/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2020 chartjs-test-utils Contributors", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2020 chartjs-test-utils Contributors"
 SPDX-License-Identifier = "MIT"
 
 # The D3 port: Dart ports of D3 7.9.0 and its module repositories (ISC). This
-# table keeps the upstream notice with ours (D3 ADR 0001). The code of the
-# port is ISC too. The change that ports a D3 module with another license or
-# holder adds a table for that module after this table.
+# table keeps the upstream notice (D3 ADR 0001). The code of the port is ISC
+# too. The change that ports a D3 module with another license or holder adds a
+# table for that module after this table.
 [[annotations]]
 path = "packages/flutter_d3_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2010-2026 Mike Bostock", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2010-2026 Mike Bostock"
 SPDX-License-Identifier = "ISC"
 
 # The ECharts port: Dart ports of Apache ECharts 6.1.0 (Apache-2.0). This table
-# keeps the upstream notice with ours (ECharts ADR 0001). The code of the port
-# is Apache-2.0 too. The package NOTICE keeps the Apache ECharts NOTICE. The
-# change that ports the first file of another component adds a table for its
-# files after this table (ECharts ADR 0001 item 12): zrender (BSD-3-Clause,
-# Baidu Inc.), the five ECharts files with d3 code (BSD-3-Clause), and the
-# zrender files with node-timsort, jsdiff and tween.js code.
+# keeps the upstream notice (ECharts ADR 0001). The code of the port is
+# Apache-2.0 too. The package NOTICE keeps the Apache ECharts NOTICE. The change
+# that ports the first file of another component adds a table for its files
+# after this table (ECharts ADR 0001 item 12): zrender (BSD-3-Clause, Baidu
+# Inc.), the five ECharts files with d3 code (BSD-3-Clause), and the zrender
+# files with node-timsort, jsdiff and tween.js code.
 [[annotations]]
 path = "packages/flutter_echarts_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2017-2026 The Apache Software Foundation", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2017-2026 The Apache Software Foundation"
 SPDX-License-Identifier = "Apache-2.0"
 
 # The chartjs-plugin-zoom port: Dart ports of chartjs-plugin-zoom 2.2.0+fb81d331
-# (MIT). This table keeps the upstream notice with ours (Zoom ADR 0001). The
-# package ports no Chart.js code. It imports the public libraries of
-# flutter_chartjs_port (ADR 0009).
+# (MIT). This table keeps the upstream notice (Zoom ADR 0001). The package ports
+# no Chart.js code. It imports the public libraries of flutter_chartjs_port
+# (ADR 0009).
 [[annotations]]
 path = "packages/flutter_chartjs_plugin_zoom_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2013-2024 chartjs-plugin-zoom contributors", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2013-2024 chartjs-plugin-zoom contributors"
 SPDX-License-Identifier = "MIT"
 
 # The chartjs-chart-sankey port: Dart ports of chartjs-chart-sankey 0.19.1
-# (MIT). This table keeps the upstream notice with ours (Sankey ADR 0001). The
-# package ports no Chart.js code. It imports the public libraries of
+# (MIT). This table keeps the upstream notice (Sankey ADR 0001). The package
+# ports no Chart.js code. It imports the public libraries of
 # flutter_chartjs_port (ADR 0009).
 [[annotations]]
 path = "packages/flutter_chartjs_chart_sankey_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2019-2026 Jukka Kurkela", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2019-2026 Jukka Kurkela"
 SPDX-License-Identifier = "MIT"
 
 # The @kurkle/color port: Dart ports of @kurkle/color 0.3.2 (MIT) and of its
-# test/index.js. This table keeps the upstream notice with ours. The package
-# ports no Chart.js code.
+# test/index.js. This table keeps the upstream notice. The package ports no
+# Chart.js code.
 [[annotations]]
 path = "packages/flutter_kurkle_color_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2018-2021 Jukka Kurkela", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2018-2021 Jukka Kurkela"
 SPDX-License-Identifier = "MIT"
 
 # The d3-color port: Dart ports of d3-color 3.1.0 (ISC), the D3 color module
 # as a package of its own, as on npm (D3 ADR 0008). This table keeps the
-# upstream notice with ours. The code of the port is ISC too.
+# upstream notice. The code of the port is ISC too.
 [[annotations]]
 path = "packages/flutter_d3_color_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2010-2022 Mike Bostock", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2010-2022 Mike Bostock"
 SPDX-License-Identifier = "ISC"
 
 # The d3-interpolate port: Dart ports of d3-interpolate 3.0.1 (ISC), the D3
 # interpolation module as a package of its own, as on npm (D3 ADR 0008). This
-# table keeps the upstream notice with ours. The code of the port is ISC too.
+# table keeps the upstream notice. The code of the port is ISC too.
 [[annotations]]
 path = "packages/flutter_d3_interpolate_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2010-2021 Mike Bostock", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2010-2021 Mike Bostock"
 SPDX-License-Identifier = "ISC"
 
 # The d3-scale-chromatic port: Dart ports of d3-scale-chromatic 3.1.0 (ISC),
 # the D3 color schemes module as a package of its own, as on npm (D3 ADR 0008).
-# This table keeps the upstream notice with ours. The code of the port is ISC
-# too.
+# This table keeps the upstream notice. The code of the port is ISC too.
 [[annotations]]
 path = "packages/flutter_d3_scale_chromatic_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2010-2024 Mike Bostock", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2010-2024 Mike Bostock"
 SPDX-License-Identifier = "ISC"
 
 # The d3-path port: Dart ports of d3-path 3.1.0 (ISC), the D3 path module as
 # a package of its own, as on npm (D3 ADR 0008). This table keeps the upstream
-# notice with ours. The code of the port is ISC too.
+# notice. The code of the port is ISC too.
 [[annotations]]
 path = "packages/flutter_d3_path_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2015-2022 Mike Bostock", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2015-2022 Mike Bostock"
 SPDX-License-Identifier = "ISC"
 
 # The d3-shape port: Dart ports of d3-shape 3.2.0 (ISC), the D3 shape module as
 # a package of its own, as on npm (D3 ADR 0008). This table keeps the upstream
-# notice with ours. The code of the port is ISC too.
+# notice. The code of the port is ISC too.
 [[annotations]]
 path = "packages/flutter_d3_shape_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2010-2022 Mike Bostock", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2010-2022 Mike Bostock"
 SPDX-License-Identifier = "ISC"
 
 # The d3-format port: Dart ports of d3-format 3.1.2 (ISC), the D3 format module
 # as a package of its own, as on npm (D3 ADR 0008). This table keeps the
-# upstream notice with ours. The code of the port is ISC too.
+# upstream notice. The code of the port is ISC too.
 [[annotations]]
 path = "packages/flutter_d3_format_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2010-2026 Mike Bostock", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2010-2026 Mike Bostock"
 SPDX-License-Identifier = "ISC"
 
 # The d3-array port: Dart ports of d3-array 3.2.4 (ISC), the D3 array module
 # as a package of its own, as on npm (D3 ADR 0008). This table keeps the
-# upstream notice with ours. The code of the port is ISC too.
+# upstream notice. The code of the port is ISC too.
 [[annotations]]
 path = "packages/flutter_d3_array_port/**"
 precedence = "aggregate"
-SPDX-FileCopyrightText = ["2010-2026 Mike Bostock", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2010-2026 Mike Bostock"
 SPDX-License-Identifier = "ISC"
 
 # The 35 ColorBrewer scheme files of d3-scale-chromatic (D3 ADR 0001 items 10
 # and 12): Apache-2.0 for ColorBrewer, with the ISC notice of
-# d3-scale-chromatic and ours.
+# d3-scale-chromatic.
 [[annotations]]
 path = [
   "packages/flutter_d3_scale_chromatic_port/lib/src/categorical/Accent.dart",
@@ -203,7 +201,6 @@ precedence = "aggregate"
 SPDX-FileCopyrightText = [
   "2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State University",
   "2010-2024 Mike Bostock",
-  "2026 Vasiliy Ditsyak",
 ]
 SPDX-License-Identifier = "ISC AND Apache-2.0"
 
@@ -255,11 +252,11 @@ precedence = "override"
 SPDX-FileCopyrightText = "External rights holders; see the adjacent sources.json"
 SPDX-License-Identifier = "LicenseRef-External-Logo-Reference"
 
-# Earlier generated concept boards copied beside their refinements are ours.
+# Earlier generated concept boards copied beside their refinements.
 [[annotations]]
 path = "apps/chartjs_gallery/design/logo-options/**/references/input-*.png"
 precedence = "override"
-SPDX-FileCopyrightText = "2026 Vasiliy Ditsyak"
+SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "MIT"
 
 # The code font of the docs site and of the ergonomics app. The font files
@@ -286,27 +283,26 @@ path = [
   "apps/chartjs_docs/lib/migrate/graphic/graphic_bar_data.dart",
 ]
 precedence = "override"
-SPDX-FileCopyrightText = ["2024 LIN Chen", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2024 LIN Chen"
 SPDX-License-Identifier = "MIT"
 
 # The samples of the docs of chartjs-plugin-zoom in the gallery: Dart ports of
 # docs/samples and docs/scripts/defaults.js of chartjs-plugin-zoom
-# 2.2.0+fb81d331 (MIT), so the upstream notice is kept alongside ours. They
-# port no Chart.js code.
+# 2.2.0+fb81d331 (MIT), so the upstream notice is kept. They port no Chart.js
+# code.
 [[annotations]]
 path = "apps/chartjs_gallery/lib/docs/zoom/**"
 precedence = "override"
-SPDX-FileCopyrightText = ["2013-2024 chartjs-plugin-zoom contributors", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2013-2024 chartjs-plugin-zoom contributors"
 SPDX-License-Identifier = "MIT"
 
 # The samples of the docs of chartjs-chart-sankey in the gallery: Dart ports of
 # src/content/docs/samples and docs/scripts/utils.js of chartjs-chart-sankey
-# 0.19.1 (MIT), so the upstream notice is kept alongside ours. They port no
-# Chart.js code.
+# 0.19.1 (MIT), so the upstream notice is kept. They port no Chart.js code.
 [[annotations]]
 path = "apps/chartjs_gallery/lib/docs/sankey/**"
 precedence = "override"
-SPDX-FileCopyrightText = ["2019-2026 Jukka Kurkela", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2019-2026 Jukka Kurkela"
 SPDX-License-Identifier = "MIT"
 
 # The data of the datetime area demo of apexcharts_flutter on the docs site: a
@@ -315,7 +311,7 @@ SPDX-License-Identifier = "MIT"
 [[annotations]]
 path = "apps/chartjs_docs/lib/migrate/apexcharts/area_datetime_data.dart"
 precedence = "override"
-SPDX-FileCopyrightText = ["2018 ApexCharts", "2026 Eduardo H", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = ["2018 ApexCharts", "2026 Eduardo H"]
 SPDX-License-Identifier = "MIT"
 
 # The data of the interactive line and bar demos of shadcn/ui on the docs site:
@@ -324,7 +320,7 @@ SPDX-License-Identifier = "MIT"
 [[annotations]]
 path = "apps/chartjs_docs/lib/migrate/shadcn/shadcn_data.dart"
 precedence = "override"
-SPDX-FileCopyrightText = ["2023 shadcn", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2023 shadcn"
 SPDX-License-Identifier = "MIT"
 
 # The ApexCharts.js replicas of the docs site: new code with the data and the
@@ -333,14 +329,14 @@ SPDX-License-Identifier = "MIT"
 [[annotations]]
 path = "apps/chartjs_docs/lib/migrate/apexcharts_js/**"
 precedence = "override"
-SPDX-FileCopyrightText = ["2018 ApexCharts", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2018 ApexCharts"
 SPDX-License-Identifier = "MIT"
 
 # The zoom plugin page of the docs site and its code panels: Dart ports of
-# docs/guide of chartjs-plugin-zoom 2.2.0+fb81d331 (MIT), so the upstream
-# notice is kept alongside ours. They port no Chart.js code.
+# docs/guide of chartjs-plugin-zoom 2.2.0+fb81d331 (MIT), so the upstream notice
+# is kept. They port no Chart.js code.
 [[annotations]]
 path = ["apps/chartjs_docs/lib/examples/zoom/**", "apps/chartjs_docs/lib/pages/zoom_plugin_page.dart"]
 precedence = "override"
-SPDX-FileCopyrightText = ["2013-2024 chartjs-plugin-zoom contributors", "2026 Vasiliy Ditsyak"]
+SPDX-FileCopyrightText = "2013-2024 chartjs-plugin-zoom contributors"
 SPDX-License-Identifier = "MIT"

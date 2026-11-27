@@ -11,4 +11,4 @@ PRODUCT_NAME = chartjs_gallery
 PRODUCT_BUNDLE_IDENTIFIER = dev.artflutter.chartjsGallery
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 Vasiliy Ditsyak
+PRODUCT_COPYRIGHT = Copyright © 2026 dev.artflutter. All rights reserved.

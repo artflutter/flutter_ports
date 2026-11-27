@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- `LICENSE`: keep only the upstream copyright notice.
+
 ## 0.1.1
 
 - Add cross-platform performance benchmark tables (Node.js, macOS/iOS/Android

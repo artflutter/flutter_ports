@@ -3,7 +3,7 @@ description: >-
   A native, fully statically typed Dart port of d3-array 3.2.4: statistics,
   fsum/Adder, bisect, quickselect, ticks/nice/range, bin & thresholds, typed
   multi-level group/rollup/index, blur/blur2/blurImage, sort/rank, and set ops.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_array_port
 issue_tracker: https://github.com/artflutter/flutter_ports/issues
 topics:
