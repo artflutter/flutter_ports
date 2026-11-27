@@ -8,8 +8,6 @@ import 'package:flutter_d3_array_port/src/leastIndex.dart';
 /// Deprecated alias for [leastIndex] returning `null` instead of `-1` when no
 /// comparable element exists.
 // DIVERGES(d3-array): adapt-array-typed-api, typed Comparable<Object> generic.
-// Upstream d3-array exports scan as a deprecated alias for leastIndex.
-// ignore: remove_deprecations_in_breaking_versions
 @Deprecated('Use leastIndex instead.')
 int? scan<T extends Comparable<Object>>(
   Iterable<T?> values, [
@@ -20,8 +18,6 @@ int? scan<T extends Comparable<Object>>(
 }
 
 /// Deprecated comparator form of [scan] for arbitrary types `T`.
-// Upstream d3-array exports scan as a deprecated alias for leastIndex.
-// ignore: remove_deprecations_in_breaking_versions
 @Deprecated('Use leastIndexWith instead.')
 int? scanWith<T>(Iterable<T> values, num Function(T a, T b) compare) {
   final index = leastIndexWith(values, compare);

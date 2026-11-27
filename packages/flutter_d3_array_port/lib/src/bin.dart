@@ -487,8 +487,6 @@ BinGenerator<T> binByIndexed<T>(
 );
 
 /// Deprecated alias for [bin].
-// Upstream d3-array exports histogram as a deprecated alias for bin.
-// ignore: remove_deprecations_in_breaking_versions
 @Deprecated('Use bin instead.')
 BinGenerator<T> histogram<T extends num?>({
   BinDomainAccessor? domain,
