@@ -28,6 +28,8 @@ sources:
     targets:
       - source: src/
         dart: packages/flutter_d3_format_port/lib/src/
+      - source: test/format-type-%-test.js
+        dart: packages/flutter_d3_format_port/test/format-type-percent_test.dart
       - source: test/
         dart: packages/flutter_d3_format_port/test/
     files:
