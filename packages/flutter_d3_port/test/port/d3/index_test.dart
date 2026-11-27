@@ -142,4 +142,20 @@ void main() {
     expect(precisionRound(0.01, 1.01), 3);
     expect(d3FormatVersion, '3.1.2');
   });
+
+  test('the bundle exports the names of d3-array', () {
+    expect(sum([1, 2, 3, 4]), 10);
+    expect(fsum([1, 1e16, 1, -1e16]), 2);
+    expect(extent([3, 1, 4, 1, 5]), (1, 5));
+    expect(mean([2, 4, 6]), 4);
+    expect(median([1, 2, 3, 4]), 2.5);
+    expect(deviation([1, 2, 3]), 1);
+    expect(ticks(0, 10, 5), [0, 2, 4, 6, 8, 10]);
+    expect(nice(0.123, 0.987, 5), (0.0, 1.0));
+    expect(range(5), [0, 1, 2, 3, 4]);
+    expect(bisectLeft([1, 2, 2, 3], 2), 1);
+    expect(bisectRight([1, 2, 2, 3], 2), 3);
+    expect(bin<double>()([0, 1, 2, 10]), isNotEmpty);
+    expect(d3ArrayVersion, '3.2.4');
+  });
 }

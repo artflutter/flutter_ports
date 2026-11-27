@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all six D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all seven D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -135,5 +135,30 @@ void main() {
     await tester.tap(find.text('fr-FR'));
     await tester.pump();
     expect(find.text('1,23M'), findsWidgets);
+
+    // Tab 6: Array demo.
+    await tester.tap(find.text('Array'));
+    await tester.pump();
+    expect(
+      find.text('Histograms, Quantile Statistics, Axis Ticks & Gaussian Blur'),
+      findsOneWidget,
+    );
+    expect(find.text('Histogram & Binning Explorer'), findsOneWidget);
+
+    await tester.tap(find.text('Sturges'));
+    await tester.pump();
+    await tester.tap(find.text('Custom'));
+    await tester.pump();
+    expect(find.textContaining('Target bins:'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text('2D blur2'),
+      300,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pump();
+    await tester.tap(find.text('2D blur2'));
+    await tester.pump();
+    expect(find.textContaining('24×16 scalar field'), findsOneWidget);
   });
 }

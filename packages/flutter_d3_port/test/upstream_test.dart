@@ -7,7 +7,7 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_d3_port/flutter_d3_port.dart';
+import 'package:flutter_d3_port/flutter_d3_port.dart' show d3Version;
 import 'package:test/test.dart';
 
 /// The closest ancestor of the working directory that has a `.gitmodules`

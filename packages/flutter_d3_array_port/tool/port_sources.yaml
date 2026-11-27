@@ -1,0 +1,160 @@
+# The projects that packages/flutter_d3_array_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-array. flutter_d3_port
+# depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-array
+
+sources:
+  - header: d3-array
+    version: "v3.2.4"
+    version_source: d3ArrayVersion in packages/flutter_d3_array_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-array
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-array
+      ref: "v3.2.4"
+      commit: 94d4541626ae3ac6c847e3d4c6e31aca1a8879b4
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_array_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_array_port/test/
+    files:
+      - src/array.js
+      - src/ascending.js
+      - src/bin.js
+      - src/bisect.js
+      - src/bisector.js
+      - src/blur.js
+      - src/constant.js
+      - src/count.js
+      - src/cross.js
+      - src/cumsum.js
+      - src/descending.js
+      - src/deviation.js
+      - src/difference.js
+      - src/disjoint.js
+      - src/every.js
+      - src/extent.js
+      - src/filter.js
+      - src/fsum.js
+      - src/greatest.js
+      - src/greatestIndex.js
+      - src/group.js
+      - src/groupSort.js
+      - src/identity.js
+      - src/index.js
+      - src/intersection.js
+      - src/least.js
+      - src/leastIndex.js
+      - src/map.js
+      - src/max.js
+      - src/maxIndex.js
+      - src/mean.js
+      - src/median.js
+      - src/merge.js
+      - src/min.js
+      - src/minIndex.js
+      - src/mode.js
+      - src/nice.js
+      - src/number.js
+      - src/pairs.js
+      - src/permute.js
+      - src/quantile.js
+      - src/quickselect.js
+      - src/range.js
+      - src/rank.js
+      - src/reduce.js
+      - src/reverse.js
+      - src/scan.js
+      - src/shuffle.js
+      - src/some.js
+      - src/sort.js
+      - src/subset.js
+      - src/sum.js
+      - src/superset.js
+      - src/threshold/freedmanDiaconis.js
+      - src/threshold/scott.js
+      - src/threshold/sturges.js
+      - src/ticks.js
+      - src/transpose.js
+      - src/union.js
+      - src/variance.js
+      - src/zip.js
+      - test/ascending-test.js
+      - test/asserts.js
+      - test/bin-test.js
+      - test/bisect-test.js
+      - test/bisector-test.js
+      - test/blur-test.js
+      - test/count-test.js
+      - test/cross-test.js
+      - test/cumsum-test.js
+      - test/descending-test.js
+      - test/deviation-test.js
+      - test/difference-test.js
+      - test/disjoint-test.js
+      - test/every-test.js
+      - test/extent-test.js
+      - test/fcumsum-test.js
+      - test/filter-test.js
+      - test/flatGroup-test.js
+      - test/flatRollup-test.js
+      - test/fsum-test.js
+      - test/greatest-test.js
+      - test/greatestIndex-test.js
+      - test/group-test.js
+      - test/groupSort-test.js
+      - test/groups-test.js
+      - test/index-test.js
+      - test/intersection-test.js
+      - test/least-test.js
+      - test/leastIndex-test.js
+      - test/map-test.js
+      - test/max-test.js
+      - test/maxIndex-test.js
+      - test/mean-test.js
+      - test/median-test.js
+      - test/merge-test.js
+      - test/min-test.js
+      - test/minIndex-test.js
+      - test/mode-test.js
+      - test/nice-test.js
+      - test/pairs-test.js
+      - test/permute-test.js
+      - test/quantile-test.js
+      - test/quickselect-test.js
+      - test/range-test.js
+      - test/rank-test.js
+      - test/reduce-test.js
+      - test/reverse-test.js
+      - test/rollup-test.js
+      - test/rollups-test.js
+      - test/scan-test.js
+      - test/shuffle-test.js
+      - test/some-test.js
+      - test/sort-test.js
+      - test/subset-test.js
+      - test/sum-test.js
+      - test/superset-test.js
+      - test/threshold/freedmanDiaconic-test.js
+      - test/threshold/scott-test.js
+      - test/threshold/sturges-test.js
+      - test/tickIncrement-test.js
+      - test/tickStep-test.js
+      - test/ticks-test.js
+      - test/transpose-test.js
+      - test/union-test.js
+      - test/variance-test.js
+      - test/zip-test.js

@@ -16,7 +16,9 @@ package `flutter_d3_path_port`, in the native forms of
 package `flutter_d3_shape_port`, in the native forms of
 [D3 ADR 0015](adr/0015-shape-native-forms.md). d3-format is the sixth (2026-11-26), as the
 package `flutter_d3_format_port`, in the native forms of
-[D3 ADR 0016](adr/0016-format-native-forms.md). The other rows have the status `not started`. Until
+[D3 ADR 0016](adr/0016-format-native-forms.md). d3-array is the seventh (2026-11-27), as the
+package `flutter_d3_array_port`, in the native forms of
+[D3 ADR 0017](adr/0017-array-native-forms.md). The other rows have the status `not started`. Until
 phase 2, this file has one row for each repository. A person writes it by hand. The status unit is one upstream source file
 (D3 ADR 0001). Thus the status of a repository row applies to each of its source files.
 
@@ -58,7 +60,7 @@ The columns:
 | Repository | Tag | Source files | Lines | Test files | Cases | Phase | Status |
 |---|---|---:|---:|---:|---:|---|---|
 | [d3](https://github.com/d3/d3/tree/v7.9.0) | v7.9.0 | 1 | 30 | 2 | 2 | 1, then each phase: the bundle index grows with each ported module | not started |
-| [d3-array](https://github.com/d3/d3-array/tree/v3.2.4) | v3.2.4 | 61 | 1384 | 65 | 530 | 1: `ticks.js`, `nice.js` and `range.js` (3 files, 86 lines, 42 cases). 2: the other files | not started |
+| [d3-array](https://github.com/d3/d3-array/tree/v3.2.4) | v3.2.4 | 61 | 1384 | 65 | 530 | 1: `ticks.js`, `nice.js` and `range.js` (3 files, 86 lines, 42 cases). 2: the other files | ported in the package `flutter_d3_array_port` ([D3 ADR 0017](adr/0017-array-native-forms.md)): 450 upstream cases pass and 81 skip (80 as `diverges: adapt-array-typed-api`, 1 upstream `it.skip`), on the VM, DDC and dart2wasm. |
 | [d3-axis](https://github.com/d3/d3-axis/tree/v3.0.0) | v3.0.0 | 3 | 183 | 2 | 10 | 7 | not started |
 | [d3-brush](https://github.com/d3/d3-brush/tree/v3.0.0) | v3.0.0 | 5 | 652 | 1 | 1 | 7 | not started |
 | [d3-chord](https://github.com/d3/d3-chord/tree/v3.0.1) | v3.0.1 | 6 | 272 | 2 | 8 | 4 | not started |

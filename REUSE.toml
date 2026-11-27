@@ -18,6 +18,7 @@ SPDX-PackageDownloadLocation = "https://github.com/artflutter/flutter_ports"
 # packages/flutter_d3_path_port ports third_party/d3-path.
 # packages/flutter_d3_shape_port ports third_party/d3-shape.
 # packages/flutter_d3_format_port ports third_party/d3-format.
+# packages/flutter_d3_array_port ports third_party/d3-array.
 
 [[annotations]]
 path = "**"
@@ -144,6 +145,15 @@ SPDX-License-Identifier = "ISC"
 # upstream notice with ours. The code of the port is ISC too.
 [[annotations]]
 path = "packages/flutter_d3_format_port/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2010-2026 Mike Bostock", "2026 Vasiliy Ditsyak"]
+SPDX-License-Identifier = "ISC"
+
+# The d3-array port: Dart ports of d3-array 3.2.4 (ISC), the D3 array module
+# as a package of its own, as on npm (D3 ADR 0008). This table keeps the
+# upstream notice with ours. The code of the port is ISC too.
+[[annotations]]
+path = "packages/flutter_d3_array_port/**"
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["2010-2026 Mike Bostock", "2026 Vasiliy Ditsyak"]
 SPDX-License-Identifier = "ISC"

@@ -7,6 +7,7 @@
 /// (D3 ADR 0008). A module gets its line here with its package.
 library;
 
+export 'package:flutter_d3_array_port/d3_array.dart';
 export 'package:flutter_d3_color_port/d3_color.dart';
 export 'package:flutter_d3_format_port/d3_format.dart';
 export 'package:flutter_d3_interpolate_port/d3_interpolate.dart';

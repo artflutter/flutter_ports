@@ -4,11 +4,12 @@
 # packages/flutter_d3_color_port, d3-interpolate in
 # packages/flutter_d3_interpolate_port, d3-scale-chromatic in
 # packages/flutter_d3_scale_chromatic_port, d3-path in
-# packages/flutter_d3_path_port, d3-shape in packages/flutter_d3_shape_port
-# and d3-format in packages/flutter_d3_format_port.
+# packages/flutter_d3_path_port, d3-shape in packages/flutter_d3_shape_port,
+# d3-format in packages/flutter_d3_format_port and d3-array in
+# packages/flutter_d3_array_port.
 # Each "// Ported from" header must name a project of this file, with the
 # same license and holder. The first entry is the d3 bundle, the upstream
-# repository of ADR 0005. The other 29 entries are the D3 module
+# repository of ADR 0005. The other 28 entries are the D3 module
 # repositories and the three repositories outside the d3 organization. They
 # are the "other projects" of the port, as in Chart.js ADR 0035.
 #
@@ -78,24 +79,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3/
-
-  - header: d3-array
-    version: "v3.2.4"
-    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:38 on 2026-10-20. The d3 v7.9.0 yarn.lock:926-927 also locks 3.2.4.
-    url: https://github.com/d3/d3-array
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-array
-      ref: "v3.2.4"
-      commit: 94d4541626ae3ac6c847e3d4c6e31aca1a8879b4
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-array/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-array/
 
   - header: d3-axis
     version: "v3.0.0"

@@ -1,5 +1,6 @@
 // Original code, not ported from D3: entry point of the combined D3 demo app.
 
+import 'package:d3_demo/pages/array_page.dart';
 import 'package:d3_demo/pages/chromatic_page.dart';
 import 'package:d3_demo/pages/color_page.dart';
 import 'package:d3_demo/pages/format_page.dart';
@@ -15,6 +16,7 @@ void main() {
     'path' => 3,
     'shape' => 4,
     'format' => 5,
+    'array' => 6,
     _ => 0,
   };
   runApp(D3DemoApp(initialTab: tab));
@@ -22,15 +24,15 @@ void main() {
 
 /// Interactive showcase for `flutter_d3_color_port`,
 /// `flutter_d3_interpolate_port`, `flutter_d3_scale_chromatic_port`,
-/// `flutter_d3_path_port`, `flutter_d3_shape_port` and
-/// `flutter_d3_format_port`.
+/// `flutter_d3_path_port`, `flutter_d3_shape_port`,
+/// `flutter_d3_format_port` and `flutter_d3_array_port`.
 class const D3DemoApp({
   /// Initial destination index (`0` = Color, `1` = Interpolate,
-  /// `2` = Chromatic, `3` = Path, `4` = Shape, `5` = Format).
+  /// `2` = Chromatic, `3` = Path, `4` = Shape, `5` = Format, `6` = Array).
   final int initialTab = 0,
   super.key,
 }) extends StatefulWidget {
-  /// Creates the demo app starting on [initialTab] (`0..5`).
+  /// Creates the demo app starting on [initialTab] (`0..6`).
   this;
 
   @override
@@ -38,7 +40,7 @@ class const D3DemoApp({
 }
 
 class _D3DemoAppState() extends State<D3DemoApp> {
-  late int _index = widget.initialTab.clamp(0, 5);
+  late int _index = widget.initialTab.clamp(0, 6);
   ThemeMode _themeMode = ThemeMode.light;
 
   static const _destinations = <(String, String, IconData, IconData)>[
@@ -58,6 +60,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
     ('Path', 'd3-path', Icons.timeline_outlined, Icons.timeline),
     ('Shape', 'd3-shape', Icons.pie_chart_outline, Icons.pie_chart),
     ('Format', 'd3-format', Icons.pin_outlined, Icons.pin),
+    ('Array', 'd3-array', Icons.bar_chart_outlined, Icons.bar_chart),
   ];
 
   @override
@@ -92,6 +95,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
               PathDemoPage(),
               ShapeDemoPage(),
               FormatDemoPage(),
+              ArrayDemoPage(),
             ],
           );
           final (_, pkg, _, _) = _destinations[_index];

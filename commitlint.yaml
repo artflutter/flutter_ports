@@ -33,6 +33,8 @@ rules:
       - flutter_d3_path_port
       - flutter_d3_shape_port
       - flutter_d3_format_port
+      - flutter_d3_array_port
+      - d3_demo
       - ci
       - deps
       - docs

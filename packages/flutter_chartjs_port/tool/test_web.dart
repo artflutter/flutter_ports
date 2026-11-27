@@ -95,6 +95,7 @@ Future<void> main(List<String> args) async {
     'flutter_d3_path_port',
     'flutter_d3_shape_port',
     'flutter_d3_format_port',
+    'flutter_d3_array_port',
   ]) {
     final directory = '$repository/packages/$name';
     final files = browserTestFiles(directory);
