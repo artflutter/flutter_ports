@@ -1,0 +1,130 @@
+# The projects that packages/flutter_d3_geo_port ports code from (D3 ADR
+# 0008, D3 ADR 0024). Each "// Ported from" header must name a project of this
+# file, with the same license and holder. The only entry is d3-geo. The package
+# depends on flutter_d3_array_port and flutter_d3_path_port; flutter_d3_port
+# depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+
+marker: d3-geo
+
+sources:
+  - header: d3-geo
+    version: "v3.1.1"
+    version_source: d3GeoVersion in packages/flutter_d3_geo_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-geo
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-geo
+      ref: "v3.1.1"
+      commit: 8c53a90ae70c94bace73ecb02f2c792c649c86ba
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_geo_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_geo_port/test/
+      - source: test/path/test-context.js
+        dart: packages/flutter_d3_geo_port/test/path/test_context.dart
+    files:
+      - src/area.js
+      - src/bounds.js
+      - src/cartesian.js
+      - src/centroid.js
+      - src/circle.js
+      - src/clip/antimeridian.js
+      - src/clip/buffer.js
+      - src/clip/circle.js
+      - src/clip/extent.js
+      - src/clip/index.js
+      - src/clip/line.js
+      - src/clip/rectangle.js
+      - src/clip/rejoin.js
+      - src/compose.js
+      - src/constant.js
+      - src/contains.js
+      - src/distance.js
+      - src/graticule.js
+      - src/identity.js
+      - src/index.js
+      - src/interpolate.js
+      - src/length.js
+      - src/math.js
+      - src/noop.js
+      - src/path/area.js
+      - src/path/bounds.js
+      - src/path/centroid.js
+      - src/path/context.js
+      - src/path/index.js
+      - src/path/measure.js
+      - src/path/string.js
+      - src/pointEqual.js
+      - src/polygonContains.js
+      - src/projection/albers.js
+      - src/projection/albersUsa.js
+      - src/projection/azimuthal.js
+      - src/projection/azimuthalEqualArea.js
+      - src/projection/azimuthalEquidistant.js
+      - src/projection/conic.js
+      - src/projection/conicConformal.js
+      - src/projection/conicEqualArea.js
+      - src/projection/conicEquidistant.js
+      - src/projection/cylindricalEqualArea.js
+      - src/projection/equalEarth.js
+      - src/projection/equirectangular.js
+      - src/projection/fit.js
+      - src/projection/gnomonic.js
+      - src/projection/identity.js
+      - src/projection/index.js
+      - src/projection/mercator.js
+      - src/projection/naturalEarth1.js
+      - src/projection/orthographic.js
+      - src/projection/resample.js
+      - src/projection/stereographic.js
+      - src/projection/transverseMercator.js
+      - src/rotation.js
+      - src/stream.js
+      - src/transform.js
+      - test/area-test.js
+      - test/asserts.js
+      - test/bounds-test.js
+      - test/centroid-test.js
+      - test/circle-test.js
+      - test/contains-test.js
+      - test/distance-test.js
+      - test/graticule-test.js
+      - test/interpolate-test.js
+      - test/length-test.js
+      - test/path/area-test.js
+      - test/path/bounds-test.js
+      - test/path/centroid-test.js
+      - test/path/index-test.js
+      - test/path/measure-test.js
+      - test/path/string-test.js
+      - test/path/test-context.js
+      - test/polygonContains-test.js
+      - test/projection/albersUsa-test.js
+      - test/projection/angle-test.js
+      - test/projection/asserts.js
+      - test/projection/azimuthal-test.js
+      - test/projection/clipcircle-test.js
+      - test/projection/equirectangular-test.js
+      - test/projection/fit-test.js
+      - test/projection/identity-test.js
+      - test/projection/invert-test.js
+      - test/projection/mercator-test.js
+      - test/projection/reflect-test.js
+      - test/projection/rotate-test.js
+      - test/projection/stereographic-test.js
+      - test/projection/transverseMercator-test.js
+      - test/rotation-test.js
+      - test/snapshot-test.js
+      - test/snapshots.js
+      - test/stream-test.js

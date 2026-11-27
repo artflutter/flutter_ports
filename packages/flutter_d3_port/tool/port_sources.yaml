@@ -5,7 +5,8 @@
 # packages/flutter_d3_interpolate_port, d3-scale-chromatic in
 # packages/flutter_d3_scale_chromatic_port, d3-path in
 # packages/flutter_d3_path_port, d3-shape in packages/flutter_d3_shape_port,
-# d3-format in packages/flutter_d3_format_port, d3-array in
+# d3-format in packages/flutter_d3_format_port, d3-geo in
+# packages/flutter_d3_geo_port, d3-array in
 # packages/flutter_d3_array_port, d3-chord in packages/flutter_d3_chord_port,
 # d3-contour in packages/flutter_d3_contour_port, d3-delaunay (with delaunator
 # and robust-predicates) in packages/flutter_d3_delaunay_port, d3-hierarchy in
@@ -16,7 +17,7 @@
 # packages/flutter_d3_time_format_port.
 # Each "// Ported from" header must name a project of this file, with the
 # same license and holder. The first entry is the d3 bundle, the upstream
-# repository of ADR 0005. The other 28 entries are the D3 module
+# repository of ADR 0005. The other 27 entries are the D3 module
 # repositories and the three repositories outside the d3 organization. They
 # are the "other projects" of the port, as in Chart.js ADR 0035.
 #
@@ -230,24 +231,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3-force/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-force/
-
-  - header: d3-geo
-    version: "v3.1.1"
-    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:52 on 2026-10-20. The d3 v7.9.0 yarn.lock:1023-1024 also locks 3.1.1.
-    url: https://github.com/d3/d3-geo
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-geo
-      ref: "v3.1.1"
-      commit: 8c53a90ae70c94bace73ecb02f2c792c649c86ba
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-geo/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-geo/
 
   - header: d3-polygon
     version: "v3.0.1"

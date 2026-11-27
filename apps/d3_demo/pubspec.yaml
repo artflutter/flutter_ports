@@ -5,7 +5,7 @@ description: >-
   flutter_d3_format_port, flutter_d3_array_port, flutter_d3_contour_port,
   flutter_d3_delaunay_port, flutter_d3_quadtree_port,
   flutter_d3_hierarchy_port, flutter_d3_chord_port, flutter_d3_time_port,
-  flutter_d3_time_format_port and flutter_d3_random_port.
+  flutter_d3_time_format_port, flutter_d3_random_port and flutter_d3_geo_port.
 publish_to: none
 version: 0.1.0+1
 
@@ -24,6 +24,7 @@ dependencies:
   flutter_d3_contour_port: ^0.1.0
   flutter_d3_delaunay_port: ^0.1.0
   flutter_d3_format_port: ^0.1.0
+  flutter_d3_geo_port: ^0.1.0
   flutter_d3_hierarchy_port: ^0.1.0
   flutter_d3_interpolate_port: ^0.3.0
   flutter_d3_path_port: ^0.1.0

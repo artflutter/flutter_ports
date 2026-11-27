@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  testWidgets('renders all fifteen D3 demo tabs and interacts cleanly', (
+  testWidgets('renders all sixteen D3 demo tabs and interacts cleanly', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(1200, 900));
@@ -352,6 +352,29 @@ void main() {
 
     await tester.tap(find.text('Reseed'));
     await tester.pump();
+
+    // Tab 15: Geo demo.
+    await tester.ensureVisible(find.text('Geo'));
+    await tester.pump();
+    await tester.tap(find.text('Geo'));
+    await tester.pump();
+    expect(
+      find.text('Interactive World Projections, 3D Globe & Spherical Geometry'),
+      findsOneWidget,
+    );
+    expect(find.text('San Francisco → Tokyo'), findsOneWidget);
+
+    await tester.tap(find.text('NaturalEarth1'));
+    await tester.pump();
+    await tester.tap(find.text('Tissot / Circles'));
+    await tester.pump();
+    expect(find.textContaining('Circle radius:'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('London'));
+    await tester.pump();
+    await tester.tap(find.text('London'));
+    await tester.pump();
+    expect(find.text('Tokyo → London'), findsOneWidget);
   });
 
   testWidgets('preserves active page button state across width breakpoint', (

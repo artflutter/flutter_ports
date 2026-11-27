@@ -7,6 +7,7 @@ import 'package:d3_demo/pages/color_page.dart';
 import 'package:d3_demo/pages/contour_page.dart';
 import 'package:d3_demo/pages/delaunay_page.dart';
 import 'package:d3_demo/pages/format_page.dart';
+import 'package:d3_demo/pages/geo_page.dart';
 import 'package:d3_demo/pages/hierarchy_page.dart';
 import 'package:d3_demo/pages/interpolate_page.dart';
 import 'package:d3_demo/pages/path_page.dart';
@@ -33,6 +34,7 @@ void main() {
     'time' => 12,
     'time-format' => 13,
     'random' => 14,
+    'geo' => 15,
     _ => 0,
   };
   runApp(D3DemoApp(initialTab: tab));
@@ -45,16 +47,18 @@ void main() {
 /// `flutter_d3_contour_port`, `flutter_d3_quadtree_port`,
 /// `flutter_d3_hierarchy_port`, `flutter_d3_chord_port`,
 /// `flutter_d3_delaunay_port`, `flutter_d3_time_port`,
-/// `flutter_d3_time_format_port` and `flutter_d3_random_port`.
+/// `flutter_d3_time_format_port`, `flutter_d3_random_port` and
+/// `flutter_d3_geo_port`.
 class const D3DemoApp({
   /// Initial destination index (`0` = Color, `1` = Interpolate,
   /// `2` = Chromatic, `3` = Path, `4` = Shape, `5` = Format, `6` = Array,
   /// `7` = Contour, `8` = Quadtree, `9` = Hierarchy, `10` = Chord,
-  /// `11` = Delaunay, `12` = Time, `13` = Time Format, `14` = Random).
+  /// `11` = Delaunay, `12` = Time, `13` = Time Format, `14` = Random,
+  /// `15` = Geo).
   final int initialTab = 0,
   super.key,
 }) extends StatefulWidget {
-  /// Creates the demo app starting on [initialTab] (`0..14`).
+  /// Creates the demo app starting on [initialTab] (`0..15`).
   this;
 
   @override
@@ -63,7 +67,7 @@ class const D3DemoApp({
 
 class _D3DemoAppState() extends State<D3DemoApp> {
   final GlobalKey _bodyKey = GlobalKey();
-  late int _index = widget.initialTab.clamp(0, 14);
+  late int _index = widget.initialTab.clamp(0, 15);
   ThemeMode _themeMode = ThemeMode.light;
 
   static const _destinations = <(String, String, IconData, IconData)>[
@@ -97,6 +101,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
     ('Time', 'd3-time', Icons.schedule_outlined, Icons.schedule),
     ('TimeFmt', 'd3-time-format', Icons.event_note_outlined, Icons.event_note),
     ('Random', 'd3-random', Icons.casino_outlined, Icons.casino),
+    ('Geo', 'd3-geo', Icons.public_outlined, Icons.public),
   ];
 
   @override
@@ -141,6 +146,7 @@ class _D3DemoAppState() extends State<D3DemoApp> {
               TimeDemoPage(),
               TimeFormatDemoPage(),
               RandomDemoPage(),
+              GeoDemoPage(),
             ],
           );
           final (_, pkg, _, _) = _destinations[_index];

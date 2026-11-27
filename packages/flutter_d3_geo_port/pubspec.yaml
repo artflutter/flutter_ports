@@ -1,0 +1,32 @@
+name: flutter_d3_geo_port
+description: >-
+  A native, fully statically typed Dart port of d3-geo 3.1.1: spherical
+  geometry, projections, clipping, graticules, circles, and geographic paths
+  drawing to SVG or directly to Flutter Canvas via UiPathContext.
+version: 0.1.0
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_geo_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - d3
+  - geo
+  - maps
+  - projections
+  - visualization
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_d3_array_port: ^0.1.1
+  flutter_d3_path_port: ^0.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  test: ^1.32.0
+  very_good_analysis: ^11.0.0

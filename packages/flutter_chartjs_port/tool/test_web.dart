@@ -95,6 +95,7 @@ Future<void> main(List<String> args) async {
     'flutter_d3_path_port',
     'flutter_d3_shape_port',
     'flutter_d3_format_port',
+    'flutter_d3_geo_port',
     'flutter_d3_array_port',
     'flutter_d3_chord_port',
     'flutter_d3_contour_port',

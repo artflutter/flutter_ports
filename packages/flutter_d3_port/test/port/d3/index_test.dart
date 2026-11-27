@@ -286,4 +286,19 @@ void main() {
     );
     expect(d3RandomVersion, '3.0.1');
   });
+
+  test('the bundle exports the names of d3-geo', () {
+    final ortho = geoOrthographic();
+    final projected = ortho(const (0, 0));
+    expect(projected, isNotNull);
+    expect(projected!.$1, closeTo(480, 1e-6));
+    expect(projected.$2, closeTo(250, 1e-6));
+    expect(geoArea(const GeoSphere()), closeTo(4 * 3.141592653589793, 1e-9));
+    expect(
+      geoDistance(const (0, 0), const (90, 0)),
+      closeTo(1.5707963267, 1e-6),
+    );
+    expect(geoPath(ortho)(const GeoSphere()), isNotNull);
+    expect(d3GeoVersion, '3.1.1');
+  });
 }

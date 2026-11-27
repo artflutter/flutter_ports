@@ -51,9 +51,11 @@ and in [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
   [`flutter_d3_time_port`](../../flutter_d3_time_port/README.md), with its differences and its
   speed figures in its `doc/` folder, d3-time-format is
   [`flutter_d3_time_format_port`](../../flutter_d3_time_format_port/README.md), with its
-  differences and its speed figures in its `doc/` folder, and d3-random is
+  differences and its speed figures in its `doc/` folder, d3-random is
   [`flutter_d3_random_port`](../../flutter_d3_random_port/README.md), with its differences and its
-  speed figures in its `doc/` folder.
+  speed figures in its `doc/` folder, and d3-geo is
+  [`flutter_d3_geo_port`](../../flutter_d3_geo_port/README.md), with its differences and its speed
+  figures in its `doc/` folder.
 - **Upstream after the pins:** [upstream-ledger.md](upstream-ledger.md) lists the upstream commits
   after each pinned tag, with one section for each repository.
 - **Porting flow:** [porting-flow.md](porting-flow.md) (proposed) gives the life cycle of one
